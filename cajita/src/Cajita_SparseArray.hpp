@@ -333,7 +333,7 @@ class SparseArray
     using aosoa_type = Cabana::AoSoA<member_types, memory_space, vector_length>;
     //! SoA Type
     using soa_type = Cabana::SoA<member_types, vector_length>;
-    //！AoSoA tuple type
+    //! AoSoA tuple type
     using tuple_type = Cabana::Tuple<member_types>;
 
     //! Sparse array layout type
