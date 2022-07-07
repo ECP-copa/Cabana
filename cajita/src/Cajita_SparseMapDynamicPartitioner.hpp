@@ -27,6 +27,44 @@
 
 namespace Cajita
 {
+
+template <class SparseMapType, typename Device>
+class SparseMapWorkloadSetter : public WorkloadSetter<Device>
+{
+    using memory_space = typename Device::memory_space;
+    using execution_space = typename Device::execution_space;
+
+    const SparseMapType& sparseMap;
+    MPI_Comm comm;
+
+  public:
+    SparseMapWorkloadSetter( const SparseMapType& sparseMap, MPI_Comm comm )
+        : sparseMap( sparseMap )
+        , comm( comm )
+    {
+    }
+
+    void run( Kokkos::View<int***, memory_space>& workload ) override
+    {
+        Kokkos::parallel_for(
+            "compute_local_workload_sparsmap",
+            Kokkos::RangePolicy<execution_space>( 0, sparseMap.capacity() ),
+            KOKKOS_LAMBDA( uint32_t i ) {
+                if ( sparseMap.valid_at( i ) )
+                {
+                    auto key = sparseMap.key_at( i );
+                    int ti, tj, tk;
+                    sparseMap.key2ijk( key, ti, tj, tk );
+                    Kokkos::atomic_increment(
+                        &workload( ti + 1, tj + 1, tk + 1 ) );
+                }
+            } );
+        Kokkos::fence();
+        // Wait for other ranks' workload to be ready
+        MPI_Barrier( comm );
+    }
+};
+
 //---------------------------------------------------------------------------//
 /*!
   Dynamic mesh block partitioner. (Current Version: Support 3D only) Workload

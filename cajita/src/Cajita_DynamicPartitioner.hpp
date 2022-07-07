@@ -27,6 +27,15 @@
 
 namespace Cajita
 {
+
+template <typename Device>
+class WorkloadSetter
+{
+    using memory_space = typename Device::memory_space;
+  public:
+    virtual void run( Kokkos::View<int***, memory_space>& ) = 0;
+};
+
 //---------------------------------------------------------------------------//
 /*!
   Dynamic mesh block partitioner. (Current Version: Support 3D only) There
@@ -421,6 +430,12 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
                         }
                     } );
         Kokkos::fence();
+    }
+
+    void setLocalWorkload( WorkloadSetter<Device>* setter )
+    {
+        resetWorkload();
+        setter.run( _workload_per_tile );
     }
 
     /*!
