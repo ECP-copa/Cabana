@@ -256,14 +256,8 @@ void sparse_array_test( int par_num, EntityType e )
                true );
     EXPECT_EQ( test_array.empty(), false );
     EXPECT_EQ( test_array.numSoA(), sparse_map.sizeTile() );
-    for ( std::size_t i = 0; i < test_array.numSoA() - 1; ++i )
-    // for ( std::size_t i = 0; i < test_array.numSoA(); ++i )
-    {
+    for ( std::size_t i = 0; i < test_array.numSoA(); ++i )
         EXPECT_EQ( test_array.arraySize( i ), cell_per_tile );
-        // printf( "cellSize %d, array id %d, arraySize %d\n",
-        //         (int)test_array.size(), (int)i,
-        //         (int)test_array.arraySize( i ) );
-    }
 
     // check particle insertion results
     int cell_num = par_view.extent( 0 ) * 27;
