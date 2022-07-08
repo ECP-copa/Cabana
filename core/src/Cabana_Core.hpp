@@ -20,12 +20,14 @@
 
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_DeepCopy.hpp>
+#include <Cabana_Fields.hpp>
 #include <Cabana_LinkedCellList.hpp>
 #include <Cabana_MemberTypes.hpp>
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_Parallel.hpp>
 #include <Cabana_ParameterPack.hpp>
 #include <Cabana_ParticleInit.hpp>
+#include <Cabana_ParticleList.hpp>
 #include <Cabana_Slice.hpp>
 #include <Cabana_SoA.hpp>
 #include <Cabana_Sort.hpp>
