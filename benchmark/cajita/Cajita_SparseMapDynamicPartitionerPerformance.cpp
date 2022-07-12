@@ -180,7 +180,8 @@ void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
 
                 // compute local workload
                 local_workload_timer.start( frac );
-                auto smws = Cajita::createSparseMapWorkloadSetter<Device>( sis, comm );
+                auto smws =
+                    Cajita::createSparseMapWorkloadSetter<Device>( sis, comm );
                 partitioner.setLocalWorkload( &smws );
                 local_workload_timer.stop( frac );
 
