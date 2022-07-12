@@ -117,10 +117,9 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
         int num_tiles_per_dim = num_cells_per_dim[c] >> cell_bits_per_tile_dim;
 
         // set up partitioner
-        Cajita::ParticleDynamicPartitioner<Device, cell_num_per_tile_dim>
-            partitioner( comm, max_workload_coeff, max_par_num,
-                         num_step_rebalance, global_num_cell,
-                         max_optimize_iteration );
+        Cajita::DynamicPartitioner<Device, cell_num_per_tile_dim> partitioner(
+            comm, max_workload_coeff, max_par_num, num_step_rebalance,
+            global_num_cell, max_optimize_iteration );
         auto ranks_per_dim =
             partitioner.ranksPerDimension( comm, global_num_cell );
         auto ave_partition =
@@ -165,9 +164,12 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
 
                 // compute local workload
                 local_workload_timer.start( p );
-                partitioner.setLocalWorkload(
+                auto pws = createParticleWorkloadSetter<
+                    partitioner.cell_num_per_tile_dim,
+                    partitioner.num_space_dim, TEST_DEVICE>(
                     pos_view, par_num, global_low_corner,
                     1.0f / num_cells_per_dim[c], comm );
+                partitioner.setLocalWorkload( &pws );
                 local_workload_timer.stop( p );
 
                 // compute prefix sum matrix

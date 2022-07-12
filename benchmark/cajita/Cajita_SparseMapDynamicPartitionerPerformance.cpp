@@ -127,10 +127,9 @@ void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
         // set up partitioner
         auto total_num =
             num_tiles_per_dim * num_tiles_per_dim * num_tiles_per_dim;
-        Cajita::SparseMapDynamicPartitioner<Device, cell_num_per_tile_dim>
-            partitioner( comm, max_workload_coeff, total_num,
-                         num_step_rebalance, global_num_cell,
-                         max_optimize_iteration );
+        Cajita::DynamicPartitioner<Device, cell_num_per_tile_dim> partitioner(
+            comm, max_workload_coeff, total_num, num_step_rebalance,
+            global_num_cell, max_optimize_iteration );
         auto ranks_per_dim =
             partitioner.ranksPerDimension( comm, global_num_cell );
         auto ave_partition =
@@ -181,7 +180,8 @@ void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
 
                 // compute local workload
                 local_workload_timer.start( frac );
-                partitioner.setLocalWorkload( sis, comm );
+                auto smws = createSparseMapWorkloadSetter<Device>( sis, comm );
+                partitioner.setLocalWorkload( &smws );
                 local_workload_timer.stop( frac );
 
                 // compute prefix sum matrix

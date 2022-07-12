@@ -32,6 +32,7 @@ template <typename Device>
 class WorkloadSetter
 {
     using memory_space = typename Device::memory_space;
+
   public:
     virtual void run( Kokkos::View<int***, memory_space>& ) = 0;
 };
@@ -435,7 +436,7 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
     void setLocalWorkload( WorkloadSetter<Device>* setter )
     {
         resetWorkload();
-        setter.run( _workload_per_tile );
+        setter->run( _workload_per_tile );
     }
 
     /*!

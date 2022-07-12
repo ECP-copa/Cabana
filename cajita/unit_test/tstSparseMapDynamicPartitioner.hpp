@@ -47,7 +47,7 @@ void uniform_distribution_automatic_rank()
         size_tile_per_dim * cell_per_tile_dim };
 
     // partitioner
-    SparseMapDynamicPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
+    DynamicPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
         MPI_COMM_WORLD, max_workload_coeff, workload_num, num_step_rebalance,
         global_cells_per_dim, max_optimize_iteration );
 
@@ -147,7 +147,9 @@ void uniform_distribution_automatic_rank()
     Kokkos::fence();
 
     // compute workload and do partition optimization
-    partitioner.setLocalWorkload( sis, MPI_COMM_WORLD );
+    auto smws =
+        createSparseMapWorkloadSetter<TEST_DEVICE>( sis, MPI_COMM_WORLD );
+    partitioner.setLocalWorkload( &smws );
     partitioner.optimizePartition( MPI_COMM_WORLD );
 
     // check results (should be the same as the average partition)
@@ -247,7 +249,7 @@ void random_distribution_automatic_rank( int occupy_num_per_rank )
                                                 size_per_dim };
 
     // partitioner
-    SparseMapDynamicPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
+    DynamicPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
         MPI_COMM_WORLD, max_workload_coeff, particle_num, num_step_rebalance,
         global_cells_per_dim, max_optimize_iteration );
 
@@ -362,9 +364,9 @@ void random_distribution_automatic_rank( int occupy_num_per_rank )
     Kokkos::fence();
 
     // compute workload from a sparseMap and do partition optimization
-    dynamic_cast<SparseMapDynamicPartitioner<TEST_DEVICE, cell_per_tile_dim>*>(
-        &partitioner )
-        ->setLocalWorkload( sis, MPI_COMM_WORLD );
+    auto smws =
+        createSparseMapWorkloadSetter<TEST_DEVICE>( sis, MPI_COMM_WORLD );
+    partitioner.setLocalWorkload( &smws );
     partitioner.optimizePartition( MPI_COMM_WORLD );
 
     // check results (should be the same as the gt_partition)
