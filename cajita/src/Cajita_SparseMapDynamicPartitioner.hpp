@@ -28,6 +28,12 @@
 namespace Cajita
 {
 
+//---------------------------------------------------------------------------//
+/*!
+  \brief Helper class to set workload for DynamicPartitioner with sparse map.
+  \tparam Sparse map type
+  \tparam Partitioner's device type
+*/
 template <class SparseMapType, typename Device>
 class SparseMapWorkloadSetter : public WorkloadSetter<Device>
 {
@@ -38,12 +44,18 @@ class SparseMapWorkloadSetter : public WorkloadSetter<Device>
     MPI_Comm comm;
 
   public:
+    /*!
+     \brief Constructor.
+     \param sparseMap Sparse map used in workload computation.
+     \param comm MPI communicator to use for computing workload.
+    */
     SparseMapWorkloadSetter( const SparseMapType& sparseMap, MPI_Comm comm )
         : sparseMap( sparseMap )
         , comm( comm )
     {
     }
 
+    //! \brief Called by DynamicPartitioner to compute workload
     void run( Kokkos::View<int***, memory_space>& workload ) override
     {
         Kokkos::parallel_for(
@@ -65,13 +77,8 @@ class SparseMapWorkloadSetter : public WorkloadSetter<Device>
     }
 };
 
-/*!
-    \brief compute the workload in the current MPI rank from sparseMap
-    (the workload of a tile is 1 if the tile is occupied, 0 otherwise). This
-    function must be called before running optimizePartition() \param
-    sparseMap sparseMap in the current rank \param comm MPI communicator used
-    for workload reduction
-*/
+//---------------------------------------------------------------------------//
+//! Creation function for SparseMapWorkloadSetter from SparseMap
 template <typename Device, class SparseMapType>
 SparseMapWorkloadSetter<SparseMapType, Device>
 createSparseMapWorkloadSetter( const SparseMapType& sparseMap, MPI_Comm comm )

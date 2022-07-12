@@ -28,6 +28,16 @@
 namespace Cajita
 {
 
+//---------------------------------------------------------------------------//
+/*!
+  \brief Helper class to set workload for DynamicPartitioner with particles.
+  \tparam Particles' position view type (Kokkos::View<Scalar* [3], MemorySpace>)
+  \tparam Global grid bottom left corner type
+  \tparam Global grid unit cell size type
+  \tparam Partitioner's cell number per tile dim
+  \tparam Partitioner's space dim number
+  \tparam Partitioner's device type
+*/
 template <class ParticlePosViewType, typename ArrayType, typename CellUnit,
           unsigned long long CellPerTileDim, int num_space_dim, typename Device>
 class ParticleWorkloadSetter : public WorkloadSetter<Device>
@@ -45,6 +55,14 @@ class ParticleWorkloadSetter : public WorkloadSetter<Device>
     MPI_Comm comm;
 
   public:
+    /*!
+     \brief Constructor.
+     \param view Position of particles used in workload computation.
+     \param particle_num The number of particles used in workload computation.
+     \param global_lower_corner The bottom-left corner of global grid.
+     \param dx The global grid resolution.
+     \param comm MPI communicator to use for computing workload.
+    */
     ParticleWorkloadSetter( const ParticlePosViewType& view, int particle_num,
                             const ArrayType& global_lower_corner,
                             const CellUnit dx, MPI_Comm comm )
@@ -56,6 +74,7 @@ class ParticleWorkloadSetter : public WorkloadSetter<Device>
     {
     }
 
+    //! \brief Called by DynamicPartitioner to compute workload
     void run( Kokkos::View<int***, memory_space>& workload ) override
     {
         Kokkos::Array<CellUnit, num_space_dim> lower_corner;
@@ -85,15 +104,9 @@ class ParticleWorkloadSetter : public WorkloadSetter<Device>
     }
 };
 
-/*!
-    \brief compute the workload in the current MPI rank from particle
-    positions (each particle count for 1 workload value). This function must
-    be called before running optimizePartition() \param view particle
-    positions view \param particle_num total particle number \param
-    global_lower_corner the coordinate of the domain global lower corner
-    \param dx cell dx size
-    \param comm MPI communicator used for workload reduction
-*/
+//---------------------------------------------------------------------------//
+//! Creation function for ParticleWorkloadSetter from Kokkos::View<Scalar* [3],
+//! MemorySpace>
 template <unsigned long long CellPerTileDim, int num_space_dim, typename Device,
           class ParticlePosViewType, typename ArrayType, typename CellUnit>
 ParticleWorkloadSetter<ParticlePosViewType, ArrayType, CellUnit, CellPerTileDim,
