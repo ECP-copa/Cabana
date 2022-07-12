@@ -426,6 +426,9 @@ class SparseMap
     static constexpr unsigned long long cell_bits_per_tile =
         cell_bits_per_tile_dim + cell_bits_per_tile_dim +
         cell_bits_per_tile_dim;
+    //! Cell mask (combine all dimensions dimension)
+    static constexpr unsigned long long cell_mask_per_tile =
+        ( 1 << cell_bits_per_tile ) - 1;
     //! Number of cells (total) inside each tile
     static constexpr unsigned long long cell_num_per_tile =
         cell_num_per_tile_dim * cell_num_per_tile_dim * cell_num_per_tile_dim;
@@ -597,6 +600,16 @@ class SparseMap
     bool valid_at( uint32_t index ) const
     {
         return _block_id_space.valid_at( index );
+    }
+
+    /*!
+      \brief (Device) Check if the tile key is valid.
+      \param key tile key to check
+    */
+    KOKKOS_INLINE_FUNCTION
+    bool isValidKey( key_type key ) const
+    {
+        return _block_id_space.isValidKey( key );
     }
 
     /*!
@@ -787,6 +800,16 @@ class BlockMap
     bool valid_at( uint32_t index ) const
     {
         return _tile_table.valid_at( index );
+    }
+
+    /*!
+      \brief (Device) Check if the tile key is valid.
+      \param key tile key to check
+    */
+    KOKKOS_INLINE_FUNCTION
+    bool isValidKey( key_type key ) const
+    {
+        return !( _tile_table.find( key ) == ~static_cast<uint32_t>( 0 ) );
     }
 
     /*!

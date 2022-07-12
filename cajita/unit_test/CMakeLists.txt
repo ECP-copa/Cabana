@@ -40,12 +40,13 @@ set(MPI_TESTS
   ParticleList
   SparseArray
   SparseDimPartitioner
+  SparseHalo
   SparseLocalGrid
   )
 
 if(Kokkos_ENABLE_SYCL) #FIXME_SYCL
   list(REMOVE_ITEM SERIAL_TESTS SparseIndexSpace)
-  list(REMOVE_ITEM MPI_TESTS SparseDimPartitioner SparseLocalGrid SparseArray)
+  list(REMOVE_ITEM MPI_TESTS SparseDimPartitioner SparseHalo SparseLocalGrid SparseArray)
 endif()
 
 if(Kokkos_ENABLE_OPENMPTARGET) #FIXME_OPENMPTARGET

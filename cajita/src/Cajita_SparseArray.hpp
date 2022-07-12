@@ -325,6 +325,9 @@ class SparseArray
     //! Least bits required to represent all cells inside a tile
     static constexpr unsigned long long cell_bits_per_tile =
         sparse_map_type::cell_bits_per_tile;
+    //! Cell ID mask inside a tile
+    static constexpr unsigned long long cell_mask_per_tile =
+        sparse_map_type::cell_mask_per_tile;
 
     // AoSoA related types
     //! DataTypes Data types (Cabana::MemberTypes).
@@ -437,8 +440,6 @@ class SparseArray
     }
 
     // ------------------------------------------------------------------------
-    // data access
-    // access soa
     /*!
       \brief (Device) Access tile SoA from tile-related information
       \param tile_i, tile_j, tile_k Tile index in each dimension
@@ -476,8 +477,21 @@ class SparseArray
     }
 
     // ------------------------------------------------------------------------
-    // data access
-    // aceess element
+    /*!
+      \brief Access AoSoA tuple from tile key and local cell id
+      \param tile_key Tile Key inside sparse map
+      \param cell_local_id local Cell ID inside the tile
+    */
+    template <typename Key>
+    KOKKOS_FORCEINLINE_FUNCTION tuple_type
+    getTuple( const Key tile_key, const int cell_local_id ) const
+    {
+        auto tile_id = _layout.queryTileFromTileKey( tile_key );
+        return _data.getTuple( ( tile_id << cell_bits_per_tile ) |
+                               ( cell_local_id & cell_mask_per_tile ) );
+    }
+
+    // ------------------------------------------------------------------------
     /*!
       \brief Access element from cell IJK, access correponding element's
       channels with extra indices

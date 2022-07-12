@@ -34,6 +34,7 @@ set(HEADERS_PUBLIC
   Cajita_ReferenceStructuredSolver.hpp
   Cajita_SparseArray.hpp
   Cajita_SparseDimPartitioner.hpp
+  Cajita_SparseHalo.hpp
   Cajita_SparseIndexSpace.hpp
   Cajita_SparseLocalGrid.hpp
   Cajita_SparseLocalGrid_impl.hpp
