@@ -385,12 +385,6 @@ jobs:
       - name: Show ccache stats
         run: |
           ccache -s
-      - name: Format Cabana
-        if: ${{ matrix.distro == 'ubuntu:latest' }}
-        working-directory: build
-        run: |
-             make cabana-format
-             git diff --exit-code
       - name: Upload Report to codecov.io
         if: ${{ matrix.coverage == 'ON' }}
         uses: codecov/codecov-action@v1
