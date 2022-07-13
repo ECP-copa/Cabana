@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_Fields.hpp
+  \brief Particle field types and common field examples.
+*/
 #ifndef CABANA_FIELDS_HPP
 #define CABANA_FIELDS_HPP
 
@@ -20,6 +24,7 @@ namespace Field
 // General field types.
 //---------------------------------------------------------------------------//
 // Forward declarations.
+//! \cond Impl
 template <class T>
 struct Scalar;
 
@@ -28,43 +33,64 @@ struct Vector;
 
 template <class T, int D0, int D1>
 struct Matrix;
+//! \endcond
 
+//! Scalar particle field type.
 template <class T>
 struct Scalar
 {
+    //! Field type.
     using value_type = T;
+    //! Field rank.
     static constexpr int rank = 0;
+    //! Field total size.
     static constexpr int size = 1;
+    //! Scalar type.
     using data_type = value_type;
 };
 
+//! Vector (1D) particle field type.
 template <class T, int D>
 struct Vector
 {
+    //! Field type.
     using value_type = T;
+    //! Field rank.
     static constexpr int rank = 1;
+    //! Field total size.
     static constexpr int size = D;
+    //! Field first dimension size.
     static constexpr int dim0 = D;
+    //! Scalar type.
     using data_type = value_type[D];
 };
 
+//! Matrix (2D) particle field type.
 template <class T, int D0, int D1>
 struct Matrix
 {
+    //! Field type.
     using value_type = T;
+    //! Field rank.
     static constexpr int rank = 2;
+    //! Field total size.
     static constexpr int size = D0 * D1;
+    //! Field first dimension size.
     static constexpr int dim0 = D0;
+    //! Field second dimension size.
     static constexpr int dim1 = D1;
+    //! Scalar type.
     using data_type = value_type[D0][D1];
 };
 
 //---------------------------------------------------------------------------//
 // Common field types.
 //---------------------------------------------------------------------------//
+//! Particle position field type.
 template <std::size_t NumSpaceDim>
 struct Position : Vector<double, NumSpaceDim>
 {
+    //! Field label.
     static std::string label() { return "position"; }
 };
 
@@ -73,6 +99,7 @@ struct Position : Vector<double, NumSpaceDim>
 //---------------------------------------------------------------------------//
 // General type indexer.
 //---------------------------------------------------------------------------//
+//! \cond Impl
 template <class T, int Size, int N, class Type, class... Types>
 struct TypeIndexerImpl
 {
@@ -87,10 +114,13 @@ struct TypeIndexerImpl<T, Size, 0, Type, Types...>
     static constexpr std::size_t value =
         std::is_same<T, Type>::value ? Size - 1 : 1;
 };
+//! \endcond
 
+//! Get the index of a field type within a particle type list.
 template <class T, class... Types>
 struct TypeIndexer
 {
+    //! Field index.
     static constexpr std::size_t index =
         TypeIndexerImpl<T, sizeof...( Types ), sizeof...( Types ) - 1,
                         Types...>::value;

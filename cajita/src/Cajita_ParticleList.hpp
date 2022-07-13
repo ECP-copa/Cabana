@@ -32,26 +32,34 @@ namespace Cajita
 {
 
 //---------------------------------------------------------------------------//
-// Particle List
-//---------------------------------------------------------------------------//
+//! List of particle fields stored in AoSoA with associated Cajita mesh.
 template <class MeshType, class... FieldTags>
 class MeshParticleList
     : public Cabana::ParticleList<typename MeshType::memory_space, FieldTags...>
 {
   public:
+    //! Kokkos memory space.
     using memory_space = typename MeshType::memory_space;
+    //! Base Cabana particle list type.
     using base = Cabana::ParticleList<memory_space, FieldTags...>;
+    //! Cajita mesh type.
     using mesh_type = MeshType;
 
+    //! Particle AoSoA member types.
     using traits = typename base::traits;
+    //! AoSoA type.
     using aosoa_type = typename base::aosoa_type;
+    //! Particle tuple type.
     using tuple_type = typename base::tuple_type;
-
+    /*!
+      \brief Single field slice type.
+      \tparam M AoSoA field index.
+    */
     template <std::size_t M>
     using slice_type = typename aosoa_type::template member_slice_type<M>;
-
+    //! Single particle type.
     using particle_type = typename base::particle_type;
-
+    //! Single SoA type.
     using particle_view_type = typename base::particle_view_type;
 
     //! Default constructor.
@@ -61,11 +69,15 @@ class MeshParticleList
         , _mesh( mesh )
     {
     }
-    // Get the mesh.
+
+    //! Get the mesh.
     const MeshType& mesh() { return *_mesh; }
 
-    // Redistribute particles to new owning grids. Return true if the particles
-    // were actually redistributed.
+    /*!
+      \brief Redistribute particles to new owning grids.
+
+      Return true if the particles were actually redistributed.
+    */
     bool redistribute( const bool force_redistribute = false )
     {
         return particleGridMigrate(
@@ -82,7 +94,7 @@ class MeshParticleList
 };
 
 //---------------------------------------------------------------------------//
-// Creation function.
+//! MeshParticleList creation function.
 template <class Mesh, class... FieldTags>
 std::shared_ptr<MeshParticleList<Mesh, FieldTags...>>
 createMeshParticleList( const std::string& label,
