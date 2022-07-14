@@ -152,10 +152,10 @@ int main( int argc, char* argv[] )
 
     // Declare the grid size per dimension
     // currently, testing 3dims+symmetric
-    std::vector<double> grid_sizes_per_dim = { 10, 20 };
+    std::vector<double> grid_sizes_per_dim = { 16, 32 };
     if ( run_type == "large" )
     {
-        grid_sizes_per_dim = { 10, 25, 50, 100 };
+        grid_sizes_per_dim = { 16, 32, 64, 128 };
     }
 
     // Get the name of the output file.
