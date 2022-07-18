@@ -156,7 +156,7 @@ void generate_random_particles( const int particle_number,
     }
 }
 template <typename EntityType>
-void sparse_array_test( int par_num, EntityType e )
+void sparse_array_test( int par_num, EntityType entity )
 {
     // basic senario information
     constexpr int size_tile_per_dim = 32;
@@ -224,7 +224,7 @@ void sparse_array_test( int par_num, EntityType e )
     auto tile_view = set2view( tile_set );
     auto par_view = set2view( par_pos_set );
 
-    // mesh/grid related initilization
+    // mesh/grid related initialization
     auto global_mesh = createSparseGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
@@ -242,15 +242,15 @@ void sparse_array_test( int par_num, EntityType e )
     // i,j,k; forth: tilekey, tid
     using DataTypes = Cabana::MemberTypes<int[3], float, double[3], int[2]>;
     auto test_layout =
-        createSparseArrayLayout<DataTypes>( local_grid, sparse_map, e );
+        createSparseArrayLayout<DataTypes>( local_grid, sparse_map, entity );
     auto test_array = createSparseArray<TEST_DEVICE>(
         std::string( "test_sparse_grid" ), test_layout );
 
     // insert particles
-    test_array.register_sparse_grid( par_view, par_num );
-    test_array.reserve_cell( 1.2 );
+    test_array.registerSparseGrid( par_view, par_num );
+    test_array.reserveFromMap( 1.2 );
 
-    // size-realted tests
+    // size-related tests
     EXPECT_EQ( test_array.size(), sparse_map.sizeCell() );
     EXPECT_EQ( test_array.capacity() >= sparse_map.reservedCellSize( 1.2 ),
                true );
@@ -291,7 +291,7 @@ void sparse_array_test( int par_num, EntityType e )
                         offset++;
                     }
         } );
-    // check if all reuiqred cell are registered
+    // check if all required cell are registered
     auto qtid_mirror =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), qtid_res );
     for ( int i = 0; i < cell_num; ++i )
@@ -402,7 +402,7 @@ void sparse_array_test( int par_num, EntityType e )
 }
 
 template <typename EntityType>
-void full_occupy_test( EntityType e )
+void full_occupy_test( EntityType entity )
 {
     // basic senario information
     constexpr int size_tile_per_dim = 8;
@@ -456,7 +456,7 @@ void full_occupy_test( EntityType e )
     partitioner.initializeRecPartition( gt_partitions[0], gt_partitions[1],
                                         gt_partitions[2] );
 
-    // mesh/grid related initilization
+    // mesh/grid related initialization
     auto global_mesh = createSparseGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
@@ -474,7 +474,7 @@ void full_occupy_test( EntityType e )
     // tid
     using DataTypes = Cabana::MemberTypes<int[3], float[3], int[2]>;
     auto test_layout =
-        createSparseArrayLayout<DataTypes>( local_grid, sparse_map, e );
+        createSparseArrayLayout<DataTypes>( local_grid, sparse_map, entity );
     auto test_array = createSparseArray<TEST_DEVICE>(
         std::string( "test_sparse_grid" ), test_layout );
 
@@ -615,6 +615,7 @@ TEST( sparse_array, 3d_sparse_array_sparse_occupy )
 TEST( sparse_array, 3d_sparse_array_full_occupy )
 {
     full_occupy_test( Cajita::Node() );
+    full_occupy_test( Cajita::Cell() );
 }
 
 //---------------------------------------------------------------------------//

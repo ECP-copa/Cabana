@@ -10,13 +10,12 @@
  ****************************************************************************/
 
 /*!
-  \file Cabana_AoSoA.hpp
-  \brief Array-of-Struct-of-Arrays particle data structure
+  \file Cabana_SparseArray.hpp
+  \brief Sparse grid fields arrays using AoSoA
 */
 #ifndef CAJITA_SPARSE_ARRAY_HPP
 #define CAJITA_SPARSE_ARRAY_HPP
 
-#include <Cajita_MpiTraits.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
 #include <Cajita_SparseLocalGrid.hpp>
 #include <Cajita_Types.hpp>
@@ -86,7 +85,7 @@ class SparseArrayLayout
     \brief (Host) Constructor
     \param local_grid Shared pointer to local grid
     \param sparse_map Reference to sparse map
-    \param bc_factor Factor to increase researved size for Edge and Face entity
+    \param bc_factor Factor to increase reserved size for Edge and Face entity
     */
     SparseArrayLayout( const std::shared_ptr<LocalGrid<MeshType>>& local_grid,
                        SparseMapType& sparse_map, const float bc_factor )
@@ -115,7 +114,7 @@ class SparseArrayLayout
       \brief array reservation size in cell
       \param factor scale up the real size as reserved space
     */
-    inline uint64_t sizeCellReserve( float factor ) const
+    inline uint64_t reservedCellSize( float factor ) const
     {
         return _map.reservedCellSize( factor );
     }
@@ -223,8 +222,8 @@ class SparseArrayLayout
       global IJK work)
     */
     KOKKOS_FORCEINLINE_FUNCTION
-    value_type cell_local_id( const int cell_i, const int cell_j,
-                              const int cell_k ) const
+    value_type cellLocalId( const int cell_i, const int cell_j,
+                            const int cell_k ) const
     {
         return _map.cell_local_id( cell_i, cell_j, cell_k );
     }
@@ -383,9 +382,9 @@ class SparseArray
       \brief Reserve the AoSoA array according to the sparse map info in layout.
       \param factor scale up the real size as reserved space
     */
-    inline void reserve_cell( const double factor = 1.2 )
+    inline void reserveFromMap( const double factor = 1.2 )
     {
-        reserve( _layout.sizeCellReserve( factor ) );
+        reserve( _layout.reservedCellSize( factor ) );
     }
 
     //! Shrink allocation to fit the valid size
@@ -404,7 +403,7 @@ class SparseArray
     //! Get AoSoA size (valid number of elements)
     KOKKOS_FUNCTION
     size_type size() const { return _data.size(); }
-    //! Test if the AoSoA arary is empty
+    //! Test if the AoSoA array is empty
     KOKKOS_FUNCTION
     bool empty() const { return ( size() == 0 ); }
     //! Get the number of SoA inside an AoSoA structure
@@ -426,8 +425,8 @@ class SparseArray
       particle, depending on the interpolation kernel
     */
     template <class PositionSliceType>
-    void register_sparse_grid( PositionSliceType& positions, int particle_num,
-                               const int p2g_radius = 1 )
+    void registerSparseGrid( PositionSliceType& positions, int particle_num,
+                             const int p2g_radius = 1 )
     {
         _layout.template registerSparseMap<execution_space, PositionSliceType>(
             positions, particle_num, p2g_radius );
@@ -442,8 +441,8 @@ class SparseArray
       \param tile_i, tile_j, tile_k Tile index in each dimension
     */
     KOKKOS_FORCEINLINE_FUNCTION
-    soa_type& access_tile_from_tile( const int tile_i, const int tile_j,
-                                     const int tile_k ) const
+    soa_type& accessTile( const int tile_i, const int tile_j,
+                          const int tile_k ) const
     {
         auto tile_id = _layout.queryTileFromTileId( tile_i, tile_j, tile_k );
         return _data.access( tile_id );
@@ -456,7 +455,7 @@ class SparseArray
     */
     template <typename Value>
     KOKKOS_FORCEINLINE_FUNCTION soa_type&
-    access_tile_from_tile( const Value tile_id ) const
+    accessTile( const Value tile_id ) const
     {
         return _data.access( tile_id );
     }
@@ -466,8 +465,8 @@ class SparseArray
       \param cell_i, cell_j, cell_k Cell index in each dimension
     */
     KOKKOS_FORCEINLINE_FUNCTION
-    soa_type& access_tile_from_cell( const int cell_i, const int cell_j,
-                                     const int cell_k ) const
+    soa_type& accessTileFromCell( const int cell_i, const int cell_j,
+                                  const int cell_k ) const
     {
         auto tile_id = _layout.queryTile( cell_i, cell_j, cell_k );
         return _data.access( tile_id );
@@ -487,10 +486,9 @@ class SparseArray
         typename soa_type::template member_reference_type<M>
         get( const Kokkos::Array<int, 3> cell_ijk, Indices&&... ids ) const
     {
-        auto& soa =
-            access_tile_from_cell( cell_ijk[0], cell_ijk[1], cell_ijk[2] );
+        auto& soa = accessTileFromCell( cell_ijk[0], cell_ijk[1], cell_ijk[2] );
         auto array_index =
-            _layout.cell_local_id( cell_ijk[0], cell_ijk[1], cell_ijk[2] );
+            _layout.cellLocalId( cell_ijk[0], cell_ijk[1], cell_ijk[2] );
         return Cabana::get<M>( soa, array_index, ids... );
     }
 
@@ -503,10 +501,9 @@ class SparseArray
         typename soa_type::template member_reference_type<M>
         get( const Kokkos::Array<int, 3> cell_ijk ) const
     {
-        auto& soa =
-            access_tile_from_cell( cell_ijk[0], cell_ijk[1], cell_ijk[2] );
+        auto& soa = accessTileFromCell( cell_ijk[0], cell_ijk[1], cell_ijk[2] );
         auto array_index =
-            _layout.cell_local_id( cell_ijk[0], cell_ijk[1], cell_ijk[2] );
+            _layout.cellLocalId( cell_ijk[0], cell_ijk[1], cell_ijk[2] );
         return Cabana::get<M>( soa, array_index );
     }
 
@@ -524,9 +521,8 @@ class SparseArray
              const Kokkos::Array<int, 3> local_cell_ijk,
              Indices&&... ids ) const
     {
-        auto& soa =
-            access_tile_from_tile( tile_ijk[0], tile_ijk[1], tile_ijk[2] );
-        auto array_index = _layout.cell_local_id(
+        auto& soa = accessTile( tile_ijk[0], tile_ijk[1], tile_ijk[2] );
+        auto array_index = _layout.cellLocalId(
             local_cell_ijk[0], local_cell_ijk[1], local_cell_ijk[2] );
         return Cabana::get<M>( soa, array_index, ids... );
     }
@@ -543,9 +539,8 @@ class SparseArray
         get( const Kokkos::Array<int, 3> tile_ijk,
              const Kokkos::Array<int, 3> local_cell_ijk ) const
     {
-        auto& soa =
-            access_tile_from_tile( tile_ijk[0], tile_ijk[1], tile_ijk[2] );
-        auto array_index = _layout.cell_local_id(
+        auto& soa = accessTile( tile_ijk[0], tile_ijk[1], tile_ijk[2] );
+        auto array_index = _layout.cellLocalId(
             local_cell_ijk[0], local_cell_ijk[1], local_cell_ijk[2] );
         return Cabana::get<M>( soa, array_index );
     }
@@ -564,7 +559,7 @@ class SparseArray
              Indices&&... ids ) const
     {
         auto& soa = _data.access( tile_id );
-        auto array_index = _layout.cell_local_id(
+        auto array_index = _layout.cellLocalId(
             local_cell_ijk[0], local_cell_ijk[1], local_cell_ijk[2] );
         return Cabana::get<M>( soa, array_index, ids... );
     }
@@ -582,7 +577,7 @@ class SparseArray
              const Kokkos::Array<int, 3> local_cell_ijk ) const
     {
         auto& soa = _data.access( tile_id );
-        auto array_index = _layout.cell_local_id(
+        auto array_index = _layout.cellLocalId(
             local_cell_ijk[0], local_cell_ijk[1], local_cell_ijk[2] );
         return Cabana::get<M>( soa, array_index );
     }
