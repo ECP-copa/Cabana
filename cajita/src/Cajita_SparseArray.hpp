@@ -10,7 +10,7 @@
  ****************************************************************************/
 
 /*!
-  \file Cabana_SparseArray.hpp
+  \file Cajita_SparseArray.hpp
   \brief Sparse grid fields arrays using AoSoA
 */
 #ifndef CAJITA_SPARSE_ARRAY_HPP
@@ -270,8 +270,9 @@ struct is_sparse_array_layout<
   \brief Create sparse array layout over the entities of a sparse local grid.
   \param local_grid The sparse local grid over which to create the layout.
   \param sparse_map The reference to a pre-created sparse map.
-  \param EntityType The entity: Cell, Node, Face, or Edge.
   \param bc_factor Factor used to increase allocation size for special entities.
+
+  \note EntityType The entity: Cell, Node, Face, or Edge.
 */
 template <class DataTypes, class EntityType, class MeshType,
           class SparseMapType>
