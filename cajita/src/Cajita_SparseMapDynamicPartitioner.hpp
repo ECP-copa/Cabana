@@ -56,7 +56,7 @@ class SparseMapWorkloadSetter : public WorkloadSetter<Device>
     }
 
     //! \brief Called by DynamicPartitioner to compute workload
-    void run( Kokkos::View<int***, memory_space>& workload ) override
+    void compute( Kokkos::View<int***, memory_space>& workload ) override
     {
         Kokkos::parallel_for(
             "compute_local_workload_sparsmap",

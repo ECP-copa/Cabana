@@ -75,7 +75,7 @@ class ParticleWorkloadSetter : public WorkloadSetter<Device>
     }
 
     //! \brief Called by DynamicPartitioner to compute workload
-    void run( Kokkos::View<int***, memory_space>& workload ) override
+    void compute( Kokkos::View<int***, memory_space>& workload ) override
     {
         Kokkos::Array<CellUnit, num_space_dim> lower_corner;
         for ( std::size_t d = 0; d < num_space_dim; ++d )
