@@ -10,7 +10,7 @@
  ****************************************************************************/
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_GlobalMesh.hpp>
-#include <Cajita_SparseDimPartitioner.hpp>
+#include <Cajita_DynamicPartitioner.hpp>
 #include <Cajita_SparseLocalGrid.hpp>
 #include <Cajita_Types.hpp>
 
@@ -46,7 +46,7 @@ void sparseLocalGridTest( EntityType t2 )
 
     // Create and initialize sparse partitioner
     std::array<bool, 3> periodic = { false, false, false };
-    SparseDimPartitioner<TEST_DEVICE, 4> partitioner(
+    DynamicPartitioner<TEST_DEVICE, 4> partitioner(
         MPI_COMM_WORLD, 1.5, 16 * 32, 100, global_num_cell, 10 );
     auto ranks_per_dim =
         partitioner.ranksPerDimension( MPI_COMM_WORLD, global_num_cell );
