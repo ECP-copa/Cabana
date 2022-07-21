@@ -22,7 +22,8 @@ set(SERIAL_TESTS
   AoSoA
   DeepCopy
   LinkedCellList
-  NeighborList
+  NeighborListN2
+  NeighborListVerlet
   Parallel
   ParameterPack
   ParticleInit

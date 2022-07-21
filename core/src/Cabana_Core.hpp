@@ -22,6 +22,7 @@
 #include <Cabana_DeepCopy.hpp>
 #include <Cabana_LinkedCellList.hpp>
 #include <Cabana_MemberTypes.hpp>
+#include <Cabana_N2NeighborList.hpp>
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_Parallel.hpp>
 #include <Cabana_ParameterPack.hpp>

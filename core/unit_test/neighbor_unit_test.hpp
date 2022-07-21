@@ -142,9 +142,8 @@ computeFullNeighborList( const PositionSlice& position,
 
 //---------------------------------------------------------------------------//
 template <class ListType, class TestListType>
-void checkFullNeighborList( const ListType& nlist,
-                            const TestListType& N2_list_copy,
-                            const int num_particle )
+void checkNeighborList( const ListType& nlist, const TestListType& N2_list_copy,
+                        const int num_particle, Cabana::FullNeighborTag )
 {
     // Create host neighbor list copy.
     auto list_copy = copyListToHost( nlist, N2_list_copy.neighbors.extent( 0 ),
@@ -178,9 +177,8 @@ void checkFullNeighborList( const ListType& nlist,
 
 //---------------------------------------------------------------------------//
 template <class ListType, class TestListType>
-void checkHalfNeighborList( const ListType& nlist,
-                            const TestListType& N2_list_copy,
-                            const int num_particle )
+void checkNeighborList( const ListType& nlist, const TestListType& N2_list_copy,
+                        const int num_particle, Cabana::HalfNeighborTag )
 {
     // Create host neighbor list copy.
     auto list_copy = copyListToHost( nlist, N2_list_copy.neighbors.extent( 0 ),
@@ -929,6 +927,48 @@ void checkSecondNeighborParallelReduceFunctor( const ListType& nlist,
 
     checkSecondNeighborParallelReduce( N2_list_copy, aosoa, serial_sum,
                                        team_sum, vector_sum, multiplier );
+}
+
+//---------------------------------------------------------------------------//
+template <class NeighborList, class TestListType>
+void checkNeighborParallelFor( NeighborList nlist, TestListType& N2_list_copy,
+                               const int num_particle )
+{
+    checkFirstNeighborParallelForLambda( nlist, N2_list_copy, num_particle );
+
+    checkSecondNeighborParallelForLambda( nlist, N2_list_copy, num_particle );
+
+    checkSplitFirstNeighborParallelFor( nlist, N2_list_copy, num_particle );
+
+    checkFirstNeighborParallelForFunctor( nlist, N2_list_copy, num_particle,
+                                          true );
+    checkFirstNeighborParallelForFunctor( nlist, N2_list_copy, num_particle,
+                                          false );
+
+    checkSecondNeighborParallelForFunctor( nlist, N2_list_copy, num_particle,
+                                           true );
+    checkSecondNeighborParallelForFunctor( nlist, N2_list_copy, num_particle,
+                                           false );
+}
+
+//---------------------------------------------------------------------------//
+template <class NeighborList, class TestListType, class AoSoAType>
+void checkNeighborParallelReduce( NeighborList nlist,
+                                  TestListType& N2_list_copy,
+                                  const AoSoAType& aosoa )
+{
+    checkFirstNeighborParallelReduceLambda( nlist, N2_list_copy, aosoa );
+
+    checkSecondNeighborParallelReduceLambda( nlist, N2_list_copy, aosoa );
+
+    checkFirstNeighborParallelReduceFunctor( nlist, N2_list_copy, aosoa, true );
+    checkFirstNeighborParallelReduceFunctor( nlist, N2_list_copy, aosoa,
+                                             false );
+
+    checkSecondNeighborParallelReduceFunctor( nlist, N2_list_copy, aosoa,
+                                              true );
+    checkSecondNeighborParallelReduceFunctor( nlist, N2_list_copy, aosoa,
+                                              false );
 }
 
 //---------------------------------------------------------------------------//
