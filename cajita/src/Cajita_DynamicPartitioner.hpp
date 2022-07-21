@@ -437,7 +437,7 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
       \brief compute workload in each MPI rank
       \param measurer measurer defined by user to compute workload.
       DynamicPartitionerWorkloadMeasurer is the base class and the user
-      should define their own measurer with compute() implemented.
+      should define derived measurer with compute() implemented.
     */
     void
     setLocalWorkload( DynamicPartitionerWorkloadMeasurer<Device>* measurer )
