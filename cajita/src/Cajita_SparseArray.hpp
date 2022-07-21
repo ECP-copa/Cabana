@@ -85,11 +85,12 @@ class SparseArrayLayout
     \brief (Host) Constructor
     \param local_grid Shared pointer to local grid
     \param sparse_map Reference to sparse map
-    \param bc_factor Factor to increase reserved size for Edge and Face entity
+    \param over_allocation  Factor to increase reserved size for Edge and Face
+    entity
     */
     SparseArrayLayout( const std::shared_ptr<LocalGrid<MeshType>>& local_grid,
-                       SparseMapType& sparse_map, const float bc_factor )
-        : _bc_factor( bc_factor )
+                       SparseMapType& sparse_map, const float over_allocation )
+        : _over_allocation( over_allocation )
         , _map( std::forward<sparse_map_type>( sparse_map ) )
     {
         auto sparse_mesh = local_grid->globalGrid().globalMesh();
@@ -230,7 +231,7 @@ class SparseArrayLayout
 
   private:
     //! factor to increase array size for special grid entities
-    float _bc_factor;
+    float _over_allocation;
     //! cell size
     Kokkos::Array<scalar_type, 3> _cell_size;
     //! global low corner
@@ -270,7 +271,8 @@ struct is_sparse_array_layout<
   \brief Create sparse array layout over the entities of a sparse local grid.
   \param local_grid The sparse local grid over which to create the layout.
   \param sparse_map The reference to a pre-created sparse map.
-  \param bc_factor Factor used to increase allocation size for special entities.
+  \param over_allocation  Factor used to increase allocation size for special
+  entities.
 
   \note EntityType The entity: Cell, Node, Face, or Edge.
 */
@@ -279,10 +281,10 @@ template <class DataTypes, class EntityType, class MeshType,
 SparseArrayLayout<DataTypes, EntityType, MeshType, SparseMapType>
 createSparseArrayLayout( const std::shared_ptr<LocalGrid<MeshType>>& local_grid,
                          SparseMapType& sparse_map, EntityType,
-                         const float bc_factor = 1.01f )
+                         const float over_allocation = 1.01f )
 {
     return SparseArrayLayout<DataTypes, EntityType, MeshType, SparseMapType>(
-        local_grid, sparse_map, bc_factor );
+        local_grid, sparse_map, over_allocation );
 }
 
 //---------------------------------------------------------------------------//
