@@ -183,7 +183,7 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
                 total_optimize_timer.start( p );
                 for ( int i = 0; i < max_optimize_iteration; ++i )
                 {
-                    partitioner.optimizePartitionAlongDim( std::rand() % 3,
+                    partitioner.updatePartition( std::rand() % 3,
                                                            is_changed );
                     if ( !is_changed )
                         break;
