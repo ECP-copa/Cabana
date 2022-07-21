@@ -40,7 +40,8 @@ namespace Cajita
 */
 template <class ParticlePosViewType, typename ArrayType, typename CellUnit,
           unsigned long long CellPerTileDim, int num_space_dim, typename Device>
-class ParticleWorkloadSetter : public WorkloadSetter<Device>
+class ParticleDynamicPartitionerWorkloadMeasurer
+    : public DynamicPartitionerWorkloadMeasurer<Device>
 {
     using memory_space = typename Device::memory_space;
     using execution_space = typename Device::execution_space;
@@ -63,9 +64,9 @@ class ParticleWorkloadSetter : public WorkloadSetter<Device>
      \param dx The global grid resolution.
      \param comm MPI communicator to use for computing workload.
     */
-    ParticleWorkloadSetter( const ParticlePosViewType& view, int particle_num,
-                            const ArrayType& global_lower_corner,
-                            const CellUnit dx, MPI_Comm comm )
+    ParticleDynamicPartitionerWorkloadMeasurer(
+        const ParticlePosViewType& view, int particle_num,
+        const ArrayType& global_lower_corner, const CellUnit dx, MPI_Comm comm )
         : view( view )
         , particle_num( particle_num )
         , global_lower_corner( global_lower_corner )
@@ -111,19 +112,20 @@ class ParticleWorkloadSetter : public WorkloadSetter<Device>
 };
 
 //---------------------------------------------------------------------------//
-//! Creation function for ParticleWorkloadSetter from Kokkos::View<Scalar* [3],
-//! MemorySpace>
+//! Creation function for ParticleDynamicPartitionerWorkloadMeasurer from
+//! Kokkos::View<Scalar* [3], MemorySpace>
 template <unsigned long long CellPerTileDim, int num_space_dim, typename Device,
           class ParticlePosViewType, typename ArrayType, typename CellUnit>
-ParticleWorkloadSetter<ParticlePosViewType, ArrayType, CellUnit, CellPerTileDim,
-                       num_space_dim, Device>
-createParticleWorkloadSetter( const ParticlePosViewType& view, int particle_num,
-                              const ArrayType& global_lower_corner,
-                              const CellUnit dx, MPI_Comm comm )
+ParticleDynamicPartitionerWorkloadMeasurer<ParticlePosViewType, ArrayType,
+                                           CellUnit, CellPerTileDim,
+                                           num_space_dim, Device>
+createParticleDynamicPartitionerWorkloadMeasurer(
+    const ParticlePosViewType& view, int particle_num,
+    const ArrayType& global_lower_corner, const CellUnit dx, MPI_Comm comm )
 {
-    return ParticleWorkloadSetter<ParticlePosViewType, ArrayType, CellUnit,
-                                  CellPerTileDim, num_space_dim, Device>(
-        view, particle_num, global_lower_corner, dx, comm );
+    return ParticleDynamicPartitionerWorkloadMeasurer<
+        ParticlePosViewType, ArrayType, CellUnit, CellPerTileDim, num_space_dim,
+        Device>( view, particle_num, global_lower_corner, dx, comm );
 }
 
 } // end namespace Cajita

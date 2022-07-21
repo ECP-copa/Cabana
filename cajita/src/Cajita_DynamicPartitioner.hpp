@@ -29,7 +29,7 @@ namespace Cajita
 {
 
 template <typename Device>
-class WorkloadSetter
+class DynamicPartitionerWorkloadMeasurer
 {
     using memory_space = typename Device::memory_space;
 
@@ -433,10 +433,17 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
         Kokkos::fence();
     }
 
-    void setLocalWorkload( WorkloadSetter<Device>* setter )
+    /*!
+      \brief compute workload in each MPI rank
+      \param measurer measurer defined by user to compute workload.
+      DynamicPartitionerWorkloadMeasurer is the base class and the user
+      should define their own measurer with compute() implemented.
+    */
+    void
+    setLocalWorkload( DynamicPartitionerWorkloadMeasurer<Device>* measurer )
     {
         resetWorkload();
-        setter->compute( _workload_per_tile );
+        measurer->compute( _workload_per_tile );
     }
 
     /*!

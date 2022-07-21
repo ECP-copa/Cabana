@@ -208,11 +208,10 @@ void random_distribution_automatic_rank( int occupy_num_per_rank )
         gt_partition, cart_rank, occupy_num_per_rank, global_low_corner,
         cell_size, cell_per_tile_dim );
     // compute workload from a particle view and do partition optimization
-    auto pws =
-        createParticleWorkloadSetter<partitioner.cell_num_per_tile_dim,
-                                     partitioner.num_space_dim, TEST_DEVICE>(
-            particle_view, occupy_num_per_rank, global_low_corner, cell_size,
-            MPI_COMM_WORLD );
+    auto pws = createParticleDynamicPartitionerWorkloadMeasurer<
+        partitioner.cell_num_per_tile_dim, partitioner.num_space_dim,
+        TEST_DEVICE>( particle_view, occupy_num_per_rank, global_low_corner,
+                      cell_size, MPI_COMM_WORLD );
     partitioner.setLocalWorkload( &pws );
     partitioner.optimizePartition( MPI_COMM_WORLD );
 
