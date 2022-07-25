@@ -486,19 +486,10 @@ void testHaloBuffers( TestTag tag, const bool use_topology )
 
     // Create send and receive buffers with an overallocation.
     double overalloc = 1.5;
-    auto send_buffer_aosoa =
-        Cabana::gatherAllocateSendBuffer( *halo, data, overalloc );
-    auto recv_buffer_aosoa =
-        Cabana::gatherAllocateRecvBuffer( *halo, data, overalloc );
-
-    // Make sure buffer is large enough.
-    bool send_check = Cabana::gatherCheckSendBuffer( *halo, send_buffer_aosoa );
-    bool recv_check = Cabana::gatherCheckSendBuffer( *halo, send_buffer_aosoa );
-    EXPECT_EQ( send_check, true );
-    EXPECT_EQ( recv_check, true );
+    auto gather = createGather( *halo, data, overalloc );
 
     // Gather by AoSoA using preallocated buffers.
-    Cabana::gather( *halo, data, send_buffer_aosoa, recv_buffer_aosoa );
+    gather.apply( data );
 
     // Compare against original host data.
     auto data_host = halo_data.copyToHost();
@@ -507,30 +498,18 @@ void testHaloBuffers( TestTag tag, const bool use_topology )
     // Scatter back the results, now with preallocated slice buffers.
     auto slice_int = Cabana::slice<0>( data );
     auto slice_dbl = Cabana::slice<1>( data );
-    auto scatter_send_int =
-        Cabana::scatterAllocateSendBuffer( *halo, slice_int, overalloc );
-    auto scatter_recv_int =
-        Cabana::scatterAllocateRecvBuffer( *halo, slice_int, overalloc );
-    auto scatter_send_dbl =
-        Cabana::scatterAllocateSendBuffer( *halo, slice_dbl, overalloc );
-    auto scatter_recv_dbl =
-        Cabana::scatterAllocateRecvBuffer( *halo, slice_dbl, overalloc );
-    Cabana::scatter( *halo, slice_int, scatter_send_int, scatter_recv_int );
-    Cabana::scatter( *halo, slice_dbl, scatter_send_dbl, scatter_recv_dbl );
+    auto scatter_int = createScatter( *halo, slice_int, overalloc );
+    auto scatter_dbl = createScatter( *halo, slice_dbl, overalloc );
+    scatter_int.apply( slice_int );
+    scatter_dbl.apply( slice_dbl );
     Cabana::deep_copy( data_host, data );
     checkScatter( tag, data_host, my_size, my_rank, num_local );
 
     // Gather again, this time with slices.
-    auto gather_send_int =
-        Cabana::gatherAllocateSendBuffer( *halo, slice_int, overalloc );
-    auto gather_recv_int =
-        Cabana::gatherAllocateRecvBuffer( *halo, slice_int, overalloc );
-    auto gather_send_dbl =
-        Cabana::gatherAllocateSendBuffer( *halo, slice_dbl, overalloc );
-    auto gather_recv_dbl =
-        Cabana::gatherAllocateRecvBuffer( *halo, slice_dbl, overalloc );
-    Cabana::gather( *halo, slice_int, gather_send_int, gather_recv_int );
-    Cabana::gather( *halo, slice_dbl, gather_send_dbl, gather_recv_dbl );
+    auto gather_int = createGather( *halo, slice_int, overalloc );
+    auto gather_dbl = createGather( *halo, slice_dbl, overalloc );
+    gather_int.apply( slice_int );
+    gather_dbl.apply( slice_dbl );
     Cabana::deep_copy( data_host, data );
     checkGatherSlice( tag, data_host, my_size, my_rank, num_local );
 }

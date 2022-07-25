@@ -390,17 +390,13 @@ void performanceTest( std::ostream& stream, const std::size_t num_particle,
         // Run preallocated AoSoA buffer tests and time the ensemble.
         auto comm_particles = Cabana::create_mirror_view_and_copy(
             comm_memory_space(), particles );
-        auto send_buffer_aosoa = Cabana::gatherAllocateSendBuffer(
-            halo, comm_particles, overallocation );
-        auto recv_buffer_aosoa = Cabana::gatherAllocateRecvBuffer(
-            halo, comm_particles, overallocation );
+        auto gather = createGather( halo, comm_particles, overallocation );
         for ( int t = 0; t < num_run; ++t )
         {
             halo_buffer_aosoa_gather.start( fraction );
             auto comm_particles = Cabana::create_mirror_view_and_copy(
                 comm_memory_space(), particles );
-            Cabana::gather( halo, comm_particles, send_buffer_aosoa,
-                            recv_buffer_aosoa );
+            gather.apply( comm_particles );
             Cabana::deep_copy( particles, comm_particles );
             halo_buffer_aosoa_gather.stop( fraction );
         }
@@ -412,22 +408,10 @@ void performanceTest( std::ostream& stream, const std::size_t num_particle,
         auto s1 = Cabana::slice<1>( comm_particles );
         auto s2 = Cabana::slice<2>( comm_particles );
         auto s3 = Cabana::slice<3>( comm_particles );
-        auto gather_send_s0 =
-            Cabana::gatherAllocateSendBuffer( halo, s0, overallocation );
-        auto gather_recv_s0 =
-            Cabana::gatherAllocateRecvBuffer( halo, s0, overallocation );
-        auto gather_send_s1 =
-            Cabana::gatherAllocateSendBuffer( halo, s1, overallocation );
-        auto gather_recv_s1 =
-            Cabana::gatherAllocateRecvBuffer( halo, s1, overallocation );
-        auto gather_send_s2 =
-            Cabana::gatherAllocateSendBuffer( halo, s2, overallocation );
-        auto gather_recv_s2 =
-            Cabana::gatherAllocateRecvBuffer( halo, s2, overallocation );
-        auto gather_send_s3 =
-            Cabana::gatherAllocateSendBuffer( halo, s3, overallocation );
-        auto gather_recv_s3 =
-            Cabana::gatherAllocateRecvBuffer( halo, s3, overallocation );
+        auto gather_s0 = createGather( halo, s0, overallocation );
+        auto gather_s1 = createGather( halo, s1, overallocation );
+        auto gather_s2 = createGather( halo, s2, overallocation );
+        auto gather_s3 = createGather( halo, s3, overallocation );
         for ( int t = 0; t < num_run; ++t )
         {
             halo_buffer_slice_gather.start( fraction );
@@ -435,16 +419,16 @@ void performanceTest( std::ostream& stream, const std::size_t num_particle,
                 comm_memory_space(), particles );
 
             auto s0 = Cabana::slice<0>( comm_particles );
-            Cabana::gather( halo, s0, gather_send_s0, gather_recv_s0 );
+            gather_s0.apply( s0 );
 
             auto s1 = Cabana::slice<1>( comm_particles );
-            Cabana::gather( halo, s1, gather_send_s1, gather_recv_s1 );
+            gather_s1.apply( s1 );
 
             auto s2 = Cabana::slice<2>( comm_particles );
-            Cabana::gather( halo, s2, gather_send_s2, gather_recv_s2 );
+            gather_s2.apply( s2 );
 
             auto s3 = Cabana::slice<3>( comm_particles );
-            Cabana::gather( halo, s3, gather_send_s3, gather_recv_s3 );
+            gather_s3.apply( s3 );
 
             Cabana::deep_copy( particles, comm_particles );
             halo_buffer_slice_gather.stop( fraction );
@@ -457,22 +441,10 @@ void performanceTest( std::ostream& stream, const std::size_t num_particle,
         s1 = Cabana::slice<1>( comm_particles );
         s2 = Cabana::slice<2>( comm_particles );
         s3 = Cabana::slice<3>( comm_particles );
-        auto scatter_send_s0 =
-            Cabana::scatterAllocateSendBuffer( halo, s0, overallocation );
-        auto scatter_recv_s0 =
-            Cabana::scatterAllocateRecvBuffer( halo, s0, overallocation );
-        auto scatter_send_s1 =
-            Cabana::scatterAllocateSendBuffer( halo, s1, overallocation );
-        auto scatter_recv_s1 =
-            Cabana::scatterAllocateRecvBuffer( halo, s1, overallocation );
-        auto scatter_send_s2 =
-            Cabana::scatterAllocateSendBuffer( halo, s2, overallocation );
-        auto scatter_recv_s2 =
-            Cabana::scatterAllocateRecvBuffer( halo, s2, overallocation );
-        auto scatter_send_s3 =
-            Cabana::scatterAllocateSendBuffer( halo, s3, overallocation );
-        auto scatter_recv_s3 =
-            Cabana::scatterAllocateRecvBuffer( halo, s3, overallocation );
+        auto scatter_s0 = createScatter( halo, s0, overallocation );
+        auto scatter_s1 = createScatter( halo, s1, overallocation );
+        auto scatter_s2 = createScatter( halo, s2, overallocation );
+        auto scatter_s3 = createScatter( halo, s3, overallocation );
         for ( int t = 0; t < num_run; ++t )
         {
             halo_buffer_slice_scatter.start( fraction );
@@ -480,16 +452,16 @@ void performanceTest( std::ostream& stream, const std::size_t num_particle,
                 comm_memory_space(), particles );
 
             s0 = Cabana::slice<0>( comm_particles );
-            Cabana::scatter( halo, s0, scatter_send_s0, scatter_recv_s0 );
+            scatter_s0.apply( s0 );
 
             s1 = Cabana::slice<1>( comm_particles );
-            Cabana::scatter( halo, s1, scatter_send_s1, scatter_recv_s1 );
+            scatter_s1.apply( s1 );
 
             s2 = Cabana::slice<2>( comm_particles );
-            Cabana::scatter( halo, s2, scatter_send_s2, scatter_recv_s2 );
+            scatter_s2.apply( s2 );
 
             s3 = Cabana::slice<3>( comm_particles );
-            Cabana::scatter( halo, s3, scatter_send_s3, scatter_recv_s3 );
+            scatter_s3.apply( s3 );
 
             Cabana::deep_copy( particles, comm_particles );
             halo_buffer_slice_scatter.stop( fraction );
