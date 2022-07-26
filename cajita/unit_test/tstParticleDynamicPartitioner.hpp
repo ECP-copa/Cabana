@@ -177,23 +177,6 @@ void random_distribution_automatic_rank( int occupy_num_per_rank )
         MPI_Barrier( MPI_COMM_WORLD );
     }
 
-    // init partitions (average partition)
-    std::array<std::vector<int>, 3> rec_partitions;
-    for ( int d = 0; d < 3; ++d )
-    {
-        int ele = size_tile_per_dim / ranks_per_dim[d];
-        int part = 0;
-        for ( int i = 0; i < ranks_per_dim[d]; ++i )
-        {
-            rec_partitions[d].push_back( part );
-            part += ele;
-        }
-        rec_partitions[d].push_back( size_tile_per_dim );
-    }
-
-    partitioner.initializeRecPartition( rec_partitions[0], rec_partitions[1],
-                                        rec_partitions[2] );
-
     // basic settings for domain size and position
     double cell_size = 0.1;
     std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };

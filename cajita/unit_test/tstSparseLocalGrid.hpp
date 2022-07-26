@@ -33,9 +33,6 @@ void sparseLocalGridTest( EntityType t2 )
     double cell_size = 0.23;
     std::array<int, 3> global_num_cell = { 16, 32, 64 };
     int cell_num_per_tile_dim = 4;
-    std::array<int, 3> global_num_tile = { 16 / cell_num_per_tile_dim,
-                                           32 / cell_num_per_tile_dim,
-                                           64 / cell_num_per_tile_dim };
     std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
@@ -48,22 +45,6 @@ void sparseLocalGridTest( EntityType t2 )
     std::array<bool, 3> periodic = { false, false, false };
     DynamicPartitioner<TEST_DEVICE, 4> partitioner( MPI_COMM_WORLD,
                                                     global_num_cell, 10 );
-    auto ranks_per_dim =
-        partitioner.ranksPerDimension( MPI_COMM_WORLD, global_num_cell );
-    std::array<std::vector<int>, 3> rec_partitions;
-    for ( int d = 0; d < 3; ++d )
-    {
-        int ele = global_num_tile[d] / ranks_per_dim[d];
-        int part = 0;
-        for ( int i = 0; i < ranks_per_dim[d]; ++i )
-        {
-            rec_partitions[d].push_back( part );
-            part += ele;
-        }
-        rec_partitions[d].push_back( global_num_tile[d] );
-    }
-    partitioner.initializeRecPartition( rec_partitions[0], rec_partitions[1],
-                                        rec_partitions[2] );
 
     // Create global grid
     auto global_grid_ptr = Cajita::createGlobalGrid(

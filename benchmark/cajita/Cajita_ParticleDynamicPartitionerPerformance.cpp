@@ -146,8 +146,8 @@ void performanceTest( std::ostream& stream, MPI_Comm comm,
             for ( int t = 0; t < num_run; ++t )
             {
                 // ensure every optimization process starts from the same status
-                partitioner.initializeRecPartition(
-                    ave_partition[0], ave_partition[1], ave_partition[2] );
+                partitioner.initializePartitionByAverage( comm,
+                                                          global_num_cell );
 
                 // compute local workload
                 local_workload_timer.start( p );

@@ -446,8 +446,6 @@ void sparseGridTest3d()
         }
         rec_partitions[d].push_back( global_num_tile[d] );
     }
-    partitioner.initializeRecPartition( rec_partitions[0], rec_partitions[1],
-                                        rec_partitions[2] );
 
     // Create spares global grid
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
@@ -562,7 +560,7 @@ void sparseGridTest3d()
         for ( int id = 1; id < ranks_per_dim[d]; id++ )
             part[d][id] += 1;
 
-    partitioner.initializeRecPartition( part[0], part[1], part[2] );
+    partitioner.setRecPartition( part[0], part[1], part[2] );
 
     std::array<int, 3> new_owned_num_cell;
     std::array<int, 3> new_global_cell_offset;

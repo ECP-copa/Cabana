@@ -74,8 +74,6 @@ void uniform_distribution_automatic_rank()
         }
         rec_partitions[d].push_back( size_tile_per_dim );
     }
-    partitioner.initializeRecPartition( rec_partitions[0], rec_partitions[1],
-                                        rec_partitions[2] );
 
     // test getCurrentPartition function
     {
@@ -323,9 +321,6 @@ void random_distribution_automatic_rank( int occupy_num_per_rank )
         }
         rec_partitions[d].push_back( size_tile_per_dim );
     }
-
-    partitioner.initializeRecPartition( rec_partitions[0], rec_partitions[1],
-                                        rec_partitions[2] );
 
     // basic settings for domain size and position
     double cell_size = 0.1;

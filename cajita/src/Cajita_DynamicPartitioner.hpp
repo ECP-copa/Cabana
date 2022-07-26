@@ -101,6 +101,7 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
         // compute the ranks_per_dim from MPI communicator
         allocate( global_cells_per_dim );
         ranksPerDimension( comm );
+        initializePartitionByAverage( comm, global_cells_per_dim );
     }
 
     /*!
@@ -126,6 +127,7 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
         int comm_size;
         MPI_Comm_size( comm, &comm_size );
         MPI_Dims_create( comm_size, num_space_dim, _ranks_per_dim.data() );
+        initializePartitionByAverage( comm, global_cells_per_dim );
     }
 
     /*!
@@ -267,18 +269,49 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
     }
 
     /*!
-      \brief Initialize the tile partition; partition in each dimension
+      \brief Initialize the tile partition by average size
+      \param comm The communicator to use for initializing partitioning
+      \param global_cells_per_dim 3D array, global cells in each dimension
+    */
+    void initializePartitionByAverage(
+        MPI_Comm comm,
+        const std::array<int, num_space_dim>& global_cells_per_dim )
+    {
+        std::array<int, 3> global_num_tile = {
+            global_cells_per_dim[0] / (int)cell_num_per_tile_dim,
+            global_cells_per_dim[1] / (int)cell_num_per_tile_dim,
+            global_cells_per_dim[2] / (int)cell_num_per_tile_dim };
+
+        auto ranks_per_dim = ranksPerDimension( comm, global_cells_per_dim );
+        std::array<std::vector<int>, 3> rec_partitions;
+        for ( int d = 0; d < 3; ++d )
+        {
+            int ele = global_num_tile[d] / ranks_per_dim[d];
+            int part = 0;
+            for ( int i = 0; i < ranks_per_dim[d]; ++i )
+            {
+                rec_partitions[d].push_back( part );
+                part += ele;
+            }
+            rec_partitions[d].push_back( global_num_tile[d] );
+        }
+
+        setRecPartition( rec_partitions[0], rec_partitions[1],
+                         rec_partitions[2] );
+    }
+
+    /*!
+      \brief Set the tile partition; partition in each dimension
       has the form [0, p_1, ..., p_n, total_tile_num], so the partition
       would be [0, p_1), [p_1, p_2) ... [p_n, total_tile_num]
       \param rec_partition_i partition array in dimension i
       \param rec_partition_j partition array in dimension j
       \param rec_partition_k partition array in dimension k
     */
-    void initializeRecPartition( std::vector<int>& rec_partition_i,
-                                 std::vector<int>& rec_partition_j,
-                                 std::vector<int>& rec_partition_k )
+    void setRecPartition( std::vector<int>& rec_partition_i,
+                          std::vector<int>& rec_partition_j,
+                          std::vector<int>& rec_partition_k )
     {
-
         int max_size = 0;
         for ( std::size_t d = 0; d < num_space_dim; ++d )
             max_size =
