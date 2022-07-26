@@ -34,12 +34,8 @@ void uniform_distribution_automatic_rank()
     constexpr int size_tile_per_dim = 16;
     constexpr int cell_per_tile_dim = 4;
     constexpr int size_per_dim = size_tile_per_dim * cell_per_tile_dim;
-    constexpr int total_size = size_per_dim * size_per_dim * size_per_dim;
 
     // some settings for partitioner
-    float max_workload_coeff = 1.5;
-    int workload_num = total_size;
-    int num_step_rebalance = 100;
     int max_optimize_iteration = 10;
     std::array<int, 3> global_cells_per_dim = {
         size_tile_per_dim * cell_per_tile_dim,
@@ -48,8 +44,7 @@ void uniform_distribution_automatic_rank()
 
     // partitioner
     DynamicPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
-        MPI_COMM_WORLD, max_workload_coeff, workload_num, num_step_rebalance,
-        global_cells_per_dim, max_optimize_iteration );
+        MPI_COMM_WORLD, global_cells_per_dim, max_optimize_iteration );
 
     // check the value of some pre-computed constants
     auto cbptd = partitioner.cell_bits_per_tile_dim;
@@ -236,13 +231,9 @@ void random_distribution_automatic_rank( int occupy_num_per_rank )
     constexpr int size_tile_per_dim = 32;
     constexpr int cell_per_tile_dim = 4;
     constexpr int size_per_dim = size_tile_per_dim * cell_per_tile_dim;
-    constexpr int total_size = size_per_dim * size_per_dim * size_per_dim;
     srand( time( 0 ) );
 
     // some settings for partitioner
-    float max_workload_coeff = 1.5;
-    int particle_num = total_size;
-    int num_step_rebalance = 100;
     int max_optimize_iteration = 10;
 
     std::array<int, 3> global_cells_per_dim = { size_per_dim, size_per_dim,
@@ -250,8 +241,7 @@ void random_distribution_automatic_rank( int occupy_num_per_rank )
 
     // partitioner
     DynamicPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
-        MPI_COMM_WORLD, max_workload_coeff, particle_num, num_step_rebalance,
-        global_cells_per_dim, max_optimize_iteration );
+        MPI_COMM_WORLD, global_cells_per_dim, max_optimize_iteration );
 
     // check the value of some pre-computed constants
     auto cbptd = partitioner.cell_bits_per_tile_dim;

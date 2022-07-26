@@ -89,23 +89,14 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
       \brief Constructor - automatically compute ranks_per_dim from MPI
       communicator
       \param comm MPI communicator to decide the rank nums in each dimension
-      \param max_workload_coeff threshold factor for re-partition
-      \param workload_num total workload(particle/tile) number, used to compute
-      workload_threshold
-      \param num_step_rebalance the simulation step number after which one
-      should check if repartition is needed
       \param global_cells_per_dim 3D array, global cells in each dimension
       \param max_optimize_iteration max iteration number to run the optimization
     */
     DynamicPartitioner(
-        MPI_Comm comm, float max_workload_coeff, int workload_num,
-        int num_step_rebalance,
+        MPI_Comm comm,
         const std::array<int, num_space_dim>& global_cells_per_dim,
         int max_optimize_iteration = 10 )
-        : _workload_threshold(
-              static_cast<int>( max_workload_coeff * workload_num ) )
-        , _num_step_rebalance( num_step_rebalance )
-        , _max_optimize_iteration( max_optimize_iteration )
+        : _max_optimize_iteration( max_optimize_iteration )
     {
         // compute the ranks_per_dim from MPI communicator
         allocate( global_cells_per_dim );
@@ -116,26 +107,17 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
       \brief Constructor - user-defined ranks_per_dim
       communicator
       \param comm MPI communicator to decide the rank nums in each dimension
-      \param max_workload_coeff threshold factor for re-partition
-      \param workload_num total workload(particle/tile) number, used to compute
-      workload_threshold
-      \param num_step_rebalance the simulation step number after which one
-      should check if repartition is needed
       \param ranks_per_dim 3D array, user-defined MPI rank constrains in per
       dimension
       \param global_cells_per_dim 3D array, global cells in each dimension
       \param max_optimize_iteration max iteration number to run the optimization
     */
     DynamicPartitioner(
-        MPI_Comm comm, float max_workload_coeff, int workload_num,
-        int num_step_rebalance,
+        MPI_Comm comm,
         const std::array<int, num_space_dim>& ranks_per_dim,
         const std::array<int, num_space_dim>& global_cells_per_dim,
         int max_optimize_iteration = 10 )
-        : _workload_threshold(
-              static_cast<int>( max_workload_coeff * workload_num ) )
-        , _num_step_rebalance( num_step_rebalance )
-        , _max_optimize_iteration( max_optimize_iteration )
+        : _max_optimize_iteration( max_optimize_iteration )
     {
         allocate( global_cells_per_dim );
         std::copy( ranks_per_dim.begin(), ranks_per_dim.end(),
@@ -751,10 +733,6 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
     };
 
   private:
-    // workload_threshold
-    int _workload_threshold;
-    // default check point for re-balance
-    int _num_step_rebalance;
     // max_optimize iterations
     int _max_optimize_iteration;
 

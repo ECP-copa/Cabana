@@ -95,9 +95,7 @@ void performanceTest( std::ostream& stream, MPI_Comm comm,
     int num_run = 10;
 
     // Basic settings for partitioenr
-    float max_workload_coeff = 1.5;
     int max_optimize_iteration = 10;
-    int num_step_rebalance = 100;
 
     for ( int c = 0; c < num_cells_per_dim_size; ++c )
     {
@@ -119,11 +117,8 @@ void performanceTest( std::ostream& stream, MPI_Comm comm,
             typename Device::memory_space(), tiles_host );
 
         // set up partitioner
-        auto total_num =
-            num_tiles_per_dim * num_tiles_per_dim * num_tiles_per_dim;
         Cajita::DynamicPartitioner<Device, cell_num_per_tile_dim> partitioner(
-            comm, max_workload_coeff, total_num, num_step_rebalance,
-            global_num_cell, max_optimize_iteration );
+            comm, global_num_cell, max_optimize_iteration );
         auto ranks_per_dim =
             partitioner.ranksPerDimension( comm, global_num_cell );
         auto ave_partition =

@@ -82,13 +82,7 @@ void performanceTest( std::ostream& stream, MPI_Comm comm,
     int num_run = 10;
 
     // Basic settings for partitioenr
-    float max_workload_coeff = 1.5;
     int max_optimize_iteration = 10;
-    int num_step_rebalance = 100;
-
-    // compute the max number of particles handled by the current MPI rank
-    int max_par_num = problem_sizes.back() / comm_size +
-                      ( problem_sizes.back() % comm_size < comm_rank ? 1 : 0 );
 
     // Create random sets of particle positions.
     using position_type = Kokkos::View<float* [3], memory_space>;
@@ -112,8 +106,7 @@ void performanceTest( std::ostream& stream, MPI_Comm comm,
 
         // set up partitioner
         Cajita::DynamicPartitioner<Device, cell_num_per_tile_dim> partitioner(
-            comm, max_workload_coeff, max_par_num, num_step_rebalance,
-            global_num_cell, max_optimize_iteration );
+            comm, global_num_cell, max_optimize_iteration );
         auto ranks_per_dim =
             partitioner.ranksPerDimension( comm, global_num_cell );
         auto ave_partition =

@@ -425,15 +425,10 @@ void sparseGridTest3d()
         global_low_corner, global_high_corner, global_num_cell );
 
     // Sparse paritioner
-    float max_workload_coeff = 1.5;
-    int workload_num =
-        global_num_cell[0] * global_num_cell[1] * global_num_cell[2];
-    int num_step_rebalance = 100;
     int max_optimize_iteration = 10;
 
     DynamicPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
-        MPI_COMM_WORLD, max_workload_coeff, workload_num, num_step_rebalance,
-        global_num_cell, max_optimize_iteration );
+        MPI_COMM_WORLD, global_num_cell, max_optimize_iteration );
 
     // test ranks per dim
     auto ranks_per_dim =
