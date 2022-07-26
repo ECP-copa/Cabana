@@ -84,9 +84,8 @@ class ParticleDynamicPartitionerWorkloadMeasurer
             lower_corner[d] = global_lower_corner[d];
         }
 
-        CellUnit dx_proxy = dx;
-        unsigned long long cell_bits_per_tile_dim_proxy =
-            cell_bits_per_tile_dim;
+        auto dx_copy = dx;
+        auto cell_bits_per_tile_dim_copy = cell_bits_per_tile_dim;
         Kokkos::parallel_for(
             "compute_local_workload_parpos",
             Kokkos::RangePolicy<execution_space>( 0, particle_num ),
