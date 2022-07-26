@@ -28,12 +28,6 @@
 
 #include <mpi.h>
 
-//---------------------------------------------------------------------------//
-// Helper functions.
-struct ParticleWorkloadTag
-{
-};
-
 // generate average partitioner
 std::array<std::vector<int>, 3>
 computeAveragePartition( const int tile_per_dim,
@@ -57,7 +51,7 @@ computeAveragePartition( const int tile_per_dim,
 //---------------------------------------------------------------------------//
 // Performance test.
 template <class Device>
-void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
+void performanceTest( std::ostream& stream, MPI_Comm comm,
                       const std::string& test_prefix,
                       std::vector<int> problem_sizes,
                       std::vector<int> num_cells_per_dim )
@@ -285,11 +279,11 @@ int main( int argc, char* argv[] )
     // Don't rerun on the CPU if already done or if turned off.
     if ( !std::is_same<device_type, host_device_type>{} )
     {
-        performanceTest<device_type>( ParticleWorkloadTag(), file,
+        performanceTest<device_type>( file,
                                       MPI_COMM_WORLD, "device_particleWL_",
                                       problem_sizes, num_cells_per_dim );
     }
-    performanceTest<host_device_type>( ParticleWorkloadTag(), file,
+    performanceTest<host_device_type>( file,
                                        MPI_COMM_WORLD, "host_particleWL_",
                                        problem_sizes, num_cells_per_dim );
 

@@ -28,12 +28,6 @@
 
 #include <mpi.h>
 
-//---------------------------------------------------------------------------//
-// Helper functions.
-struct SparseMapTag
-{
-};
-
 // generate a random tile sequence
 int current = 0;
 int uniqueNumber() { return current++; }
@@ -79,7 +73,7 @@ std::array<std::vector<int>, 3> computeAveragePartition(
 //---------------------------------------------------------------------------//
 // Performance test.
 template <class Device>
-void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
+void performanceTest( std::ostream& stream, MPI_Comm comm,
                       const std::string& test_prefix,
                       std::vector<double> occupy_fraction,
                       std::vector<int> num_cells_per_dim )
@@ -299,11 +293,11 @@ int main( int argc, char* argv[] )
     // Don't rerun on the CPU if already done or if turned off.
     if ( !std::is_same<device_type, host_device_type>{} )
     {
-        performanceTest<device_type>( SparseMapTag(), file, MPI_COMM_WORLD,
+        performanceTest<device_type>( file, MPI_COMM_WORLD,
                                       "device_sparsemapWL_", occupy_fraction,
                                       num_cells_per_dim );
     }
-    performanceTest<host_device_type>( SparseMapTag(), file, MPI_COMM_WORLD,
+    performanceTest<host_device_type>( file, MPI_COMM_WORLD,
                                        "host_sparsemapWL_", occupy_fraction,
                                        num_cells_per_dim );
 
