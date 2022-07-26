@@ -272,12 +272,11 @@ int main( int argc, char* argv[] )
     // Don't rerun on the CPU if already done or if turned off.
     if ( !std::is_same<device_type, host_device_type>{} )
     {
-        performanceTest<device_type>( file,
-                                      MPI_COMM_WORLD, "device_particleWL_",
-                                      problem_sizes, num_cells_per_dim );
+        performanceTest<device_type>( file, MPI_COMM_WORLD,
+                                      "device_particleWL_", problem_sizes,
+                                      num_cells_per_dim );
     }
-    performanceTest<host_device_type>( file,
-                                       MPI_COMM_WORLD, "host_particleWL_",
+    performanceTest<host_device_type>( file, MPI_COMM_WORLD, "host_particleWL_",
                                        problem_sizes, num_cells_per_dim );
 
     // Close the output file on rank 0.

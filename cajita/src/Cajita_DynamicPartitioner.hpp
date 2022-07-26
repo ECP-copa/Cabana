@@ -113,8 +113,7 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
       \param max_optimize_iteration max iteration number to run the optimization
     */
     DynamicPartitioner(
-        MPI_Comm comm,
-        const std::array<int, num_space_dim>& ranks_per_dim,
+        MPI_Comm comm, const std::array<int, num_space_dim>& ranks_per_dim,
         const std::array<int, num_space_dim>& global_cells_per_dim,
         int max_optimize_iteration = 10 )
         : _max_optimize_iteration( max_optimize_iteration )
