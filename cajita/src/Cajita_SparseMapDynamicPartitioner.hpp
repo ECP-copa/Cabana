@@ -60,16 +60,16 @@ class SparseMapDynamicPartitionerWorkloadMeasurer
     //! \brief Called by DynamicPartitioner to compute workload
     void compute( Kokkos::View<int***, memory_space>& workload ) override
     {
-        const SparseMapType& sparseMap_proxy = sparseMap;
+        const SparseMapType& sparse_map_copy = sparseMap;
         Kokkos::parallel_for(
             "compute_local_workload_sparsmap",
             Kokkos::RangePolicy<execution_space>( 0, sparseMap.capacity() ),
             KOKKOS_LAMBDA( uint32_t i ) {
-                if ( sparseMap_proxy.valid_at( i ) )
+                if ( sparse_map_copy.valid_at( i ) )
                 {
-                    auto key = sparseMap_proxy.key_at( i );
+                    auto key = sparse_map_copy.key_at( i );
                     int ti, tj, tk;
-                    sparseMap_proxy.key2ijk( key, ti, tj, tk );
+                    sparse_map_copy.key2ijk( key, ti, tj, tk );
                     Kokkos::atomic_increment(
                         &workload( ti + 1, tj + 1, tk + 1 ) );
                 }

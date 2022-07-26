@@ -92,16 +92,16 @@ class ParticleDynamicPartitionerWorkloadMeasurer
             KOKKOS_LAMBDA( const int i ) {
                 int ti =
                     static_cast<int>(
-                        ( view( i, 0 ) - lower_corner[0] ) / dx_proxy - 0.5 ) >>
-                    cell_bits_per_tile_dim_proxy;
+                        ( view( i, 0 ) - lower_corner[0] ) / dx_copy - 0.5 ) >>
+                    cell_bits_per_tile_dim_copy;
                 int tj =
                     static_cast<int>(
-                        ( view( i, 1 ) - lower_corner[1] ) / dx_proxy - 0.5 ) >>
-                    cell_bits_per_tile_dim_proxy;
+                        ( view( i, 1 ) - lower_corner[1] ) / dx_copy - 0.5 ) >>
+                    cell_bits_per_tile_dim_copy;
                 int tz =
                     static_cast<int>(
-                        ( view( i, 2 ) - lower_corner[2] ) / dx_proxy - 0.5 ) >>
-                    cell_bits_per_tile_dim_proxy;
+                        ( view( i, 2 ) - lower_corner[2] ) / dx_copy - 0.5 ) >>
+                    cell_bits_per_tile_dim_copy;
                 Kokkos::atomic_increment( &workload( ti + 1, tj + 1, tz + 1 ) );
             } );
         Kokkos::fence();
