@@ -1148,6 +1148,9 @@ class CommunicationData
     //! Perform the communication (migrate, gather, scatter).
     virtual void apply() = 0;
 
+    virtual void apply( const particle_data_type& src,
+                        particle_data_type& dst ) = 0;
+
     //! \cond Impl
     void reserveImpl( const CommPlanType& comm_plan,
                       const particle_data_type particles,
@@ -1163,7 +1166,7 @@ class CommunicationData
         reserveImpl( comm_plan, particles, total_send, total_recv );
     }
     void reserveImpl( const CommPlanType& comm_plan,
-                      const particle_data_type particles,
+                      const particle_data_type& particles,
                       const std::size_t total_send,
                       const std::size_t total_recv )
     {

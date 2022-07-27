@@ -100,6 +100,7 @@ class Distributor : public CommunicationPlan<DeviceType>
                  const std::vector<int>& neighbor_ranks )
         : CommunicationPlan<DeviceType>( comm )
     {
+        setRank();
         auto neighbor_ids = this->createFromExportsAndTopology(
             element_export_ranks, neighbor_ranks );
         this->createExportSteering( neighbor_ids, element_export_ranks );
@@ -136,9 +137,41 @@ class Distributor : public CommunicationPlan<DeviceType>
     Distributor( MPI_Comm comm, const ViewType& element_export_ranks )
         : CommunicationPlan<DeviceType>( comm )
     {
+        setRank();
         auto neighbor_ids = this->createFromExportsOnly( element_export_ranks );
         this->createExportSteering( neighbor_ids, element_export_ranks );
     }
+
+    //! Total migrate send size for this rank.
+    auto totalSend() const { return this->totalNumExport() - numStay(); }
+    //! Total migrate receive size for this rank.
+    auto totalReceive() const { return this->totalNumImport(); }
+
+    //! Total migrate size staying on the current rank.
+    auto numStay() const
+    {
+        // Calculate the number of elements that are staying on this rank and
+        // therefore can be directly copied. If any of the neighbor ranks are
+        // this rank it will be stored in first position (i.e. the first
+        // neighbor in the local list is always yourself if you are sending to
+        // yourself).
+        return ( this->numNeighbor() > 0 &&
+                 this->neighborRank( 0 ) == _my_rank )
+                   ? this->numExport( 0 )
+                   : 0;
+    }
+
+    //! Set the current MPI rank.
+    void setRank()
+    {
+        _my_rank = -1;
+        MPI_Comm_rank( this->comm(), &_my_rank );
+    }
+    //! Get the current MPI rank.
+    auto getRank() { return _my_rank; }
+
+  private:
+    int _my_rank;
 };
 
 //---------------------------------------------------------------------------//
@@ -162,146 +195,629 @@ struct is_distributor
 };
 
 //---------------------------------------------------------------------------//
-namespace Impl
-{
-//! \cond Impl
-//---------------------------------------------------------------------------//
-// Synchronously move data between a source and destination AoSoA by executing
-// the forward communication plan.
-template <class Distributor_t, class AoSoA_t>
-void distributeData(
-    const Distributor_t& distributor, const AoSoA_t& src, AoSoA_t& dst,
-    typename std::enable_if<( is_distributor<Distributor_t>::value &&
-                              is_aosoa<AoSoA_t>::value ),
+/*!
+  \brief Ensure the particle size matches the distributor size.
+
+  \param distributor The distributor that will be used for the migrate. Used to
+  query import and export sizes.
+
+  \param particles The particle data (either AoSoA or slice). Used to query the
+  total size.
+*/
+template <class DistributorType, class ParticleData>
+bool distributorCheckValidSize(
+    const DistributorType& distributor, const ParticleData& particles,
+    typename std::enable_if<( is_distributor<DistributorType>::value ),
                             int>::type* = 0 )
 {
-    // Get the MPI rank we are currently on.
-    int my_rank = -1;
-    MPI_Comm_rank( distributor.comm(), &my_rank );
+    return ( particles.size() == distributor.exportSize() );
+}
+/*!
+  \brief Ensure the particle size matches the distributor size.
 
-    // Get the number of neighbors.
-    int num_n = distributor.numNeighbor();
+  \param distributor The distributor that will be used for the migrate. Used to
+  query import and export sizes.
 
-    // Calculate the number of elements that are staying on this rank and
-    // therefore can be directly copied. If any of the neighbor ranks are this
-    // rank it will be stored in first position (i.e. the first neighbor in
-    // the local list is always yourself if you are sending to yourself).
-    std::size_t num_stay =
-        ( num_n > 0 && distributor.neighborRank( 0 ) == my_rank )
-            ? distributor.numExport( 0 )
-            : 0;
-
-    // Allocate a send buffer.
-    std::size_t num_send = distributor.totalNumExport() - num_stay;
-    Kokkos::View<typename AoSoA_t::tuple_type*,
-                 typename Distributor_t::memory_space>
-        send_buffer( Kokkos::ViewAllocateWithoutInitializing(
-                         "distributor_send_buffer" ),
-                     num_send );
-
-    // Allocate a receive buffer.
-    Kokkos::View<typename AoSoA_t::tuple_type*,
-                 typename Distributor_t::memory_space>
-        recv_buffer( Kokkos::ViewAllocateWithoutInitializing(
-                         "distributor_recv_buffer" ),
-                     distributor.totalNumImport() );
-
-    // Get the steering vector for the sends.
-    auto steering = distributor.getExportSteering();
-
-    // Gather the exports from the source AoSoA into the tuple-contiguous send
-    // buffer or the receive buffer if the data is staying. We know that the
-    // steering vector is ordered such that the data staying on this rank
-    // comes first.
-    auto build_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
-    {
-        auto tpl = src.getTuple( steering( i ) );
-        if ( i < num_stay )
-            recv_buffer( i ) = tpl;
-        else
-            send_buffer( i - num_stay ) = tpl;
-    };
-    Kokkos::RangePolicy<typename Distributor_t::execution_space>
-        build_send_buffer_policy( 0, distributor.totalNumExport() );
-    Kokkos::parallel_for( "Cabana::Impl::distributeData::build_send_buffer",
-                          build_send_buffer_policy, build_send_buffer_func );
-    Kokkos::fence();
-
-    // The distributor has its own communication space so choose any tag.
-    const int mpi_tag = 1234;
-
-    // Post non-blocking receives.
-    std::vector<MPI_Request> requests;
-    requests.reserve( num_n );
-    std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
-    for ( int n = 0; n < num_n; ++n )
-    {
-        recv_range.second = recv_range.first + distributor.numImport( n );
-
-        if ( ( distributor.numImport( n ) > 0 ) &&
-             ( distributor.neighborRank( n ) != my_rank ) )
-        {
-            auto recv_subview = Kokkos::subview( recv_buffer, recv_range );
-
-            requests.push_back( MPI_Request() );
-
-            MPI_Irecv( recv_subview.data(),
-                       recv_subview.size() *
-                           sizeof( typename AoSoA_t::tuple_type ),
-                       MPI_BYTE, distributor.neighborRank( n ), mpi_tag,
-                       distributor.comm(), &( requests.back() ) );
-        }
-
-        recv_range.first = recv_range.second;
-    }
-
-    // Do blocking sends.
-    std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
-    for ( int n = 0; n < num_n; ++n )
-    {
-        if ( ( distributor.numExport( n ) > 0 ) &&
-             ( distributor.neighborRank( n ) != my_rank ) )
-        {
-            send_range.second = send_range.first + distributor.numExport( n );
-
-            auto send_subview = Kokkos::subview( send_buffer, send_range );
-
-            MPI_Send( send_subview.data(),
-                      send_subview.size() *
-                          sizeof( typename AoSoA_t::tuple_type ),
-                      MPI_BYTE, distributor.neighborRank( n ), mpi_tag,
-                      distributor.comm() );
-
-            send_range.first = send_range.second;
-        }
-    }
-
-    // Wait on non-blocking receives.
-    std::vector<MPI_Status> status( requests.size() );
-    const int ec =
-        MPI_Waitall( requests.size(), requests.data(), status.data() );
-    if ( MPI_SUCCESS != ec )
-        throw std::logic_error( "Failed MPI Communication" );
-
-    // Extract the receive buffer into the destination AoSoA.
-    auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
-    {
-        dst.setTuple( i, recv_buffer( i ) );
-    };
-    Kokkos::RangePolicy<typename Distributor_t::execution_space>
-        extract_recv_buffer_policy( 0, distributor.totalNumImport() );
-    Kokkos::parallel_for( "Cabana::Impl::distributeData::extract_recv_buffer",
-                          extract_recv_buffer_policy,
-                          extract_recv_buffer_func );
-    Kokkos::fence();
-
-    // Barrier before completing to ensure synchronization.
-    MPI_Barrier( distributor.comm() );
+  \param particles The particle data (either AoSoA or slice). Used to query the
+  total size.
+*/
+template <class DistributorType, class ParticleData>
+bool distributorCheckValidSize(
+    const DistributorType& distributor, const ParticleData& src,
+    const ParticleData& dst,
+    typename std::enable_if<( is_distributor<DistributorType>::value ),
+                            int>::type* = 0 )
+{
+    return ( distributorCheckValidSize( distributor, src ) &&
+             dst.size() == distributor.totalNumImport() );
 }
 
 //---------------------------------------------------------------------------//
-//! \endcond
-} // end namespace Impl
+template <class DistributorType, class AoSoAType, class SFINAE = void>
+class Migrate;
+
+/*!
+  \brief Synchronously migrate data between two different decompositions using
+  the distributor forward communication plan. AoSoA version.
+
+  Migrate moves all data to a new distribution that is uniquely owned - each
+  element will only have a single destination rank.
+*/
+template <class DistributorType, class AoSoAType>
+class Migrate<DistributorType, AoSoAType,
+              typename std::enable_if<is_aosoa<AoSoAType>::value>::type>
+    : public CommunicationData<DistributorType,
+                               CommunicationDataAoSoA<AoSoAType>>
+{
+  public:
+    static_assert( is_distributor<DistributorType>::value, "" );
+
+    //! Base type.
+    using base_type =
+        CommunicationData<DistributorType, CommunicationDataAoSoA<AoSoAType>>;
+    //! Communication plan type (Distributor)
+    using plan_type = typename base_type::plan_type;
+    //! Kokkos execution space.
+    using execution_space = typename base_type::execution_space;
+    //! Kokkos memory space.
+    using memory_space = typename base_type::memory_space;
+    //! Communication data type.
+    using data_type = typename base_type::data_type;
+    //! Communication buffer type.
+    using buffer_type = typename base_type::buffer_type;
+
+    /*!
+      \param distributor The Distributor to be used for the migrate.
+
+      \param aosoa Upon input, must have the same number of elements as the
+      inputs used to construct the distributor. At output, it will be the same
+      size as the number of import elements on this rank provided by the
+      distributor. Before using this function, consider reserving enough memory
+      in the data structure so reallocating is not necessary.
+
+      \param overallocation An optional factor to keep extra space in the
+      buffers to avoid frequent resizing.
+    */
+    Migrate( DistributorType distributor, AoSoAType aosoa,
+             const double overallocation = 1.0 )
+        : base_type( distributor, overallocation )
+    {
+        update( _distributor, aosoa );
+    }
+
+    /*!
+      \param distributor The Distributor to be used for the migrate.
+
+      \param src The AoSoA containing the data to be migrated. Must have the
+      same number of elements as the inputs used to construct the distributor.
+
+      \param dst The AoSoA to which the migrated data will be written. Must be
+      the same size as the number of imports given by the distributor on this
+      rank. Call totalNumImport() on the distributor to get this size value.
+
+      \param overallocation An optional factor to keep extra space in the
+      buffers to avoid frequent resizing.
+    */
+    Migrate( DistributorType distributor, AoSoAType src, AoSoAType dst,
+             const double overallocation = 1.0 )
+        : base_type( distributor, overallocation )
+    {
+        update( _distributor, src, dst );
+    }
+
+    /*!
+      \brief Perform the migrate operation. In-place AoSoA version.
+
+      Synchronously migrate data between two different decompositions using the
+      distributor forward communication plan. Single AoSoA version that will
+      resize in-place. Note that resizing does not necessarily allocate more
+      memory. The AoSoA memory will only increase if not enough has already been
+      reserved/allocated for the needed number of elements.
+
+      \param aosoa The AoSoA containing the data to be migrated. Upon input,
+      must have the same number of elements as the inputs used to construct the
+      distributor. At output, it will be the same size as the number of import
+      elements on this rank provided by the distributor. Before using this
+      function, consider reserving enough memory in the data structure so
+      reallocating is not necessary.
+    */
+    void apply( AoSoAType& aosoa ) override
+    {
+        migrate( aosoa, aosoa );
+
+        // If the destination decomposition is smaller than the source
+        // decomposition resize after we have moved the data.
+        bool dst_is_bigger =
+            ( _distributor.totalNumImport() > _distributor.exportSize() );
+        if ( !dst_is_bigger )
+            aosoa.resize( _distributor.totalNumImport() );
+    }
+
+    /*!
+      \brief Perform the migrate operation. Multiple AoSoA version.
+
+      \param src The AoSoA containing the data to be migrated. Must have the
+      same number of elements as the inputs used to construct the distributor.
+
+      \param dst The AoSoA to which the migrated data will be written. Must be
+      the same size as the number of imports given by the distributor on this
+      rank. Call totalNumImport() on the distributor to get this size value.
+    */
+    void apply( const AoSoAType& src, AoSoAType& dst ) override
+    {
+        migrate( src, dst );
+    }
+
+    /*!
+      \brief Update the distributor and AoSoA data for migration.
+
+      \param distributor The Distributor to be used for the migrate.
+      \param aosoa The AoSoA on which to perform the migrate.
+      \param overallocation An optional factor to keep extra space in the
+      buffers to avoid frequent resizing.
+    */
+    void update( const DistributorType& distributor, AoSoAType& aosoa,
+                 const double overallocation )
+    {
+        // Check that the AoSoA is the right size.
+        if ( !distributorCheckValidSize( distributor, aosoa ) )
+            throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
+
+        // Determine if the source of destination decomposition has more data on
+        // this rank.
+        bool dst_is_bigger =
+            ( distributor.totalNumImport() > distributor.exportSize() );
+
+        // If the destination decomposition is bigger than the source
+        // decomposition resize now so we have enough space to do the operation.
+        if ( dst_is_bigger )
+            aosoa.resize( distributor.totalNumImport() );
+
+        this->updateImpl( distributor, aosoa, distributor.totalSend(),
+                          distributor.totalReceive(), overallocation );
+    }
+    /*!
+      \brief Update the distributor and AoSoA data for migration.
+
+      \param distributor The Distributor to be used for the migrate.
+      \param aosoa The AoSoA on which to perform the migrate.
+    */
+    void update( const DistributorType& distributor, AoSoAType& aosoa )
+    {
+        // Check that the AoSoA is the right size.
+        if ( !distributorCheckValidSize( distributor, aosoa ) )
+            throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
+
+        // Determine if the source of destination decomposition has more data on
+        // this rank.
+        bool dst_is_bigger =
+            ( distributor.totalNumImport() > distributor.exportSize() );
+
+        // If the destination decomposition is bigger than the source
+        // decomposition resize now so we have enough space to do the operation.
+        if ( dst_is_bigger )
+            aosoa.resize( distributor.totalNumImport() );
+
+        this->updateImpl( distributor, aosoa, distributor.totalSend(),
+                          distributor.totalReceive() );
+    }
+
+    /*!
+      \brief Update the distributor and AoSoA data for migration.
+
+      \param distributor The Distributor to be used for the migrate.
+      \param src The AoSoA containing the data to be migrated. Must have the
+      same number of elements as the inputs used to construct the distributor.
+      \param dst The AoSoA to which the migrated data will be written. Must be
+      the same size as the number of imports given by the distributor on this
+      rank.
+      \param overallocation An optional factor to keep extra space in the
+      buffers to avoid frequent resizing.
+    */
+    void update( const DistributorType& distributor, const AoSoAType& src,
+                 AoSoAType& dst, const double overallocation )
+    {
+        // Check that src and dst are the right size.
+        if ( !distributorCheckValidSize( distributor, src, dst ) )
+            throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
+
+        this->updateImpl( distributor, src, distributor.totalSend(),
+                          distributor.totalReceive(), overallocation );
+    }
+    /*!
+      \brief Update the distributor and AoSoA data for migration.
+
+      \param distributor The Distributor to be used for the migrate.
+      \param src The AoSoA containing the data to be migrated. Must have the
+      same number of elements as the inputs used to construct the distributor.
+      \param dst The AoSoA to which the migrated data will be written. Must be
+      the same size as the number of imports given by the distributor on this
+      rank.
+    */
+    void update( const DistributorType& distributor, const AoSoAType& src,
+                 AoSoAType& dst )
+    {
+        // Check that src and dst are the right size.
+        if ( !distributorCheckValidSize( distributor, src, dst ) )
+            throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
+
+        this->updateImpl( distributor, src, distributor.totalSend(),
+                          distributor.totalReceive() );
+    }
+
+  private:
+    // Implementation of the migration.
+    void migrate( const AoSoAType& src, AoSoAType& dst )
+    {
+        // Get the buffers (local copies for lambdas below).
+        auto send_buffer = this->getSendBuffer();
+        auto recv_buffer = this->getReceiveBuffer();
+
+        // Get the number of neighbors.
+        int num_n = _distributor.numNeighbor();
+
+        // Number of elements that are staying on this rank.
+        auto num_stay = _distributor.numStay();
+
+        // Get the steering vector for the sends.
+        auto steering = _distributor.getExportSteering();
+
+        // Gather the exports from the source AoSoA into the tuple-contiguous
+        // send buffer or the receive buffer if the data is staying. We know
+        // that the steering vector is ordered such that the data staying on
+        // this rank comes first.
+        auto build_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
+        {
+            auto tpl = src.getTuple( steering( i ) );
+            if ( i < num_stay )
+                recv_buffer( i ) = tpl;
+            else
+                send_buffer( i - num_stay ) = tpl;
+        };
+        Kokkos::RangePolicy<execution_space> build_send_buffer_policy(
+            0, _distributor.totalNumExport() );
+        Kokkos::parallel_for( "Cabana::migrate::build_send_buffer",
+                              build_send_buffer_policy,
+                              build_send_buffer_func );
+        Kokkos::fence();
+
+        // The distributor has its own communication space so choose any tag.
+        const int mpi_tag = 1234;
+
+        // Post non-blocking receives.
+        std::vector<MPI_Request> requests;
+        requests.reserve( num_n );
+        std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
+        for ( int n = 0; n < num_n; ++n )
+        {
+            recv_range.second = recv_range.first + _distributor.numImport( n );
+
+            if ( ( _distributor.numImport( n ) > 0 ) &&
+                 ( _distributor.neighborRank( n ) != _my_rank ) )
+            {
+                auto recv_subview = Kokkos::subview( recv_buffer, recv_range );
+
+                requests.push_back( MPI_Request() );
+
+                MPI_Irecv( recv_subview.data(),
+                           recv_subview.size() * sizeof( data_type ), MPI_BYTE,
+                           _distributor.neighborRank( n ), mpi_tag,
+                           _distributor.comm(), &( requests.back() ) );
+            }
+
+            recv_range.first = recv_range.second;
+        }
+
+        // Do blocking sends.
+        std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
+        for ( int n = 0; n < num_n; ++n )
+        {
+            if ( ( _distributor.numExport( n ) > 0 ) &&
+                 ( _distributor.neighborRank( n ) != _my_rank ) )
+            {
+                send_range.second =
+                    send_range.first + _distributor.numExport( n );
+
+                auto send_subview = Kokkos::subview( send_buffer, send_range );
+
+                MPI_Send( send_subview.data(),
+                          send_subview.size() * sizeof( data_type ), MPI_BYTE,
+                          _distributor.neighborRank( n ), mpi_tag,
+                          _distributor.comm() );
+
+                send_range.first = send_range.second;
+            }
+        }
+
+        // Wait on non-blocking receives.
+        std::vector<MPI_Status> status( requests.size() );
+        const int ec =
+            MPI_Waitall( requests.size(), requests.data(), status.data() );
+        if ( MPI_SUCCESS != ec )
+            throw std::logic_error( "Failed MPI Communication" );
+
+        // Extract the receive buffer into the destination AoSoA.
+        auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
+        {
+            dst.setTuple( i, recv_buffer( i ) );
+        };
+        Kokkos::RangePolicy<execution_space> extract_recv_buffer_policy(
+            0, _distributor.totalNumImport() );
+        Kokkos::parallel_for( "Cabana::migrate::extract_recv_buffer",
+                              extract_recv_buffer_policy,
+                              extract_recv_buffer_func );
+        Kokkos::fence();
+
+        // Barrier before completing to ensure synchronization.
+        MPI_Barrier( _distributor.comm() );
+    }
+
+  private:
+    plan_type _distributor = base_type::_comm_plan;
+
+    int _my_rank;
+};
+
+/*!
+  \brief Synchronously migrate data between two different decompositions using
+  the distributor forward communication plan. Slice version.
+
+  Migrate moves all data to a new distribution that is uniquely owned - each
+  element will only have a single destination rank.
+*/
+template <class DistributorType, class SliceType>
+class Migrate<DistributorType, SliceType,
+              typename std::enable_if<is_slice<SliceType>::value>::type>
+    : CommunicationData<DistributorType, CommunicationDataSlice<SliceType>>
+{
+  public:
+    static_assert( is_distributor<DistributorType>::value, "" );
+
+    //! Base type.
+    using base_type =
+        CommunicationData<DistributorType, CommunicationDataSlice<SliceType>>;
+    //! Communication plan type (Distributor)
+    using plan_type = typename base_type::plan_type;
+    //! Kokkos execution space.
+    using execution_space = typename base_type::execution_space;
+    //! Kokkos memory space.
+    using memory_space = typename base_type::memory_space;
+    //! Communication data type.
+    using data_type = typename base_type::data_type;
+    //! Communication buffer type.
+    using buffer_type = typename base_type::buffer_type;
+
+    /*!
+      \param distributor The Distributor to be used for the migrate.
+      \param src The slice containing the data to be migrated.
+      \param dst The slice to which the migrated data will be written.
+      \param overallocation An optional factor to keep extra space in the
+      buffers to avoid frequent resizing.
+    */
+    Migrate( const DistributorType& distributor, const SliceType& src,
+             SliceType& dst, const double overallocation = 1.0 )
+        : base_type( distributor, overallocation )
+    {
+        _my_rank = _distributor.getRank();
+        update( _distributor, src, dst );
+    }
+
+    /*!
+      \brief Perform the migrate operation.
+
+      \param src The slice containing the data to be migrated.
+      \param dst The slice to which the migrated data will be written.
+    */
+    void apply( const SliceType& src, SliceType& dst ) override
+    {
+        // Get the buffers (local copies for lambdas below).
+        auto send_buffer = this->getSendBuffer();
+        auto recv_buffer = this->getReceiveBuffer();
+
+        // Get the number of components in the slices.
+        auto num_comp = this->getSliceComponents( src );
+
+        // Get the raw slice data.
+        auto src_data = src.data();
+        auto dst_data = dst.data();
+
+        // Get the number of neighbors.
+        int num_n = _distributor.numNeighbor();
+
+        // Number of elements that are staying on this rank.
+        auto num_stay = _distributor.numStay();
+
+        // Get the steering vector for the sends.
+        auto steering = _distributor.getExportSteering();
+
+        // Gather from the source Slice into the contiguous send buffer or,
+        // if it is part of the local copy, put it directly in the destination
+        // Slice.
+        auto build_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
+        {
+            auto s_src = SliceType::index_type::s( steering( i ) );
+            auto a_src = SliceType::index_type::a( steering( i ) );
+            std::size_t src_offset = s_src * src.stride( 0 ) + a_src;
+            if ( i < num_stay )
+                for ( std::size_t n = 0; n < num_comp; ++n )
+                    recv_buffer( i, n ) =
+                        src_data[src_offset + n * SliceType::vector_length];
+            else
+                for ( std::size_t n = 0; n < num_comp; ++n )
+                    send_buffer( i - num_stay, n ) =
+                        src_data[src_offset + n * SliceType::vector_length];
+        };
+        Kokkos::RangePolicy<execution_space> build_send_buffer_policy(
+            0, _distributor.totalNumExport() );
+        Kokkos::parallel_for( "Cabana::migrate::build_send_buffer",
+                              build_send_buffer_policy,
+                              build_send_buffer_func );
+        Kokkos::fence();
+
+        // The distributor has its own communication space so choose any tag.
+        const int mpi_tag = 1234;
+
+        // Post non-blocking receives.
+        std::vector<MPI_Request> requests;
+        requests.reserve( num_n );
+        std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
+        for ( int n = 0; n < num_n; ++n )
+        {
+            recv_range.second = recv_range.first + _distributor.numImport( n );
+
+            if ( ( _distributor.numImport( n ) > 0 ) &&
+                 ( _distributor.neighborRank( n ) != _my_rank ) )
+            {
+                auto recv_subview =
+                    Kokkos::subview( recv_buffer, recv_range, Kokkos::ALL );
+
+                requests.push_back( MPI_Request() );
+
+                MPI_Irecv( recv_subview.data(),
+                           recv_subview.size() * sizeof( data_type ), MPI_BYTE,
+                           _distributor.neighborRank( n ), mpi_tag,
+                           _distributor.comm(), &( requests.back() ) );
+            }
+
+            recv_range.first = recv_range.second;
+        }
+
+        // Do blocking sends.
+        std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
+        for ( int n = 0; n < num_n; ++n )
+        {
+            if ( ( _distributor.numExport( n ) > 0 ) &&
+                 ( _distributor.neighborRank( n ) != _my_rank ) )
+            {
+                send_range.second =
+                    send_range.first + _distributor.numExport( n );
+
+                auto send_subview =
+                    Kokkos::subview( send_buffer, send_range, Kokkos::ALL );
+
+                MPI_Send( send_subview.data(),
+                          send_subview.size() * sizeof( data_type ), MPI_BYTE,
+                          _distributor.neighborRank( n ), mpi_tag,
+                          _distributor.comm() );
+
+                send_range.first = send_range.second;
+            }
+        }
+
+        // Wait on non-blocking receives.
+        std::vector<MPI_Status> status( requests.size() );
+        const int ec =
+            MPI_Waitall( requests.size(), requests.data(), status.data() );
+        if ( MPI_SUCCESS != ec )
+            throw std::logic_error( "Failed MPI Communication" );
+
+        // Extract the data from the receive buffer into the destination Slice.
+        auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
+        {
+            auto s = SliceType::index_type::s( i );
+            auto a = SliceType::index_type::a( i );
+            std::size_t dst_offset = s * dst.stride( 0 ) + a;
+            for ( std::size_t n = 0; n < num_comp; ++n )
+                dst_data[dst_offset + n * SliceType::vector_length] =
+                    recv_buffer( i, n );
+        };
+        Kokkos::RangePolicy<execution_space> extract_recv_buffer_policy(
+            0, _distributor.totalNumImport() );
+        Kokkos::parallel_for( "Cabana::migrate::extract_recv_buffer",
+                              extract_recv_buffer_policy,
+                              extract_recv_buffer_func );
+        Kokkos::fence();
+
+        // Barrier before completing to ensure synchronization.
+        MPI_Barrier( _distributor.comm() );
+    }
+
+    //! \cond Impl
+    void apply( SliceType& ) override
+    {
+        // This should never be called. It exists to override the base.
+        throw std::runtime_error(
+            "In-place slice migrate is not implemented!" );
+    }
+    //! \endcond
+
+    /*!
+      \brief Update the distributor and slice data for migrate.
+
+      \param distributor The Distributor to be used for the migrate.
+      \param src The slice containing the data to be migrated.
+      \param dst The slice to which the migrated data will be written.
+      \param overallocation An optional factor to keep extra space in the
+      buffers to avoid frequent resizing.
+    */
+    void update( const DistributorType& distributor, const SliceType& src,
+                 SliceType& dst, const double overallocation )
+    {
+        // Check that src and dst are the right size.
+        if ( !distributorCheckValidSize( distributor, src, dst ) )
+            throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
+
+        this->updateImpl( distributor, src, distributor.totalSend(),
+                          distributor.totalReceive(), overallocation );
+    }
+    /*!
+      \brief Update the distributor and slice data for migrate.
+
+      \param distributor The Distributor to be used for the migrate.
+      \param src The slice containing the data to be migrated.
+      \param dst The slice to which the migrated data will be written.
+    */
+    void update( const DistributorType& distributor, const SliceType& src,
+                 SliceType& dst )
+    {
+        // Check that src and dst are the right size.
+        if ( !distributorCheckValidSize( distributor, src, dst ) )
+            throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
+
+        this->updateImpl( distributor, src, distributor.totalSend(),
+                          distributor.totalReceive() );
+    }
+
+  private:
+    plan_type _distributor = base_type::_comm_plan;
+
+    int _my_rank;
+};
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Create the migrate.
+
+  \param distributor The distributor to use for the migrate.
+  \param data The data on which to perform the migrate.
+  \param overallocation An optional factor to keep extra space in the buffers to
+  avoid frequent resizing.
+*/
+template <class DistributorType, class ParticleDataType>
+auto createMigrate( DistributorType distributor, ParticleDataType data,
+                    const double overallocation = 1.0 )
+{
+    return Migrate<DistributorType, ParticleDataType>( distributor, data,
+                                                       overallocation );
+}
+
+/*!
+  \brief Create the migrate.
+
+  \param distributor The distributor to use for the migrate.
+  \param src The AoSoA containing the data to be migrated.
+  \param dst The AoSoA to which the migrated data will be written.
+  \param overallocation An optional factor to keep extra space in the buffers to
+  avoid frequent resizing.
+*/
+template <class DistributorType, class ParticleDataType>
+auto createMigrate( const DistributorType& distributor,
+                    const ParticleDataType& src, ParticleDataType& dst,
+                    const double overallocation = 1.0 )
+{
+    return Migrate<DistributorType, ParticleDataType>( distributor, src, dst,
+                                                       overallocation );
+}
 
 //---------------------------------------------------------------------------//
 /*!
@@ -311,9 +827,9 @@ void distributeData(
   Migrate moves all data to a new distribution that is uniquely owned - each
   element will only have a single destination rank.
 
-  \tparam Distributor_t Distributor type - must be a distributor.
-
-  \tparam AoSoA_t AoSoA type - must be an AoSoA.
+  \note This routine allocates send and receive buffers internally. This is
+  often not performant due to frequent buffer reallocations - consider creating
+  and reusing Migrate instead.
 
   \param distributor The distributor to use for the migration.
 
@@ -324,22 +840,15 @@ void distributeData(
   same size as the number of imports given by the distributor on this
   rank. Call totalNumImport() on the distributor to get this size value.
 */
-template <class Distributor_t, class AoSoA_t>
-void migrate( const Distributor_t& distributor, const AoSoA_t& src,
-              AoSoA_t& dst,
-              typename std::enable_if<( is_distributor<Distributor_t>::value &&
-                                        is_aosoa<AoSoA_t>::value ),
-                                      int>::type* = 0 )
+template <class DistributorType, class AoSoAType>
+void migrate(
+    const DistributorType& distributor, const AoSoAType& src, AoSoAType& dst,
+    typename std::enable_if<( is_distributor<DistributorType>::value &&
+                              is_aosoa<AoSoAType>::value ),
+                            int>::type* = 0 )
 {
-    // Check that src and dst are the right size.
-    if ( src.size() != distributor.exportSize() )
-        throw std::runtime_error( "Source is the wrong size for migration!" );
-    if ( dst.size() != distributor.totalNumImport() )
-        throw std::runtime_error(
-            "Destination is the wrong size for migration!" );
-
-    // Move the data.
-    Impl::distributeData( distributor, src, dst );
+    auto migrate = createMigrate( distributor, src, dst );
+    migrate.apply( src, dst );
 }
 
 //---------------------------------------------------------------------------//
@@ -353,46 +862,28 @@ void migrate( const Distributor_t& distributor, const AoSoA_t& src,
   Migrate moves all data to a new distribution that is uniquely owned - each
   element will only have a single destination rank.
 
-  \tparam Distributor_t Distributor type - must be a distributor.
-
-  \tparam AoSoA_t AoSoA type - must be an AoSoA.
+  \note This routine allocates send and receive buffers internally. This is
+  often not performant due to frequent buffer reallocations - consider creating
+  and reusing Migrate instead.
 
   \param distributor The distributor to use for the migration.
 
   \param aosoa The AoSoA containing the data to be migrated. Upon input, must
   have the same number of elements as the inputs used to construct the
-  destributor. At output, it will be the same size as th enumber of import
+  distributor. At output, it will be the same size as the number of import
   elements on this rank provided by the distributor. Before using this
   function, consider reserving enough memory in the data structure so
   reallocating is not necessary.
 */
-template <class Distributor_t, class AoSoA_t>
-void migrate( const Distributor_t& distributor, AoSoA_t& aosoa,
-              typename std::enable_if<( is_distributor<Distributor_t>::value &&
-                                        is_aosoa<AoSoA_t>::value ),
-                                      int>::type* = 0 )
+template <class DistributorType, class AoSoAType>
+void migrate(
+    const DistributorType& distributor, AoSoAType& aosoa,
+    typename std::enable_if<( is_distributor<DistributorType>::value &&
+                              is_aosoa<AoSoAType>::value ),
+                            int>::type* = 0 )
 {
-    // Check that the AoSoA is the right size.
-    if ( aosoa.size() != distributor.exportSize() )
-        throw std::runtime_error( "AoSoA is the wrong size for migration!" );
-
-    // Determine if the source of destination decomposition has more data on
-    // this rank.
-    bool dst_is_bigger =
-        ( distributor.totalNumImport() > distributor.exportSize() );
-
-    // If the destination decomposition is bigger than the source
-    // decomposition resize now so we have enough space to do the operation.
-    if ( dst_is_bigger )
-        aosoa.resize( distributor.totalNumImport() );
-
-    // Move the data.
-    Impl::distributeData( distributor, aosoa, aosoa );
-
-    // If the destination decomposition is smaller than the source
-    // decomposition resize after we have moved the data.
-    if ( !dst_is_bigger )
-        aosoa.resize( distributor.totalNumImport() );
+    auto migrate = createMigrate( distributor, aosoa );
+    migrate.apply( aosoa );
 }
 
 //---------------------------------------------------------------------------//
@@ -405,180 +896,25 @@ void migrate( const Distributor_t& distributor, AoSoA_t& aosoa,
   Migrate moves all data to a new distribution that is uniquely owned - each
   element will only have a single destination rank.
 
-  \tparam Distributor_t Distributor type - must be a distributor.
-
-  \tparam Slice_t Slice type - must be an Slice.
-
   \param distributor The distributor to use for the migration.
 
   \param src The slice containing the data to be migrated. Must have the same
-  number of elements as the inputs used to construct the destributor.
+  number of elements as the inputs used to construct the distributor.
 
   \param dst The slice to which the migrated data will be written. Must be the
   same size as the number of imports given by the distributor on this
   rank. Call totalNumImport() on the distributor to get this size value.
 */
-template <class Distributor_t, class Slice_t>
-void migrate( const Distributor_t& distributor, const Slice_t& src,
-              Slice_t& dst,
-              typename std::enable_if<( is_distributor<Distributor_t>::value &&
-                                        is_slice<Slice_t>::value ),
-                                      int>::type* = 0 )
+template <class DistributorType, class SliceType>
+void migrate(
+    const DistributorType& distributor, const SliceType& src, SliceType& dst,
+    typename std::enable_if<( is_distributor<DistributorType>::value &&
+                              is_slice<SliceType>::value ),
+                            int>::type* = 0 )
 {
-    // Check that src and dst are the right size.
-    if ( src.size() != distributor.exportSize() )
-        throw std::runtime_error( "Source is the wrong size for migration!" );
-    if ( dst.size() != distributor.totalNumImport() )
-        throw std::runtime_error(
-            "Destination is the wrong size for migration!" );
-
-    // Get the number of components in the slices.
-    size_t num_comp = 1;
-    for ( size_t d = 2; d < src.rank(); ++d )
-        num_comp *= src.extent( d );
-
-    // Get the raw slice data.
-    auto src_data = src.data();
-    auto dst_data = dst.data();
-
-    // Get the MPI rank we are currently on.
-    int my_rank = -1;
-    MPI_Comm_rank( distributor.comm(), &my_rank );
-
-    // Get the number of neighbors.
-    int num_n = distributor.numNeighbor();
-
-    // Calculate the number of elements that are staying on this rank and
-    // therefore can be directly copied. If any of the neighbor ranks are this
-    // rank it will be stored in first position (i.e. the first neighbor in
-    // the local list is always yourself if you are sending to yourself).
-    std::size_t num_stay =
-        ( num_n > 0 && distributor.neighborRank( 0 ) == my_rank )
-            ? distributor.numExport( 0 )
-            : 0;
-
-    // Allocate a send buffer. Note this one is layout right so the components
-    // of each element are consecutive in memory.
-    std::size_t num_send = distributor.totalNumExport() - num_stay;
-    Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
-                 typename Distributor_t::memory_space>
-        send_buffer( Kokkos::ViewAllocateWithoutInitializing(
-                         "distributor_send_buffer" ),
-                     num_send, num_comp );
-
-    // Allocate a receive buffer. Note this one is layout right so the
-    // components of each element are consecutive in memory.
-    Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
-                 typename Distributor_t::memory_space>
-        recv_buffer( Kokkos::ViewAllocateWithoutInitializing(
-                         "distributor_recv_buffer" ),
-                     distributor.totalNumImport(), num_comp );
-
-    // Get the steering vector for the sends.
-    auto steering = distributor.getExportSteering();
-
-    // Gather from the source Slice into the contiguous send buffer or,
-    // if it is part of the local copy, put it directly in the destination
-    // Slice.
-    auto build_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
-    {
-        auto s_src = Slice_t::index_type::s( steering( i ) );
-        auto a_src = Slice_t::index_type::a( steering( i ) );
-        std::size_t src_offset = s_src * src.stride( 0 ) + a_src;
-        if ( i < num_stay )
-            for ( std::size_t n = 0; n < num_comp; ++n )
-                recv_buffer( i, n ) =
-                    src_data[src_offset + n * Slice_t::vector_length];
-        else
-            for ( std::size_t n = 0; n < num_comp; ++n )
-                send_buffer( i - num_stay, n ) =
-                    src_data[src_offset + n * Slice_t::vector_length];
-    };
-    Kokkos::RangePolicy<typename Distributor_t::execution_space>
-        build_send_buffer_policy( 0, distributor.totalNumExport() );
-    Kokkos::parallel_for( "Cabana::migrate::build_send_buffer",
-                          build_send_buffer_policy, build_send_buffer_func );
-    Kokkos::fence();
-
-    // The distributor has its own communication space so choose any tag.
-    const int mpi_tag = 1234;
-
-    // Post non-blocking receives.
-    std::vector<MPI_Request> requests;
-    requests.reserve( num_n );
-    std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
-    for ( int n = 0; n < num_n; ++n )
-    {
-        recv_range.second = recv_range.first + distributor.numImport( n );
-
-        if ( ( distributor.numImport( n ) > 0 ) &&
-             ( distributor.neighborRank( n ) != my_rank ) )
-        {
-            auto recv_subview =
-                Kokkos::subview( recv_buffer, recv_range, Kokkos::ALL );
-
-            requests.push_back( MPI_Request() );
-
-            MPI_Irecv( recv_subview.data(),
-                       recv_subview.size() *
-                           sizeof( typename Slice_t::value_type ),
-                       MPI_BYTE, distributor.neighborRank( n ), mpi_tag,
-                       distributor.comm(), &( requests.back() ) );
-        }
-
-        recv_range.first = recv_range.second;
-    }
-
-    // Do blocking sends.
-    std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
-    for ( int n = 0; n < num_n; ++n )
-    {
-        if ( ( distributor.numExport( n ) > 0 ) &&
-             ( distributor.neighborRank( n ) != my_rank ) )
-        {
-            send_range.second = send_range.first + distributor.numExport( n );
-
-            auto send_subview =
-                Kokkos::subview( send_buffer, send_range, Kokkos::ALL );
-
-            MPI_Send( send_subview.data(),
-                      send_subview.size() *
-                          sizeof( typename Slice_t::value_type ),
-                      MPI_BYTE, distributor.neighborRank( n ), mpi_tag,
-                      distributor.comm() );
-
-            send_range.first = send_range.second;
-        }
-    }
-
-    // Wait on non-blocking receives.
-    std::vector<MPI_Status> status( requests.size() );
-    const int ec =
-        MPI_Waitall( requests.size(), requests.data(), status.data() );
-    if ( MPI_SUCCESS != ec )
-        throw std::logic_error( "Failed MPI Communication" );
-
-    // Extract the data from the receive buffer into the destination Slice.
-    auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
-    {
-        auto s = Slice_t::index_type::s( i );
-        auto a = Slice_t::index_type::a( i );
-        std::size_t dst_offset = s * dst.stride( 0 ) + a;
-        for ( std::size_t n = 0; n < num_comp; ++n )
-            dst_data[dst_offset + n * Slice_t::vector_length] =
-                recv_buffer( i, n );
-    };
-    Kokkos::RangePolicy<typename Distributor_t::execution_space>
-        extract_recv_buffer_policy( 0, distributor.totalNumImport() );
-    Kokkos::parallel_for( "Cabana::migrate::extract_recv_buffer",
-                          extract_recv_buffer_policy,
-                          extract_recv_buffer_func );
-    Kokkos::fence();
-
-    // Barrier before completing to ensure synchronization.
-    MPI_Barrier( distributor.comm() );
+    auto migrate = createMigrate( distributor, src, dst );
+    migrate.apply( src, dst );
 }
-
 //---------------------------------------------------------------------------//
 
 } // end namespace Cabana

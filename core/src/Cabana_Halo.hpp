@@ -359,6 +359,12 @@ class Gather<HaloType, AoSoAType,
         MPI_Barrier( _halo.comm() );
     }
 
+    void apply( const AoSoAType&, AoSoAType& ) override
+    {
+        // This should never be called. It exists to override the base.
+        throw std::runtime_error( "Gather must be in place!" );
+    }
+
     /*!
       \brief Reserve new buffers as needed and update the halo and AoSoA data.
 
@@ -548,6 +554,12 @@ class Gather<HaloType, SliceType,
 
         // Barrier before completing to ensure synchronization.
         MPI_Barrier( _halo.comm() );
+    }
+
+    void apply( const SliceType&, SliceType& ) override
+    {
+        // This should never be called. It exists to override the base.
+        throw std::runtime_error( "Gather must be in place!" );
     }
 
     /*!
@@ -792,6 +804,12 @@ class Scatter
 
         // Barrier before completing to ensure synchronization.
         MPI_Barrier( _halo.comm() );
+    }
+
+    void apply( const SliceType&, SliceType& ) override
+    {
+        // This should never be called. It exists to override the base.
+        throw std::runtime_error( "Scatter must be in place!" );
     }
 
     /*!
