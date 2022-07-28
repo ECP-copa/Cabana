@@ -69,6 +69,12 @@ class NeighborList
     static std::size_t getNeighbor( const NeighborListType& list,
                                     const std::size_t particle_index,
                                     const std::size_t neighbor_index );
+
+    //! Set the id for a neighbor for a given particle index and neighbor index.
+    KOKKOS_INLINE_FUNCTION
+    std::size_t setNeighbor( NeighborListType& list,
+                             const std::size_t particle_index,
+                             const std::size_t neighbor_index );
 };
 
 //---------------------------------------------------------------------------//

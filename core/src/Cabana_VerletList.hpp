@@ -69,6 +69,13 @@ struct VerletListData<MemorySpace, VerletLayoutCSR>
         neighbors( offsets( pid ) +
                    Kokkos::atomic_fetch_add( &counts( pid ), 1 ) ) = nid;
     }
+
+    //! Modify a neighbor in the list.
+    KOKKOS_INLINE_FUNCTION
+    void setNeighbor( const int pid, const int nid, const int new_id ) const
+    {
+        neighbors( offsets( pid ) + nid ) = new_id;
+    }
 };
 
 //! Store the VerletList 2D neighbor data.
@@ -91,6 +98,13 @@ struct VerletListData<MemorySpace, VerletLayout2D>
         std::size_t count = Kokkos::atomic_fetch_add( &counts( pid ), 1 );
         if ( count < neighbors.extent( 1 ) )
             neighbors( pid, count ) = nid;
+    }
+
+    //! Modify a neighbor in the list.
+    KOKKOS_INLINE_FUNCTION
+    void setNeighbor( const int pid, const int nid, const int new_id ) const
+    {
+        neighbors( pid, nid ) = new_id;
     }
 };
 
@@ -788,6 +802,15 @@ class VerletList
 
         // Get the data from the builder.
         _data = builder._data;
+    }
+
+    //! Modify a neighbor in the list; for example, mark it as a broken bond.
+    KOKKOS_INLINE_FUNCTION
+    void setNeighbor( const std::size_t particle_index,
+                      const std::size_t neighbor_index,
+                      const int new_index ) const
+    {
+        _data.setNeighbor( particle_index, neighbor_index, new_index );
     }
 };
 
