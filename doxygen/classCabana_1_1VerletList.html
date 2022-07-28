@@ -121,6 +121,10 @@ template&lt;class PositionSlice , class ExecutionSpace &gt; </td></tr>
 <tr class="memitem:a01978d70caaeffeff8deae1e2f494ab0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html#a01978d70caaeffeff8deae1e2f494ab0">build</a> (ExecutionSpace, PositionSlice x, const std::size_t begin, const std::size_t end, const typename PositionSlice::value_type neighborhood_radius, const typename PositionSlice::value_type cell_size_ratio, const typename PositionSlice::value_type grid_min[3], const typename PositionSlice::value_type grid_max[3], const std::size_t max_neigh=0)</td></tr>
 <tr class="memdesc:a01978d70caaeffeff8deae1e2f494ab0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a list of particle positions and a neighborhood radius calculate the neighbor list. <br /></td></tr>
 <tr class="separator:a01978d70caaeffeff8deae1e2f494ab0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ec325de6150d9f2e5a71175924970b7"><td class="memItemLeft" align="right" valign="top"><a id="a3ec325de6150d9f2e5a71175924970b7"></a>
+KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html#a3ec325de6150d9f2e5a71175924970b7">setNeighbor</a> (const std::size_t particle_index, const std::size_t neighbor_index, const int new_index) const</td></tr>
+<tr class="memdesc:a3ec325de6150d9f2e5a71175924970b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Modify a neighbor in the list; for example, mark it as a broken bond. <br /></td></tr>
+<tr class="separator:a3ec325de6150d9f2e5a71175924970b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>

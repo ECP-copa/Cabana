@@ -1,16 +1,16 @@
 var searchData=
 [
-  ['l2g_871',['L2G',['../structCajita_1_1IndexConversion_1_1L2G.html',1,'Cajita::IndexConversion']]],
-  ['layoutadapter_872',['LayoutAdapter',['../structCajita_1_1LayoutAdapter.html',1,'Cajita']]],
-  ['layoutcabanaslice_873',['LayoutCabanaSlice',['../structKokkos_1_1LayoutCabanaSlice.html',1,'Kokkos']]],
-  ['layoutcontainer_874',['LayoutContainer',['../structCajita_1_1ReferenceConjugateGradient_1_1LayoutContainer.html',1,'Cajita::ReferenceConjugateGradient']]],
-  ['linkedcelllist_875',['LinkedCellList',['../classCabana_1_1LinkedCellList.html',1,'Cabana']]],
-  ['loadbalancer_876',['LoadBalancer',['../classCajita_1_1Experimental_1_1LoadBalancer.html',1,'Cajita::Experimental']]],
-  ['loadbalancer_3c_20uniformmesh_3c_20scalar_2c_20numspacedim_20_3e_20_3e_877',['LoadBalancer&lt; UniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;',['../classCajita_1_1Experimental_1_1LoadBalancer_3_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html',1,'Cajita::Experimental']]],
-  ['local_878',['Local',['../structCajita_1_1Local.html',1,'Cajita']]],
-  ['localgrid_879',['LocalGrid',['../classCajita_1_1Experimental_1_1LocalGrid.html',1,'Cajita::Experimental::LocalGrid&lt; MeshType &gt;'],['../classCajita_1_1LocalGrid.html',1,'Cajita::LocalGrid&lt; MeshType &gt;']]],
-  ['localgrid_3c_20sparsemesh_3c_20scalar_2c_20numspacedim_20_3e_20_3e_880',['LocalGrid&lt; SparseMesh&lt; Scalar, NumSpaceDim &gt; &gt;',['../classCajita_1_1Experimental_1_1LocalGrid_3_01SparseMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html',1,'Cajita::Experimental']]],
-  ['localmesh_881',['LocalMesh',['../classCajita_1_1LocalMesh.html',1,'Cajita']]],
-  ['localmesh_3c_20device_2c_20nonuniformmesh_3c_20scalar_2c_20numspacedim_20_3e_20_3e_882',['LocalMesh&lt; Device, NonUniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;',['../classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html',1,'Cajita']]],
-  ['localmesh_3c_20device_2c_20uniformmesh_3c_20scalar_2c_20numspacedim_20_3e_20_3e_883',['LocalMesh&lt; Device, UniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;',['../classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html',1,'Cajita']]]
+  ['l2g_872',['L2G',['../structCajita_1_1IndexConversion_1_1L2G.html',1,'Cajita::IndexConversion']]],
+  ['layoutadapter_873',['LayoutAdapter',['../structCajita_1_1LayoutAdapter.html',1,'Cajita']]],
+  ['layoutcabanaslice_874',['LayoutCabanaSlice',['../structKokkos_1_1LayoutCabanaSlice.html',1,'Kokkos']]],
+  ['layoutcontainer_875',['LayoutContainer',['../structCajita_1_1ReferenceConjugateGradient_1_1LayoutContainer.html',1,'Cajita::ReferenceConjugateGradient']]],
+  ['linkedcelllist_876',['LinkedCellList',['../classCabana_1_1LinkedCellList.html',1,'Cabana']]],
+  ['loadbalancer_877',['LoadBalancer',['../classCajita_1_1Experimental_1_1LoadBalancer.html',1,'Cajita::Experimental']]],
+  ['loadbalancer_3c_20uniformmesh_3c_20scalar_2c_20numspacedim_20_3e_20_3e_878',['LoadBalancer&lt; UniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;',['../classCajita_1_1Experimental_1_1LoadBalancer_3_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html',1,'Cajita::Experimental']]],
+  ['local_879',['Local',['../structCajita_1_1Local.html',1,'Cajita']]],
+  ['localgrid_880',['LocalGrid',['../classCajita_1_1Experimental_1_1LocalGrid.html',1,'Cajita::Experimental::LocalGrid&lt; MeshType &gt;'],['../classCajita_1_1LocalGrid.html',1,'Cajita::LocalGrid&lt; MeshType &gt;']]],
+  ['localgrid_3c_20sparsemesh_3c_20scalar_2c_20numspacedim_20_3e_20_3e_881',['LocalGrid&lt; SparseMesh&lt; Scalar, NumSpaceDim &gt; &gt;',['../classCajita_1_1Experimental_1_1LocalGrid_3_01SparseMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html',1,'Cajita::Experimental']]],
+  ['localmesh_882',['LocalMesh',['../classCajita_1_1LocalMesh.html',1,'Cajita']]],
+  ['localmesh_3c_20device_2c_20nonuniformmesh_3c_20scalar_2c_20numspacedim_20_3e_20_3e_883',['LocalMesh&lt; Device, NonUniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;',['../classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html',1,'Cajita']]],
+  ['localmesh_3c_20device_2c_20uniformmesh_3c_20scalar_2c_20numspacedim_20_3e_20_3e_884',['LocalMesh&lt; Device, UniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;',['../classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html',1,'Cajita']]]
 ];
