@@ -218,8 +218,11 @@ bool distributorCheckValidSize(
   \param distributor The distributor that will be used for the migrate. Used to
   query import and export sizes.
 
-  \param particles The particle data (either AoSoA or slice). Used to query the
+  \param src The source particle data (either AoSoA or slice). Used to query the
   total size.
+
+  \param dst The destination particle data (either AoSoA or slice). Used to
+  query the total size.
 */
 template <class DistributorType, class ParticleData>
 bool distributorCheckValidSize(

@@ -1149,6 +1149,7 @@ class CommunicationData
     //! Perform the communication (migrate, gather, scatter).
     virtual void apply() = 0;
 
+    //! Perform the communication (migrate, gather, scatter).
     virtual void apply( const particle_data_type& src,
                         particle_data_type& dst ) = 0;
 
