@@ -238,19 +238,18 @@ class Gather;
 template <class HaloType, class AoSoAType>
 class Gather<HaloType, AoSoAType,
              typename std::enable_if<is_aosoa<AoSoAType>::value>::type>
-    : CommunicateAoSoA<HaloType, AoSoAType>
+    : public CommunicationData<HaloType, CommunicationDataAoSoA<AoSoAType>>
 {
   public:
     static_assert( is_halo<HaloType>::value, "" );
 
     //! Base type.
-    using base_type = CommunicateAoSoA<HaloType, AoSoAType>;
+    using base_type =
+        CommunicationData<HaloType, CommunicationDataAoSoA<AoSoAType>>;
     //! Communication plan type (Halo)
     using plan_type = typename base_type::plan_type;
     //! Kokkos execution space.
     using execution_space = typename base_type::execution_space;
-    //! AoSoA type.
-    using aosoa_type = typename base_type::aosoa_type;
     //! Kokkos memory space.
     using memory_space = typename base_type::memory_space;
     //! Communication data type.
@@ -288,11 +287,14 @@ class Gather<HaloType, AoSoAType,
     */
     void apply( AoSoAType& aosoa ) override
     {
+        // Get the buffers (local copies for lambdas below).
+        auto send_buffer = this->getSendBuffer();
+        auto recv_buffer = this->getReceiveBuffer();
+
         // Get the steering vector for the sends.
         auto steering = _halo.getExportSteering();
 
         // Gather from the local data into a tuple-contiguous send buffer.
-        auto send_buffer = this->getSendBuffer();
         auto gather_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
         {
             send_buffer( i ) = aosoa.getTuple( steering( i ) );
@@ -315,7 +317,7 @@ class Gather<HaloType, AoSoAType,
         {
             recv_range.second = recv_range.first + _halo.numImport( n );
 
-            auto recv_subview = Kokkos::subview( _recv_buffer, recv_range );
+            auto recv_subview = Kokkos::subview( recv_buffer, recv_range );
 
             MPI_Irecv( recv_subview.data(),
                        recv_subview.size() * sizeof( data_type ), MPI_BYTE,
@@ -331,7 +333,7 @@ class Gather<HaloType, AoSoAType,
         {
             send_range.second = send_range.first + _halo.numExport( n );
 
-            auto send_subview = Kokkos::subview( _send_buffer, send_range );
+            auto send_subview = Kokkos::subview( send_buffer, send_range );
 
             MPI_Send( send_subview.data(),
                       send_subview.size() * sizeof( data_type ), MPI_BYTE,
@@ -349,7 +351,6 @@ class Gather<HaloType, AoSoAType,
 
         // Extract the receive buffer into the ghosted elements.
         std::size_t num_local = _halo.numLocal();
-        auto recv_buffer = this->getReceiveBuffer();
         auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
         {
             std::size_t ghost_idx = i + num_local;
@@ -371,23 +372,34 @@ class Gather<HaloType, AoSoAType,
 
       \param halo The Halo to be used for the gather.
       \param aosoa The AoSoA on which to perform the gather.
-      \param overallocation An optional factor to keep extra space in the
-      buffers to avoid frequent resizing.
     */
-    void update( const HaloType& halo, AoSoAType& aosoa,
-                 const double overallocation = -1 ) override
+    void update( const HaloType& halo, AoSoAType& aosoa )
     {
         if ( !haloCheckValidSize( halo, aosoa ) )
             throw std::runtime_error( "AoSoA is the wrong size for gather!" );
 
-        this->updateImpl( halo, totalSend(), totalReceive(), overallocation );
+        this->updateImpl( halo, aosoa, totalSend(), totalReceive() );
+    }
+    /*!
+      \brief Udpate the halo and AoSoA data for gather.
+
+      \param halo The Halo to be used for the gather.
+      \param aosoa The AoSoA on which to perform the gather.
+      \param overallocation An optional factor to keep extra space in the
+      buffers to avoid frequent resizing.
+    */
+    void update( const HaloType& halo, AoSoAType& aosoa,
+                 const double overallocation )
+    {
+        if ( !haloCheckValidSize( halo, aosoa ) )
+            throw std::runtime_error( "AoSoA is the wrong size for gather!" );
+
+        this->updateImpl( halo, aosoa, totalSend(), totalReceive(),
+                          overallocation );
     }
 
   private:
     plan_type _halo = base_type::_comm_plan;
-    using base_type::_overallocation;
-    using base_type::_recv_buffer;
-    using base_type::_send_buffer;
 };
 
 /*!
@@ -404,19 +416,18 @@ class Gather<HaloType, AoSoAType,
 template <class HaloType, class SliceType>
 class Gather<HaloType, SliceType,
              typename std::enable_if<is_slice<SliceType>::value>::type>
-    : CommunicateSlice<HaloType, SliceType>
+    : public CommunicationData<HaloType, CommunicationDataSlice<SliceType>>
 {
   public:
     static_assert( is_halo<HaloType>::value, "" );
 
     //! Base type.
-    using base_type = CommunicateSlice<HaloType, SliceType>;
+    using base_type =
+        CommunicationData<HaloType, CommunicationDataSlice<SliceType>>;
     //! Communication plan type (Halo)
     using plan_type = typename base_type::plan_type;
     //! Kokkos execution space.
     using execution_space = typename base_type::execution_space;
-    //! Slice type.
-    using slice_type = typename base_type::slice_type;
     //! Kokkos memory space.
     using memory_space = typename base_type::memory_space;
     //! Communication data type.
@@ -457,6 +468,10 @@ class Gather<HaloType, SliceType,
         // Get the number of components in the slice.
         std::size_t num_comp = this->getSliceComponents( slice );
 
+        // Get the buffers (local copies for lambdas below).
+        auto send_buffer = this->getSendBuffer();
+        auto recv_buffer = this->getReceiveBuffer();
+
         // Get the raw slice data.
         auto slice_data = slice.data();
 
@@ -464,7 +479,6 @@ class Gather<HaloType, SliceType,
         auto steering = _halo.getExportSteering();
 
         // Gather from the local data into a tuple-contiguous send buffer.
-        auto send_buffer = this->getSendBuffer();
         auto gather_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
         {
             auto s = SliceType::index_type::s( steering( i ) );
@@ -493,12 +507,11 @@ class Gather<HaloType, SliceType,
             recv_range.second = recv_range.first + _halo.numImport( n );
 
             auto recv_subview =
-                Kokkos::subview( _recv_buffer, recv_range, Kokkos::ALL );
+                Kokkos::subview( recv_buffer, recv_range, Kokkos::ALL );
 
             MPI_Irecv( recv_subview.data(),
-                       recv_subview.size() *
-                           sizeof( typename SliceType::value_type ),
-                       MPI_BYTE, _halo.neighborRank( n ), mpi_tag, _halo.comm(),
+                       recv_subview.size() * sizeof( data_type ), MPI_BYTE,
+                       _halo.neighborRank( n ), mpi_tag, _halo.comm(),
                        &( requests[n] ) );
 
             recv_range.first = recv_range.second;
@@ -511,12 +524,11 @@ class Gather<HaloType, SliceType,
             send_range.second = send_range.first + _halo.numExport( n );
 
             auto send_subview =
-                Kokkos::subview( _send_buffer, send_range, Kokkos::ALL );
+                Kokkos::subview( send_buffer, send_range, Kokkos::ALL );
 
-            MPI_Send(
-                send_subview.data(),
-                send_subview.size() * sizeof( typename SliceType::value_type ),
-                MPI_BYTE, _halo.neighborRank( n ), mpi_tag, _halo.comm() );
+            MPI_Send( send_subview.data(),
+                      send_subview.size() * sizeof( data_type ), MPI_BYTE,
+                      _halo.neighborRank( n ), mpi_tag, _halo.comm() );
 
             send_range.first = send_range.second;
         }
@@ -530,7 +542,6 @@ class Gather<HaloType, SliceType,
 
         // Extract the receive buffer into the ghosted elements.
         std::size_t num_local = _halo.numLocal();
-        auto recv_buffer = this->getReceiveBuffer();
         auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
         {
             std::size_t ghost_idx = i + num_local;
@@ -561,23 +572,30 @@ class Gather<HaloType, SliceType,
       buffers to avoid frequent resizing.
     */
     void update( const HaloType& halo, const SliceType& slice,
-                 const double overallocation = -1 ) override
+                 const double overallocation )
     {
         if ( !haloCheckValidSize( halo, slice ) )
             throw std::runtime_error( "AoSoA is the wrong size for gather!" );
 
-        // Get the number of components in the slice.
-        std::size_t num_comp = this->getSliceComponents( slice );
-
-        this->updateImpl( halo, totalSend(), totalReceive(), num_comp,
+        this->updateImpl( halo, slice, totalSend(), totalReceive(),
                           overallocation );
+    }
+    /*!
+      \brief Udpate the halo and slice data for gather.
+
+      \param halo The Halo to be used for the gather.
+      \param slice The slice on which to perform the gather.
+    */
+    void update( const HaloType& halo, const SliceType& slice )
+    {
+        if ( !haloCheckValidSize( halo, slice ) )
+            throw std::runtime_error( "AoSoA is the wrong size for gather!" );
+
+        this->updateImpl( halo, slice, totalSend(), totalReceive() );
     }
 
   private:
     plan_type _halo = base_type::_comm_plan;
-    using base_type::_overallocation;
-    using base_type::_recv_buffer;
-    using base_type::_send_buffer;
 };
 
 //---------------------------------------------------------------------------//
@@ -642,19 +660,19 @@ void gather( const HaloType& halo, ParticleDataType& data )
   contributions will be made to the sum, one for each rank.
 */
 template <class HaloType, class SliceType>
-class Scatter : CommunicateSlice<HaloType, SliceType>
+class Scatter
+    : public CommunicationData<HaloType, CommunicationDataSlice<SliceType>>
 {
     static_assert( is_halo<HaloType>::value, "" );
 
   public:
     //! Base type.
-    using base_type = CommunicateSlice<HaloType, SliceType>;
+    using base_type =
+        CommunicationData<HaloType, CommunicationDataSlice<SliceType>>;
     //! Communication plan type (Halo).
     using plan_type = typename base_type::plan_type;
     //! Kokkos execution space.
     using execution_space = typename base_type::execution_space;
-    //! Slice type.
-    using slice_type = typename base_type::slice_type;
     //! Kokkos memory space.
     using memory_space = typename base_type::memory_space;
     //! Communication data type.
@@ -695,16 +713,18 @@ class Scatter : CommunicateSlice<HaloType, SliceType>
         // Get the number of components in the slice.
         std::size_t num_comp = this->getSliceComponents( slice );
 
+        // Get the buffers (local copies for lambdas below).
+        auto send_buffer = this->getSendBuffer();
+        auto recv_buffer = this->getReceiveBuffer();
+
         // Get the raw slice data. Wrap in a 1D Kokkos View so we can unroll the
         // components of each slice element.
-        Kokkos::View<typename SliceType::value_type*,
-                     typename SliceType::memory_space,
+        Kokkos::View<data_type*, memory_space,
                      Kokkos::MemoryTraits<Kokkos::Unmanaged>>
             slice_data( slice.data(), slice.numSoA() * slice.stride( 0 ) );
 
         // Extract the send buffer from the ghosted elements.
         std::size_t num_local = _halo.numLocal();
-        auto send_buffer = this->getSendBuffer();
         auto extract_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
         {
             std::size_t ghost_idx = i + num_local;
@@ -729,7 +749,6 @@ class Scatter : CommunicateSlice<HaloType, SliceType>
         int num_n = _halo.numNeighbor();
         std::vector<MPI_Request> requests( num_n );
         std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
-        auto recv_buffer = this->getReceiveBuffer();
         for ( int n = 0; n < num_n; ++n )
         {
             recv_range.second = recv_range.first + _halo.numExport( n );
@@ -738,9 +757,8 @@ class Scatter : CommunicateSlice<HaloType, SliceType>
                 Kokkos::subview( recv_buffer, recv_range, Kokkos::ALL );
 
             MPI_Irecv( recv_subview.data(),
-                       recv_subview.size() *
-                           sizeof( typename SliceType::value_type ),
-                       MPI_BYTE, _halo.neighborRank( n ), mpi_tag, _halo.comm(),
+                       recv_subview.size() * sizeof( data_type ), MPI_BYTE,
+                       _halo.neighborRank( n ), mpi_tag, _halo.comm(),
                        &( requests[n] ) );
 
             recv_range.first = recv_range.second;
@@ -753,12 +771,11 @@ class Scatter : CommunicateSlice<HaloType, SliceType>
             send_range.second = send_range.first + _halo.numImport( n );
 
             auto send_subview =
-                Kokkos::subview( _send_buffer, send_range, Kokkos::ALL );
+                Kokkos::subview( send_buffer, send_range, Kokkos::ALL );
 
-            MPI_Send(
-                send_subview.data(),
-                send_subview.size() * sizeof( typename SliceType::value_type ),
-                MPI_BYTE, _halo.neighborRank( n ), mpi_tag, _halo.comm() );
+            MPI_Send( send_subview.data(),
+                      send_subview.size() * sizeof( data_type ), MPI_BYTE,
+                      _halo.neighborRank( n ), mpi_tag, _halo.comm() );
 
             send_range.first = send_range.second;
         }
@@ -804,23 +821,30 @@ class Scatter : CommunicateSlice<HaloType, SliceType>
       buffers to avoid frequent resizing.
     */
     void update( const HaloType& halo, const SliceType& slice,
-                 const double overallocation = -1 ) override
+                 const double overallocation )
     {
         if ( !haloCheckValidSize( halo, slice ) )
             throw std::runtime_error( "AoSoA is the wrong size for scatter!" );
 
-        // Get the number of components in the slice.
-        std::size_t num_comp = this->getSliceComponents( slice );
-
-        this->updateImpl( halo, totalSend(), totalReceive(), num_comp,
+        this->updateImpl( halo, slice, totalSend(), totalReceive(),
                           overallocation );
+    }
+    /*!
+      \brief Udpate the halo and slice data for scatter.
+
+      \param halo The Halo to be used for the scatter.
+      \param slice The slice on which to perform the scatter.
+    */
+    void update( const HaloType& halo, const SliceType& slice )
+    {
+        if ( !haloCheckValidSize( halo, slice ) )
+            throw std::runtime_error( "AoSoA is the wrong size for scatter!" );
+
+        this->updateImpl( halo, slice, totalSend(), totalReceive() );
     }
 
   private:
     plan_type _halo = base_type::_comm_plan;
-    using base_type::_overallocation;
-    using base_type::_recv_buffer;
-    using base_type::_send_buffer;
 };
 
 /*!

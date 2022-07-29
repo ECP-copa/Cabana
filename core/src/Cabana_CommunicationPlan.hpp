@@ -946,24 +946,19 @@ class CommunicationPlan
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Store communication plan and send/receive buffers. AoSoA version.
+  \brief Store AoSoA send/receive buffers.
 */
-template <class CommPlanType, class AoSoAType>
-class CommunicateAoSoA
+template <class AoSoAType>
+struct CommunicationDataAoSoA
 {
     static_assert( is_aosoa<AoSoAType>::value, "" );
 
-  public:
-    //! Communication plan type (Halo, Distributor)
-    using plan_type = CommPlanType;
-    //! Kokkos execution space.
-    using execution_space = typename plan_type::execution_space;
-    //! AoSoA type.
-    using aosoa_type = AoSoAType;
+    //! Particle data type.
+    using particle_data_type = AoSoAType;
     //! Kokkos memory space.
-    using memory_space = typename aosoa_type::memory_space;
+    using memory_space = typename particle_data_type::memory_space;
     //! Communication data type.
-    using data_type = typename aosoa_type::tuple_type;
+    using data_type = typename particle_data_type::tuple_type;
     //! Communication buffer type.
     using buffer_type = typename Kokkos::View<data_type*, memory_space>;
 
@@ -973,10 +968,7 @@ class CommunicateAoSoA
       \param overallocation An optional factor to keep extra space in the
       buffers to avoid frequent resizing.
     */
-    CommunicateAoSoA( const CommPlanType& comm_plan,
-                      const double overallocation = 1.0 )
-        : _comm_plan( comm_plan )
-        , _overallocation( overallocation )
+    CommunicationDataAoSoA()
     {
         _send_buffer = buffer_type(
             Kokkos::ViewAllocateWithoutInitializing( "send_buffer" ), 0 );
@@ -984,56 +976,23 @@ class CommunicateAoSoA
             Kokkos::ViewAllocateWithoutInitializing( "recv_buffer" ), 0 );
     }
 
-    //! Get the communication send buffer.
-    buffer_type getSendBuffer() const { return _send_buffer; }
-    //! Get the communication receive buffer.
-    buffer_type getReceiveBuffer() const { return _recv_buffer; }
-
-    /*!
-      \brief Perform the gather operation, automatically recreating the
-      comm_plan and communication buffers as needed.
-
-      \param aosoa The AoSoA on which to perform the gather.
-      \param overallocation An optional factor to keep extra space in the
-      buffers to avoid frequent resizing.
-    */
-    void apply( AoSoAType& aosoa, const double overallocation = -1 )
+    //! Resize the send buffer.
+    void reallocateSend( AoSoAType, const std::size_t num_send )
     {
-        update( _comm_plan, aosoa, overallocation );
-        apply( aosoa );
+        Kokkos::realloc( _send_buffer, num_send );
     }
-
-    //! Perform the communication (migrate, gather, scatter).
-    virtual void apply( AoSoAType& aosoa ) = 0;
-
-    //! Udpate the communciation plan and particle data to communicate.
-    virtual void update( const CommPlanType& comm_plan, AoSoAType& aosoa,
-                         const double overallocation = -1 ) = 0;
-
-  protected:
-    //! \cond Impl
-    void updateImpl( const CommPlanType& comm_plan,
-                     const std::size_t total_send, const std::size_t total_recv,
-                     const double overallocation = -1 )
+    //! Resize the receive buffer.
+    void reallocateReceive( AoSoAType, const std::size_t num_recv )
     {
-        _comm_plan = comm_plan;
-
-        if ( overallocation != -1 )
-            _overallocation = overallocation;
-
-        std::size_t new_send_size = total_send * _overallocation;
-        if ( new_send_size > _send_buffer.extent( 0 ) )
-            Kokkos::realloc( _send_buffer, new_send_size );
-        std::size_t new_recv_size = total_recv * _overallocation;
-        if ( new_recv_size > _recv_buffer.extent( 0 ) )
-            Kokkos::realloc( _recv_buffer, new_recv_size );
+        Kokkos::realloc( _recv_buffer, num_recv );
+    }
+    //! \cond Impl
+    auto getSliceComponents( AoSoAType )
+    {
+        throw std::runtime_error( "Slice components not valid for AoSoA!" );
     }
     //! \endcond
 
-    //! Communication plan.
-    plan_type _comm_plan;
-    //! Overallocation factor.
-    int _overallocation;
     //! Send buffer.
     buffer_type _send_buffer;
     //! Receive buffer.
@@ -1041,24 +1000,19 @@ class CommunicateAoSoA
 };
 
 /*!
-  \brief Store communication plan and send/receive buffers. Slice version.
+  \brief Store slice send/receive buffers.
 */
-template <class CommPlanType, class SliceType>
-class CommunicateSlice
+template <class SliceType>
+struct CommunicationDataSlice
 {
     static_assert( is_slice<SliceType>::value, "" );
 
-  public:
-    //! Communication plan type (Halo, Distributor).
-    using plan_type = CommPlanType;
-    //! Kokkos execution space.
-    using execution_space = typename plan_type::execution_space;
-    //! Slice type.
-    using slice_type = SliceType;
+    //! Particle data type.
+    using particle_data_type = SliceType;
     //! Kokkos memory space.
-    using memory_space = typename slice_type::memory_space;
+    using memory_space = typename particle_data_type::memory_space;
     //! Communication data type.
-    using data_type = typename slice_type::value_type;
+    using data_type = typename particle_data_type::value_type;
     //! Communication buffer type.
     using buffer_type =
         typename Kokkos::View<data_type**, Kokkos::LayoutRight, memory_space>;
@@ -1069,10 +1023,7 @@ class CommunicateSlice
       \param overallocation An optional factor to keep extra space in the
       buffers to avoid frequent resizing.
     */
-    CommunicateSlice( const CommPlanType& comm_plan,
-                      const double overallocation = 1.0 )
-        : _comm_plan( comm_plan )
-        , _overallocation( overallocation )
+    CommunicationDataSlice()
     {
         _send_buffer = buffer_type(
             Kokkos::ViewAllocateWithoutInitializing( "send_buffer" ), 0, 0 );
@@ -1080,72 +1031,123 @@ class CommunicateSlice
             Kokkos::ViewAllocateWithoutInitializing( "recv_buffer" ), 0, 0 );
     }
 
-    //! Get the communication send buffer.
-    buffer_type getSendBuffer() const { return _send_buffer; }
-    //! Get the communication receive buffer.
-    buffer_type getReceiveBuffer() const { return _recv_buffer; }
-
-    /*!
-      \brief Perform the gather operation, automatically recreating the
-      comm_plan and communication buffers as needed.
-
-      \param slice The AoSoA on which to perform the gather.
-      \param overallocation An optional factor to keep extra space in the
-      buffers to avoid frequent resizing.
-    */
-    void apply( SliceType& slice, const double overallocation = -1 )
+    //! Resize the send buffer.
+    void reallocateSend( const SliceType slice, const std::size_t num_send )
     {
-        update( _comm_plan, slice, overallocation );
-        apply( slice );
+        auto num_comp = getSliceComponents( slice );
+        Kokkos::realloc( _send_buffer, num_send, num_comp );
+    }
+    //! Resize the receive buffer.
+    void reallocateReceive( const SliceType slice, const std::size_t num_recv )
+    {
+        auto num_comp = getSliceComponents( slice );
+        Kokkos::realloc( _recv_buffer, num_recv, num_comp );
     }
 
-    //! Perform the communication (migrate, gather, scatter).
-    virtual void apply( SliceType& slice ) = 0;
-
-    //! Udpate the communciation plan and particle data to communicate.
-    virtual void update( const CommPlanType& comm_plan, const SliceType& slice,
-                         const double overallocation = -1 ) = 0;
-
-  protected:
-    //! \cond Impl
-    void updateImpl( const CommPlanType& comm_plan,
-                     const std::size_t total_send, const std::size_t total_recv,
-                     const std::size_t num_comp,
-                     const double overallocation = -1 )
-    {
-        _comm_plan = comm_plan;
-
-        if ( overallocation != -1 )
-            _overallocation = overallocation;
-
-        std::size_t new_send_size = total_send * _overallocation;
-        if ( new_send_size > _send_buffer.extent( 0 ) )
-            Kokkos::realloc( _send_buffer, new_send_size, num_comp );
-        std::size_t new_recv_size = total_recv * _overallocation;
-        if ( new_recv_size > _recv_buffer.extent( 0 ) )
-            Kokkos::realloc( _recv_buffer, new_recv_size, num_comp );
-    }
-
+    //! Get the total number of components in the slice.
     auto getSliceComponents( SliceType slice )
     {
-        // Get the number of components in the slice.
         std::size_t num_comp = 1;
         for ( std::size_t d = 2; d < slice.rank(); ++d )
             num_comp *= slice.extent( d );
         return num_comp;
     }
-    //! \endcond
 
-    //! Communication plan.
-    plan_type _comm_plan;
-    //! Overallocation factor.
-    int _overallocation;
     //! Send buffer.
     buffer_type _send_buffer;
     //! Receive buffer.
     buffer_type _recv_buffer;
 };
 //---------------------------------------------------------------------------//
+
+/*!
+  \brief Store communication plan and communication buffers.
+*/
+template <class CommPlanType, class CommDataType>
+class CommunicationData
+{
+  public:
+    //! Communication plan type (Halo, Distributor)
+    using plan_type = CommPlanType;
+    //! Kokkos execution space.
+    using execution_space = typename plan_type::execution_space;
+    //! Communication data type.
+    using comm_data_type = CommDataType;
+    //! Particle data type.
+    using particle_data_type = typename comm_data_type::particle_data_type;
+    //! Kokkos memory space.
+    using memory_space = typename comm_data_type::memory_space;
+    //! Communication data type.
+    using data_type = typename comm_data_type::data_type;
+    //! Communication buffer type.
+    using buffer_type = typename comm_data_type::buffer_type;
+
+    /*!
+      \param comm_plan The communication plan.
+
+      \param overallocation An optional factor to keep extra space in the
+      buffers to avoid frequent resizing.
+    */
+    CommunicationData( const CommPlanType& comm_plan,
+                       const double overallocation = 1.0 )
+        : _comm_plan( comm_plan )
+        , _overallocation( overallocation )
+    {
+        _comm_data = CommDataType();
+    }
+
+    //! Get the communication send buffer.
+    buffer_type getSendBuffer() const { return _comm_data._send_buffer; }
+    //! Get the communication receive buffer.
+    buffer_type getReceiveBuffer() const { return _comm_data._recv_buffer; }
+
+    //! Perform the communication (migrate, gather, scatter).
+    virtual void apply( particle_data_type& particles ) = 0;
+
+    //! \cond Impl
+    void updateImpl( const CommPlanType& comm_plan,
+                     const particle_data_type particles,
+                     const std::size_t total_send, const std::size_t total_recv,
+                     const double overallocation )
+    {
+        if ( overallocation < 1.0 )
+            throw std::runtime_error( "Cannot allocate buffers with less space "
+                                      "than data to communicate!" );
+        _overallocation = overallocation;
+
+        updateImpl( comm_plan, particles, total_send, total_recv );
+    }
+    void updateImpl( const CommPlanType& comm_plan,
+                     const particle_data_type particles,
+                     const std::size_t total_send,
+                     const std::size_t total_recv )
+    {
+        _comm_plan = comm_plan;
+
+        std::size_t new_send_size = total_send * _overallocation;
+        if ( new_send_size > _comm_data._send_buffer.extent( 0 ) )
+            _comm_data.reallocateSend( particles, new_send_size );
+
+        std::size_t new_recv_size = total_recv * _overallocation;
+        if ( new_recv_size > _comm_data._recv_buffer.extent( 0 ) )
+            _comm_data.reallocateReceive( particles, new_recv_size );
+    }
+    //! \endcond
+
+  protected:
+    //! Get the total number of components in the slice.
+    auto getSliceComponents( particle_data_type slice )
+    {
+        return _comm_data.getSliceComponents( slice );
+    };
+
+    //! Communication plan.
+    plan_type _comm_plan;
+    //! Communication plan.
+    comm_data_type _comm_data;
+    //! Overallocation factor.
+    int _overallocation;
+};
 
 } // end namespace Cabana
 
