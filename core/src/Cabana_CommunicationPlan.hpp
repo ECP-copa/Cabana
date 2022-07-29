@@ -1096,6 +1096,7 @@ class CommunicationData
         , _comm_data( CommDataType( particles ) )
         , _overallocation( overallocation )
     {
+        updateRangePolicy();
     }
 
     //! Get the communication send buffer.

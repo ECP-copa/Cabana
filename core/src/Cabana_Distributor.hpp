@@ -474,11 +474,8 @@ class Migrate<DistributorType, AoSoAType,
             else
                 send_buffer( i - num_stay ) = tpl;
         };
-        Kokkos::RangePolicy<execution_space> build_send_buffer_policy(
-            0, _distributor.totalNumExport() );
         Kokkos::parallel_for( "Cabana::migrate::build_send_buffer",
-                              build_send_buffer_policy,
-                              build_send_buffer_func );
+                              _send_policy, build_send_buffer_func );
         Kokkos::fence();
 
         // The distributor has its own communication space so choose any tag.
@@ -541,19 +538,17 @@ class Migrate<DistributorType, AoSoAType,
         {
             dst.setTuple( i, recv_buffer( i ) );
         };
-        Kokkos::RangePolicy<execution_space> extract_recv_buffer_policy(
-            0, _distributor.totalNumImport() );
         Kokkos::parallel_for( "Cabana::migrate::extract_recv_buffer",
-                              extract_recv_buffer_policy,
-                              extract_recv_buffer_func );
+                              _recv_policy, extract_recv_buffer_func );
         Kokkos::fence();
 
         // Barrier before completing to ensure synchronization.
         MPI_Barrier( _distributor.comm() );
     }
 
-  private:
     plan_type _distributor = base_type::_comm_plan;
+    using base_type::_recv_policy;
+    using base_type::_send_policy;
 
     int _my_rank;
 };
@@ -647,11 +642,8 @@ class Migrate<DistributorType, SliceType,
                     send_buffer( i - num_stay, n ) =
                         src_data[src_offset + n * SliceType::vector_length];
         };
-        Kokkos::RangePolicy<execution_space> build_send_buffer_policy(
-            0, _distributor.totalNumExport() );
         Kokkos::parallel_for( "Cabana::migrate::build_send_buffer",
-                              build_send_buffer_policy,
-                              build_send_buffer_func );
+                              _send_policy, build_send_buffer_func );
         Kokkos::fence();
 
         // The distributor has its own communication space so choose any tag.
@@ -721,11 +713,8 @@ class Migrate<DistributorType, SliceType,
                 dst_data[dst_offset + n * SliceType::vector_length] =
                     recv_buffer( i, n );
         };
-        Kokkos::RangePolicy<execution_space> extract_recv_buffer_policy(
-            0, _distributor.totalNumImport() );
         Kokkos::parallel_for( "Cabana::migrate::extract_recv_buffer",
-                              extract_recv_buffer_policy,
-                              extract_recv_buffer_func );
+                              _recv_policy, extract_recv_buffer_func );
         Kokkos::fence();
 
         // Barrier before completing to ensure synchronization.
@@ -780,6 +769,8 @@ class Migrate<DistributorType, SliceType,
 
   private:
     plan_type _distributor = base_type::_comm_plan;
+    using base_type::_recv_policy;
+    using base_type::_send_policy;
 
     int _my_rank;
 };
