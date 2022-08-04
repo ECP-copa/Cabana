@@ -270,9 +270,9 @@ class Gather<HaloType, AoSoAType,
       buffers to avoid frequent resizing.
     */
     Gather( HaloType halo, AoSoAType aosoa, const double overallocation = 1.0 )
-        : base_type( halo, overallocation )
+        : base_type( halo, aosoa, overallocation )
     {
-        update( _halo, aosoa );
+        reserve( _halo, aosoa );
     }
 
     //! Total gather send size for this rank.
@@ -285,15 +285,15 @@ class Gather<HaloType, AoSoAType,
 
       \param aosoa The AoSoA on which to perform the gather.
     */
-    void apply( AoSoAType& aosoa ) override
+    void apply() override
     {
-        // Get the buffers (local copies for lambdas below).
+        // Get the buffers and particle data (local copies for lambdas below).
         auto send_buffer = this->getSendBuffer();
         auto recv_buffer = this->getReceiveBuffer();
+        auto aosoa = this->getParticles();
 
         // Get the steering vector for the sends.
         auto steering = _halo.getExportSteering();
-
         // Gather from the local data into a tuple-contiguous send buffer.
         auto gather_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
         {
@@ -448,9 +448,9 @@ class Gather<HaloType, SliceType,
       buffers to avoid frequent resizing.
     */
     Gather( HaloType halo, SliceType slice, const double overallocation = 1.0 )
-        : base_type( halo, overallocation )
+        : base_type( halo, slice, overallocation )
     {
-        update( _halo, slice );
+        reserve( _halo, slice );
     }
 
     //! Total gather send size for this rank.
@@ -463,14 +463,15 @@ class Gather<HaloType, SliceType,
 
       \param slice The slice on which to perform the gather.
     */
-    void apply( SliceType& slice ) override
+    void apply() override
     {
-        // Get the number of components in the slice.
-        std::size_t num_comp = this->getSliceComponents( slice );
-
         // Get the buffers (local copies for lambdas below).
         auto send_buffer = this->getSendBuffer();
         auto recv_buffer = this->getReceiveBuffer();
+        auto slice = this->getParticles();
+
+        // Get the number of components in the slice.
+        std::size_t num_comp = this->getSliceComponents( slice );
 
         // Get the raw slice data.
         auto slice_data = slice.data();
@@ -640,7 +641,7 @@ template <class HaloType, class ParticleDataType>
 void gather( const HaloType& halo, ParticleDataType& data )
 {
     auto gather = createGather( halo, data );
-    gather.apply( data );
+    gather.apply();
 }
 
 /**********
@@ -693,9 +694,9 @@ class Scatter
       buffers to avoid frequent resizing.
     */
     Scatter( HaloType halo, SliceType slice, const double overallocation = 1.0 )
-        : base_type( halo, overallocation )
+        : base_type( halo, slice, overallocation )
     {
-        update( _halo, slice );
+        reserve( _halo, slice );
     }
 
     //! Total scatter send size for this rank.
@@ -708,14 +709,15 @@ class Scatter
 
       \param slice The slice on which to perform the scatter.
     */
-    void apply( SliceType& slice ) override
+    void apply() override
     {
-        // Get the number of components in the slice.
-        std::size_t num_comp = this->getSliceComponents( slice );
-
         // Get the buffers (local copies for lambdas below).
         auto send_buffer = this->getSendBuffer();
         auto recv_buffer = this->getReceiveBuffer();
+        auto slice = this->getParticles();
+
+        // Get the number of components in the slice.
+        std::size_t num_comp = this->getSliceComponents( slice );
 
         // Get the raw slice data. Wrap in a 1D Kokkos View so we can unroll the
         // components of each slice element.
@@ -894,7 +896,7 @@ void scatter( const HaloType& halo, SliceType& slice,
                                       int>::type* = 0 )
 {
     auto scatter = createScatter( halo, slice );
-    scatter.apply( slice );
+    scatter.apply();
 }
 
 //---------------------------------------------------------------------------//

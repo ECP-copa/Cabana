@@ -963,12 +963,11 @@ struct CommunicationDataAoSoA
     using buffer_type = typename Kokkos::View<data_type*, memory_space>;
 
     /*!
-      \param comm_plan The Halo to be used for the gather.
-
-      \param overallocation An optional factor to keep extra space in the
-      buffers to avoid frequent resizing.
+      Constructor
+      \param particles The particle data (either AoSoA or slice).
     */
-    CommunicationDataAoSoA()
+    CommunicationDataAoSoA( particle_data_type particles )
+        : _particles( particles )
     {
         _send_buffer = buffer_type(
             Kokkos::ViewAllocateWithoutInitializing( "send_buffer" ), 0 );
@@ -997,6 +996,8 @@ struct CommunicationDataAoSoA
     buffer_type _send_buffer;
     //! Receive buffer.
     buffer_type _recv_buffer;
+    //! Particle AoSoA.
+    particle_data_type _particles;
 };
 
 /*!
@@ -1018,12 +1019,11 @@ struct CommunicationDataSlice
         typename Kokkos::View<data_type**, Kokkos::LayoutRight, memory_space>;
 
     /*!
-      \param comm_plan The Halo to be used for the gather.
-
-      \param overallocation An optional factor to keep extra space in the
-      buffers to avoid frequent resizing.
+      Constructor
+      \param particles The particle data (either AoSoA or slice).
     */
-    CommunicationDataSlice()
+    CommunicationDataSlice( particle_data_type particles )
+        : _particles( particles )
     {
         _send_buffer = buffer_type(
             Kokkos::ViewAllocateWithoutInitializing( "send_buffer" ), 0, 0 );
@@ -1057,6 +1057,8 @@ struct CommunicationDataSlice
     buffer_type _send_buffer;
     //! Receive buffer.
     buffer_type _recv_buffer;
+    //! Particle slice.
+    particle_data_type _particles;
 };
 //---------------------------------------------------------------------------//
 
@@ -1084,16 +1086,17 @@ class CommunicationData
 
     /*!
       \param comm_plan The communication plan.
-
+      \param particles The particle data (either AoSoA or slice).
       \param overallocation An optional factor to keep extra space in the
       buffers to avoid frequent resizing.
     */
     CommunicationData( const CommPlanType& comm_plan,
+                       const particle_data_type& particles,
                        const double overallocation = 1.0 )
         : _comm_plan( comm_plan )
+        , _comm_data( CommDataType( particles ) )
         , _overallocation( overallocation )
     {
-        _comm_data = CommDataType();
     }
 
     //! Get the communication send buffer.
@@ -1101,8 +1104,15 @@ class CommunicationData
     //! Get the communication receive buffer.
     buffer_type getReceiveBuffer() const { return _comm_data._recv_buffer; }
 
+    //! Get the particles to communicate.
+    particle_data_type getParticles() const { return _comm_data._particles; }
+    //! Update particles to communicate.
+    void setParticles( const particle_data_type& particles )
+    {
+        _comm_data._particles = particles;
+    }
     //! Perform the communication (migrate, gather, scatter).
-    virtual void apply( particle_data_type& particles ) = 0;
+    virtual void apply() = 0;
 
     //! \cond Impl
     void updateImpl( const CommPlanType& comm_plan,
@@ -1123,6 +1133,7 @@ class CommunicationData
                      const std::size_t total_recv )
     {
         _comm_plan = comm_plan;
+        setParticles( particles );
 
         std::size_t new_send_size = total_send * _overallocation;
         if ( new_send_size > _comm_data._send_buffer.extent( 0 ) )

@@ -396,7 +396,7 @@ void performanceTest( std::ostream& stream, const std::size_t num_particle,
             halo_buffer_aosoa_gather.start( fraction );
             auto comm_particles = Cabana::create_mirror_view_and_copy(
                 comm_memory_space(), particles );
-            gather.apply( comm_particles );
+            gather.apply();
             Cabana::deep_copy( particles, comm_particles );
             halo_buffer_aosoa_gather.stop( fraction );
         }
@@ -418,17 +418,10 @@ void performanceTest( std::ostream& stream, const std::size_t num_particle,
             comm_particles = Cabana::create_mirror_view_and_copy(
                 comm_memory_space(), particles );
 
-            auto s0 = Cabana::slice<0>( comm_particles );
-            gather_s0.apply( s0 );
-
-            auto s1 = Cabana::slice<1>( comm_particles );
-            gather_s1.apply( s1 );
-
-            auto s2 = Cabana::slice<2>( comm_particles );
-            gather_s2.apply( s2 );
-
-            auto s3 = Cabana::slice<3>( comm_particles );
-            gather_s3.apply( s3 );
+            gather_s0.apply();
+            gather_s1.apply();
+            gather_s2.apply();
+            gather_s3.apply();
 
             Cabana::deep_copy( particles, comm_particles );
             halo_buffer_slice_gather.stop( fraction );
@@ -451,17 +444,10 @@ void performanceTest( std::ostream& stream, const std::size_t num_particle,
             comm_particles = Cabana::create_mirror_view_and_copy(
                 comm_memory_space(), particles );
 
-            s0 = Cabana::slice<0>( comm_particles );
-            scatter_s0.apply( s0 );
-
-            s1 = Cabana::slice<1>( comm_particles );
-            scatter_s1.apply( s1 );
-
-            s2 = Cabana::slice<2>( comm_particles );
-            scatter_s2.apply( s2 );
-
-            s3 = Cabana::slice<3>( comm_particles );
-            scatter_s3.apply( s3 );
+            scatter_s0.apply();
+            scatter_s1.apply();
+            scatter_s2.apply();
+            scatter_s3.apply();
 
             Cabana::deep_copy( particles, comm_particles );
             halo_buffer_slice_scatter.stop( fraction );
