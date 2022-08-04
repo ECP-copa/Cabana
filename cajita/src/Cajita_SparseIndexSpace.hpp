@@ -431,6 +431,8 @@ class SparseMap
     using value_type = Value;
     //! Hash table type.
     static constexpr HashTypes hash_type = Hash;
+    //! memory space
+    using memory_space = MemorySpace;
 
     /*!
       \brief (Host) Constructor
@@ -482,11 +484,33 @@ class SparseMap
     KOKKOS_INLINE_FUNCTION
     value_type queryTile( int cell_i, int cell_j, int cell_k ) const
     {
-        // query the tile No.
+        // query the tile ID
         auto tile_id = _block_id_space.find( cell_i >> cell_bits_per_tile_dim,
                                              cell_j >> cell_bits_per_tile_dim,
                                              cell_k >> cell_bits_per_tile_dim );
         return tile_id;
+    }
+
+    /*!
+      \brief (Device) Query the 1D tile key from the 3D tile ijk
+      \param tile_i, tile_j, tile_k Tile ID in each dimension
+    */
+    KOKKOS_INLINE_FUNCTION
+    value_type queryTileFromTileId( const int tile_i, const int tile_j,
+                                    const int tile_k ) const
+    {
+        // query the tile ID
+        return _block_id_space.find( tile_i, tile_j, tile_k );
+    }
+
+    /*!
+      \brief (Device) Query the 1D tile key from the 1D tile key
+      \param tile_key 1D tile key
+    */
+    KOKKOS_INLINE_FUNCTION
+    value_type queryTileFromTileKey( const key_type tile_key ) const
+    {
+        return _block_id_space.findKey( tile_key );
     }
 
     /*!
@@ -496,11 +520,9 @@ class SparseMap
     KOKKOS_INLINE_FUNCTION
     value_type queryCell( int cell_i, int cell_j, int cell_k ) const
     {
-        // query the tile No.
+        // query the tile ID.
         auto tile_id = queryTile( cell_i, cell_j, cell_k );
-        auto cell_id = _tile_id_space.coordToOffset(
-            cell_i & cell_mask_per_tile_dim, cell_j & cell_mask_per_tile_dim,
-            cell_k & cell_mask_per_tile_dim );
+        auto cell_id = cell_local_id( cell_i, cell_j, cell_k );
         return static_cast<value_type>( ( tile_id << cell_bits_per_tile ) |
                                         cell_id );
     }
@@ -529,6 +551,39 @@ class SparseMap
       \brief (Host) Valid tile number inside current block (MPI rank)
     */
     value_type size() const { return _block_id_space.validTileNumHost(); }
+
+    /*!
+      \brief (Host) Valid tile number inside current block (MPI rank)
+    */
+    inline value_type sizeTile() const { return size(); }
+
+    /*!
+      \brief (Host) Valid cell number inside current block (MPI rank)
+    */
+    inline value_type sizeCell() const
+    {
+        return sizeTile() << cell_bits_per_tile;
+    }
+
+    /*!
+      \brief (Host) Reserved tile number inside current block (MPI rank)
+      \param factor scale up the real size as reserved space
+    */
+    template <typename T>
+    inline value_type reservedTileSize( T factor ) const
+    {
+        return _block_id_space.reservedTileNumHost( factor );
+    }
+
+    /*!
+      \brief (Host) Reserved cell number inside current block (MPI rank)
+      \param factor scale up the real size as reserved space
+    */
+    template <typename T>
+    inline value_type reservedCellSize( T factor ) const
+    {
+        return reservedTileSize( factor ) << cell_bits_per_tile;
+    }
 
     /*!
       \brief (Device) Valid block at index
@@ -561,7 +616,7 @@ class SparseMap
     }
 
     /*!
-      \brief (Device) Transfer block hash key to block ijk
+      \brief (Device) Transfer tile hash key to tile ijk
       \param key Tile hash key
       \param tile_i, tile_j, tile_k Tile ID in each dimension
     */
@@ -569,6 +624,31 @@ class SparseMap
     void key2ijk( key_type& key, int& tile_i, int& tile_j, int& tile_k ) const
     {
         return _block_id_space.key2ijk( key, tile_i, tile_j, tile_k );
+    }
+
+    /*!
+      \brief (Device) Transfer tile ijk to til key
+      \param tile_i, tile_j, tile_k Tile ID in each dimension
+      \return tile hash key
+    */
+    KOKKOS_INLINE_FUNCTION
+    key_type ijk2key( int tile_i, int tile_j, int tile_k ) const
+    {
+        return _block_id_space.ijk2key( tile_i, tile_j, tile_k );
+    }
+
+    /*!
+      \brief (Device) Get local cell ID from cell IJK
+      \param cell_i, cell_j, cell_k Cell ID in each dimension (both local and
+      global IJK work)
+    */
+    KOKKOS_INLINE_FUNCTION
+    value_type cell_local_id( const int cell_i, const int cell_j,
+                              const int cell_k ) const
+    {
+        return _tile_id_space.coordToOffset( cell_i & cell_mask_per_tile_dim,
+                                             cell_j & cell_mask_per_tile_dim,
+                                             cell_k & cell_mask_per_tile_dim );
     }
 
   private:
@@ -742,6 +822,20 @@ class BlockMap
     }
 
     /*!
+      \brief (Host) Reserved tile number inside current block (MPI rank)
+    */
+    template <typename T>
+    inline value_type reservedTileNumHost( T factor ) const
+    {
+        auto tile_table_info_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), _tile_table_info );
+        value_type num = tile_table_info_mirror( 0 ) * factor;
+        tile_table_info_mirror( 1 ) = num;
+        Kokkos::deep_copy( _tile_table_info, tile_table_info_mirror );
+        return num;
+    }
+
+    /*!
       \brief (Device) Insert a tile into the hash table
       \param tile_i, tile_j, tile_k Tile ID in each dimension
     */
@@ -771,6 +865,16 @@ class BlockMap
     {
         return _tile_table.value_at(
             _tile_table.find( ijk2key( tile_i, tile_j, tile_k ) ) );
+    }
+
+    /*!
+      \brief (Device) Query the tile No. from the hash table
+      \param tile_key Tile Key in each dimension
+    */
+    KOKKOS_INLINE_FUNCTION
+    value_type findKey( key_type tile_key ) const
+    {
+        return _tile_table.value_at( _tile_table.find( tile_key ) );
     }
 
     /*!

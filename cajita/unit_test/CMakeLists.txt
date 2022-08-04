@@ -39,6 +39,7 @@ set(MPI_TESTS
   Parallel
   SparseDimPartitioner
   Partitioner
+  SparseArray
   )
 
 if(Kokkos_ENABLE_OPENMPTARGET) #FIXME_OPENMPTARGET

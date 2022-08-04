@@ -37,7 +37,7 @@ namespace Cajita
   \brief Entity layout for array data on the local mesh.
 
   \tparam EntityType Array entity type: Cell, Node, Edge, or Face
-  \tparam MeshType Mesh type: UniformMesh, NonUniformMesh, SparseMesh
+  \tparam MeshType Mesh type: UniformMesh, NonUniformMesh
 */
 template <class EntityType, class MeshType>
 class ArrayLayout
@@ -217,7 +217,7 @@ createArrayLayout( const std::shared_ptr<GlobalGrid<MeshType>>& global_grid,
 
   \tparam Scalar Scalar type.
   \tparam EntityType Array entity type (node, cell, face, edge).
-  \tparam MeshType Mesh type (uniform, non-uniform, sparse).
+  \tparam MeshType Mesh type (uniform, non-uniform).
   \tparam Params Kokkos View parameters.
 */
 template <class Scalar, class EntityType, class MeshType, class... Params>
