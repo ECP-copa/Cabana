@@ -29,16 +29,29 @@ namespace Test
 struct UniqueTestTag
 {
     int num_local;
+    int num_send;
+    int num_recv;
     UniqueTestTag()
     {
         int my_size = -1;
         MPI_Comm_size( MPI_COMM_WORLD, &my_size );
         num_local = 2 * my_size;
+        num_send = my_size;
+        num_recv = my_size;
     }
 };
 struct AllTestTag
 {
     int num_local = 1;
+    int num_send;
+    int num_recv;
+    AllTestTag()
+    {
+        int my_size = -1;
+        MPI_Comm_size( MPI_COMM_WORLD, &my_size );
+        num_send = my_size;
+        num_recv = my_size;
+    }
 };
 
 struct HaloData
@@ -412,6 +425,20 @@ void checkGatherSlice( AllTestTag, AoSoAType data_host, const int my_size,
     }
 }
 
+template <class CommData>
+void checkSizeAndCapacity( CommData comm_data, const int num_send,
+                           const int num_recv, const double overalloc )
+{
+    auto send_size = comm_data.sendSize();
+    auto recv_size = comm_data.receiveSize();
+    EXPECT_EQ( send_size, num_send );
+    EXPECT_EQ( recv_size, num_recv );
+    auto send_capacity = comm_data.sendCapacity();
+    auto recv_capacity = comm_data.receiveCapacity();
+    EXPECT_EQ( send_capacity, num_send * overalloc );
+    EXPECT_EQ( recv_capacity, num_recv * overalloc );
+}
+
 //---------------------------------------------------------------------------//
 // Gather/scatter test.
 template <class TestTag>
@@ -485,11 +512,16 @@ void testHaloBuffers( TestTag tag, const bool use_topology )
     auto data = halo_data.createData( my_rank, num_local );
 
     // Create send and receive buffers with an overallocation.
-    double overalloc = 1.5;
+    double overalloc = 3.0; // large value since very little is communicated.
     auto gather = createGather( *halo, data, overalloc );
 
+    // Check sizes and capacities.
+    int num_send = tag.num_send;
+    int num_recv = tag.num_recv;
+    checkSizeAndCapacity( gather, num_send, num_recv, overalloc );
+
     // Gather by AoSoA using preallocated buffers.
-    gather.apply( data );
+    gather.apply();
 
     // Compare against original host data.
     auto data_host = halo_data.copyToHost();
@@ -500,18 +532,54 @@ void testHaloBuffers( TestTag tag, const bool use_topology )
     auto slice_dbl = Cabana::slice<1>( data );
     auto scatter_int = createScatter( *halo, slice_int, overalloc );
     auto scatter_dbl = createScatter( *halo, slice_dbl, overalloc );
-    scatter_int.apply( slice_int );
-    scatter_dbl.apply( slice_dbl );
+    scatter_int.apply();
+    scatter_dbl.apply();
     Cabana::deep_copy( data_host, data );
     checkScatter( tag, data_host, my_size, my_rank, num_local );
+    checkSizeAndCapacity( scatter_int, num_recv, num_send, overalloc );
+    checkSizeAndCapacity( scatter_dbl, num_recv, num_send, overalloc );
 
     // Gather again, this time with slices.
+    slice_int = Cabana::slice<0>( data );
+    slice_dbl = Cabana::slice<1>( data );
     auto gather_int = createGather( *halo, slice_int, overalloc );
     auto gather_dbl = createGather( *halo, slice_dbl, overalloc );
-    gather_int.apply( slice_int );
-    gather_dbl.apply( slice_dbl );
+    gather_int.apply();
+    gather_dbl.apply();
     Cabana::deep_copy( data_host, data );
     checkGatherSlice( tag, data_host, my_size, my_rank, num_local );
+    checkSizeAndCapacity( gather_int, num_send, num_recv, overalloc );
+    checkSizeAndCapacity( gather_dbl, num_send, num_recv, overalloc );
+
+    // Now check the reserve/shrink functionality with AoSoA.
+    // This call should do nothing since the overallocation is still taken into
+    // account.
+    gather.shrinkToFit( true );
+    scatter_int.shrinkToFit( true );
+    scatter_dbl.shrinkToFit( true );
+    checkSizeAndCapacity( gather, num_send, num_recv, overalloc );
+    checkSizeAndCapacity( scatter_int, num_recv, num_send, overalloc );
+    checkSizeAndCapacity( scatter_dbl, num_recv, num_send, overalloc );
+
+    //  After another shrink (now without any overallocation) sizes should have
+    //  changed.
+    gather.shrinkToFit();
+    scatter_int.shrinkToFit();
+    scatter_dbl.shrinkToFit();
+    checkSizeAndCapacity( gather, num_send, num_recv, 1.0 );
+    checkSizeAndCapacity( scatter_int, num_recv, num_send, 1.0 );
+    checkSizeAndCapacity( scatter_dbl, num_recv, num_send, 1.0 );
+
+    // Last, increase the overallocation factor.
+    overalloc = 5.0;
+    gather_int.reserve( *halo, slice_int, overalloc );
+    gather_dbl.reserve( *halo, slice_dbl, overalloc );
+    scatter_int.reserve( *halo, slice_int, overalloc );
+    scatter_dbl.reserve( *halo, slice_dbl, overalloc );
+    checkSizeAndCapacity( gather_int, num_send, num_recv, overalloc );
+    checkSizeAndCapacity( gather_dbl, num_send, num_recv, overalloc );
+    checkSizeAndCapacity( scatter_int, num_send, num_recv, overalloc );
+    checkSizeAndCapacity( scatter_dbl, num_send, num_recv, overalloc );
 }
 
 //---------------------------------------------------------------------------//

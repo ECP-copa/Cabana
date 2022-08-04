@@ -1111,6 +1111,41 @@ class CommunicationData
     {
         _comm_data._particles = particles;
     }
+
+    /*!
+      \brief Current send buffer size.
+      \note This is stored as a member because it is not directly related to the
+      buffer sizes (as the capacity is).
+    */
+    auto sendSize() { return _send_size; }
+    /*!
+      \brief Current receive buffer size.
+      \note This is stored as a member because it is not directly related to the
+      buffer sizes (as the capacity is).
+    */
+    auto receiveSize() { return _recv_size; }
+    //! Current allocated send buffer space.
+    auto sendCapacity() { return _comm_data._send_buffer.extent( 0 ); }
+    //! Current allocated receive buffer space.
+    auto receiveCapacity() { return _comm_data._recv_buffer.extent( 0 ); }
+    /*!
+      \brief Reduce communication buffers to current send/receive sizes.
+      \param use_overallocation Shrink the buffers, but retain extra storage
+      according to the overallocation factor.
+    */
+    void shrinkToFit( const bool use_overallocation = false )
+    {
+        auto shrunk_send_size = _send_size;
+        auto shrunk_recv_size = _recv_size;
+        if ( use_overallocation )
+        {
+            shrunk_send_size *= _overallocation;
+            shrunk_recv_size *= _overallocation;
+        }
+        _comm_data.reallocateSend( _comm_data._particles, shrunk_send_size );
+        _comm_data.reallocateReceive( _comm_data._particles, shrunk_recv_size );
+    }
+
     //! Perform the communication (migrate, gather, scatter).
     virtual void apply() = 0;
 
@@ -1136,13 +1171,18 @@ class CommunicationData
         _comm_plan = comm_plan;
         setParticles( particles );
 
+        auto send_capacity = sendCapacity();
         std::size_t new_send_size = total_send * _overallocation;
-        if ( new_send_size > _comm_data._send_buffer.extent( 0 ) )
+        if ( new_send_size > send_capacity )
             _comm_data.reallocateSend( particles, new_send_size );
 
+        auto recv_capacity = receiveCapacity();
         std::size_t new_recv_size = total_recv * _overallocation;
-        if ( new_recv_size > _comm_data._recv_buffer.extent( 0 ) )
+        if ( new_recv_size > recv_capacity )
             _comm_data.reallocateReceive( particles, new_recv_size );
+
+        _send_size = total_send;
+        _recv_size = total_recv;
     }
     //! \endcond
 
@@ -1158,7 +1198,11 @@ class CommunicationData
     //! Communication plan.
     comm_data_type _comm_data;
     //! Overallocation factor.
-    int _overallocation;
+    double _overallocation;
+    //! Send sizes.
+    std::size_t _send_size;
+    //! Receive sizes.
+    std::size_t _recv_size;
 };
 
 } // end namespace Cabana
