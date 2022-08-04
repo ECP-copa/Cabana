@@ -1115,22 +1115,23 @@ class CommunicationData
     virtual void apply() = 0;
 
     //! \cond Impl
-    void updateImpl( const CommPlanType& comm_plan,
-                     const particle_data_type particles,
-                     const std::size_t total_send, const std::size_t total_recv,
-                     const double overallocation )
+    void reserveImpl( const CommPlanType& comm_plan,
+                      const particle_data_type particles,
+                      const std::size_t total_send,
+                      const std::size_t total_recv,
+                      const double overallocation )
     {
         if ( overallocation < 1.0 )
             throw std::runtime_error( "Cannot allocate buffers with less space "
                                       "than data to communicate!" );
         _overallocation = overallocation;
 
-        updateImpl( comm_plan, particles, total_send, total_recv );
+        reserveImpl( comm_plan, particles, total_send, total_recv );
     }
-    void updateImpl( const CommPlanType& comm_plan,
-                     const particle_data_type particles,
-                     const std::size_t total_send,
-                     const std::size_t total_recv )
+    void reserveImpl( const CommPlanType& comm_plan,
+                      const particle_data_type particles,
+                      const std::size_t total_send,
+                      const std::size_t total_recv )
     {
         _comm_plan = comm_plan;
         setParticles( particles );

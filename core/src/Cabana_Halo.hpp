@@ -368,34 +368,34 @@ class Gather<HaloType, AoSoAType,
     }
 
     /*!
-      \brief Udpate the halo and AoSoA data for gather.
+      \brief Reserve new buffers as needed and update the halo and AoSoA data.
 
       \param halo The Halo to be used for the gather.
       \param aosoa The AoSoA on which to perform the gather.
     */
-    void update( const HaloType& halo, AoSoAType& aosoa )
+    void reserve( const HaloType& halo, AoSoAType& aosoa )
     {
         if ( !haloCheckValidSize( halo, aosoa ) )
             throw std::runtime_error( "AoSoA is the wrong size for gather!" );
 
-        this->updateImpl( halo, aosoa, totalSend(), totalReceive() );
+        this->reserveImpl( halo, aosoa, totalSend(), totalReceive() );
     }
     /*!
-      \brief Udpate the halo and AoSoA data for gather.
+      \brief Reserve new buffers as needed and update the halo and AoSoA data.
 
       \param halo The Halo to be used for the gather.
       \param aosoa The AoSoA on which to perform the gather.
       \param overallocation An optional factor to keep extra space in the
       buffers to avoid frequent resizing.
     */
-    void update( const HaloType& halo, AoSoAType& aosoa,
-                 const double overallocation )
+    void reserve( const HaloType& halo, AoSoAType& aosoa,
+                  const double overallocation )
     {
         if ( !haloCheckValidSize( halo, aosoa ) )
             throw std::runtime_error( "AoSoA is the wrong size for gather!" );
 
-        this->updateImpl( halo, aosoa, totalSend(), totalReceive(),
-                          overallocation );
+        this->reserveImpl( halo, aosoa, totalSend(), totalReceive(),
+                           overallocation );
     }
 
   private:
@@ -565,34 +565,34 @@ class Gather<HaloType, SliceType,
     }
 
     /*!
-      \brief Udpate the halo and slice data for gather.
+      \brief Reserve new buffers as needed and update the halo and slice data.
 
       \param halo The Halo to be used for the gather.
       \param slice The slice on which to perform the gather.
       \param overallocation An optional factor to keep extra space in the
       buffers to avoid frequent resizing.
     */
-    void update( const HaloType& halo, const SliceType& slice,
-                 const double overallocation )
+    void reserve( const HaloType& halo, const SliceType& slice,
+                  const double overallocation )
     {
         if ( !haloCheckValidSize( halo, slice ) )
             throw std::runtime_error( "AoSoA is the wrong size for gather!" );
 
-        this->updateImpl( halo, slice, totalSend(), totalReceive(),
-                          overallocation );
+        this->reserveImpl( halo, slice, totalSend(), totalReceive(),
+                           overallocation );
     }
     /*!
-      \brief Udpate the halo and slice data for gather.
+      \brief Reserve new buffers as needed and update the halo and slice data.
 
       \param halo The Halo to be used for the gather.
       \param slice The slice on which to perform the gather.
     */
-    void update( const HaloType& halo, const SliceType& slice )
+    void reserve( const HaloType& halo, const SliceType& slice )
     {
         if ( !haloCheckValidSize( halo, slice ) )
             throw std::runtime_error( "AoSoA is the wrong size for gather!" );
 
-        this->updateImpl( halo, slice, totalSend(), totalReceive() );
+        this->reserveImpl( halo, slice, totalSend(), totalReceive() );
     }
 
   private:
@@ -815,34 +815,35 @@ class Scatter
     }
 
     /*!
-      \brief Udpate the halo and slice data for scatter.
+      \brief Reserve new buffers as needed and update the halo and slice data.
+      Reallocation only occurs if there is not enough space in the buffers.
 
       \param halo The Halo to be used for the scatter.
       \param slice The slice on which to perform the scatter.
       \param overallocation An optional factor to keep extra space in the
       buffers to avoid frequent resizing.
     */
-    void update( const HaloType& halo, const SliceType& slice,
-                 const double overallocation )
+    void reserve( const HaloType& halo, const SliceType& slice,
+                  const double overallocation )
     {
         if ( !haloCheckValidSize( halo, slice ) )
             throw std::runtime_error( "AoSoA is the wrong size for scatter!" );
 
-        this->updateImpl( halo, slice, totalSend(), totalReceive(),
-                          overallocation );
+        this->reserveImpl( halo, slice, totalSend(), totalReceive(),
+                           overallocation );
     }
     /*!
-      \brief Udpate the halo and slice data for scatter.
+      \brief Reserve new buffers as needed and update the halo and slice data.
 
       \param halo The Halo to be used for the scatter.
       \param slice The slice on which to perform the scatter.
     */
-    void update( const HaloType& halo, const SliceType& slice )
+    void reserve( const HaloType& halo, const SliceType& slice )
     {
         if ( !haloCheckValidSize( halo, slice ) )
             throw std::runtime_error( "AoSoA is the wrong size for scatter!" );
 
-        this->updateImpl( halo, slice, totalSend(), totalReceive() );
+        this->reserveImpl( halo, slice, totalSend(), totalReceive() );
     }
 
   private:
