@@ -129,12 +129,20 @@ KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1BlockMap.html#af2c3974
 <a class="el" href="classCajita_1_1BlockMap.html#af2c3974e7f69225ef7b09c3cfd4d9439">value_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#afb7ca686658484062f0428b86c9e14ec">validTileNumHost</a> () const</td></tr>
 <tr class="memdesc:afb7ca686658484062f0428b86c9e14ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Host) Valid tile number inside current block (MPI rank) <br /></td></tr>
 <tr class="separator:afb7ca686658484062f0428b86c9e14ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab870857aeec59b7b6257b1a93a75cffb"><td class="memTemplParams" colspan="2"><a id="ab870857aeec59b7b6257b1a93a75cffb"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ab870857aeec59b7b6257b1a93a75cffb"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCajita_1_1BlockMap.html#af2c3974e7f69225ef7b09c3cfd4d9439">value_type</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#ab870857aeec59b7b6257b1a93a75cffb">reservedTileNumHost</a> (T factor) const</td></tr>
+<tr class="memdesc:ab870857aeec59b7b6257b1a93a75cffb"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Host) Reserved tile number inside current block (MPI rank) <br /></td></tr>
+<tr class="separator:ab870857aeec59b7b6257b1a93a75cffb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6d4520d3113c54b0dcdbbc7a725fe1a6"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#a6d4520d3113c54b0dcdbbc7a725fe1a6">insert</a> (int tile_i, int tile_j, int tile_k) const</td></tr>
 <tr class="memdesc:a6d4520d3113c54b0dcdbbc7a725fe1a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Insert a tile into the hash table  <a href="classCajita_1_1BlockMap.html#a6d4520d3113c54b0dcdbbc7a725fe1a6">More...</a><br /></td></tr>
 <tr class="separator:a6d4520d3113c54b0dcdbbc7a725fe1a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3faae56394a4d60c58e0d64083f4390e"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1BlockMap.html#af2c3974e7f69225ef7b09c3cfd4d9439">value_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#a3faae56394a4d60c58e0d64083f4390e">find</a> (int tile_i, int tile_j, int tile_k) const</td></tr>
 <tr class="memdesc:a3faae56394a4d60c58e0d64083f4390e"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Query the tile No. from the hash table  <a href="classCajita_1_1BlockMap.html#a3faae56394a4d60c58e0d64083f4390e">More...</a><br /></td></tr>
 <tr class="separator:a3faae56394a4d60c58e0d64083f4390e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a975a4fa0ff9bbe40b2503b39b931caac"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1BlockMap.html#af2c3974e7f69225ef7b09c3cfd4d9439">value_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#a975a4fa0ff9bbe40b2503b39b931caac">findKey</a> (<a class="el" href="classCajita_1_1BlockMap.html#a9dc48457a379832c3554689f0b0296e3">key_type</a> tile_key) const</td></tr>
+<tr class="memdesc:a975a4fa0ff9bbe40b2503b39b931caac"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Query the tile No. from the hash table  <a href="classCajita_1_1BlockMap.html#a975a4fa0ff9bbe40b2503b39b931caac">More...</a><br /></td></tr>
+<tr class="separator:a975a4fa0ff9bbe40b2503b39b931caac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7bc9b3a2b0fbc7229ee1052e3864ba94"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1BlockMap.html#a9dc48457a379832c3554689f0b0296e3">key_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#a7bc9b3a2b0fbc7229ee1052e3864ba94">ijk2key</a> (int tile_i, int tile_j, int tile_k) const</td></tr>
 <tr class="memdesc:a7bc9b3a2b0fbc7229ee1052e3864ba94"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Transfer tile ijk to tile hash key  <a href="classCajita_1_1BlockMap.html#a7bc9b3a2b0fbc7229ee1052e3864ba94">More...</a><br /></td></tr>
 <tr class="separator:a7bc9b3a2b0fbc7229ee1052e3864ba94"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -285,6 +293,42 @@ template&lt;typename MemorySpace , unsigned long long CBits, unsigned long long 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tile_i,tile_j,tile_k</td><td>Tile ID in each dimension </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a975a4fa0ff9bbe40b2503b39b931caac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a975a4fa0ff9bbe40b2503b39b931caac">&#9670;&nbsp;</a></span>findKey()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename MemorySpace , unsigned long long CBits, unsigned long long CNumPerDim, unsigned long long CNumPerTile, HashTypes Hash, typename Key , typename Value &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1BlockMap.html#af2c3974e7f69225ef7b09c3cfd4d9439">value_type</a> <a class="el" href="classCajita_1_1BlockMap.html">Cajita::BlockMap</a>&lt; MemorySpace, CBits, CNumPerDim, CNumPerTile, Hash, Key, Value &gt;::findKey </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classCajita_1_1BlockMap.html#a9dc48457a379832c3554689f0b0296e3">key_type</a>&#160;</td>
+          <td class="paramname"><em>tile_key</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>(Device) Query the tile No. from the hash table </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tile_key</td><td>Tile Key in each dimension </td></tr>
   </table>
   </dd>
 </dl>

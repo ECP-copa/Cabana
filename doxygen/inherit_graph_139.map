@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structCajita_1_1ScalarValueP2G.html" title="Point&#45;to&#45;grid scalar value functor." alt="" coords="5,5,164,47"/>
+<area shape="rect" id="node1" href="$classCajita_1_1ReferenceStructuredSolver.html" title="Reference preconditioned structured solver interface." alt="" coords="5,5,199,61"/>
+<area shape="rect" id="node2" href="$classCajita_1_1ReferenceConjugateGradient.html" title="Reference structured preconditioned block conjugate gradient implementation." alt="" coords="247,5,443,61"/>
 </map>

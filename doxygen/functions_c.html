@@ -68,20 +68,26 @@ $(function() {
 <li>capacity()
 : <a class="el" href="classCabana_1_1AoSoA.html#a730ffd15f754ec44263e1267c23f80f6">Cabana::AoSoA&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;</a>
 , <a class="el" href="classCajita_1_1BlockMap.html#a9e1ac0b455cc6b71890f4c969ec35be3">Cajita::BlockMap&lt; MemorySpace, CBits, CNumPerDim, CNumPerTile, Hash, Key, Value &gt;</a>
+, <a class="el" href="classCajita_1_1Experimental_1_1SparseArray.html#a265414614cd39467e1586d12065bd5e6">Cajita::Experimental::SparseArray&lt; DataTypes, DeviceType, EntityType, MeshType, SparseMapType &gt;</a>
 , <a class="el" href="classCajita_1_1SparseMap.html#a6050fd663a18d14025d20ffe9f5cc76d">Cajita::SparseMap&lt; MemorySpace, CellPerTileDim, Hash, Key, Value &gt;</a>
 </li>
 <li>cardinalBinIndex()
 : <a class="el" href="classCabana_1_1LinkedCellList.html#a67fca264ecf64ea3f2aeb9452b4944e9">Cabana::LinkedCellList&lt; DeviceType &gt;</a>
 </li>
 <li>cell_bits_per_tile
-: <a class="el" href="classCajita_1_1SparseMap.html#acd5473b89a1b8562c3a4c6b840b8948a">Cajita::SparseMap&lt; MemorySpace, CellPerTileDim, Hash, Key, Value &gt;</a>
+: <a class="el" href="classCajita_1_1Experimental_1_1SparseArray.html#a90b4ffb8ed061030329a827ec162c31f">Cajita::Experimental::SparseArray&lt; DataTypes, DeviceType, EntityType, MeshType, SparseMapType &gt;</a>
+, <a class="el" href="classCajita_1_1SparseMap.html#acd5473b89a1b8562c3a4c6b840b8948a">Cajita::SparseMap&lt; MemorySpace, CellPerTileDim, Hash, Key, Value &gt;</a>
 </li>
 <li>cell_bits_per_tile_dim
 : <a class="el" href="classCajita_1_1BlockMap.html#af5119249a33826e541359382bdd9c393">Cajita::BlockMap&lt; MemorySpace, CBits, CNumPerDim, CNumPerTile, Hash, Key, Value &gt;</a>
+, <a class="el" href="classCajita_1_1Experimental_1_1SparseArrayLayout.html#a541e4fb8a7ea6a6ca196a702998a849b">Cajita::Experimental::SparseArrayLayout&lt; DataTypes, EntityType, MeshType, SparseMapType &gt;</a>
 , <a class="el" href="classCajita_1_1SparseDimPartitioner.html#abeffdd20e2001506d8c2b7257dc67a6b">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim, NumSpaceDim &gt;</a>
 , <a class="el" href="classCajita_1_1SparseMap.html#ad6a263120f27d94ae9ae2a667072c44a">Cajita::SparseMap&lt; MemorySpace, CellPerTileDim, Hash, Key, Value &gt;</a>
 , <a class="el" href="classCajita_1_1TileIndexSpace.html#a6f41060443e51d7fac7690d6760f010c">Cajita::TileIndexSpace&lt; N, cellBitsPerTileDim, &gt;</a>
 , <a class="el" href="classCajita_1_1TileMap.html#ab1f19fb695ca37c53f59333c89904385">Cajita::TileMap&lt; CBits, CNumPerDim, CNumPerTile &gt;</a>
+</li>
+<li>cell_local_id()
+: <a class="el" href="classCajita_1_1SparseMap.html#a88fe412b140bc02d3bbf22289afa863d">Cajita::SparseMap&lt; MemorySpace, CellPerTileDim, Hash, Key, Value &gt;</a>
 </li>
 <li>cell_mask_per_tile_dim
 : <a class="el" href="classCajita_1_1SparseMap.html#a8d014ef7075f5d45e4aba6db6af6638d">Cajita::SparseMap&lt; MemorySpace, CellPerTileDim, Hash, Key, Value &gt;</a>
@@ -94,12 +100,16 @@ $(function() {
 </li>
 <li>cell_num_per_tile_dim
 : <a class="el" href="classCajita_1_1BlockMap.html#a42b5341edb7c865ef233dd9b9b9c7a09">Cajita::BlockMap&lt; MemorySpace, CBits, CNumPerDim, CNumPerTile, Hash, Key, Value &gt;</a>
+, <a class="el" href="classCajita_1_1Experimental_1_1SparseArrayLayout.html#a1b6005db836e3fa554598e1dc6b54867">Cajita::Experimental::SparseArrayLayout&lt; DataTypes, EntityType, MeshType, SparseMapType &gt;</a>
 , <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a48f75e292caa057b5ff2bab858af6359">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim, NumSpaceDim &gt;</a>
 , <a class="el" href="classCajita_1_1SparseMap.html#acf44a8b191093462d5a4f22c3f1ea0cc">Cajita::SparseMap&lt; MemorySpace, CellPerTileDim, Hash, Key, Value &gt;</a>
 , <a class="el" href="classCajita_1_1TileMap.html#a2f5367ce7a7af300c2fd9adfdcc219ad">Cajita::TileMap&lt; CBits, CNumPerDim, CNumPerTile &gt;</a>
 </li>
 <li>cellInRange()
 : <a class="el" href="classCajita_1_1TileIndexSpace.html#acb2cf7b103a6b43fb6e075aa27e07f1d">Cajita::TileIndexSpace&lt; N, cellBitsPerTileDim, &gt;</a>
+</li>
+<li>cellLocalId()
+: <a class="el" href="classCajita_1_1Experimental_1_1SparseArrayLayout.html#a53a504bdc9d3830bbcfbc6cb7e6af959">Cajita::Experimental::SparseArrayLayout&lt; DataTypes, EntityType, MeshType, SparseMapType &gt;</a>
 </li>
 <li>cellSize()
 : <a class="el" href="classCajita_1_1GlobalMesh.html#ae632acccf1dca60f6a20d9169c428702">Cajita::GlobalMesh&lt; MeshType &gt;</a>
@@ -112,6 +122,8 @@ $(function() {
 </li>
 <li>clear()
 : <a class="el" href="classCajita_1_1BlockMap.html#a46ad7fe067b29b3b08f85a7e0f0df79a">Cajita::BlockMap&lt; MemorySpace, CBits, CNumPerDim, CNumPerTile, Hash, Key, Value &gt;</a>
+, <a class="el" href="classCajita_1_1Experimental_1_1SparseArray.html#aa7806e721e5940ab15cd5e9fca5d892b">Cajita::Experimental::SparseArray&lt; DataTypes, DeviceType, EntityType, MeshType, SparseMapType &gt;</a>
+, <a class="el" href="classCajita_1_1Experimental_1_1SparseArrayLayout.html#a266ee2093eeac7d7a17310edc2dd2843">Cajita::Experimental::SparseArrayLayout&lt; DataTypes, EntityType, MeshType, SparseMapType &gt;</a>
 , <a class="el" href="classCajita_1_1SparseMap.html#a8223c3cbda0557344884665f1059abf9">Cajita::SparseMap&lt; MemorySpace, CellPerTileDim, Hash, Key, Value &gt;</a>
 </li>
 <li>cnt
@@ -143,8 +155,8 @@ $(function() {
 : <a class="el" href="structCabana_1_1ParameterPack.html#ac0e8ee39708e29b1db3ae605b69f9bff">Cabana::ParameterPack&lt; Types &gt;</a>
 </li>
 <li>coordinates()
-: <a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a85576d4c075885a3431eac73c415264b">Cajita::LocalMesh&lt; Device, NonUniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;</a>
-, <a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a218cff249fe0e1b4641b6af09fde992f">Cajita::LocalMesh&lt; Device, UniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;</a>
+: <a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a888d56a94024dcfa793b12d843ceb543">Cajita::LocalMesh&lt; Device, NonUniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;</a>
+, <a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#abdd1502b113b1f4733ffde6dc16509a0">Cajita::LocalMesh&lt; Device, UniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;</a>
 </li>
 <li>coordToOffset()
 : <a class="el" href="classCajita_1_1TileMap.html#a96d5cf685cb182e4e1bcad1cce853596">Cajita::TileMap&lt; CBits, CNumPerDim, CNumPerTile &gt;</a>

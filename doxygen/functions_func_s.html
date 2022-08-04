@@ -236,7 +236,7 @@ $(function() {
 , <a class="el" href="classCajita_1_1HypreStructuredSolver.html#a400887dff866e7a394bb704232827723">Cajita::HypreStructuredSolver&lt; Scalar, EntityType, MemorySpace &gt;</a>
 </li>
 <li>sharedIndexSpace()
-: <a class="el" href="classCajita_1_1ArrayLayout.html#a7334a39a6846cd2244e77aaf23e5fc9c">Cajita::ArrayLayout&lt; EntityType, MeshType &gt;</a>
+: <a class="el" href="classCajita_1_1ArrayLayout.html#a6bb05638b870826830b9cb61d77910e4">Cajita::ArrayLayout&lt; EntityType, MeshType &gt;</a>
 , <a class="el" href="classCajita_1_1LocalGrid.html#af08496949d3c9dcaf72c9890e0c411b9">Cajita::LocalGrid&lt; MeshType &gt;</a>
 </li>
 <li>sharedTileIndexSpace()
@@ -244,6 +244,7 @@ $(function() {
 </li>
 <li>shrinkToFit()
 : <a class="el" href="classCabana_1_1AoSoA.html#a5cb720713784b07b508063af7b9b10e1">Cabana::AoSoA&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;</a>
+, <a class="el" href="classCajita_1_1Experimental_1_1SparseArray.html#a1392cafb955a325416e3750a91fbe80c">Cajita::Experimental::SparseArray&lt; DataTypes, DeviceType, EntityType, MeshType, SparseMapType &gt;</a>
 </li>
 <li>SimdPolicy()
 : <a class="el" href="classCabana_1_1SimdPolicy.html#a1402abf6d218b5bfeff58ee1ea5acc21">Cabana::SimdPolicy&lt; VectorLength, Properties &gt;</a>
@@ -253,17 +254,22 @@ $(function() {
 , <a class="el" href="structArborX_1_1AccessTraits_3_01SliceLike_00_01PredicatesTag_01_4.html#ad68bb030ccbffb58387bde508f5f41b4">ArborX::AccessTraits&lt; SliceLike, PredicatesTag &gt;</a>
 , <a class="el" href="classCabana_1_1AoSoA.html#a1539f676ad72b25c1cb2071930af7c9b">Cabana::AoSoA&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;</a>
 , <a class="el" href="classCabana_1_1Slice.html#a56916eee341b8184856f125ef5db0c93">Cabana::Slice&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;</a>
+, <a class="el" href="classCajita_1_1Experimental_1_1SparseArray.html#ac9ea9fb59668a8cba2c37064a5ca335b">Cajita::Experimental::SparseArray&lt; DataTypes, DeviceType, EntityType, MeshType, SparseMapType &gt;</a>
 , <a class="el" href="classCajita_1_1IndexSpace.html#ac417f8370643d11791b20a2af6106e31">Cajita::IndexSpace&lt; N &gt;</a>
 , <a class="el" href="classCajita_1_1SparseMap.html#a9ed7a4a92c7d180a5f553d497acfd835">Cajita::SparseMap&lt; MemorySpace, CellPerTileDim, Hash, Key, Value &gt;</a>
 </li>
 <li>sizeCell()
-: <a class="el" href="classCajita_1_1TileIndexSpace.html#a6b2d178fbff1aa7798df36637087d521">Cajita::TileIndexSpace&lt; N, cellBitsPerTileDim, &gt;</a>
+: <a class="el" href="classCajita_1_1Experimental_1_1SparseArrayLayout.html#a18a6ce732e51e5863d28f34a7827dab5">Cajita::Experimental::SparseArrayLayout&lt; DataTypes, EntityType, MeshType, SparseMapType &gt;</a>
+, <a class="el" href="classCajita_1_1SparseMap.html#aa539c800ba9df24ebe65770fdf1ec200">Cajita::SparseMap&lt; MemorySpace, CellPerTileDim, Hash, Key, Value &gt;</a>
+, <a class="el" href="classCajita_1_1TileIndexSpace.html#a6b2d178fbff1aa7798df36637087d521">Cajita::TileIndexSpace&lt; N, cellBitsPerTileDim, &gt;</a>
 </li>
 <li>sizeTile()
-: <a class="el" href="classCajita_1_1TileIndexSpace.html#a250c9023a086e7f07e7d9731971ba8ce">Cajita::TileIndexSpace&lt; N, cellBitsPerTileDim, &gt;</a>
+: <a class="el" href="classCajita_1_1Experimental_1_1SparseArrayLayout.html#a997dc20c2c135c5a7c26a082ea71fb21">Cajita::Experimental::SparseArrayLayout&lt; DataTypes, EntityType, MeshType, SparseMapType &gt;</a>
+, <a class="el" href="classCajita_1_1SparseMap.html#a4d789eb20ac962369fa283bae27976c7">Cajita::SparseMap&lt; MemorySpace, CellPerTileDim, Hash, Key, Value &gt;</a>
+, <a class="el" href="classCajita_1_1TileIndexSpace.html#a250c9023a086e7f07e7d9731971ba8ce">Cajita::TileIndexSpace&lt; N, cellBitsPerTileDim, &gt;</a>
 </li>
 <li>Slice()
-: <a class="el" href="classCabana_1_1Slice.html#a93a0064084e2b05c030e63ecc688734b">Cabana::Slice&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;</a>
+: <a class="el" href="classCabana_1_1Slice.html#ae615b44282c747d966f9503f5f49fb57">Cabana::Slice&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;</a>
 </li>
 <li>solve()
 : <a class="el" href="classCajita_1_1HypreStructuredSolver.html#a7eedc9f523d5d00b92e572b9e8bf7d1a">Cajita::HypreStructuredSolver&lt; Scalar, EntityType, MemorySpace &gt;</a>
@@ -280,8 +286,17 @@ $(function() {
 , <a class="el" href="classCajita_1_1HypreStructSMG.html#a22498dd39cc9f6a1dd61751fdbba63d7">Cajita::HypreStructSMG&lt; Scalar, EntityType, MemorySpace &gt;</a>
 , <a class="el" href="classCajita_1_1HypreStructuredSolver.html#a7825bc273ca13d7372a63afec9ab5b06">Cajita::HypreStructuredSolver&lt; Scalar, EntityType, MemorySpace &gt;</a>
 </li>
+<li>SparseArray()
+: <a class="el" href="classCajita_1_1Experimental_1_1SparseArray.html#a1a97a9e3111379b0bbb97ec6108019dd">Cajita::Experimental::SparseArray&lt; DataTypes, DeviceType, EntityType, MeshType, SparseMapType &gt;</a>
+</li>
+<li>SparseArrayLayout()
+: <a class="el" href="classCajita_1_1Experimental_1_1SparseArrayLayout.html#acc4dc7ef4bee0df7e284009acbfda5c0">Cajita::Experimental::SparseArrayLayout&lt; DataTypes, EntityType, MeshType, SparseMapType &gt;</a>
+</li>
 <li>SparseDimPartitioner()
 : <a class="el" href="classCajita_1_1SparseDimPartitioner.html#ad7ad6c77a89dcdb20c164daddd6f7e44">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim, NumSpaceDim &gt;</a>
+</li>
+<li>sparseMap()
+: <a class="el" href="classCajita_1_1Experimental_1_1SparseArrayLayout.html#ad99865391a1a0a02d53385b51ba3b33e">Cajita::Experimental::SparseArrayLayout&lt; DataTypes, EntityType, MeshType, SparseMapType &gt;</a>
 </li>
 <li>SparseMap()
 : <a class="el" href="classCajita_1_1SparseMap.html#ab3581b66536f6065b80fc1d00eeee0cd">Cajita::SparseMap&lt; MemorySpace, CellPerTileDim, Hash, Key, Value &gt;</a>
