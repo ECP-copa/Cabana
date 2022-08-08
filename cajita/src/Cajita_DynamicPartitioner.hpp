@@ -28,13 +28,24 @@
 namespace Cajita
 {
 
+//---------------------------------------------------------------------------//
+/*!
+  Workload measurer for DynamicPartitioner. It can be customized by the user
+  to compute workload on each rank.
+
+  \tparam Device Kokkos device type.
+*/
 template <typename Device>
 class DynamicPartitionerWorkloadMeasurer
 {
     using memory_space = typename Device::memory_space;
 
   public:
-    virtual void compute( Kokkos::View<int***, memory_space>& ) = 0;
+    /*!
+      \brief this function need to be overwrited to compute workload
+      \param workload workload computed on each rank
+    */
+    virtual void compute( Kokkos::View<int***, memory_space>& workload ) = 0;
 };
 
 //---------------------------------------------------------------------------//
@@ -769,18 +780,22 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
     int _max_optimize_iteration;
 
   protected:
-    // represent the rectangle partition in each dimension
-    // with form [0, p_1, ..., p_n, cell_num], n = rank num in current
-    // dimension, partition in this dimension would be [0, p_1), [p_1, p_2) ...
-    // [p_n, total_tile_num] (unit: tile)
+    //! represent the rectangle partition in each dimension
+    //! with form [0, p_1, ..., p_n, cell_num], n = rank num in current
+    //! dimension, partition in this dimension would be [0, p_1), [p_1, p_2) ...
+    //! [p_n, total_tile_num] (unit: tile)
     partition_view _rectangle_partition_dev;
-    // the workload of each tile on current
+    //! the workload of each tile on current
     workload_view _workload_per_tile;
-    // 3d prefix sum of the workload of each tile on current
+    //! 3d prefix sum of the workload of each tile on current
     workload_view _workload_prefix_sum;
-    // ranks per dimension
+    //! ranks per dimension
     Kokkos::Array<int, num_space_dim> _ranks_per_dim;
 
+    /*!
+      \brief allocate internal data structure for the partition algorithm
+      \param global_cells_per_dim grid size along each dimension
+    */
     void allocate( const std::array<int, num_space_dim>& global_cells_per_dim )
     {
 
