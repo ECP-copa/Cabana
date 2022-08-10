@@ -295,9 +295,9 @@ std::vector<std::string> getFieldNames( FieldSliceTypes&&... fields )
 //! Write a Silo multimesh hierarchy.
 template <class... FieldSliceTypes>
 void writeMultiMesh( PMPIO_baton_t* baton, DBfile* silo_file,
-                     const int comm_size, const std::string& mesh_name,
-                     const int time_step_index, const double time,
-                     FieldSliceTypes&&... fields )
+                     const int comm_size, const std::string& prefix,
+                     const std::string& mesh_name, const int time_step_index,
+                     const double time, FieldSliceTypes&&... fields )
 {
     // Go to the root directory of the file.
     DBSetDir( silo_file, "/" );
@@ -316,7 +316,7 @@ void writeMultiMesh( PMPIO_baton_t* baton, DBfile* silo_file,
         else
         {
             std::stringstream bname;
-            bname << "particles_" << time_step_index << "_group_" << group_rank
+            bname << prefix << "_" << time_step_index << "_group_" << group_rank
                   << ".silo:/rank_" << r << "/" << mesh_name;
             mb_names.push_back( bname.str() );
         }
@@ -347,7 +347,7 @@ void writeMultiMesh( PMPIO_baton_t* baton, DBfile* silo_file,
             else
             {
                 std::stringstream bname;
-                bname << "particles_" << time_step_index << "_group_"
+                bname << prefix << "_" << time_step_index << "_group_"
                       << group_rank << ".silo:/rank_" << r << "/"
                       << field_names[f];
                 fb_names[f].push_back( bname.str() );
@@ -461,7 +461,7 @@ void writePartialRangeTimeStep( const std::string& prefix, MPI_Comm comm,
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), view );
 
     // Add the point mesh.
-    std::string mesh_name = "particles";
+    std::string mesh_name = prefix;
     double* ptrs[3] = { &host_coords( 0, 0 ), &host_coords( 0, 1 ),
                         &host_coords( 0, 2 ) };
     DBPutPointmesh( silo_file, mesh_name.c_str(), host_coords.extent( 1 ), ptrs,
@@ -477,8 +477,8 @@ void writePartialRangeTimeStep( const std::string& prefix, MPI_Comm comm,
     int comm_size;
     MPI_Comm_size( comm, &comm_size );
     if ( 0 == comm_rank && comm_size > 1 )
-        writeMultiMesh( baton, silo_file, comm_size, mesh_name, time_step_index,
-                        time, fields... );
+        writeMultiMesh( baton, silo_file, comm_size, prefix, mesh_name,
+                        time_step_index, time, fields... );
 
     // Hand off the baton.
     PMPIO_HandOffBaton( baton, silo_file );
