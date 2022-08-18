@@ -976,21 +976,15 @@ struct CommunicationDataAoSoA
     }
 
     //! Resize the send buffer.
-    void reallocateSend( AoSoAType, const std::size_t num_send )
+    void reallocateSend( const std::size_t num_send )
     {
         Kokkos::realloc( _send_buffer, num_send );
     }
     //! Resize the receive buffer.
-    void reallocateReceive( AoSoAType, const std::size_t num_recv )
+    void reallocateReceive( const std::size_t num_recv )
     {
         Kokkos::realloc( _recv_buffer, num_recv );
     }
-    //! \cond Impl
-    auto getSliceComponents( AoSoAType )
-    {
-        throw std::runtime_error( "Slice components not valid for AoSoA!" );
-    }
-    //! \endcond
 
     //! Send buffer.
     buffer_type _send_buffer;
@@ -998,6 +992,8 @@ struct CommunicationDataAoSoA
     buffer_type _recv_buffer;
     //! Particle AoSoA.
     particle_data_type _particles;
+    //! Slice components.
+    std::size_t _num_comp = 0;
 };
 
 /*!
@@ -1025,6 +1021,8 @@ struct CommunicationDataSlice
     CommunicationDataSlice( particle_data_type particles )
         : _particles( particles )
     {
+        setSliceComponents();
+
         _send_buffer = buffer_type(
             Kokkos::ViewAllocateWithoutInitializing( "send_buffer" ), 0, 0 );
         _recv_buffer = buffer_type(
@@ -1032,25 +1030,22 @@ struct CommunicationDataSlice
     }
 
     //! Resize the send buffer.
-    void reallocateSend( const SliceType slice, const std::size_t num_send )
+    void reallocateSend( const std::size_t num_send )
     {
-        auto num_comp = getSliceComponents( slice );
-        Kokkos::realloc( _send_buffer, num_send, num_comp );
+        Kokkos::realloc( _send_buffer, num_send, _num_comp );
     }
     //! Resize the receive buffer.
-    void reallocateReceive( const SliceType slice, const std::size_t num_recv )
+    void reallocateReceive( const std::size_t num_recv )
     {
-        auto num_comp = getSliceComponents( slice );
-        Kokkos::realloc( _recv_buffer, num_recv, num_comp );
+        Kokkos::realloc( _recv_buffer, num_recv, _num_comp );
     }
 
     //! Get the total number of components in the slice.
-    auto getSliceComponents( SliceType slice )
+    void setSliceComponents()
     {
-        std::size_t num_comp = 1;
-        for ( std::size_t d = 2; d < slice.rank(); ++d )
-            num_comp *= slice.extent( d );
-        return num_comp;
+        _num_comp = 1;
+        for ( std::size_t d = 2; d < _particles.rank(); ++d )
+            _num_comp *= _particles.extent( d );
     }
 
     //! Send buffer.
@@ -1059,6 +1054,8 @@ struct CommunicationDataSlice
     buffer_type _recv_buffer;
     //! Particle slice.
     particle_data_type _particles;
+    //! Slice components.
+    std::size_t _num_comp;
 };
 //---------------------------------------------------------------------------//
 
@@ -1142,8 +1139,8 @@ class CommunicationData
             shrunk_send_size *= _overallocation;
             shrunk_recv_size *= _overallocation;
         }
-        _comm_data.reallocateSend( _comm_data._particles, shrunk_send_size );
-        _comm_data.reallocateReceive( _comm_data._particles, shrunk_recv_size );
+        _comm_data.reallocateSend( shrunk_send_size );
+        _comm_data.reallocateReceive( shrunk_recv_size );
     }
 
     //! Perform the communication (migrate, gather, scatter).
@@ -1174,12 +1171,12 @@ class CommunicationData
         auto send_capacity = sendCapacity();
         std::size_t new_send_size = total_send * _overallocation;
         if ( new_send_size > send_capacity )
-            _comm_data.reallocateSend( particles, new_send_size );
+            _comm_data.reallocateSend( new_send_size );
 
         auto recv_capacity = receiveCapacity();
         std::size_t new_recv_size = total_recv * _overallocation;
         if ( new_recv_size > recv_capacity )
-            _comm_data.reallocateReceive( particles, new_recv_size );
+            _comm_data.reallocateReceive( new_recv_size );
 
         _send_size = total_send;
         _recv_size = total_recv;
@@ -1188,10 +1185,7 @@ class CommunicationData
 
   protected:
     //! Get the total number of components in the slice.
-    auto getSliceComponents( particle_data_type slice )
-    {
-        return _comm_data.getSliceComponents( slice );
-    };
+    auto getSliceComponents() { return _comm_data._num_comp; };
 
     //! Communication plan.
     plan_type _comm_plan;

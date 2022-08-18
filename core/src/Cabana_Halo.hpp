@@ -471,7 +471,7 @@ class Gather<HaloType, SliceType,
         auto slice = this->getParticles();
 
         // Get the number of components in the slice.
-        std::size_t num_comp = this->getSliceComponents( slice );
+        std::size_t num_comp = this->getSliceComponents();
 
         // Get the raw slice data.
         auto slice_data = slice.data();
@@ -717,7 +717,7 @@ class Scatter
         auto slice = this->getParticles();
 
         // Get the number of components in the slice.
-        std::size_t num_comp = this->getSliceComponents( slice );
+        std::size_t num_comp = this->getSliceComponents();
 
         // Get the raw slice data. Wrap in a 1D Kokkos View so we can unroll the
         // components of each slice element.
