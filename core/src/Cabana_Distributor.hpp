@@ -249,15 +249,16 @@ class Migrate;
 template <class DistributorType, class AoSoAType>
 class Migrate<DistributorType, AoSoAType,
               typename std::enable_if<is_aosoa<AoSoAType>::value>::type>
-    : public CommunicationData<DistributorType,
-                               CommunicationDataAoSoA<AoSoAType>>
+    : public CommunicationDataSeparate<
+          DistributorType, CommunicationDataAoSoASeparate<AoSoAType>>
 {
   public:
     static_assert( is_distributor<DistributorType>::value, "" );
 
-    //! Base type.
+    //! Base type. Note we use separate AoSoA even if it's in place.
     using base_type =
-        CommunicationData<DistributorType, CommunicationDataAoSoA<AoSoAType>>;
+        CommunicationDataSeparate<DistributorType,
+                                  CommunicationDataAoSoASeparate<AoSoAType>>;
     //! Communication plan type (Distributor)
     using plan_type = typename base_type::plan_type;
     //! Kokkos execution space.
@@ -283,9 +284,10 @@ class Migrate<DistributorType, AoSoAType,
     */
     Migrate( DistributorType distributor, AoSoAType aosoa,
              const double overallocation = 1.0 )
-        : base_type( distributor, overallocation )
+        : base_type( distributor, aosoa, aosoa, overallocation )
     {
-        reserve( _distributor, aosoa );
+        // Use the data as both source and destination.
+        reserve( _distributor, aosoa, aosoa );
     }
 
     /*!
@@ -303,158 +305,23 @@ class Migrate<DistributorType, AoSoAType,
     */
     Migrate( DistributorType distributor, AoSoAType src, AoSoAType dst,
              const double overallocation = 1.0 )
-        : base_type( distributor, overallocation )
+        : base_type( distributor, src, dst, overallocation )
     {
         reserve( _distributor, src, dst );
     }
 
     /*!
-      \brief Perform the migrate operation. In-place AoSoA version.
-
-      Synchronously migrate data between two different decompositions using the
-      distributor forward communication plan. Single AoSoA version that will
-      resize in-place. Note that resizing does not necessarily allocate more
-      memory. The AoSoA memory will only increase if not enough has already been
-      reserved/allocated for the needed number of elements.
-
-      \param aosoa The AoSoA containing the data to be migrated. Upon input,
-      must have the same number of elements as the inputs used to construct the
-      distributor. At output, it will be the same size as the number of import
-      elements on this rank provided by the distributor. Before using this
-      function, consider reserving enough memory in the data structure so
-      reallocating is not necessary.
+      \brief Perform the migrate operation.
     */
-    void apply( AoSoAType& aosoa ) override
-    {
-        migrate( aosoa, aosoa );
-
-        // If the destination decomposition is smaller than the source
-        // decomposition resize after we have moved the data.
-        bool dst_is_bigger =
-            ( _distributor.totalNumImport() > _distributor.exportSize() );
-        if ( !dst_is_bigger )
-            aosoa.resize( _distributor.totalNumImport() );
-    }
-
-    /*!
-      \brief Perform the migrate operation. Multiple AoSoA version.
-
-      \param src The AoSoA containing the data to be migrated. Must have the
-      same number of elements as the inputs used to construct the distributor.
-
-      \param dst The AoSoA to which the migrated data will be written. Must be
-      the same size as the number of imports given by the distributor on this
-      rank. Call totalNumImport() on the distributor to get this size value.
-    */
-    void apply( const AoSoAType& src, AoSoAType& dst ) override
-    {
-        migrate( src, dst );
-    }
-
-    /*!
-      \brief Update the distributor and AoSoA data for migration.
-
-      \param distributor The Distributor to be used for the migrate.
-      \param aosoa The AoSoA on which to perform the migrate.
-      \param overallocation An optional factor to keep extra space in the
-      buffers to avoid frequent resizing.
-    */
-    void reserve( const DistributorType& distributor, AoSoAType& aosoa,
-                  const double overallocation )
-    {
-        // Check that the AoSoA is the right size.
-        if ( !distributorCheckValidSize( distributor, aosoa ) )
-            throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
-
-        // Determine if the source of destination decomposition has more data on
-        // this rank.
-        bool dst_is_bigger =
-            ( distributor.totalNumImport() > distributor.exportSize() );
-
-        // If the destination decomposition is bigger than the source
-        // decomposition resize now so we have enough space to do the operation.
-        if ( dst_is_bigger )
-            aosoa.resize( distributor.totalNumImport() );
-
-        this->reserveImpl( distributor, aosoa, distributor.totalSend(),
-                           distributor.totalReceive(), overallocation );
-    }
-    /*!
-      \brief Update the distributor and AoSoA data for migration.
-
-      \param distributor The Distributor to be used for the migrate.
-      \param aosoa The AoSoA on which to perform the migrate.
-    */
-    void reserve( const DistributorType& distributor, AoSoAType& aosoa )
-    {
-        // Check that the AoSoA is the right size.
-        if ( !distributorCheckValidSize( distributor, aosoa ) )
-            throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
-
-        // Determine if the source of destination decomposition has more data on
-        // this rank.
-        bool dst_is_bigger =
-            ( distributor.totalNumImport() > distributor.exportSize() );
-
-        // If the destination decomposition is bigger than the source
-        // decomposition resize now so we have enough space to do the operation.
-        if ( dst_is_bigger )
-            aosoa.resize( distributor.totalNumImport() );
-
-        this->reserveImpl( distributor, aosoa, distributor.totalSend(),
-                           distributor.totalReceive() );
-    }
-
-    /*!
-      \brief Update the distributor and AoSoA data for migration.
-
-      \param distributor The Distributor to be used for the migrate.
-      \param src The AoSoA containing the data to be migrated. Must have the
-      same number of elements as the inputs used to construct the distributor.
-      \param dst The AoSoA to which the migrated data will be written. Must be
-      the same size as the number of imports given by the distributor on this
-      rank.
-      \param overallocation An optional factor to keep extra space in the
-      buffers to avoid frequent resizing.
-    */
-    void reserve( const DistributorType& distributor, const AoSoAType& src,
-                  AoSoAType& dst, const double overallocation )
-    {
-        // Check that src and dst are the right size.
-        if ( !distributorCheckValidSize( distributor, src, dst ) )
-            throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
-
-        this->reserveImpl( distributor, src, distributor.totalSend(),
-                           distributor.totalReceive(), overallocation );
-    }
-    /*!
-      \brief Update the distributor and AoSoA data for migration.
-
-      \param distributor The Distributor to be used for the migrate.
-      \param src The AoSoA containing the data to be migrated. Must have the
-      same number of elements as the inputs used to construct the distributor.
-      \param dst The AoSoA to which the migrated data will be written. Must be
-      the same size as the number of imports given by the distributor on this
-      rank.
-    */
-    void reserve( const DistributorType& distributor, const AoSoAType& src,
-                  AoSoAType& dst )
-    {
-        // Check that src and dst are the right size.
-        if ( !distributorCheckValidSize( distributor, src, dst ) )
-            throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
-
-        this->reserveImpl( distributor, src, distributor.totalSend(),
-                           distributor.totalReceive() );
-    }
-
-  private:
-    // Implementation of the migration.
-    void migrate( const AoSoAType& src, AoSoAType& dst )
+    void apply() override
     {
         // Get the buffers (local copies for lambdas below).
         auto send_buffer = this->getSendBuffer();
         auto recv_buffer = this->getReceiveBuffer();
+
+        // Get the particle data. Note that the src could be the same as dst.
+        auto src = this->getParticles();
+        auto dst = this->getDestinationParticles();
 
         // Get the number of neighbors.
         int num_n = _distributor.numNeighbor();
@@ -465,10 +332,10 @@ class Migrate<DistributorType, AoSoAType,
         // Get the steering vector for the sends.
         auto steering = _distributor.getExportSteering();
 
-        // Gather the exports from the source AoSoA into the tuple-contiguous
-        // send buffer or the receive buffer if the data is staying. We know
-        // that the steering vector is ordered such that the data staying on
-        // this rank comes first.
+        // Gather the exports from the source AoSoA into the
+        // tuple-contiguous send buffer or the receive buffer if the data is
+        // staying. We know that the steering vector is ordered such that
+        // the data staying on this rank comes first.
         auto build_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
         {
             auto tpl = src.getTuple( steering( i ) );
@@ -481,7 +348,8 @@ class Migrate<DistributorType, AoSoAType,
                               _send_policy, build_send_buffer_func );
         Kokkos::fence();
 
-        // The distributor has its own communication space so choose any tag.
+        // The distributor has its own communication space so choose any
+        // tag.
         const int mpi_tag = 1234;
 
         // Post non-blocking receives.
@@ -549,6 +417,104 @@ class Migrate<DistributorType, AoSoAType,
         MPI_Barrier( _distributor.comm() );
     }
 
+    /*!
+      \brief Update the distributor and AoSoA data for migration.
+
+      \param distributor The Distributor to be used for the migrate.
+      \param aosoa The AoSoA on which to perform the migrate.
+      \param overallocation An optional factor to keep extra space in the
+      buffers to avoid frequent resizing.
+    */
+    void reserve( const DistributorType& distributor, AoSoAType& aosoa,
+                  const double overallocation )
+    {
+        // Check that the AoSoA is the right size.
+        if ( !distributorCheckValidSize( distributor, aosoa ) )
+            throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
+
+        // Determine if the source of destination decomposition has more data on
+        // this rank.
+        bool dst_is_bigger =
+            ( distributor.totalNumImport() > distributor.exportSize() );
+
+        // If the destination decomposition is bigger than the source
+        // decomposition resize now so we have enough space to do the operation.
+        if ( dst_is_bigger )
+            aosoa.resize( distributor.totalNumImport() );
+
+        this->reserveImpl( distributor, aosoa, aosoa, distributor.totalSend(),
+                           distributor.totalReceive(), overallocation );
+    }
+    /*!
+      \brief Update the distributor and AoSoA data for migration.
+
+      \param distributor The Distributor to be used for the migrate.
+      \param aosoa The AoSoA on which to perform the migrate.
+    */
+    void reserve( const DistributorType& distributor, AoSoAType& aosoa )
+    {
+        // Check that the AoSoA is the right size.
+        if ( !distributorCheckValidSize( distributor, aosoa ) )
+            throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
+
+        // Determine if the source of destination decomposition has more data on
+        // this rank.
+        bool dst_is_bigger =
+            ( distributor.totalNumImport() > distributor.exportSize() );
+
+        // If the destination decomposition is bigger than the source
+        // decomposition resize now so we have enough space to do the operation.
+        if ( dst_is_bigger )
+            aosoa.resize( distributor.totalNumImport() );
+
+        this->reserveImpl( distributor, aosoa, aosoa, distributor.totalSend(),
+                           distributor.totalReceive() );
+    }
+
+    /*!
+      \brief Update the distributor and AoSoA data for migration.
+
+      \param distributor The Distributor to be used for the migrate.
+      \param src The AoSoA containing the data to be migrated. Must have the
+      same number of elements as the inputs used to construct the distributor.
+      \param dst The AoSoA to which the migrated data will be written. Must be
+      the same size as the number of imports given by the distributor on this
+      rank.
+      \param overallocation An optional factor to keep extra space in the
+      buffers to avoid frequent resizing.
+    */
+    void reserve( const DistributorType& distributor, const AoSoAType& src,
+                  AoSoAType& dst, const double overallocation )
+    {
+        // Check that src and dst are the right size.
+        if ( !distributorCheckValidSize( distributor, src, dst ) )
+            throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
+
+        this->reserveImpl( distributor, src, dst, distributor.totalSend(),
+                           distributor.totalReceive(), overallocation );
+    }
+    /*!
+      \brief Update the distributor and AoSoA data for migration.
+
+      \param distributor The Distributor to be used for the migrate.
+      \param src The AoSoA containing the data to be migrated. Must have the
+      same number of elements as the inputs used to construct the distributor.
+      \param dst The AoSoA to which the migrated data will be written. Must be
+      the same size as the number of imports given by the distributor on this
+      rank.
+    */
+    void reserve( const DistributorType& distributor, const AoSoAType& src,
+                  AoSoAType& dst )
+    {
+        // Check that src and dst are the right size.
+        if ( !distributorCheckValidSize( distributor, src, dst ) )
+            throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
+
+        this->reserveImpl( distributor, src, dst, distributor.totalSend(),
+                           distributor.totalReceive() );
+    }
+
+  private:
     plan_type _distributor = base_type::_comm_plan;
     using base_type::_recv_policy;
     using base_type::_send_policy;
@@ -566,14 +532,16 @@ class Migrate<DistributorType, AoSoAType,
 template <class DistributorType, class SliceType>
 class Migrate<DistributorType, SliceType,
               typename std::enable_if<is_slice<SliceType>::value>::type>
-    : CommunicationData<DistributorType, CommunicationDataSlice<SliceType>>
+    : CommunicationDataSeparate<DistributorType,
+                                CommunicationDataSliceSeparate<SliceType>>
 {
   public:
     static_assert( is_distributor<DistributorType>::value, "" );
 
     //! Base type.
     using base_type =
-        CommunicationData<DistributorType, CommunicationDataSlice<SliceType>>;
+        CommunicationDataSeparate<DistributorType,
+                                  CommunicationDataSliceSeparate<SliceType>>;
     //! Communication plan type (Distributor)
     using plan_type = typename base_type::plan_type;
     //! Kokkos execution space.
@@ -594,7 +562,7 @@ class Migrate<DistributorType, SliceType,
     */
     Migrate( const DistributorType& distributor, const SliceType& src,
              SliceType& dst, const double overallocation = 1.0 )
-        : base_type( distributor, overallocation )
+        : base_type( distributor, src, dst, overallocation )
     {
         _my_rank = _distributor.getRank();
         reserve( _distributor, src, dst );
@@ -606,17 +574,19 @@ class Migrate<DistributorType, SliceType,
       \param src The slice containing the data to be migrated.
       \param dst The slice to which the migrated data will be written.
     */
-    void apply( const SliceType& src, SliceType& dst ) override
+    void apply() override
     {
         // Get the buffers (local copies for lambdas below).
         auto send_buffer = this->getSendBuffer();
         auto recv_buffer = this->getReceiveBuffer();
 
         // Get the number of components in the slices.
-        auto num_comp = this->getSliceComponents( src );
+        auto num_comp = this->getSliceComponents();
 
         // Get the raw slice data.
+        auto src = this->getParticles();
         auto src_data = src.data();
+        auto dst = this->getDestinationParticles();
         auto dst_data = dst.data();
 
         // Get the number of neighbors.
@@ -724,15 +694,6 @@ class Migrate<DistributorType, SliceType,
         MPI_Barrier( _distributor.comm() );
     }
 
-    //! \cond Impl
-    void apply() override
-    {
-        // This should never be called. It exists to override the base.
-        throw std::runtime_error(
-            "In-place slice migrate is not implemented!" );
-    }
-    //! \endcond
-
     /*!
       \brief Update the distributor and slice data for migrate.
 
@@ -749,7 +710,7 @@ class Migrate<DistributorType, SliceType,
         if ( !distributorCheckValidSize( distributor, src, dst ) )
             throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
 
-        this->reserveImpl( distributor, src, distributor.totalSend(),
+        this->reserveImpl( distributor, src, dst, distributor.totalSend(),
                            distributor.totalReceive(), overallocation );
     }
     /*!
@@ -766,7 +727,7 @@ class Migrate<DistributorType, SliceType,
         if ( !distributorCheckValidSize( distributor, src, dst ) )
             throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
 
-        this->reserveImpl( distributor, src, distributor.totalSend(),
+        this->reserveImpl( distributor, src, dst, distributor.totalSend(),
                            distributor.totalReceive() );
     }
 
@@ -816,7 +777,7 @@ auto createMigrate( const DistributorType& distributor,
 //---------------------------------------------------------------------------//
 /*!
   \brief Synchronously migrate data between two different decompositions using
-  the distributor forward communication plan. Multiple AoSoA version.
+  the distributor forward communication plan. Separate destination version.
 
   Migrate moves all data to a new distribution that is uniquely owned - each
   element will only have a single destination rank.
@@ -834,15 +795,12 @@ auto createMigrate( const DistributorType& distributor,
   same size as the number of imports given by the distributor on this
   rank. Call totalNumImport() on the distributor to get this size value.
 */
-template <class DistributorType, class AoSoAType>
-void migrate(
-    const DistributorType& distributor, const AoSoAType& src, AoSoAType& dst,
-    typename std::enable_if<( is_distributor<DistributorType>::value &&
-                              is_aosoa<AoSoAType>::value ),
-                            int>::type* = 0 )
+template <class DistributorType, class ParticleDataType>
+void migrate( const DistributorType& distributor, const ParticleDataType& src,
+              ParticleDataType& dst )
 {
     auto migrate = createMigrate( distributor, src, dst );
-    migrate.apply( src, dst );
+    migrate.apply();
 }
 
 //---------------------------------------------------------------------------//
@@ -877,37 +835,7 @@ void migrate(
                             int>::type* = 0 )
 {
     auto migrate = createMigrate( distributor, aosoa );
-    migrate.apply( aosoa );
-}
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Synchronously migrate data between two different decompositions using
-  the distributor forward communication plan. Slice version. The user can do
-  this in-place with the same slice but they will need to manage the resizing
-  themselves as we can't resize slices.
-
-  Migrate moves all data to a new distribution that is uniquely owned - each
-  element will only have a single destination rank.
-
-  \param distributor The distributor to use for the migration.
-
-  \param src The slice containing the data to be migrated. Must have the same
-  number of elements as the inputs used to construct the distributor.
-
-  \param dst The slice to which the migrated data will be written. Must be the
-  same size as the number of imports given by the distributor on this
-  rank. Call totalNumImport() on the distributor to get this size value.
-*/
-template <class DistributorType, class SliceType>
-void migrate(
-    const DistributorType& distributor, const SliceType& src, SliceType& dst,
-    typename std::enable_if<( is_distributor<DistributorType>::value &&
-                              is_slice<SliceType>::value ),
-                            int>::type* = 0 )
-{
-    auto migrate = createMigrate( distributor, src, dst );
-    migrate.apply( src, dst );
+    migrate.apply();
 }
 //---------------------------------------------------------------------------//
 
