@@ -791,7 +791,11 @@ void dot( const Array_t& a, const Array_t& b,
         functor,
         Kokkos::View<typename Array_t::value_type*, Kokkos::HostSpace>(
             products.data(), products.size() ) );
+#if KOKKOS_VERSION >= 30500
     exec_space.fence( "ArrayOp::dot before MPI_Allreduce" );
+#else
+    exec_space.fence();
+#endif
 
     MPI_Allreduce( MPI_IN_PLACE, products.data(), products.size(),
                    MpiTraits<typename Array_t::value_type>::type(), MPI_SUM,
@@ -897,7 +901,11 @@ void normInf( const Array_t& array,
         functor,
         Kokkos::View<typename Array_t::value_type*, Kokkos::HostSpace>(
             norms.data(), norms.size() ) );
+#if KOKKOS_VERSION >= 30500
     exec_space.fence( "ArrayOp::normInf before MPI_Allreduce" );
+#else
+    exec_space.fence();
+#endif
 
     MPI_Allreduce( MPI_IN_PLACE, norms.data(), norms.size(),
                    MpiTraits<typename Array_t::value_type>::type(), MPI_MAX,
@@ -997,7 +1005,11 @@ void norm1( const Array_t& array,
         functor,
         Kokkos::View<typename Array_t::value_type*, Kokkos::HostSpace>(
             norms.data(), norms.size() ) );
+#if KOKKOS_VERSION >= 30500
     exec_space.fence( "ArrayOp::norm1 before MPI_Allreduce" );
+#else
+    exec_space.fence();
+#endif
 
     MPI_Allreduce( MPI_IN_PLACE, norms.data(), norms.size(),
                    MpiTraits<typename Array_t::value_type>::type(), MPI_SUM,
@@ -1097,7 +1109,11 @@ void norm2( const Array_t& array,
         functor,
         Kokkos::View<typename Array_t::value_type*, Kokkos::HostSpace>(
             norms.data(), norms.size() ) );
+#if KOKKOS_VERSION >= 30500
     exec_space.fence( "ArrayOp::norm2 before MPI_Allreduce" );
+#else
+    exec_space.fence();
+#endif
 
     MPI_Allreduce( MPI_IN_PLACE, norms.data(), norms.size(),
                    MpiTraits<typename Array_t::value_type>::type(), MPI_SUM,
