@@ -31,7 +31,7 @@ jobs:
         cxx: ['g++', 'clang++']
         backend: ['OPENMP', 'SERIAL']
         cmake_build_type: ['Debug', 'Release']
-        kokkos_ver: ['3.4.00', 'master']
+        kokkos_ver: ['3.5.00', 'master']
         arborx: ['NoArborX']
         heffte: ['NoheFFTe' ]
         hypre: ['NoHYPRE']
