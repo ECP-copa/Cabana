@@ -16,7 +16,7 @@ concurrency:
 jobs:
   CI:
     # FIXME: remove failing distributions here when passing
-    continue-on-error: ${{ matrix.kokkos_ver == 'develop' || matrix.distro == 'fedora:rawhide' || (matrix.distro == 'fedora:intel' && matrix.backend == 'SERIAL' && matrix.cmake_build_type == 'Release') }}
+    continue-on-error: ${{ (matrix.distro == 'fedora:intel' && matrix.backend == 'SERIAL' && matrix.cmake_build_type == 'Release') }}
     defaults:
       run:
         shell: bash
@@ -31,7 +31,7 @@ jobs:
         cxx: ['g++', 'clang++']
         backend: ['OPENMP', 'SERIAL']
         cmake_build_type: ['Debug', 'Release']
-        kokkos_ver: ['3.4.00', 'master', 'develop']
+        kokkos_ver: ['3.4.00', 'master']
         arborx: ['NoArborX']
         heffte: ['NoheFFTe' ]
         hypre: ['NoHYPRE']
@@ -43,8 +43,7 @@ jobs:
             cxx: 'g++'
             backend: 'THREADS'
             cmake_build_type: 'Debug'
-            # FIXME: switch to master when available: https://github.com/kokkos/kokkos/pull/5109
-            kokkos_ver: 'develop'
+            kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
             hypre: 'NoHYPRE'
