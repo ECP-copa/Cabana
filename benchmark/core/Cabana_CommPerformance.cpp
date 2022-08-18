@@ -394,14 +394,15 @@ void performanceTest( std::ostream& stream, const std::size_t num_particle,
         for ( int t = 0; t < num_run; ++t )
         {
             halo_buffer_aosoa_gather.start( fraction );
-            auto comm_particles = Cabana::create_mirror_view_and_copy(
+            comm_particles = Cabana::create_mirror_view_and_copy(
                 comm_memory_space(), particles );
             gather.apply();
             Cabana::deep_copy( particles, comm_particles );
             halo_buffer_aosoa_gather.stop( fraction );
         }
 
-        // Run preallocated slice buffer gather tests and time the ensemble.
+        // Run preallocated slice buffer gather/scatter tests and time the
+        // ensemble.
         comm_particles = Cabana::create_mirror_view_and_copy(
             comm_memory_space(), particles );
         auto s0 = Cabana::slice<0>( comm_particles );
@@ -412,11 +413,23 @@ void performanceTest( std::ostream& stream, const std::size_t num_particle,
         auto gather_s1 = createGather( halo, s1, overallocation );
         auto gather_s2 = createGather( halo, s2, overallocation );
         auto gather_s3 = createGather( halo, s3, overallocation );
+        auto scatter_s0 = createScatter( halo, s0, overallocation );
+        auto scatter_s1 = createScatter( halo, s1, overallocation );
+        auto scatter_s2 = createScatter( halo, s2, overallocation );
+        auto scatter_s3 = createScatter( halo, s3, overallocation );
         for ( int t = 0; t < num_run; ++t )
         {
             halo_buffer_slice_gather.start( fraction );
             comm_particles = Cabana::create_mirror_view_and_copy(
                 comm_memory_space(), particles );
+            s0 = Cabana::slice<0>( comm_particles );
+            s1 = Cabana::slice<1>( comm_particles );
+            s2 = Cabana::slice<2>( comm_particles );
+            s3 = Cabana::slice<3>( comm_particles );
+            gather_s0.setParticles( s0 );
+            gather_s1.setParticles( s1 );
+            gather_s2.setParticles( s2 );
+            gather_s3.setParticles( s3 );
 
             gather_s0.apply();
             gather_s1.apply();
@@ -425,24 +438,18 @@ void performanceTest( std::ostream& stream, const std::size_t num_particle,
 
             Cabana::deep_copy( particles, comm_particles );
             halo_buffer_slice_gather.stop( fraction );
-        }
 
-        // Run preallocated slice buffer scatter tests and time the ensemble.
-        comm_particles = Cabana::create_mirror_view_and_copy(
-            comm_memory_space(), particles );
-        s0 = Cabana::slice<0>( comm_particles );
-        s1 = Cabana::slice<1>( comm_particles );
-        s2 = Cabana::slice<2>( comm_particles );
-        s3 = Cabana::slice<3>( comm_particles );
-        auto scatter_s0 = createScatter( halo, s0, overallocation );
-        auto scatter_s1 = createScatter( halo, s1, overallocation );
-        auto scatter_s2 = createScatter( halo, s2, overallocation );
-        auto scatter_s3 = createScatter( halo, s3, overallocation );
-        for ( int t = 0; t < num_run; ++t )
-        {
             halo_buffer_slice_scatter.start( fraction );
             comm_particles = Cabana::create_mirror_view_and_copy(
                 comm_memory_space(), particles );
+            s0 = Cabana::slice<0>( comm_particles );
+            s1 = Cabana::slice<1>( comm_particles );
+            s2 = Cabana::slice<2>( comm_particles );
+            s3 = Cabana::slice<3>( comm_particles );
+            scatter_s0.setParticles( s0 );
+            scatter_s1.setParticles( s1 );
+            scatter_s2.setParticles( s2 );
+            scatter_s3.setParticles( s3 );
 
             scatter_s0.apply();
             scatter_s1.apply();
