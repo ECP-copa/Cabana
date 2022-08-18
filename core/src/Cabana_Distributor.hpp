@@ -285,7 +285,7 @@ class Migrate<DistributorType, AoSoAType,
              const double overallocation = 1.0 )
         : base_type( distributor, overallocation )
     {
-        update( _distributor, aosoa );
+        reserve( _distributor, aosoa );
     }
 
     /*!
@@ -305,7 +305,7 @@ class Migrate<DistributorType, AoSoAType,
              const double overallocation = 1.0 )
         : base_type( distributor, overallocation )
     {
-        update( _distributor, src, dst );
+        reserve( _distributor, src, dst );
     }
 
     /*!
@@ -359,8 +359,8 @@ class Migrate<DistributorType, AoSoAType,
       \param overallocation An optional factor to keep extra space in the
       buffers to avoid frequent resizing.
     */
-    void update( const DistributorType& distributor, AoSoAType& aosoa,
-                 const double overallocation )
+    void reserve( const DistributorType& distributor, AoSoAType& aosoa,
+                  const double overallocation )
     {
         // Check that the AoSoA is the right size.
         if ( !distributorCheckValidSize( distributor, aosoa ) )
@@ -376,8 +376,8 @@ class Migrate<DistributorType, AoSoAType,
         if ( dst_is_bigger )
             aosoa.resize( distributor.totalNumImport() );
 
-        this->updateImpl( distributor, aosoa, distributor.totalSend(),
-                          distributor.totalReceive(), overallocation );
+        this->reserveImpl( distributor, aosoa, distributor.totalSend(),
+                           distributor.totalReceive(), overallocation );
     }
     /*!
       \brief Update the distributor and AoSoA data for migration.
@@ -385,7 +385,7 @@ class Migrate<DistributorType, AoSoAType,
       \param distributor The Distributor to be used for the migrate.
       \param aosoa The AoSoA on which to perform the migrate.
     */
-    void update( const DistributorType& distributor, AoSoAType& aosoa )
+    void reserve( const DistributorType& distributor, AoSoAType& aosoa )
     {
         // Check that the AoSoA is the right size.
         if ( !distributorCheckValidSize( distributor, aosoa ) )
@@ -401,8 +401,8 @@ class Migrate<DistributorType, AoSoAType,
         if ( dst_is_bigger )
             aosoa.resize( distributor.totalNumImport() );
 
-        this->updateImpl( distributor, aosoa, distributor.totalSend(),
-                          distributor.totalReceive() );
+        this->reserveImpl( distributor, aosoa, distributor.totalSend(),
+                           distributor.totalReceive() );
     }
 
     /*!
@@ -417,15 +417,15 @@ class Migrate<DistributorType, AoSoAType,
       \param overallocation An optional factor to keep extra space in the
       buffers to avoid frequent resizing.
     */
-    void update( const DistributorType& distributor, const AoSoAType& src,
-                 AoSoAType& dst, const double overallocation )
+    void reserve( const DistributorType& distributor, const AoSoAType& src,
+                  AoSoAType& dst, const double overallocation )
     {
         // Check that src and dst are the right size.
         if ( !distributorCheckValidSize( distributor, src, dst ) )
             throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
 
-        this->updateImpl( distributor, src, distributor.totalSend(),
-                          distributor.totalReceive(), overallocation );
+        this->reserveImpl( distributor, src, distributor.totalSend(),
+                           distributor.totalReceive(), overallocation );
     }
     /*!
       \brief Update the distributor and AoSoA data for migration.
@@ -437,15 +437,15 @@ class Migrate<DistributorType, AoSoAType,
       the same size as the number of imports given by the distributor on this
       rank.
     */
-    void update( const DistributorType& distributor, const AoSoAType& src,
-                 AoSoAType& dst )
+    void reserve( const DistributorType& distributor, const AoSoAType& src,
+                  AoSoAType& dst )
     {
         // Check that src and dst are the right size.
         if ( !distributorCheckValidSize( distributor, src, dst ) )
             throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
 
-        this->updateImpl( distributor, src, distributor.totalSend(),
-                          distributor.totalReceive() );
+        this->reserveImpl( distributor, src, distributor.totalSend(),
+                           distributor.totalReceive() );
     }
 
   private:
@@ -597,7 +597,7 @@ class Migrate<DistributorType, SliceType,
         : base_type( distributor, overallocation )
     {
         _my_rank = _distributor.getRank();
-        update( _distributor, src, dst );
+        reserve( _distributor, src, dst );
     }
 
     /*!
@@ -725,7 +725,7 @@ class Migrate<DistributorType, SliceType,
     }
 
     //! \cond Impl
-    void apply( SliceType& ) override
+    void apply() override
     {
         // This should never be called. It exists to override the base.
         throw std::runtime_error(
@@ -742,15 +742,15 @@ class Migrate<DistributorType, SliceType,
       \param overallocation An optional factor to keep extra space in the
       buffers to avoid frequent resizing.
     */
-    void update( const DistributorType& distributor, const SliceType& src,
-                 SliceType& dst, const double overallocation )
+    void reserve( const DistributorType& distributor, const SliceType& src,
+                  SliceType& dst, const double overallocation )
     {
         // Check that src and dst are the right size.
         if ( !distributorCheckValidSize( distributor, src, dst ) )
             throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
 
-        this->updateImpl( distributor, src, distributor.totalSend(),
-                          distributor.totalReceive(), overallocation );
+        this->reserveImpl( distributor, src, distributor.totalSend(),
+                           distributor.totalReceive(), overallocation );
     }
     /*!
       \brief Update the distributor and slice data for migrate.
@@ -759,15 +759,15 @@ class Migrate<DistributorType, SliceType,
       \param src The slice containing the data to be migrated.
       \param dst The slice to which the migrated data will be written.
     */
-    void update( const DistributorType& distributor, const SliceType& src,
-                 SliceType& dst )
+    void reserve( const DistributorType& distributor, const SliceType& src,
+                  SliceType& dst )
     {
         // Check that src and dst are the right size.
         if ( !distributorCheckValidSize( distributor, src, dst ) )
             throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
 
-        this->updateImpl( distributor, src, distributor.totalSend(),
-                          distributor.totalReceive() );
+        this->reserveImpl( distributor, src, distributor.totalSend(),
+                           distributor.totalReceive() );
     }
 
   private:
