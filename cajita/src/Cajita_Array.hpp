@@ -893,7 +893,7 @@ void normInf( const Array_t& array,
     Kokkos::parallel_reduce(
         "ArrayOp::normInf",
         createExecutionPolicy( array.layout()->indexSpace( Own(), Local() ),
-                               exec_space),
+                               exec_space ),
         functor,
         Kokkos::View<typename Array_t::value_type*, Kokkos::HostSpace>(
             norms.data(), norms.size() ) );
