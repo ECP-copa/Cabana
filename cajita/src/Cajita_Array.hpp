@@ -783,11 +783,15 @@ void dot( const Array_t& a, const Array_t& b,
 
     DotFunctor<typename Array_t::view_type, Array_t::num_space_dim> functor(
         a.view(), b.view() );
+    typename Array_t::execution_space exec_space;
     Kokkos::parallel_reduce(
         "ArrayOp::dot",
         createExecutionPolicy( a.layout()->indexSpace( Own(), Local() ),
-                               typename Array_t::execution_space() ),
-        functor, products.data() );
+                               exec_space ),
+        functor,
+        Kokkos::View<typename Array_t::value_type*, Kokkos::HostSpace>(
+            products.data(), products.size() ) );
+    exec_space.fence( "ArrayOp::dot before MPI_Allreduce" );
 
     MPI_Allreduce( MPI_IN_PLACE, products.data(), products.size(),
                    MpiTraits<typename Array_t::value_type>::type(), MPI_SUM,
@@ -885,11 +889,15 @@ void normInf( const Array_t& array,
 
     NormInfFunctor<typename Array_t::view_type, Array_t::num_space_dim> functor(
         array.view() );
+    typename Array_t::execution_space exec_space;
     Kokkos::parallel_reduce(
         "ArrayOp::normInf",
         createExecutionPolicy( array.layout()->indexSpace( Own(), Local() ),
-                               typename Array_t::execution_space() ),
-        functor, norms.data() );
+                               exec_space),
+        functor,
+        Kokkos::View<typename Array_t::value_type*, Kokkos::HostSpace>(
+            norms.data(), norms.size() ) );
+    exec_space.fence( "ArrayOp::normInf before MPI_Allreduce" );
 
     MPI_Allreduce( MPI_IN_PLACE, norms.data(), norms.size(),
                    MpiTraits<typename Array_t::value_type>::type(), MPI_MAX,
@@ -981,11 +989,15 @@ void norm1( const Array_t& array,
 
     Norm1Functor<typename Array_t::view_type, Array_t::num_space_dim> functor(
         array.view() );
+    typename Array_t::execution_space exec_space;
     Kokkos::parallel_reduce(
         "ArrayOp::norm1",
         createExecutionPolicy( array.layout()->indexSpace( Own(), Local() ),
-                               typename Array_t::execution_space() ),
-        functor, norms.data() );
+                               exec_space ),
+        functor,
+        Kokkos::View<typename Array_t::value_type*, Kokkos::HostSpace>(
+            norms.data(), norms.size() ) );
+    exec_space.fence( "ArrayOp::norm1 before MPI_Allreduce" );
 
     MPI_Allreduce( MPI_IN_PLACE, norms.data(), norms.size(),
                    MpiTraits<typename Array_t::value_type>::type(), MPI_SUM,
@@ -1077,11 +1089,15 @@ void norm2( const Array_t& array,
 
     Norm2Functor<typename Array_t::view_type, Array_t::num_space_dim> functor(
         array.view() );
+    typename Array_t::execution_space exec_space;
     Kokkos::parallel_reduce(
         "ArrayOp::norm2",
         createExecutionPolicy( array.layout()->indexSpace( Own(), Local() ),
-                               typename Array_t::execution_space() ),
-        functor, norms.data() );
+                               exec_space ),
+        functor,
+        Kokkos::View<typename Array_t::value_type*, Kokkos::HostSpace>(
+            norms.data(), norms.size() ) );
+    exec_space.fence( "ArrayOp::norm2 before MPI_Allreduce" );
 
     MPI_Allreduce( MPI_IN_PLACE, norms.data(), norms.size(),
                    MpiTraits<typename Array_t::value_type>::type(), MPI_SUM,
