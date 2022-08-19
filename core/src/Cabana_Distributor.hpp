@@ -210,6 +210,8 @@ bool distributorCheckValidSize(
     typename std::enable_if<( is_distributor<DistributorType>::value ),
                             int>::type* = 0 )
 {
+    std::cout << "src " << particles.size() << " " << distributor.exportSize()
+              << "\n";
     return ( particles.size() == distributor.exportSize() );
 }
 /*!
@@ -231,6 +233,8 @@ bool distributorCheckValidSize(
     typename std::enable_if<( is_distributor<DistributorType>::value ),
                             int>::type* = 0 )
 {
+    std::cout << "dst " << dst.size() << " " << distributor.totalNumImport()
+              << "\n";
     return ( distributorCheckValidSize( distributor, src ) &&
              dst.size() == distributor.totalNumImport() );
 }
@@ -286,8 +290,8 @@ class Migrate<DistributorType, AoSoAType,
              const double overallocation = 1.0 )
         : base_type( distributor, aosoa, aosoa, overallocation )
     {
-        // Use the data as both source and destination.
-        reserve( _distributor, aosoa, aosoa );
+        _my_rank = _distributor.getRank();
+        reserve( _distributor, aosoa );
     }
 
     /*!
@@ -307,6 +311,7 @@ class Migrate<DistributorType, AoSoAType,
              const double overallocation = 1.0 )
         : base_type( distributor, src, dst, overallocation )
     {
+        _my_rank = _distributor.getRank();
         reserve( _distributor, src, dst );
     }
 
@@ -322,6 +327,9 @@ class Migrate<DistributorType, AoSoAType,
         // Get the particle data. Note that the src could be the same as dst.
         auto src = this->getParticles();
         auto dst = this->getDestinationParticles();
+
+        std::cout << "capacity " << this->sendCapacity() << " ("
+                  << this->receiveCapacity() << "\n";
 
         // Get the number of neighbors.
         int num_n = _distributor.numNeighbor();
@@ -415,6 +423,13 @@ class Migrate<DistributorType, AoSoAType,
 
         // Barrier before completing to ensure synchronization.
         MPI_Barrier( _distributor.comm() );
+
+        // If the destination decomposition is smaller than the source
+        // decomposition resize after we have moved the data.
+        bool dst_is_bigger =
+            ( _distributor.totalNumImport() > _distributor.exportSize() );
+        if ( !dst_is_bigger )
+            this->resizeParticles( _distributor.totalNumImport() );
     }
 
     /*!
@@ -426,7 +441,7 @@ class Migrate<DistributorType, AoSoAType,
       buffers to avoid frequent resizing.
     */
     void reserve( const DistributorType& distributor, AoSoAType& aosoa,
-                  const double overallocation )
+                  const double overallocation = 0.0 )
     {
         // Check that the AoSoA is the right size.
         if ( !distributorCheckValidSize( distributor, aosoa ) )
@@ -442,33 +457,14 @@ class Migrate<DistributorType, AoSoAType,
         if ( dst_is_bigger )
             aosoa.resize( distributor.totalNumImport() );
 
-        this->reserveImpl( distributor, aosoa, aosoa, distributor.totalSend(),
-                           distributor.totalReceive(), overallocation );
-    }
-    /*!
-      \brief Update the distributor and AoSoA data for migration.
-
-      \param distributor The Distributor to be used for the migrate.
-      \param aosoa The AoSoA on which to perform the migrate.
-    */
-    void reserve( const DistributorType& distributor, AoSoAType& aosoa )
-    {
-        // Check that the AoSoA is the right size.
-        if ( !distributorCheckValidSize( distributor, aosoa ) )
-            throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
-
-        // Determine if the source of destination decomposition has more data on
-        // this rank.
-        bool dst_is_bigger =
-            ( distributor.totalNumImport() > distributor.exportSize() );
-
-        // If the destination decomposition is bigger than the source
-        // decomposition resize now so we have enough space to do the operation.
-        if ( dst_is_bigger )
-            aosoa.resize( distributor.totalNumImport() );
-
-        this->reserveImpl( distributor, aosoa, aosoa, distributor.totalSend(),
-                           distributor.totalReceive() );
+        if ( overallocation >= 1.0 )
+            this->reserveImpl( distributor, aosoa, aosoa,
+                               distributor.totalSend(),
+                               distributor.totalReceive(), overallocation );
+        else
+            this->reserveImpl( distributor, aosoa, aosoa,
+                               distributor.totalSend(),
+                               distributor.totalReceive() );
     }
 
     /*!
@@ -484,34 +480,18 @@ class Migrate<DistributorType, AoSoAType,
       buffers to avoid frequent resizing.
     */
     void reserve( const DistributorType& distributor, const AoSoAType& src,
-                  AoSoAType& dst, const double overallocation )
+                  AoSoAType& dst, const double overallocation = 0.0 )
     {
         // Check that src and dst are the right size.
         if ( !distributorCheckValidSize( distributor, src, dst ) )
             throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
 
-        this->reserveImpl( distributor, src, dst, distributor.totalSend(),
-                           distributor.totalReceive(), overallocation );
-    }
-    /*!
-      \brief Update the distributor and AoSoA data for migration.
-
-      \param distributor The Distributor to be used for the migrate.
-      \param src The AoSoA containing the data to be migrated. Must have the
-      same number of elements as the inputs used to construct the distributor.
-      \param dst The AoSoA to which the migrated data will be written. Must be
-      the same size as the number of imports given by the distributor on this
-      rank.
-    */
-    void reserve( const DistributorType& distributor, const AoSoAType& src,
-                  AoSoAType& dst )
-    {
-        // Check that src and dst are the right size.
-        if ( !distributorCheckValidSize( distributor, src, dst ) )
-            throw std::runtime_error( "AoSoA is the wrong size for migrate!" );
-
-        this->reserveImpl( distributor, src, dst, distributor.totalSend(),
-                           distributor.totalReceive() );
+        if ( overallocation >= 1.0 )
+            this->reserveImpl( distributor, src, dst, distributor.totalSend(),
+                               distributor.totalReceive(), overallocation );
+        else
+            this->reserveImpl( distributor, src, dst, distributor.totalSend(),
+                               distributor.totalReceive() );
     }
 
   private:
@@ -836,6 +816,7 @@ void migrate(
 {
     auto migrate = createMigrate( distributor, aosoa );
     migrate.apply();
+    aosoa = migrate.getParticles();
 }
 //---------------------------------------------------------------------------//
 

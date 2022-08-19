@@ -1175,6 +1175,15 @@ class CommunicationData
     {
         updateRangePolicy();
     }
+    CommunicationData( const CommPlanType& comm_plan,
+                       const CommDataType& comm_data,
+                       const double overallocation = 1.0 )
+        : _comm_plan( comm_plan )
+        , _comm_data( comm_data )
+        , _overallocation( overallocation )
+    {
+        updateRangePolicy();
+    }
 
     //! Get the communication send buffer.
     buffer_type getSendBuffer() const { return _comm_data._send_buffer; }
@@ -1223,6 +1232,11 @@ class CommunicationData
         _comm_data.reallocateReceive( shrunk_recv_size );
     }
 
+    void resizeParticles( const std::size_t new_size )
+    {
+        _comm_data._particles.resize( new_size );
+    }
+
     //! Perform the communication (migrate, gather, scatter).
     virtual void apply() = 0;
 
@@ -1260,11 +1274,15 @@ class CommunicationData
         std::size_t new_send_size = total_send * _overallocation;
         if ( new_send_size > send_capacity )
             _comm_data.reallocateSend( new_send_size );
+        std::cout << "send cap " << new_send_size << " " << sendCapacity()
+                  << "\n";
 
         auto recv_capacity = receiveCapacity();
         std::size_t new_recv_size = total_recv * _overallocation;
         if ( new_recv_size > recv_capacity )
             _comm_data.reallocateReceive( new_recv_size );
+        std::cout << "recv cap " << new_recv_size << " " << receiveCapacity()
+                  << "\n";
 
         _send_size = total_send;
         _recv_size = total_recv;
@@ -1304,11 +1322,10 @@ class CommunicationData
 */
 template <class CommPlanType, class CommDataType>
 class CommunicationDataSeparate
-    : public CommunicationData<CommPlanType, typename CommDataType::base_type>
+    : public CommunicationData<CommPlanType, CommDataType>
 {
   public:
-    using base_type =
-        CommunicationData<CommPlanType, typename CommDataType::base_type>;
+    using base_type = CommunicationData<CommPlanType, CommDataType>;
     //! Communication plan type (Halo, Distributor)
     using plan_type = typename base_type::plan_type;
     //! Kokkos execution space.
@@ -1316,7 +1333,7 @@ class CommunicationDataSeparate
     //! Kokkos execution policy.
     using policy_type = typename base_type::policy_type;
     //! Communication data type.
-    using comm_data_type = CommDataType;
+    using comm_data_type = typename base_type::comm_data_type;
     //! Particle data type.
     using particle_data_type = typename base_type::particle_data_type;
     //! Kokkos memory space.
@@ -1336,8 +1353,7 @@ class CommunicationDataSeparate
                                const particle_data_type& src,
                                const particle_data_type& dst,
                                const double overallocation = 1.0 )
-        : base_type( comm_plan, src, overallocation )
-        , _comm_data( CommDataType( src, dst ) )
+        : base_type( comm_plan, CommDataType( src, dst ), overallocation )
     {
     }
 
@@ -1389,7 +1405,7 @@ class CommunicationDataSeparate
     //! Receive range policy.
     using base_type::_recv_policy;
     //! Communication plan.
-    comm_data_type _comm_data;
+    using base_type::_comm_data;
     //! Overallocation factor.
     using base_type::_overallocation;
     //! Send sizes.
