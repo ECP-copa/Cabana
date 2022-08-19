@@ -1,4 +1,4 @@
-name: CI
+name: Nightly
 on:
   push:
     branches:
@@ -24,7 +24,7 @@ jobs:
       - name: Build kokkos
         working-directory: kokkos
         run: |
-          cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/kokkos -DKokkos_CXX_STANDARD=14 -DKokkos_ENABLE_${{ matrix.backend }}=ON
+          cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/kokkos -DKokkos_ENABLE_${{ matrix.backend }}=ON
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout Cabana
