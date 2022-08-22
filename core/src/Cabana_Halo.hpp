@@ -282,15 +282,13 @@ class Gather<HaloType, AoSoAType,
 
     /*!
       \brief Perform the gather operation.
-
-      \param aosoa The AoSoA on which to perform the gather.
     */
     void apply() override
     {
         // Get the buffers and particle data (local copies for lambdas below).
         auto send_buffer = this->getSendBuffer();
         auto recv_buffer = this->getReceiveBuffer();
-        auto aosoa = this->getParticles();
+        auto aosoa = this->getData();
 
         // Get the steering vector for the sends.
         auto steering = _halo.getExportSteering();
@@ -456,15 +454,13 @@ class Gather<HaloType, SliceType,
 
     /*!
       \brief Perform the gather operation.
-
-      \param slice The slice on which to perform the gather.
     */
     void apply() override
     {
         // Get the buffers (local copies for lambdas below).
         auto send_buffer = this->getSendBuffer();
         auto recv_buffer = this->getReceiveBuffer();
-        auto slice = this->getParticles();
+        auto slice = this->getData();
 
         // Get the number of components in the slice.
         std::size_t num_comp = this->getSliceComponents();
@@ -698,15 +694,13 @@ class Scatter
 
     /*!
       \brief Perform the scatter operation.
-
-      \param slice The slice on which to perform the scatter.
     */
     void apply() override
     {
         // Get the buffers (local copies for lambdas below).
         auto send_buffer = this->getSendBuffer();
         auto recv_buffer = this->getReceiveBuffer();
-        auto slice = this->getParticles();
+        auto slice = this->getData();
 
         // Get the number of components in the slice.
         std::size_t num_comp = this->getSliceComponents();

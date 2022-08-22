@@ -426,10 +426,10 @@ void performanceTest( std::ostream& stream, const std::size_t num_particle,
             s1 = Cabana::slice<1>( comm_particles );
             s2 = Cabana::slice<2>( comm_particles );
             s3 = Cabana::slice<3>( comm_particles );
-            gather_s0.setParticles( s0 );
-            gather_s1.setParticles( s1 );
-            gather_s2.setParticles( s2 );
-            gather_s3.setParticles( s3 );
+            gather_s0.setData( s0 );
+            gather_s1.setData( s1 );
+            gather_s2.setData( s2 );
+            gather_s3.setData( s3 );
 
             gather_s0.apply();
             gather_s1.apply();
@@ -446,10 +446,10 @@ void performanceTest( std::ostream& stream, const std::size_t num_particle,
             s1 = Cabana::slice<1>( comm_particles );
             s2 = Cabana::slice<2>( comm_particles );
             s3 = Cabana::slice<3>( comm_particles );
-            scatter_s0.setParticles( s0 );
-            scatter_s1.setParticles( s1 );
-            scatter_s2.setParticles( s2 );
-            scatter_s3.setParticles( s3 );
+            scatter_s0.setData( s0 );
+            scatter_s1.setData( s1 );
+            scatter_s2.setData( s2 );
+            scatter_s3.setData( s3 );
 
             scatter_s0.apply();
             scatter_s1.apply();

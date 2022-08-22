@@ -1104,9 +1104,9 @@ class CommunicationData
     buffer_type getReceiveBuffer() const { return _comm_data._recv_buffer; }
 
     //! Get the particles to communicate.
-    particle_data_type getParticles() const { return _comm_data._particles; }
+    particle_data_type getData() const { return _comm_data._particles; }
     //! Update particles to communicate.
-    void setParticles( const particle_data_type& particles )
+    void setData( const particle_data_type& particles )
     {
         _comm_data._particles = particles;
     }
@@ -1168,7 +1168,7 @@ class CommunicationData
                       const std::size_t total_recv )
     {
         _comm_plan = comm_plan;
-        setParticles( particles );
+        setData( particles );
 
         auto send_capacity = sendCapacity();
         std::size_t new_send_size = total_send * _overallocation;
