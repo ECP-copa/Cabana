@@ -512,8 +512,8 @@ class Migrate<DistributorType, AoSoAType,
 template <class DistributorType, class SliceType>
 class Migrate<DistributorType, SliceType,
               typename std::enable_if<is_slice<SliceType>::value>::type>
-    : CommunicationDataSeparate<DistributorType,
-                                CommunicationDataSliceSeparate<SliceType>>
+    : public CommunicationDataSeparate<
+          DistributorType, CommunicationDataSliceSeparate<SliceType>>
 {
   public:
     static_assert( is_distributor<DistributorType>::value, "" );
@@ -781,6 +781,7 @@ void migrate( const DistributorType& distributor, const ParticleDataType& src,
 {
     auto migrate = createMigrate( distributor, src, dst );
     migrate.apply();
+    dst = migrate.getDestinationParticles();
 }
 
 //---------------------------------------------------------------------------//
