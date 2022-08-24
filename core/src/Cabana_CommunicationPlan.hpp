@@ -945,6 +945,275 @@ class CommunicationPlan
 };
 
 //---------------------------------------------------------------------------//
+/*!
+  \brief Store AoSoA send/receive buffers.
+*/
+template <class AoSoAType>
+struct CommunicationDataAoSoA
+{
+    static_assert( is_aosoa<AoSoAType>::value, "" );
+
+    //! Particle data type.
+    using particle_data_type = AoSoAType;
+    //! Kokkos memory space.
+    using memory_space = typename particle_data_type::memory_space;
+    //! Communication data type.
+    using data_type = typename particle_data_type::tuple_type;
+    //! Communication buffer type.
+    using buffer_type = typename Kokkos::View<data_type*, memory_space>;
+
+    /*!
+      Constructor
+      \param particles The particle data (either AoSoA or slice).
+    */
+    CommunicationDataAoSoA( particle_data_type particles )
+        : _particles( particles )
+    {
+        _send_buffer = buffer_type(
+            Kokkos::ViewAllocateWithoutInitializing( "send_buffer" ), 0 );
+        _recv_buffer = buffer_type(
+            Kokkos::ViewAllocateWithoutInitializing( "recv_buffer" ), 0 );
+    }
+
+    //! Resize the send buffer.
+    void reallocateSend( const std::size_t num_send )
+    {
+        Kokkos::realloc( _send_buffer, num_send );
+    }
+    //! Resize the receive buffer.
+    void reallocateReceive( const std::size_t num_recv )
+    {
+        Kokkos::realloc( _recv_buffer, num_recv );
+    }
+
+    //! Send buffer.
+    buffer_type _send_buffer;
+    //! Receive buffer.
+    buffer_type _recv_buffer;
+    //! Particle AoSoA.
+    particle_data_type _particles;
+    //! Slice components.
+    std::size_t _num_comp = 0;
+};
+
+/*!
+  \brief Store slice send/receive buffers.
+*/
+template <class SliceType>
+struct CommunicationDataSlice
+{
+    static_assert( is_slice<SliceType>::value, "" );
+
+    //! Particle data type.
+    using particle_data_type = SliceType;
+    //! Kokkos memory space.
+    using memory_space = typename particle_data_type::memory_space;
+    //! Communication data type.
+    using data_type = typename particle_data_type::value_type;
+    //! Communication buffer type.
+    using buffer_type =
+        typename Kokkos::View<data_type**, Kokkos::LayoutRight, memory_space>;
+
+    /*!
+      Constructor
+      \param particles The particle data (either AoSoA or slice).
+    */
+    CommunicationDataSlice( particle_data_type particles )
+        : _particles( particles )
+    {
+        setSliceComponents();
+
+        _send_buffer = buffer_type(
+            Kokkos::ViewAllocateWithoutInitializing( "send_buffer" ), 0, 0 );
+        _recv_buffer = buffer_type(
+            Kokkos::ViewAllocateWithoutInitializing( "recv_buffer" ), 0, 0 );
+    }
+
+    //! Resize the send buffer.
+    void reallocateSend( const std::size_t num_send )
+    {
+        Kokkos::realloc( _send_buffer, num_send, _num_comp );
+    }
+    //! Resize the receive buffer.
+    void reallocateReceive( const std::size_t num_recv )
+    {
+        Kokkos::realloc( _recv_buffer, num_recv, _num_comp );
+    }
+
+    //! Get the total number of components in the slice.
+    void setSliceComponents()
+    {
+        _num_comp = 1;
+        for ( std::size_t d = 2; d < _particles.rank(); ++d )
+            _num_comp *= _particles.extent( d );
+    }
+
+    //! Send buffer.
+    buffer_type _send_buffer;
+    //! Receive buffer.
+    buffer_type _recv_buffer;
+    //! Particle slice.
+    particle_data_type _particles;
+    //! Slice components.
+    std::size_t _num_comp;
+};
+//---------------------------------------------------------------------------//
+
+/*!
+  \brief Store communication plan and communication buffers.
+*/
+template <class CommPlanType, class CommDataType>
+class CommunicationData
+{
+  public:
+    //! Communication plan type (Halo, Distributor)
+    using plan_type = CommPlanType;
+    //! Kokkos execution space.
+    using execution_space = typename plan_type::execution_space;
+    //! Kokkos execution policy.
+    using policy_type = Kokkos::RangePolicy<execution_space>;
+    //! Communication data type.
+    using comm_data_type = CommDataType;
+    //! Particle data type.
+    using particle_data_type = typename comm_data_type::particle_data_type;
+    //! Kokkos memory space.
+    using memory_space = typename comm_data_type::memory_space;
+    //! Communication data type.
+    using data_type = typename comm_data_type::data_type;
+    //! Communication buffer type.
+    using buffer_type = typename comm_data_type::buffer_type;
+
+    /*!
+      \param comm_plan The communication plan.
+      \param particles The particle data (either AoSoA or slice).
+      \param overallocation An optional factor to keep extra space in the
+      buffers to avoid frequent resizing.
+    */
+    CommunicationData( const CommPlanType& comm_plan,
+                       const particle_data_type& particles,
+                       const double overallocation = 1.0 )
+        : _comm_plan( comm_plan )
+        , _comm_data( CommDataType( particles ) )
+        , _overallocation( overallocation )
+    {
+    }
+
+    //! Get the communication send buffer.
+    buffer_type getSendBuffer() const { return _comm_data._send_buffer; }
+    //! Get the communication receive buffer.
+    buffer_type getReceiveBuffer() const { return _comm_data._recv_buffer; }
+
+    //! Get the particles to communicate.
+    particle_data_type getData() const { return _comm_data._particles; }
+    //! Update particles to communicate.
+    void setData( const particle_data_type& particles )
+    {
+        _comm_data._particles = particles;
+    }
+
+    /*!
+      \brief Current send buffer size.
+      \note This is stored as a member because it is not directly related to the
+      buffer sizes (as the capacity is).
+    */
+    auto sendSize() { return _send_size; }
+    /*!
+      \brief Current receive buffer size.
+      \note This is stored as a member because it is not directly related to the
+      buffer sizes (as the capacity is).
+    */
+    auto receiveSize() { return _recv_size; }
+    //! Current allocated send buffer space.
+    auto sendCapacity() { return _comm_data._send_buffer.extent( 0 ); }
+    //! Current allocated receive buffer space.
+    auto receiveCapacity() { return _comm_data._recv_buffer.extent( 0 ); }
+    /*!
+      \brief Reduce communication buffers to current send/receive sizes.
+      \param use_overallocation Shrink the buffers, but retain extra storage
+      according to the overallocation factor.
+    */
+    void shrinkToFit( const bool use_overallocation = false )
+    {
+        auto shrunk_send_size = _send_size;
+        auto shrunk_recv_size = _recv_size;
+        if ( use_overallocation )
+        {
+            shrunk_send_size *= _overallocation;
+            shrunk_recv_size *= _overallocation;
+        }
+        _comm_data.reallocateSend( shrunk_send_size );
+        _comm_data.reallocateReceive( shrunk_recv_size );
+    }
+
+    //! Perform the communication (migrate, gather, scatter).
+    virtual void apply() = 0;
+
+    //! \cond Impl
+    void reserveImpl( const CommPlanType& comm_plan,
+                      const particle_data_type particles,
+                      const std::size_t total_send,
+                      const std::size_t total_recv,
+                      const double overallocation )
+    {
+        if ( overallocation < 1.0 )
+            throw std::runtime_error( "Cannot allocate buffers with less space "
+                                      "than data to communicate!" );
+        _overallocation = overallocation;
+
+        reserveImpl( comm_plan, particles, total_send, total_recv );
+    }
+    void reserveImpl( const CommPlanType& comm_plan,
+                      const particle_data_type particles,
+                      const std::size_t total_send,
+                      const std::size_t total_recv )
+    {
+        _comm_plan = comm_plan;
+        setData( particles );
+
+        auto send_capacity = sendCapacity();
+        std::size_t new_send_size = total_send * _overallocation;
+        if ( new_send_size > send_capacity )
+            _comm_data.reallocateSend( new_send_size );
+
+        auto recv_capacity = receiveCapacity();
+        std::size_t new_recv_size = total_recv * _overallocation;
+        if ( new_recv_size > recv_capacity )
+            _comm_data.reallocateReceive( new_recv_size );
+
+        _send_size = total_send;
+        _recv_size = total_recv;
+
+        // Update policies with new sizes.
+        updateRangePolicy();
+    }
+    //! \endcond
+
+  protected:
+    //! Update range policy based on new communication plan.
+    void updateRangePolicy()
+    {
+        _send_policy = policy_type( 0, _send_size );
+        _recv_policy = policy_type( 0, _recv_size );
+    }
+
+    //! Get the total number of components in the slice.
+    auto getSliceComponents() { return _comm_data._num_comp; };
+
+    //! Communication plan.
+    plan_type _comm_plan;
+    //! Send range policy.
+    policy_type _send_policy;
+    //! Receive range policy.
+    policy_type _recv_policy;
+    //! Communication plan.
+    comm_data_type _comm_data;
+    //! Overallocation factor.
+    double _overallocation;
+    //! Send sizes.
+    std::size_t _send_size;
+    //! Receive sizes.
+    std::size_t _recv_size;
+};
 
 } // end namespace Cabana
 

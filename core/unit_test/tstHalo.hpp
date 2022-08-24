@@ -26,25 +26,82 @@
 namespace Test
 {
 
-//---------------------------------------------------------------------------//
-// test without collisions
-void test1( const bool use_topology )
+struct UniqueTestTag
 {
-    // Make a communication plan.
+    int num_local;
+    int num_send;
+    int num_recv;
+    UniqueTestTag()
+    {
+        int my_size = -1;
+        MPI_Comm_size( MPI_COMM_WORLD, &my_size );
+        num_local = 2 * my_size;
+        num_send = my_size;
+        num_recv = my_size;
+    }
+};
+struct AllTestTag
+{
+    int num_local = 1;
+    int num_send;
+    int num_recv;
+    AllTestTag()
+    {
+        int my_size = -1;
+        MPI_Comm_size( MPI_COMM_WORLD, &my_size );
+        num_send = my_size;
+        num_recv = my_size;
+    }
+};
+
+struct HaloData
+{
+    // Create an AoSoA of local data with space allocated for local data.
+    using DataTypes = Cabana::MemberTypes<int, double[2]>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
+    using AoSoA_Host_t = Cabana::AoSoA<DataTypes, Kokkos::HostSpace>;
+    AoSoA_t aosoa;
+
+    HaloData( Cabana::Halo<TEST_MEMSPACE> halo )
+    {
+        aosoa = AoSoA_t( "data", halo.numLocal() + halo.numGhost() );
+    }
+
+    AoSoA_t createData( const int my_rank, const int num_local )
+    {
+        auto slice_int = Cabana::slice<0>( aosoa );
+        auto slice_dbl = Cabana::slice<1>( aosoa );
+
+        // Fill the local data.
+        auto fill_func = KOKKOS_LAMBDA( const int i )
+        {
+            slice_int( i ) = my_rank + 1;
+            slice_dbl( i, 0 ) = my_rank + 1;
+            slice_dbl( i, 1 ) = my_rank + 1.5;
+        };
+        Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_local );
+        Kokkos::parallel_for( range_policy, fill_func );
+        Kokkos::fence();
+        return aosoa;
+    }
+
+    AoSoA_Host_t copyToHost()
+    {
+        // Deep copy to check after gather/scatter.
+        AoSoA_Host_t aosoa_host( "data_host", aosoa.size() );
+        Cabana::deep_copy( aosoa_host, aosoa );
+        return aosoa_host;
+    }
+};
+
+auto createHalo( UniqueTestTag, const int use_topology, const int my_size,
+                 const int num_local )
+{
     std::shared_ptr<Cabana::Halo<TEST_MEMSPACE>> halo;
-
-    // Get my rank.
-    int my_rank = -1;
-    MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
-
-    // Get my size.
-    int my_size = -1;
-    MPI_Comm_size( MPI_COMM_WORLD, &my_size );
 
     // Every rank will send ghosts to all other ranks. Send one element to
     // each rank including yourself. Interleave the sends. The resulting
     // communication plan has ghosts that have one unique destination.
-    int num_local = 2 * my_size;
     Kokkos::View<int*, Kokkos::HostSpace> export_ranks_host( "export_ranks",
                                                              my_size );
     Kokkos::View<std::size_t*, Kokkos::HostSpace> export_ids_host( "export_ids",
@@ -69,37 +126,48 @@ void test1( const bool use_topology )
         halo = std::make_shared<Cabana::Halo<TEST_MEMSPACE>>(
             MPI_COMM_WORLD, num_local, export_ids, export_ranks );
 
-    // Check the plan.
-    EXPECT_EQ( halo->numLocal(), num_local );
-    EXPECT_EQ( halo->numGhost(), my_size );
+    return halo;
+}
 
-    // Create an AoSoA of local data with space allocated for local data.
-    using DataTypes = Cabana::MemberTypes<int, double[2]>;
-    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
-    AoSoA_t data( "data", halo->numLocal() + halo->numGhost() );
-    auto slice_int = Cabana::slice<0>( data );
-    auto slice_dbl = Cabana::slice<1>( data );
+auto createHalo( AllTestTag, const int use_topology, const int my_size,
+                 const int num_local )
+{
+    std::shared_ptr<Cabana::Halo<TEST_MEMSPACE>> halo;
 
-    // Fill the local data.
-    auto fill_func = KOKKOS_LAMBDA( const int i )
+    // Every rank will send its single data point as ghosts to all other
+    // ranks. This will create collisions in the scatter as every rank will
+    // have data for this rank in the summation.
+    Kokkos::View<int*, Kokkos::HostSpace> export_ranks_host( "export_ranks",
+                                                             my_size );
+    Kokkos::View<std::size_t*, TEST_MEMSPACE> export_ids( "export_ids",
+                                                          my_size );
+    Kokkos::deep_copy( export_ids, 0 );
+    std::vector<int> neighbors( my_size );
+    for ( int n = 0; n < my_size; ++n )
     {
-        slice_int( i ) = my_rank + 1;
-        slice_dbl( i, 0 ) = my_rank + 1;
-        slice_dbl( i, 1 ) = my_rank + 1.5;
-    };
-    Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_local );
-    Kokkos::parallel_for( range_policy, fill_func );
-    Kokkos::fence();
+        neighbors[n] = n;
+        export_ranks_host( n ) = n;
+    }
+    auto export_ranks = Kokkos::create_mirror_view_and_copy(
+        TEST_MEMSPACE(), export_ranks_host );
 
-    // Gather by AoSoA.
-    Cabana::gather( *halo, data );
+    // Create the plan.
+    if ( use_topology )
+        halo = std::make_shared<Cabana::Halo<TEST_MEMSPACE>>(
+            MPI_COMM_WORLD, num_local, export_ids, export_ranks, neighbors );
+    else
+        halo = std::make_shared<Cabana::Halo<TEST_MEMSPACE>>(
+            MPI_COMM_WORLD, num_local, export_ids, export_ranks );
 
-    // Check the results of the gather.
-    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host(
-        "data_host", halo->numLocal() + halo->numGhost() );
+    return halo;
+}
+
+template <class AoSoAType>
+void checkGatherAoSoA( UniqueTestTag, AoSoAType data_host, const int my_size,
+                       const int my_rank, const int num_local )
+{
     auto slice_int_host = Cabana::slice<0>( data_host );
     auto slice_dbl_host = Cabana::slice<1>( data_host );
-    Cabana::deep_copy( data_host, data );
 
     // check that the local data didn't change.
     for ( int i = 0; i < my_size; ++i )
@@ -137,11 +205,14 @@ void test1( const bool use_topology )
             EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), send_rank + 1.5 );
         }
     }
+}
 
-    // Scatter back the results,
-    Cabana::scatter( *halo, slice_int );
-    Cabana::scatter( *halo, slice_dbl );
-    Cabana::deep_copy( data_host, data );
+template <class AoSoAType>
+void checkScatter( UniqueTestTag, AoSoAType data_host, const int my_size,
+                   const int my_rank, const int num_local )
+{
+    auto slice_int_host = Cabana::slice<0>( data_host );
+    auto slice_dbl_host = Cabana::slice<1>( data_host );
 
     // Check that the local data was updated. Every ghost had a unique
     // destination so the result should be doubled for those elements that
@@ -182,11 +253,14 @@ void test1( const bool use_topology )
             EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), send_rank + 1.5 );
         }
     }
+}
 
-    // Gather again, this time with slices.
-    Cabana::gather( *halo, slice_int );
-    Cabana::gather( *halo, slice_dbl );
-    Cabana::deep_copy( data_host, data );
+template <class AoSoAType>
+void checkGatherSlice( UniqueTestTag, AoSoAType data_host, const int my_size,
+                       const int my_rank, const int num_local )
+{
+    auto slice_int_host = Cabana::slice<0>( data_host );
+    auto slice_dbl_host = Cabana::slice<1>( data_host );
 
     // Check that the local data remained unchanged.
     for ( int i = 0; i < my_size; ++i )
@@ -227,78 +301,12 @@ void test1( const bool use_topology )
     }
 }
 
-//---------------------------------------------------------------------------//
-// test with collisions
-void test2( const bool use_topology )
+template <class AoSoAType>
+void checkGatherAoSoA( AllTestTag, AoSoAType data_host, const int my_size,
+                       const int my_rank, const int num_local )
 {
-    // Make a communication plan.
-    std::shared_ptr<Cabana::Halo<TEST_MEMSPACE>> halo;
-
-    // Get my rank.
-    int my_rank = -1;
-    MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
-
-    // Get my size.
-    int my_size = -1;
-    MPI_Comm_size( MPI_COMM_WORLD, &my_size );
-
-    // Every rank will send its single data point as ghosts to all other
-    // ranks. This will create collisions in the scatter as every rank will
-    // have data for this rank in the summation.
-    int num_local = 1;
-    Kokkos::View<int*, Kokkos::HostSpace> export_ranks_host( "export_ranks",
-                                                             my_size );
-    Kokkos::View<std::size_t*, TEST_MEMSPACE> export_ids( "export_ids",
-                                                          my_size );
-    Kokkos::deep_copy( export_ids, 0 );
-    std::vector<int> neighbors( my_size );
-    for ( int n = 0; n < my_size; ++n )
-    {
-        neighbors[n] = n;
-        export_ranks_host( n ) = n;
-    }
-    auto export_ranks = Kokkos::create_mirror_view_and_copy(
-        TEST_MEMSPACE(), export_ranks_host );
-
-    // Create the plan.
-    if ( use_topology )
-        halo = std::make_shared<Cabana::Halo<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, num_local, export_ids, export_ranks, neighbors );
-    else
-        halo = std::make_shared<Cabana::Halo<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, num_local, export_ids, export_ranks );
-
-    // Check the plan.
-    EXPECT_EQ( halo->numLocal(), num_local );
-    EXPECT_EQ( halo->numGhost(), my_size );
-
-    // Create an AoSoA of local data with space allocated for local data.
-    using DataTypes = Cabana::MemberTypes<int, double[2]>;
-    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
-    AoSoA_t data( "data", halo->numLocal() + halo->numGhost() );
-    auto slice_int = Cabana::slice<0>( data );
-    auto slice_dbl = Cabana::slice<1>( data );
-
-    // Fill the local data.
-    auto fill_func = KOKKOS_LAMBDA( const int i )
-    {
-        slice_int( i ) = my_rank + 1;
-        slice_dbl( i, 0 ) = my_rank + 1;
-        slice_dbl( i, 1 ) = my_rank + 1.5;
-    };
-    Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_local );
-    Kokkos::parallel_for( range_policy, fill_func );
-    Kokkos::fence();
-
-    // Gather by AoSoA.
-    Cabana::gather( *halo, data );
-
-    // Check the results of the gather.
-    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host(
-        "data_host", halo->numLocal() + halo->numGhost() );
     auto slice_int_host = Cabana::slice<0>( data_host );
     auto slice_dbl_host = Cabana::slice<1>( data_host );
-    Cabana::deep_copy( data_host, data );
 
     // check that the local data didn't change.
     EXPECT_EQ( slice_int_host( 0 ), my_rank + 1 );
@@ -329,11 +337,14 @@ void test2( const bool use_topology )
             EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), send_rank + 1.5 );
         }
     }
+}
 
-    // Scatter back the results,
-    Cabana::scatter( *halo, slice_int );
-    Cabana::scatter( *halo, slice_dbl );
-    Cabana::deep_copy( data_host, data );
+template <class AoSoAType>
+void checkScatter( AllTestTag, AoSoAType data_host, const int my_size,
+                   const int my_rank, const int num_local )
+{
+    auto slice_int_host = Cabana::slice<0>( data_host );
+    auto slice_dbl_host = Cabana::slice<1>( data_host );
 
     // Check that the local data was updated. Every ghost was sent to all of
     // the ranks so the result should be multiplied by the number of ranks.
@@ -367,11 +378,14 @@ void test2( const bool use_topology )
             EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), send_rank + 1.5 );
         }
     }
+}
 
-    // Gather again, this time with slices.
-    Cabana::gather( *halo, slice_int );
-    Cabana::gather( *halo, slice_dbl );
-    Cabana::deep_copy( data_host, data );
+template <class AoSoAType>
+void checkGatherSlice( AllTestTag, AoSoAType data_host, const int my_size,
+                       const int my_rank, const int num_local )
+{
+    auto slice_int_host = Cabana::slice<0>( data_host );
+    auto slice_dbl_host = Cabana::slice<1>( data_host );
 
     // Check that the local data remained unchanged.
     EXPECT_EQ( slice_int_host( 0 ), ( my_size + 1 ) * ( my_rank + 1 ) );
@@ -411,16 +425,191 @@ void test2( const bool use_topology )
     }
 }
 
+template <class CommData>
+void checkSizeAndCapacity( CommData comm_data, const int num_send,
+                           const int num_recv, const double overalloc )
+{
+    auto send_size = comm_data.sendSize();
+    auto recv_size = comm_data.receiveSize();
+    EXPECT_EQ( send_size, num_send );
+    EXPECT_EQ( recv_size, num_recv );
+    auto send_capacity = comm_data.sendCapacity();
+    auto recv_capacity = comm_data.receiveCapacity();
+    EXPECT_EQ( send_capacity, num_send * overalloc );
+    EXPECT_EQ( recv_capacity, num_recv * overalloc );
+}
+
+//---------------------------------------------------------------------------//
+// Gather/scatter test.
+template <class TestTag>
+void testHalo( TestTag tag, const bool use_topology )
+{
+    // Get my rank.
+    int my_rank = -1;
+    MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
+
+    // Get my size.
+    int my_size = -1;
+    MPI_Comm_size( MPI_COMM_WORLD, &my_size );
+
+    // Make a communication plan.
+    int num_local = tag.num_local;
+    auto halo = createHalo( tag, use_topology, my_size, num_local );
+
+    // Check the plan.
+    EXPECT_EQ( halo->numLocal(), num_local );
+    EXPECT_EQ( halo->numGhost(), my_size );
+
+    // Create particle data.
+    HaloData halo_data( *halo );
+    auto data = halo_data.createData( my_rank, num_local );
+
+    // Gather by AoSoA.
+    Cabana::gather( *halo, data );
+
+    // Compare against original host data.
+    auto data_host = halo_data.copyToHost();
+    checkGatherAoSoA( tag, data_host, my_size, my_rank, num_local );
+
+    // Scatter back the results,
+    auto slice_int = Cabana::slice<0>( data );
+    auto slice_dbl = Cabana::slice<1>( data );
+    Cabana::scatter( *halo, slice_int );
+    Cabana::scatter( *halo, slice_dbl );
+    Cabana::deep_copy( data_host, data );
+    checkScatter( tag, data_host, my_size, my_rank, num_local );
+
+    // Gather again, this time with slices.
+    Cabana::gather( *halo, slice_int );
+    Cabana::gather( *halo, slice_dbl );
+    Cabana::deep_copy( data_host, data );
+    checkGatherSlice( tag, data_host, my_size, my_rank, num_local );
+}
+
+//---------------------------------------------------------------------------//
+// Gather/scatter test with persistent buffers.
+template <class TestTag>
+void testHaloBuffers( TestTag tag, const bool use_topology )
+{
+    // Get my rank.
+    int my_rank = -1;
+    MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
+
+    // Get my size.
+    int my_size = -1;
+    MPI_Comm_size( MPI_COMM_WORLD, &my_size );
+
+    // Make a communication plan.
+    int num_local = tag.num_local;
+    auto halo = createHalo( tag, use_topology, my_size, num_local );
+
+    // Check the plan.
+    EXPECT_EQ( halo->numLocal(), num_local );
+    EXPECT_EQ( halo->numGhost(), my_size );
+
+    // Create particle data.
+    HaloData halo_data( *halo );
+    auto data = halo_data.createData( my_rank, num_local );
+
+    // Create send and receive buffers with an overallocation.
+    double overalloc = 3.0; // large value since very little is communicated.
+    auto gather = createGather( *halo, data, overalloc );
+
+    // Check sizes and capacities.
+    int num_send = tag.num_send;
+    int num_recv = tag.num_recv;
+    checkSizeAndCapacity( gather, num_send, num_recv, overalloc );
+
+    // Gather by AoSoA using preallocated buffers.
+    gather.apply();
+
+    // Compare against original host data.
+    auto data_host = halo_data.copyToHost();
+    checkGatherAoSoA( tag, data_host, my_size, my_rank, num_local );
+
+    // Scatter back the results, now with preallocated slice buffers.
+    auto slice_int = Cabana::slice<0>( data );
+    auto slice_dbl = Cabana::slice<1>( data );
+    auto scatter_int = createScatter( *halo, slice_int, overalloc );
+    auto scatter_dbl = createScatter( *halo, slice_dbl, overalloc );
+    scatter_int.apply();
+    scatter_dbl.apply();
+    Cabana::deep_copy( data_host, data );
+    checkScatter( tag, data_host, my_size, my_rank, num_local );
+    checkSizeAndCapacity( scatter_int, num_recv, num_send, overalloc );
+    checkSizeAndCapacity( scatter_dbl, num_recv, num_send, overalloc );
+
+    // Gather again, this time with slices.
+    slice_int = Cabana::slice<0>( data );
+    slice_dbl = Cabana::slice<1>( data );
+    auto gather_int = createGather( *halo, slice_int, overalloc );
+    auto gather_dbl = createGather( *halo, slice_dbl, overalloc );
+    gather_int.apply();
+    gather_dbl.apply();
+    Cabana::deep_copy( data_host, data );
+    checkGatherSlice( tag, data_host, my_size, my_rank, num_local );
+    checkSizeAndCapacity( gather_int, num_send, num_recv, overalloc );
+    checkSizeAndCapacity( gather_dbl, num_send, num_recv, overalloc );
+
+    // Now check the reserve/shrink functionality with AoSoA.
+    // This call should do nothing since the overallocation is still taken into
+    // account.
+    gather.shrinkToFit( true );
+    scatter_int.shrinkToFit( true );
+    scatter_dbl.shrinkToFit( true );
+    checkSizeAndCapacity( gather, num_send, num_recv, overalloc );
+    checkSizeAndCapacity( scatter_int, num_recv, num_send, overalloc );
+    checkSizeAndCapacity( scatter_dbl, num_recv, num_send, overalloc );
+
+    //  After another shrink (now without any overallocation) sizes should have
+    //  changed.
+    gather.shrinkToFit();
+    scatter_int.shrinkToFit();
+    scatter_dbl.shrinkToFit();
+    checkSizeAndCapacity( gather, num_send, num_recv, 1.0 );
+    checkSizeAndCapacity( scatter_int, num_recv, num_send, 1.0 );
+    checkSizeAndCapacity( scatter_dbl, num_recv, num_send, 1.0 );
+
+    // Last, increase the overallocation factor.
+    overalloc = 5.0;
+    gather_int.reserve( *halo, slice_int, overalloc );
+    gather_dbl.reserve( *halo, slice_dbl, overalloc );
+    scatter_int.reserve( *halo, slice_int, overalloc );
+    scatter_dbl.reserve( *halo, slice_dbl, overalloc );
+    checkSizeAndCapacity( gather_int, num_send, num_recv, overalloc );
+    checkSizeAndCapacity( gather_dbl, num_send, num_recv, overalloc );
+    checkSizeAndCapacity( scatter_int, num_send, num_recv, overalloc );
+    checkSizeAndCapacity( scatter_dbl, num_send, num_recv, overalloc );
+}
+
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, halo_test_1 ) { test1( true ); }
+// test without collisions (each ghost is unique)
+TEST( TEST_CATEGORY, halo_test_unique )
+{
+    testHalo( UniqueTestTag{}, true );
+    testHaloBuffers( UniqueTestTag{}, true );
+}
 
-TEST( TEST_CATEGORY, halo_test_1_no_topo ) { test1( false ); }
+TEST( TEST_CATEGORY, halo_test_unique_no_topo )
+{
+    testHalo( UniqueTestTag{}, false );
+    testHaloBuffers( UniqueTestTag{}, false );
+}
 
-TEST( TEST_CATEGORY, halo_test_2 ) { test2( true ); }
+// tests with collisions (each ghost is duplicated on all ranks)
+TEST( TEST_CATEGORY, halo_test_all )
+{
+    testHalo( AllTestTag{}, true );
+    testHaloBuffers( AllTestTag{}, false );
+}
 
-TEST( TEST_CATEGORY, halo_test_2_no_topo ) { test2( false ); }
+TEST( TEST_CATEGORY, halo_test_all_no_topo )
+{
+    testHalo( AllTestTag{}, false );
+    testHaloBuffers( AllTestTag{}, false );
+}
 
 //---------------------------------------------------------------------------//
 
