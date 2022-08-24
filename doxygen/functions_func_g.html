@@ -65,6 +65,10 @@ $(function() {
 &#160;
 
 <h3><a id="index_g"></a>- g -</h3><ul>
+<li>Gather()
+: <a class="el" href="classCabana_1_1Gather_3_01HaloType_00_01AoSoAType_00_01typename_01std_1_1enable__if_3_01is__aoso666e08a1494152c80218c785a19e78d3.html#aaefd3a217e73e3c41692bdf523a29dee">Cabana::Gather&lt; HaloType, AoSoAType, typename std::enable_if&lt; is_aosoa&lt; AoSoAType &gt;::value &gt;::type &gt;</a>
+, <a class="el" href="classCabana_1_1Gather_3_01HaloType_00_01SliceType_00_01typename_01std_1_1enable__if_3_01is__slica420051aad1e71fccbd290130c9a8cef.html#a6416c69d4e8f6107c0b3dc9e4932204b">Cabana::Gather&lt; HaloType, SliceType, typename std::enable_if&lt; is_slice&lt; SliceType &gt;::value &gt;::type &gt;</a>
+</li>
 <li>gather()
 : <a class="el" href="classCajita_1_1Halo.html#a5722978e7ea15b2be1f42c8d9ec25f83">Cajita::Halo&lt; MemorySpace &gt;</a>
 </li>
@@ -81,6 +85,9 @@ $(function() {
 </li>
 <li>getCurrentPartition()
 : <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a465c6a300918ced96115b61d2d4396db">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim, NumSpaceDim &gt;</a>
+</li>
+<li>getData()
+: <a class="el" href="classCabana_1_1CommunicationData.html#a20ddee92e69fc65d987b1fc1d7a2229f">Cabana::CommunicationData&lt; CommPlanType, CommDataType &gt;</a>
 </li>
 <li>getExportSteering()
 : <a class="el" href="classCabana_1_1CommunicationPlan.html#a244cc72428af0c610a8752f957136ac7">Cabana::CommunicationPlan&lt; DeviceType &gt;</a>
@@ -175,8 +182,17 @@ $(function() {
 : <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#ab9346a386c824d56aa8d829697beb5f3">Cajita::ReferenceConjugateGradient&lt; Scalar, EntityType, MeshType, DeviceType &gt;</a>
 , <a class="el" href="classCajita_1_1ReferenceStructuredSolver.html#aa561e1ba27e7e0dbd3a9229000d19929">Cajita::ReferenceStructuredSolver&lt; Scalar, EntityType, MeshType, DeviceType &gt;</a>
 </li>
+<li>getReceiveBuffer()
+: <a class="el" href="classCabana_1_1CommunicationData.html#af5d6195678412ca17819c7bab7416d87">Cabana::CommunicationData&lt; CommPlanType, CommDataType &gt;</a>
+</li>
 <li>getReorder()
 : <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransformParams.html#a98acc885e67ef97c3e2a261ffe9eeea4">Cajita::Experimental::FastFourierTransformParams</a>
+</li>
+<li>getSendBuffer()
+: <a class="el" href="classCabana_1_1CommunicationData.html#a1942e7d66a95f869ea97c3ee93f19bae">Cabana::CommunicationData&lt; CommPlanType, CommDataType &gt;</a>
+</li>
+<li>getSliceComponents()
+: <a class="el" href="classCabana_1_1CommunicationData.html#a7d2067cc523fb7de5e39b6f175d14182">Cabana::CommunicationData&lt; CommPlanType, CommDataType &gt;</a>
 </li>
 <li>getTuple()
 : <a class="el" href="classCabana_1_1AoSoA.html#a7cbebb9b07ff0f9b0bee66d5c014f445">Cabana::AoSoA&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;</a>
@@ -185,13 +201,13 @@ $(function() {
 : <a class="el" href="classCajita_1_1Experimental_1_1LoadBalancer_3_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aa4aa6c61d18c3780c77e5e059862356d">Cajita::Experimental::LoadBalancer&lt; UniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;</a>
 </li>
 <li>globalGrid()
-: <a class="el" href="classCajita_1_1Experimental_1_1LocalGrid_3_01SparseMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#abb29b798bcc11c3c761954286acece43">Cajita::Experimental::LocalGrid&lt; SparseMesh&lt; Scalar, NumSpaceDim &gt; &gt;</a>
+: <a class="el" href="classCajita_1_1Experimental_1_1LocalGrid_3_01SparseMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#ab43460cb0fe51794021fa46f0bfd8119">Cajita::Experimental::LocalGrid&lt; SparseMesh&lt; Scalar, NumSpaceDim &gt; &gt;</a>
 </li>
 <li>GlobalGrid()
 : <a class="el" href="classCajita_1_1GlobalGrid.html#a6b2ad5cd34eaddb9be122fd4024810c0">Cajita::GlobalGrid&lt; MeshType &gt;</a>
 </li>
 <li>globalGrid()
-: <a class="el" href="classCajita_1_1LocalGrid.html#acec6b15a27c27f844f86c4dc7c917698">Cajita::LocalGrid&lt; MeshType &gt;</a>
+: <a class="el" href="classCajita_1_1LocalGrid.html#acc5635315a6bee097803072b004f5158">Cajita::LocalGrid&lt; MeshType &gt;</a>
 </li>
 <li>globalMesh()
 : <a class="el" href="classCajita_1_1GlobalGrid.html#a0e834cd57cc6c74766df661fe0a7b9b2">Cajita::GlobalGrid&lt; MeshType &gt;</a>
@@ -207,7 +223,7 @@ $(function() {
 , <a class="el" href="classCajita_1_1GlobalMesh_3_01NonUniformMesh_3_01Scalar_00_013_01_4_01_4.html#a076dc2e1ed90c999c128dbb999acbd15">Cajita::GlobalMesh&lt; NonUniformMesh&lt; Scalar, 3 &gt; &gt;</a>
 </li>
 <li>globalNumEntity()
-: <a class="el" href="classCajita_1_1GlobalGrid.html#a285bb800a1ad84cb09f67bd89538f338">Cajita::GlobalGrid&lt; MeshType &gt;</a>
+: <a class="el" href="classCajita_1_1GlobalGrid.html#ac8ddb382924e5799b8b421d676c77f2d">Cajita::GlobalGrid&lt; MeshType &gt;</a>
 </li>
 <li>globalOffset()
 : <a class="el" href="classCajita_1_1GlobalGrid.html#a53facb92d1cce43e9a06b82fe2635e8c">Cajita::GlobalGrid&lt; MeshType &gt;</a>

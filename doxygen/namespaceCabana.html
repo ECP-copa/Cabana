@@ -84,6 +84,15 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html">CommunicationPlan</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Communication plan base class.  <a href="classCabana_1_1CommunicationPlan.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1CommunicationDataAoSoA.html">CommunicationDataAoSoA</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> send/receive buffers.  <a href="structCabana_1_1CommunicationDataAoSoA.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1CommunicationDataSlice.html">CommunicationDataSlice</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store slice send/receive buffers.  <a href="structCabana_1_1CommunicationDataSlice.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationData.html">CommunicationData</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store communication plan and communication buffers.  <a href="classCabana_1_1CommunicationData.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Distributor.html">Distributor</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A communication plan for migrating data from one uniquely-owned decomposition to another uniquely owned decomposition.  <a href="classCabana_1_1Distributor.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -104,6 +113,17 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1is__halo.html">is_halo</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1Halo.html" title="A communication plan for scattering and gathering of ghosted data.">Halo</a> static type checker.  <a href="structCabana_1_1is__halo.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Gather.html">Gather</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Gather_3_01HaloType_00_01AoSoAType_00_01typename_01std_1_1enable__if_3_01is__aoso666e08a1494152c80218c785a19e78d3.html">Gather&lt; HaloType, AoSoAType, typename std::enable_if&lt; is_aosoa&lt; AoSoAType &gt;::value &gt;::type &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously gather data from the local decomposition to the ghosts using the halo forward communication plan. <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> version. This is a uniquely-owned to multiply-owned communication.  <a href="classCabana_1_1Gather_3_01HaloType_00_01AoSoAType_00_01typename_01std_1_1enable__if_3_01is__aoso666e08a1494152c80218c785a19e78d3.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Gather_3_01HaloType_00_01SliceType_00_01typename_01std_1_1enable__if_3_01is__slica420051aad1e71fccbd290130c9a8cef.html">Gather&lt; HaloType, SliceType, typename std::enable_if&lt; is_slice&lt; SliceType &gt;::value &gt;::type &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously gather data from the local decomposition to the ghosts using the halo forward communication plan. <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> version. This is a uniquely-owned to multiply-owned communication.  <a href="classCabana_1_1Gather_3_01HaloType_00_01SliceType_00_01typename_01std_1_1enable__if_3_01is__slica420051aad1e71fccbd290130c9a8cef.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Scatter.html">Scatter</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously scatter data from the ghosts to the local decomposition of a slice using the halo reverse communication plan. This is a multiply-owned to uniquely owned communication.  <a href="classCabana_1_1Scatter.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html">LinkedCellList</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data describing the bin sizes and offsets resulting from a binning operation on a 3d regular Cartesian grid.  <a href="classCabana_1_1LinkedCellList.html#details">More...</a><br /></td></tr>
@@ -293,18 +313,26 @@ template&lt;class Space , class SrcAoSoA &gt; </td></tr>
 <tr class="memitem:a82063f55f2d0c3d17d11ba6642fb7353"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a82063f55f2d0c3d17d11ba6642fb7353">migrate</a> (const Distributor_t &amp;distributor, const Slice_t &amp;src, Slice_t &amp;dst, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__distributor.html">is_distributor</a>&lt; Distributor_t &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; Slice_t &gt;::value), int &gt;::type *=0)</td></tr>
 <tr class="memdesc:a82063f55f2d0c3d17d11ba6642fb7353"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously migrate data between two different decompositions using the distributor forward communication plan. <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> version. The user can do this in-place with the same slice but they will need to manage the resizing themselves as we can't resize slices.  <a href="namespaceCabana.html#a82063f55f2d0c3d17d11ba6642fb7353">More...</a><br /></td></tr>
 <tr class="separator:a82063f55f2d0c3d17d11ba6642fb7353"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0dd17069284c2039235e463b2d885ee"><td class="memTemplParams" colspan="2">template&lt;class Halo_t , class AoSoA_t &gt; </td></tr>
-<tr class="memitem:ac0dd17069284c2039235e463b2d885ee"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ac0dd17069284c2039235e463b2d885ee">gather</a> (const Halo_t &amp;halo, AoSoA_t &amp;aosoa, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__halo.html">is_halo</a>&lt; Halo_t &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; AoSoA_t &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:ac0dd17069284c2039235e463b2d885ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously gather data from the local decomposition to the ghosts using the halo forward communication plan. <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> version. This is a uniquely-owned to multiply-owned communication.  <a href="namespaceCabana.html#ac0dd17069284c2039235e463b2d885ee">More...</a><br /></td></tr>
-<tr class="separator:ac0dd17069284c2039235e463b2d885ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c97a585251f273cc3ed77bda475af8c"><td class="memTemplParams" colspan="2">template&lt;class Halo_t , class Slice_t &gt; </td></tr>
-<tr class="memitem:a2c97a585251f273cc3ed77bda475af8c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a2c97a585251f273cc3ed77bda475af8c">gather</a> (const Halo_t &amp;halo, Slice_t &amp;<a class="el" href="namespaceCabana.html#ad6d068692acbf0642e84ce1f94b677c9">slice</a>, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__halo.html">is_halo</a>&lt; Halo_t &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; Slice_t &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:a2c97a585251f273cc3ed77bda475af8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously gather data from the local decomposition to the ghosts using the halo forward communication plan. <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> version. This is a uniquely-owned to multiply-owned communication.  <a href="namespaceCabana.html#a2c97a585251f273cc3ed77bda475af8c">More...</a><br /></td></tr>
-<tr class="separator:a2c97a585251f273cc3ed77bda475af8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af22a4214a72df81e7678162494c38dd0"><td class="memTemplParams" colspan="2">template&lt;class Halo_t , class Slice_t &gt; </td></tr>
-<tr class="memitem:af22a4214a72df81e7678162494c38dd0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#af22a4214a72df81e7678162494c38dd0">scatter</a> (const Halo_t &amp;halo, Slice_t &amp;<a class="el" href="namespaceCabana.html#ad6d068692acbf0642e84ce1f94b677c9">slice</a>, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__halo.html">is_halo</a>&lt; Halo_t &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; Slice_t &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:af22a4214a72df81e7678162494c38dd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously scatter data from the ghosts to the local decomposition of a slice using the halo reverse communication plan. This is a multiply-owned to uniquely owned communication.  <a href="namespaceCabana.html#af22a4214a72df81e7678162494c38dd0">More...</a><br /></td></tr>
-<tr class="separator:af22a4214a72df81e7678162494c38dd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad45fca0815618ea3fe95fcf688f38dc6"><td class="memTemplParams" colspan="2">template&lt;class Halo , class ParticleData &gt; </td></tr>
+<tr class="memitem:ad45fca0815618ea3fe95fcf688f38dc6"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ad45fca0815618ea3fe95fcf688f38dc6">haloCheckValidSize</a> (const <a class="el" href="classCabana_1_1Halo.html">Halo</a> &amp;halo, const ParticleData &amp;particles, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__halo.html">is_halo</a>&lt; <a class="el" href="classCabana_1_1Halo.html">Halo</a> &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:ad45fca0815618ea3fe95fcf688f38dc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ensure the particle size matches the total halo (local and ghost) size.  <a href="namespaceCabana.html#ad45fca0815618ea3fe95fcf688f38dc6">More...</a><br /></td></tr>
+<tr class="separator:ad45fca0815618ea3fe95fcf688f38dc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acfe4862a55c2c1e611de4447db7cbedb"><td class="memTemplParams" colspan="2">template&lt;class HaloType , class ParticleDataType &gt; </td></tr>
+<tr class="memitem:acfe4862a55c2c1e611de4447db7cbedb"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#acfe4862a55c2c1e611de4447db7cbedb">createGather</a> (const HaloType &amp;halo, const ParticleDataType &amp;data, const double overallocation=1.0)</td></tr>
+<tr class="memdesc:acfe4862a55c2c1e611de4447db7cbedb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the gather.  <a href="namespaceCabana.html#acfe4862a55c2c1e611de4447db7cbedb">More...</a><br /></td></tr>
+<tr class="separator:acfe4862a55c2c1e611de4447db7cbedb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75770ffe2209e474ae14436511d6b326"><td class="memTemplParams" colspan="2">template&lt;class HaloType , class ParticleDataType &gt; </td></tr>
+<tr class="memitem:a75770ffe2209e474ae14436511d6b326"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a75770ffe2209e474ae14436511d6b326">gather</a> (const HaloType &amp;halo, ParticleDataType &amp;data)</td></tr>
+<tr class="memdesc:a75770ffe2209e474ae14436511d6b326"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously gather data from the local decomposition to the ghosts using the halo forward communication plan. <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> version. This is a uniquely-owned to multiply-owned communication.  <a href="namespaceCabana.html#a75770ffe2209e474ae14436511d6b326">More...</a><br /></td></tr>
+<tr class="separator:a75770ffe2209e474ae14436511d6b326"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc228ac6b568dd1c43f84dee0093b3fd"><td class="memTemplParams" colspan="2">template&lt;class HaloType , class SliceType &gt; </td></tr>
+<tr class="memitem:abc228ac6b568dd1c43f84dee0093b3fd"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#abc228ac6b568dd1c43f84dee0093b3fd">createScatter</a> (const HaloType &amp;halo, const SliceType &amp;<a class="el" href="namespaceCabana.html#ad6d068692acbf0642e84ce1f94b677c9">slice</a>, const double overallocation=1.0, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__halo.html">is_halo</a>&lt; HaloType &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:abc228ac6b568dd1c43f84dee0093b3fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the scatter.  <a href="namespaceCabana.html#abc228ac6b568dd1c43f84dee0093b3fd">More...</a><br /></td></tr>
+<tr class="separator:abc228ac6b568dd1c43f84dee0093b3fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8eb6aa8da865a5ff9c1a86f1ba0a281"><td class="memTemplParams" colspan="2">template&lt;class HaloType , class SliceType &gt; </td></tr>
+<tr class="memitem:aa8eb6aa8da865a5ff9c1a86f1ba0a281"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#aa8eb6aa8da865a5ff9c1a86f1ba0a281">scatter</a> (const HaloType &amp;halo, SliceType &amp;<a class="el" href="namespaceCabana.html#ad6d068692acbf0642e84ce1f94b677c9">slice</a>, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__halo.html">is_halo</a>&lt; HaloType &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:aa8eb6aa8da865a5ff9c1a86f1ba0a281"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously scatter data from the ghosts to the local decomposition of a slice using the halo reverse communication plan. This is a multiply-owned to uniquely owned communication.  <a href="namespaceCabana.html#aa8eb6aa8da865a5ff9c1a86f1ba0a281">More...</a><br /></td></tr>
+<tr class="separator:aa8eb6aa8da865a5ff9c1a86f1ba0a281"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02c3a57c3cd27a75094bbfa1be56145b"><td class="memTemplParams" colspan="2">template&lt;class LinkedCellListType , class AoSoA_t &gt; </td></tr>
 <tr class="memitem:a02c3a57c3cd27a75094bbfa1be56145b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a02c3a57c3cd27a75094bbfa1be56145b">permute</a> (const LinkedCellListType &amp;linked_cell_list, AoSoA_t &amp;aosoa, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__linked__cell__list.html">is_linked_cell_list</a>&lt; LinkedCellListType &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; AoSoA_t &gt;::value), int &gt;::type *=0)</td></tr>
 <tr class="memdesc:a02c3a57c3cd27a75094bbfa1be56145b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a linked cell list permute an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.  <a href="namespaceCabana.html#a02c3a57c3cd27a75094bbfa1be56145b">More...</a><br /></td></tr>
@@ -1094,6 +1122,52 @@ template&lt;class Space , class SrcAoSoA &gt; </div>
 
 </div>
 </div>
+<a id="acfe4862a55c2c1e611de4447db7cbedb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acfe4862a55c2c1e611de4447db7cbedb">&#9670;&nbsp;</a></span>createGather()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class HaloType , class ParticleDataType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto Cabana::createGather </td>
+          <td>(</td>
+          <td class="paramtype">const HaloType &amp;&#160;</td>
+          <td class="paramname"><em>halo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ParticleDataType &amp;&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>overallocation</em> = <code>1.0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create the gather. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">halo</td><td>The halo to use for the gather. </td></tr>
+    <tr><td class="paramname">data</td><td>The data on which to perform the gather. The slice should have a size equivalent to halo.numGhost() + halo.numLocal(). The locally owned elements are expected to appear first (i.e. in the first halo.numLocal() elements) and the ghosted elements are expected to appear second (i.e. in the next halo.numGhost() elements()). </td></tr>
+    <tr><td class="paramname">overallocation</td><td>An optional factor to keep extra space in the buffers to avoid frequent resizing. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ab460bf0f1b72014755b0bd79426b9df8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab460bf0f1b72014755b0bd79426b9df8">&#9670;&nbsp;</a></span>createRandomParticles()</h2>
 
@@ -1238,6 +1312,58 @@ template&lt;class PositionType &gt; </div>
       </table>
 </div><div class="memdoc">
 <p>Generate random particles with minimum distance between neighbors. This approximates many physical scenarios, e.g. atomic simulations. Kokkos device version with default execution space. </p>
+
+</div>
+</div>
+<a id="abc228ac6b568dd1c43f84dee0093b3fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc228ac6b568dd1c43f84dee0093b3fd">&#9670;&nbsp;</a></span>createScatter()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class HaloType , class SliceType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto Cabana::createScatter </td>
+          <td>(</td>
+          <td class="paramtype">const HaloType &amp;&#160;</td>
+          <td class="paramname"><em>halo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const SliceType &amp;&#160;</td>
+          <td class="paramname"><em>slice</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>overallocation</em> = <code>1.0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__halo.html">is_halo</a>&lt; HaloType &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *&#160;</td>
+          <td class="paramname"> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create the scatter. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">halo</td><td>The halo to use for the scatter. </td></tr>
+    <tr><td class="paramname">slice</td><td>The slice on which to perform the scatter. The slice should have a size equivalent to halo.numGhost() + halo.numLocal(). The locally owned elements are expected to appear first (i.e. in the first halo.numLocal() elements) and the ghosted elements are expected to appear second (i.e. in the next halo.numGhost() elements()). </td></tr>
+    <tr><td class="paramname">overallocation</td><td>An optional factor to keep extra space in the buffers to avoid frequent resizing. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1611,84 +1737,25 @@ template&lt;class IndexType , class FunctorType , class NeighborListType , class
 
 </div>
 </div>
-<a id="ac0dd17069284c2039235e463b2d885ee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac0dd17069284c2039235e463b2d885ee">&#9670;&nbsp;</a></span>gather() <span class="overload">[1/2]</span></h2>
+<a id="a75770ffe2209e474ae14436511d6b326"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75770ffe2209e474ae14436511d6b326">&#9670;&nbsp;</a></span>gather()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Halo_t , class AoSoA_t &gt; </div>
+template&lt;class HaloType , class ParticleDataType &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void Cabana::gather </td>
           <td>(</td>
-          <td class="paramtype">const Halo_t &amp;&#160;</td>
+          <td class="paramtype">const HaloType &amp;&#160;</td>
           <td class="paramname"><em>halo</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">AoSoA_t &amp;&#160;</td>
-          <td class="paramname"><em>aosoa</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__halo.html">is_halo</a>&lt; Halo_t &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; AoSoA_t &gt;::value), int &gt;::type *&#160;</td>
-          <td class="paramname"> = <code>0</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Synchronously gather data from the local decomposition to the ghosts using the halo forward communication plan. <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> version. This is a uniquely-owned to multiply-owned communication. </p>
-<p>A gather sends data from a locally owned elements to one or many ranks on which they exist as ghosts. A locally owned element may be sent to as many ranks as desired to be used as a ghost on those ranks. The value of the element in the locally owned decomposition will be the value assigned to the element in the ghosted decomposition.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Halo_t</td><td><a class="el" href="classCabana_1_1Halo.html" title="A communication plan for scattering and gathering of ghosted data.">Halo</a> type - must be a <a class="el" href="classCabana_1_1Halo.html" title="A communication plan for scattering and gathering of ghosted data.">Halo</a>.</td></tr>
-    <tr><td class="paramname">AoSoA_t</td><td><a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> type - must be an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">halo</td><td>The halo to use for the gather.</td></tr>
-    <tr><td class="paramname">aosoa</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> on which to perform the gather. The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> should have a size equivalent to halo.numGhost() + halo.numLocal(). The locally owned elements are expected to appear first (i.e. in the first halo.numLocal() elements) and the ghosted elements are expected to appear second (i.e. in the next halo.numGhost() elements()). </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a2c97a585251f273cc3ed77bda475af8c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c97a585251f273cc3ed77bda475af8c">&#9670;&nbsp;</a></span>gather() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Halo_t , class Slice_t &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void Cabana::gather </td>
-          <td>(</td>
-          <td class="paramtype">const Halo_t &amp;&#160;</td>
-          <td class="paramname"><em>halo</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Slice_t &amp;&#160;</td>
-          <td class="paramname"><em>slice</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__halo.html">is_halo</a>&lt; Halo_t &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; Slice_t &gt;::value), int &gt;::type *&#160;</td>
-          <td class="paramname"> = <code>0</code>&#160;</td>
+          <td class="paramtype">ParticleDataType &amp;&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1699,18 +1766,56 @@ template&lt;class Halo_t , class Slice_t &gt; </div>
 </div><div class="memdoc">
 
 <p>Synchronously gather data from the local decomposition to the ghosts using the halo forward communication plan. <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> version. This is a uniquely-owned to multiply-owned communication. </p>
-<p>A gather sends data from a locally owned elements to one or many ranks on which they exist as ghosts. A locally owned element may be sent to as many ranks as desired to be used as a ghost on those ranks. The value of the element in the locally owned decomposition will be the value assigned to the element in the ghosted decomposition.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Halo_t</td><td><a class="el" href="classCabana_1_1Halo.html" title="A communication plan for scattering and gathering of ghosted data.">Halo</a> type - must be a <a class="el" href="classCabana_1_1Halo.html" title="A communication plan for scattering and gathering of ghosted data.">Halo</a>.</td></tr>
-    <tr><td class="paramname">Slice_t</td><td><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> type - must be a <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a>.</td></tr>
-  </table>
-  </dd>
-</dl>
+<dl class="section note"><dt>Note</dt><dd>This routine allocates send and receive buffers internally. This is often not performant due to frequent buffer reallocations - consider creating and reusing <a class="el" href="classCabana_1_1Gather.html">Gather</a> instead.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">halo</td><td>The halo to use for the gather.</td></tr>
-    <tr><td class="paramname">slice</td><td>The <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> on which to perform the gather. The <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> should have a size equivalent to halo.numGhost() + halo.numLocal(). The locally owned elements are expected to appear first (i.e. in the first halo.numLocal() elements) and the ghosted elements are expected to appear second (i.e. in the next halo.numGhost() elements()). </td></tr>
+    <tr><td class="paramname">data</td><td>The data on which to perform the gather. The slice should have a size equivalent to halo.numGhost() + halo.numLocal(). The locally owned elements are expected to appear first (i.e. in the first halo.numLocal() elements) and the ghosted elements are expected to appear second (i.e. in the next halo.numGhost() elements()). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad45fca0815618ea3fe95fcf688f38dc6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad45fca0815618ea3fe95fcf688f38dc6">&#9670;&nbsp;</a></span>haloCheckValidSize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Halo , class ParticleData &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Cabana::haloCheckValidSize </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classCabana_1_1Halo.html">Halo</a> &amp;&#160;</td>
+          <td class="paramname"><em>halo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ParticleData &amp;&#160;</td>
+          <td class="paramname"><em>particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__halo.html">is_halo</a>&lt; <a class="el" href="classCabana_1_1Halo.html">Halo</a> &gt;::value), int &gt;::type *&#160;</td>
+          <td class="paramname"> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ensure the particle size matches the total halo (local and ghost) size. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">halo</td><td>The halo that will be used for the gather. Used to query import and export sizes.</td></tr>
+    <tr><td class="paramname">particles</td><td>The particle data (either <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> or slice). Used to query the total size. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2982,30 +3087,30 @@ template&lt;class LinkedCellListType , class SliceType &gt; </div>
 
 </div>
 </div>
-<a id="af22a4214a72df81e7678162494c38dd0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af22a4214a72df81e7678162494c38dd0">&#9670;&nbsp;</a></span>scatter()</h2>
+<a id="aa8eb6aa8da865a5ff9c1a86f1ba0a281"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8eb6aa8da865a5ff9c1a86f1ba0a281">&#9670;&nbsp;</a></span>scatter()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Halo_t , class Slice_t &gt; </div>
+template&lt;class HaloType , class SliceType &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void Cabana::scatter </td>
           <td>(</td>
-          <td class="paramtype">const Halo_t &amp;&#160;</td>
+          <td class="paramtype">const HaloType &amp;&#160;</td>
           <td class="paramname"><em>halo</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Slice_t &amp;&#160;</td>
+          <td class="paramtype">SliceType &amp;&#160;</td>
           <td class="paramname"><em>slice</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__halo.html">is_halo</a>&lt; Halo_t &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; Slice_t &gt;::value), int &gt;::type *&#160;</td>
+          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__halo.html">is_halo</a>&lt; HaloType &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *&#160;</td>
           <td class="paramname"> = <code>0</code>&#160;</td>
         </tr>
         <tr>
@@ -3017,14 +3122,7 @@ template&lt;class Halo_t , class Slice_t &gt; </div>
 </div><div class="memdoc">
 
 <p>Synchronously scatter data from the ghosts to the local decomposition of a slice using the halo reverse communication plan. This is a multiply-owned to uniquely owned communication. </p>
-<p>In a scatter operation results from ghosted values on other processors are scattered back to the owning processor of the ghost and the value associated with the ghost is summed into the locally owned value the ghost represents. If a locally owned element is ghosted on multiple ranks, then multiple contributions will be made to the sum, one for each rank.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Halo_t</td><td><a class="el" href="classCabana_1_1Halo.html" title="A communication plan for scattering and gathering of ghosted data.">Halo</a> type - must be a <a class="el" href="classCabana_1_1Halo.html" title="A communication plan for scattering and gathering of ghosted data.">Halo</a>.</td></tr>
-    <tr><td class="paramname">Slice_t</td><td><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> type - must be a <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a>.</td></tr>
-  </table>
-  </dd>
-</dl>
+<dl class="section note"><dt>Note</dt><dd>This routine allocates send and receive buffers internally. This is often not performant due to frequent buffer reallocations - consider creating and reusing <a class="el" href="classCabana_1_1Gather.html">Gather</a> instead.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">halo</td><td>The halo to use for the scatter.</td></tr>

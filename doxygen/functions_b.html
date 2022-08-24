@@ -82,7 +82,10 @@ $(function() {
 , <a class="el" href="classCajita_1_1HypreStructSMG.html#ab7136ee614fbd383e01eadc6c2be1e5e">Cajita::HypreStructSMG&lt; Scalar, EntityType, MemorySpace &gt;</a>
 </li>
 <li>base_type
-: <a class="el" href="classCabana_1_1SimdPolicy.html#aa3da6400127f253c5e7afec623ee64be">Cabana::SimdPolicy&lt; VectorLength, Properties &gt;</a>
+: <a class="el" href="classCabana_1_1Gather_3_01HaloType_00_01AoSoAType_00_01typename_01std_1_1enable__if_3_01is__aoso666e08a1494152c80218c785a19e78d3.html#a049a601326de677abc9cad5d2ca975e9">Cabana::Gather&lt; HaloType, AoSoAType, typename std::enable_if&lt; is_aosoa&lt; AoSoAType &gt;::value &gt;::type &gt;</a>
+, <a class="el" href="classCabana_1_1Gather_3_01HaloType_00_01SliceType_00_01typename_01std_1_1enable__if_3_01is__slica420051aad1e71fccbd290130c9a8cef.html#a8fcc510870de0a31db685337cb8a8680">Cabana::Gather&lt; HaloType, SliceType, typename std::enable_if&lt; is_slice&lt; SliceType &gt;::value &gt;::type &gt;</a>
+, <a class="el" href="classCabana_1_1Scatter.html#aaf564e5e0dfbff59329534c91682b547">Cabana::Scatter&lt; HaloType, SliceType &gt;</a>
+, <a class="el" href="classCabana_1_1SimdPolicy.html#aa3da6400127f253c5e7afec623ee64be">Cabana::SimdPolicy&lt; VectorLength, Properties &gt;</a>
 </li>
 <li>BinningData()
 : <a class="el" href="classCabana_1_1BinningData.html#a9d379fcb21bbd5d216b73b92c6e544e8">Cabana::BinningData&lt; DeviceType &gt;</a>
@@ -117,7 +120,15 @@ $(function() {
 : <a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#aadcac50fe1e166896b21dd1719a9c774">Cajita::IndexConversion::L2G&lt; MeshType, EntityType &gt;</a>
 </li>
 <li>boundaryIndexSpace()
-: <a class="el" href="classCajita_1_1LocalGrid.html#ad8ade1fca6bd1a0aceccf74c4ce7dded">Cajita::LocalGrid&lt; MeshType &gt;</a>
+: <a class="el" href="classCajita_1_1LocalGrid.html#ae8151795076a32f988021b55f22384de">Cajita::LocalGrid&lt; MeshType &gt;</a>
+</li>
+<li>buffer_type
+: <a class="el" href="classCabana_1_1CommunicationData.html#a66b4812e0bf8b658b9b69b636ad063b8">Cabana::CommunicationData&lt; CommPlanType, CommDataType &gt;</a>
+, <a class="el" href="structCabana_1_1CommunicationDataAoSoA.html#abde86ef12a49423079e687f3b296026e">Cabana::CommunicationDataAoSoA&lt; AoSoAType &gt;</a>
+, <a class="el" href="structCabana_1_1CommunicationDataSlice.html#aa36000b107bbefbc87354fd1c5531953">Cabana::CommunicationDataSlice&lt; SliceType &gt;</a>
+, <a class="el" href="classCabana_1_1Gather_3_01HaloType_00_01AoSoAType_00_01typename_01std_1_1enable__if_3_01is__aoso666e08a1494152c80218c785a19e78d3.html#aba48db0c49d106ad427b09a4f7630f21">Cabana::Gather&lt; HaloType, AoSoAType, typename std::enable_if&lt; is_aosoa&lt; AoSoAType &gt;::value &gt;::type &gt;</a>
+, <a class="el" href="classCabana_1_1Gather_3_01HaloType_00_01SliceType_00_01typename_01std_1_1enable__if_3_01is__slica420051aad1e71fccbd290130c9a8cef.html#a1670f4699fcaf25ef0fbec79c5a7cd27">Cabana::Gather&lt; HaloType, SliceType, typename std::enable_if&lt; is_slice&lt; SliceType &gt;::value &gt;::type &gt;</a>
+, <a class="el" href="classCabana_1_1Scatter.html#ac9c5ab7cff326754a570dd4970024afc">Cabana::Scatter&lt; HaloType, SliceType &gt;</a>
 </li>
 <li>build()
 : <a class="el" href="classCabana_1_1LinkedCellList.html#af1144f85f4b1af0d81938b57f1b7bbe2">Cabana::LinkedCellList&lt; DeviceType &gt;</a>
