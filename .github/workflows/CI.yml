@@ -11,6 +11,7 @@ jobs:
     strategy:
       matrix:
         backend: ["OPENMP", "SERIAL"]
+        kokkos_ver: ["master", "develop"]
     runs-on: ubuntu-20.04
     steps:
       - name: Install deps
@@ -19,7 +20,7 @@ jobs:
         uses: actions/checkout@v2.2.0
         with:
           repository: kokkos/kokkos
-          ref: develop
+          ref: ${{ matrix.kokkos_ver }}
           path: kokkos
       - name: Build kokkos
         working-directory: kokkos
