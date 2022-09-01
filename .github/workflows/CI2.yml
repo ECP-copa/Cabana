@@ -265,7 +265,7 @@ jobs:
         uses: actions/checkout@v2.2.0
         with:
           repository: arborx/ArborX
-          ref: master
+          ref: v1.2
           path: arborx
       - name: Build arborx
         if: ${{ matrix.arborx == 'ArborX' }}
@@ -327,7 +327,7 @@ jobs:
       - name: Checkout ALL
         if: ${{ matrix.liball == 'libALL' }}
         run: |
-          git clone --depth 1 --branch master https://gitlab.jsc.fz-juelich.de/SLMS/loadbalancing ALL
+          git clone --depth 1 --branch v0.9.2 https://gitlab.jsc.fz-juelich.de/SLMS/loadbalancing ALL
       - name: Build ALL
         if: ${{ matrix.liball == 'libALL' }}
         working-directory: ALL
