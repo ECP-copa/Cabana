@@ -308,7 +308,8 @@ void generate_random_halo_tiles(
 
 // ---------------------------------------------------------------------------
 void generate_ground_truth(
-    Reduce::Sum, std::unordered_map<std::string, DataMembers>& ground_truth,
+    ScatterReduce::Sum,
+    std::unordered_map<std::string, DataMembers>& ground_truth,
     const DataMembers base_values, const std::vector<std::array<int, 3>>& tiles,
     const std::vector<int>& tile_ghosted_num )
 {
@@ -328,7 +329,8 @@ void generate_ground_truth(
 }
 
 void generate_ground_truth(
-    Reduce::Max, std::unordered_map<std::string, DataMembers>& ground_truth,
+    ScatterReduce::Max,
+    std::unordered_map<std::string, DataMembers>& ground_truth,
     const DataMembers base_values, const std::vector<std::array<int, 3>>& tiles,
     const std::vector<int>& )
 {
@@ -346,7 +348,8 @@ void generate_ground_truth(
 }
 
 void generate_ground_truth(
-    Reduce::Min, std::unordered_map<std::string, DataMembers>& ground_truth,
+    ScatterReduce::Min,
+    std::unordered_map<std::string, DataMembers>& ground_truth,
     const DataMembers base_values, const std::vector<std::array<int, 3>>& tiles,
     const std::vector<int>& )
 {
@@ -464,8 +467,7 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
         std::string( "test_sparse_grid" ), sparse_layout );
 
     SparseHalo<TEST_MEMSPACE, DataTypes, EntityType, 3, cell_bits_per_tile_dim>
-        halo( SparseHaloPattern<3, EntityType>( entity ), local_grid,
-              MPI_COMM_WORLD );
+        halo( NodeHaloPattern<3>(), local_grid, MPI_COMM_WORLD );
 
     // sample valid halos on rank 0 and broadcast to other ranks
     // Kokkos::View<T* [3], TEST_MEMSPACE> tile_view;
@@ -647,8 +649,7 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, sparse_halo_scatter_and_gather_sum )
 {
-    haloScatterAndGatherTest( Cajita::Experimental::Reduce::Sum(),
-                              Cajita::Node() );
+    haloScatterAndGatherTest( Cajita::ScatterReduce::Sum(), Cajita::Node() );
 }
 
 // TODO: test min/max

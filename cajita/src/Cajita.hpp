@@ -38,6 +38,7 @@
 #ifndef KOKKOS_ENABLE_SYCL // FIXME_SYCL
 #include <Cajita_SparseArray.hpp>
 #include <Cajita_SparseDimPartitioner.hpp>
+#include <Cajita_SparseHalo.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
 #include <Cajita_SparseLocalGrid.hpp>
 #endif

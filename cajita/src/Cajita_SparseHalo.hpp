@@ -16,6 +16,7 @@
 #include <Cabana_SoA.hpp>
 #include <Cabana_Tuple.hpp>
 
+#include <Cajita_Halo.hpp> // to get the pattern and tags defined here
 #include <Cajita_SparseArray.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
 #include <Cajita_Types.hpp>
@@ -29,158 +30,6 @@ namespace Cajita
 {
 namespace Experimental
 {
-//---------------------------------------------------------------------------//
-// Sparse Halo exchange patterns.
-// reuse the dense node halo pattern
-//---------------------------------------------------------------------------//
-//! Sparse halo exchange pattern class.
-template <std::size_t NumSpaceDim, class EntityType>
-class SparseHaloPattern
-{
-  public:
-    //! Type of entities stored on sparse grid
-    using entity_type = EntityType;
-    //! Dimension number
-    static constexpr std::size_t num_space_dim = NumSpaceDim;
-
-    //! Constructor for Node entities, for 3D case
-    template <std::size_t NSD = num_space_dim,
-              typename std::enable_if_t<( 3 == NSD ), bool> = true>
-    SparseHaloPattern( Node )
-    {
-        std::vector<std::array<int, 3>> neighbors;
-        neighbors.reserve( 26 );
-        for ( int i = -1; i < 2; ++i )
-            for ( int j = -1; j < 2; ++j )
-                for ( int k = -1; k < 2; ++k )
-                    if ( !( i == 0 && j == 0 && k == 0 ) )
-                        neighbors.push_back( { i, j, k } );
-        this->setNeighbors( neighbors );
-    }
-
-    //! Constructor for Node entities, for 2D case
-    template <std::size_t NSD = num_space_dim,
-              typename std::enable_if_t<( 2 == NSD ), bool> = true>
-    SparseHaloPattern( Node )
-    {
-        std::vector<std::array<int, 2>> neighbors;
-        neighbors.reserve( 8 );
-        for ( int i = -1; i < 2; ++i )
-            for ( int j = -1; j < 2; ++j )
-                if ( !( i == 0 && j == 0 ) )
-                    neighbors.push_back( { i, j } );
-        this->setNeighbors( neighbors );
-    }
-
-    //! Constructor for Cell entities, for 3D case
-    template <std::size_t NSD = num_space_dim,
-              typename std::enable_if_t<( 3 == NSD ), bool> = true>
-    SparseHaloPattern( Cell )
-    {
-        std::vector<std::array<int, 3>> neighbors;
-        neighbors.reserve( 26 );
-        for ( int i = -1; i < 2; ++i )
-            for ( int j = -1; j < 2; ++j )
-                for ( int k = -1; k < 2; ++k )
-                    if ( !( i == 0 && j == 0 && k == 0 ) )
-                        neighbors.push_back( { i, j, k } );
-        this->setNeighbors( neighbors );
-    }
-
-    //! Constructor for Cell entities, for 2D case
-    template <std::size_t NSD = num_space_dim,
-              typename std::enable_if_t<( 2 == NSD ), bool> = true>
-    SparseHaloPattern( Cell )
-    {
-        std::vector<std::array<int, 2>> neighbors;
-        neighbors.reserve( 8 );
-        for ( int i = -1; i < 2; ++i )
-            for ( int j = -1; j < 2; ++j )
-                if ( !( i == 0 && j == 0 ) )
-                    neighbors.push_back( { i, j } );
-        this->setNeighbors( neighbors );
-    }
-
-    // [NOTES]
-    // I think the face/edge case should also have 26 neighbors in 3D and 8
-    // neighbors in 2D Depends on the kernel size, if it's >= 2, then all
-    // neighbors should communicate data
-    // But here I just follow the design of Dense Halo
-    //! Constructor for other entities (Face and Edge), for 3D case
-    template <std::size_t NSD = num_space_dim,
-              typename std::enable_if_t<( 3 == NSD ), bool> = true>
-    SparseHaloPattern()
-    {
-        std::vector<std::array<int, 3>> neighbors = {
-            { -1, 0, 0 }, { 1, 0, 0 },  { 0, -1, 0 },
-            { 0, 1, 0 },  { 0, 0, -1 }, { 0, 0, 1 } };
-        this->setNeighbors( neighbors );
-    }
-
-    //! Constructor for other entities (Face and Edge), for 2D case
-    template <std::size_t NSD = num_space_dim,
-              typename std::enable_if_t<( 2 == NSD ), bool> = true>
-    SparseHaloPattern()
-    {
-        std::vector<std::array<int, 2>> neighbors = {
-            { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
-        this->setNeighbors( neighbors );
-    }
-    // [NOTES - Ends]
-
-    //! Get the neighbors that are in the halo pattern.
-    std::vector<std::array<int, num_space_dim>> getNeighbors() const
-    {
-        return _neighbors;
-    }
-
-  private:
-    //! Set neighbors according to input
-    void
-    setNeighbors( const std::vector<std::array<int, num_space_dim>>& neighbors )
-    {
-        _neighbors = neighbors;
-    }
-
-  private:
-    //! record neighbor pattern
-    std::vector<std::array<int, num_space_dim>> _neighbors;
-};
-
-//---------------------------------------------------------------------------//
-// Scatter reduction.
-// TODO: reuse the dense halo tags
-//---------------------------------------------------------------------------//
-namespace Reduce
-{
-
-//! Sum values from neighboring ranks into this rank's data.
-struct Sum
-{
-};
-
-//! Assign this rank's data to be the minimum of it and its neighbor ranks'
-//! values.
-struct Min
-{
-};
-
-//! Assign this rank's data to be the maximum of it and its neighbor ranks'
-//! values.
-struct Max
-{
-};
-
-//! Replace this rank's data with its neighbor ranks' values. Note that if
-//! multiple ranks scatter back to the same grid locations then the value
-//! assigned will be from one of the neighbors but it is undetermined from
-//! which neighbor that value will come.
-struct Replace
-{
-};
-
-} // namespace Reduce
-
 //---------------------------------------------------------------------------//
 // Halo
 // ---------------------------------------------------------------------------//
@@ -209,7 +58,7 @@ class SparseHalo
     using entity_type = EntityType;
 
     //! sparse grid halo pattern (TODO currently reusing Halo's Node pattern)
-    using halo_pattern_type = SparseHaloPattern<NumSpaceDim, EntityType>;
+    using halo_pattern_type = NodeHaloPattern<NumSpaceDim>;
 
     //! value type of entities on sparse grid
     using value_type = Value;
@@ -823,7 +672,7 @@ class SparseHalo
                 int nid = valid_recvs[unpack_index];
                 auto h_neighbor_counting = Kokkos::create_mirror_view_and_copy(
                     Kokkos::HostSpace(), _neighbor_counting[nid] );
-                unpackBuffer( Reduce::Replace(), exec_space,
+                unpackBuffer( ScatterReduce::Replace(), exec_space,
                               _ghosted_buffers[nid], _tmp_tile_steering[nid],
                               sparse_array, map,
                               h_neighbor_counting( Index::own ) );
@@ -1054,7 +903,7 @@ class SparseHalo
     //! Reduce an element into the buffer. Sum reduction.
     template <class T>
     KOKKOS_INLINE_FUNCTION static void
-    unpackOp( Reduce::Sum, const T& buffer_val, T& array_val )
+    unpackOp( ScatterReduce::Sum, const T& buffer_val, T& array_val )
     {
         array_val += buffer_val;
     }
@@ -1062,7 +911,7 @@ class SparseHalo
     //! Reduce an element into the buffer. Min reduction.
     template <class T>
     KOKKOS_INLINE_FUNCTION static void
-    unpackOp( Reduce::Min, const T& buffer_val, T& array_val )
+    unpackOp( ScatterReduce::Min, const T& buffer_val, T& array_val )
     {
         if ( buffer_val < array_val )
             array_val = buffer_val;
@@ -1071,7 +920,7 @@ class SparseHalo
     //! Reduce an element into the buffer. Max reduction.
     template <class T>
     KOKKOS_INLINE_FUNCTION static void
-    unpackOp( Reduce::Max, const T& buffer_val, T& array_val )
+    unpackOp( ScatterReduce::Max, const T& buffer_val, T& array_val )
     {
         if ( buffer_val > array_val )
             array_val = buffer_val;
@@ -1080,7 +929,7 @@ class SparseHalo
     //! Reduce an element into the buffer. Replace reduction.
     template <class T>
     KOKKOS_INLINE_FUNCTION static void
-    unpackOp( Reduce::Replace, const T& buffer_val, T& array_val )
+    unpackOp( ScatterReduce::Replace, const T& buffer_val, T& array_val )
     {
         array_val = buffer_val;
     }
