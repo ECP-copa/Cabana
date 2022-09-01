@@ -25,7 +25,7 @@ jobs:
       - name: Build kokkos
         working-directory: kokkos
         run: |
-          cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/kokkos -DKokkos_ENABLE_${{ matrix.backend }}=ON
+          cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/kokkos -DKokkos_ENABLE_${{ matrix.backend }}=ON  -DKokkos_ENABLE_DEPRECATED_CODE_3=OFF
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout Cabana
