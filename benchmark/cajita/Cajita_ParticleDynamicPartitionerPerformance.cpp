@@ -151,10 +151,11 @@ void performanceTest( std::ostream& stream, MPI_Comm comm,
 
                 // compute local workload
                 local_workload_timer.start( p );
+                constexpr int cell_num_per_tile_dim = 4;
+                constexpr int num_space_dim = 3;
                 auto pws =
                     Cajita::createParticleDynamicPartitionerWorkloadMeasurer<
-                        partitioner.cell_num_per_tile_dim,
-                        partitioner.num_space_dim, Device>(
+                        cell_num_per_tile_dim, num_space_dim, Device>(
                         pos_view, par_num, global_low_corner,
                         1.0f / num_cells_per_dim[c], comm );
                 partitioner.setLocalWorkload( &pws );
