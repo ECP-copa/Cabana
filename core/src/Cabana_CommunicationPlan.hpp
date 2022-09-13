@@ -1191,7 +1191,7 @@ class CommunicationData
     buffer_type getReceiveBuffer() const { return _comm_data._recv_buffer; }
 
     //! Get the particles to communicate.
-    particle_data_type getData() const { return _comm_data._particles; }
+    particle_data_type getParticles() const { return _comm_data._particles; }
     //! Update particles to communicate.
     void setData( const particle_data_type& particles )
     {
