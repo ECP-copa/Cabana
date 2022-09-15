@@ -1,4 +1,4 @@
-ARG BASE=nvidia/cuda:11.0-devel-ubuntu20.04
+ARG BASE=nvidia/cuda:11.0.3-devel-ubuntu20.04
 FROM $BASE
 
 ARG NPROCS=4
