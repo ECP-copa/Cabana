@@ -9,10 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+#include <Cajita_DynamicPartitioner.hpp>
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_GlobalMesh.hpp>
 #include <Cajita_Partitioner.hpp>
-#include <Cajita_SparseDimPartitioner.hpp>
 #include <Cajita_Types.hpp>
 
 #include <gtest/gtest.h>
@@ -425,15 +425,10 @@ void sparseGridTest3d()
         global_low_corner, global_high_corner, global_num_cell );
 
     // Sparse paritioner
-    float max_workload_coeff = 1.5;
-    int workload_num =
-        global_num_cell[0] * global_num_cell[1] * global_num_cell[2];
-    int num_step_rebalance = 100;
     int max_optimize_iteration = 10;
 
-    SparseDimPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
-        MPI_COMM_WORLD, max_workload_coeff, workload_num, num_step_rebalance,
-        global_num_cell, max_optimize_iteration );
+    DynamicPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
+        MPI_COMM_WORLD, global_num_cell, max_optimize_iteration );
 
     // test ranks per dim
     auto ranks_per_dim =
@@ -451,8 +446,6 @@ void sparseGridTest3d()
         }
         rec_partitions[d].push_back( global_num_tile[d] );
     }
-    partitioner.initializeRecPartition( rec_partitions[0], rec_partitions[1],
-                                        rec_partitions[2] );
 
     // Create spares global grid
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
@@ -567,7 +560,7 @@ void sparseGridTest3d()
         for ( int id = 1; id < ranks_per_dim[d]; id++ )
             part[d][id] += 1;
 
-    partitioner.initializeRecPartition( part[0], part[1], part[2] );
+    partitioner.setRecPartition( part[0], part[1], part[2] );
 
     std::array<int, 3> new_owned_num_cell;
     std::array<int, 3> new_global_cell_offset;

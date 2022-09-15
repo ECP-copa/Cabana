@@ -12,8 +12,8 @@
 #include "../Cabana_BenchmarkUtils.hpp"
 #include "Cabana_ParticleInit.hpp"
 
-#include <Cajita_SparseDimPartitioner.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
+#include <Cajita_SparseMapDynamicPartitioner.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -27,15 +27,6 @@
 #include <vector>
 
 #include <mpi.h>
-
-//---------------------------------------------------------------------------//
-// Helper functions.
-struct ParticleWorkloadTag
-{
-};
-struct SparseMapTag
-{
-};
 
 // generate a random tile sequence
 int current = 0;
@@ -82,150 +73,7 @@ std::array<std::vector<int>, 3> computeAveragePartition(
 //---------------------------------------------------------------------------//
 // Performance test.
 template <class Device>
-void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
-                      const std::string& test_prefix,
-                      std::vector<int> problem_sizes,
-                      std::vector<int> num_cells_per_dim )
-{
-    using memory_space = typename Device::memory_space;
-
-    // Get comm rank;
-    int comm_rank;
-    MPI_Comm_rank( comm, &comm_rank );
-
-    // Get comm size;
-    int comm_size;
-    MPI_Comm_size( comm, &comm_size );
-
-    // Domain size setup
-    std::array<float, 3> global_low_corner = { 0.0, 0.0, 0.0 };
-    std::array<float, 3> global_high_corner = { 1.0, 1.0, 1.0 };
-    constexpr int cell_num_per_tile_dim = 4;
-    constexpr int cell_bits_per_tile_dim = 2;
-
-    // Declare the total number of particles
-    int num_problem_size = problem_sizes.size();
-
-    // Declare the size (cell nums) of the domain
-    int num_cells_per_dim_size = num_cells_per_dim.size();
-
-    // Number of runs in the test loops.
-    int num_run = 10;
-
-    // Basic settings for partitioenr
-    float max_workload_coeff = 1.5;
-    int max_optimize_iteration = 10;
-    int num_step_rebalance = 100;
-
-    // compute the max number of particles handled by the current MPI rank
-    int max_par_num = problem_sizes.back() / comm_size +
-                      ( problem_sizes.back() % comm_size < comm_rank ? 1 : 0 );
-
-    // Create random sets of particle positions.
-    using position_type = Kokkos::View<float* [3], memory_space>;
-    std::vector<position_type> positions( num_problem_size );
-    for ( int p = 0; p < num_problem_size; ++p )
-    {
-        positions[p] = position_type(
-            Kokkos::ViewAllocateWithoutInitializing( "positions" ),
-            problem_sizes[p] );
-        Cabana::createRandomParticles( positions[p], problem_sizes[p],
-                                       global_low_corner[0],
-                                       global_high_corner[0] );
-    }
-
-    for ( int c = 0; c < num_cells_per_dim_size; ++c )
-    {
-        // init the sparse grid domain
-        std::array<int, 3> global_num_cell = {
-            num_cells_per_dim[c], num_cells_per_dim[c], num_cells_per_dim[c] };
-        int num_tiles_per_dim = num_cells_per_dim[c] >> cell_bits_per_tile_dim;
-
-        // set up partitioner
-        Cajita::SparseDimPartitioner<Device, cell_num_per_tile_dim> partitioner(
-            comm, max_workload_coeff, max_par_num, num_step_rebalance,
-            global_num_cell, max_optimize_iteration );
-        auto ranks_per_dim =
-            partitioner.ranksPerDimension( comm, global_num_cell );
-        auto ave_partition =
-            computeAveragePartition( num_tiles_per_dim, ranks_per_dim );
-
-        // Create insertion timers
-        std::stringstream local_workload_name;
-        local_workload_name << test_prefix << "compute_local_workload_"
-                            << "domain_size(cell)_" << num_cells_per_dim[c];
-        Cabana::Benchmark::Timer local_workload_timer(
-            local_workload_name.str(), num_problem_size );
-
-        std::stringstream prefix_sum_name;
-        prefix_sum_name << test_prefix << "compute_prefix_sum_"
-                        << "domain_size(cell)_" << num_cells_per_dim[c];
-        Cabana::Benchmark::Timer prefix_sum_timer( prefix_sum_name.str(),
-                                                   num_problem_size );
-
-        std::stringstream total_optimize_name;
-        total_optimize_name << test_prefix << "total_optimize_"
-                            << "domain_size(cell)_" << num_cells_per_dim[c];
-        Cabana::Benchmark::Timer total_optimize_timer(
-            total_optimize_name.str(), num_problem_size );
-
-        // loop over all the particle numbers
-        for ( int p = 0; p < num_problem_size; ++p )
-        {
-            // compute the number of particles handled by the current MPI rank
-            int par_num = problem_sizes[p] / comm_size +
-                          ( problem_sizes[p] % comm_size < comm_rank ? 1 : 0 );
-
-            auto pos_view = Kokkos::subview(
-                positions[p], Kokkos::pair<int, int>( 0, par_num ),
-                Kokkos::pair<int, int>( 0, 3 ) );
-
-            // try for num_run times
-            for ( int t = 0; t < num_run; ++t )
-            {
-                // ensure every optimization process starts from the same status
-                partitioner.initializeRecPartition(
-                    ave_partition[0], ave_partition[1], ave_partition[2] );
-
-                // compute local workload
-                local_workload_timer.start( p );
-                partitioner.computeLocalWorkLoad( pos_view, par_num,
-                                                  global_low_corner,
-                                                  1.0f / num_cells_per_dim[c] );
-                local_workload_timer.stop( p );
-
-                // compute prefix sum matrix
-                prefix_sum_timer.start( p );
-                partitioner.computeFullPrefixSum( comm );
-                prefix_sum_timer.stop( p );
-
-                // optimization
-                bool is_changed = false;
-                // full timer
-                total_optimize_timer.start( p );
-                for ( int i = 0; i < max_optimize_iteration; ++i )
-                {
-                    partitioner.optimizePartition( is_changed,
-                                                   std::rand() % 3 );
-                    if ( !is_changed )
-                        break;
-                }
-                total_optimize_timer.stop( p );
-            }
-        }
-        // Output results
-        outputResults( stream, "insert_tile_num", problem_sizes,
-                       local_workload_timer, comm );
-        outputResults( stream, "insert_tile_num", problem_sizes,
-                       prefix_sum_timer, comm );
-        outputResults( stream, "insert_tile_num", problem_sizes,
-                       total_optimize_timer, comm );
-        stream << std::flush;
-    }
-}
-
-template <class Device>
-void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
+void performanceTest( std::ostream& stream, MPI_Comm comm,
                       const std::string& test_prefix,
                       std::vector<double> occupy_fraction,
                       std::vector<int> num_cells_per_dim )
@@ -247,9 +95,7 @@ void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
     int num_run = 10;
 
     // Basic settings for partitioenr
-    float max_workload_coeff = 1.5;
     int max_optimize_iteration = 10;
-    int num_step_rebalance = 100;
 
     for ( int c = 0; c < num_cells_per_dim_size; ++c )
     {
@@ -271,11 +117,8 @@ void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
             typename Device::memory_space(), tiles_host );
 
         // set up partitioner
-        auto total_num =
-            num_tiles_per_dim * num_tiles_per_dim * num_tiles_per_dim;
-        Cajita::SparseDimPartitioner<Device, cell_num_per_tile_dim> partitioner(
-            comm, max_workload_coeff, total_num, num_step_rebalance,
-            global_num_cell, max_optimize_iteration );
+        Cajita::DynamicPartitioner<Device, cell_num_per_tile_dim> partitioner(
+            comm, global_num_cell, max_optimize_iteration );
         auto ranks_per_dim =
             partitioner.ranksPerDimension( comm, global_num_cell );
         auto ave_partition =
@@ -321,12 +164,15 @@ void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
             for ( int t = 0; t < num_run; ++t )
             {
                 // ensure every optimization process starts from the same status
-                partitioner.initializeRecPartition(
-                    ave_partition[0], ave_partition[1], ave_partition[2] );
+                partitioner.initializePartitionByAverage( comm,
+                                                          global_num_cell );
 
                 // compute local workload
                 local_workload_timer.start( frac );
-                partitioner.computeLocalWorkLoad( sis );
+                auto smws =
+                    Cajita::createSparseMapDynamicPartitionerWorkloadMeasurer<
+                        Device>( sis, comm );
+                partitioner.setLocalWorkload( &smws );
                 local_workload_timer.stop( frac );
 
                 // compute prefix sum matrix
@@ -340,8 +186,7 @@ void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
                 total_optimize_timer.start( frac );
                 for ( int i = 0; i < max_optimize_iteration; ++i )
                 {
-                    partitioner.optimizePartition( is_changed,
-                                                   std::rand() % 3 );
+                    partitioner.updatePartition( std::rand() % 3, is_changed );
                     if ( !is_changed )
                         break;
                 }
@@ -443,17 +288,11 @@ int main( int argc, char* argv[] )
     // Don't rerun on the CPU if already done or if turned off.
     if ( !std::is_same<device_type, host_device_type>{} )
     {
-        performanceTest<device_type>( ParticleWorkloadTag(), file,
-                                      MPI_COMM_WORLD, "device_particleWL_",
-                                      problem_sizes, num_cells_per_dim );
-        performanceTest<device_type>( SparseMapTag(), file, MPI_COMM_WORLD,
+        performanceTest<device_type>( file, MPI_COMM_WORLD,
                                       "device_sparsemapWL_", occupy_fraction,
                                       num_cells_per_dim );
     }
-    performanceTest<host_device_type>( ParticleWorkloadTag(), file,
-                                       MPI_COMM_WORLD, "host_particleWL_",
-                                       problem_sizes, num_cells_per_dim );
-    performanceTest<host_device_type>( SparseMapTag(), file, MPI_COMM_WORLD,
+    performanceTest<host_device_type>( file, MPI_COMM_WORLD,
                                        "host_sparsemapWL_", occupy_fraction,
                                        num_cells_per_dim );
 

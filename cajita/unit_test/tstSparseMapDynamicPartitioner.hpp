@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita_SparseDimPartitioner.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
+#include <Cajita_SparseMapDynamicPartitioner.hpp>
 #include <Kokkos_Core.hpp>
 
 #include <ctime>
@@ -34,12 +34,8 @@ void uniform_distribution_automatic_rank()
     constexpr int size_tile_per_dim = 16;
     constexpr int cell_per_tile_dim = 4;
     constexpr int size_per_dim = size_tile_per_dim * cell_per_tile_dim;
-    constexpr int total_size = size_per_dim * size_per_dim * size_per_dim;
 
     // some settings for partitioner
-    float max_workload_coeff = 1.5;
-    int workload_num = total_size;
-    int num_step_rebalance = 100;
     int max_optimize_iteration = 10;
     std::array<int, 3> global_cells_per_dim = {
         size_tile_per_dim * cell_per_tile_dim,
@@ -47,9 +43,8 @@ void uniform_distribution_automatic_rank()
         size_tile_per_dim * cell_per_tile_dim };
 
     // partitioner
-    SparseDimPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
-        MPI_COMM_WORLD, max_workload_coeff, workload_num, num_step_rebalance,
-        global_cells_per_dim, max_optimize_iteration );
+    DynamicPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
+        MPI_COMM_WORLD, global_cells_per_dim, max_optimize_iteration );
 
     // check the value of some pre-computed constants
     auto cbptd = partitioner.cell_bits_per_tile_dim;
@@ -79,8 +74,6 @@ void uniform_distribution_automatic_rank()
         }
         rec_partitions[d].push_back( size_tile_per_dim );
     }
-    partitioner.initializeRecPartition( rec_partitions[0], rec_partitions[1],
-                                        rec_partitions[2] );
 
     // test getCurrentPartition function
     {
@@ -147,7 +140,10 @@ void uniform_distribution_automatic_rank()
     Kokkos::fence();
 
     // compute workload and do partition optimization
-    partitioner.optimizePartition( sis, MPI_COMM_WORLD );
+    auto smws = createSparseMapDynamicPartitionerWorkloadMeasurer<TEST_DEVICE>(
+        sis, MPI_COMM_WORLD );
+    partitioner.setLocalWorkload( &smws );
+    partitioner.optimizePartition( MPI_COMM_WORLD );
 
     // check results (should be the same as the average partition)
     owned_cells_per_dim = partitioner.ownedCellsPerDimension( cart_comm );
@@ -219,66 +215,6 @@ auto generate_random_tiles( const std::array<std::vector<int>, 3>& gt_partition,
     return tiles_view;
 }
 
-auto generate_random_particles(
-    const std::array<std::vector<int>, 3>& gt_partition,
-    const Kokkos::Array<int, 3>& cart_rank, int occupy_par_num_per_rank,
-    const std::array<double, 3> global_low_corner, double dx,
-    int cell_num_per_tile_dim ) -> Kokkos::View<double* [3], TEST_MEMSPACE>
-{
-    std::set<std::array<double, 3>> par_set;
-
-    double start[3], size[3];
-    for ( int d = 0; d < 3; ++d )
-    {
-        start[d] =
-            ( gt_partition[d][cart_rank[d]] * cell_num_per_tile_dim + 0.5 ) *
-                dx +
-            global_low_corner[d];
-
-        size[d] =
-            ( ( gt_partition[d][cart_rank[d] + 1] * cell_num_per_tile_dim ) -
-              ( gt_partition[d][cart_rank[d]] * cell_num_per_tile_dim ) ) *
-            dx;
-    }
-    // insert the corner tiles to the set, to ensure the uniqueness of the
-    // ground truth partition
-    par_set.insert(
-        { start[0] + 0.01 * dx, start[1] + 0.01 * dx, start[2] + 0.01 * dx } );
-    par_set.insert( {
-        start[0] + size[0] - dx - 0.01 * dx,
-        start[1] + size[1] - dx - 0.01 * dx,
-        start[2] + size[2] - dx - 0.01 * dx,
-    } );
-
-    // insert random tiles to the set
-    while ( static_cast<int>( par_set.size() ) < occupy_par_num_per_rank )
-    {
-        double rand_offset[3];
-        for ( int d = 0; d < 3; ++d )
-            rand_offset[d] = (double)std::rand() / RAND_MAX;
-        par_set.insert( { start[0] + rand_offset[0] * ( size[0] - dx ),
-                          start[1] + rand_offset[1] * ( size[1] - dx ),
-                          start[2] + rand_offset[2] * ( size[2] - dx ) } );
-    }
-
-    // particle_set => particle view (host)
-    typedef typename TEST_EXECSPACE::array_layout layout;
-    Kokkos::View<double* [3], layout, Kokkos::HostSpace> par_view_host(
-        "particle_view_host", par_set.size() );
-    int i = 0;
-    for ( auto it = par_set.begin(); it != par_set.end(); ++it )
-    {
-        for ( int d = 0; d < 3; ++d )
-            par_view_host( i, d ) = ( *it )[d];
-        i++;
-    }
-
-    // create tiles view on device
-    Kokkos::View<double* [3], TEST_MEMSPACE> par_view =
-        Kokkos::create_mirror_view_and_copy( TEST_MEMSPACE(), par_view_host );
-    return par_view;
-}
-
 /*!
   \brief In this test, the ground truth partition is first randomly chosen, then
   a given number of tiles are regiestered on each rank (the most bottom-left and
@@ -286,32 +222,24 @@ auto generate_random_particles(
   truth partition )
   \param occupy_num_per_rank the tile number that will be registered on each MPI
   rank
-  \param use_tile2workload indicate the source to compute the workload on MPI
-  ranks, true if using tile occupation while false if using particle positions
 */
-void random_distribution_automatic_rank( int occupy_num_per_rank,
-                                         bool use_tile2workload = true )
+void random_distribution_automatic_rank( int occupy_num_per_rank )
 {
     // define the domain size
     constexpr int size_tile_per_dim = 32;
     constexpr int cell_per_tile_dim = 4;
     constexpr int size_per_dim = size_tile_per_dim * cell_per_tile_dim;
-    constexpr int total_size = size_per_dim * size_per_dim * size_per_dim;
     srand( time( 0 ) );
 
     // some settings for partitioner
-    float max_workload_coeff = 1.5;
-    int particle_num = total_size;
-    int num_step_rebalance = 100;
     int max_optimize_iteration = 10;
 
     std::array<int, 3> global_cells_per_dim = { size_per_dim, size_per_dim,
                                                 size_per_dim };
 
     // partitioner
-    SparseDimPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
-        MPI_COMM_WORLD, max_workload_coeff, particle_num, num_step_rebalance,
-        global_cells_per_dim, max_optimize_iteration );
+    DynamicPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
+        MPI_COMM_WORLD, global_cells_per_dim, max_optimize_iteration );
 
     // check the value of some pre-computed constants
     auto cbptd = partitioner.cell_bits_per_tile_dim;
@@ -394,9 +322,6 @@ void random_distribution_automatic_rank( int occupy_num_per_rank,
         rec_partitions[d].push_back( size_tile_per_dim );
     }
 
-    partitioner.initializeRecPartition( rec_partitions[0], rec_partitions[1],
-                                        rec_partitions[2] );
-
     // basic settings for domain size and position
     double cell_size = 0.1;
     int pre_alloc_size = size_per_dim * size_per_dim;
@@ -406,42 +331,28 @@ void random_distribution_automatic_rank( int occupy_num_per_rank,
         global_low_corner[1] + cell_size * global_cells_per_dim[1],
         global_low_corner[2] + cell_size * global_cells_per_dim[2] };
 
-    // use tile occupization info to compute the workload on MPI ranks
-    if ( use_tile2workload )
-    {
-        // randomly generate a fixed number of tiles on every MPI rank
-        auto tiles_view = generate_random_tiles(
-            gt_partition, cart_rank, size_tile_per_dim, occupy_num_per_rank );
-        // create a new sparseMap
-        auto global_mesh = createSparseGlobalMesh(
-            global_low_corner, global_high_corner, global_cells_per_dim );
-        auto sis =
-            createSparseMap<TEST_EXECSPACE>( global_mesh, pre_alloc_size );
-        // register selected tiles to the sparseMap
-        Kokkos::parallel_for(
-            "insert_tile_to_sparse_map",
-            Kokkos::RangePolicy<TEST_EXECSPACE>( 0, tiles_view.extent( 0 ) ),
-            KOKKOS_LAMBDA( int id ) {
-                sis.insertTile( tiles_view( id, 0 ), tiles_view( id, 1 ),
-                                tiles_view( id, 2 ) );
-            } );
-        Kokkos::fence();
+    // randomly generate a fixed number of tiles on every MPI rank
+    auto tiles_view = generate_random_tiles(
+        gt_partition, cart_rank, size_tile_per_dim, occupy_num_per_rank );
+    // create a new sparseMap
+    auto global_mesh = createSparseGlobalMesh(
+        global_low_corner, global_high_corner, global_cells_per_dim );
+    auto sis = createSparseMap<TEST_EXECSPACE>( global_mesh, pre_alloc_size );
+    // register selected tiles to the sparseMap
+    Kokkos::parallel_for(
+        "insert_tile_to_sparse_map",
+        Kokkos::RangePolicy<TEST_EXECSPACE>( 0, tiles_view.extent( 0 ) ),
+        KOKKOS_LAMBDA( int id ) {
+            sis.insertTile( tiles_view( id, 0 ), tiles_view( id, 1 ),
+                            tiles_view( id, 2 ) );
+        } );
+    Kokkos::fence();
 
-        // compute workload from a sparseMap and do partition optimization
-        partitioner.optimizePartition( sis, MPI_COMM_WORLD );
-    }
-    // use particle positions to compute teh workload on MPI ranks
-    else
-    {
-        // randomly generate a fixed number of particles on each MPI rank
-        auto particle_view = generate_random_particles(
-            gt_partition, cart_rank, occupy_num_per_rank, global_low_corner,
-            cell_size, cell_per_tile_dim );
-        // compute workload from a particle view and do partition optimization
-        partitioner.optimizePartition( particle_view, occupy_num_per_rank,
-                                       global_low_corner, cell_size,
-                                       MPI_COMM_WORLD );
-    }
+    // compute workload from a sparseMap and do partition optimization
+    auto smws = createSparseMapDynamicPartitionerWorkloadMeasurer<TEST_DEVICE>(
+        sis, MPI_COMM_WORLD );
+    partitioner.setLocalWorkload( &smws );
+    partitioner.optimizePartition( MPI_COMM_WORLD );
 
     // check results (should be the same as the gt_partition)
     auto part = partitioner.getCurrentPartition();
@@ -464,11 +375,7 @@ TEST( sparse_dim_partitioner, sparse_dim_partitioner_uniform_test )
 }
 TEST( sparse_dim_partitioner, sparse_dim_partitioner_random_tile_test )
 {
-    random_distribution_automatic_rank( 32, true );
-}
-TEST( sparse_dim_partitioner, sparse_dim_partitioner_random_par_test )
-{
-    random_distribution_automatic_rank( 50, false );
+    random_distribution_automatic_rank( 32 );
 }
 //---------------------------------------------------------------------------//
 } // end namespace Test

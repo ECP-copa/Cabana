@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+#include <Cajita_DynamicPartitioner.hpp>
 #include <Cajita_SparseArray.hpp>
-#include <Cajita_SparseDimPartitioner.hpp>
 #include <Cajita_SparseLocalGrid.hpp>
 
 #include <Cabana_DeepCopy.hpp>
@@ -181,13 +181,9 @@ void sparse_array_test( int par_num, EntityType entity )
     std::array<bool, 3> is_dim_periodic = { false, false, false };
 
     // sparse partitioner
-    T max_workload_coeff = 1.5;
-    int workload_num = size_per_dim * size_per_dim * size_per_dim;
-    int num_step_rebalance = 200;
     int max_optimize_iteration = 10;
-    SparseDimPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
-        MPI_COMM_WORLD, max_workload_coeff, workload_num, num_step_rebalance,
-        global_num_cell, max_optimize_iteration );
+    DynamicPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
+        MPI_COMM_WORLD, global_num_cell, max_optimize_iteration );
 
     // rank-related information
     Kokkos::Array<int, 3> cart_rank;
@@ -207,8 +203,8 @@ void sparse_array_test( int par_num, EntityType entity )
     // scene initialization
     auto gt_partitions =
         generate_random_partition( ranks_per_dim, size_tile_per_dim );
-    partitioner.initializeRecPartition( gt_partitions[0], gt_partitions[1],
-                                        gt_partitions[2] );
+    partitioner.setRecPartition( gt_partitions[0], gt_partitions[1],
+                                 gt_partitions[2] );
 
     std::set<std::array<int, 3>> tile_set;
     std::set<std::array<T, 3>> par_pos_set;
@@ -427,13 +423,9 @@ void full_occupy_test( EntityType entity )
     std::array<bool, 3> is_dim_periodic = { false, false, false };
 
     // sparse partitioner
-    T max_workload_coeff = 1.5;
-    int workload_num = size_per_dim * size_per_dim * size_per_dim;
-    int num_step_rebalance = 200;
     int max_optimize_iteration = 10;
-    SparseDimPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
-        MPI_COMM_WORLD, max_workload_coeff, workload_num, num_step_rebalance,
-        global_num_cell, max_optimize_iteration );
+    DynamicPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
+        MPI_COMM_WORLD, global_num_cell, max_optimize_iteration );
 
     // rank-related information
     Kokkos::Array<int, 3> cart_rank;
@@ -453,8 +445,8 @@ void full_occupy_test( EntityType entity )
     // scene initialization
     auto gt_partitions =
         generate_random_partition( ranks_per_dim, size_tile_per_dim );
-    partitioner.initializeRecPartition( gt_partitions[0], gt_partitions[1],
-                                        gt_partitions[2] );
+    partitioner.setRecPartition( gt_partitions[0], gt_partitions[1],
+                                 gt_partitions[2] );
 
     // mesh/grid related initialization
     auto global_mesh = createSparseGlobalMesh(

@@ -10,11 +10,11 @@
  ****************************************************************************/
 
 /*!
-  \file Cajita_SparseDimPartitioner.hpp
-  \brief Multi-node sparse grid partitioner
+  \file Cajita_DynamicPartitioner.hpp
+  \brief Multi-node dynamic grid partitioner
 */
-#ifndef CAJITA_SPARSEDIMPARTITIONER_HPP
-#define CAJITA_SPARSEDIMPARTITIONER_HPP
+#ifndef CAJITA_DYNAMICPARTITIONER_HPP
+#define CAJITA_DYNAMICPARTITIONER_HPP
 
 #include <Cajita_Partitioner.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
@@ -27,16 +27,42 @@
 
 namespace Cajita
 {
+
 //---------------------------------------------------------------------------//
 /*!
-  Sparse mesh block partitioner. (Current Version: Support 3D only)
+  Workload measurer for DynamicPartitioner. It can be customized by the user
+  to compute workload on each rank.
+
   \tparam Device Kokkos device type.
-  \tparam CellPerTileDim Cells per tile per dimension.
-  \tparam NumSpaceDim Dimemsion (The current version support 3D only)
+*/
+template <typename Device>
+class DynamicPartitionerWorkloadMeasurer
+{
+    using memory_space = typename Device::memory_space;
+
+  public:
+    /*!
+      \brief this function need to be overwrited to compute workload
+      \param workload workload computed on each rank
+    */
+    virtual void compute( Kokkos::View<int***, memory_space>& workload ) = 0;
+};
+
+//---------------------------------------------------------------------------//
+/*!
+  Dynamic mesh block partitioner. (Current Version: Support 3D only) There
+  should be no instantiation for this class without implementing any workload
+  computation.
+
+  \tparam Device Kokkos device type.
+  \tparam CellPerTileDim Cells
+  per tile per dimension.
+  \tparam NumSpaceDim Dimemsion (The current version
+  support 3D only)
 */
 template <typename Device, unsigned long long CellPerTileDim = 4,
           std::size_t NumSpaceDim = 3>
-class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
+class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
 {
   public:
     //! dimension
@@ -74,53 +100,35 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
       \brief Constructor - automatically compute ranks_per_dim from MPI
       communicator
       \param comm MPI communicator to decide the rank nums in each dimension
-      \param max_workload_coeff threshold factor for re-partition
-      \param workload_num total workload(particle/tile) number, used to compute
-      workload_threshold
-      \param num_step_rebalance the simulation step number after which one
-      should check if repartition is needed
       \param global_cells_per_dim 3D array, global cells in each dimension
       \param max_optimize_iteration max iteration number to run the optimization
     */
-    SparseDimPartitioner(
-        MPI_Comm comm, float max_workload_coeff, int workload_num,
-        int num_step_rebalance,
+    DynamicPartitioner(
+        MPI_Comm comm,
         const std::array<int, num_space_dim>& global_cells_per_dim,
         int max_optimize_iteration = 10 )
-        : _workload_threshold(
-              static_cast<int>( max_workload_coeff * workload_num ) )
-        , _num_step_rebalance( num_step_rebalance )
-        , _max_optimize_iteration( max_optimize_iteration )
+        : _max_optimize_iteration( max_optimize_iteration )
     {
         // compute the ranks_per_dim from MPI communicator
         allocate( global_cells_per_dim );
         ranksPerDimension( comm );
+        initializePartitionByAverage( comm, global_cells_per_dim );
     }
 
     /*!
       \brief Constructor - user-defined ranks_per_dim
       communicator
       \param comm MPI communicator to decide the rank nums in each dimension
-      \param max_workload_coeff threshold factor for re-partition
-      \param workload_num total workload(particle/tile) number, used to compute
-      workload_threshold
-      \param num_step_rebalance the simulation step number after which one
-      should check if repartition is needed
       \param ranks_per_dim 3D array, user-defined MPI rank constrains in per
       dimension
       \param global_cells_per_dim 3D array, global cells in each dimension
       \param max_optimize_iteration max iteration number to run the optimization
     */
-    SparseDimPartitioner(
-        MPI_Comm comm, float max_workload_coeff, int workload_num,
-        int num_step_rebalance,
-        const std::array<int, num_space_dim>& ranks_per_dim,
+    DynamicPartitioner(
+        MPI_Comm comm, const std::array<int, num_space_dim>& ranks_per_dim,
         const std::array<int, num_space_dim>& global_cells_per_dim,
         int max_optimize_iteration = 10 )
-        : _workload_threshold(
-              static_cast<int>( max_workload_coeff * workload_num ) )
-        , _num_step_rebalance( num_step_rebalance )
-        , _max_optimize_iteration( max_optimize_iteration )
+        : _max_optimize_iteration( max_optimize_iteration )
     {
         allocate( global_cells_per_dim );
         std::copy( ranks_per_dim.begin(), ranks_per_dim.end(),
@@ -130,6 +138,7 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
         int comm_size;
         MPI_Comm_size( comm, &comm_size );
         MPI_Dims_create( comm_size, num_space_dim, _ranks_per_dim.data() );
+        initializePartitionByAverage( comm, global_cells_per_dim );
     }
 
     /*!
@@ -171,7 +180,7 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
             nrank *= _ranks_per_dim[d];
         if ( comm_size != nrank )
             throw std::runtime_error(
-                "SparsePartitioner ranks do not match comm size" );
+                "DynamicPartitioner ranks do not match comm size" );
         return ranks_per_dim;
     }
 
@@ -271,18 +280,49 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
     }
 
     /*!
-      \brief Initialize the tile partition; partition in each dimension
+      \brief Initialize the tile partition by average size
+      \param comm The communicator to use for initializing partitioning
+      \param global_cells_per_dim 3D array, global cells in each dimension
+    */
+    void initializePartitionByAverage(
+        MPI_Comm comm,
+        const std::array<int, num_space_dim>& global_cells_per_dim )
+    {
+        std::array<int, 3> global_num_tile = {
+            global_cells_per_dim[0] / (int)cell_num_per_tile_dim,
+            global_cells_per_dim[1] / (int)cell_num_per_tile_dim,
+            global_cells_per_dim[2] / (int)cell_num_per_tile_dim };
+
+        auto ranks_per_dim = ranksPerDimension( comm, global_cells_per_dim );
+        std::array<std::vector<int>, 3> rec_partitions;
+        for ( int d = 0; d < 3; ++d )
+        {
+            int ele = global_num_tile[d] / ranks_per_dim[d];
+            int part = 0;
+            for ( int i = 0; i < ranks_per_dim[d]; ++i )
+            {
+                rec_partitions[d].push_back( part );
+                part += ele;
+            }
+            rec_partitions[d].push_back( global_num_tile[d] );
+        }
+
+        setRecPartition( rec_partitions[0], rec_partitions[1],
+                         rec_partitions[2] );
+    }
+
+    /*!
+      \brief Set the tile partition; partition in each dimension
       has the form [0, p_1, ..., p_n, total_tile_num], so the partition
       would be [0, p_1), [p_1, p_2) ... [p_n, total_tile_num]
       \param rec_partition_i partition array in dimension i
       \param rec_partition_j partition array in dimension j
       \param rec_partition_k partition array in dimension k
     */
-    void initializeRecPartition( std::vector<int>& rec_partition_i,
-                                 std::vector<int>& rec_partition_j,
-                                 std::vector<int>& rec_partition_k )
+    void setRecPartition( std::vector<int>& rec_partition_i,
+                          std::vector<int>& rec_partition_j,
+                          std::vector<int>& rec_partition_k )
     {
-
         int max_size = 0;
         for ( std::size_t d = 0; d < num_space_dim; ++d )
             max_size =
@@ -333,75 +373,6 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
     {
         Kokkos::deep_copy( _workload_per_tile, 0 );
         Kokkos::deep_copy( _workload_prefix_sum, 0 );
-    }
-
-    /*!
-      \brief compute the workload in the current MPI rank from particle
-      positions (each particle count for 1 workload value)
-      \param view particle positions view
-      \param particle_num total particle number
-      \param global_lower_corner the coordinate of the domain global lower
-      corner
-      \param dx cell dx size
-    */
-    template <class ParticlePosViewType, typename ArrayType, typename CellUnit>
-    void computeLocalWorkLoad( const ParticlePosViewType& view,
-                               int particle_num,
-                               const ArrayType& global_lower_corner,
-                               const CellUnit dx )
-    {
-        resetWorkload();
-        // make a local copy
-        auto workload = _workload_per_tile;
-        Kokkos::Array<CellUnit, num_space_dim> lower_corner;
-        for ( std::size_t d = 0; d < num_space_dim; ++d )
-        {
-            lower_corner[d] = global_lower_corner[d];
-        }
-
-        Kokkos::parallel_for(
-            "compute_local_workload_parpos",
-            Kokkos::RangePolicy<execution_space>( 0, particle_num ),
-            KOKKOS_LAMBDA( const int i ) {
-                int ti = static_cast<int>(
-                             ( view( i, 0 ) - lower_corner[0] ) / dx - 0.5 ) >>
-                         cell_bits_per_tile_dim;
-                int tj = static_cast<int>(
-                             ( view( i, 1 ) - lower_corner[1] ) / dx - 0.5 ) >>
-                         cell_bits_per_tile_dim;
-                int tz = static_cast<int>(
-                             ( view( i, 2 ) - lower_corner[2] ) / dx - 0.5 ) >>
-                         cell_bits_per_tile_dim;
-                Kokkos::atomic_increment( &workload( ti + 1, tj + 1, tz + 1 ) );
-            } );
-        Kokkos::fence();
-    }
-
-    /*!
-      \brief compute the workload in the current MPI rank from sparseMap
-      (the workload of a tile is 1 if the tile is occupied, 0 otherwise)
-      \param sparseMap sparseMap in the current rank
-    */
-    template <class SparseMapType>
-    void computeLocalWorkLoad( const SparseMapType& sparseMap )
-    {
-        resetWorkload();
-        // make a local copy
-        auto workload = _workload_per_tile;
-        Kokkos::parallel_for(
-            "compute_local_workload_sparsmap",
-            Kokkos::RangePolicy<execution_space>( 0, sparseMap.capacity() ),
-            KOKKOS_LAMBDA( uint32_t i ) {
-                if ( sparseMap.valid_at( i ) )
-                {
-                    auto key = sparseMap.key_at( i );
-                    int ti, tj, tk;
-                    sparseMap.key2ijk( key, ti, tj, tk );
-                    Kokkos::atomic_increment(
-                        &workload( ti + 1, tj + 1, tk + 1 ) );
-                }
-            } );
-        Kokkos::fence();
     }
 
     /*!
@@ -488,23 +459,25 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
     }
 
     /*!
+      \brief compute workload in each MPI rank
+      \param measurer measurer defined by user to compute workload.
+      DynamicPartitionerWorkloadMeasurer is the base class and the user
+      should define a derived measurer class with compute() implemented.
+    */
+    void
+    setLocalWorkload( DynamicPartitionerWorkloadMeasurer<Device>* measurer )
+    {
+        resetWorkload();
+        measurer->compute( _workload_per_tile );
+    }
+
+    /*!
       \brief iteratively optimize the partition
-      \param view particle positions view
-      \param particle_num total particle number
-      \param global_lower_corner the coordinate of the domain global lower
-      corner
-      \param dx cell dx size
       \param comm MPI communicator used for workload reduction
       \return iteration number
     */
-    template <class ParticlePosViewType, typename ArrayType, typename CellUnit>
-    int optimizePartition( const ParticlePosViewType& view, int particle_num,
-                           const ArrayType& global_lower_corner,
-                           const CellUnit dx, MPI_Comm comm )
+    int optimizePartition( MPI_Comm comm )
     {
-        computeLocalWorkLoad( view, particle_num, global_lower_corner, dx );
-        MPI_Barrier( comm );
-
         computeFullPrefixSum( comm );
         MPI_Barrier( comm );
 
@@ -521,46 +494,7 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
                     random_dim_id = std::rand() % num_space_dim;
 
                 bool is_dim_changed = false; // record changes in current dim
-                optimizePartition( is_dim_changed, random_dim_id );
-
-                // update control info
-                is_changed = is_changed || is_dim_changed;
-                dim_covered[random_dim_id] = true;
-            }
-            // return if the current partition is optimal
-            if ( !is_changed )
-                return i;
-        }
-        return _max_optimize_iteration;
-    }
-
-    /*!
-      \brief iteratively optimize the partition
-      \param sparseMap sparseMap in the current rank
-      \param comm MPI communicator used for workload reduction
-      \return iteration number
-    */
-    template <class SparseMapType>
-    int optimizePartition( const SparseMapType& sparseMap, MPI_Comm comm )
-    {
-        computeLocalWorkLoad( sparseMap );
-        MPI_Barrier( comm );
-
-        computeFullPrefixSum( comm );
-        MPI_Barrier( comm );
-
-        for ( int i = 0; i < _max_optimize_iteration; ++i )
-        {
-            bool is_changed = false; // record changes in current iteration
-            bool dim_covered[3] = { false, false, false };
-            for ( int d = 0; d < 3; ++d )
-            {
-                int random_dim_id = std::rand() % num_space_dim;
-                while ( dim_covered[random_dim_id] )
-                    random_dim_id = std::rand() % num_space_dim;
-
-                bool is_dim_changed = false; // record changes in current dim
-                optimizePartition( is_dim_changed, random_dim_id );
+                updatePartition( random_dim_id, is_dim_changed );
 
                 // update control info
                 is_changed = is_changed || is_dim_changed;
@@ -575,11 +509,11 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
 
     /*!
       \brief optimize the partition in three dimensions seperately
-      \param is_changed label if the partition is changed after the optimization
       \param iter_seed seed number to choose the starting dimension of the
       optimization
+      \param is_changed label if the partition is changed after the optimization
     */
-    void optimizePartition( bool& is_changed, int iter_seed )
+    void updatePartition( int iter_seed, bool& is_changed )
     {
         is_changed = false;
         // loop over three dimensions, optimize the partition in dimension di
@@ -630,51 +564,27 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
             // last_point: the opimized position for the lask partition
             int last_point = 0;
             // current_workload: the workload between [last_point, point_i)
-            Kokkos::View<int*, memory_space> current_workload(
-                "current_workload", _ranks_per_dim[dj] * _ranks_per_dim[dk] );
             for ( int current_rank = 1; current_rank < rank; current_rank++ )
             {
                 int last_diff = __INT_MAX__;
                 while ( true )
                 {
-                    // compute current workload between [last_point, point_i)
-                    Kokkos::parallel_for(
-                        "compute_current_workload",
-                        Kokkos::RangePolicy<execution_space>(
-                            0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
-                        KOKKOS_LAMBDA( uint32_t jnk ) {
-                            int j = static_cast<int>( jnk / rank_k );
-                            int k = static_cast<int>( jnk % rank_k );
-                            current_workload( jnk ) = compute_sub_workload(
-                                di, last_point, point_i, dj, j, dk, k );
-                        } );
-                    Kokkos::fence();
-
-                    // compute the (w_jk^ave - w_jk^{last_point:point_i})
-                    Kokkos::parallel_for(
-                        "compute_diff",
-                        Kokkos::RangePolicy<execution_space>(
-                            0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
-                        KOKKOS_LAMBDA( uint32_t jnk ) {
-                            auto wl =
-                                current_workload( jnk ) - ave_workload( jnk );
-                            // compute absolute diff (rather than squares to
-                            // avoid potential overflow)
-                            // TODO: update when Kokkos::abs() available
-                            wl = wl > 0 ? wl : -wl;
-                            current_workload( jnk ) = wl;
-                        } );
-                    Kokkos::fence();
-
-                    // compute the sum of the difference in all rank_j*rank_k
-                    // regions
                     int diff;
                     Kokkos::parallel_reduce(
                         "diff_reduce",
                         Kokkos::RangePolicy<execution_space>(
                             0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
-                        KOKKOS_LAMBDA( const int idx, int& update ) {
-                            update += current_workload( idx );
+                        KOKKOS_LAMBDA( const int jnk, int& update ) {
+                            int j = static_cast<int>( jnk / rank_k );
+                            int k = static_cast<int>( jnk % rank_k );
+                            int current_workload = compute_sub_workload(
+                                di, last_point, point_i, dj, j, dk, k );
+                            auto wl = current_workload - ave_workload( jnk );
+                            // compute absolute diff (rather than squares to
+                            // avoid potential overflow)
+                            // TODO: update when Kokkos::abs() available
+                            wl = wl > 0 ? wl : -wl;
+                            update += wl;
                         },
                         diff );
                     Kokkos::fence();
@@ -866,25 +776,26 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
     };
 
   private:
-    // workload_threshold
-    int _workload_threshold;
-    // default check point for re-balance
-    int _num_step_rebalance;
     // max_optimize iterations
     int _max_optimize_iteration;
 
-    // represent the rectangle partition in each dimension
-    // with form [0, p_1, ..., p_n, cell_num], n = rank num in current
-    // dimension, partition in this dimension would be [0, p_1), [p_1, p_2) ...
-    // [p_n, total_tile_num] (unit: tile)
+  protected:
+    //! represent the rectangle partition in each dimension
+    //! with form [0, p_1, ..., p_n, cell_num], n = rank num in current
+    //! dimension, partition in this dimension would be [0, p_1), [p_1, p_2) ...
+    //! [p_n, total_tile_num] (unit: tile)
     partition_view _rectangle_partition_dev;
-    // the workload of each tile on current
+    //! the workload of each tile on current
     workload_view _workload_per_tile;
-    // 3d prefix sum of the workload of each tile on current
+    //! 3d prefix sum of the workload of each tile on current
     workload_view _workload_prefix_sum;
-    // ranks per dimension
+    //! ranks per dimension
     Kokkos::Array<int, num_space_dim> _ranks_per_dim;
 
+    /*!
+      \brief allocate internal data structure for the partition algorithm
+      \param global_cells_per_dim grid size along each dimension
+    */
     void allocate( const std::array<int, num_space_dim>& global_cells_per_dim )
     {
 
@@ -903,6 +814,7 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
             ( global_cells_per_dim[2] >> cell_bits_per_tile_dim ) + 1 );
     }
 };
+
 } // end namespace Cajita
 
-#endif // end CAJITA_SPARSEDIMPARTITIONER_HPP
+#endif // end CAJITA_DYNAMICPARTITIONER_HPP
