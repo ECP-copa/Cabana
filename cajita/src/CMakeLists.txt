@@ -21,7 +21,6 @@ set(HEADERS_PUBLIC
   Cajita_Halo.hpp
   Cajita_IndexConversion.hpp
   Cajita_IndexSpace.hpp
-  Cajita_SparseIndexSpace.hpp
   Cajita_Interpolation.hpp
   Cajita_LocalGrid.hpp
   Cajita_LocalGrid_impl.hpp
@@ -32,11 +31,14 @@ set(HEADERS_PUBLIC
   Cajita_ParticleGridDistributor.hpp
   Cajita_Partitioner.hpp
   Cajita_ReferenceStructuredSolver.hpp
+  Cajita_SparseArray.hpp
+  Cajita_SparseDimPartitioner.hpp
+  Cajita_SparseIndexSpace.hpp
+  Cajita_SparseLocalGrid.hpp
+  Cajita_SparseLocalGrid_impl.hpp
   Cajita_Splines.hpp
   Cajita_Types.hpp
   Cajita_UniformDimPartitioner.hpp
-  Cajita_SparseDimPartitioner.hpp
-  Cajita_SparseArray.hpp
   )
 
 if(Cabana_ENABLE_HYPRE)
