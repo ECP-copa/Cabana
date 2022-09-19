@@ -41,7 +41,6 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
     using IterTag = Cabana::SerialOpTag;
 
     // Declare problem sizes.
-    double min_dist = 1.0;
     int num_problem_size = problem_sizes.size();
     std::vector<double> x_min( num_problem_size );
     std::vector<double> x_max( num_problem_size );
@@ -68,11 +67,10 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
 
         // Define problem grid.
         x_min[p] = 0.0;
-        x_max[p] = 1.3 * min_dist * std::pow( num_p, 1.0 / 3.0 );
+        x_max[p] = 1.3 * std::pow( num_p, 1.0 / 3.0 );
         aosoas[p].resize( num_p );
         auto x = Cabana::slice<0>( aosoas[p], "position" );
-        Cabana::createRandomParticlesMinDistance( x, x.size(), x_min[p],
-                                                  x_max[p], min_dist );
+        Cabana::createRandomParticles( x, x.size(), x_min[p], x_max[p] );
 
         if ( sort )
         {
@@ -80,7 +78,7 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
             // simulation. They likely won't be randomly scattered about, but
             // rather will be periodically sorted for spatial locality. Bin them
             // in cells the size of the smallest cutoff distance.
-            double cutoff = cutoff_ratios.front() * min_dist;
+            double cutoff = cutoff_ratios.front();
             double sort_delta[3] = { cutoff, cutoff, cutoff };
             double grid_min[3] = { x_min[p], x_min[p], x_min[p] };
             double grid_max[3] = { x_max[p], x_max[p], x_max[p] };
@@ -139,7 +137,7 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                 for ( int t = 0; t < num_run; ++t )
                 {
                     // Create the neighbor list.
-                    double cutoff = cutoff_ratios[c0] * min_dist;
+                    double cutoff = cutoff_ratios[c0];
                     create_timer.start( pid );
                     Cabana::VerletList<memory_space, ListTag, LayoutTag,
                                        BuildTag>
