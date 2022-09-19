@@ -34,10 +34,12 @@
 #include <Cajita_ParticleGridDistributor.hpp>
 #include <Cajita_Partitioner.hpp>
 #include <Cajita_ReferenceStructuredSolver.hpp>
+#ifndef KOKKOS_ENABLE_SYCL // FIXME_SYCL
 #include <Cajita_SparseArray.hpp>
 #include <Cajita_SparseDimPartitioner.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
 #include <Cajita_SparseLocalGrid.hpp>
+#endif
 #include <Cajita_Splines.hpp>
 #include <Cajita_Types.hpp>
 #include <Cajita_UniformDimPartitioner.hpp>
