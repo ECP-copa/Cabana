@@ -29,7 +29,7 @@ jobs:
         cxx: ['g++', 'clang++']
         backend: ['OPENMP', 'SERIAL']
         cmake_build_type: ['Debug', 'Release']
-        kokkos_ver: ['3.4.00']
+        kokkos_ver: ['3.4.01']
         arborx: ['NoArborX']
         heffte: ['NoheFFTe' ]
         hypre: ['NoHYPRE']
@@ -37,12 +37,11 @@ jobs:
         silo: ['NoSilo']
         coverage: ['OFF']
         include:
-            # FIXME: update from master after 3.7 release
           - distro: 'ubuntu:latest'
             cxx: 'g++'
             backend: 'THREADS'
             cmake_build_type: 'Debug'
-            kokkos_ver: 'master'
+            kokkos_ver: '3.7.00'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
             hypre: 'NoHYPRE'
