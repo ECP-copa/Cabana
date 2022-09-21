@@ -29,9 +29,10 @@ if(Cabana_ENABLE_HEFFTE)
 endif()
 
 if(Cabana_ENABLE_TESTING)
-  add_test(NAME Cajita_SparseMapPerformance COMMAND ${NONMPI_PRECOMMAND} SparseMapPerformance sparsemap_output.txt)
-
-  add_test(NAME Cajita_SparsePartitionerPerformance COMMAND ${NONMPI_PRECOMMAND} SparsePartitionerPerformance sparsepartitioner_output.txt)
+  if(NOT Kokkos_ENABLE_SYCL) #FIXME_SYCL
+    add_test(NAME Cajita_SparseMapPerformance COMMAND ${NONMPI_PRECOMMAND} SparseMapPerformance sparsemap_output.txt)
+    add_test(NAME Cajita_SparsePartitionerPerformance COMMAND ${NONMPI_PRECOMMAND} SparsePartitionerPerformance sparsepartitioner_output.txt)
+  endif()
 
   add_test(NAME Cajita_HaloPerformance COMMAND ${NONMPI_PRECOMMAND} HaloPerformance halo_output.txt)
 
