@@ -1,30 +1,261 @@
-name: Nightly
+name: CI
 on:
   push:
     branches:
-      - kokkos_develop_testing
-  schedule:
-    - cron:  '0 1 * * *'
+      - master
+  pull_request:
+    branches:
+      - master
+
+concurrency:
+  group: ${ {github.event_name }}-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{github.event_name == 'pull_request'}}
 
 jobs:
   CI:
+    # FIXME: remove failing distributions here when passing
+    continue-on-error: ${{ (matrix.distro == 'fedora:intel' && matrix.backend == 'SERIAL' && matrix.cmake_build_type == 'Release') }}
+    defaults:
+      run:
+        shell: bash
+    env:
+      CCACHE_DIR: "${{ github.workspace }}/.ccache"
+      CCACHE_MAXSIZE: "10G"
+      CCACHE_CPP2: "true"
+      ASAN_OPTIONS: "detect_leaks=0"
     strategy:
       matrix:
-        backend: ["OPENMP", "SERIAL"]
+        distro: ['ubuntu:latest']
+        cxx: ['g++', 'clang++']
+        backend: ['OPENMP', 'SERIAL']
+        cmake_build_type: ['Debug', 'Release']
+        kokkos_ver: ['3.4.00']
+        arborx: ['NoArborX']
+        heffte: ['NoheFFTe' ]
+        hypre: ['NoHYPRE']
+        liball: ['NolibALL']
+        silo: ['NoSilo']
+        coverage: ['OFF']
+        include:
+            # FIXME: update from master after 3.7 release
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            backend: 'THREADS'
+            cmake_build_type: 'Debug'
+            kokkos_ver: 'master'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            silo: 'NoSilo'
+            coverage: 'OFF'
+          - distro: 'fedora:intel'
+            cxx: 'icpc'
+            backend: 'OPENMP'
+            cmake_build_type: 'Release'
+            kokkos_ver: '3.4.01'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
+          - distro: 'fedora:intel'
+            cxx: 'icpc'
+            backend: 'OPENMP'
+            cmake_build_type: 'Debug'
+            kokkos_ver: '3.4.01'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
+          - distro: 'fedora:intel'
+            cxx: 'icpc'
+            backend: 'SERIAL'
+            cmake_build_type: 'Release'
+            kokkos_ver: '3.4.01'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
+          - distro: 'fedora:intel'
+            cxx: 'icpc'
+            backend: 'SERIAL'
+            cmake_build_type: 'Debug'
+            kokkos_ver: '3.4.01'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
+          - distro: 'fedora:intel'
+            cxx: 'icpc'
+            backend: 'SERIAL'
+            cmake_build_type: 'Debug'
+            kokkos_ver: '3.4.01'
+            arborx: 'NoArborX'
+            heffte: 'heFFTe_MKL'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
+          - distro: 'fedora:latest'
+            cxx: 'g++'
+            backend: 'OPENMP'
+            cmake_build_type: 'Release'
+            kokkos_ver: '3.4.01'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
+            doxygen: 'ON'
+          - distro: 'fedora:latest'
+            cxx: 'clang++'
+            backend: 'OPENMP'
+            cmake_build_type: 'Release'
+            kokkos_ver: '3.4.01'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
+          - distro: 'opensuse:latest'
+            cxx: 'g++'
+            cmake_build_type: 'Release'
+            backend: 'OPENMP'
+            kokkos_ver: '3.4.01'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
+          - distro: 'opensuse:latest'
+            cxx: 'clang++'
+            backend: 'OPENMP'
+            cmake_build_type: 'Release'
+            kokkos_ver: '3.4.01'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
+          - distro: 'ubuntu:rolling'
+            cxx: 'g++'
+            cmake_build_type: 'Release'
+            backend: 'OPENMP'
+            kokkos_ver: '3.4.01'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
+          - distro: 'ubuntu:rolling'
+            cxx: 'clang++'
+            backend: 'OPENMP'
+            cmake_build_type: 'Release'
+            kokkos_ver: '3.4.01'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
+          - distro: 'fedora:rawhide'
+            cxx: 'g++'
+            cmake_build_type: 'Release'
+            backend: 'OPENMP'
+            kokkos_ver: '3.4.01'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
+          - distro: 'fedora:rawhide'
+            cxx: 'clang++'
+            backend: 'OPENMP'
+            cmake_build_type: 'Release'
+            kokkos_ver: '3.4.01'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            backend: 'OPENMP'
+            cmake_build_type: 'Release'
+            kokkos_ver: '3.5.00'
+            arborx: 'ArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            backend: 'OPENMP'
+            cmake_build_type: 'Release'
+            kokkos_ver: '3.4.01'
+            arborx: 'NoArborX'
+            heffte: 'heFFTe_FFTW'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            backend: 'OPENMP'
+            cmake_build_type: 'Release'
+            kokkos_ver: '3.4.01'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            liball: 'libALL'
+            coverage: 'OFF'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            backend: 'OPENMP'
+            cmake_build_type: 'Debug'
+            kokkos_ver: '3.4.01'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'HYPRE'
+            coverage: 'ON'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            backend: 'OPENMP'
+            cmake_build_type: 'Debug'
+            kokkos_ver: '3.4.01'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            silo: 'Silo'
+            coverage: 'ON'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            backend: 'OPENMP'
+            cmake_build_type: 'Debug'
+            kokkos_ver: '3.5.00'
+            arborx: 'ArborX'
+            heffte: 'heFFTe_FFTW'
+            hypre: 'HYPRE'
+            liball: 'libALL'
+            silo: 'Silo'
+            coverage: 'ON'
     runs-on: ubuntu-20.04
     container:
-      image: ghcr.io/ecp-copa/ci-containers/ubuntu:latest
+      image: ghcr.io/ecp-copa/ci-containers/${{ matrix.distro }}
+      options: --security-opt seccomp=unconfined
     steps:
+      - name: Cache ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ccache-${{ matrix.distro }}-${{github.run_id}}
+          restore-keys: ccache-${{ matrix.distro }}
+      - name: Zero ccache stats
+        run: |
+          ccache -z
       - name: Checkout kokkos
         uses: actions/checkout@v2.2.0
         with:
           repository: kokkos/kokkos
-          ref: develop
+          ref: ${{ matrix.kokkos_ver }}
           path: kokkos
       - name: Build kokkos
         working-directory: kokkos
         run: |
-          cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/kokkos -DKokkos_ENABLE_${{ matrix.backend }}=ON  -DKokkos_ENABLE_DEPRECATED_CODE_3=OFF
+          [[ ${{ matrix.backend }} == "OPENMP" ]] && kokkos_cmake_opts+=( -DKokkos_ENABLE_OPENMP==ON )
+          [[ ${{ matrix.backend }} == "THREADS" ]] && kokkos_cmake_opts+=( -DKokkos_ENABLE_THREADS==ON )
+          cmake -B build \
+            -DCMAKE_INSTALL_PREFIX=$HOME/kokkos \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            -DKokkos_ENABLE_HWLOC=ON \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
+            ${kokkos_cmake_opts}
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout arborx
@@ -32,19 +263,147 @@ jobs:
         uses: actions/checkout@v2.2.0
         with:
           repository: arborx/ArborX
-          ref: master
+          ref: v1.2
           path: arborx
       - name: Build arborx
+        if: ${{ matrix.arborx == 'ArborX' }}
         working-directory: arborx
         run: |
-          cmake -B build -DCMAKE_PREFIX_PATH=${HOME}/kokkos -DCMAKE_INSTALL_PREFIX=$HOME/arborx
+          cmake -B build \
+            -DCMAKE_PREFIX_PATH=${HOME}/kokkos \
+            -DCMAKE_INSTALL_PREFIX=$HOME/arborx \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
+          cmake --build build --parallel 2
+          cmake --install build
+      - name: Checkout heffte
+        if: ${{ matrix.heffte != 'NoheFFTe' }}
+        # actions/checkout doesn't work for external repos yet (actions/checkout#447)
+        run: |
+          git clone --depth 1 --branch v2.1.0 https://bitbucket.org/icl/heffte.git heffte
+      - name: Build heffte
+        if: ${{ matrix.heffte != 'NoheFFTe' }}
+        working-directory: heffte
+        run: |
+          [[ ${{ matrix.heffte }} == "heFFTe_FFTW" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_FFTW=ON )
+          [[ ${{ matrix.heffte }} == "heFFTe_MKL" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_MKL=ON )
+          # FIXME: Remove MKL path below when we update heFFTe
+          cmake -B build \
+            -DCMAKE_CXX_STANDARD="11" \
+            -DBUILD_SHARED_LIBS=ON \
+            -DCMAKE_INSTALL_PREFIX=$HOME/heffte \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
+            -DMKL_ROOT=/opt/intel/oneapi/mkl/latest \
+            -DHeffte_MKL_IOMP5=/opt/intel/oneapi/compiler/latest/linux/compiler/lib/intel64_lin/libiomp5.so \
+            ${heffte_cmake_opts}
+          cmake --build build --parallel 2
+          cmake --install build
+      - name: Checkout hypre
+        if: ${{ matrix.hypre == 'HYPRE' }}
+        uses: actions/checkout@v2.2.0
+        with:
+          repository: hypre-space/hypre
+          ref: v2.22.1
+          path: hypre
+      - name: Build hypre
+        if: ${{ matrix.hypre == 'HYPRE' }}
+        working-directory: hypre/src
+        run: |
+          [[ ${{ matrix.backend }} == 'OPENMP' ]] && hypre_cmake_opts+=( -DHYPRE_WITH_OPENMP=ON )
+          cmake -B build \
+            -DHYPRE_INSTALL_PREFIX=$HOME/hypre \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
+            -DHYPRE_WITH_MPI=ON \
+            ${hypre_cmake_opts}
+          cmake --build build --parallel 2
+          cmake --install build
+      - name: Checkout ALL
+        if: ${{ matrix.liball == 'libALL' }}
+        run: |
+          git clone --depth 1 --branch v0.9.2 https://gitlab.jsc.fz-juelich.de/SLMS/loadbalancing ALL
+      - name: Build ALL
+        if: ${{ matrix.liball == 'libALL' }}
+        working-directory: ALL
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/ALL
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout Cabana
         uses: actions/checkout@v2.2.0
       - name: Build Cabana
+        env:
+          SANITIZER: ${{ matrix.sanitizer }}
+          SILO: ${{ matrix.silo }}
         run: |
-          cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/Cabana -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx" -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON -DCabana_REQUIRE_${{ matrix.backend }}=ON
-          cmake --build build --parallel 2
-          cmake --build build --target test
+          if [[ ${SILO} == 'Silo' ]]; then
+            cabana_cmake_opts+=( -DCabana_REQUIRE_SILO=ON )
+          else
+            cabana_cmake_opts+=( -DCMAKE_DISABLE_FIND_PACKAGE_SILO=ON )
+          fi
+          # FIXME: Add sanitizer for fedora when fixed
+          if [[ ${SANITIZER} == 'MSAN' ]]; then
+            cabana_cmake_opts+=( -DWITH_MSAN=ON )
+          elif [[ ${{ matrix.distro }} != *"fedora"* ]]; then
+            cabana_cmake_opts+=( -DWITH_ASAN=ON )
+          fi
+          cmake -B build \
+            -DCMAKE_INSTALL_PREFIX=$HOME/Cabana \
+            -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe" \
+            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/hypre;$HOME/ALL" \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_FLAGS="-Wall -Wextra -pedantic -Werror" \
+            -DCabana_ENABLE_TESTING=ON \
+            -DCabana_ENABLE_EXAMPLES=ON \
+            -DCabana_ENABLE_PERFORMANCE_TESTING=ON \
+            -DCabana_PERFORMANCE_EXPECTED_FLOPS=0 \
+            -DCabana_ENABLE_COVERAGE_BUILD=${{ matrix.coverage }} \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
+            -DVALGRIND_EXECUTABLE=False \
+            -DDOXYGEN_WARN_AS_ERROR=FAIL_ON_WARNINGS \
+            ${cabana_cmake_opts}
+          cmake --build build --parallel 2 --verbose
+          CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test
           cmake --install build
+      - name: Test Cabana Export Target
+        working-directory: example/core_tutorial/01_hello_world
+        run: |
+          cmake -B build \
+            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/hypre;$HOME/Cabana" \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }}
+          cmake --build build
+      - name: Build Doxygen
+        if: ${{ matrix.doxygen == 'ON' }}
+        run: cmake --build build --target doxygen
+      - name: Show ccache stats
+        run: |
+          ccache -s
+      - name: Upload Report to codecov.io
+        if: ${{ matrix.coverage == 'ON' }}
+        uses: codecov/codecov-action@v1
+      - name: Checkout gh-pages
+        if: ${{ matrix.doxygen == 'ON' }}
+        uses: actions/checkout@v2
+        with:
+          ref: 'gh-pages'
+          path: 'html'
+      - name: update and commit to gh-pages branch
+        if: ${{ matrix.doxygen == 'ON' }}
+        working-directory: html
+        run: |
+          rm -rf doxygen
+          mv ../build/html doxygen
+          git config --global user.name "Automatic Deployment (GitHub Action)";
+          git config --global user.email "noreply@lanl.gov"
+          git add --all
+          git diff --quiet HEAD || git commit -m "Documentation Update"
+          if [[ "${GITHUB_REF}" == 'refs/heads/master' ]]; then
+            git push
+          else
+            git show
+          fi
