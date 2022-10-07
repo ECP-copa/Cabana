@@ -28,7 +28,6 @@ jobs:
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout arborx
-        if: ${{ matrix.arborx == 'ArborX' }}
         uses: actions/checkout@v2.2.0
         with:
           repository: arborx/ArborX
