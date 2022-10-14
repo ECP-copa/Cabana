@@ -93,7 +93,7 @@ void particleListTest()
     Kokkos::parallel_for(
         "modify", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, num_p ),
         KOKKOS_LAMBDA( const int p ) {
-            typename list_type::particle_type particle( aosoa.getTuple( p ) );
+            auto particle = plist.getParticle( p );
 
             for ( int d = 0; d < 3; ++d )
                 get( particle, Cabana::Field::Position<3>(), d ) += p + d;
@@ -106,7 +106,7 @@ void particleListTest()
                 for ( int j = 0; j < 3; ++j )
                     get( particle, Bar(), i, j ) += p + i + j;
 
-            aosoa.setTuple( p, particle.tuple() );
+            plist.setParticle( particle, p );
         } );
 
     // Check the modification.
@@ -184,12 +184,7 @@ void particleViewTest()
     Kokkos::parallel_for(
         "modify", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, num_p ),
         KOKKOS_LAMBDA( const int p ) {
-            auto s = Cabana::Impl::Index<
-                list_type::particle_view_type::vector_length>::s( p );
-            auto a = Cabana::Impl::Index<
-                list_type::particle_view_type::vector_length>::a( p );
-            typename list_type::particle_view_type particle( aosoa.access( s ),
-                                                             a );
+            auto particle = plist.getParticleView( p );
 
             for ( int d = 0; d < 3; ++d )
                 get( particle, Cabana::Field::Position<3>(), d ) += p + d;

@@ -214,6 +214,30 @@ class ParticleList
     //! Get the AoSoA (const).
     const aosoa_type& aosoa() const { return _aosoa; }
 
+    //! Get a single particle.
+    template <class IndexType>
+    KOKKOS_INLINE_FUNCTION auto getParticle( IndexType p ) const
+    {
+        return particle_type( _aosoa.getTuple( p ) );
+    }
+
+    //! Set a single particle.
+    template <class ParticleType, class IndexType>
+    KOKKOS_INLINE_FUNCTION void setParticle( ParticleType particle,
+                                             IndexType p ) const
+    {
+        _aosoa.setTuple( p, particle.tuple() );
+    }
+
+    //! Set a single particle with the struct+array indexing.
+    template <class IndexType>
+    KOKKOS_INLINE_FUNCTION auto getParticleView( IndexType p ) const
+    {
+        auto s = Cabana::Impl::Index<particle_view_type::vector_length>::s( p );
+        auto a = Cabana::Impl::Index<particle_view_type::vector_length>::a( p );
+        return particle_view_type( _aosoa.access( s ), a );
+    }
+
     //! Get the label.
     const std::string& label() const { return _label; }
 
