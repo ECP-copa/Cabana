@@ -1,8 +1,6 @@
 name: Nightly
 on:
-  push:
-    branches:
-      - kokkos_develop_testing
+  workflow_dispatch:
   schedule:
     - cron:  '0 1 * * *'
 
