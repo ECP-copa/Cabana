@@ -26,6 +26,7 @@ set(SERIAL_TESTS
   Parallel
   ParameterPack
   ParticleInit
+  ParticleList
   Slice
   Sort
   Tuple

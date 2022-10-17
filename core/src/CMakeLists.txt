@@ -15,6 +15,7 @@ set(HEADERS_PUBLIC
   Cabana_AoSoA.hpp
   Cabana_Core.hpp
   Cabana_DeepCopy.hpp
+  Cabana_Fields.hpp
   Cabana_ExecutionPolicy.hpp
   Cabana_LinkedCellList.hpp
   Cabana_MemberTypes.hpp
@@ -22,6 +23,7 @@ set(HEADERS_PUBLIC
   Cabana_Parallel.hpp
   Cabana_ParameterPack.hpp
   Cabana_ParticleInit.hpp
+  Cabana_ParticleList.hpp
   Cabana_Slice.hpp
   Cabana_SoA.hpp
   Cabana_Sort.hpp
