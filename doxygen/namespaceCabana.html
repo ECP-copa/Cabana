@@ -108,6 +108,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1NeighborList_3_01Experimental_1_1Dense_3_01MemorySpace_00_01Tag_01_4_01_4.html">NeighborList&lt; Experimental::Dense&lt; MemorySpace, Tag &gt; &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">2d ArborX <a class="el" href="classCabana_1_1NeighborList.html" title="Neighbor list interface. Provides an interface callable at the functor level that gives access to nei...">NeighborList</a> interface.  <a href="classCabana_1_1NeighborList_3_01Experimental_1_1Dense_3_01MemorySpace_00_01Tag_01_4_01_4.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1TypeIndexer.html">TypeIndexer</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the index of a field type within a particle type list.  <a href="structCabana_1_1TypeIndexer.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Halo.html">Halo</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A communication plan for scattering and gathering of ghosted data.  <a href="classCabana_1_1Halo.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -183,6 +186,18 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1is__parameter__pack.html">is_parameter_pack</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1ParameterPack.html">ParameterPack</a> static type checker.  <a href="structCabana_1_1is__parameter__pack.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1ParticleTraits.html">ParticleTraits</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> particle fields for <a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a>.  <a href="structCabana_1_1ParticleTraits.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1Particle.html">Particle</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Single particle copy. Wraps a tuple copy of a particle.  <a href="structCabana_1_1Particle.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1ParticleView.html">ParticleView</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Single <a class="el" href="structCabana_1_1SoA.html">SoA</a> particle view. Wraps a view of the <a class="el" href="structCabana_1_1SoA.html">SoA</a> the particle resides in.  <a href="structCabana_1_1ParticleView.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of particle fields stored in <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.  <a href="classCabana_1_1ParticleList.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html">Slice</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.  <a href="classCabana_1_1Slice.html#details">More...</a><br /></td></tr>
@@ -430,6 +445,31 @@ template&lt;class ExecutionSpace , class PositionType &gt; </td></tr>
 <tr class="memitem:ab460bf0f1b72014755b0bd79426b9df8"><td class="memTemplParams" colspan="2">template&lt;class PositionType &gt; </td></tr>
 <tr class="memitem:ab460bf0f1b72014755b0bd79426b9df8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ab460bf0f1b72014755b0bd79426b9df8">createRandomParticles</a> (PositionType &amp;positions, const std::size_t num_particles, const double box_min, const double box_max)</td></tr>
 <tr class="separator:ab460bf0f1b72014755b0bd79426b9df8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae950d2a85d50f5b792a74ace10606298"><td class="memTemplParams" colspan="2"><a id="ae950d2a85d50f5b792a74ace10606298"></a>
+template&lt;class FieldTag , class... FieldTags, class... IndexTypes&gt; </td></tr>
+<tr class="memitem:ae950d2a85d50f5b792a74ace10606298"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt; sizeof...(IndexTypes)==FieldTag::rank, typename <a class="el" href="structCabana_1_1Particle.html">Particle</a>&lt; FieldTags... &gt;::tuple_type::template member_const_reference_type&lt; <a class="el" href="structCabana_1_1TypeIndexer.html">TypeIndexer</a>&lt; FieldTag, FieldTags... &gt;::index &gt; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ae950d2a85d50f5b792a74ace10606298">get</a> (const <a class="el" href="structCabana_1_1Particle.html">Particle</a>&lt; FieldTags... &gt; &amp;particle, FieldTag, IndexTypes... indices)</td></tr>
+<tr class="memdesc:ae950d2a85d50f5b792a74ace10606298"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a single element of a single field from indices. <br /></td></tr>
+<tr class="separator:ae950d2a85d50f5b792a74ace10606298"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad97382b4f9d42c9c463435668e8b1cef"><td class="memTemplParams" colspan="2"><a id="ad97382b4f9d42c9c463435668e8b1cef"></a>
+template&lt;class FieldTag , class... FieldTags, class... IndexTypes&gt; </td></tr>
+<tr class="memitem:ad97382b4f9d42c9c463435668e8b1cef"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt; sizeof...(IndexTypes)==FieldTag::rank, typename <a class="el" href="structCabana_1_1Particle.html">Particle</a>&lt; FieldTags... &gt;::tuple_type::template member_reference_type&lt; <a class="el" href="structCabana_1_1TypeIndexer.html">TypeIndexer</a>&lt; FieldTag, FieldTags... &gt;::index &gt; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ad97382b4f9d42c9c463435668e8b1cef">get</a> (<a class="el" href="structCabana_1_1Particle.html">Particle</a>&lt; FieldTags... &gt; &amp;particle, FieldTag, IndexTypes... indices)</td></tr>
+<tr class="memdesc:ad97382b4f9d42c9c463435668e8b1cef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a single element of a single field from indices. <br /></td></tr>
+<tr class="separator:ad97382b4f9d42c9c463435668e8b1cef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d45cf359635125b3afc4dc47ccda5c7"><td class="memTemplParams" colspan="2"><a id="a7d45cf359635125b3afc4dc47ccda5c7"></a>
+template&lt;class FieldTag , class... FieldTags, class... IndexTypes, int VectorLength&gt; </td></tr>
+<tr class="memitem:a7d45cf359635125b3afc4dc47ccda5c7"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt; sizeof...(IndexTypes)==FieldTag::rank, typename <a class="el" href="structCabana_1_1ParticleView.html">ParticleView</a>&lt; VectorLength, FieldTags... &gt;::soa_type::template member_const_reference_type&lt; <a class="el" href="structCabana_1_1TypeIndexer.html">TypeIndexer</a>&lt; FieldTag, FieldTags... &gt;::index &gt; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a7d45cf359635125b3afc4dc47ccda5c7">get</a> (const <a class="el" href="structCabana_1_1ParticleView.html">ParticleView</a>&lt; VectorLength, FieldTags... &gt; &amp;particle, FieldTag, IndexTypes... indices)</td></tr>
+<tr class="memdesc:a7d45cf359635125b3afc4dc47ccda5c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a single element of a single field from indices. <br /></td></tr>
+<tr class="separator:a7d45cf359635125b3afc4dc47ccda5c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf16095bf2a55c2c4fd590ae6e297792"><td class="memTemplParams" colspan="2"><a id="abf16095bf2a55c2c4fd590ae6e297792"></a>
+template&lt;class FieldTag , class... FieldTags, class... IndexTypes, int VectorLength&gt; </td></tr>
+<tr class="memitem:abf16095bf2a55c2c4fd590ae6e297792"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt; sizeof...(IndexTypes)==FieldTag::rank, typename <a class="el" href="structCabana_1_1ParticleView.html">ParticleView</a>&lt; VectorLength, FieldTags... &gt;::soa_type::template member_reference_type&lt; <a class="el" href="structCabana_1_1TypeIndexer.html">TypeIndexer</a>&lt; FieldTag, FieldTags... &gt;::index &gt; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#abf16095bf2a55c2c4fd590ae6e297792">get</a> (<a class="el" href="structCabana_1_1ParticleView.html">ParticleView</a>&lt; VectorLength, FieldTags... &gt; &amp;particle, FieldTag, IndexTypes... indices)</td></tr>
+<tr class="memdesc:abf16095bf2a55c2c4fd590ae6e297792"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a single element of a single field from indices. <br /></td></tr>
+<tr class="separator:abf16095bf2a55c2c4fd590ae6e297792"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5d2b8e770b14662916a39da54ba4460"><td class="memTemplParams" colspan="2"><a id="ad5d2b8e770b14662916a39da54ba4460"></a>
+template&lt;class MemorySpace , class... FieldTags&gt; </td></tr>
+<tr class="memitem:ad5d2b8e770b14662916a39da54ba4460"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; MemorySpace, FieldTags... &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ad5d2b8e770b14662916a39da54ba4460">createParticleList</a> (const std::string &amp;label, <a class="el" href="structCabana_1_1ParticleTraits.html">ParticleTraits</a>&lt; FieldTags... &gt;)</td></tr>
+<tr class="memdesc:ad5d2b8e770b14662916a39da54ba4460"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> creation function. <br /></td></tr>
+<tr class="separator:ad5d2b8e770b14662916a39da54ba4460"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0aab31b7d2fef61f7b49251c301d441d"><td class="memTemplParams" colspan="2"><a id="a0aab31b7d2fef61f7b49251c301d441d"></a>
 template&lt;std::size_t M, class SoA_t &gt; </td></tr>
 <tr class="memitem:a0aab31b7d2fef61f7b49251c301d441d"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt; <a class="el" href="structCabana_1_1is__soa.html">is_soa</a>&lt; SoA_t &gt;::value, typename SoA_t::template member_reference_type&lt; M &gt; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a0aab31b7d2fef61f7b49251c301d441d">get</a> (SoA_t &amp;soa, const std::size_t a)</td></tr>
@@ -1651,7 +1691,7 @@ template&lt;class IndexType , class FunctorType , class NeighborListType &gt; </
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">i</td><td>Particle index. </td></tr>
+    <tr><td class="paramname">i</td><td><a class="el" href="structCabana_1_1Particle.html" title="Single particle copy. Wraps a tuple copy of a particle.">Particle</a> index. </td></tr>
     <tr><td class="paramname">neighbor_functor</td><td>The neighbor functor to execute in parallel. </td></tr>
     <tr><td class="paramname">list</td><td>The neighbor list over which to execute the neighbor operations. </td></tr>
     <tr><td class="paramname"><a class="el" href="classCabana_1_1FirstNeighborsTag.html" title="Loop over particle neighbors.">FirstNeighborsTag</a></td><td>Tag indicating operations over particle first neighbors.</td></tr>
@@ -1726,7 +1766,7 @@ template&lt;class IndexType , class FunctorType , class NeighborListType , class
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">i</td><td>Particle index. </td></tr>
+    <tr><td class="paramname">i</td><td><a class="el" href="structCabana_1_1Particle.html" title="Single particle copy. Wraps a tuple copy of a particle.">Particle</a> index. </td></tr>
     <tr><td class="paramname">team</td><td>Kokkos team. </td></tr>
     <tr><td class="paramname">neighbor_functor</td><td>The neighbor functor to execute in parallel. </td></tr>
     <tr><td class="paramname">list</td><td>The neighbor list over which to execute the neighbor operations. </td></tr>
