@@ -1,8 +1,6 @@
 name: Nightly
 on:
-  push:
-    branches:
-      - kokkos_develop_testing
+  workflow_dispatch:
   schedule:
     - cron:  '0 1 * * *'
 
@@ -45,5 +43,5 @@ jobs:
         run: |
           cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/Cabana -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx" -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON -DCabana_REQUIRE_${{ matrix.backend }}=ON
           cmake --build build --parallel 2
-          cmake --build build --target test
+          CTEST_OUTPUT_ON_FAILURE=yes cmake --build build --target test
           cmake --install build
