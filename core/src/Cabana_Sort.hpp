@@ -163,9 +163,12 @@ BinningData<DeviceType>
 kokkosBinSort( KeyViewType keys, Comparator comp, const bool sort_within_bins,
                const std::size_t begin, const std::size_t end )
 {
+    Kokkos::Profiling::pushRegion( "Cabana::BinSort" );
     Kokkos::BinSort<KeyViewType, Comparator, DeviceType> bin_sort(
         keys, begin, end, comp, sort_within_bins );
     bin_sort.create_permute_vector();
+    Kokkos::Profiling::popRegion();
+
     return BinningData<DeviceType>( begin, end, bin_sort.get_bin_count(),
                                     bin_sort.get_bin_offsets(),
                                     bin_sort.get_permute_vector() );
@@ -178,6 +181,8 @@ template <class KeyViewType,
 Kokkos::MinMaxScalar<typename KeyViewType::non_const_value_type>
 keyMinMax( KeyViewType keys, const std::size_t begin, const std::size_t end )
 {
+    Kokkos::Profiling::pushRegion( "Cabana::keyMinMax" );
+
     using KeyValueType = typename KeyViewType::non_const_value_type;
     Kokkos::MinMaxScalar<KeyValueType> result;
     Kokkos::MinMax<KeyValueType> reducer( result );
@@ -197,6 +202,9 @@ keyMinMax( KeyViewType keys, const std::size_t begin, const std::size_t end )
         },
         reducer );
     Kokkos::fence();
+
+    Kokkos::Profiling::popRegion();
+
     return result;
 }
 
@@ -590,6 +598,8 @@ void permute(
                               is_aosoa<AoSoA_t>::value ),
                             int>::type* = 0 )
 {
+    Kokkos::Profiling::pushRegion( "Cabana::permute" );
+
     auto begin = binning_data.rangeBegin();
     auto end = binning_data.rangeEnd();
 
@@ -617,6 +627,8 @@ void permute(
         Kokkos::RangePolicy<typename DeviceType::execution_space>( begin, end ),
         copy_back );
     Kokkos::fence();
+
+    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -639,6 +651,7 @@ void permute(
                               is_slice<SliceType>::value ),
                             int>::type* = 0 )
 {
+    Kokkos::Profiling::pushRegion( "Cabana::permute" );
 
     auto begin = binning_data.rangeBegin();
     auto end = binning_data.rangeEnd();
@@ -685,6 +698,8 @@ void permute(
         Kokkos::RangePolicy<typename DeviceType::execution_space>( begin, end ),
         copy_back );
     Kokkos::fence();
+
+    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//

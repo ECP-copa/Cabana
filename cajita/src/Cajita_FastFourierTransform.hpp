@@ -219,8 +219,12 @@ class FastFourierTransform
                   entity_type, mesh_type, device_type, value_type>::value ),
             int>::type* = 0 )
     {
+        Kokkos::Profiling::pushRegion( "Cabana::FFT::forward" );
+
         checkArrayDofs( x.layout()->dofsPerEntity() );
         static_cast<Derived*>( this )->forwardImpl( x, scaling );
+
+        Kokkos::Profiling::popRegion();
     }
 
     /*!
@@ -239,8 +243,12 @@ class FastFourierTransform
                   entity_type, mesh_type, device_type, value_type>::value ),
             int>::type* = 0 )
     {
+        Kokkos::Profiling::pushRegion( "Cabana::FFT::reverse" );
+
         checkArrayDofs( x.layout()->dofsPerEntity() );
         static_cast<Derived*>( this )->reverseImpl( x, scaling );
+
+        Kokkos::Profiling::popRegion();
     }
 
     /*!

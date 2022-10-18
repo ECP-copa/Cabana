@@ -381,6 +381,8 @@ class HypreStructuredSolver
     template <class Array_t>
     void solve( const Array_t& b, Array_t& x )
     {
+        Kokkos::Profiling::pushRegion( "Cajita::HypreStructuredSolver::solve" );
+
         static_assert( is_array<Array_t>::value, "Must use an array" );
         static_assert(
             std::is_same<typename Array_t::entity_type, entity_type>::value,
@@ -442,6 +444,8 @@ class HypreStructuredSolver
         // Copy the HYPRE solution to the LHS.
         auto x_subv = createSubview( x.view(), owned_space );
         Kokkos::deep_copy( x_subv, vector_values );
+
+        Kokkos::Profiling::popRegion();
     }
 
     //! Get the number of iterations taken on the last solve.

@@ -50,8 +50,10 @@ inline void grid_parallel_for( const std::string& label,
                                const IndexSpace<N>& index_space,
                                const FunctorType& functor )
 {
+    Kokkos::Profiling::pushRegion( "Cajita::grid_parallel_for" );
     Kokkos::parallel_for(
         label, createExecutionPolicy( index_space, exec_space ), functor );
+    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -83,9 +85,11 @@ grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
                    const IndexSpace<N>& index_space, const WorkTag& work_tag,
                    const FunctorType& functor )
 {
+    Kokkos::Profiling::pushRegion( "Cajita::grid_parallel_for" );
     Kokkos::parallel_for(
         label, createExecutionPolicy( index_space, exec_space, work_tag ),
         functor );
+    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -193,6 +197,8 @@ grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
                    const Kokkos::Array<IndexSpace<4>, NumSpace>& index_spaces,
                    const FunctorType& functor )
 {
+    Kokkos::Profiling::pushRegion( "Cajita::grid_parallel_for" );
+
     // Compute the total number of threads needed and the index space offsets
     // via inclusive scan.
     int size = index_spaces[0].size();
@@ -245,6 +251,8 @@ grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
                      k_base + index_spaces[s].min( Dim::K ),
                      l_base + index_spaces[s].min( 3 ) );
         } );
+
+    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -273,6 +281,8 @@ grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
                    const Kokkos::Array<IndexSpace<3>, NumSpace>& index_spaces,
                    const FunctorType& functor )
 {
+    Kokkos::Profiling::pushRegion( "Cajita::grid_parallel_for" );
+
     // Compute the total number of threads needed and the index space offsets
     // via inclusive scan.
     int size = index_spaces[0].size();
@@ -321,6 +331,8 @@ grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
                      j_base + index_spaces[s].min( Dim::J ),
                      k_base + index_spaces[s].min( Dim::K ) );
         } );
+
+    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -349,6 +361,8 @@ grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
                    const Kokkos::Array<IndexSpace<2>, NumSpace>& index_spaces,
                    const FunctorType& functor )
 {
+    Kokkos::Profiling::pushRegion( "Cajita::grid_parallel_for" );
+
     // Compute the total number of threads needed and the index space offsets
     // via inclusive scan.
     int size = index_spaces[0].size();
@@ -393,6 +407,8 @@ grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
             functor( s, i_base + index_spaces[s].min( Dim::I ),
                      j_base + index_spaces[s].min( Dim::J ) );
         } );
+
+    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -427,9 +443,11 @@ inline void grid_parallel_reduce( const std::string& label,
                                   const FunctorType& functor,
                                   ReduceType& reducer )
 {
+    Kokkos::Profiling::pushRegion( "Cajita::grid_parallel_reduce" );
     Kokkos::parallel_reduce( label,
                              createExecutionPolicy( index_space, exec_space ),
                              functor, reducer );
+    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -467,9 +485,11 @@ grid_parallel_reduce( const std::string& label,
                       const IndexSpace<N>& index_space, const WorkTag& work_tag,
                       const FunctorType& functor, ReduceType& reducer )
 {
+    Kokkos::Profiling::pushRegion( "Cajita::grid_parallel_reduce" );
     Kokkos::parallel_reduce(
         label, createExecutionPolicy( index_space, exec_space, work_tag ),
         functor, reducer );
+    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//

@@ -19,6 +19,8 @@
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_Types.hpp>
 
+#include <Kokkos_Core.hpp>
+
 #include <ALL.hpp>
 
 #include <mpi.h>
@@ -117,6 +119,8 @@ class LoadBalancer<UniformMesh<Scalar, NumSpaceDim>>
         const BlockPartitioner<NumSpaceDim>& partitioner,
         const double local_work )
     {
+        Kokkos::Profiling::pushRegion( "Cajita::LoadBalancer::balance" );
+
         // Create new decomposition
         _liball->setWork( local_work );
         _liball->balance();
@@ -147,6 +151,8 @@ class LoadBalancer<UniformMesh<Scalar, NumSpaceDim>>
             createGlobalGrid( _comm, global_mesh, periodic, partitioner );
         global_grid->setNumCellAndOffset( num_cell, cell_index_lo );
         _global_grid = global_grid;
+
+        Kokkos::Profiling::popRegion();
         return _global_grid;
     }
 
