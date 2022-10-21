@@ -168,6 +168,17 @@ jobs:
           - distro: 'ubuntu:latest'
             cxx: 'g++'
             backend: 'OPENMP'
+            cmake_build_type: 'Debug'
+            kokkos_ver: '3.5.00'
+            arborx: 'ArborX'
+            silo: 'Silo'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            mpi: 'NoMPI'
+            coverage: 'OFF'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: '3.5.00'
             arborx: 'ArborX'
@@ -337,8 +348,12 @@ jobs:
       - name: Build Cabana
         env:
           SANITIZER: ${{ matrix.sanitizer }}
+          MPI: ${{ matrix.mpi }}
           SILO: ${{ matrix.silo }}
         run: |
+          if [[ ${MPI} == 'NoMPI' ]]; then
+            cabana_cmake_opts+=( -DCMAKE_DISABLE_FIND_PACKAGE_MPI=ON -DCabana_REQUIRE_MPI=OFF -DCabana_ENABLE_CAJITA=OFF)
+          fi
           if [[ ${SILO} == 'Silo' ]]; then
             cabana_cmake_opts+=( -DCabana_REQUIRE_SILO=ON )
           else
@@ -365,7 +380,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
             -DVALGRIND_EXECUTABLE=False \
             -DDOXYGEN_WARN_AS_ERROR=FAIL_ON_WARNINGS \
-            ${cabana_cmake_opts}
+            ${cabana_cmake_opts[@]}
           cmake --build build --parallel 2 --verbose
           CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test
           cmake --install build
