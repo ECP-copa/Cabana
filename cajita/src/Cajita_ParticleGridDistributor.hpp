@@ -237,11 +237,11 @@ int migrateCount( const LocalGridType& local_grid,
   \return Distributor for later migration.
 */
 template <class LocalGridType, class PositionSliceType>
-Cabana::Distributor<typename PositionSliceType::device_type>
+Cabana::Distributor<typename PositionSliceType::memory_space>
 createParticleGridDistributor( const LocalGridType& local_grid,
                                PositionSliceType& positions )
 {
-    using device_type = typename PositionSliceType::device_type;
+    using memory_space = typename PositionSliceType::memory_space;
 
     // Get all 26 neighbor ranks.
     auto topology = getTopology( local_grid );
@@ -249,8 +249,8 @@ createParticleGridDistributor( const LocalGridType& local_grid,
     Kokkos::View<int*, Kokkos::HostSpace, Kokkos::MemoryUnmanaged>
         topology_host( topology.data(), topology.size() );
     auto topology_mirror =
-        Kokkos::create_mirror_view_and_copy( device_type(), topology_host );
-    Kokkos::View<int*, device_type> destinations(
+        Kokkos::create_mirror_view_and_copy( memory_space(), topology_host );
+    Kokkos::View<int*, memory_space> destinations(
         Kokkos::ViewAllocateWithoutInitializing( "destinations" ),
         positions.size() );
 
@@ -260,7 +260,7 @@ createParticleGridDistributor( const LocalGridType& local_grid,
                                   positions );
 
     // Create the Cabana distributor.
-    Cabana::Distributor<device_type> distributor(
+    Cabana::Distributor<memory_space> distributor(
         local_grid.globalGrid().comm(), destinations, topology );
     return distributor;
 }
