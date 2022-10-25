@@ -165,6 +165,15 @@ jobs:
             heffte: 'NoheFFTe'
             hypre: 'NoHYPRE'
             coverage: 'OFF'
+          - distro: 'fedora:nompi'
+            cxx: 'g++'
+            backend: 'OPENMP'
+            cmake_build_type: 'Debug'
+            kokkos_ver: '3.5.00'
+            arborx: 'ArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
             backend: 'OPENMP'
@@ -365,7 +374,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
             -DVALGRIND_EXECUTABLE=False \
             -DDOXYGEN_WARN_AS_ERROR=FAIL_ON_WARNINGS \
-            ${cabana_cmake_opts}
+            ${cabana_cmake_opts[@]}
           cmake --build build --parallel 2 --verbose
           CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test
           cmake --install build

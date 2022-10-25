@@ -213,7 +213,7 @@ endif()
 
 add_subdirectory(core)
 
-option(Cabana_ENABLE_CAJITA "Build Cajita (grid and particle-grid)" ON)
+option(Cabana_ENABLE_CAJITA "Build Cajita (grid and particle-grid)" ${Cabana_ENABLE_MPI})
 if(Cabana_ENABLE_CAJITA)
   if(MPI_FOUND)
     add_subdirectory(cajita)
