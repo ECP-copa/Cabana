@@ -48,14 +48,12 @@ void linkedCellListExample()
     */
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
-    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 54;
-    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "A", num_tuple );
+    Cabana::AoSoA<DataTypes, MemorySpace, VectorLength> aosoa( "A", num_tuple );
 
     /*
       Define the parameters of the Cartesian grid over which we will build the
@@ -107,12 +105,12 @@ void linkedCellListExample()
       exercise, try adding both start and end (int) inputs to define a subset
       range of particles to permute:
 
-      Cabana::LinkedCellList<DeviceType> cell_list( positions, start, end,
+      Cabana::LinkedCellList<MemorySpace> cell_list( positions, start, end,
                                                     grid_delta,
                                                     grid_min, grid_max );
      */
-    Cabana::LinkedCellList<DeviceType> cell_list( positions, grid_delta,
-                                                  grid_min, grid_max );
+    Cabana::LinkedCellList<MemorySpace> cell_list( positions, grid_delta,
+                                                   grid_min, grid_max );
 
     /*
       Now permute the AoSoA (i.e. reorder the data) using the linked cell list.

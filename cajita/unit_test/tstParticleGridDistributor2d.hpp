@@ -100,7 +100,7 @@ void migrateTest( const GridType global_grid, const double cell_size,
 
     // Copy to the device space.
     auto particles_mirror =
-        Cabana::create_mirror_view_and_copy( TEST_DEVICE(), particles );
+        Cabana::create_mirror_view_and_copy( TEST_MEMSPACE(), particles );
     auto coords_mirror = Cabana::slice<0>( particles_mirror, "coords" );
 
     // Redistribute the particle AoSoA in place.
@@ -211,7 +211,7 @@ void localOnlyTest( const GridType global_grid, const double cell_size )
 
     // Copy to the device space.
     auto particles_mirror =
-        Cabana::create_mirror_view_and_copy( TEST_DEVICE(), particles );
+        Cabana::create_mirror_view_and_copy( TEST_MEMSPACE(), particles );
 
     // Redistribute the particles.
     auto coords_mirror = Cabana::slice<0>( particles_mirror, "coords" );
@@ -303,7 +303,7 @@ void removeOutsideTest( const GridType global_grid )
 
     // Copy to the device space.
     auto particles_mirror =
-        Cabana::create_mirror_view_and_copy( TEST_DEVICE(), particles );
+        Cabana::create_mirror_view_and_copy( TEST_MEMSPACE(), particles );
 
     // Check particles were created.
     EXPECT_GT( particles_mirror.size(), 0 );

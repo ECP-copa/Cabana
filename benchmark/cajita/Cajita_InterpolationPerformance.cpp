@@ -23,20 +23,20 @@ using namespace Cajita;
 // This is an example fused kernel version of p2g. It is not intended to be
 // physical, but only to compare performance.
 template <class ScalarValue, class VectorValue, class ScalarGrad,
-          class VectorDiv, class TensorDiv, class Coordinates, class DeviceType,
-          class ScalarArrayType, class VectorArrayType>
+          class VectorDiv, class TensorDiv, class Coordinates,
+          class MemorySpace, class ScalarArrayType, class VectorArrayType>
 void fused_p2g( const ScalarValue& scalar_value,
                 const VectorValue& vector_value, const ScalarGrad& scalar_grad,
                 const VectorDiv& vector_div, const TensorDiv& tensor_div,
                 const Coordinates& points, const std::size_t num_point,
-                const Halo<DeviceType>& halo, ScalarArrayType& scalar_array,
+                const Halo<MemorySpace>& halo, ScalarArrayType& scalar_array,
                 VectorArrayType& vector_array )
 {
-    using execution_space = typename DeviceType::execution_space;
+    using execution_space = typename MemorySpace::execution_space;
 
     // Create the local mesh.
     auto local_mesh =
-        createLocalMesh<DeviceType>( *( scalar_array.layout()->localGrid() ) );
+        createLocalMesh<MemorySpace>( *( scalar_array.layout()->localGrid() ) );
 
     // Create a scatter view of the arrays.
     auto scalar_view = scalar_array.view();
@@ -79,19 +79,19 @@ void fused_p2g( const ScalarValue& scalar_value,
 // This is an example fused kernel version of g2p. It is not intended to be
 // physical, but only to compare performance.
 template <class ScalarArrayType, class VectorArrayType, class Coordinates,
-          class DeviceType, class ScalarValue, class VectorValue,
+          class MemorySpace, class ScalarValue, class VectorValue,
           class ScalarGrad, class VectorGrad, class VectorDiv>
 void fused_g2p( ScalarArrayType& scalar_array, VectorArrayType& vector_array,
-                const Halo<DeviceType>& halo, const Coordinates& points,
+                const Halo<MemorySpace>& halo, const Coordinates& points,
                 const std::size_t num_point, const ScalarValue& scalar_value,
                 const VectorValue& vector_value, const ScalarGrad& scalar_grad,
                 const VectorGrad& vector_grad, const VectorDiv& vector_div )
 {
-    using execution_space = typename DeviceType::execution_space;
+    using execution_space = typename MemorySpace::execution_space;
 
     // Create the local mesh.
     auto local_mesh =
-        createLocalMesh<DeviceType>( *( scalar_array.layout()->localGrid() ) );
+        createLocalMesh<MemorySpace>( *( scalar_array.layout()->localGrid() ) );
 
     // Gather data into the halo before interpolating.
     halo.gather( execution_space(), scalar_array );
@@ -127,17 +127,17 @@ void fused_g2p( ScalarArrayType& scalar_array, VectorArrayType& vector_array,
 }
 
 // This is an example fused kernel scalar g2p2g.
-template <class ScalarValueP2GType, class Coordinates, class DeviceType,
+template <class ScalarValueP2GType, class Coordinates, class MemorySpace,
           class ScalarArrayType, class ScalarValueG2PType>
 void g2p2g( const ScalarValueP2GType& scalar_p2g, const Coordinates& points,
-            const std::size_t num_point, const Halo<DeviceType>& halo,
+            const std::size_t num_point, const Halo<MemorySpace>& halo,
             ScalarArrayType& scalar_array, ScalarValueG2PType& scalar_g2p )
 {
-    using execution_space = typename DeviceType::execution_space;
+    using execution_space = typename MemorySpace::execution_space;
 
     // Create the local mesh.
     auto local_mesh =
-        createLocalMesh<DeviceType>( *( scalar_array.layout()->localGrid() ) );
+        createLocalMesh<MemorySpace>( *( scalar_array.layout()->localGrid() ) );
 
     // Gather data into the halo before interpolating.
     halo.gather( execution_space(), scalar_array );
@@ -198,7 +198,7 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
     // Define the particle types.
     using member_types =
         Cabana::MemberTypes<double[3][3], double[3], double[3], double>;
-    using aosoa_type = Cabana::AoSoA<member_types, Device>;
+    using aosoa_type = Cabana::AoSoA<member_types, memory_space>;
 
     // Define properties that do not depend on mesh size.
     Cajita::DimBlockPartitioner<3> partitioner;

@@ -51,7 +51,7 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
 
     // Define the aosoa.
     using member_types = Cabana::MemberTypes<double[3]>;
-    using aosoa_type = Cabana::AoSoA<member_types, Device>;
+    using aosoa_type = Cabana::AoSoA<member_types, memory_space>;
     std::vector<aosoa_type> aosoas( num_problem_size );
 
     // Create aosoas.
@@ -78,7 +78,7 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
             double cutoff = cutoff_ratios.front();
             double sort_delta[3] = { cutoff, cutoff, cutoff };
             auto x = Cabana::slice<0>( aosoas[p], "position" );
-            Cabana::LinkedCellList<Device> linked_cell_list(
+            Cabana::LinkedCellList<memory_space> linked_cell_list(
                 x, sort_delta, grid_min, grid_max );
             Cabana::permute( linked_cell_list, aosoas[p] );
         }

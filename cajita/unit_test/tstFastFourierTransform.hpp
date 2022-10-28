@@ -107,7 +107,7 @@ void forwardReverseTest3d( bool use_default, bool use_params )
 
     // Create a random vector to transform..
     auto vector_layout = createArrayLayout( local_grid, 2, Cell() );
-    auto lhs = createArray<double, TEST_DEVICE>( "lhs", vector_layout );
+    auto lhs = createArray<double, TEST_MEMSPACE>( "lhs", vector_layout );
     auto lhs_view = lhs->view();
     auto lhs_host =
         createArray<double, typename decltype( lhs_view )::array_layout,
@@ -182,7 +182,7 @@ void forwardReverseTest2d( bool use_default, bool use_params )
 
     // Create a random vector to transform..
     auto vector_layout = createArrayLayout( local_grid, 2, Cell() );
-    auto lhs = createArray<double, TEST_DEVICE>( "lhs", vector_layout );
+    auto lhs = createArray<double, TEST_MEMSPACE>( "lhs", vector_layout );
     auto lhs_view = lhs->view();
     auto lhs_host =
         createArray<double, typename decltype( lhs_view )::array_layout,

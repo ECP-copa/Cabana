@@ -60,8 +60,6 @@ void aosoaExample()
       `Kokkos::HostSpace`.
     */
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
-    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA. We define how many tuples the aosoa will
@@ -72,8 +70,8 @@ void aosoaExample()
        allocation tracker.
     */
     int num_tuple = 5;
-    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "my_aosoa",
-                                                              num_tuple );
+    Cabana::AoSoA<DataTypes, MemorySpace, VectorLength> aosoa( "my_aosoa",
+                                                               num_tuple );
 
     /*
        Print the label and size data. In this case we have created an AoSoA

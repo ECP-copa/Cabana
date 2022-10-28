@@ -275,7 +275,7 @@ void executionTest()
     int max_i = 8;
     int size_i = 12;
     IndexSpace<1> is1( { min_i }, { max_i } );
-    Kokkos::View<double*, TEST_DEVICE> v1( "v1", size_i );
+    Kokkos::View<double*, TEST_MEMSPACE> v1( "v1", size_i );
     Kokkos::parallel_for(
         "fill_rank_1", createExecutionPolicy( is1, TEST_EXECSPACE() ),
         KOKKOS_LAMBDA( const int i ) { v1( i ) = 1.0; } );
@@ -294,7 +294,7 @@ void executionTest()
     int max_j = 9;
     int size_j = 18;
     IndexSpace<2> is2( { min_i, min_j }, { max_i, max_j } );
-    Kokkos::View<double**, TEST_DEVICE> v2( "v2", size_i, size_j );
+    Kokkos::View<double**, TEST_MEMSPACE> v2( "v2", size_i, size_j );
     Kokkos::parallel_for(
         "fill_rank_2", createExecutionPolicy( is2, TEST_EXECSPACE() ),
         KOKKOS_LAMBDA( const int i, const int j ) { v2( i, j ) = 1.0; } );
@@ -315,7 +315,7 @@ void executionTest()
     int max_k = 11;
     int size_k = 13;
     IndexSpace<3> is3( { min_i, min_j, min_k }, { max_i, max_j, max_k } );
-    Kokkos::View<double***, TEST_DEVICE> v3( "v3", size_i, size_j, size_k );
+    Kokkos::View<double***, TEST_MEMSPACE> v3( "v3", size_i, size_j, size_k );
     Kokkos::parallel_for(
         "fill_rank_3", createExecutionPolicy( is3, TEST_EXECSPACE() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k ) {
@@ -341,8 +341,8 @@ void executionTest()
     int size_l = 14;
     IndexSpace<4> is4( { min_i, min_j, min_k, min_l },
                        { max_i, max_j, max_k, max_l } );
-    Kokkos::View<double****, TEST_DEVICE> v4( "v4", size_i, size_j, size_k,
-                                              size_l );
+    Kokkos::View<double****, TEST_MEMSPACE> v4( "v4", size_i, size_j, size_k,
+                                                size_l );
     Kokkos::parallel_for(
         "fill_rank_4", createExecutionPolicy( is4, TEST_EXECSPACE() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ) {
@@ -373,7 +373,7 @@ void subviewTest()
     int max_i = 8;
     int size_i = 12;
     IndexSpace<1> is1( { min_i }, { max_i } );
-    Kokkos::View<double*, TEST_DEVICE> v1( "v1", size_i );
+    Kokkos::View<double*, TEST_MEMSPACE> v1( "v1", size_i );
     auto sv1 = createSubview( v1, is1 );
     Kokkos::deep_copy( sv1, 1.0 );
     auto v1_mirror =
@@ -391,7 +391,7 @@ void subviewTest()
     int max_j = 9;
     int size_j = 18;
     IndexSpace<2> is2( { min_i, min_j }, { max_i, max_j } );
-    Kokkos::View<double**, TEST_DEVICE> v2( "v2", size_i, size_j );
+    Kokkos::View<double**, TEST_MEMSPACE> v2( "v2", size_i, size_j );
     auto sv2 = createSubview( v2, is2 );
     Kokkos::deep_copy( sv2, 1.0 );
     auto v2_mirror =
@@ -411,7 +411,7 @@ void subviewTest()
     int max_k = 11;
     int size_k = 13;
     IndexSpace<3> is3( { min_i, min_j, min_k }, { max_i, max_j, max_k } );
-    Kokkos::View<double***, TEST_DEVICE> v3( "v3", size_i, size_j, size_k );
+    Kokkos::View<double***, TEST_MEMSPACE> v3( "v3", size_i, size_j, size_k );
     auto sv3 = createSubview( v3, is3 );
     Kokkos::deep_copy( sv3, 1.0 );
     auto v3_mirror =
@@ -434,8 +434,8 @@ void subviewTest()
     int size_l = 14;
     IndexSpace<4> is4( { min_i, min_j, min_k, min_l },
                        { max_i, max_j, max_k, max_l } );
-    Kokkos::View<double****, TEST_DEVICE> v4( "v4", size_i, size_j, size_k,
-                                              size_l );
+    Kokkos::View<double****, TEST_MEMSPACE> v4( "v4", size_i, size_j, size_k,
+                                                size_l );
     auto sv4 = createSubview( v4, is4 );
     Kokkos::deep_copy( sv4, 1.0 );
     auto v4_mirror =

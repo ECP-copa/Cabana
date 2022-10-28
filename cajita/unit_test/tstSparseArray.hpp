@@ -185,7 +185,7 @@ void sparse_array_test( int par_num, EntityType entity )
     int workload_num = size_per_dim * size_per_dim * size_per_dim;
     int num_step_rebalance = 200;
     int max_optimize_iteration = 10;
-    SparseDimPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
+    SparseDimPartitioner<TEST_MEMSPACE, cell_per_tile_dim> partitioner(
         MPI_COMM_WORLD, max_workload_coeff, workload_num, num_step_rebalance,
         global_num_cell, max_optimize_iteration );
 
@@ -243,7 +243,7 @@ void sparse_array_test( int par_num, EntityType entity )
     using DataTypes = Cabana::MemberTypes<int[3], float, double[3], int[2]>;
     auto test_layout =
         createSparseArrayLayout<DataTypes>( local_grid, sparse_map, entity );
-    auto test_array = createSparseArray<TEST_DEVICE>(
+    auto test_array = createSparseArray<TEST_MEMSPACE>(
         std::string( "test_sparse_grid" ), *test_layout );
 
     // insert particles
@@ -261,7 +261,7 @@ void sparse_array_test( int par_num, EntityType entity )
 
     // check particle insertion results
     int cell_num = par_view.extent( 0 ) * 27;
-    Kokkos::View<int*, TEST_DEVICE> qtid_res(
+    Kokkos::View<int*, TEST_MEMSPACE> qtid_res(
         Kokkos::ViewAllocateWithoutInitializing( "query_tile_id" ), cell_num );
 
     T dx_inv = 1.0f / cell_size;
@@ -303,7 +303,7 @@ void sparse_array_test( int par_num, EntityType entity )
     // assign value
     auto& map = test_layout->sparseMap();
     // tile ijk, cell ijk, tile key
-    Kokkos::View<int* [7], TEST_DEVICE> info(
+    Kokkos::View<int* [7], TEST_MEMSPACE> info(
         Kokkos::ViewAllocateWithoutInitializing( "tile_cell_info" ),
         test_array->size() );
     auto array = *test_array;
@@ -430,7 +430,7 @@ void full_occupy_test( EntityType entity )
     int workload_num = size_per_dim * size_per_dim * size_per_dim;
     int num_step_rebalance = 200;
     int max_optimize_iteration = 10;
-    SparseDimPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
+    SparseDimPartitioner<TEST_MEMSPACE, cell_per_tile_dim> partitioner(
         MPI_COMM_WORLD, max_workload_coeff, workload_num, num_step_rebalance,
         global_num_cell, max_optimize_iteration );
 
@@ -474,7 +474,7 @@ void full_occupy_test( EntityType entity )
     using DataTypes = Cabana::MemberTypes<int[3], float[3], int[2]>;
     auto test_layout =
         createSparseArrayLayout<DataTypes>( local_grid, sparse_map, entity );
-    auto test_array = createSparseArray<TEST_DEVICE>(
+    auto test_array = createSparseArray<TEST_MEMSPACE>(
         std::string( "test_sparse_grid" ), *test_layout );
 
     // valid tile range
@@ -498,7 +498,7 @@ void full_occupy_test( EntityType entity )
     test_array->resize( map.sizeCell() );
 
     // assign value
-    Kokkos::View<int*** [2], TEST_DEVICE> info(
+    Kokkos::View<int*** [2], TEST_MEMSPACE> info(
         Kokkos::ViewAllocateWithoutInitializing( "tile_cell_info" ),
         size_tile_per_dim, size_tile_per_dim, size_tile_per_dim );
 

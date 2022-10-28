@@ -78,7 +78,7 @@ void performanceTest( std::ostream& stream,
         auto ghosted_space = local_grid->indexSpace( Ghost(), Cell(), Local() );
 
         auto vector_layout = createArrayLayout( local_grid, 2, Cell() );
-        auto lhs = createArray<double, Device>( "lhs", vector_layout );
+        auto lhs = createArray<double, memory_space>( "lhs", vector_layout );
         auto lhs_view = lhs->view();
         uint64_t seed = global_grid->blockId() +
                         ( 19383747 % ( global_grid->blockId() + 1 ) );
@@ -103,9 +103,9 @@ void performanceTest( std::ostream& stream,
         // Create FFT options
         Experimental::FastFourierTransformParams params;
 
-        auto fft =
-            Experimental::createHeffteFastFourierTransform<double, Device>(
-                *vector_layout, params );
+        auto fft = Experimental::createHeffteFastFourierTransform<double,
+                                                                  memory_space>(
+            *vector_layout, params );
 
         setup_timer.stop( p );
 

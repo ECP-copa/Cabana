@@ -40,7 +40,7 @@ void testAtomicOr()
                 }
     Kokkos::deep_copy( tile_insert_record, tile_insert_record_mirror );
 
-    Kokkos::View<bool[size][size][size], TEST_DEVICE> tile_label( "label" );
+    Kokkos::View<bool[size][size][size], TEST_MEMSPACE> tile_label( "label" );
 
     TEST_EXECSPACE().fence();
     Kokkos::parallel_for(
@@ -89,7 +89,7 @@ void testAtomicOrPro()
                 }
     Kokkos::deep_copy( tile_insert_record, tile_insert_record_mirror );
 
-    Kokkos::View<bool[size][size][size], TEST_DEVICE> tile_label( "label" );
+    Kokkos::View<bool[size][size][size], TEST_MEMSPACE> tile_label( "label" );
 
     TEST_EXECSPACE().fence();
     Kokkos::parallel_for(
@@ -128,10 +128,10 @@ void testTileSpace()
     constexpr int size_bit = SizeBit;
     constexpr int size = Size;
     using TIS = TileMap<size_bit, size, size * size>;
-    Kokkos::View<int[size][size][size], TEST_DEVICE> offset_res( "offset" );
-    Kokkos::View<int[size][size][size], TEST_DEVICE> i_res( "i" );
-    Kokkos::View<int[size][size][size], TEST_DEVICE> j_res( "j" );
-    Kokkos::View<int[size][size][size], TEST_DEVICE> k_res( "k" );
+    Kokkos::View<int[size][size][size], TEST_MEMSPACE> offset_res( "offset" );
+    Kokkos::View<int[size][size][size], TEST_MEMSPACE> i_res( "i" );
+    Kokkos::View<int[size][size][size], TEST_MEMSPACE> j_res( "j" );
+    Kokkos::View<int[size][size][size], TEST_MEMSPACE> k_res( "k" );
     TIS tis;
     Kokkos::parallel_for(
         Kokkos::RangePolicy<TEST_EXECSPACE>( 0, size ),
@@ -183,9 +183,9 @@ void testBlockSpace()
              cell_num_per_tile, HashType, key_type, value_type>
         bis( size, size, size, pre_alloc_size );
 
-    Kokkos::View<int[size][size][size], TEST_DEVICE> i_res( "i" );
-    Kokkos::View<int[size][size][size], TEST_DEVICE> j_res( "j" );
-    Kokkos::View<int[size][size][size], TEST_DEVICE> k_res( "k" );
+    Kokkos::View<int[size][size][size], TEST_MEMSPACE> i_res( "i" );
+    Kokkos::View<int[size][size][size], TEST_MEMSPACE> j_res( "j" );
+    Kokkos::View<int[size][size][size], TEST_MEMSPACE> k_res( "k" );
     TEST_EXECSPACE().fence();
     Kokkos::parallel_for(
         Kokkos::RangePolicy<TEST_EXECSPACE>( 0, size ), KOKKOS_LAMBDA( int i ) {
@@ -218,7 +218,8 @@ void testBlockSpace()
             }
     bool test[size * size * size];
 
-    Kokkos::View<int[size * size * size], TEST_DEVICE> id_find_res( "id_find" );
+    Kokkos::View<int[size * size * size], TEST_MEMSPACE> id_find_res(
+        "id_find" );
     Kokkos::parallel_for(
         Kokkos::RangePolicy<TEST_EXECSPACE>( 0, size ), KOKKOS_LAMBDA( int i ) {
             for ( int j = 0; j < size; j++ )
@@ -286,8 +287,8 @@ void testSparseMapFullInsert()
     auto cnt = sis.cell_num_per_tile;
     EXPECT_EQ( cnt, 64 );
 
-    Kokkos::View<int***, TEST_DEVICE> qid_res( "query_id", size[0], size[1],
-                                               size[2] );
+    Kokkos::View<int***, TEST_MEMSPACE> qid_res( "query_id", size[0], size[1],
+                                                 size[2] );
 
     Kokkos::parallel_for(
         Kokkos::RangePolicy<TEST_EXECSPACE>( 0, size_per_dim ),
@@ -403,14 +404,14 @@ void testSparseMapSparseInsert()
                       tile_j * size_tile_per_dim + tile_k] = 1;
     }
     int valid_cell_num = cell_register.size();
-    Kokkos::View<int*, TEST_DEVICE> dev_cell_1did( "cell_ids_1d_dev",
-                                                   insert_cell_num );
+    Kokkos::View<int*, TEST_MEMSPACE> dev_cell_1did( "cell_ids_1d_dev",
+                                                     insert_cell_num );
     Kokkos::deep_copy( dev_cell_1did, host_cell_1did );
 
-    Kokkos::View<int*, TEST_DEVICE> qtkey_res( "query_tile_key",
-                                               insert_cell_num );
-    Kokkos::View<int*, TEST_DEVICE> qtid_res( "query_tile_id",
-                                              insert_cell_num );
+    Kokkos::View<int*, TEST_MEMSPACE> qtkey_res( "query_tile_key",
+                                                 insert_cell_num );
+    Kokkos::View<int*, TEST_MEMSPACE> qtid_res( "query_tile_id",
+                                                insert_cell_num );
 
     Kokkos::parallel_for(
         Kokkos::RangePolicy<TEST_EXECSPACE>( 0, insert_cell_num ),
@@ -515,7 +516,7 @@ void testSparseMapReinsert()
     auto sis = createSparseMap<TEST_EXECSPACE>( global_mesh, pre_alloc_size );
 
     constexpr int insert_cell_num = 50;
-    Kokkos::View<int*, TEST_DEVICE> qid_res( "query_id", insert_cell_num );
+    Kokkos::View<int*, TEST_MEMSPACE> qid_res( "query_id", insert_cell_num );
     Kokkos::View<int*, Kokkos::HostSpace> host_cell_1did( "cell_ids_1d",
                                                           insert_cell_num );
     std::map<int, int> cell_register;
@@ -532,8 +533,8 @@ void testSparseMapReinsert()
                       tile_j * size_tile_per_dim + tile_k] = 1;
     }
     int valid_cell_num = cell_register.size();
-    Kokkos::View<int*, TEST_DEVICE> dev_cell_1did( "cell_ids_1d_dev",
-                                                   insert_cell_num );
+    Kokkos::View<int*, TEST_MEMSPACE> dev_cell_1did( "cell_ids_1d_dev",
+                                                     insert_cell_num );
     Kokkos::deep_copy( dev_cell_1did, host_cell_1did );
 
     Kokkos::parallel_for(

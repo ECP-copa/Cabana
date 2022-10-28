@@ -32,7 +32,7 @@ using namespace Cajita;
 namespace Test
 {
 //---------------------------------------------------------------------------//
-template <class Scalar, class EntityType, int SplineOrder, class DeviceType,
+template <class Scalar, class EntityType, int SplineOrder, class MemorySpace,
           class DataTags>
 struct PointSet
 {
@@ -53,9 +53,8 @@ struct PointSet
     using spline_data_tags = DataTags;
 
     // Kokkos types.
-    using device_type = DeviceType;
-    using execution_space = typename device_type::execution_space;
-    using memory_space = typename device_type::memory_space;
+    using memory_space = MemorySpace;
+    using execution_space = typename memory_space::execution_space;
 
     // Number of points.
     std::size_t num_point;
@@ -64,24 +63,24 @@ struct PointSet
     std::size_t num_alloc;
 
     // Physical cell size. (point,dim)
-    Kokkos::View<Scalar* [3], device_type> cell_size;
+    Kokkos::View<Scalar* [3], memory_space> cell_size;
 
     // Point logical position. (point,dim)
-    Kokkos::View<Scalar* [3], device_type> logical_coords;
+    Kokkos::View<Scalar* [3], memory_space> logical_coords;
 
     // Point mesh stencil. (point,ns,dim)
-    Kokkos::View<int* [ns][3], device_type> stencil;
+    Kokkos::View<int* [ns][3], memory_space> stencil;
 
     // Point basis values at entities in stencil. (point,ns,dim)
-    Kokkos::View<Scalar* [ns][3], device_type> value;
+    Kokkos::View<Scalar* [ns][3], memory_space> value;
 
     // Point basis gradient values at entities in stencil
     // (point,ni,nj,nk,dim)
-    Kokkos::View<Scalar* [ns][ns][ns][3], device_type> gradient;
+    Kokkos::View<Scalar* [ns][ns][ns][3], memory_space> gradient;
 
     // Point basis distance values at entities in stencil
     // (point,ns,dim)
-    Kokkos::View<Scalar* [ns][3], device_type> distance;
+    Kokkos::View<Scalar* [ns][3], memory_space> distance;
 
     // Mesh uniform cell size.
     Scalar dx;
@@ -195,9 +194,7 @@ void updatePointSet( const LocalMeshType& local_mesh, EntityType,
 //---------------------------------------------------------------------------//
 template <class DataTags, class PointCoordinates, class EntityType,
           int SplineOrder>
-PointSet<typename PointCoordinates::value_type, EntityType, SplineOrder,
-         typename PointCoordinates::device_type, DataTags>
-createPointSet(
+auto createPointSet(
     const PointCoordinates& points, const std::size_t num_point,
     const std::size_t num_alloc,
     const LocalGrid<UniformMesh<typename PointCoordinates::value_type>>&
@@ -206,10 +203,10 @@ createPointSet(
 {
     using scalar_type = typename PointCoordinates::value_type;
 
-    using device_type = typename PointCoordinates::device_type;
+    using memory_space = typename PointCoordinates::memory_space;
 
     using set_type =
-        PointSet<scalar_type, EntityType, SplineOrder, device_type, DataTags>;
+        PointSet<scalar_type, EntityType, SplineOrder, memory_space, DataTags>;
 
     set_type point_set;
 
@@ -221,28 +218,28 @@ createPointSet(
     point_set.num_point = num_point;
     point_set.num_alloc = num_alloc;
 
-    point_set.cell_size = Kokkos::View<scalar_type* [3], device_type>(
+    point_set.cell_size = Kokkos::View<scalar_type* [3], memory_space>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::cell_size" ),
         num_alloc );
 
-    point_set.logical_coords = Kokkos::View<scalar_type* [3], device_type>(
+    point_set.logical_coords = Kokkos::View<scalar_type* [3], memory_space>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::logical_coords" ),
         num_alloc );
 
-    point_set.stencil = Kokkos::View<int* [ns][3], device_type>(
+    point_set.stencil = Kokkos::View<int* [ns][3], memory_space>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::stencil" ),
         num_alloc );
 
-    point_set.value = Kokkos::View<scalar_type* [ns][3], device_type>(
+    point_set.value = Kokkos::View<scalar_type* [ns][3], memory_space>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::value" ),
         num_alloc );
 
     point_set.gradient =
-        Kokkos::View<scalar_type* [ns][ns][ns][3], device_type>(
+        Kokkos::View<scalar_type* [ns][ns][ns][3], memory_space>(
             Kokkos::ViewAllocateWithoutInitializing( "PointSet::gradients" ),
             num_alloc );
 
-    point_set.distance = Kokkos::View<scalar_type* [ns][3], device_type>(
+    point_set.distance = Kokkos::View<scalar_type* [ns][3], memory_space>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::distance" ),
         num_alloc );
 
@@ -281,12 +278,12 @@ void splineEvaluationTest()
     // Create a local grid.
     int halo_width = 1;
     auto local_grid = createLocalGrid( global_grid, halo_width );
-    auto local_mesh = createLocalMesh<TEST_DEVICE>( *local_grid );
+    auto local_mesh = createLocalMesh<TEST_MEMSPACE>( *local_grid );
 
     // Create a point in the center of every cell.
     auto cell_space = local_grid->indexSpace( Own(), Cell(), Local() );
     int num_point = cell_space.size();
-    Kokkos::View<double* [3], TEST_DEVICE> points(
+    Kokkos::View<double* [3], TEST_MEMSPACE> points(
         Kokkos::ViewAllocateWithoutInitializing( "points" ), num_point );
     Kokkos::parallel_for(
         "fill_points", createExecutionPolicy( cell_space, TEST_EXECSPACE() ),

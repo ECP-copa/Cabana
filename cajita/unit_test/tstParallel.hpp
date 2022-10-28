@@ -38,7 +38,7 @@ struct ReduceTag
 
 struct TestFunctor1
 {
-    Kokkos::View<double*, TEST_DEVICE> v;
+    Kokkos::View<double*, TEST_MEMSPACE> v;
 
     KOKKOS_INLINE_FUNCTION
     void operator()( const ForTag&, const int i ) const { v( i ) = 2.0; }
@@ -52,7 +52,7 @@ struct TestFunctor1
 
 struct TestFunctor2
 {
-    Kokkos::View<double**, TEST_DEVICE> v;
+    Kokkos::View<double**, TEST_MEMSPACE> v;
 
     KOKKOS_INLINE_FUNCTION
     void operator()( const ForTag&, const int i, const int j ) const
@@ -70,7 +70,7 @@ struct TestFunctor2
 
 struct TestFunctorArray
 {
-    Kokkos::View<double****, TEST_DEVICE> v;
+    Kokkos::View<double****, TEST_MEMSPACE> v;
 
     KOKKOS_INLINE_FUNCTION
     void operator()( const ForTag&, const int i, const int j,
@@ -97,7 +97,7 @@ void parallelIndexSpaceTest()
     int max_i = 8;
     int size_i = 12;
     IndexSpace<1> is1( { min_i }, { max_i } );
-    Kokkos::View<double*, TEST_DEVICE> v1( "v1", size_i );
+    Kokkos::View<double*, TEST_MEMSPACE> v1( "v1", size_i );
     grid_parallel_for(
         "fill_rank_1", TEST_EXECSPACE(), is1,
         KOKKOS_LAMBDA( const int i ) { v1( i ) = 1.0; } );
@@ -143,7 +143,7 @@ void parallelIndexSpaceTest()
     int max_j = 9;
     int size_j = 18;
     IndexSpace<2> is2( { min_i, min_j }, { max_i, max_j } );
-    Kokkos::View<double**, TEST_DEVICE> v2( "v2", size_i, size_j );
+    Kokkos::View<double**, TEST_MEMSPACE> v2( "v2", size_i, size_j );
     grid_parallel_for(
         "fill_rank_2", TEST_EXECSPACE(), is2,
         KOKKOS_LAMBDA( const int i, const int j ) { v2( i, j ) = 1.0; } );
@@ -222,7 +222,7 @@ void parallelLocalGridTest()
 
     // Create an array.
     std::string label( "test_array" );
-    auto array = createArray<double, TEST_DEVICE>( label, cell_layout );
+    auto array = createArray<double, TEST_MEMSPACE>( label, cell_layout );
 
     // Assign a value to the entire the array.
     auto array_view = array->view();

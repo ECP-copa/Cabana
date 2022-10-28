@@ -142,9 +142,10 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
         int num_tiles_per_dim = num_cells_per_dim[c] >> cell_bits_per_tile_dim;
 
         // set up partitioner
-        Cajita::SparseDimPartitioner<Device, cell_num_per_tile_dim> partitioner(
-            comm, max_workload_coeff, max_par_num, num_step_rebalance,
-            global_num_cell, max_optimize_iteration );
+        Cajita::SparseDimPartitioner<memory_space, cell_num_per_tile_dim>
+            partitioner( comm, max_workload_coeff, max_par_num,
+                         num_step_rebalance, global_num_cell,
+                         max_optimize_iteration );
         auto ranks_per_dim =
             partitioner.ranksPerDimension( comm, global_num_cell );
         auto ave_partition =
@@ -231,6 +232,8 @@ void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
                       std::vector<int> num_cells_per_dim )
 {
     using exec_space = typename Device::execution_space;
+    using memory_space = typename Device::memory_space;
+
     // Domain size setup
     std::array<float, 3> global_low_corner = { 0.0, 0.0, 0.0 };
     std::array<float, 3> global_high_corner = { 1.0, 1.0, 1.0 };
@@ -267,15 +270,16 @@ void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
 
         // Generate a random set of occupied tiles
         auto tiles_host = generateRandomTileSequence( num_tiles_per_dim );
-        auto tiles_view = Kokkos::create_mirror_view_and_copy(
-            typename Device::memory_space(), tiles_host );
+        auto tiles_view =
+            Kokkos::create_mirror_view_and_copy( memory_space(), tiles_host );
 
         // set up partitioner
         auto total_num =
             num_tiles_per_dim * num_tiles_per_dim * num_tiles_per_dim;
-        Cajita::SparseDimPartitioner<Device, cell_num_per_tile_dim> partitioner(
-            comm, max_workload_coeff, total_num, num_step_rebalance,
-            global_num_cell, max_optimize_iteration );
+        Cajita::SparseDimPartitioner<memory_space, cell_num_per_tile_dim>
+            partitioner( comm, max_workload_coeff, total_num,
+                         num_step_rebalance, global_num_cell,
+                         max_optimize_iteration );
         auto ranks_per_dim =
             partitioner.ranksPerDimension( comm, global_num_cell );
         auto ave_partition =

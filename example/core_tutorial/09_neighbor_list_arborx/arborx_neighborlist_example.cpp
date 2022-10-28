@@ -38,14 +38,12 @@ void arborxNeighborListExample()
     using DataTypes = Cabana::MemberTypes<double[3], int>;
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
-    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 81;
-    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "A", num_tuple );
+    Cabana::AoSoA<DataTypes, MemorySpace, VectorLength> aosoa( "A", num_tuple );
 
     /*
       Create the particle ids.

@@ -180,7 +180,7 @@ void gatherScatterTest( const ManualBlockPartitioner<2>& partitioner,
         // Create a cell array.
         auto layout =
             createArrayLayout( global_grid, array_halo_width, 4, Cell() );
-        auto array = createArray<double, TEST_DEVICE>( "array", layout );
+        auto array = createArray<double, TEST_MEMSPACE>( "array", layout );
 
         // Assign the owned cells a value of 1 and the rest 0.
         ArrayOp::assign( *array, 0.0, Ghost() );
@@ -210,22 +210,22 @@ void gatherScatterTest( const ManualBlockPartitioner<2>& partitioner,
         auto cell_layout =
             createArrayLayout( global_grid, array_halo_width, 4, Cell() );
         auto cell_array =
-            createArray<double, TEST_DEVICE>( "cell_array", cell_layout );
+            createArray<double, TEST_MEMSPACE>( "cell_array", cell_layout );
 
         auto node_layout =
             createArrayLayout( global_grid, array_halo_width, 3, Node() );
         auto node_array =
-            createArray<float, TEST_DEVICE>( "node_array", node_layout );
+            createArray<float, TEST_MEMSPACE>( "node_array", node_layout );
 
         auto face_i_layout = createArrayLayout( global_grid, array_halo_width,
                                                 4, Face<Dim::I>() );
         auto face_i_array =
-            createArray<double, TEST_DEVICE>( "face_i_array", face_i_layout );
+            createArray<double, TEST_MEMSPACE>( "face_i_array", face_i_layout );
 
         auto face_j_layout = createArrayLayout( global_grid, array_halo_width,
                                                 1, Face<Dim::J>() );
         auto face_j_array =
-            createArray<double, TEST_DEVICE>( "face_j_array", face_j_layout );
+            createArray<double, TEST_MEMSPACE>( "face_j_array", face_j_layout );
 
         // Assign the owned cells a value of 1 and the rest 0.
         ArrayOp::assign( *cell_array, 0.0, Ghost() );
@@ -333,7 +333,7 @@ void scatterReduceTest( const ReduceFunc& reduce )
     int dofs_per_cell = 4;
     auto cell_layout = createArrayLayout( global_grid, array_halo_width,
                                           dofs_per_cell, Cell() );
-    auto array = createArray<double, TEST_DEVICE>( "array", cell_layout );
+    auto array = createArray<double, TEST_MEMSPACE>( "array", cell_layout );
 
     // Assign the rank to the array.
     int comm_rank;

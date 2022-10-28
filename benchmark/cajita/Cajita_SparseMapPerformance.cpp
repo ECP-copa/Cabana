@@ -63,10 +63,10 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
     // Some helper views
     int max_num_tiles_per_dim =
         num_cells_per_dim.back() / cell_num_per_tile_dim;
-    Kokkos::View<uint64_t***, Device> tile_ids(
+    Kokkos::View<uint64_t***, memory_space> tile_ids(
         Kokkos::ViewAllocateWithoutInitializing( "tile_ids" ),
         max_num_tiles_per_dim, max_num_tiles_per_dim, max_num_tiles_per_dim );
-    Kokkos::View<bool***, Device> is_tile_valid(
+    Kokkos::View<bool***, memory_space> is_tile_valid(
         Kokkos::ViewAllocateWithoutInitializing( "is_tile_valid" ),
         max_num_tiles_per_dim, max_num_tiles_per_dim, max_num_tiles_per_dim );
 
