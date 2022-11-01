@@ -50,9 +50,8 @@ void calculateFFT( bool use_default, bool use_params,
 
     if ( use_default && use_params )
     {
-        auto fft =
-            Experimental::createHeffteFastFourierTransform<double, TEST_DEVICE>(
-                *vector_layout, params );
+        auto fft = Experimental::createHeffteFastFourierTransform<
+            double, TEST_MEMSPACE>( *vector_layout, params );
         // Forward transform
         fft->forward( *lhs, Experimental::FFTScaleFull() );
         // Reverse transform
@@ -60,9 +59,8 @@ void calculateFFT( bool use_default, bool use_params,
     }
     else if ( use_default )
     {
-        auto fft =
-            Experimental::createHeffteFastFourierTransform<double, TEST_DEVICE>(
-                *vector_layout );
+        auto fft = Experimental::createHeffteFastFourierTransform<
+            double, TEST_MEMSPACE>( *vector_layout );
         fft->forward( *lhs, Experimental::FFTScaleFull() );
         fft->reverse( *lhs, Experimental::FFTScaleNone() );
     }
@@ -71,14 +69,14 @@ void calculateFFT( bool use_default, bool use_params,
     else if ( use_params )
     {
         auto fft = Experimental::createHeffteFastFourierTransform<
-            double, TEST_DEVICE, HostBackendType>( *vector_layout, params );
+            double, TEST_MEMSPACE, HostBackendType>( *vector_layout, params );
         fft->forward( *lhs, Experimental::FFTScaleFull() );
         fft->reverse( *lhs, Experimental::FFTScaleNone() );
     }
     else
     {
         auto fft = Experimental::createHeffteFastFourierTransform<
-            double, TEST_DEVICE, HostBackendType>( *vector_layout );
+            double, TEST_MEMSPACE, HostBackendType>( *vector_layout );
         fft->forward( *lhs, Experimental::FFTScaleFull() );
         fft->reverse( *lhs, Experimental::FFTScaleNone() );
     }
