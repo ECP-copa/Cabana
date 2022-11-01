@@ -127,10 +127,9 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                 // Create the neighbor list.
                 double cutoff = cutoff_ratios[c];
                 create_timer.start( pid );
-                auto const nlist =
-                    Cabana::Experimental::make2DNeighborList<Device>(
-                        ListTag{}, Cabana::slice<0>( aosoas[p], "position" ), 0,
-                        num_p, cutoff );
+                auto const nlist = Cabana::Experimental::make2DNeighborList(
+                    ListTag{}, Cabana::slice<0>( aosoas[p], "position" ), 0,
+                    num_p, cutoff );
                 create_timer.stop( pid );
 
                 // Iterate through the neighbor list.

@@ -87,7 +87,7 @@ void arborxNeighborListExample()
       "make2DNeighborList" is provided.
      */
     double neighborhood_radius = 0.25;
-    auto neighbor_list = Cabana::Experimental::makeNeighborList<DeviceType>(
+    auto neighbor_list = Cabana::Experimental::makeNeighborList(
         Cabana::FullNeighborTag{}, positions, 0, positions.size(),
         neighborhood_radius );
 
