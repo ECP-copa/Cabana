@@ -1291,18 +1291,18 @@ class SparseHalo
   \param pattern The pattern to build the sparse halo from.
   \param array The sparse array over which to build the halo.
 */
-template <class DeviceType, unsigned long long cellBitsPerTileDim,
+template <class MemorySpace, unsigned long long cellBitsPerTileDim,
           class DataTypes, class EntityType, class MeshType,
           class SparseMapType, class Pattern, typename Value = int,
           typename Key = uint64_t>
 auto createSparseHalo(
     const Pattern& pattern,
-    const std::shared_ptr<
-        SparseArray<DataTypes, DeviceType, EntityType, MeshType, SparseMapType>>
+    const std::shared_ptr<SparseArray<DataTypes, MemorySpace, EntityType,
+                                      MeshType, SparseMapType>>
         array )
 {
-    using array_type =
-        SparseArray<DataTypes, DeviceType, EntityType, MeshType, SparseMapType>;
+    using array_type = SparseArray<DataTypes, MemorySpace, EntityType, MeshType,
+                                   SparseMapType>;
     using memory_space = typename array_type::memory_space;
     static constexpr std::size_t num_space_dim = array_type::num_space_dim;
     return std::make_shared<

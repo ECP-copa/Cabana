@@ -247,14 +247,12 @@ class Array
         std::conditional_t<2 == num_space_dim,
                            Kokkos::View<value_type***, Params...>, void>>;
 
-    //! Device type.
-    using device_type = typename view_type::device_type;
-
     //! Memory space.
     using memory_space = typename view_type::memory_space;
-
-    //! Execution space.
-    using execution_space = typename view_type::execution_space;
+    //! Default device type.
+    using device_type [[deprecated]] = typename memory_space::device_type;
+    //! Default execution space.
+    using execution_space = typename memory_space::execution_space;
 
     /*!
       \brief Create an array with the given layout. Arrays are constructed
@@ -310,7 +308,7 @@ class Array
     using subview_memory_traits = typename subview_type::memory_traits;
     //! Subarray type.
     using subarray_type = Array<Scalar, EntityType, MeshType, subview_layout,
-                                device_type, subview_memory_traits>;
+                                memory_space, subview_memory_traits>;
 };
 
 //---------------------------------------------------------------------------//
@@ -368,7 +366,7 @@ template <class Scalar, class EntityType, class MeshType, class... Params>
 std::shared_ptr<Array<
     Scalar, EntityType, MeshType,
     typename Array<Scalar, EntityType, MeshType, Params...>::subview_layout,
-    typename Array<Scalar, EntityType, MeshType, Params...>::device_type,
+    typename Array<Scalar, EntityType, MeshType, Params...>::memory_space,
     typename Array<Scalar, EntityType, MeshType,
                    Params...>::subview_memory_traits>>
 createSubarray( const Array<Scalar, EntityType, MeshType, Params...>& array,
@@ -394,7 +392,7 @@ createSubarray( const Array<Scalar, EntityType, MeshType, Params...>& array,
     return std::make_shared<Array<
         Scalar, EntityType, MeshType,
         typename Array<Scalar, EntityType, MeshType, Params...>::subview_layout,
-        typename Array<Scalar, EntityType, MeshType, Params...>::device_type,
+        typename Array<Scalar, EntityType, MeshType, Params...>::memory_space,
         typename Array<Scalar, EntityType, MeshType,
                        Params...>::subview_memory_traits>>( sub_layout,
                                                             sub_view );
@@ -501,7 +499,7 @@ scale( Array_t& array, const std::vector<typename Array_t::value_type>& alpha,
                  Kokkos::MemoryUnmanaged>
         alpha_view_host( alpha.data(), alpha.size() );
     auto alpha_view = Kokkos::create_mirror_view_and_copy(
-        typename Array_t::device_type(), alpha_view_host );
+        typename Array_t::memory_space(), alpha_view_host );
 
     auto array_view = array.view();
     Kokkos::parallel_for(
@@ -534,7 +532,7 @@ scale( Array_t& array, const std::vector<typename Array_t::value_type>& alpha,
                  Kokkos::MemoryUnmanaged>
         alpha_view_host( alpha.data(), alpha.size() );
     auto alpha_view = Kokkos::create_mirror_view_and_copy(
-        typename Array_t::device_type(), alpha_view_host );
+        typename Array_t::memory_space(), alpha_view_host );
 
     auto array_view = array.view();
     Kokkos::parallel_for(

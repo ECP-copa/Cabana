@@ -798,76 +798,65 @@ KOKKOS_INLINE_FUNCTION
 /*!
  \brief Global Grid-to-Point interpolation.
 
+  \tparam ExecutionSpace Kokkos execution space.
   \tparam PointEvalFunctor Functor type used to evaluate the interpolated data
   for a given point at a given entity.
-
   \tparam PointCoordinates Container type with view traits containing the
   point coordinates. Will be indexed as (point,dim).
-
   \tparam ArrayScalar The scalar type used for the interpolated data.
-
   \tparam MeshScalar The scalar type used for the geometry/interpolation data.
-
   \tparam NumSpaceDim The spatial dimension of the mesh.
-
   \tparam EntityType The entitytype to which the points will interpolate.
-
   \tparam SplineOrder The order of spline interpolation to use.
-
-  \tparam DeviceType The device type to use for interplation
-
+  \tparam MemorySpace The memory space to use for interplation
   \tparam ArrayParams Parameters for the array type.
 
   \param array The grid array from which the point data will be interpolated.
-
   \param halo The halo associated with the grid array. This hallo will be used
   to gather the array data before interpolation.
-
   \param points The points over which to perform the interpolation. Will be
   indexed as (point,dim). The subset of indices in each point's interpolation
   stencil must be contained within the local grid that will be used for the
   interpolation
-
   \param num_point The number of points. This is the size of the first
   dimension of points.
-
   \param functor A functor that interpolates from a given entity to a given
   point.
 
   \note Spline of SplineOrder passed for interpolation.
 */
-template <class PointEvalFunctor, class PointCoordinates, class ArrayScalar,
-          class MeshScalar, class EntityType, int SplineOrder,
-          std::size_t NumSpaceDim, class DeviceType, class... ArrayParams>
+template <class ExecutionSpace, class PointEvalFunctor, class PointCoordinates,
+          class ArrayScalar, class MeshScalar, class EntityType,
+          int SplineOrder, std::size_t NumSpaceDim, class MemorySpace,
+          class... ArrayParams>
 void g2p(
+    ExecutionSpace,
     const Array<ArrayScalar, EntityType, UniformMesh<MeshScalar, NumSpaceDim>,
                 ArrayParams...>& array,
-    const Halo<DeviceType>& halo, const PointCoordinates& points,
+    const Halo<MemorySpace>& halo, const PointCoordinates& points,
     const std::size_t num_point, Spline<SplineOrder>,
     const PointEvalFunctor& functor )
 {
     using array_type =
         Array<ArrayScalar, EntityType, UniformMesh<MeshScalar, NumSpaceDim>,
               ArrayParams...>;
-    static_assert( std::is_same<typename Halo<DeviceType>::memory_space,
-                                typename array_type::memory_space>::value,
-                   "Mismatching points/array memory space." );
-
-    using execution_space = typename DeviceType::execution_space;
+    static_assert(
+        std::is_same<MemorySpace, typename array_type::memory_space>::value,
+        "Mismatching points/array memory space." );
 
     // Create the local mesh.
     auto local_mesh =
-        createLocalMesh<DeviceType>( *( array.layout()->localGrid() ) );
+        createLocalMesh<MemorySpace>( *( array.layout()->localGrid() ) );
 
     // Gather data into the halo before interpolating.
-    halo.gather( execution_space(), array );
+    halo.gather( ExecutionSpace(), array );
 
     // Get a view of the array data.
     auto array_view = array.view();
 
     // Loop over points and interpolate from the grid.
     Kokkos::parallel_for(
-        "g2p", Kokkos::RangePolicy<execution_space>( 0, num_point ),
+        "g2p", Kokkos::RangePolicy<ExecutionSpace>( 0, num_point ),
         KOKKOS_LAMBDA( const int p ) {
             // Get the point coordinates.
             MeshScalar px[NumSpaceDim];
@@ -885,6 +874,52 @@ void g2p(
             // Evaluate the functor.
             functor( sd, p, array_view );
         } );
+}
+
+/*!
+ \brief Global Grid-to-Point interpolation.
+
+  \tparam PointEvalFunctor Functor type used to evaluate the interpolated data
+  for a given point at a given entity.
+  \tparam PointCoordinates Container type with view traits containing the
+  point coordinates. Will be indexed as (point,dim).
+  \tparam ArrayScalar The scalar type used for the interpolated data.
+  \tparam MeshScalar The scalar type used for the geometry/interpolation data.
+  \tparam NumSpaceDim The spatial dimension of the mesh.
+  \tparam EntityType The entitytype to which the points will interpolate.
+  \tparam SplineOrder The order of spline interpolation to use.
+  \tparam MemorySpace The memory space to use for interplation
+  \tparam ArrayParams Parameters for the array type.
+
+  \param array The grid array from which the point data will be interpolated.
+  \param halo The halo associated with the grid array. This hallo will be used
+  to gather the array data before interpolation.
+  \param points The points over which to perform the interpolation. Will be
+  indexed as (point,dim). The subset of indices in each point's interpolation
+  stencil must be contained within the local grid that will be used for the
+  interpolation
+  \param num_point The number of points. This is the size of the first
+  dimension of points.
+  \param functor A functor that interpolates from a given entity to a given
+  point.
+
+  \note Spline of SplineOrder passed for interpolation.
+*/
+template <class PointEvalFunctor, class PointCoordinates, class ArrayScalar,
+          class MeshScalar, class EntityType, int SplineOrder,
+          std::size_t NumSpaceDim, class MemorySpace, class... ArrayParams>
+void g2p(
+    const Array<ArrayScalar, EntityType, UniformMesh<MeshScalar, NumSpaceDim>,
+                ArrayParams...>& array,
+    const Halo<MemorySpace>& halo, const PointCoordinates& points,
+    const std::size_t num_point, Spline<SplineOrder>,
+    const PointEvalFunctor& functor )
+{
+    using exec_space = typename Array<ArrayScalar, EntityType,
+                                      UniformMesh<MeshScalar, NumSpaceDim>,
+                                      ArrayParams...>::execution_space;
+    g2p( exec_space{}, array, halo, points, num_point, Spline<SplineOrder>{},
+         functor );
 }
 
 //---------------------------------------------------------------------------//
@@ -1148,65 +1183,53 @@ createVectorDivergenceG2P( const ViewType& x,
 /*!
   \brief Global Point-to-Grid interpolation.
 
+  \tparam ExecutionSpace Kokkos execution space.
   \tparam PointEvalFunctor Functor type used to evaluate the interpolated data
   for a given point at a given entity.
-
   \tparam PointCoordinates Container type with view traits containing the
   point coordinates. Will be indexed as (point,dim).
-
   \tparam ArrayScalar The scalar type used for the interpolated data.
-
   \tparam MeshScalar The scalar type used for the geometry/interpolation data.
-
   \tparam NumSpaceDim The spatial dimension of the mesh.
-
   \tparam EntityType The entitytype to which the points will interpolate.
-
   \tparam SplineOrder The order of spline interpolation to use.
-
-  \tparam DeviceType The device type to use for interplation
-
+  \tparam MemorySpace The memory space to use for interplation
   \tparam ArrayParams Parameters for the array type.
 
   \param functor A functor that interpolates from a given point to a given
   entity.
-
   \param points The points over which to perform the interpolation. Will be
   indexed as (point,dim). The subset of indices in each point's interpolation
   stencil must be contained within the local grid that will be used for the
   interpolation
-
   \param num_point The number of points. This is the size of the first
   dimension of points.
-
   \param halo The halo associated with the grid array. This hallo will be used
   to scatter the interpolated data.
-
   \param array The grid array to which the point data will be interpolated.
 
   \note Spline of SplineOrder passed for interpolation.
 */
-template <class PointEvalFunctor, class PointCoordinates, class ArrayScalar,
-          class MeshScalar, std::size_t NumSpaceDim, class EntityType,
-          int SplineOrder, class DeviceType, class... ArrayParams>
-void p2g( const PointEvalFunctor& functor, const PointCoordinates& points,
-          const std::size_t num_point, Spline<SplineOrder>,
-          const Halo<DeviceType>& halo,
+template <class ExecutionSpace, class PointEvalFunctor, class PointCoordinates,
+          class ArrayScalar, class MeshScalar, std::size_t NumSpaceDim,
+          class EntityType, int SplineOrder, class MemorySpace,
+          class... ArrayParams>
+void p2g( ExecutionSpace, const PointEvalFunctor& functor,
+          const PointCoordinates& points, const std::size_t num_point,
+          Spline<SplineOrder>, const Halo<MemorySpace>& halo,
           Array<ArrayScalar, EntityType, UniformMesh<MeshScalar, NumSpaceDim>,
                 ArrayParams...>& array )
 {
     using array_type =
         Array<ArrayScalar, EntityType, UniformMesh<MeshScalar, NumSpaceDim>,
               ArrayParams...>;
-    static_assert( std::is_same<typename Halo<DeviceType>::memory_space,
-                                typename array_type::memory_space>::value,
-                   "Mismatching points/array memory space." );
-
-    using execution_space = typename DeviceType::execution_space;
+    static_assert(
+        std::is_same<MemorySpace, typename array_type::memory_space>::value,
+        "Mismatching points/array memory space." );
 
     // Create the local mesh.
     auto local_mesh =
-        createLocalMesh<DeviceType>( *( array.layout()->localGrid() ) );
+        createLocalMesh<MemorySpace>( *( array.layout()->localGrid() ) );
 
     // Create a scatter view of the array.
     auto array_view = array.view();
@@ -1214,7 +1237,7 @@ void p2g( const PointEvalFunctor& functor, const PointCoordinates& points,
 
     // Loop over points and interpolate to the grid.
     Kokkos::parallel_for(
-        "p2g", Kokkos::RangePolicy<execution_space>( 0, num_point ),
+        "p2g", Kokkos::RangePolicy<ExecutionSpace>( 0, num_point ),
         KOKKOS_LAMBDA( const int p ) {
             // Get the point coordinates.
             MeshScalar px[NumSpaceDim];
@@ -1236,7 +1259,52 @@ void p2g( const PointEvalFunctor& functor, const PointCoordinates& points,
 
     // Scatter interpolation contributions in the halo back to their owning
     // ranks.
-    halo.scatter( execution_space(), ScatterReduce::Sum(), array );
+    halo.scatter( ExecutionSpace(), ScatterReduce::Sum(), array );
+}
+
+/*!
+  \brief Global Point-to-Grid interpolation.
+
+  \tparam PointEvalFunctor Functor type used to evaluate the interpolated data
+  for a given point at a given entity.
+  \tparam PointCoordinates Container type with view traits containing the
+  point coordinates. Will be indexed as (point,dim).
+  \tparam ArrayScalar The scalar type used for the interpolated data.
+  \tparam MeshScalar The scalar type used for the geometry/interpolation data.
+  \tparam NumSpaceDim The spatial dimension of the mesh.
+  \tparam EntityType The entitytype to which the points will interpolate.
+  \tparam SplineOrder The order of spline interpolation to use.
+  \tparam MemorySpace The memory space to use for interplation
+  \tparam ArrayParams Parameters for the array type.
+
+  \param functor A functor that interpolates from a given point to a given
+  entity.
+  \param points The points over which to perform the interpolation. Will be
+  indexed as (point,dim). The subset of indices in each point's interpolation
+  stencil must be contained within the local grid that will be used for the
+  interpolation
+  \param num_point The number of points. This is the size of the first
+  dimension of points.
+  \param halo The halo associated with the grid array. This hallo will be used
+  to scatter the interpolated data.
+  \param array The grid array to which the point data will be interpolated.
+
+  \note Spline of SplineOrder passed for interpolation.
+*/
+template <class PointEvalFunctor, class PointCoordinates, class ArrayScalar,
+          class MeshScalar, std::size_t NumSpaceDim, class EntityType,
+          int SplineOrder, class MemorySpace, class... ArrayParams>
+void p2g( const PointEvalFunctor& functor, const PointCoordinates& points,
+          const std::size_t num_point, Spline<SplineOrder>,
+          const Halo<MemorySpace>& halo,
+          Array<ArrayScalar, EntityType, UniformMesh<MeshScalar, NumSpaceDim>,
+                ArrayParams...>& array )
+{
+    using exec_space = typename Array<ArrayScalar, EntityType,
+                                      UniformMesh<MeshScalar, NumSpaceDim>,
+                                      ArrayParams...>::execution_space;
+    p2g( exec_space{}, functor, points, num_point, Spline<SplineOrder>{}, halo,
+         array );
 }
 
 //---------------------------------------------------------------------------//

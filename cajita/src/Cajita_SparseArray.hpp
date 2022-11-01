@@ -21,6 +21,7 @@
 #include <Cajita_Types.hpp>
 
 #include <Cabana_AoSoA.hpp>
+#include <Cabana_Utils.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -302,25 +303,30 @@ auto createSparseArrayLayout(
   stored in AoSoA manner, with each tile being the SoA element
 
   \tparam DataTypes Data types (Cabana::MemberTypes).
-  \tparam DeviceType Device type.
+  \tparam MemorySpace Kokkos memory space.
   \tparam EntityType Array entity type (node, cell, face, edge).
   \tparam MeshType Mesh type (sparse mesh).
   \tparam SparseMapType Sparse map type.
 */
-template <class DataTypes, class DeviceType, class EntityType, class MeshType,
+template <class DataTypes, class MemorySpace, class EntityType, class MeshType,
           class SparseMapType>
 class SparseArray
 {
   public:
     //! self type
-    using sparse_array_type =
-        SparseArray<DataTypes, DeviceType, EntityType, MeshType, SparseMapType>;
-    //! Device type
-    using device_type = DeviceType;
-    //! Memory space type
-    using memory_space = typename device_type::memory_space;
-    //! Execution space type
-    using execution_space = typename device_type::execution_space;
+    using sparse_array_type = SparseArray<DataTypes, MemorySpace, EntityType,
+                                          MeshType, SparseMapType>;
+    // FIXME: extracting the self type for backwards compatibility with previous
+    // template on DeviceType. Should simply be MemorySpace after next release.
+    //! Memory space.
+    using memory_space = typename MemorySpace::memory_space;
+    // FIXME: replace warning with memory space assert after next release.
+    static_assert( Cabana::Impl::warn( Kokkos::is_device<MemorySpace>() ) );
+
+    //! Default device type.
+    using device_type [[deprecated]] = typename memory_space::device_type;
+    //! Default execution space.
+    using execution_space = typename memory_space::execution_space;
     //! Memory space size type
     using size_type = typename memory_space::size_type;
     //! Array entity type (node, cell, face, edge).
@@ -660,18 +666,18 @@ struct is_sparse_array : public std::false_type
 };
 
 //! Sparse array static type checker.
-template <class DataTypes, class DeviceType, class EntityType, class MeshType,
+template <class DataTypes, class MemorySpace, class EntityType, class MeshType,
           class SparseMapType>
 struct is_sparse_array<
-    SparseArray<DataTypes, DeviceType, EntityType, MeshType, SparseMapType>>
+    SparseArray<DataTypes, MemorySpace, EntityType, MeshType, SparseMapType>>
     : public std::true_type
 {
 };
 
 //! Sparse array static type checker.
-template <class DataTypes, class DeviceType, class EntityType, class MeshType,
+template <class DataTypes, class MemorySpace, class EntityType, class MeshType,
           class SparseMapType>
-struct is_sparse_array<const SparseArray<DataTypes, DeviceType, EntityType,
+struct is_sparse_array<const SparseArray<DataTypes, MemorySpace, EntityType,
                                          MeshType, SparseMapType>>
     : public std::true_type
 {
@@ -686,13 +692,13 @@ struct is_sparse_array<const SparseArray<DataTypes, DeviceType, EntityType,
   \param layout The sparse array layout.
   \return SparseArray
 */
-template <class DeviceType, class DataTypes, class EntityType, class MeshType,
+template <class MemorySpace, class DataTypes, class EntityType, class MeshType,
           class SparseMapType>
 auto createSparseArray(
     const std::string label,
     SparseArrayLayout<DataTypes, EntityType, MeshType, SparseMapType>& layout )
 {
-    return std::make_shared<SparseArray<DataTypes, DeviceType, EntityType,
+    return std::make_shared<SparseArray<DataTypes, MemorySpace, EntityType,
                                         MeshType, SparseMapType>>( label,
                                                                    layout );
 }
