@@ -19,6 +19,8 @@
 #include <Cajita_LocalGrid.hpp>
 #include <Cajita_Types.hpp>
 
+#include <Cabana_Utils.hpp>
+
 #include <Kokkos_Core.hpp>
 
 namespace Cajita
@@ -313,6 +315,9 @@ class LocalMesh<MemorySpace, NonUniformMesh<Scalar, NumSpaceDim>>
     // template on DeviceType. Should simply be MemorySpace after next release.
     //! Memory space.
     using memory_space = typename MemorySpace::memory_space;
+    // FIXME: replace warning with memory space assert after next release.
+    static_assert( Cabana::Impl::warn( Kokkos::is_device<MemorySpace>() ) );
+
     //! Default device type.
     using device_type [[deprecated]] = typename memory_space::device_type;
     //! Default execution space.

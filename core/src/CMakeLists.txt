@@ -29,6 +29,7 @@ set(HEADERS_PUBLIC
   Cabana_Sort.hpp
   Cabana_Tuple.hpp
   Cabana_Types.hpp
+  Cabana_Utils.hpp
   Cabana_VerletList.hpp
   Cabana_Version.hpp
   )

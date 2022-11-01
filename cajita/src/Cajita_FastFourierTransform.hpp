@@ -19,6 +19,8 @@
 #include <Cajita_Array.hpp>
 #include <Cajita_Types.hpp>
 
+#include <Cabana_Utils.hpp>
+
 #include <Kokkos_Core.hpp>
 
 #include <heffte_fft3d.h>
@@ -153,10 +155,14 @@ class FastFourierTransform
     using mesh_type = MeshType;
     //! Scalar value type.
     using value_type = Scalar;
+
     // FIXME: extracting the self type for backwards compatibility with previous
     // template on DeviceType. Should simply be MemorySpace after next release.
     //! Kokkos memory space.
     using memory_space = typename MemorySpace::memory_space;
+    // FIXME: replace warning with memory space assert after next release.
+    static_assert( Cabana::Impl::warn( Kokkos::is_device<MemorySpace>() ) );
+
     //! Kokkos execution space.
     using execution_space = typename memory_space::execution_space;
     //! Kokkos execution space.
@@ -479,10 +485,14 @@ class HeffteFastFourierTransform
   public:
     //! Scalar value type.
     using value_type = Scalar;
+
     // FIXME: extracting the self type for backwards compatibility with previous
     // template on DeviceType. Should simply be MemorySpace after next release.
     //! Kokkos memory space.
     using memory_space = typename MemorySpace::memory_space;
+    // FIXME: replace warning with memory space assert after next release.
+    static_assert( Cabana::Impl::warn( Kokkos::is_device<MemorySpace>() ) );
+
     //! Kokkos execution space.
     using execution_space = ExecSpace;
     //! Kokkos execution space.

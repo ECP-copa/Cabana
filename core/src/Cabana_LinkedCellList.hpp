@@ -18,6 +18,7 @@
 
 #include <Cabana_Slice.hpp>
 #include <Cabana_Sort.hpp>
+#include <Cabana_Utils.hpp>
 #include <impl/Cabana_CartesianGrid.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -42,6 +43,9 @@ class LinkedCellList
     // template on DeviceType. Should simply be MemorySpace after next release.
     //! Memory space.
     using memory_space = typename MemorySpace::memory_space;
+    // FIXME: replace warning with memory space assert after next release.
+    static_assert( Impl::warn( Kokkos::is_device<MemorySpace>() ) );
+
     //! Default device type.
     using device_type [[deprecated]] = typename memory_space::device_type;
     //! Default execution space.
