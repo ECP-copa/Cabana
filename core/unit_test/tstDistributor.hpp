@@ -27,12 +27,89 @@
 namespace Test
 {
 
+struct DistributorData
+{
+    // Create an AoSoA of local data with space allocated for local data.
+    using DataTypes = Cabana::MemberTypes<int, double[2]>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
+    using AoSoA_Host_t = Cabana::AoSoA<DataTypes, Kokkos::HostSpace>;
+    AoSoA_t aosoa;
+
+    DistributorData( const int num_data )
+    {
+        aosoa = AoSoA_t( "src", num_data );
+    }
+
+    AoSoA_t createSrcData1( const int num_data, const int my_rank )
+    {
+        auto slice_int_src = Cabana::slice<0>( aosoa );
+        auto slice_dbl_src = Cabana::slice<1>( aosoa );
+
+        // Fill the data.
+        auto fill_func = KOKKOS_LAMBDA( const int i )
+        {
+            slice_int_src( i ) = my_rank + i;
+            slice_dbl_src( i, 0 ) = my_rank + i;
+            slice_dbl_src( i, 1 ) = my_rank + i + 0.5;
+        };
+        Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
+        Kokkos::parallel_for( range_policy, fill_func );
+        Kokkos::fence();
+        return aosoa;
+    }
+
+    AoSoA_t createSrcData2( const int num_data, const int my_rank )
+    {
+        auto slice_int_src = Cabana::slice<0>( aosoa );
+        auto slice_dbl_src = Cabana::slice<1>( aosoa );
+
+        // Fill the data.
+        auto fill_func = KOKKOS_LAMBDA( const int i )
+        {
+            slice_int_src( i ) = my_rank;
+            slice_dbl_src( i, 0 ) = my_rank;
+            slice_dbl_src( i, 1 ) = my_rank + 0.5;
+        };
+        Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
+        Kokkos::parallel_for( range_policy, fill_func );
+        Kokkos::fence();
+        return aosoa;
+    }
+
+    AoSoA_t createDstData( const int num_data )
+    {
+        return AoSoA_t( "dst", num_data );
+    }
+
+    AoSoA_Host_t createHostData( const int num_data )
+    {
+        // Create empty host copy.
+        AoSoA_Host_t aosoa_host( "data_host", num_data );
+        return aosoa_host;
+    }
+};
+
+template <class ExportRankView>
+auto createDistributor( ExportRankView export_ranks,
+                        const std::vector<int> neighbor_ranks,
+                        const int use_topology )
+{
+    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
+
+    // Create the plan.
+    if ( use_topology )
+        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
+            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
+    else
+        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
+            MPI_COMM_WORLD, export_ranks );
+
+    return distributor;
+}
+
 //---------------------------------------------------------------------------//
 void test1( const bool use_topology )
 {
-    // Make a communication plan.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
-
     // Get my rank.
     int my_rank = -1;
     MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
@@ -43,34 +120,15 @@ void test1( const bool use_topology )
     Kokkos::deep_copy( export_ranks, my_rank );
     std::vector<int> neighbor_ranks( 1, my_rank );
 
-    // Create the plan.
-    if ( use_topology )
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
-    else
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks );
+    auto distributor =
+        createDistributor( export_ranks, neighbor_ranks, use_topology );
 
     // Make some data to migrate.
-    using DataTypes = Cabana::MemberTypes<int, double[2]>;
-    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
-    AoSoA_t data_src( "src", num_data );
-    auto slice_int_src = Cabana::slice<0>( data_src );
-    auto slice_dbl_src = Cabana::slice<1>( data_src );
-
-    // Fill the data.
-    auto fill_func = KOKKOS_LAMBDA( const int i )
-    {
-        slice_int_src( i ) = my_rank + i;
-        slice_dbl_src( i, 0 ) = my_rank + i;
-        slice_dbl_src( i, 1 ) = my_rank + i + 0.5;
-    };
-    Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
-    Kokkos::parallel_for( range_policy, fill_func );
-    Kokkos::fence();
+    DistributorData dist_data( num_data );
+    auto data_src = dist_data.createSrcData1( num_data, my_rank );
 
     // Create a second set of data to which we will migrate.
-    AoSoA_t data_dst( "dst", num_data );
+    auto data_dst = dist_data.createDstData( num_data );
     auto slice_int_dst = Cabana::slice<0>( data_dst );
     auto slice_dbl_dst = Cabana::slice<1>( data_dst );
 
@@ -78,8 +136,7 @@ void test1( const bool use_topology )
     Cabana::migrate( *distributor, data_src, data_dst );
 
     // Check the migration.
-    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_dst_host( "data_dst_host",
-                                                               num_data );
+    auto data_dst_host = dist_data.createHostData( num_data );
     auto slice_int_dst_host = Cabana::slice<0>( data_dst_host );
     auto slice_dbl_dst_host = Cabana::slice<1>( data_dst_host );
     Cabana::deep_copy( data_dst_host, data_dst );
@@ -99,9 +156,6 @@ void test1( const bool use_topology )
 //---------------------------------------------------------------------------//
 void test2( const bool use_topology )
 {
-    // Make a communication plan.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
-
     // Get my rank.
     int my_rank = -1;
     MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
@@ -117,44 +171,24 @@ void test2( const bool use_topology )
         TEST_MEMSPACE(), export_ranks_host );
     std::vector<int> neighbor_ranks( 1, my_rank );
 
-    // Create the plan
-    if ( use_topology )
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
-    else
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks );
+    auto distributor =
+        createDistributor( export_ranks, neighbor_ranks, use_topology );
 
     // Make some data to migrate.
-    using DataTypes = Cabana::MemberTypes<int, double[2]>;
-    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
-    AoSoA_t data( "data", num_data );
-    auto slice_int = Cabana::slice<0>( data );
-    auto slice_dbl = Cabana::slice<1>( data );
-
-    // Fill the data.
-    auto fill_func = KOKKOS_LAMBDA( const int i )
-    {
-        slice_int( i ) = my_rank + i;
-        slice_dbl( i, 0 ) = my_rank + i;
-        slice_dbl( i, 1 ) = my_rank + i + 0.5;
-    };
-    Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
-    Kokkos::parallel_for( range_policy, fill_func );
-    Kokkos::fence();
+    DistributorData dist_data( num_data );
+    auto data = dist_data.createSrcData1( num_data, my_rank );
 
     // Do the migration in-place
     Cabana::migrate( *distributor, data );
 
     // Get host copies of the migrated data.
-    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host( "data_host",
-                                                           num_data / 2 );
+    auto data_host = dist_data.createHostData( num_data / 2 );
     auto slice_int_host = Cabana::slice<0>( data_host );
     auto slice_dbl_host = Cabana::slice<1>( data_host );
     Cabana::deep_copy( data_host, data );
 
     // Check the migration. We received less than we sent so this should have
-    // resized the aososa.
+    // resized the aosoa.
     auto steering = distributor->getExportSteering();
     auto host_steering =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
@@ -172,9 +206,6 @@ void test2( const bool use_topology )
 //---------------------------------------------------------------------------//
 void test3( const bool use_topology )
 {
-    // Make a communication plan.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
-
     // Get my rank.
     int my_rank = -1;
     MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
@@ -192,34 +223,17 @@ void test3( const bool use_topology )
     Kokkos::deep_copy( export_ranks, inverse_rank );
     std::vector<int> neighbor_ranks( 1, inverse_rank );
 
-    // Create the plan with both export ranks and the topology.
-    if ( use_topology )
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
-    else
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks );
+    auto distributor =
+        createDistributor( export_ranks, neighbor_ranks, use_topology );
 
     // Make some data to migrate.
-    using DataTypes = Cabana::MemberTypes<int, double[2]>;
-    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
-    AoSoA_t data_src( "data_src", num_data );
+    DistributorData dist_data( num_data );
+    auto data_src = dist_data.createSrcData1( num_data, my_rank );
     auto slice_int_src = Cabana::slice<0>( data_src );
     auto slice_dbl_src = Cabana::slice<1>( data_src );
 
-    // Fill the data.
-    auto fill_func = KOKKOS_LAMBDA( const int i )
-    {
-        slice_int_src( i ) = my_rank + i;
-        slice_dbl_src( i, 0 ) = my_rank + i;
-        slice_dbl_src( i, 1 ) = my_rank + i + 0.5;
-    };
-    Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
-    Kokkos::parallel_for( range_policy, fill_func );
-    Kokkos::fence();
-
     // Create a second set of data to which we will migrate.
-    AoSoA_t data_dst( "data_dst", num_data );
+    auto data_dst = dist_data.createDstData( num_data );
     auto slice_int_dst = Cabana::slice<0>( data_dst );
     auto slice_dbl_dst = Cabana::slice<1>( data_dst );
 
@@ -246,8 +260,7 @@ void test3( const bool use_topology )
         Kokkos::HostSpace(), inverse_steering );
 
     // Check the migration.
-    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_dst_host( "data_dst_host",
-                                                               num_data );
+    auto data_dst_host = dist_data.createHostData( num_data );
     Cabana::deep_copy( data_dst_host, data_dst );
     auto slice_int_dst_host = Cabana::slice<0>( data_dst_host );
     auto slice_dbl_dst_host = Cabana::slice<1>( data_dst_host );
@@ -264,9 +277,6 @@ void test3( const bool use_topology )
 //---------------------------------------------------------------------------//
 void test4( const bool use_topology )
 {
-    // Make a communication plan.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
-
     // Get my rank.
     int my_rank = -1;
     MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
@@ -289,34 +299,17 @@ void test4( const bool use_topology )
     auto export_ranks = Kokkos::create_mirror_view_and_copy(
         TEST_MEMSPACE(), export_ranks_host );
 
-    // Create the plan
-    if ( use_topology )
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
-    else
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks );
+    auto distributor =
+        createDistributor( export_ranks, neighbor_ranks, use_topology );
 
     // Make some data to migrate.
-    using DataTypes = Cabana::MemberTypes<int, double[2]>;
-    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
-    AoSoA_t data_src( "data_src", num_data );
+    DistributorData dist_data( num_data );
+    auto data_src = dist_data.createSrcData2( num_data, my_rank );
     auto slice_int_src = Cabana::slice<0>( data_src );
     auto slice_dbl_src = Cabana::slice<1>( data_src );
 
-    // Fill the data.
-    auto fill_func = KOKKOS_LAMBDA( const int i )
-    {
-        slice_int_src( i ) = my_rank;
-        slice_dbl_src( i, 0 ) = my_rank;
-        slice_dbl_src( i, 1 ) = my_rank + 0.5;
-    };
-    Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
-    Kokkos::parallel_for( range_policy, fill_func );
-    Kokkos::fence();
-
     // Create a second set of data to which we will migrate.
-    AoSoA_t data_dst( "data_dst", num_data );
+    auto data_dst = dist_data.createDstData( num_data );
     auto slice_int_dst = Cabana::slice<0>( data_dst );
     auto slice_dbl_dst = Cabana::slice<1>( data_dst );
 
@@ -324,8 +317,7 @@ void test4( const bool use_topology )
     Cabana::migrate( *distributor, data_src, data_dst );
 
     // Check the migration.
-    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_dst_host( "data_dst_host",
-                                                               num_data );
+    auto data_dst_host = dist_data.createHostData( num_data );
     auto slice_int_dst_host = Cabana::slice<0>( data_dst_host );
     auto slice_dbl_dst_host = Cabana::slice<1>( data_dst_host );
     Cabana::deep_copy( data_dst_host, data_dst );
@@ -368,9 +360,6 @@ void test4( const bool use_topology )
 //---------------------------------------------------------------------------//
 void test5( const bool use_topology )
 {
-    // Make a communication plan.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
-
     // Get my rank.
     int my_rank = -1;
     MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
@@ -394,34 +383,17 @@ void test5( const bool use_topology )
     auto export_ranks = Kokkos::create_mirror_view_and_copy(
         TEST_MEMSPACE(), export_ranks_host );
 
-    // Create the plan
-    if ( use_topology )
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
-    else
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks );
+    auto distributor =
+        createDistributor( export_ranks, neighbor_ranks, use_topology );
 
     // Make some data to migrate.
-    using DataTypes = Cabana::MemberTypes<int, double[2]>;
-    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
-    AoSoA_t data_src( "data_src", num_data );
+    DistributorData dist_data( num_data );
+    auto data_src = dist_data.createSrcData2( num_data, my_rank );
     auto slice_int_src = Cabana::slice<0>( data_src );
     auto slice_dbl_src = Cabana::slice<1>( data_src );
 
-    // Fill the data.
-    auto fill_func = KOKKOS_LAMBDA( const int i )
-    {
-        slice_int_src( i ) = my_rank;
-        slice_dbl_src( i, 0 ) = my_rank;
-        slice_dbl_src( i, 1 ) = my_rank + 0.5;
-    };
-    Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
-    Kokkos::parallel_for( range_policy, fill_func );
-    Kokkos::fence();
-
     // Create a second set of data to which we will migrate.
-    AoSoA_t data_dst( "data_dst", my_size );
+    auto data_dst = dist_data.createDstData( my_size );
     auto slice_int_dst = Cabana::slice<0>( data_dst );
     auto slice_dbl_dst = Cabana::slice<1>( data_dst );
 
@@ -430,8 +402,7 @@ void test5( const bool use_topology )
     Cabana::migrate( *distributor, slice_dbl_src, slice_dbl_dst );
 
     // Check the migration.
-    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host( "data_host",
-                                                           my_size );
+    auto data_host = dist_data.createHostData( my_size );
     auto slice_int_host = Cabana::slice<0>( data_host );
     auto slice_dbl_host = Cabana::slice<1>( data_host );
     Cabana::deep_copy( data_host, data_dst );
@@ -462,9 +433,6 @@ void test5( const bool use_topology )
 //---------------------------------------------------------------------------//
 void test6( const bool use_topology )
 {
-    // Make a communication plan.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
-
     // Get my rank.
     int my_rank = -1;
     MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
@@ -488,31 +456,14 @@ void test6( const bool use_topology )
         neighbor_ranks.assign( 1, 0 );
     }
 
-    // Create the plan.
-    if ( use_topology )
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
-    else
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks );
+    auto distributor =
+        createDistributor( export_ranks, neighbor_ranks, use_topology );
 
     // Make some data to migrate.
-    using DataTypes = Cabana::MemberTypes<int, double[2]>;
-    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
-    AoSoA_t data( "data", num_data );
+    DistributorData dist_data( num_data );
+    auto data = dist_data.createSrcData2( num_data, my_rank );
     auto slice_int = Cabana::slice<0>( data );
     auto slice_dbl = Cabana::slice<1>( data );
-
-    // Fill the data.
-    auto fill_func = KOKKOS_LAMBDA( const int i )
-    {
-        slice_int( i ) = my_rank;
-        slice_dbl( i, 0 ) = my_rank;
-        slice_dbl( i, 1 ) = my_rank + 0.5;
-    };
-    Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
-    Kokkos::parallel_for( range_policy, fill_func );
-    Kokkos::fence();
 
     // Do the migration
     Cabana::migrate( *distributor, data );
@@ -524,8 +475,7 @@ void test6( const bool use_topology )
         EXPECT_EQ( data.size(), 0 );
 
     // Check the migration.
-    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host(
-        "data_host", distributor->totalNumImport() );
+    auto data_host = dist_data.createHostData( distributor->totalNumImport() );
     auto slice_int_host = Cabana::slice<0>( data_host );
     auto slice_dbl_host = Cabana::slice<1>( data_host );
     Cabana::deep_copy( data_host, data );
@@ -545,9 +495,6 @@ void test6( const bool use_topology )
 //---------------------------------------------------------------------------//
 void test7( const bool use_topology )
 {
-    // Make a communication plan.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
-
     // Get my rank.
     int my_rank = -1;
     MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
@@ -574,13 +521,8 @@ void test7( const bool use_topology )
         neighbor_ranks.assign( 1, 0 );
     }
 
-    // Create the plan.
-    if ( use_topology )
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
-    else
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks );
+    auto distributor =
+        createDistributor( export_ranks, neighbor_ranks, use_topology );
 
     // Make some data to migrate.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
@@ -619,9 +561,6 @@ void test7( const bool use_topology )
 //---------------------------------------------------------------------------//
 void test8( const bool use_topology )
 {
-    // Make a communication plan.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
-
     // Get my rank.
     int my_rank = -1;
     MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
@@ -653,13 +592,8 @@ void test8( const bool use_topology )
     neighbor_ranks[1] = my_rank;
     neighbor_ranks[2] = ( my_rank == my_size - 1 ) ? 0 : my_rank + 1;
 
-    // Create the plan.
-    if ( use_topology )
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
-    else
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks );
+    auto distributor =
+        createDistributor( export_ranks, neighbor_ranks, use_topology );
 
     // Make some data to migrate.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
@@ -703,9 +637,6 @@ void test8( const bool use_topology )
 //---------------------------------------------------------------------------//
 void test9( const bool use_topology )
 {
-    // Make a communication plan.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
-
     // Edge case where all particles will be removed - nothing is kept, sent, or
     // received.
     int num_data = 2;
@@ -716,18 +647,10 @@ void test9( const bool use_topology )
     Kokkos::parallel_for( range_policy, fill_ranks );
     Kokkos::fence();
 
-    // Create the plan.
-    if ( use_topology )
-    {
-        std::vector<int> neighbor_ranks;
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
-    }
-    else
-    {
-        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks );
-    }
+    std::vector<int> neighbor_ranks;
+
+    auto distributor =
+        createDistributor( export_ranks, neighbor_ranks, use_topology );
 
     // Make empty data to migrate.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;

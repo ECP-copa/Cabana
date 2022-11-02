@@ -288,7 +288,7 @@ class Gather<HaloType, AoSoAType,
         // Get the buffers and particle data (local copies for lambdas below).
         auto send_buffer = this->getSendBuffer();
         auto recv_buffer = this->getReceiveBuffer();
-        auto aosoa = this->getData();
+        auto aosoa = this->getParticles();
 
         // Get the steering vector for the sends.
         auto steering = _halo.getExportSteering();
@@ -460,7 +460,7 @@ class Gather<HaloType, SliceType,
         // Get the buffers (local copies for lambdas below).
         auto send_buffer = this->getSendBuffer();
         auto recv_buffer = this->getReceiveBuffer();
-        auto slice = this->getData();
+        auto slice = this->getParticles();
 
         // Get the number of components in the slice.
         std::size_t num_comp = this->getSliceComponents();
@@ -700,7 +700,7 @@ class Scatter
         // Get the buffers (local copies for lambdas below).
         auto send_buffer = this->getSendBuffer();
         auto recv_buffer = this->getReceiveBuffer();
-        auto slice = this->getData();
+        auto slice = this->getParticles();
 
         // Get the number of components in the slice.
         std::size_t num_comp = this->getSliceComponents();
