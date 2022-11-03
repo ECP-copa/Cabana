@@ -365,7 +365,7 @@ jobs:
             -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/hypre;$HOME/ALL" \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_FLAGS="-Wall -Wextra -pedantic -Werror" \
+            -DCMAKE_CXX_FLAGS="-Wall -Wextra -pedantic -Werror $([[ ${{ matrix.cxx }} == icpx ]] && echo -Wno-debug-disables-optimization)" \
             -DCabana_ENABLE_TESTING=ON \
             -DCabana_ENABLE_EXAMPLES=ON \
             -DCabana_ENABLE_PERFORMANCE_TESTING=ON \
