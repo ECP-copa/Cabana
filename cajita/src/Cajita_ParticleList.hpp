@@ -86,10 +86,12 @@ class MeshParticleList
             _aosoa, _mesh->minimumHaloWidth(), force_redistribute );
     }
 
-  private:
+  protected:
+    //! Particle AoSoA.
     using base::_aosoa;
     using base::_label;
 
+    //! Cajita mesh.
     std::shared_ptr<MeshType> _mesh;
 };
 

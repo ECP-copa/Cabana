@@ -250,7 +250,8 @@ class ParticleList
             _aosoa, FieldTag::label() );
     }
 
-  private:
+  protected:
+    //! Particle AoSoA.
     aosoa_type _aosoa;
     std::string _label;
 };
