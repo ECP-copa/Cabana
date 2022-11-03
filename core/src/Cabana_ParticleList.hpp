@@ -202,7 +202,6 @@ class ParticleList
     //! Default constructor.
     ParticleList( const std::string& label )
         : _aosoa( label )
-        , _label( label )
     {
     }
 
@@ -238,8 +237,8 @@ class ParticleList
         return particle_view_type( _aosoa.access( s ), a );
     }
 
-    //! Get the label.
-    const std::string& label() const { return _label; }
+    //! Get the AoSoA label.
+    const std::string& label() const { return _aosoa.label(); }
 
     //! Get a slice of a given field.
     template <class FieldTag>
@@ -253,7 +252,6 @@ class ParticleList
   protected:
     //! Particle AoSoA.
     aosoa_type _aosoa;
-    std::string _label;
 };
 
 //---------------------------------------------------------------------------//

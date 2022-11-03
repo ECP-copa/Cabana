@@ -89,8 +89,6 @@ class MeshParticleList
   protected:
     //! Particle AoSoA.
     using base::_aosoa;
-    using base::_label;
-
     //! Cajita mesh.
     std::shared_ptr<MeshType> _mesh;
 };
