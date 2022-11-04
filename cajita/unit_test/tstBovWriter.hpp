@@ -145,7 +145,7 @@ void writeTest3d()
                     cell_data_file.seekg( cell_id * sizeof( double ) );
                     cell_data_file.read( (char*)&cell_value, sizeof( double ) );
 
-                    EXPECT_DOUBLE_EQ(
+                    EXPECT_FLOAT_EQ(
                         cell_value,
                         1.0 + fabs( cos( pi2 * xarg ) * cos( pi2 * yarg ) *
                                     cos( pi2 * zarg ) ) );
@@ -177,20 +177,20 @@ void writeTest3d()
 
                     node_data_file.seekg( node_id * sizeof( double ) );
                     node_data_file.read( (char*)&node_value, sizeof( double ) );
-                    EXPECT_DOUBLE_EQ( node_value,
-                                      1.0 + fabs( cos( pi2 * xarg ) ) );
+                    EXPECT_FLOAT_EQ( node_value,
+                                     1.0 + fabs( cos( pi2 * xarg ) ) );
                     ++node_id;
 
                     node_data_file.seekg( node_id * sizeof( double ) );
                     node_data_file.read( (char*)&node_value, sizeof( double ) );
-                    EXPECT_DOUBLE_EQ( node_value,
-                                      1.0 + fabs( cos( pi2 * yarg ) ) );
+                    EXPECT_FLOAT_EQ( node_value,
+                                     1.0 + fabs( cos( pi2 * yarg ) ) );
                     ++node_id;
 
                     node_data_file.seekg( node_id * sizeof( double ) );
                     node_data_file.read( (char*)&node_value, sizeof( double ) );
-                    EXPECT_DOUBLE_EQ( node_value,
-                                      1.0 + fabs( cos( pi2 * zarg ) ) );
+                    EXPECT_FLOAT_EQ( node_value,
+                                     1.0 + fabs( cos( pi2 * zarg ) ) );
                     ++node_id;
                 }
 
@@ -302,8 +302,8 @@ void writeTest2d()
                 cell_data_file.seekg( cell_id * sizeof( double ) );
                 cell_data_file.read( (char*)&cell_value, sizeof( double ) );
 
-                EXPECT_DOUBLE_EQ( cell_value, 1.0 + fabs( cos( pi2 * xarg ) *
-                                                          cos( pi2 * yarg ) ) );
+                EXPECT_FLOAT_EQ( cell_value, 1.0 + fabs( cos( pi2 * xarg ) *
+                                                         cos( pi2 * yarg ) ) );
                 ++cell_id;
             }
 
@@ -328,12 +328,12 @@ void writeTest2d()
 
                 node_data_file.seekg( node_id * sizeof( double ) );
                 node_data_file.read( (char*)&node_value, sizeof( double ) );
-                EXPECT_DOUBLE_EQ( node_value, 1.0 + fabs( cos( pi2 * xarg ) ) );
+                EXPECT_FLOAT_EQ( node_value, 1.0 + fabs( cos( pi2 * xarg ) ) );
                 ++node_id;
 
                 node_data_file.seekg( node_id * sizeof( double ) );
                 node_data_file.read( (char*)&node_value, sizeof( double ) );
-                EXPECT_DOUBLE_EQ( node_value, 1.0 + fabs( cos( pi2 * yarg ) ) );
+                EXPECT_FLOAT_EQ( node_value, 1.0 + fabs( cos( pi2 * yarg ) ) );
                 ++node_id;
             }
 
