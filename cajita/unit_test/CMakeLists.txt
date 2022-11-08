@@ -37,6 +37,7 @@ set(MPI_TESTS
   BovWriter
   Parallel
   Partitioner
+  ParticleList
   SparseArray
   SparseDimPartitioner
   SparseLocalGrid
