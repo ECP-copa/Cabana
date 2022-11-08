@@ -25,18 +25,20 @@ namespace Test
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, particle_test )
 {
-    Cabana::ParticleList<TEST_MEMSPACE, Cabana::Field::Position<3>, Foo,
-                         CommRank, Bar>
-        plist( "test_particles" );
+    auto fields = Cabana::ParticleTraits<Cabana::Field::Position<3>, Foo,
+                                         CommRank, Bar>();
+    auto plist =
+        Cabana::createParticleList<TEST_MEMSPACE>( "test_particles", fields );
 
     particleListTest( plist );
 }
 
 TEST( TEST_CATEGORY, particle_view_test )
 {
-    Cabana::ParticleList<TEST_MEMSPACE, Cabana::Field::Position<3>, Foo,
-                         CommRank, Bar>
-        plist( "test_particles" );
+    auto fields = Cabana::ParticleTraits<Cabana::Field::Position<3>, Foo,
+                                         CommRank, Bar>();
+    auto plist =
+        Cabana::createParticleList<TEST_MEMSPACE>( "test_particles", fields );
 
     particleViewTest( plist );
 }

@@ -33,17 +33,16 @@ namespace Cajita
 
 //---------------------------------------------------------------------------//
 //! List of particle fields stored in AoSoA with associated Cajita mesh.
-template <class MeshType, class... FieldTags>
-class MeshParticleList
-    : public Cabana::ParticleList<typename MeshType::memory_space, FieldTags...>
+template <class MemorySpace, class LocalGrid, class... FieldTags>
+class MeshParticleList : public Cabana::ParticleList<MemorySpace, FieldTags...>
 {
   public:
     //! Kokkos memory space.
-    using memory_space = typename MeshType::memory_space;
+    using memory_space = MemorySpace;
     //! Base Cabana particle list type.
     using base = Cabana::ParticleList<memory_space, FieldTags...>;
-    //! Cajita mesh type.
-    using mesh_type = MeshType;
+    //! Cajita grid type.
+    using local_grid_type = LocalGrid;
 
     //! Particle AoSoA member types.
     using traits = typename base::traits;
@@ -64,14 +63,14 @@ class MeshParticleList
 
     //! Default constructor.
     MeshParticleList( const std::string& label,
-                      const std::shared_ptr<MeshType>& mesh )
+                      const std::shared_ptr<LocalGrid>& local_grid )
         : base( label )
-        , _mesh( mesh )
+        , _local_grid( local_grid )
     {
     }
 
-    //! Get the mesh.
-    const MeshType& mesh() { return *_mesh; }
+    //! Get the grid.
+    const LocalGrid& localGrid() { return *_local_grid; }
 
     /*!
       \brief Redistribute particles to new owning grids.
@@ -80,29 +79,41 @@ class MeshParticleList
     */
     bool redistribute( const bool force_redistribute = false )
     {
+        return redistribute(
+            Cabana::Field::Position<local_grid_type::num_space_dim>(),
+            force_redistribute );
+    }
+
+    /*!
+      \brief Redistribute particles to new owning grids with explicit field.
+
+      \tparam PositionFieldTag Field tag for position data.
+      Return true if the particles were actually redistributed.
+    */
+    template <class PositionFieldTag>
+    bool redistribute( PositionFieldTag, const bool force_redistribute = false )
+    {
         return particleGridMigrate(
-            *( _mesh->localGrid() ),
-            this->slice( Cabana::Field::Position<mesh_type::num_space_dim>() ),
-            _aosoa, _mesh->minimumHaloWidth(), force_redistribute );
+            *_local_grid, this->slice( PositionFieldTag() ), _aosoa,
+            _local_grid->haloCellWidth(), force_redistribute );
     }
 
   protected:
     //! Particle AoSoA.
     using base::_aosoa;
-    //! Cajita mesh.
-    std::shared_ptr<MeshType> _mesh;
+    //! Cajita local grid.
+    std::shared_ptr<LocalGrid> _local_grid;
 };
 
 //---------------------------------------------------------------------------//
 //! MeshParticleList creation function.
-template <class Mesh, class... FieldTags>
-std::shared_ptr<MeshParticleList<Mesh, FieldTags...>>
-createMeshParticleList( const std::string& label,
-                        const std::shared_ptr<Mesh>& mesh,
-                        Cabana::ParticleTraits<FieldTags...> )
+template <class MemorySpace, class LocalGrid, class... FieldTags>
+auto createMeshParticleList( const std::string& label,
+                             const std::shared_ptr<LocalGrid>& local_grid,
+                             Cabana::ParticleTraits<FieldTags...> )
 {
-    return std::make_shared<MeshParticleList<Mesh, FieldTags...>>( label,
-                                                                   mesh );
+    return MeshParticleList<MemorySpace, LocalGrid, FieldTags...>( label,
+                                                                   local_grid );
 }
 
 //---------------------------------------------------------------------------//

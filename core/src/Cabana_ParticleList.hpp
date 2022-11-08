@@ -257,10 +257,10 @@ class ParticleList
 //---------------------------------------------------------------------------//
 //! ParticleList creation function.
 template <class MemorySpace, class... FieldTags>
-std::shared_ptr<ParticleList<MemorySpace, FieldTags...>>
-createParticleList( const std::string& label, ParticleTraits<FieldTags...> )
+auto createParticleList( const std::string& label,
+                         ParticleTraits<FieldTags...> )
 {
-    return std::make_shared<ParticleList<MemorySpace, FieldTags...>>( label );
+    return ParticleList<MemorySpace, FieldTags...>( label );
 }
 
 //---------------------------------------------------------------------------//

@@ -43,18 +43,18 @@ TEST( TEST_CATEGORY, particle_test )
 
     // Create a local mesh.
     auto local_grid = Cajita::createLocalGrid( global_grid, 1 );
-    auto local_mesh = Cajita::createLocalMesh<TEST_DEVICE>( *local_grid );
-    auto local_mesh_ptr =
-        std::make_shared<decltype( local_mesh )>( local_mesh );
 
     auto fields = Cabana::ParticleTraits<Cabana::Field::Position<3>, Foo,
                                          CommRank, Bar>();
-    auto plist = Cajita::createMeshParticleList( "test_particles",
-                                                 local_mesh_ptr, fields );
+    auto plist = Cajita::createMeshParticleList<TEST_MEMSPACE>(
+        "test_particles", local_grid, fields );
 
-    particleListTest( *plist );
+    particleListTest( plist );
 
-    particleViewTest( *plist );
+    particleViewTest( plist );
+
+    // Use explicit field tag even though it could be done internally.
+    plist.redistribute( Cabana::Field::Position<3>() );
 }
 
 //---------------------------------------------------------------------------//
