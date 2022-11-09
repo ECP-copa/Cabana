@@ -143,6 +143,18 @@ void writeTest()
     Cabana::deep_copy( coords, coords_mirror );
     Cajita::Experimental::SiloParticleOutput::writeTimeStep(
         "particles", *global_grid, step, time, coords, ids, matrix, vec );
+
+    // Test edge case with no particles.
+    time += time_step_size;
+    ++step;
+    aosoa.resize( 0 );
+    aosoa.shrinkToFit();
+    coords = Cabana::slice<0>( aosoa, "coords" );
+    vec = Cabana::slice<1>( aosoa, "vec" );
+    matrix = Cabana::slice<2>( aosoa, "matrix" );
+    ids = Cabana::slice<3>( aosoa, "ids" );
+    Cajita::Experimental::SiloParticleOutput::writeTimeStep(
+        "particles", *global_grid, step, time, coords, ids, matrix, vec );
 }
 
 //---------------------------------------------------------------------------//
