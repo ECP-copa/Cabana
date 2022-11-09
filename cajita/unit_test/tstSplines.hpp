@@ -36,7 +36,7 @@ TEST( cajita_splines, zero_spline_test )
     double sum = 0.0;
     for ( auto x : values )
         sum += x;
-    EXPECT_DOUBLE_EQ( sum, 1.0 );
+    EXPECT_FLOAT_EQ( sum, 1.0 );
 
     xp = 2.1789;
     x0 = Spline<0>::mapToLogicalGrid( xp, rdx, low_x );
@@ -44,7 +44,7 @@ TEST( cajita_splines, zero_spline_test )
     sum = 0.0;
     for ( auto x : values )
         sum += x;
-    EXPECT_DOUBLE_EQ( sum, 1.0 );
+    EXPECT_FLOAT_EQ( sum, 1.0 );
 
     xp = low_x + 5 * dx;
     x0 = Spline<0>::mapToLogicalGrid( xp, rdx, low_x );
@@ -52,7 +52,7 @@ TEST( cajita_splines, zero_spline_test )
     sum = 0.0;
     for ( auto x : values )
         sum += x;
-    EXPECT_DOUBLE_EQ( sum, 1.0 );
+    EXPECT_FLOAT_EQ( sum, 1.0 );
 
     // Check the stencil by putting a point in the center of a dual cell (on a
     // node).
@@ -73,12 +73,12 @@ TEST( cajita_splines, zero_spline_test )
     field[0] = grid_func( low_x + node_id * dx );
     Spline<0>::value( x0, values );
     double field_xp = field[0] * values[0];
-    EXPECT_DOUBLE_EQ( field_xp, field[0] );
+    EXPECT_FLOAT_EQ( field_xp, field[0] );
 
     // Check the derivative of a function.
     Spline<0>::gradient( x0, rdx, values );
     double field_grad = field[0] * values[0];
-    EXPECT_DOUBLE_EQ( field_grad, 0.0 );
+    EXPECT_FLOAT_EQ( field_grad, 0.0 );
 }
 
 TEST( cajita_splines, linear_spline_test )
@@ -95,7 +95,7 @@ TEST( cajita_splines, linear_spline_test )
     double sum = 0.0;
     for ( auto x : values )
         sum += x;
-    EXPECT_DOUBLE_EQ( sum, 1.0 );
+    EXPECT_FLOAT_EQ( sum, 1.0 );
 
     xp = 2.1789;
     x0 = Spline<1>::mapToLogicalGrid( xp, rdx, low_x );
@@ -103,7 +103,7 @@ TEST( cajita_splines, linear_spline_test )
     sum = 0.0;
     for ( auto x : values )
         sum += x;
-    EXPECT_DOUBLE_EQ( sum, 1.0 );
+    EXPECT_FLOAT_EQ( sum, 1.0 );
 
     xp = low_x + 5 * dx;
     x0 = Spline<1>::mapToLogicalGrid( xp, rdx, low_x );
@@ -111,7 +111,7 @@ TEST( cajita_splines, linear_spline_test )
     sum = 0.0;
     for ( auto x : values )
         sum += x;
-    EXPECT_DOUBLE_EQ( sum, 1.0 );
+    EXPECT_FLOAT_EQ( sum, 1.0 );
 
     // Check the stencil by putting a point in the center of a primal cell.
     int cell_id = 4;
@@ -157,7 +157,7 @@ TEST( cajita_splines, quadratic_spline_test )
     double sum = 0.0;
     for ( auto x : values )
         sum += x;
-    EXPECT_DOUBLE_EQ( sum, 1.0 );
+    EXPECT_FLOAT_EQ( sum, 1.0 );
 
     xp = 2.1789;
     x0 = Spline<2>::mapToLogicalGrid( xp, rdx, low_x );
@@ -165,7 +165,7 @@ TEST( cajita_splines, quadratic_spline_test )
     sum = 0.0;
     for ( auto x : values )
         sum += x;
-    EXPECT_DOUBLE_EQ( sum, 1.0 );
+    EXPECT_FLOAT_EQ( sum, 1.0 );
 
     xp = low_x + 5 * dx;
     x0 = Spline<2>::mapToLogicalGrid( xp, rdx, low_x );
@@ -173,7 +173,7 @@ TEST( cajita_splines, quadratic_spline_test )
     sum = 0.0;
     for ( auto x : values )
         sum += x;
-    EXPECT_DOUBLE_EQ( sum, 1.0 );
+    EXPECT_FLOAT_EQ( sum, 1.0 );
 
     // Check the stencil by putting a point in the center of a dual cell (on a
     // node).
@@ -201,14 +201,14 @@ TEST( cajita_splines, quadratic_spline_test )
     Spline<2>::value( x0, values );
     double field_xp =
         field[0] * values[0] + field[1] * values[1] + field[2] * values[2];
-    EXPECT_DOUBLE_EQ( field_xp, grid_func( xp ) );
+    EXPECT_FLOAT_EQ( field_xp, grid_func( xp ) );
 
     // Check the derivative of a function.
     Spline<2>::gradient( x0, rdx, values );
     double field_grad =
         field[0] * values[0] + field[1] * values[1] + field[2] * values[2];
     auto grid_deriv = [=]( const double ) { return 4.32; };
-    EXPECT_DOUBLE_EQ( field_grad, grid_deriv( xp ) );
+    EXPECT_FLOAT_EQ( field_grad, grid_deriv( xp ) );
 }
 
 TEST( cajita_splines, cubic_spline_test )
@@ -225,7 +225,7 @@ TEST( cajita_splines, cubic_spline_test )
     double sum = 0.0;
     for ( auto x : values )
         sum += x;
-    EXPECT_DOUBLE_EQ( sum, 1.0 );
+    EXPECT_FLOAT_EQ( sum, 1.0 );
 
     xp = 2.1789;
     x0 = Spline<3>::mapToLogicalGrid( xp, rdx, low_x );
@@ -233,7 +233,7 @@ TEST( cajita_splines, cubic_spline_test )
     sum = 0.0;
     for ( auto x : values )
         sum += x;
-    EXPECT_DOUBLE_EQ( sum, 1.0 );
+    EXPECT_FLOAT_EQ( sum, 1.0 );
 
     xp = low_x + 5 * dx;
     x0 = Spline<3>::mapToLogicalGrid( xp, rdx, low_x );
@@ -241,7 +241,7 @@ TEST( cajita_splines, cubic_spline_test )
     sum = 0.0;
     for ( auto x : values )
         sum += x;
-    EXPECT_DOUBLE_EQ( sum, 1.0 );
+    EXPECT_FLOAT_EQ( sum, 1.0 );
 
     // Check the stencil by putting a point in the center of a primal cell.
     int cell_id = 4;
@@ -271,14 +271,14 @@ TEST( cajita_splines, cubic_spline_test )
     Spline<3>::value( x0, values );
     double field_xp = field[0] * values[0] + field[1] * values[1] +
                       field[2] * values[2] + field[3] * values[3];
-    EXPECT_DOUBLE_EQ( field_xp, grid_func( xp ) );
+    EXPECT_FLOAT_EQ( field_xp, grid_func( xp ) );
 
     // Check the derivative of a function.
     Spline<3>::gradient( x0, rdx, values );
     double field_grad = field[0] * values[0] + field[1] * values[1] +
                         field[2] * values[2] + field[3] * values[3];
     auto grid_deriv = [=]( const double ) { return 4.32; };
-    EXPECT_DOUBLE_EQ( field_grad, grid_deriv( xp ) );
+    EXPECT_FLOAT_EQ( field_grad, grid_deriv( xp ) );
 }
 
 } // end namespace Test

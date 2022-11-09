@@ -48,7 +48,7 @@ jobs:
             silo: 'NoSilo'
             coverage: 'OFF'
           - distro: 'fedora:intel'
-            cxx: 'icpc'
+            cxx: 'icpx'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: '3.4.01'
@@ -57,7 +57,7 @@ jobs:
             hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'fedora:intel'
-            cxx: 'icpc'
+            cxx: 'icpx'
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
             kokkos_ver: '3.4.01'
@@ -66,7 +66,7 @@ jobs:
             hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'fedora:intel'
-            cxx: 'icpc'
+            cxx: 'icpx'
             backend: 'SERIAL'
             cmake_build_type: 'Release'
             kokkos_ver: '3.4.01'
@@ -75,7 +75,7 @@ jobs:
             hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'fedora:intel'
-            cxx: 'icpc'
+            cxx: 'icpx'
             backend: 'SERIAL'
             cmake_build_type: 'Debug'
             kokkos_ver: '3.4.01'
@@ -84,7 +84,7 @@ jobs:
             hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'fedora:intel'
-            cxx: 'icpc'
+            cxx: 'icpx'
             backend: 'SERIAL'
             cmake_build_type: 'Debug'
             kokkos_ver: '3.4.01'
@@ -367,7 +367,7 @@ jobs:
             -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/hypre;$HOME/ALL" \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_FLAGS="-Wall -Wextra -pedantic -Werror" \
+            -DCMAKE_CXX_FLAGS="-Wall -Wextra -pedantic -Werror $([[ ${{ matrix.cxx }} == icpx ]] && echo -Wno-debug-disables-optimization)" \
             -DCabana_ENABLE_TESTING=ON \
             -DCabana_ENABLE_EXAMPLES=ON \
             -DCabana_ENABLE_PERFORMANCE_TESTING=ON \
