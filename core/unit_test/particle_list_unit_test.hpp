@@ -36,15 +36,13 @@ struct Bar : Cabana::Field::Matrix<double, 3, 3>
     static std::string label() { return "bar"; }
 };
 
-//---------------------------------------------------------------------------//
-template <class ListType>
-void particleListTest( ListType plist )
+template <class ParticleList>
+void setParticleListTestData( ParticleList& plist )
 {
     // Resize the aosoa.
     auto& aosoa = plist.aosoa();
     std::size_t num_p = 10;
     aosoa.resize( num_p );
-    EXPECT_EQ( plist.aosoa().size(), 10 );
 
     // Populate fields.
     auto px = plist.slice( Cabana::Field::Position<3>() );
@@ -56,21 +54,36 @@ void particleListTest( ListType plist )
     Cabana::deep_copy( pm, 3.3 );
     Cabana::deep_copy( pc, 5 );
     Cabana::deep_copy( pf, -1.2 );
+}
+
+template <class ParticleList>
+void checkParticleListLabels( const ParticleList plist )
+{
+    EXPECT_EQ( plist.size(), 10 );
 
     // Check the slices.
+    auto px = plist.slice( Cabana::Field::Position<3>() );
+    auto pm = plist.slice( Foo() );
+    auto pc = plist.slice( CommRank() );
+    auto pf = plist.slice( Bar() );
     EXPECT_EQ( px.label(), "position" );
     EXPECT_EQ( pm.label(), "foo" );
     EXPECT_EQ( pc.label(), "comm_rank" );
     EXPECT_EQ( pf.label(), "bar" );
+}
 
-    // Check deep copy.
+template <class ParticleList>
+void checkParticleListInitial( const ParticleList plist )
+{
+    // Check initial state after deep copy.
+    auto& aosoa = plist.aosoa();
     auto aosoa_host =
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
     auto px_h = Cabana::slice<0>( aosoa_host );
     auto pm_h = Cabana::slice<1>( aosoa_host );
     auto pc_h = Cabana::slice<2>( aosoa_host );
     auto pf_h = Cabana::slice<3>( aosoa_host );
-    for ( std::size_t p = 0; p < num_p; ++p )
+    for ( std::size_t p = 0; p < aosoa_host.size(); ++p )
     {
         for ( int d = 0; d < 3; ++d )
             EXPECT_DOUBLE_EQ( px_h( p, d ), 1.23 );
@@ -83,10 +96,46 @@ void particleListTest( ListType plist )
             for ( int j = 0; j < 3; ++j )
                 EXPECT_DOUBLE_EQ( pf_h( p, i, j ), -1.2 );
     }
+}
+
+template <class ParticleList>
+void checkParticleListFinal( const ParticleList plist )
+{
+    // Check the modification.
+    auto& aosoa = plist.aosoa();
+    auto aosoa_host =
+        Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
+    auto px_h = Cabana::slice<0>( aosoa_host );
+    auto pm_h = Cabana::slice<1>( aosoa_host );
+    auto pc_h = Cabana::slice<2>( aosoa_host );
+    auto pf_h = Cabana::slice<3>( aosoa_host );
+    for ( std::size_t p = 0; p < aosoa_host.size(); ++p )
+    {
+        for ( int d = 0; d < 3; ++d )
+            EXPECT_DOUBLE_EQ( px_h( p, d ), 1.23 + p + d );
+
+        EXPECT_DOUBLE_EQ( pm_h( p ), 3.3 + p );
+
+        EXPECT_EQ( pc_h( p ), 5 + p );
+
+        for ( int i = 0; i < 3; ++i )
+            for ( int j = 0; j < 3; ++j )
+                EXPECT_DOUBLE_EQ( pf_h( p, i, j ), -1.2 + p + i + j );
+    }
+}
+
+//---------------------------------------------------------------------------//
+template <class ListType>
+void particleListTest( ListType plist )
+{
+    setParticleListTestData( plist );
+
+    checkParticleListLabels( plist );
+    checkParticleListInitial( plist );
 
     // Locally modify.
     Kokkos::parallel_for(
-        "modify", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, num_p ),
+        "modify", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, plist.size() ),
         KOKKOS_LAMBDA( const int p ) {
             auto particle = plist.getParticle( p );
 
@@ -105,73 +154,21 @@ void particleListTest( ListType plist )
         } );
 
     // Check the modification.
-    Cabana::deep_copy( aosoa_host, aosoa );
-    for ( std::size_t p = 0; p < num_p; ++p )
-    {
-        for ( int d = 0; d < 3; ++d )
-            EXPECT_DOUBLE_EQ( px_h( p, d ), 1.23 + p + d );
-
-        EXPECT_DOUBLE_EQ( pm_h( p ), 3.3 + p );
-
-        EXPECT_EQ( pc_h( p ), 5 + p );
-
-        for ( int i = 0; i < 3; ++i )
-            for ( int j = 0; j < 3; ++j )
-                EXPECT_DOUBLE_EQ( pf_h( p, i, j ), -1.2 + p + i + j );
-    }
+    checkParticleListFinal( plist );
 }
 
 //---------------------------------------------------------------------------//
 template <class ListType>
 void particleViewTest( ListType plist )
 {
-    // Resize the aosoa.
-    auto& aosoa = plist.aosoa();
-    std::size_t num_p = 10;
-    aosoa.resize( num_p );
-    EXPECT_EQ( plist.aosoa().size(), 10 );
+    setParticleListTestData( plist );
 
-    // Populate fields.
-    auto px = plist.slice( Cabana::Field::Position<3>() );
-    auto pm = plist.slice( Foo() );
-    auto pc = plist.slice( CommRank() );
-    auto pf = plist.slice( Bar() );
-
-    Cabana::deep_copy( px, 1.23 );
-    Cabana::deep_copy( pm, 3.3 );
-    Cabana::deep_copy( pc, 5 );
-    Cabana::deep_copy( pf, -1.2 );
-
-    // Check the slices.
-    EXPECT_EQ( px.label(), "position" );
-    EXPECT_EQ( pm.label(), "foo" );
-    EXPECT_EQ( pc.label(), "comm_rank" );
-    EXPECT_EQ( pf.label(), "bar" );
-
-    // Check deep copy.
-    auto aosoa_host =
-        Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
-    auto px_h = Cabana::slice<0>( aosoa_host );
-    auto pm_h = Cabana::slice<1>( aosoa_host );
-    auto pc_h = Cabana::slice<2>( aosoa_host );
-    auto pf_h = Cabana::slice<3>( aosoa_host );
-    for ( std::size_t p = 0; p < num_p; ++p )
-    {
-        for ( int d = 0; d < 3; ++d )
-            EXPECT_DOUBLE_EQ( px_h( p, d ), 1.23 );
-
-        EXPECT_DOUBLE_EQ( pm_h( p ), 3.3 );
-
-        EXPECT_EQ( pc_h( p ), 5 );
-
-        for ( int i = 0; i < 3; ++i )
-            for ( int j = 0; j < 3; ++j )
-                EXPECT_DOUBLE_EQ( pf_h( p, i, j ), -1.2 );
-    }
+    checkParticleListLabels( plist );
+    checkParticleListInitial( plist );
 
     // Locally modify.
     Kokkos::parallel_for(
-        "modify", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, num_p ),
+        "modify", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, plist.size() ),
         KOKKOS_LAMBDA( const int p ) {
             auto particle = plist.getParticleView( p );
 
@@ -188,20 +185,7 @@ void particleViewTest( ListType plist )
         } );
 
     // Check the modification.
-    Cabana::deep_copy( aosoa_host, aosoa );
-    for ( std::size_t p = 0; p < num_p; ++p )
-    {
-        for ( int d = 0; d < 3; ++d )
-            EXPECT_DOUBLE_EQ( px_h( p, d ), 1.23 + p + d );
-
-        EXPECT_DOUBLE_EQ( pm_h( p ), 3.3 + p );
-
-        EXPECT_EQ( pc_h( p ), 5 + p );
-
-        for ( int i = 0; i < 3; ++i )
-            for ( int j = 0; j < 3; ++j )
-                EXPECT_DOUBLE_EQ( pf_h( p, i, j ), -1.2 + p + i + j );
-    }
+    checkParticleListFinal( plist );
 }
 
 //---------------------------------------------------------------------------//
