@@ -137,10 +137,10 @@ void writeFields(
     auto host_view =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), view );
 
-    // Get the data pointers.
+    // Get the data pointers per dimension.
     std::vector<typename SliceType::value_type*> ptrs( host_view.extent( 1 ) );
     for ( std::size_t d0 = 0; d0 < host_view.extent( 1 ); ++d0 )
-        ptrs[d0] = &host_view( 0, d0 );
+        ptrs[d0] = Kokkos::subview( host_view, Kokkos::ALL(), d0 ).data();
 
     // Write the field.
     DBPutPointvar( silo_file, slice.label().c_str(), mesh_name.c_str(),
@@ -174,12 +174,13 @@ void writeFields(
     auto host_view =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), view );
 
-    // Get the data pointers.
+    // Get the data pointers per dimension.
     std::vector<typename SliceType::value_type*> ptrs;
     ptrs.reserve( host_view.extent( 1 ) * host_view.extent( 2 ) );
     for ( unsigned d0 = 0; d0 < host_view.extent( 1 ); ++d0 )
         for ( unsigned d1 = 0; d1 < host_view.extent( 2 ); ++d1 )
-            ptrs.push_back( &host_view( 0, d0, d1 ) );
+            ptrs.push_back(
+                Kokkos::subview( host_view, Kokkos::ALL(), d0, d1 ).data() );
 
     // Write the field.
     DBPutPointvar( silo_file, slice.label().c_str(), mesh_name.c_str(),
@@ -421,6 +422,9 @@ void writePartialRangeTimeStep( const std::string& prefix, MPI_Comm comm,
         PMPIO_Init( num_group, PMPIO_WRITE, comm, mpi_tag, createFile, openFile,
                     closeFile, nullptr );
 
+    // Allow empty.
+    DBSetAllowEmptyObjects( 1 );
+
     // Compose a data file name.
     int comm_rank;
     MPI_Comm_rank( comm, &comm_rank );
@@ -462,8 +466,14 @@ void writePartialRangeTimeStep( const std::string& prefix, MPI_Comm comm,
 
     // Add the point mesh.
     std::string mesh_name = prefix;
-    double* ptrs[3] = { &host_coords( 0, 0 ), &host_coords( 0, 1 ),
-                        &host_coords( 0, 2 ) };
+    auto host_x = Kokkos::subview( host_coords, Kokkos::ALL(), 0 );
+    auto host_y = Kokkos::subview( host_coords, Kokkos::ALL(), 1 );
+    auto host_z = Kokkos::subview( host_coords, Kokkos::ALL(), 2 );
+    typename CoordSliceType::value_type* ptrs[3] = {
+        host_x.data(),
+        host_y.data(),
+        host_z.data(),
+    };
     DBPutPointmesh( silo_file, mesh_name.c_str(), host_coords.extent( 1 ), ptrs,
                     host_coords.extent( 0 ),
                     SiloTraits<typename CoordSliceType::value_type>::type(),
