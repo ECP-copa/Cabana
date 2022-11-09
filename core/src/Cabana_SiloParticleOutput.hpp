@@ -469,7 +469,7 @@ void writePartialRangeTimeStep( const std::string& prefix, MPI_Comm comm,
     auto host_x = Kokkos::subview( host_coords, Kokkos::ALL(), 0 );
     auto host_y = Kokkos::subview( host_coords, Kokkos::ALL(), 1 );
     auto host_z = Kokkos::subview( host_coords, Kokkos::ALL(), 2 );
-    double* ptrs[3] = {
+    typename CoordSliceType::value_type* ptrs[3] = {
         host_x.data(),
         host_y.data(),
         host_z.data(),
