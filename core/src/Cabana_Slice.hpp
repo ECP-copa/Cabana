@@ -920,6 +920,68 @@ void copySliceToView( ViewType& view, const SliceType& slice,
 }
 
 //---------------------------------------------------------------------------//
+// Copy from View.
+//---------------------------------------------------------------------------//
+
+//! Copy from slice to View. Rank-0
+template <class ExecutionSpace, class SliceType, class ViewType>
+void copyViewToSlice(
+    ExecutionSpace exec_space, SliceType& slice, const ViewType& view,
+    const std::size_t begin, const std::size_t end,
+    typename std::enable_if<
+        2 == SliceType::kokkos_view::traits::dimension::rank, int*>::type = 0 )
+{
+    Kokkos::parallel_for(
+        "Cabana::copyViewToSlice::Rank0",
+        Kokkos::RangePolicy<ExecutionSpace>( exec_space, begin, end ),
+        KOKKOS_LAMBDA( const int i ) { slice( i - begin ) = view( i ); } );
+}
+
+//! Copy from slice to View. Rank-1
+template <class ExecutionSpace, class SliceType, class ViewType>
+void copyViewToSlice(
+    ExecutionSpace exec_space, SliceType& slice, const ViewType& view,
+    const std::size_t begin, const std::size_t end,
+    typename std::enable_if<
+        3 == SliceType::kokkos_view::traits::dimension::rank, int*>::type = 0 )
+{
+    Kokkos::parallel_for(
+        "Cabana::copySliceToView::FieldRank1",
+        Kokkos::RangePolicy<ExecutionSpace>( exec_space, begin, end ),
+        KOKKOS_LAMBDA( const int i ) {
+            for ( std::size_t d0 = 0; d0 < slice.extent( 2 ); ++d0 )
+                slice( i - begin, d0 ) = view( i, d0 );
+        } );
+}
+
+//! Copy from slice to View. Rank-2
+template <class ExecutionSpace, class SliceType, class ViewType>
+void copyViewToSlice(
+    ExecutionSpace exec_space, SliceType& slice, const ViewType& view,
+    const std::size_t begin, const std::size_t end,
+    typename std::enable_if<
+        4 == SliceType::kokkos_view::traits::dimension::rank, int*>::type = 0 )
+{
+    Kokkos::parallel_for(
+        "Cabana::copySliceToView::writeFieldRank2",
+        Kokkos::RangePolicy<ExecutionSpace>( exec_space, begin, end ),
+        KOKKOS_LAMBDA( const int i ) {
+            for ( std::size_t d0 = 0; d0 < slice.extent( 2 ); ++d0 )
+                for ( std::size_t d1 = 0; d1 < slice.extent( 3 ); ++d1 )
+                    slice( i - begin, d0, d1 ) = view( i, d0, d1 );
+        } );
+}
+
+//! Copy from slice to View with default execution space.
+template <class ViewType, class SliceType>
+void copyViewToSlice( ViewType& view, const SliceType& slice,
+                      const std::size_t begin, const std::size_t end )
+{
+    using exec_space = typename SliceType::execution_space;
+    copyViewToSlice( exec_space{}, view, slice, begin, end );
+}
+
+//---------------------------------------------------------------------------//
 
 } // end namespace Cabana
 

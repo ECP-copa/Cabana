@@ -36,8 +36,41 @@
 namespace Test
 {
 
+template <class SliceType>
+void checkScalar( SliceType write, SliceType read )
+{
+    for ( std::size_t p = 0; p < write.size(); ++p )
+    {
+        EXPECT_EQ( write( p ), read( p ) );
+    }
+}
+
+template <class SliceType>
+void checkVector( SliceType write, SliceType read )
+{
+    for ( std::size_t p = 0; p < write.size(); ++p )
+    {
+        for ( int d = 0; d < 3; ++d )
+        {
+            EXPECT_DOUBLE_EQ( write( p, d ), read( p, d ) );
+        }
+    }
+}
+
+template <class SliceType>
+void checkMatrix( SliceType write, SliceType read )
+{
+    for ( std::size_t p = 0; p < write.size(); ++p )
+    {
+        for ( int d1 = 0; d1 < 3; ++d1 )
+            for ( int d2 = 0; d2 < 3; ++d2 )
+            {
+                EXPECT_FLOAT_EQ( write( p, d1, d2 ), read( p, d1, d2 ) );
+            }
+    }
+}
 //---------------------------------------------------------------------------//
-void writeTest()
+void writeReadTest()
 {
     double low_corner = -2.8;
     double high_corner = 1.2;
@@ -83,13 +116,44 @@ void writeTest()
     h5_config.collective = true;
 
     // Write a time step to file.
+    double time_read;
     double time = 7.64;
     double step = 892;
     Cabana::Experimental::HDF5ParticleOutput::writeTimeStep(
         h5_config, "particles", MPI_COMM_WORLD, step, time, coords.size(),
         coords, ids, matrix, vec );
 
-    // FIXME: read data back in and compare.
+    // Make an empty copy to read into.
+    auto aosoa_read = Cabana::create_mirror_view( Kokkos::HostSpace(), aosoa );
+    auto coords_read = Cabana::slice<0>( aosoa_read, "coords" );
+    auto vec_read = Cabana::slice<1>( aosoa_read, "vec" );
+    auto matrix_read = Cabana::slice<2>( aosoa_read, "matrix" );
+    auto ids_read = Cabana::slice<3>( aosoa_read, "ids" );
+
+    // Read the data back in and compare.
+    Cabana::Experimental::HDF5ParticleOutput::readTimeStep(
+        h5_config, "particles", MPI_COMM_WORLD, step, coords.size(),
+        coords.label(), time_read, coords_read );
+    checkVector( coords_mirror, coords_read );
+    EXPECT_DOUBLE_EQ( time, time_read );
+
+    Cabana::Experimental::HDF5ParticleOutput::readTimeStep(
+        h5_config, "particles", MPI_COMM_WORLD, step, coords.size(),
+        ids.label(), time_read, ids_read );
+    checkScalar( ids_mirror, ids_read );
+    EXPECT_DOUBLE_EQ( time, time_read );
+
+    Cabana::Experimental::HDF5ParticleOutput::readTimeStep(
+        h5_config, "particles", MPI_COMM_WORLD, step, coords.size(),
+        vec.label(), time_read, vec_read );
+    checkVector( vec_mirror, vec_read );
+    EXPECT_DOUBLE_EQ( time, time_read );
+
+    Cabana::Experimental::HDF5ParticleOutput::readTimeStep(
+        h5_config, "particles", MPI_COMM_WORLD, step, coords.size(),
+        matrix.label(), time_read, matrix_read );
+    checkMatrix( matrix_mirror, matrix_read );
+    EXPECT_DOUBLE_EQ( time, time_read );
 
     // Move the particles and write again.
     double time_step_size = 0.32;
@@ -102,12 +166,19 @@ void writeTest()
     Cabana::Experimental::HDF5ParticleOutput::writeTimeStep(
         h5_config, "particles", MPI_COMM_WORLD, step, time, coords.size(),
         coords, ids, matrix, vec );
+
+    // Read the data back in and compare.
+    Cabana::Experimental::HDF5ParticleOutput::readTimeStep(
+        h5_config, "particles", MPI_COMM_WORLD, step, coords_read.size(),
+        coords.label(), time_read, coords_read );
+    checkVector( coords_mirror, coords_read );
+    EXPECT_DOUBLE_EQ( time, time_read );
 }
 
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, write_test ) { writeTest(); }
+TEST( TEST_CATEGORY, write_read_test ) { writeReadTest(); }
 
 //---------------------------------------------------------------------------//
 

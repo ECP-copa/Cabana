@@ -53,7 +53,7 @@ namespace Impl
 //! \cond Impl
 inline void writeXdmfHeader( const char* xml_file_name, hsize_t dims0,
                              hsize_t dims1, const char* dtype, uint precision,
-                             const char* h5_file_name )
+                             const char* h5_file_name, const char* coords_name )
 {
     std::ofstream xdmf_file( xml_file_name, std::ios::trunc );
     xdmf_file << "<?xml version=\"1.0\" ?>\n";
@@ -68,7 +68,7 @@ inline void writeXdmfHeader( const char* xml_file_name, hsize_t dims0,
     xdmf_file << "         <DataItem Dimensions=\"" << dims0 << " " << dims1;
     xdmf_file << "\" NumberType=\"" << dtype;
     xdmf_file << "\" Precision=\"" << precision;
-    xdmf_file << "\" Format=\"HDF\"> " << h5_file_name << ":/coord_xyz";
+    xdmf_file << "\" Format=\"HDF\"> " << h5_file_name << ":/" << coords_name;
     xdmf_file << " </DataItem>\n";
     xdmf_file << "      </Geometry>\n";
     xdmf_file.close();
@@ -144,9 +144,6 @@ struct HDF5Config
     bool evict_on_close = false;
 };
 
-//---------------------------------------------------------------------------//
-// HDF5 (XDMF) Particle Field Output.
-//---------------------------------------------------------------------------//
 //! \cond Impl
 // Format traits for both HDF5 and XDMF.
 template <typename T>
@@ -221,6 +218,9 @@ struct HDF5Traits<double>
 namespace Impl
 {
 //---------------------------------------------------------------------------//
+// HDF5 (XDMF) Particle Field Output.
+//---------------------------------------------------------------------------//
+
 // Rank-0 field
 template <class SliceType>
 void writeFields(
@@ -520,7 +520,7 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
     H5Pset_fapl_mpio( plist_id, comm, MPI_INFO_NULL );
     H5Pset_libver_bounds( plist_id, H5F_LIBVER_LATEST, H5F_LIBVER_LATEST );
 
-#if HDF5_VERSION_GE( 1, 10, 1 )
+#if H5_VERSION_GE( 1, 10, 1 )
     if ( h5_config.evict_on_close )
     {
         H5Pset_evict_on_close( plist_id, (hbool_t)1 );
@@ -609,8 +609,8 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
     hid_t type_id = HDF5Traits<typename CoordSliceType::value_type>::type(
         &dtype, &precision );
 
-    dset_id = H5Dcreate( file_id, "coord_xyz", type_id, filespace_id,
-                         H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT );
+    dset_id = H5Dcreate( file_id, coords_slice.label().c_str(), type_id,
+                         filespace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT );
 
     H5Sselect_hyperslab( filespace_id, H5S_SELECT_SET, offset, NULL, count,
                          NULL );
@@ -627,7 +627,8 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
     {
         Impl::writeXdmfHeader( filename_xdmf.str().c_str(), dimsf[0], dimsf[1],
                                dtype.c_str(), precision,
-                               filename_hdf5.str().c_str() );
+                               filename_hdf5.str().c_str(),
+                               coords_slice.label().c_str() );
     }
 
     // Add variables.
@@ -640,6 +641,187 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
 
     if ( 0 == comm_rank )
         Impl::writeXdmfFooter( filename_xdmf.str().c_str() );
+}
+
+//---------------------------------------------------------------------------//
+// HDF5 (XDMF) Particle Field Input.
+//---------------------------------------------------------------------------//
+//! Read particle data from HDF5 output. Rank-0
+template <class SliceType>
+void readField(
+    hid_t dset_id, hid_t dtype_id, hid_t memspace_id, hid_t filespace_id,
+    hid_t plist_id, std::size_t n_local, const SliceType& slice,
+    typename std::enable_if<
+        2 == SliceType::kokkos_view::traits::dimension::rank, int*>::type = 0 )
+{
+    // Read the field into a View.
+    Kokkos::View<typename SliceType::value_type*, Kokkos::HostSpace> host_view(
+        Kokkos::ViewAllocateWithoutInitializing( "field" ), n_local );
+    H5Dread( dset_id, dtype_id, memspace_id, filespace_id, plist_id,
+             host_view.data() );
+
+    // Mirror the field and copy.
+    auto view = Kokkos::create_mirror_view_and_copy(
+        typename SliceType::memory_space(), host_view );
+    copyViewToSlice( slice, view, 0, n_local );
+}
+
+//! Read particle data from HDF5 output. Rank-1
+template <class SliceType>
+void readField(
+    hid_t dset_id, hid_t dtype_id, hid_t memspace_id, hid_t filespace_id,
+    hid_t plist_id, std::size_t n_local, const SliceType& slice,
+    typename std::enable_if<
+        3 == SliceType::kokkos_view::traits::dimension::rank, int*>::type = 0 )
+{
+    // Read the field into a View.
+    Kokkos::View<typename SliceType::value_type**, Kokkos::LayoutRight,
+                 Kokkos::HostSpace>
+        host_view( Kokkos::ViewAllocateWithoutInitializing( "field" ), n_local,
+                   slice.extent( 2 ) );
+    H5Dread( dset_id, dtype_id, memspace_id, filespace_id, plist_id,
+             host_view.data() );
+
+    // Mirror the field and copy.
+    auto view = Kokkos::create_mirror_view_and_copy(
+        typename SliceType::memory_space(), host_view );
+    copyViewToSlice( slice, view, 0, n_local );
+}
+
+//! Read particle data from HDF5 output. Rank-2
+template <class SliceType>
+void readField(
+    hid_t dset_id, hid_t dtype_id, hid_t memspace_id, hid_t filespace_id,
+    hid_t plist_id, std::size_t n_local, const SliceType& slice,
+    typename std::enable_if<
+        4 == SliceType::kokkos_view::traits::dimension::rank, int*>::type = 0 )
+{
+    // Read the field into a View.
+    Kokkos::View<typename SliceType::value_type***, Kokkos::LayoutRight,
+                 Kokkos::HostSpace>
+        host_view( Kokkos::ViewAllocateWithoutInitializing( "field" ), n_local,
+                   slice.extent( 2 ), slice.extent( 3 ) );
+    H5Dread( dset_id, dtype_id, memspace_id, filespace_id, plist_id,
+             host_view.data() );
+
+    // Mirror the field and copy.
+    auto view = Kokkos::create_mirror_view_and_copy(
+        typename SliceType::memory_space(), host_view );
+    copyViewToSlice( slice, view, 0, n_local );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Read particle output from an HDF5 file.
+  \param h5_config HDF5 configuration settings.
+  \param prefix Filename prefix.
+  \param comm MPI communicator.
+  \param time_step_index Current simulation step index.
+  \param n_local Number of local particles.
+  \param dataset_name Dataset name to read data from.
+  \param time Current simulation time.
+  \param field Particle property field slice.
+*/
+template <class FieldSliceType>
+void readTimeStep( HDF5Config h5_config, const std::string& prefix,
+                   MPI_Comm comm, const int time_step_index,
+                   const std::size_t n_local, const std::string& dataset_name,
+                   double& time, FieldSliceType& field )
+{
+    hid_t plist_id;
+    hid_t dset_id;
+    hid_t file_id;
+    hid_t dtype_id;
+    hid_t filespace_id;
+    hid_t memspace_id;
+    int ndims;
+
+    // HDF5 hyperslab parameters
+    hsize_t offset[3] = { 0, 0, 0 };
+    hsize_t dimsf[3] = { 0, 0, 0 };
+    hsize_t count[3] = { 0, 0, 0 };
+
+    int comm_rank;
+    MPI_Comm_rank( comm, &comm_rank );
+    int comm_size;
+    MPI_Comm_size( comm, &comm_size );
+
+    // Retrieve data file name.
+    std::stringstream filename_hdf5;
+    filename_hdf5 << prefix << "_" << time_step_index << ".h5";
+
+    plist_id = H5Pcreate( H5P_FILE_ACCESS );
+    H5Pset_fapl_mpio( plist_id, comm, MPI_INFO_NULL );
+
+#if H5_VERSION_GE( 1, 10, 0 )
+    if ( h5_config.collective )
+    {
+        H5Pset_all_coll_metadata_ops( plist_id, 1 );
+    }
+#endif
+
+    // Open the HDF5 file.
+    file_id = H5Fopen( filename_hdf5.str().c_str(), H5F_ACC_RDONLY, plist_id );
+    H5Pclose( plist_id );
+
+    // Get current simulation time associated with time_step_index
+    hid_t attr_id = H5Aopen( file_id, "Time", H5P_DEFAULT );
+    H5Aread( attr_id, H5T_NATIVE_DOUBLE, &time );
+    H5Aclose( attr_id );
+
+    // Open the dataset.
+    dset_id = H5Dopen( file_id, dataset_name.c_str(), H5P_DEFAULT );
+
+    // Get the datatype of the dataset.
+    dtype_id = H5Dget_type( dset_id );
+
+    // Get the dataspace of the dataset.
+    filespace_id = H5Dget_space( dset_id );
+
+    // Get the rank of the dataspace.
+    ndims = H5Sget_simple_extent_ndims( filespace_id );
+
+    // Get the extents fo the file dataspace.
+    H5Sget_simple_extent_dims( filespace_id, dimsf, NULL );
+
+    std::vector<int> all_offsets( comm_size );
+    all_offsets[comm_rank] = n_local;
+
+    MPI_Allreduce( MPI_IN_PLACE, all_offsets.data(), comm_size, MPI_INT,
+                   MPI_SUM, comm );
+
+    for ( int i = 0; i < comm_size; i++ )
+    {
+        if ( i < comm_rank )
+        {
+            offset[0] += static_cast<hsize_t>( all_offsets[i] );
+        }
+    }
+    std::vector<int>().swap( all_offsets );
+
+    count[0] = n_local;
+    count[1] = dimsf[1];
+    count[2] = dimsf[2];
+
+    memspace_id = H5Screate_simple( ndims, count, NULL );
+
+    plist_id = H5Pcreate( H5P_DATASET_XFER );
+
+    // Default IO in HDF5 is independent
+    if ( h5_config.collective )
+        H5Pset_dxpl_mpio( plist_id, H5FD_MPIO_COLLECTIVE );
+
+    H5Sselect_hyperslab( filespace_id, H5S_SELECT_SET, offset, NULL, count,
+                         NULL );
+
+    readField( dset_id, dtype_id, memspace_id, filespace_id, plist_id, n_local,
+               field );
+
+    H5Pclose( plist_id );
+    H5Sclose( memspace_id );
+    H5Sclose( filespace_id );
+    H5Dclose( dset_id );
+    H5Fclose( file_id );
 }
 
 //---------------------------------------------------------------------------//
