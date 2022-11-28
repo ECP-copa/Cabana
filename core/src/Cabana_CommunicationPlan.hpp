@@ -428,8 +428,6 @@ class CommunicationPlan
       \brief Constructor.
 
       \param comm The MPI communicator over which the distributor is defined.
-
-      \return The MPI communicator for this plan.
     */
     CommunicationPlan( MPI_Comm comm )
     {

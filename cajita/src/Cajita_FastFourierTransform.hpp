@@ -126,12 +126,12 @@ class FastFourierTransformParams
     bool getAllToAll() const { return alltoall; }
     /*!
       \brief getPencils Get data exchange type (pencil or slab).
-      \param value Using pencil (true) or slab (false) decomposition.
+      \return Using pencil (true) or slab (false) decomposition.
     */
     bool getPencils() const { return pencils; }
     /*!
       \brief getReorder Get data handling (contiguous or strided memory).
-      \param value Using contiguous (true) or strided (false) memory layout.
+      \return Using contiguous (true) or strided (false) memory layout.
       Contiguous layout requires tensor transposition; strided layout does not.
     */
     bool getReorder() const { return reorder; }
