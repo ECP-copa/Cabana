@@ -1,11 +1,11 @@
 <map id="cajita/src/Cajita_GlobalMesh.hpp" name="cajita/src/Cajita_GlobalMesh.hpp">
-<area shape="rect" id="node1" title="Global mesh." alt="" coords="275,5,434,47"/>
-<area shape="rect" id="node2" href="$Cajita__Types_8hpp.html" title="Grid type tags." alt="" coords="5,95,131,121"/>
-<area shape="rect" id="node3" title=" " alt="" coords="74,169,161,196"/>
-<area shape="rect" id="node4" title=" " alt="" coords="206,95,261,121"/>
-<area shape="rect" id="node5" title=" " alt="" coords="285,95,345,121"/>
-<area shape="rect" id="node6" title=" " alt="" coords="369,95,423,121"/>
-<area shape="rect" id="node7" title=" " alt="" coords="448,95,523,121"/>
-<area shape="rect" id="node8" title=" " alt="" coords="547,95,629,121"/>
-<area shape="rect" id="node9" title=" " alt="" coords="654,95,717,121"/>
+<area shape="rect" id="node1" title="Global mesh." alt="" coords="275,5,434,45"/>
+<area shape="rect" id="node2" href="$Cajita__Types_8hpp.html" title="Grid type tags." alt="" coords="5,93,131,119"/>
+<area shape="rect" id="node3" title=" " alt="" coords="74,167,161,192"/>
+<area shape="rect" id="node4" title=" " alt="" coords="206,93,261,119"/>
+<area shape="rect" id="node5" title=" " alt="" coords="285,93,345,119"/>
+<area shape="rect" id="node6" title=" " alt="" coords="369,93,423,119"/>
+<area shape="rect" id="node7" title=" " alt="" coords="448,93,523,119"/>
+<area shape="rect" id="node8" title=" " alt="" coords="547,93,629,119"/>
+<area shape="rect" id="node9" title=" " alt="" coords="654,93,717,119"/>
 </map>

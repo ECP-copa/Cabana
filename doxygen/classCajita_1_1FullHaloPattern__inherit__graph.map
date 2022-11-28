@@ -1,5 +1,5 @@
 <map id="Cajita::FullHaloPattern" name="Cajita::FullHaloPattern">
-<area shape="rect" id="node1" title="Full 3d halo with all 26 adjacent blocks. Backwards compatibility wrapper." alt="" coords="27,155,186,181"/>
-<area shape="rect" id="node2" href="$classCajita_1_1NodeHaloPattern_3_013_01_4.html" title=" " alt="" coords="5,80,208,107"/>
-<area shape="rect" id="node3" href="$classCajita_1_1HaloPattern.html" title=" " alt="" coords="23,5,191,32"/>
+<area shape="rect" id="node1" title="Full 3d halo with all 26 adjacent blocks. Backwards compatibility wrapper." alt="" coords="27,152,186,177"/>
+<area shape="rect" id="node2" href="$classCajita_1_1NodeHaloPattern_3_013_01_4.html" title=" " alt="" coords="5,79,208,104"/>
+<area shape="rect" id="node3" href="$classCajita_1_1HaloPattern.html" title=" " alt="" coords="23,5,191,31"/>
 </map>

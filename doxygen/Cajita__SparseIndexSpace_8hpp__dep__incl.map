@@ -1,7 +1,7 @@
 <map id="cajita/src/Cajita_SparseIndexSpace.hpp" name="cajita/src/Cajita_SparseIndexSpace.hpp">
-<area shape="rect" id="node1" title="Sparse grid mapping." alt="" coords="89,5,250,47"/>
-<area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="99,273,240,300"/>
-<area shape="rect" id="node3" href="$Cajita__SparseArray_8hpp.html" title="Sparse grid fields arrays using AoSoA." alt="" coords="30,184,191,225"/>
-<area shape="rect" id="node4" href="$Cajita__SparseDimPartitioner_8hpp.html" title="Multi&#45;node sparse grid partitioner." alt="" coords="267,184,429,225"/>
-<area shape="rect" id="node5" href="$Cajita__SparseLocalGrid_8hpp.html" title="Sparse Local grid and related implementations." alt="" coords="149,95,310,136"/>
+<area shape="rect" id="node1" title="Sparse grid mapping." alt="" coords="88,5,250,45"/>
+<area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="98,269,240,295"/>
+<area shape="rect" id="node3" href="$Cajita__SparseArray_8hpp.html" title="Sparse grid fields arrays using AoSoA." alt="" coords="30,181,191,221"/>
+<area shape="rect" id="node4" href="$Cajita__SparseDimPartitioner_8hpp.html" title="Multi&#45;node sparse grid partitioner." alt="" coords="267,181,428,221"/>
+<area shape="rect" id="node5" href="$Cajita__SparseLocalGrid_8hpp.html" title="Sparse Local grid and related implementations." alt="" coords="148,93,310,133"/>
 </map>

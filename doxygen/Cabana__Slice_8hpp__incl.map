@@ -1,10 +1,10 @@
 <map id="core/src/Cabana_Slice.hpp" name="core/src/Cabana_Slice.hpp">
-<area shape="rect" id="node1" title="Slice a single particle property from an AoSoA." alt="" coords="309,5,491,32"/>
-<area shape="rect" id="node2" href="$Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="26,155,163,181"/>
-<area shape="rect" id="node3" title=" " alt="" coords="139,229,269,256"/>
-<area shape="rect" id="node4" title=" " alt="" coords="322,229,409,256"/>
-<area shape="rect" id="node5" href="$Cabana__Index_8hpp.html" title="AoSoA indexing." alt="" coords="317,80,483,107"/>
-<area shape="rect" id="node6" href="$Cabana__TypeTraits_8hpp_source.html" title=" " alt="" coords="188,155,383,181"/>
-<area shape="rect" id="node7" title=" " alt="" coords="559,80,620,107"/>
-<area shape="rect" id="node8" title=" " alt="" coords="644,80,703,107"/>
+<area shape="rect" id="node1" title="Slice a single particle property from an AoSoA." alt="" coords="309,5,492,31"/>
+<area shape="rect" id="node2" href="$Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="26,152,164,177"/>
+<area shape="rect" id="node3" title=" " alt="" coords="140,225,269,251"/>
+<area shape="rect" id="node4" title=" " alt="" coords="322,225,409,251"/>
+<area shape="rect" id="node5" href="$Cabana__Index_8hpp.html" title="AoSoA indexing." alt="" coords="317,79,484,104"/>
+<area shape="rect" id="node6" href="$Cabana__TypeTraits_8hpp_source.html" title=" " alt="" coords="188,152,383,177"/>
+<area shape="rect" id="node7" title=" " alt="" coords="559,79,620,104"/>
+<area shape="rect" id="node8" title=" " alt="" coords="644,79,703,104"/>
 </map>

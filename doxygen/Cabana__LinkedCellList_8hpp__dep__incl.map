@@ -1,5 +1,5 @@
 <map id="core/src/Cabana_LinkedCellList.hpp" name="core/src/Cabana_LinkedCellList.hpp">
-<area shape="rect" id="node1" title="Linked cell list binning and sorting." alt="" coords="5,5,196,47"/>
-<area shape="rect" id="node2" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="9,169,193,196"/>
-<area shape="rect" id="node3" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="67,95,281,121"/>
+<area shape="rect" id="node1" title="Linked cell list binning and sorting." alt="" coords="5,5,196,45"/>
+<area shape="rect" id="node2" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="9,167,193,192"/>
+<area shape="rect" id="node3" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="67,93,281,119"/>
 </map>

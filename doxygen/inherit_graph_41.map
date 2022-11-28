@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structCabana_1_1MemberTypeAtIndex.html" title="Get the type of the member at a given index." alt="" coords="5,5,213,47"/>
+<area shape="rect" id="node1" href="$classCabana_1_1ParticleList.html" title=" " alt="" coords="5,5,208,60"/>
+<area shape="rect" id="node2" href="$classCajita_1_1MeshParticleList.html" title="List of particle fields stored in AoSoA with associated Cajita mesh." alt="" coords="256,13,427,53"/>
 </map>

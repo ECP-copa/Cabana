@@ -1,4 +1,4 @@
 <map id="Cabana::Gather&lt; HaloType, AoSoAType, typename std::enable_if&lt; is_aosoa&lt; AoSoAType &gt;::value &gt;::type &gt;" name="Cabana::Gather&lt; HaloType, AoSoAType, typename std::enable_if&lt; is_aosoa&lt; AoSoAType &gt;::value &gt;::type &gt;">
-<area shape="rect" id="node1" title="Synchronously gather data from the local decomposition to the ghosts using the halo forward communica..." alt="" coords="11,109,240,180"/>
-<area shape="rect" id="node2" href="$classCabana_1_1CommunicationData.html" title=" " alt="" coords="5,5,245,61"/>
+<area shape="rect" id="node1" title="Synchronously gather data from the local decomposition to the ghosts using the halo forward communica..." alt="" coords="11,108,240,177"/>
+<area shape="rect" id="node2" href="$classCabana_1_1CommunicationData.html" title=" " alt="" coords="5,5,245,60"/>
 </map>

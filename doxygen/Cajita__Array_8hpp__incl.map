@@ -1,23 +1,23 @@
 <map id="cajita/src/Cajita_Array.hpp" name="cajita/src/Cajita_Array.hpp">
-<area shape="rect" id="node1" title="Grid field arrays." alt="" coords="637,5,817,32"/>
-<area shape="rect" id="node2" href="$Cajita__IndexSpace_8hpp.html" title="Logical grid indexing." alt="" coords="349,155,509,181"/>
-<area shape="rect" id="node3" title=" " alt="" coords="145,229,274,256"/>
-<area shape="rect" id="node7" href="$Cajita__LocalGrid_8hpp.html" title="Local grid." alt="" coords="1211,80,1357,107"/>
-<area shape="rect" id="node10" href="$Cajita__Types_8hpp.html" title="Grid type tags." alt="" coords="1212,304,1337,331"/>
-<area shape="rect" id="node11" title=" " alt="" coords="1181,379,1267,405"/>
-<area shape="rect" id="node12" title=" " alt="" coords="927,304,987,331"/>
-<area shape="rect" id="node14" title=" " alt="" coords="1389,304,1464,331"/>
-<area shape="rect" id="node16" title=" " alt="" coords="1598,304,1661,331"/>
-<area shape="rect" id="node18" title=" " alt="" coords="174,304,231,331"/>
-<area shape="rect" id="node21" href="$Cajita__MpiTraits_8hpp.html" title="MPI traits." alt="" coords="129,155,274,181"/>
-<area shape="rect" id="node4" title=" " alt="" coords="440,304,523,331"/>
-<area shape="rect" id="node5" title=" " alt="" coords="634,304,689,331"/>
-<area shape="rect" id="node6" title=" " alt="" coords="299,229,357,256"/>
-<area shape="rect" id="node8" href="$Cajita__GlobalGrid_8hpp.html" title="Global grid." alt="" coords="931,155,1085,181"/>
-<area shape="rect" id="node20" href="$Cajita__LocalGrid__impl_8hpp_source.html" title=" " alt="" coords="1261,155,1440,181"/>
-<area shape="rect" id="node9" href="$Cajita__GlobalMesh_8hpp.html" title="Global mesh." alt="" coords="1075,229,1237,256"/>
-<area shape="rect" id="node17" href="$Cajita__Partitioner_8hpp.html" title="Multi&#45;node grid partitioner." alt="" coords="585,229,738,256"/>
-<area shape="rect" id="node19" href="$Cajita__GlobalGrid__impl_8hpp_source.html" title=" " alt="" coords="864,229,1051,256"/>
-<area shape="rect" id="node13" title=" " alt="" coords="1047,304,1102,331"/>
-<area shape="rect" id="node15" title=" " alt="" coords="767,304,849,331"/>
+<area shape="rect" id="node1" title="Grid field arrays." alt="" coords="637,5,817,31"/>
+<area shape="rect" id="node2" href="$Cajita__IndexSpace_8hpp.html" title="Logical grid indexing." alt="" coords="349,152,509,177"/>
+<area shape="rect" id="node3" title=" " alt="" coords="145,225,274,251"/>
+<area shape="rect" id="node7" href="$Cajita__LocalGrid_8hpp.html" title="Local grid." alt="" coords="1211,79,1357,104"/>
+<area shape="rect" id="node10" href="$Cajita__Types_8hpp.html" title="Grid type tags." alt="" coords="1212,299,1337,324"/>
+<area shape="rect" id="node11" title=" " alt="" coords="1181,372,1267,397"/>
+<area shape="rect" id="node12" title=" " alt="" coords="927,299,987,324"/>
+<area shape="rect" id="node14" title=" " alt="" coords="1389,299,1464,324"/>
+<area shape="rect" id="node16" title=" " alt="" coords="1598,299,1661,324"/>
+<area shape="rect" id="node18" title=" " alt="" coords="174,299,231,324"/>
+<area shape="rect" id="node21" href="$Cajita__MpiTraits_8hpp.html" title="MPI traits." alt="" coords="129,152,274,177"/>
+<area shape="rect" id="node4" title=" " alt="" coords="440,299,523,324"/>
+<area shape="rect" id="node5" title=" " alt="" coords="634,299,689,324"/>
+<area shape="rect" id="node6" title=" " alt="" coords="299,225,357,251"/>
+<area shape="rect" id="node8" href="$Cajita__GlobalGrid_8hpp.html" title="Global grid." alt="" coords="931,152,1085,177"/>
+<area shape="rect" id="node20" href="$Cajita__LocalGrid__impl_8hpp_source.html" title=" " alt="" coords="1261,152,1440,177"/>
+<area shape="rect" id="node9" href="$Cajita__GlobalMesh_8hpp.html" title="Global mesh." alt="" coords="1075,225,1237,251"/>
+<area shape="rect" id="node17" href="$Cajita__Partitioner_8hpp.html" title="Multi&#45;node grid partitioner." alt="" coords="585,225,738,251"/>
+<area shape="rect" id="node19" href="$Cajita__GlobalGrid__impl_8hpp_source.html" title=" " alt="" coords="864,225,1051,251"/>
+<area shape="rect" id="node13" title=" " alt="" coords="1047,299,1102,324"/>
+<area shape="rect" id="node15" title=" " alt="" coords="767,299,849,324"/>
 </map>

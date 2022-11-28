@@ -1,7 +1,7 @@
 <map id="core/src/Cabana_Fields.hpp" name="core/src/Cabana_Fields.hpp">
-<area shape="rect" id="node1" title="Particle field types and common field examples." alt="" coords="63,5,254,32"/>
-<area shape="rect" id="node2" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="5,177,189,203"/>
-<area shape="rect" id="node3" href="$Cabana__ParticleList_8hpp.html" title="Application&#45;level particle storage and single particle access." alt="" coords="135,80,308,121"/>
-<area shape="rect" id="node4" href="$Cajita__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="213,169,379,211"/>
-<area shape="rect" id="node5" href="$Cajita_8hpp_source.html" title=" " alt="" coords="225,259,367,285"/>
+<area shape="rect" id="node1" title="Particle field types and common field examples." alt="" coords="63,5,254,31"/>
+<area shape="rect" id="node2" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="5,174,189,199"/>
+<area shape="rect" id="node3" href="$Cabana__ParticleList_8hpp.html" title="Application&#45;level particle storage and single particle access." alt="" coords="135,79,308,119"/>
+<area shape="rect" id="node4" href="$Cajita__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="213,167,379,207"/>
+<area shape="rect" id="node5" href="$Cajita_8hpp_source.html" title=" " alt="" coords="225,255,367,280"/>
 </map>
