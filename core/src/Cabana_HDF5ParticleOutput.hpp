@@ -247,14 +247,9 @@ void writeFields(
 
     // Reorder in a contiguous blocked format.
     Kokkos::View<typename SliceType::value_type*,
-                 typename SliceType::device_type>
-        view( Kokkos::ViewAllocateWithoutInitializing( "field" ),
-              slice.size() );
-    Kokkos::parallel_for(
-        "Cabana::HDF5ParticleOutput::writeFieldRank0",
-        Kokkos::RangePolicy<typename SliceType::execution_space>(
-            0, slice.size() ),
-        KOKKOS_LAMBDA( const int i ) { view( i ) = slice( i ); } );
+                 typename SliceType::memory_space>
+        view( Kokkos::ViewAllocateWithoutInitializing( "field" ), n_local );
+    copySliceToView( view, slice, 0, n_local );
 
     // Mirror the field to the host.
     auto host_view =
@@ -313,17 +308,10 @@ void writeFields(
 
     // Reorder in a contiguous blocked format.
     Kokkos::View<typename SliceType::value_type**, Kokkos::LayoutRight,
-                 typename SliceType::device_type>
-        view( Kokkos::ViewAllocateWithoutInitializing( "field" ), slice.size(),
+                 typename SliceType::memory_space>
+        view( Kokkos::ViewAllocateWithoutInitializing( "field" ), n_local,
               slice.extent( 2 ) );
-    Kokkos::parallel_for(
-        "Cabana::HDF5ParticleOutput::writeFieldRank1",
-        Kokkos::RangePolicy<typename SliceType::execution_space>(
-            0, slice.size() ),
-        KOKKOS_LAMBDA( const int i ) {
-            for ( std::size_t d0 = 0; d0 < slice.extent( 2 ); ++d0 )
-                view( i, d0 ) = slice( i, d0 );
-        } );
+    copySliceToView( view, slice, 0, n_local );
 
     // Mirror the field to the host.
     auto host_view =
@@ -397,18 +385,10 @@ void writeFields(
 
     // Reorder in a contiguous blocked format.
     Kokkos::View<typename SliceType::value_type***, Kokkos::LayoutRight,
-                 typename SliceType::device_type>
-        view( Kokkos::ViewAllocateWithoutInitializing( "field" ), slice.size(),
+                 typename SliceType::memory_space>
+        view( Kokkos::ViewAllocateWithoutInitializing( "field" ), n_local,
               slice.extent( 2 ), slice.extent( 3 ) );
-    Kokkos::parallel_for(
-        "Cabana::HDF5ParticleOutput::writeFieldRank2",
-        Kokkos::RangePolicy<typename SliceType::execution_space>(
-            0, slice.size() ),
-        KOKKOS_LAMBDA( const int i ) {
-            for ( std::size_t d0 = 0; d0 < slice.extent( 2 ); ++d0 )
-                for ( std::size_t d1 = 0; d1 < slice.extent( 3 ); ++d1 )
-                    view( i, d0, d1 ) = slice( i, d0, d1 );
-        } );
+    copySliceToView( view, slice, 0, n_local );
 
     // Mirror the field to the host.
     auto host_view =
@@ -572,7 +552,7 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
 
     // Reorder the coordinates in a blocked format.
     Kokkos::View<typename CoordSliceType::value_type**, Kokkos::LayoutRight,
-                 typename CoordSliceType::device_type>
+                 typename CoordSliceType::memory_space>
         coords_view( Kokkos::ViewAllocateWithoutInitializing( "coords" ),
                      coords_slice.size(), coords_slice.extent( 2 ) );
     Kokkos::parallel_for(

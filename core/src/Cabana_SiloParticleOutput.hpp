@@ -98,10 +98,7 @@ void writeFields(
                  typename SliceType::device_type>
         view( Kokkos::ViewAllocateWithoutInitializing( "scalar_field" ),
               end - begin );
-    Kokkos::parallel_for(
-        "Cabana::SiloParticleOutput::writeFieldRank0",
-        Kokkos::RangePolicy<typename SliceType::execution_space>( begin, end ),
-        KOKKOS_LAMBDA( const int i ) { view( i - begin ) = slice( i ); } );
+    copySliceToView( view, slice, begin, end );
 
     // Mirror the field to the host.
     auto host_view =
@@ -127,13 +124,7 @@ void writeFields(
                  typename SliceType::device_type>
         view( Kokkos::ViewAllocateWithoutInitializing( "vector_field" ),
               end - begin, slice.extent( 2 ) );
-    Kokkos::parallel_for(
-        "Cabana::SiloParticleOutput::writeFieldRank1",
-        Kokkos::RangePolicy<typename SliceType::execution_space>( begin, end ),
-        KOKKOS_LAMBDA( const int i ) {
-            for ( std::size_t d0 = 0; d0 < slice.extent( 2 ); ++d0 )
-                view( i - begin, d0 ) = slice( i, d0 );
-        } );
+    copySliceToView( view, slice, begin, end );
 
     // Mirror the field to the host.
     auto host_view =
@@ -164,14 +155,7 @@ void writeFields(
                  typename SliceType::device_type>
         view( Kokkos::ViewAllocateWithoutInitializing( "matrix_field" ),
               end - begin, slice.extent( 2 ), slice.extent( 3 ) );
-    Kokkos::parallel_for(
-        "Cabana::SiloParticleOutput::writeFieldRank2",
-        Kokkos::RangePolicy<typename SliceType::execution_space>( begin, end ),
-        KOKKOS_LAMBDA( const int i ) {
-            for ( std::size_t d0 = 0; d0 < slice.extent( 2 ); ++d0 )
-                for ( std::size_t d1 = 0; d1 < slice.extent( 3 ); ++d1 )
-                    view( i - begin, d0, d1 ) = slice( i, d0, d1 );
-        } );
+    copySliceToView( view, slice, begin, end );
 
     // Mirror the field to the host.
     auto host_view =
@@ -455,14 +439,7 @@ void writePartialRangeTimeStep( const std::string& prefix, MPI_Comm comm,
                  typename CoordSliceType::device_type>
         view( Kokkos::ViewAllocateWithoutInitializing( "coords" ), end - begin,
               coords.extent( 2 ) );
-    Kokkos::parallel_for(
-        "Cabana::SiloParticleOutput::writeCoords",
-        Kokkos::RangePolicy<typename CoordSliceType::execution_space>( begin,
-                                                                       end ),
-        KOKKOS_LAMBDA( const int i ) {
-            for ( std::size_t d0 = 0; d0 < coords.extent( 2 ); ++d0 )
-                view( i - begin, d0 ) = coords( i, d0 );
-        } );
+    copySliceToView( view, coords, begin, end );
 
     // Mirror the coordinates to the host.
     auto host_coords =
