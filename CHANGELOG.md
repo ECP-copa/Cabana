@@ -2,7 +2,7 @@
 
 ## (dev)
 
-- Updated minimum Kokkos dependency to version 3.4
+- Updated minimum Kokkos dependency to version 3.6
 
 ## 0.5.0
 
