@@ -44,17 +44,15 @@ TEST( TEST_CATEGORY, particle_test )
     // Create a local mesh.
     auto local_grid = Cajita::createLocalGrid( global_grid, 1 );
 
-    auto fields = Cabana::ParticleTraits<Cabana::Field::Position<3>, Foo,
-                                         CommRank, Bar>();
-    auto plist = Cajita::createMeshParticleList<TEST_MEMSPACE>(
-        "test_particles", local_grid, fields );
+    auto plist = Cajita::ParticleList<TEST_MEMSPACE, Cabana::Field::Position<3>,
+                                      Foo, CommRank, Bar>( "test_particles" );
 
     particleListTest( plist );
 
     particleViewTest( plist );
 
     // Use explicit field tag even though it could be done internally.
-    plist.redistribute( Cabana::Field::Position<3>() );
+    plist.redistribute( *local_grid, Cabana::Field::Position<3>() );
 }
 
 //---------------------------------------------------------------------------//
