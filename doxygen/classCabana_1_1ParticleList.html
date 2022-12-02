@@ -76,6 +76,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classCabana_1_1ParticleList-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">Cabana::ParticleList&lt; MemorySpace, FieldTags &gt; Class Template Reference</div></div>
 </div><!--header-->
@@ -85,6 +86,15 @@ $(function() {
  <a href="classCabana_1_1ParticleList.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Cabana__ParticleList_8hpp_source.html">Cabana_ParticleList.hpp</a>&gt;</code></p>
+<div class="dynheader">
+Collaboration diagram for Cabana::ParticleList&lt; MemorySpace, FieldTags &gt;:</div>
+<div class="dyncontent">
+<div class="center"><img src="classCabana_1_1ParticleList__coll__graph.png" border="0" usemap="#aCabana_1_1ParticleList_3_01MemorySpace_00_01FieldTags_01_4_coll__map" alt="Collaboration graph"/></div>
+<map name="aCabana_1_1ParticleList_3_01MemorySpace_00_01FieldTags_01_4_coll__map" id="aCabana_1_1ParticleList_3_01MemorySpace_00_01FieldTags_01_4_coll__map">
+<area shape="rect" title="List of particle fields stored in AoSoA." alt="" coords="5,123,201,163"/>
+<area shape="rect" href="classCabana_1_1AoSoA.html" title=" " alt="" coords="8,5,199,60"/>
+</map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
@@ -152,13 +162,20 @@ template&lt;class IndexType &gt; </td></tr>
 <tr class="separator:a3e3a1db5a0843e140b6eae481da4e95c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca4de3aa0c2fe7fb656c2f1b88722ab9"><td class="memItemLeft" align="right" valign="top"><a id="aca4de3aa0c2fe7fb656c2f1b88722ab9" name="aca4de3aa0c2fe7fb656c2f1b88722ab9"></a>
 const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>label</b> () const</td></tr>
-<tr class="memdesc:aca4de3aa0c2fe7fb656c2f1b88722ab9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the label. <br /></td></tr>
+<tr class="memdesc:aca4de3aa0c2fe7fb656c2f1b88722ab9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> label. <br /></td></tr>
 <tr class="separator:aca4de3aa0c2fe7fb656c2f1b88722ab9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4dd72a1abcc3d53d7cda73f82d42cc58"><td class="memTemplParams" colspan="2"><a id="a4dd72a1abcc3d53d7cda73f82d42cc58" name="a4dd72a1abcc3d53d7cda73f82d42cc58"></a>
 template&lt;class FieldTag &gt; </td></tr>
 <tr class="memitem:a4dd72a1abcc3d53d7cda73f82d42cc58"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1ParticleList.html#a2b5b5fe3661a321bfa5a995bc8edce1e">slice_type</a>&lt; <a class="el" href="structCabana_1_1TypeIndexer.html">TypeIndexer</a>&lt; FieldTag, FieldTags... &gt;::index &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>slice</b> (FieldTag) const</td></tr>
 <tr class="memdesc:a4dd72a1abcc3d53d7cda73f82d42cc58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a slice of a given field. <br /></td></tr>
 <tr class="separator:a4dd72a1abcc3d53d7cda73f82d42cc58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:adb92da2d65bde1a342b3c7e2ed045018"><td class="memItemLeft" align="right" valign="top"><a id="adb92da2d65bde1a342b3c7e2ed045018" name="adb92da2d65bde1a342b3c7e2ed045018"></a>
+<a class="el" href="classCabana_1_1ParticleList.html#aa738e32eb08105c87e5c4388f9033be0">aosoa_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_aosoa</b></td></tr>
+<tr class="memdesc:adb92da2d65bde1a342b3c7e2ed045018"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Particle.html" title="Single particle copy. Wraps a tuple copy of a particle.">Particle</a> <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. <br /></td></tr>
+<tr class="separator:adb92da2d65bde1a342b3c7e2ed045018"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;class MemorySpace, class... FieldTags&gt;<br />
