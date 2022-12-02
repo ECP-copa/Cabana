@@ -285,6 +285,8 @@ class Gather<HaloType, AoSoAType,
     */
     void apply() override
     {
+        Kokkos::Profiling::pushRegion( "Cabana::gather" );
+
         // Get the buffers and particle data (local copies for lambdas below).
         auto send_buffer = this->getSendBuffer();
         auto recv_buffer = this->getReceiveBuffer();
@@ -357,6 +359,8 @@ class Gather<HaloType, AoSoAType,
 
         // Barrier before completing to ensure synchronization.
         MPI_Barrier( _halo.comm() );
+
+        Kokkos::Profiling::popRegion();
     }
 
     /*!
@@ -457,6 +461,8 @@ class Gather<HaloType, SliceType,
     */
     void apply() override
     {
+        Kokkos::Profiling::pushRegion( "Cabana::gather" );
+
         // Get the buffers (local copies for lambdas below).
         auto send_buffer = this->getSendBuffer();
         auto recv_buffer = this->getReceiveBuffer();
@@ -548,6 +554,8 @@ class Gather<HaloType, SliceType,
 
         // Barrier before completing to ensure synchronization.
         MPI_Barrier( _halo.comm() );
+
+        Kokkos::Profiling::popRegion();
     }
 
     /*!
@@ -697,6 +705,8 @@ class Scatter
     */
     void apply() override
     {
+        Kokkos::Profiling::pushRegion( "Cabana::scatter" );
+
         // Get the buffers (local copies for lambdas below).
         auto send_buffer = this->getSendBuffer();
         auto recv_buffer = this->getReceiveBuffer();
@@ -792,6 +802,7 @@ class Scatter
 
         // Barrier before completing to ensure synchronization.
         MPI_Barrier( _halo.comm() );
+        Kokkos::Profiling::popRegion();
     }
 
     /*!

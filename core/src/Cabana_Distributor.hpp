@@ -175,6 +175,8 @@ void distributeData(
                               is_aosoa<AoSoA_t>::value ),
                             int>::type* = 0 )
 {
+    Kokkos::Profiling::pushRegion( "Cabana::migrate" );
+
     // Get the MPI rank we are currently on.
     int my_rank = -1;
     MPI_Comm_rank( distributor.comm(), &my_rank );
@@ -297,6 +299,7 @@ void distributeData(
 
     // Barrier before completing to ensure synchronization.
     MPI_Barrier( distributor.comm() );
+    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//

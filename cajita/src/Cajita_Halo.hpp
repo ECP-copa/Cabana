@@ -297,6 +297,8 @@ class Halo
     void gather( const ExecutionSpace& exec_space,
                  const ArrayTypes&... arrays ) const
     {
+        Kokkos::Profiling::pushRegion( "Cajita::gather" );
+
         // Get the number of neighbors. Return if we have none.
         int num_n = _neighbor_ranks.size();
         if ( 0 == num_n )
@@ -367,6 +369,7 @@ class Halo
 
         // Wait on send requests.
         MPI_Waitall( num_n, requests.data() + num_n, MPI_STATUSES_IGNORE );
+        Kokkos::Profiling::popRegion();
     }
 
     /*!
@@ -380,6 +383,8 @@ class Halo
     void scatter( const ExecutionSpace& exec_space, const ReduceOp& reduce_op,
                   const ArrayTypes&... arrays ) const
     {
+        Kokkos::Profiling::pushRegion( "Cajita::scatter" );
+
         // Get the number of neighbors. Return if we have none.
         int num_n = _neighbor_ranks.size();
         if ( 0 == num_n )
@@ -448,6 +453,7 @@ class Halo
             // Wait on send requests.
             MPI_Waitall( num_n, requests.data() + num_n, MPI_STATUSES_IGNORE );
         }
+        Kokkos::Profiling::popRegion();
     }
 
   public:

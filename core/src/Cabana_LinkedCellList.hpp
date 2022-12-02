@@ -234,6 +234,8 @@ class LinkedCellList
     void build( SliceType positions, const std::size_t begin,
                 const std::size_t end )
     {
+        Kokkos::Profiling::pushRegion( "Cabana::LinkedCellList::build" );
+
         assert( end >= begin );
         assert( end <= positions.size() );
 
@@ -307,6 +309,8 @@ class LinkedCellList
         // Create the binning data.
         _bin_data =
             BinningData<DeviceType>( begin, end, _counts, _offsets, _permutes );
+
+        Kokkos::Profiling::popRegion();
     }
 
     /*!

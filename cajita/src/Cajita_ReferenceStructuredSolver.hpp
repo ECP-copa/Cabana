@@ -260,6 +260,9 @@ class ReferenceConjugateGradient
     */
     void solve( const Array_t& b, Array_t& x ) override
     {
+        Kokkos::Profiling::pushRegion(
+            "Cajita::ReferenceStructuredSolver::solve" );
+
         // Get the local grid.
         auto local_grid = _vectors->layout()->localGrid();
 
@@ -437,6 +440,8 @@ class ReferenceConjugateGradient
         // If we didn't converge throw.
         if ( !converged )
             throw std::runtime_error( "CG solver did not converge" );
+
+        Kokkos::Profiling::popRegion();
     }
 
     //! Get the number of iterations taken on the last solve.
