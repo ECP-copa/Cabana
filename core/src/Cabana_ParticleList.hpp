@@ -202,7 +202,6 @@ class ParticleList
     //! Default constructor.
     ParticleList( const std::string& label )
         : _aosoa( label )
-        , _label( label )
     {
     }
 
@@ -238,8 +237,8 @@ class ParticleList
         return particle_view_type( _aosoa.access( s ), a );
     }
 
-    //! Get the label.
-    const std::string& label() const { return _label; }
+    //! Get the AoSoA label.
+    const std::string& label() const { return _aosoa.label(); }
 
     //! Get a slice of a given field.
     template <class FieldTag>
@@ -250,18 +249,18 @@ class ParticleList
             _aosoa, FieldTag::label() );
     }
 
-  private:
+  protected:
+    //! Particle AoSoA.
     aosoa_type _aosoa;
-    std::string _label;
 };
 
 //---------------------------------------------------------------------------//
 //! ParticleList creation function.
 template <class MemorySpace, class... FieldTags>
-std::shared_ptr<ParticleList<MemorySpace, FieldTags...>>
-createParticleList( const std::string& label, ParticleTraits<FieldTags...> )
+auto createParticleList( const std::string& label,
+                         ParticleTraits<FieldTags...> )
 {
-    return std::make_shared<ParticleList<MemorySpace, FieldTags...>>( label );
+    return ParticleList<MemorySpace, FieldTags...>( label );
 }
 
 //---------------------------------------------------------------------------//
