@@ -34,7 +34,7 @@ pipeline {
                               -D CMAKE_BUILD_TYPE=Debug \
                               -D CMAKE_CXX_COMPILER=$KOKKOS_DIR/bin/nvcc_wrapper \
                               -D CMAKE_CXX_COMPILER_LAUNCHER=ccache \
-                              -D CMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic" \
+                              -D CMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic -Werror" \
                               -D CMAKE_PREFIX_PATH="$KOKKOS_DIR;$ARBORX_DIR;$HEFFTE_DIR;$HYPRE_DIR" \
                               -D MPIEXEC_MAX_NUMPROCS=1 \
                               -D MPIEXEC_PREFLAGS="--allow-run-as-root;--mca;btl_smcuda_use_cuda_ipc;0" \
@@ -74,7 +74,7 @@ pipeline {
                               -D CMAKE_BUILD_TYPE=Debug \
                               -D CMAKE_CXX_COMPILER=hipcc \
                               -D CMAKE_CXX_STANDARD=14 \
-                              -D CMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic -DNDEBUG" \
+                              -D CMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic -Werror -DNDEBUG" \
                               -D MPIEXEC_MAX_NUMPROCS=1 \
                               -D MPIEXEC_PREFLAGS="--allow-run-as-root" \
                               -D CMAKE_PREFIX_PATH="$KOKKOS_DIR;$ARBORX_DIR;$HEFFTE_DIR" \
