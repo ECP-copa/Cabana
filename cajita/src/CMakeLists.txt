@@ -65,6 +65,7 @@ if(Cabana_ENABLE_SILO)
 endif()
 
 add_library(Cajita INTERFACE)
+set_target_properties(Cajita PROPERTIES INTERFACE_COMPILE_FEATURES cxx_std_17)
 add_library(Cabana::Cajita ALIAS Cajita)
 
 target_link_libraries(Cajita INTERFACE
