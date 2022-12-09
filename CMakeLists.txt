@@ -106,11 +106,18 @@ if(SILO_FOUND)
 endif()
 
 # find HDF5 (XDMF)
-Cabana_add_dependency( PACKAGE HDF5 COMPONENTS C )
-if(HDF5_FOUND)
-  install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindHDF5.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana )
+# FIXME: not automatically finding since we need to enable C to use it (which
+#        would break pure CXX projects downstream) unless CMake is new enough
+if(CMAKE_VERSION VERSION_LESS 3.26)
+  option(Cabana_REQUIRE_HDF5 "Require Cabana to build with HDF5 support" OFF)
+  if(Cabana_REQUIRE_HDF5)
+    # Workaround for using HDF5 C-bindings
+    enable_language(C)
+    find_package( HDF5 REQUIRED COMPONENTS C )
+  endif()
+  set(Cabana_ENABLE_HDF5 ${Cabana_REQUIRE_HDF5})
+else()
+  Cabana_add_dependency( PACKAGE HDF5 COMPONENTS C )
 endif()
 
 if(Cabana_ENABLE_HDF5 AND NOT Cabana_ENABLE_MPI)

@@ -78,7 +78,8 @@ if(Cabana_ENABLE_SILO)
 endif()
 
 if(Cabana_ENABLE_HDF5)
-  target_link_libraries(cabanacore INTERFACE HDF5::hdf5)
+  # FIXME: replace with HDF5::HDF5 when requiring newer CMake
+  target_link_libraries(cabanacore INTERFACE ${HDF5_LIBRARIES})
 endif()
 
 if(Cabana_ENABLE_MPI)
@@ -88,7 +89,9 @@ endif()
 target_include_directories(cabanacore INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+  ${HDF5_INCLUDE_DIRS} # FIXME: remove when requiring newer CMake
+  )
 
 install(TARGETS cabanacore
   EXPORT Cabana_Targets
