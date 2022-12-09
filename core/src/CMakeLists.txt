@@ -60,6 +60,9 @@ set(HEADERS_IMPL
 
 add_library(cabanacore INTERFACE)
 
+# Require minimum of C++17
+set_target_properties(cabanacore PROPERTIES INTERFACE_COMPILE_FEATURES cxx_std_17)
+
 target_link_libraries(cabanacore INTERFACE Kokkos::kokkos)
 
 if(Cabana_ENABLE_ARBORX)
