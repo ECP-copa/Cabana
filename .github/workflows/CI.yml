@@ -13,8 +13,6 @@ concurrency:
 
 jobs:
   CI:
-    # FIXME: remove failing distributions here when passing
-    continue-on-error: ${{ (matrix.distro == 'fedora:intel' && matrix.backend == 'SERIAL' && matrix.cmake_build_type == 'Release') }}
     defaults:
       run:
         shell: bash
@@ -367,7 +365,7 @@ jobs:
             -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/hypre;$HOME/ALL" \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_FLAGS="-Wall -Wextra -pedantic -Werror $([[ ${{ matrix.cxx }} == icpx ]] && echo -Wno-debug-disables-optimization)" \
+            -DCMAKE_CXX_FLAGS="-Wall -Wextra -pedantic -Werror $([[ ${{ matrix.cxx }} == icpx ]] && echo -DCMAKE_CXX_FLAGS_DEBUG="-g -O0")" \
             -DCabana_ENABLE_TESTING=ON \
             -DCabana_ENABLE_EXAMPLES=ON \
             -DCabana_ENABLE_PERFORMANCE_TESTING=ON \
