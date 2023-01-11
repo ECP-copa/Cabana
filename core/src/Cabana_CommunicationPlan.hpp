@@ -357,7 +357,8 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
 
 //---------------------------------------------------------------------------//
 // Return unique neighbor ranks, with the current rank first.
-inline std::vector<int> getUniqueTopology( std::vector<int> topology )
+inline std::vector<int> getUniqueTopology( MPI_Comm comm,
+                                           std::vector<int> topology )
 {
     auto remove_end = std::remove( topology.begin(), topology.end(), -1 );
     std::sort( topology.begin(), remove_end );
@@ -366,7 +367,7 @@ inline std::vector<int> getUniqueTopology( std::vector<int> topology )
 
     // Put this rank first.
     int my_rank = -1;
-    MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
+    MPI_Comm_rank( comm, &my_rank );
     for ( auto& n : topology )
     {
         if ( n == my_rank )
@@ -595,7 +596,7 @@ class CommunicationPlan
         _num_export_element = element_export_ranks.size();
 
         // Store the unique neighbors (this rank first).
-        _neighbors = Impl::getUniqueTopology( neighbor_ranks );
+        _neighbors = Impl::getUniqueTopology( comm(), neighbor_ranks );
         int num_n = _neighbors.size();
 
         // Get the size of this communicator.
