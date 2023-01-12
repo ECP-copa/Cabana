@@ -225,11 +225,11 @@ void migrationExample()
 int main( int argc, char* argv[] )
 {
     MPI_Init( &argc, &argv );
+    {
+        Kokkos::ScopeGuard scope_guard( argc, argv );
 
-    Kokkos::ScopeGuard scope_guard( argc, argv );
-
-    migrationExample();
-
+        migrationExample();
+    }
     MPI_Finalize();
 
     return 0;
