@@ -36,11 +36,13 @@ using namespace Cajita::Experimental;
 
 namespace Test
 {
-typedef struct DataMembersType
+// Test data type.
+struct TestData
 {
     double ds[3];
     float f;
-} DataMembers;
+};
+
 // ---------------------------------------------------------------------------
 // generate a random partition, to mimic a random simulation status
 std::array<std::vector<int>, 3>
@@ -308,9 +310,8 @@ void generate_random_halo_tiles(
 
 // ---------------------------------------------------------------------------
 void generate_ground_truth(
-    ScatterReduce::Sum,
-    std::unordered_map<std::string, DataMembers>& ground_truth,
-    const DataMembers base_values, const std::vector<std::array<int, 3>>& tiles,
+    ScatterReduce::Sum, std::unordered_map<std::string, TestData>& ground_truth,
+    const TestData base_values, const std::vector<std::array<int, 3>>& tiles,
     const std::vector<int>& tile_ghosted_num )
 {
     for ( std::size_t i = 0; i < tiles.size(); ++i )
@@ -329,9 +330,8 @@ void generate_ground_truth(
 }
 
 void generate_ground_truth(
-    ScatterReduce::Max,
-    std::unordered_map<std::string, DataMembers>& ground_truth,
-    const DataMembers base_values, const std::vector<std::array<int, 3>>& tiles,
+    ScatterReduce::Max, std::unordered_map<std::string, TestData>& ground_truth,
+    const TestData base_values, const std::vector<std::array<int, 3>>& tiles,
     const std::vector<int>& )
 {
     for ( std::size_t i = 0; i < tiles.size(); ++i )
@@ -348,9 +348,8 @@ void generate_ground_truth(
 }
 
 void generate_ground_truth(
-    ScatterReduce::Min,
-    std::unordered_map<std::string, DataMembers>& ground_truth,
-    const DataMembers base_values, const std::vector<std::array<int, 3>>& tiles,
+    ScatterReduce::Min, std::unordered_map<std::string, TestData>& ground_truth,
+    const TestData base_values, const std::vector<std::array<int, 3>>& tiles,
     const std::vector<int>& )
 {
     for ( std::size_t i = 0; i < tiles.size(); ++i )
@@ -482,12 +481,8 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
     // the grid should have base value x assigned by the owner
     // and every other ghosters assign 0.1x to the gird
     // x is a factor multiplied to different data members
-    std::unordered_map<std::string, DataMembers> ground_truth;
-    DataMembers base_values;
-    base_values.ds[0] = 1.0;
-    base_values.ds[1] = 10.0;
-    base_values.ds[2] = 100.0;
-    base_values.f = 0.1f;
+    std::unordered_map<std::string, TestData> ground_truth;
+    TestData base_values{ { 1.0, 10.0, 100.0 }, 0.1f };
 
     generate_ground_truth( reduce_op, ground_truth, base_values, tiles,
                            tile_ghosted_num );
