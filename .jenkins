@@ -110,7 +110,7 @@ pipeline {
                         sh '''
                             rm -rf build && mkdir -p build && cd build && \
                             cmake \
-                              -D CMAKE_BUILD_TYPE=Debug \
+                              -D CMAKE_BUILD_TYPE=Release \
                               -D CMAKE_CXX_COMPILER=clang++ \
                               -D CMAKE_CXX_COMPILER_LAUNCHER=ccache \
                               -D CMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic -Wno-unknown-cuda-version -fsycl -fsycl-targets=nvptx64-nvidia-cuda-sycldevice" \
