@@ -12,9 +12,10 @@ jobs:
     strategy:
       matrix:
         backend: ["OPENMP", "SERIAL"]
+        distro: ['ubuntu:latest', 'fedora:rawhide']
     runs-on: ubuntu-20.04
     container:
-      image: ghcr.io/ecp-copa/ci-containers/ubuntu:latest
+      image: ghcr.io/ecp-copa/ci-containers/${{ matrix.distro }}
     steps:
       - name: Checkout kokkos
         uses: actions/checkout@v2.2.0
