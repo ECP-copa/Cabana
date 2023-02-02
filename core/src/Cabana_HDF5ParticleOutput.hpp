@@ -493,6 +493,8 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
                     const CoordSliceType& coords_slice,
                     FieldSliceTypes&&... fields )
 {
+    Kokkos::Profiling::pushRegion( "Cabana::HDF5ParticleOutput" );
+
     hid_t plist_id;
     hid_t dset_id;
     hid_t file_id;
@@ -641,6 +643,8 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
 
     if ( 0 == comm_rank )
         Impl::writeXdmfFooter( filename_xdmf.str().c_str() );
+
+    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -728,6 +732,8 @@ void readTimeStep( HDF5Config h5_config, const std::string& prefix,
                    const std::size_t n_local, const std::string& dataset_name,
                    double& time, FieldSliceType& field )
 {
+    Kokkos::Profiling::pushRegion( "Cabana::HDF5ParticleInput" );
+
     hid_t plist_id;
     hid_t dset_id;
     hid_t file_id;
@@ -822,6 +828,8 @@ void readTimeStep( HDF5Config h5_config, const std::string& prefix,
     H5Sclose( filespace_id );
     H5Dclose( dset_id );
     H5Fclose( file_id );
+
+    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//

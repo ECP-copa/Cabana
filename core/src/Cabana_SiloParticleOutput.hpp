@@ -403,6 +403,8 @@ void writePartialRangeTimeStep( const std::string& prefix, MPI_Comm comm,
                                 const CoordSliceType& coords,
                                 FieldSliceTypes&&... fields )
 {
+    Kokkos::Profiling::pushRegion( "Cabana::SiloParticleOutput" );
+
     // Create the parallel baton.
     int mpi_tag = 1948;
     PMPIO_baton_t* baton =
@@ -476,6 +478,8 @@ void writePartialRangeTimeStep( const std::string& prefix, MPI_Comm comm,
 
     // Finish.
     PMPIO_Finish( baton );
+
+    Kokkos::Profiling::popRegion();
 }
 
 /*!
