@@ -78,10 +78,14 @@ macro(Cabana_add_tests)
         "#include <Test${_device}_Category.hpp>\n"
         "#include <tst${_test}.hpp>\n"
       )
-      if(${CABANA_UNIT_TEST_PACKAGE} STREQUAL Cajita)
-        set(_target Cajita_${_test}_test_${_device})
+      if(${CABANA_UNIT_TEST_PACKAGE} STREQUAL cabanacore)
+        if(CABANA_UNIT_TEST_MPI)
+          set(_target Cabana_${_test}_MPI_test_${_device})
+        else()
+          set(_target Cabana_${_test}_test_${_device})
+        endif()
       else()
-        set(_target Cabana_${_test}_test_${_device})
+        set(_target ${CABANA_UNIT_TEST_PACKAGE}_${_test}_MPI_test_${_device})
       endif()
       add_executable(${_target} ${_file} ${CABANA_UNIT_TEST_MAIN})
       target_include_directories(${_target} PRIVATE ${_dir}
