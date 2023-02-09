@@ -794,7 +794,7 @@ class Slice
       \return The rank of the data for this slice.
     */
     KOKKOS_INLINE_FUNCTION
-    constexpr size_type rank() const { return _view.Rank; }
+    constexpr size_type rank() const { return _view.rank; }
 
     /*!
       \brief Get the extent of a given raw slice data dimension. This includes
