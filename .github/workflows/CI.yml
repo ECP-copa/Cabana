@@ -33,6 +33,7 @@ jobs:
         hypre: ['NoHYPRE']
         liball: ['NolibALL']
         silo: ['NoSilo']
+        hdf5: ['NoHDF5']
         coverage: ['OFF']
         include:
           - distro: 'ubuntu:latest'
@@ -126,6 +127,7 @@ jobs:
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
             hypre: 'NoHYPRE'
+            hdf5: 'HDF5'
             coverage: 'OFF'
           - distro: 'ubuntu:rolling'
             cxx: 'g++'
@@ -190,7 +192,7 @@ jobs:
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
             hypre: 'HYPRE'
-            coverage: 'ON'
+            coverage: 'OFF'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
             backend: 'OPENMP'
@@ -200,7 +202,17 @@ jobs:
             heffte: 'NoheFFTe'
             hypre: 'NoHYPRE'
             silo: 'Silo'
-            coverage: 'ON'
+            coverage: 'OFF'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            backend: 'OPENMP'
+            cmake_build_type: 'Debug'
+            kokkos_ver: '3.6.01'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            hdf5: 'HDF5'
+            coverage: 'OFF'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
             backend: 'OPENMP'
@@ -211,6 +223,7 @@ jobs:
             hypre: 'HYPRE'
             liball: 'libALL'
             silo: 'Silo'
+            hdf5: 'HDF5'
             coverage: 'ON'
     runs-on: ubuntu-20.04
     container:
@@ -327,11 +340,17 @@ jobs:
         env:
           SANITIZER: ${{ matrix.sanitizer }}
           SILO: ${{ matrix.silo }}
+          HDF5: ${{ matrix.hdf5 }}
         run: |
           if [[ ${SILO} == 'Silo' ]]; then
             cabana_cmake_opts+=( -DCabana_REQUIRE_SILO=ON )
           else
             cabana_cmake_opts+=( -DCMAKE_DISABLE_FIND_PACKAGE_SILO=ON )
+          fi
+          if [[ ${HDF5} == 'HDF5' ]]; then
+            cabana_cmake_opts+=( -DCabana_REQUIRE_HDF5=ON )
+          else
+            cabana_cmake_opts+=( -DCMAKE_DISABLE_FIND_PACKAGE_HDF5=ON )
           fi
           # FIXME: Add sanitizer for fedora when fixed
           if [[ ${SANITIZER} == 'MSAN' ]]; then

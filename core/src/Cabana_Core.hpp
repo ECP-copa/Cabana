@@ -49,4 +49,8 @@
 #include <Cabana_Experimental_NeighborList.hpp>
 #endif
 
+#ifdef Cabana_ENABLE_HDF5
+#include <Cabana_HDF5ParticleOutput.hpp>
+#endif
+
 #endif // end CABANA_CORE_HPP

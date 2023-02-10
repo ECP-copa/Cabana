@@ -26,4 +26,6 @@
 
 #cmakedefine Cabana_ENABLE_SILO
 
+#cmakedefine Cabana_ENABLE_HDF5
+
 #endif // CABANA_CORE_CONFIG_HPP
