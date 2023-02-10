@@ -123,12 +123,17 @@ $(function() {
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Experimental__NeighborList_8hpp.html">Cabana_Experimental_NeighborList.hpp</a>&gt;</span></div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#endif </span><span class="comment">// end CABANA_CORE_HPP</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#ifdef Cabana_ENABLE_HDF5</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__HDF5ParticleOutput_8hpp.html">Cabana_HDF5ParticleOutput.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="preprocessor">#endif </span><span class="comment">// end CABANA_CORE_HPP</span></div>
 <div class="ttc" id="aCabana__AoSoA_8hpp_html"><div class="ttname"><a href="Cabana__AoSoA_8hpp.html">Cabana_AoSoA.hpp</a></div><div class="ttdoc">Array-of-Struct-of-Arrays particle data structure.</div></div>
 <div class="ttc" id="aCabana__DeepCopy_8hpp_html"><div class="ttname"><a href="Cabana__DeepCopy_8hpp.html">Cabana_DeepCopy.hpp</a></div><div class="ttdoc">AoSoA and slice extensions for Kokkos deep copy and mirrors.</div></div>
 <div class="ttc" id="aCabana__Distributor_8hpp_html"><div class="ttname"><a href="Cabana__Distributor_8hpp.html">Cabana_Distributor.hpp</a></div><div class="ttdoc">Multi-node particle redistribution.</div></div>
 <div class="ttc" id="aCabana__Experimental__NeighborList_8hpp_html"><div class="ttname"><a href="Cabana__Experimental__NeighborList_8hpp.html">Cabana_Experimental_NeighborList.hpp</a></div><div class="ttdoc">ArborX tree-based neighbor lists.</div></div>
 <div class="ttc" id="aCabana__Fields_8hpp_html"><div class="ttname"><a href="Cabana__Fields_8hpp.html">Cabana_Fields.hpp</a></div><div class="ttdoc">Particle field types and common field examples.</div></div>
+<div class="ttc" id="aCabana__HDF5ParticleOutput_8hpp_html"><div class="ttname"><a href="Cabana__HDF5ParticleOutput_8hpp.html">Cabana_HDF5ParticleOutput.hpp</a></div><div class="ttdoc">Write particle output using the HDF5 (XDMF) format.</div></div>
 <div class="ttc" id="aCabana__Halo_8hpp_html"><div class="ttname"><a href="Cabana__Halo_8hpp.html">Cabana_Halo.hpp</a></div><div class="ttdoc">Multi-node particle scatter/gather.</div></div>
 <div class="ttc" id="aCabana__LinkedCellList_8hpp_html"><div class="ttname"><a href="Cabana__LinkedCellList_8hpp.html">Cabana_LinkedCellList.hpp</a></div><div class="ttdoc">Linked cell list binning and sorting.</div></div>
 <div class="ttc" id="aCabana__MemberTypes_8hpp_html"><div class="ttname"><a href="Cabana__MemberTypes_8hpp.html">Cabana_MemberTypes.hpp</a></div><div class="ttdoc">AoSoA tuple member types.</div></div>

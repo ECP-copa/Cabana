@@ -1,3 +1,10 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structCajita_1_1IndexConversion_1_1L2G.html" title="Local&#45;to&#45;global indexer." alt="" coords="5,5,219,45"/>
+<area shape="rect" id="node1" href="$classCajita_1_1HypreStructuredSolver.html" title="Hypre structured solver interface for scalar fields." alt="" coords="5,197,251,237"/>
+<area shape="rect" id="node2" href="$classCajita_1_1HypreStructBiCGSTAB.html" title="BiCGSTAB solver." alt="" coords="299,5,544,45"/>
+<area shape="rect" id="node3" href="$classCajita_1_1HypreStructDiagonal.html" title="Diagonal preconditioner." alt="" coords="299,69,544,109"/>
+<area shape="rect" id="node4" href="$classCajita_1_1HypreStructGMRES.html" title="GMRES solver." alt="" coords="299,133,544,173"/>
+<area shape="rect" id="node5" href="$classCajita_1_1HypreStructJacobi.html" title="Jacobi solver." alt="" coords="299,197,544,237"/>
+<area shape="rect" id="node6" href="$classCajita_1_1HypreStructPCG.html" title="PCG solver." alt="" coords="339,262,503,317"/>
+<area shape="rect" id="node7" href="$classCajita_1_1HypreStructPFMG.html" title="PFMG solver." alt="" coords="334,341,509,395"/>
+<area shape="rect" id="node8" href="$classCajita_1_1HypreStructSMG.html" title="SMG solver." alt="" coords="338,419,505,474"/>
 </map>

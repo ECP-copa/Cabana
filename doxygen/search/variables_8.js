@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['local_5fown_5fmax_0',['local_own_max',['../structCajita_1_1IndexConversion_1_1L2G.html#ac3fd727a87d2bff1053b142ae44a9aca',1,'Cajita::IndexConversion::L2G']]],
-  ['local_5fown_5fmin_1',['local_own_min',['../structCajita_1_1IndexConversion_1_1L2G.html#acd2dcfa6650f50215868f68c4e3bcbec',1,'Cajita::IndexConversion::L2G']]]
+  ['index_0',['index',['../structCabana_1_1TypeIndexer.html#ac3709a509d4f02593c8fc82e6c17be05',1,'Cabana::TypeIndexer']]]
 ];

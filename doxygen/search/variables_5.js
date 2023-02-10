@@ -1,8 +1,4 @@
 var searchData=
 [
-  ['g_0',['g',['../structCajita_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineWeightPhysicalGradients_01_4.html#a6aa47fe6c34bd8be01a76fb73b59167b',1,'Cajita::SplineDataMember&lt; Scalar, Order, NumSpaceDim, SplineWeightPhysicalGradients &gt;']]],
-  ['global_5fhigh_1',['global_high',['../classCajita_1_1Experimental_1_1FastFourierTransform.html#a168f2780dbdc35c2e0c16615d51469ad',1,'Cajita::Experimental::FastFourierTransform']]],
-  ['global_5flow_2',['global_low',['../classCajita_1_1Experimental_1_1FastFourierTransform.html#aa6a88a6fe1562ff0eeb34768c4984eff',1,'Cajita::Experimental::FastFourierTransform']]],
-  ['global_5fnum_5fentity_3',['global_num_entity',['../structCajita_1_1IndexConversion_1_1L2G.html#a2f824c5d3124a1e79274334623a8481c',1,'Cajita::IndexConversion::L2G']]],
-  ['global_5fown_5fmin_4',['global_own_min',['../structCajita_1_1IndexConversion_1_1L2G.html#aa6a19695bf7188cee265d72929c392b6',1,'Cajita::IndexConversion::L2G']]]
+  ['evict_5fon_5fclose_0',['evict_on_close',['../structCabana_1_1Experimental_1_1HDF5ParticleOutput_1_1HDF5Config.html#a56b6e7b5fafeaacc5574f80a5ac328bb',1,'Cabana::Experimental::HDF5ParticleOutput::HDF5Config']]]
 ];
