@@ -53,7 +53,7 @@ void neighborParallelForExample()
     */
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::OpenMP;
+    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
     using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*

@@ -55,7 +55,7 @@ void simdParallelForExample()
     using DataTypes = Cabana::MemberTypes<double, double>;
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::OpenMP;
+    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
     using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
@@ -104,9 +104,8 @@ void simdParallelForExample()
       The template parameters of this type include the vector length
       indicating the size of the SIMD loops to be performed, and the Kokkos
       execution space over which perform the threading. This example uses
-      OpenMP for the threading but CUDA, Serial, or any other Kokkos execution
-      space can similarly be used as long as it is compatible with the memory
-      space of the AoSoA.
+      the default host execution space, but any Kokkos execution space can be
+      used as long as it is compatible with the memory space of the AoSoA.
 
       Note: The policy is defined over a 1D index range even though
       the intention is to perform 2D parallel loops. The policy will

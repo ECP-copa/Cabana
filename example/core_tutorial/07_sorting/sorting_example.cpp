@@ -40,7 +40,7 @@ void sortingExample()
     */
     const int VectorLength = 4;
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::Serial;
+    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
     using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*

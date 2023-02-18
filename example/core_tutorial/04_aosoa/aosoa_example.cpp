@@ -49,20 +49,16 @@ void aosoaExample()
     const int VectorLength = 4;
 
     /*
-      Finally declare the memory space in which the AoSoA will be allocated
-      and the execution space in which kernels will execute. In this example
-      we are writing basic loops that will execute on the CPU. The HostSpace
-      allocates memory in standard CPU RAM.
+      Finally declare the memory space in which the AoSoA will be allocated.
+      In this example we are writing basic loops that will execute on the CPU.
+      The HostSpace allocates memory in standard CPU RAM.
 
-      Kokkos also supports execution on NVIDIA GPUs. For example, to create an
-      AoSoA allocated with CUDA Unified Virtual Memory (UVM) use
-      `Kokkos::CudaUVMSpace` instead of `Kokkos::HostSpace`. The CudaUVMSpace
-      allocates memory in managed GPU memory via `cudaMallocManaged`. This
-      memory is automatically paged between host and device depending on the
-      context in which the memory is accessed.
+      Kokkos also supports execution on GPUs. For example, to create an
+      AoSoA allocated on NVIDIA devices use `Kokkos::CudaSpace` instead of
+      `Kokkos::HostSpace`.
     */
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::Serial;
+    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
     using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
