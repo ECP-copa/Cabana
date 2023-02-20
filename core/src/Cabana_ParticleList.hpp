@@ -180,11 +180,12 @@ class ParticleList
   public:
     //! Kokkos memory space.
     using memory_space = MemorySpace;
-    //! Particle AoSoA member types.
+    //! AoSoA member field types.
     using traits = ParticleTraits<FieldTags...>;
+    //! AoSoA member types.
+    using member_types = typename traits::member_types;
     //! AoSoA type.
-    using aosoa_type =
-        Cabana::AoSoA<typename traits::member_types, memory_space>;
+    using aosoa_type = Cabana::AoSoA<member_types, memory_space>;
     //! Particle tuple type.
     using tuple_type = typename aosoa_type::tuple_type;
     /*!
@@ -202,6 +203,13 @@ class ParticleList
     //! Default constructor.
     ParticleList( const std::string& label )
         : _aosoa( label )
+    {
+    }
+
+    //! Constructor from existing AoSoA.
+    template <class AoSoAType>
+    ParticleList( const AoSoAType aosoa )
+        : _aosoa( aosoa )
     {
     }
 

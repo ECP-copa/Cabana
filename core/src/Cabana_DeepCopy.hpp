@@ -17,6 +17,7 @@
 #define CABANA_DEEPCOPY_HPP
 
 #include <Cabana_AoSoA.hpp>
+#include <Cabana_ParticleList.hpp>
 #include <Cabana_Slice.hpp>
 #include <impl/Cabana_TypeTraits.hpp>
 
@@ -104,10 +105,9 @@ inline SrcAoSoA create_mirror_view_and_copy(
     const Space&, const SrcAoSoA& src,
     typename std::enable_if<
         ( std::is_same<typename SrcAoSoA::memory_space,
-                       typename Space::memory_space>::value )>::type* = 0 )
+                       typename Space::memory_space>::value &&
+          is_aosoa<SrcAoSoA>::value )>::type* = 0 )
 {
-    static_assert( is_aosoa<SrcAoSoA>::value,
-                   "create_mirror_view_and_copy() requires an AoSoA" );
     return src;
 }
 
@@ -127,11 +127,9 @@ create_mirror_view_and_copy(
     const Space& space, const SrcAoSoA& src,
     typename std::enable_if<
         ( !std::is_same<typename SrcAoSoA::memory_space,
-                        typename Space::memory_space>::value )>::type* = 0 )
+                        typename Space::memory_space>::value &&
+          is_aosoa<SrcAoSoA>::value )>::type* = 0 )
 {
-    static_assert( is_aosoa<SrcAoSoA>::value,
-                   "create_mirror_view_and_copy() requires an AoSoA" );
-
     auto dst = create_mirror( space, src );
 
     Kokkos::deep_copy(
@@ -230,6 +228,25 @@ deep_copy( DstAoSoA& dst, const SrcAoSoA& src,
         Kokkos::parallel_for( "Cabana::deep_copy", exec_policy, copy_func );
         Kokkos::fence();
     }
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Deep copy data between compatible ParticleList objects.
+
+  \param dst The destination for the copied data.
+  \param src The source of the copied data.
+s*/
+template <class DstMemorySpace, class SrcMemorySpace, class... FieldTags>
+inline void deep_copy( ParticleList<DstMemorySpace, FieldTags...>& dst,
+                       const ParticleList<SrcMemorySpace, FieldTags...>& src )
+{
+    // Copy particle data to new memory space.
+    auto aosoa_src = src.aosoa();
+    auto& aosoa_dst = dst.aosoa();
+
+    // Set the new data.
+    Cabana::deep_copy( aosoa_dst, aosoa_src );
 }
 
 //---------------------------------------------------------------------------//
@@ -390,6 +407,49 @@ inline void deep_copy( Slice_t& slice,
 }
 
 //---------------------------------------------------------------------------//
+/*!
+  \brief Create a mirror of the given ParticleList in the given memory space.
+
+  \note Memory allocation will only occur if the requested mirror
+  memory space is different from that of the input AoSoA. If they are the
+  same, the original ParticleList is returned.
+ */
+template <class DstMemorySpace, class SrcMemorySpace, class... FieldTags>
+auto create_mirror_view_and_copy(
+    DstMemorySpace, ParticleList<SrcMemorySpace, FieldTags...> plist_src,
+    typename std::enable_if<
+        std::is_same<SrcMemorySpace, DstMemorySpace>::value>::type* = 0 )
+{
+    return plist_src;
+}
+
+/*!
+  \brief Create a mirror of the given ParticleList in the given memory space.
+
+  \note Memory allocation will only occur if the requested mirror
+  memory space is different from that of the input AoSoA. If they are the
+  same, the original ParticleList is returned.
+ */
+template <class DstMemorySpace, class SrcMemorySpace, class... FieldTags>
+auto create_mirror_view_and_copy(
+    DstMemorySpace, ParticleList<SrcMemorySpace, FieldTags...> plist_src,
+    typename std::enable_if<
+        !std::is_same<SrcMemorySpace, DstMemorySpace>::value>::type* = 0 )
+{
+    // Extract the original AoSoA.
+    auto aosoa_src = plist_src.aosoa();
+
+    // Create an AoSoA in the new memory space.
+    using src_plist_type = ParticleList<SrcMemorySpace, FieldTags...>;
+    using member_types = typename src_plist_type::member_types;
+    AoSoA<member_types, DstMemorySpace> aosoa_dst( aosoa_src.label() );
+
+    // Copy data to new AoAoA.
+    deep_copy( aosoa_dst, aosoa_src );
+
+    // Create new list with the copied data.
+    return ParticleList<DstMemorySpace, FieldTags...>( aosoa_dst );
+}
 
 } // end namespace Cabana
 
