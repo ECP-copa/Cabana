@@ -28,6 +28,7 @@ set(MPI_TESTS
   Array2d
   Halo3d
   Halo2d
+  ParticleInit
   ParticleGridDistributor2d
   ParticleGridDistributor3d
   SplineEvaluation3d

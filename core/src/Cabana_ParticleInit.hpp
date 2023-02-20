@@ -24,6 +24,64 @@
 namespace Cabana
 {
 
+//---------------------------------------------------------------------------//
+// Initialization type tags.
+//! Uniform particle initialization type tag.
+struct InitUniform
+{
+};
+//! Random particle initialization type tag.
+struct InitRandom
+{
+};
+
+//---------------------------------------------------------------------------//
+//! Filter out empty particles that weren't created.
+template <class CreationView, class ParticleAoSoA, class ExecutionSpace>
+void filterEmpties( const ExecutionSpace& exec_space,
+                    const int local_num_create,
+                    const CreationView& particle_created, ParticleAoSoA& aosoa )
+{
+    using memory_space = typename CreationView::memory_space;
+
+    // Determine the empty particle positions in the compaction zone.
+    int num_particles = aosoa.size();
+    Kokkos::View<int*, memory_space> empties(
+        Kokkos::ViewAllocateWithoutInitializing( "empties" ),
+        std::min( num_particles - local_num_create, local_num_create ) );
+    Kokkos::parallel_scan(
+        "Cabana::ParticleInit::FindEmpty",
+        Kokkos::RangePolicy<ExecutionSpace>( exec_space, 0, local_num_create ),
+        KOKKOS_LAMBDA( const int i, int& count, const bool final_pass ) {
+            if ( !particle_created( i ) )
+            {
+                if ( final_pass )
+                {
+                    empties( count ) = i;
+                }
+                ++count;
+            }
+        } );
+
+    // Compact the list so the it only has real particles.
+    Kokkos::parallel_scan(
+        "Cabana::ParticleInit::RemoveEmpty",
+        Kokkos::RangePolicy<ExecutionSpace>( exec_space, local_num_create,
+                                             num_particles ),
+        KOKKOS_LAMBDA( const int i, int& count, const bool final_pass ) {
+            if ( particle_created( i ) )
+            {
+                if ( final_pass )
+                {
+                    aosoa.setTuple( empties( count ), aosoa.getTuple( i ) );
+                }
+                ++count;
+            }
+        } );
+    aosoa.resize( local_num_create );
+    aosoa.shrinkToFit();
+}
+
 /*!
   Generate random particles with minimum distance between neighbors. This
   approximates many physical scenarios, e.g. atomic simulations. Kokkos
