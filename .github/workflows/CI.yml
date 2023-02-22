@@ -377,12 +377,12 @@ jobs:
           [[ ${{ matrix.distro }} == 'ubuntu:latest' || ${{ matrix.distro }} == 'ubuntu:rolling' || ${{ matrix.backend }} == OPENMP || ${{ matrix.cmake_build_type }} == Release ]] && cabana_cmake_opts+=( -DVALGRIND_EXECUTABLE=False )
           [[ ${{ matrix.cxx }} == icpx ]] && cabana_cmake_opts+=( -DCMAKE_CXX_FLAGS_DEBUG="-g -O0" )
           [[ ${{ matrix.heffte }} == *"ONEAPI"* ]] && source /opt/intel/oneapi/setvars.sh
+          cabana_cxx_flags+=( "-Wall -Wextra -pedantic" )
           if [[ ${{ matrix.backend }} == "SYCL" ]]; then
-            cabana_cxx_flags=( "-Wall -Wextra -pedantic" )
             source /opt/intel/oneapi/setvars.sh
             cabana_cmake_opts+=(-DMPIEXEC_MAX_NUMPROCS=1)
           else
-            cabana_cxx_flags=( "-Wall -Wextra -pedantic -Werror" )
+            cabana_cxx_flags+=( "-Werror" )
             cabana_cmake_opts+=(-DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe")
           fi
           cmake -B build \
@@ -390,7 +390,7 @@ jobs:
             -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/hypre;$HOME/ALL" \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_FLAGS="${cabana_cxx_flags[@]}" \
+            -DCMAKE_CXX_FLAGS="${cabana_cxx_flags[*]}" \
             -DCabana_ENABLE_TESTING=ON \
             -DCabana_ENABLE_EXAMPLES=ON \
             -DCabana_ENABLE_PERFORMANCE_TESTING=ON \
@@ -398,7 +398,7 @@ jobs:
             -DCabana_ENABLE_COVERAGE_BUILD=${{ matrix.coverage }} \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
             -DDOXYGEN_WARN_AS_ERROR=FAIL_ON_WARNINGS \
-            ${cabana_cmake_opts[@]}
+            "${cabana_cmake_opts[@]}"
           cmake --build build --parallel 2 --verbose
           CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test
           cmake --install build
