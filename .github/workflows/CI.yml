@@ -301,9 +301,9 @@ jobs:
         working-directory: heffte
         run: |
           [[ ${{ matrix.heffte }} == *"heFFTe_FFTW"* ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_FFTW=ON )
-          [[ ${{ matrix.heffte }} == *"heFFTe_MKL"* ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_MKL=ON )
+          [[ ${{ matrix.heffte }} == *"heFFTe_MKL"* ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_MKL=ON -DHeffte_MKL_ROOT=/opt/intel/oneapi/mkl/latest )
           if [[ ${{ matrix.heffte }} == *"ONEAPI"* ]]; then
-            heffte_cmake_opts+=( -DHeffte_ENABLE_ONEAPI=ON -DCMAKE_CXX_FLAGS=-fsycl )
+            heffte_cmake_opts+=( -DHeffte_ENABLE_ONEAPI=ON -DHeffte_ONEMKL_ROOT=/opt/intel/oneapi/mkl/latest -DCMAKE_CXX_FLAGS=-fsycl )
             source /opt/intel/oneapi/setvars.sh
           fi
           cmake -B build \
@@ -312,7 +312,6 @@ jobs:
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
-            -DHeffte_ONEMKL_ROOT=/opt/intel/oneapi/mkl/latest \
             ${heffte_cmake_opts[@]}
           cmake --build build --parallel 2
           cmake --install build
