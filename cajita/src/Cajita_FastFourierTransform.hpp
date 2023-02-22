@@ -421,6 +421,7 @@ struct HeffteScalingTraits<FFTScaleSymmetric>
     static const auto scaling_type = heffte::scale::symmetric;
 };
 
+#ifdef KOKKOS_ENABLE_SYCL
 // Overload for SYCL.
 template <class HeffteBackendType>
 auto createHeffte(
@@ -437,6 +438,7 @@ auto createHeffte(
     return std::make_shared<heffte::fft3d<HeffteBackendType>>( q, inbox, outbox,
                                                                comm, params );
 }
+#endif
 
 template <class HeffteBackendType>
 auto createHeffte(
