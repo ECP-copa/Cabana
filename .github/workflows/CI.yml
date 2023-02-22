@@ -301,7 +301,7 @@ jobs:
         working-directory: heffte
         run: |
           [[ ${{ matrix.heffte }} == *"heFFTe_FFTW"* ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_FFTW=ON )
-          [[ ${{ matrix.heffte }} == *"heFFTe_MKL"* ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_MKL=ON -DHeffte_MKL_ROOT=/opt/intel/oneapi/mkl/latest )
+          [[ ${{ matrix.heffte }} == *"heFFTe_MKL"* ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_MKL=ON -DHeffte_MKL_ROOT=/opt/intel/oneapi/mkl/latest -DHeffte_MKL_IOMP5=/opt/intel/oneapi/compiler/latest/linux/compiler/lib/intel64_lin/libiomp5.so )
           if [[ ${{ matrix.heffte }} == *"ONEAPI"* ]]; then
             heffte_cmake_opts+=( -DHeffte_ENABLE_ONEAPI=ON -DHeffte_ONEMKL_ROOT=/opt/intel/oneapi/mkl/latest -DCMAKE_CXX_FLAGS=-fsycl )
             source /opt/intel/oneapi/setvars.sh
