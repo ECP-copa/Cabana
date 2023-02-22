@@ -300,10 +300,10 @@ jobs:
         if: ${{ matrix.heffte != 'NoheFFTe' }}
         working-directory: heffte
         run: |
-          [[ ${{ matrix.heffte }} == *"heFFTe_FFTW"* ]] && heffte_cmake_opts+=" -DHeffte_ENABLE_FFTW=ON"
-          [[ ${{ matrix.heffte }} == *"heFFTe_MKL"* ]] && heffte_cmake_opts+=" -DHeffte_ENABLE_MKL=ON"
+          [[ ${{ matrix.heffte }} == *"heFFTe_FFTW"* ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_FFTW=ON )
+          [[ ${{ matrix.heffte }} == *"heFFTe_MKL"* ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_MKL=ON )
           if [[ ${{ matrix.heffte }} == *"ONEAPI"* ]]; then
-            heffte_cmake_opts+=" -DHeffte_ENABLE_ONEAPI=ON"
+            heffte_cmake_opts+=( -DHeffte_ENABLE_ONEAPI=ON -DCMAKE_CXX_FLAGS=-fsycl )
             source /opt/intel/oneapi/setvars.sh
           fi
           cmake -B build \
@@ -312,9 +312,8 @@ jobs:
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
-            -DMKL_ROOT=/opt/intel/oneapi/mkl/latest \
-            -DHeffte_MKL_IOMP5=/opt/intel/oneapi/compiler/latest/linux/compiler/lib/intel64_lin/libiomp5.so \
-            ${heffte_cmake_opts}
+            -DHeffte_ONEMKL_ROOT=/opt/intel/oneapi/mkl/latest \
+            ${heffte_cmake_opts[@]}
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout hypre
