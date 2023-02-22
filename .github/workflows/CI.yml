@@ -378,7 +378,6 @@ jobs:
           [[ ${{ matrix.heffte }} == *"ONEAPI"* ]] && source /opt/intel/oneapi/setvars.sh
           cabana_cxx_flags+=( "-Wall -Wextra -pedantic" )
           if [[ ${{ matrix.backend }} == "SYCL" ]]; then
-            source /opt/intel/oneapi/setvars.sh
             cabana_cmake_opts+=(-DMPIEXEC_MAX_NUMPROCS=1)
           else
             cabana_cxx_flags+=( "-Werror" )
