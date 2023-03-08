@@ -11,4 +11,5 @@
 
 add_executable(Array array_example.cpp)
 target_link_libraries(Array Cajita)
-add_test(NAME Cajita_tutorial_08 COMMAND ${NONMPI_PRECOMMAND} Array)
+add_test(NAME Cajita_tutorial_08 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} Array ${MPIEXEC_POSTFLAGS})
+set_tests_properties(Cajita_tutorial_08 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

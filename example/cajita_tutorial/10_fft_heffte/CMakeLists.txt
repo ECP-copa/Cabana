@@ -11,4 +11,5 @@
 
 add_executable(HeffteFFT heffte_fast_fourier_transform_example.cpp)
 target_link_libraries(HeffteFFT Cajita)
-add_test(NAME Cajita_tutorial_10 COMMAND ${NONMPI_PRECOMMAND} HeffteFFT)
+add_test(NAME Cajita_tutorial_10 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} HeffteFFT ${MPIEXEC_POSTFLAGS})
+set_tests_properties(Cajita_tutorial_10 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

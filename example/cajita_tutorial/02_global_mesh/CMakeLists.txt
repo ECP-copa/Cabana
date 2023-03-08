@@ -11,4 +11,5 @@
 
 add_executable(GlobalMesh global_mesh_example.cpp)
 target_link_libraries(GlobalMesh Cajita)
-add_test(NAME Cajita_tutorial_02 COMMAND ${NONMPI_PRECOMMAND} GlobalMesh)
+add_test(NAME Cajita_tutorial_02 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} GlobalMesh ${MPIEXEC_POSTFLAGS})
+set_tests_properties(Cajita_tutorial_02 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

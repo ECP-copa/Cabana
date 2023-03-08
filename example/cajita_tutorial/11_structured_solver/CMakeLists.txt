@@ -11,4 +11,5 @@
 
 add_executable(StructuredSolver structured_solver_example.cpp)
 target_link_libraries(StructuredSolver Cajita)
-add_test(NAME Cajita_tutorial_11 COMMAND ${NONMPI_PRECOMMAND} StructuredSolver)
+add_test(NAME Cajita_tutorial_11 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} StructuredSolver ${MPIEXEC_POSTFLAGS})
+set_tests_properties(Cajita_tutorial_11 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

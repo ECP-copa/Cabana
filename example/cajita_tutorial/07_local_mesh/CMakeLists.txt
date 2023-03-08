@@ -11,4 +11,5 @@
 
 add_executable(LocalMesh local_mesh_example.cpp)
 target_link_libraries(LocalMesh Cajita)
-add_test(NAME Cajita_tutorial_07 COMMAND ${NONMPI_PRECOMMAND} LocalMesh)
+add_test(NAME Cajita_tutorial_07 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} LocalMesh ${MPIEXEC_POSTFLAGS})
+set_tests_properties(Cajita_tutorial_07 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

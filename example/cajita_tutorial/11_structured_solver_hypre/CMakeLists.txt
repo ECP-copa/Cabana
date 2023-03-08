@@ -11,4 +11,5 @@
 
 add_executable(HypreStructuredSolver hypre_structured_solver_example.cpp)
 target_link_libraries(HypreStructuredSolver Cajita)
-add_test(NAME Cajita_tutorial_11_hypre COMMAND ${NONMPI_PRECOMMAND} HypreStructuredSolver)
+add_test(NAME Cajita_tutorial_11_hypre COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} HypreStructuredSolver ${MPIEXEC_POSTFLAGS})
+set_tests_properties(Cajita_tutorial_11_hypre PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
