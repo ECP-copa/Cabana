@@ -11,4 +11,5 @@
 
 add_executable(Interpolation interpolation_example.cpp)
 target_link_libraries(Interpolation Cajita)
-add_test(NAME Cajita_tutorial_15 COMMAND ${NONMPI_PRECOMMAND} Interpolation)
+add_test(NAME Cajita_tutorial_15 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} Interpolation ${MPIEXEC_POSTFLAGS})
+set_tests_properties(Cajita_tutorial_15 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
