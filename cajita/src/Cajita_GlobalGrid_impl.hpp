@@ -41,17 +41,36 @@ GlobalGrid<MeshType>::GlobalGrid(
 
     // Generate a communicator with a Cartesian topology.
     int reorder_cart_ranks = 1;
-    MPI_Cart_create( comm, num_space_dim, _ranks_per_dim.data(),
-                     periodic_dims.data(), reorder_cart_ranks, &_cart_comm );
+
+    auto num_space_dim_copy = num_space_dim;
+    auto ranks_per_dim_copy = _ranks_per_dim.data();
+    auto periodic_dims_copy = periodic_dims.data();
+    _cart_comm_ptr.reset(
+        // Duplicate the communicator and store in a std::shared_ptr so that
+        // all copies point to the same object
+        [comm, num_space_dim_copy, ranks_per_dim_copy, periodic_dims_copy,
+         reorder_cart_ranks]()
+        {
+            auto p = std::make_unique<MPI_Comm>();
+            MPI_Cart_create( comm, num_space_dim_copy, ranks_per_dim_copy,
+                             periodic_dims_copy, reorder_cart_ranks, p.get() );
+            return p.release();
+        }(),
+        // Custom deleter to mark the communicator for deallocation
+        []( MPI_Comm* p )
+        {
+            MPI_Comm_free( p );
+            delete p;
+        } );
 
     // Get the Cartesian topology index of this rank.
     int linear_rank;
-    MPI_Comm_rank( _cart_comm, &linear_rank );
-    MPI_Cart_coords( _cart_comm, linear_rank, num_space_dim,
+    MPI_Comm_rank( this->comm(), &linear_rank );
+    MPI_Cart_coords( this->comm(), linear_rank, num_space_dim,
                      _cart_rank.data() );
 
     // Get the cells per dimension and the remainder.
-    partitioner.ownedCellInfo( _cart_comm, global_num_cell, _owned_num_cell,
+    partitioner.ownedCellInfo( this->comm(), global_num_cell, _owned_num_cell,
                                _global_cell_offset );
 
     // Determine if a block is on the low or high boundaries.
@@ -67,7 +86,6 @@ GlobalGrid<MeshType>::GlobalGrid(
 template <class MeshType>
 GlobalGrid<MeshType>::~GlobalGrid()
 {
-    MPI_Comm_free( &_cart_comm );
 }
 
 //---------------------------------------------------------------------------//
@@ -75,7 +93,7 @@ GlobalGrid<MeshType>::~GlobalGrid()
 template <class MeshType>
 MPI_Comm GlobalGrid<MeshType>::comm() const
 {
-    return _cart_comm;
+    return *_cart_comm_ptr;
 }
 
 //---------------------------------------------------------------------------//
@@ -124,7 +142,7 @@ template <class MeshType>
 int GlobalGrid<MeshType>::totalNumBlock() const
 {
     int comm_size;
-    MPI_Comm_size( _cart_comm, &comm_size );
+    MPI_Comm_size( this->comm(), &comm_size );
     return comm_size;
 }
 
@@ -142,7 +160,7 @@ template <class MeshType>
 int GlobalGrid<MeshType>::blockId() const
 {
     int comm_rank;
-    MPI_Comm_rank( _cart_comm, &comm_rank );
+    MPI_Comm_rank( this->comm(), &comm_rank );
     return comm_rank;
 }
 
@@ -163,7 +181,7 @@ int GlobalGrid<MeshType>::blockRank(
 
     // If we have indices get their rank.
     int lr;
-    MPI_Cart_rank( _cart_comm, ijk.data(), &lr );
+    MPI_Cart_rank( this->comm(), ijk.data(), &lr );
     return lr;
 }
 

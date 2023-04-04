@@ -170,7 +170,7 @@ class GlobalGrid
                               const std::array<int, num_space_dim>& offset );
 
   private:
-    MPI_Comm _cart_comm;
+    std::shared_ptr<MPI_Comm> _cart_comm_ptr;
     std::shared_ptr<GlobalMesh<MeshType>> _global_mesh;
     std::array<bool, num_space_dim> _periodic;
     std::array<int, num_space_dim> _ranks_per_dim;
