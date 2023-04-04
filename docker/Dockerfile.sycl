@@ -49,6 +49,8 @@ ENV SYCL_DIR=/opt/sycl
 RUN SYCL_VERSION=20220112 && \
     SYCL_ARCHIVE=${SYCL_VERSION}.tar.gz && \
     SYCL_URL=https://github.com/intel/llvm/archive/sycl-nightly/${SYCL_ARCHIVE} && \
+    export CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda && \
+    export CUDA_LIB_PATH=${CUDA_TOOLKIT_ROOT_DIR}/lib64/stubs && \
     SCRATCH_DIR=/scratch && mkdir -p ${SCRATCH_DIR} && cd ${SCRATCH_DIR} && \
     wget --quiet ${SYCL_URL} && \
     mkdir llvm && \
