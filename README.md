@@ -28,6 +28,11 @@ developers.
 We encourage you to contribute to Cabana! Please check the
 [guidelines](CONTRIBUTING.md) on how to do so.
 
+## Citing
+
+If you use Cabana in your work, please cite the [JOSS article](CITATION.bib).
+Also consider citing the appropriate [release](https://doi.org/10.5281/zenodo.2558368).
+
 ## License
 
 Cabana is distributed under an [open source 3-clause BSD license](LICENSE).
