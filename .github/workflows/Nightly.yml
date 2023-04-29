@@ -12,6 +12,7 @@ jobs:
     strategy:
       matrix:
         backend: ["OPENMP", "SERIAL"]
+        cxx: ['g++', 'clang++']
         distro: ['ubuntu:latest', 'fedora:rawhide']
     runs-on: ubuntu-20.04
     container:
@@ -26,7 +27,7 @@ jobs:
       - name: Build kokkos
         working-directory: kokkos
         run: |
-          cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/kokkos -DKokkos_ENABLE_${{ matrix.backend }}=ON  -DKokkos_ENABLE_DEPRECATED_CODE_3=OFF
+          cmake -B build -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DCMAKE_INSTALL_PREFIX=$HOME/kokkos -DKokkos_ENABLE_${{ matrix.backend }}=ON  -DKokkos_ENABLE_DEPRECATED_CODE_3=OFF
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout arborx
@@ -38,14 +39,14 @@ jobs:
       - name: Build arborx
         working-directory: arborx
         run: |
-          cmake -B build -DCMAKE_PREFIX_PATH=${HOME}/kokkos -DCMAKE_INSTALL_PREFIX=$HOME/arborx
+          cmake -B build -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DCMAKE_PREFIX_PATH=${HOME}/kokkos -DCMAKE_INSTALL_PREFIX=$HOME/arborx
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout Cabana
         uses: actions/checkout@v2.2.0
       - name: Build Cabana
         run: |
-          cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/Cabana -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx" -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON -DCabana_REQUIRE_${{ matrix.backend }}=ON -DVALGRIND_EXECUTABLE=False ${{ github.event.inputs.cmake_args }}
+          cmake -B build -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DCMAKE_INSTALL_PREFIX=$HOME/Cabana -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx" -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON -DCabana_REQUIRE_${{ matrix.backend }}=ON -DVALGRIND_EXECUTABLE=False ${{ github.event.inputs.cmake_args }}
           cmake --build build --parallel 2
           CTEST_OUTPUT_ON_FAILURE=yes cmake --build build --target test
           cmake --install build
