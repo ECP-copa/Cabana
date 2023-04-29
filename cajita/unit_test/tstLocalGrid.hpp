@@ -1859,7 +1859,7 @@ void notPeriodicTest3d()
     auto grid_comm = global_grid->comm();
 
     // Create a local mesh.
-    int halo_width = 2;
+    int halo_width = 5;
     auto local_grid = createLocalGrid( global_grid, halo_width );
 
     // Check sizes
@@ -2030,7 +2030,14 @@ void notPeriodicTest3d()
                 }
             }
 
+    ///////////////////////////////////////
     // Check the boundary spaces.
+    ///////////////////////////////////////
+
+    //////////////////
+    // CELL SPACES
+    //////////////////
+
     IndexSpace<3> boundary_cell_space;
     if ( -1 == local_grid->neighborRank( -1, 0, 1 ) )
     {
@@ -2218,6 +2225,1465 @@ void notPeriodicTest3d()
                    owned_cell_space.min( Dim::K ) );
         EXPECT_EQ( boundary_cell_space.max( Dim::K ),
                    owned_cell_space.min( Dim::K ) + 1 );
+    }
+
+    //////////////////
+    // NODE SPACES
+    //////////////////
+
+    IndexSpace<3> boundary_node_space;
+    if ( -1 == local_grid->neighborRank( -1, 0, 1 ) )
+    {
+        boundary_node_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Node(), -1, 0, 1 );
+        EXPECT_EQ( boundary_node_space.min( Dim::I ), 0 );
+        EXPECT_EQ( boundary_node_space.max( Dim::I ), halo_width );
+        EXPECT_EQ( boundary_node_space.min( Dim::J ),
+                   owned_node_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::J ),
+                   owned_node_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_node_space.min( Dim::K ),
+                   owned_node_space.max( Dim::K ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::K ),
+                   owned_node_space.max( Dim::K ) + halo_width );
+
+        boundary_node_space =
+            local_grid->boundaryIndexSpace( Own(), Node(), -1, 0, 1 );
+        EXPECT_EQ( boundary_node_space.min( Dim::I ),
+                   owned_node_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::I ),
+                   owned_node_space.min( Dim::I ) + halo_width + 1 );
+        EXPECT_EQ( boundary_node_space.min( Dim::J ),
+                   owned_node_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::J ),
+                   owned_node_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_node_space.min( Dim::K ),
+                   owned_node_space.max( Dim::K ) - halo_width - 1 );
+        EXPECT_EQ( boundary_node_space.max( Dim::K ),
+                   owned_node_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1, 0 ) )
+    {
+        boundary_node_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Node(), 1, -1, 0 );
+        EXPECT_EQ( boundary_node_space.min( Dim::I ),
+                   owned_node_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::I ),
+                   owned_node_space.max( Dim::I ) + halo_width );
+        EXPECT_EQ( boundary_node_space.min( Dim::J ), 0 );
+        EXPECT_EQ( boundary_node_space.max( Dim::J ), halo_width );
+        EXPECT_EQ( boundary_node_space.min( Dim::K ),
+                   owned_node_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::K ),
+                   owned_node_space.max( Dim::K ) );
+
+        boundary_node_space =
+            local_grid->boundaryIndexSpace( Own(), Node(), 1, -1, 0 );
+        EXPECT_EQ( boundary_node_space.min( Dim::I ),
+                   owned_node_space.max( Dim::I ) - halo_width - 1 );
+        EXPECT_EQ( boundary_node_space.max( Dim::I ),
+                   owned_node_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_node_space.min( Dim::J ),
+                   owned_node_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::J ),
+                   owned_node_space.min( Dim::J ) + halo_width + 1 );
+        EXPECT_EQ( boundary_node_space.min( Dim::K ),
+                   owned_node_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::K ),
+                   owned_node_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 0, 1, -1 ) )
+    {
+        boundary_node_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Node(), 0, 1, -1 );
+        EXPECT_EQ( boundary_node_space.min( Dim::I ),
+                   owned_node_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::I ),
+                   owned_node_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_node_space.min( Dim::J ),
+                   owned_node_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::J ),
+                   owned_node_space.max( Dim::J ) + halo_width );
+        EXPECT_EQ( boundary_node_space.min( Dim::K ), 0 );
+        EXPECT_EQ( boundary_node_space.max( Dim::K ), halo_width );
+
+        boundary_node_space =
+            local_grid->boundaryIndexSpace( Own(), Node(), 0, 1, -1 );
+        EXPECT_EQ( boundary_node_space.min( Dim::I ),
+                   owned_node_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::I ),
+                   owned_node_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_node_space.min( Dim::J ),
+                   owned_node_space.max( Dim::J ) - halo_width - 1 );
+        EXPECT_EQ( boundary_node_space.max( Dim::J ),
+                   owned_node_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_node_space.min( Dim::K ),
+                   owned_node_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::K ),
+                   owned_node_space.min( Dim::K ) + halo_width + 1 );
+    }
+
+    // Check the boundary spaces again but this time with a
+    // specified halo width.
+    if ( -1 == local_grid->neighborRank( -1, 0, 1 ) )
+    {
+        int new_hw = 4;
+        boundary_node_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Node(), -1, 0, 1, new_hw );
+        EXPECT_EQ( boundary_node_space.min( Dim::I ),
+                   owned_node_space.min( Dim::I ) - new_hw );
+        EXPECT_EQ( boundary_node_space.max( Dim::I ),
+                   owned_node_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_node_space.min( Dim::J ),
+                   owned_node_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::J ),
+                   owned_node_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_node_space.min( Dim::K ),
+                   owned_node_space.max( Dim::K ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::K ),
+                   owned_node_space.max( Dim::K ) + new_hw );
+
+        boundary_node_space =
+            local_grid->boundaryIndexSpace( Own(), Node(), -1, 0, 1, new_hw );
+        EXPECT_EQ( boundary_node_space.min( Dim::I ),
+                   owned_node_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::I ),
+                   owned_node_space.min( Dim::I ) + new_hw + 1 );
+        EXPECT_EQ( boundary_node_space.min( Dim::J ),
+                   owned_node_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::J ),
+                   owned_node_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_node_space.min( Dim::K ),
+                   owned_node_space.max( Dim::K ) - new_hw - 1 );
+        EXPECT_EQ( boundary_node_space.max( Dim::K ),
+                   owned_node_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1, 0 ) )
+    {
+        int new_hw = 3;
+        boundary_node_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Node(), 1, -1, 0, new_hw );
+        EXPECT_EQ( boundary_node_space.min( Dim::I ),
+                   owned_node_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::I ),
+                   owned_node_space.max( Dim::I ) + new_hw );
+        EXPECT_EQ( boundary_node_space.min( Dim::J ),
+                   owned_node_space.min( Dim::J ) - new_hw );
+        EXPECT_EQ( boundary_node_space.max( Dim::J ),
+                   owned_node_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_node_space.min( Dim::K ),
+                   owned_node_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::K ),
+                   owned_node_space.max( Dim::K ) );
+
+        boundary_node_space =
+            local_grid->boundaryIndexSpace( Own(), Node(), 1, -1, 0, new_hw );
+        EXPECT_EQ( boundary_node_space.min( Dim::I ),
+                   owned_node_space.max( Dim::I ) - new_hw - 1 );
+        EXPECT_EQ( boundary_node_space.max( Dim::I ),
+                   owned_node_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_node_space.min( Dim::J ),
+                   owned_node_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::J ),
+                   owned_node_space.min( Dim::J ) + new_hw + 1 );
+        EXPECT_EQ( boundary_node_space.min( Dim::K ),
+                   owned_node_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::K ),
+                   owned_node_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 0, 1, -1 ) )
+    {
+        int new_hw = 1;
+        boundary_node_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Node(), 0, 1, -1, new_hw );
+        EXPECT_EQ( boundary_node_space.min( Dim::I ),
+                   owned_node_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::I ),
+                   owned_node_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_node_space.min( Dim::J ),
+                   owned_node_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::J ),
+                   owned_node_space.max( Dim::J ) + new_hw );
+        EXPECT_EQ( boundary_node_space.min( Dim::K ),
+                   owned_node_space.min( Dim::K ) - new_hw );
+        EXPECT_EQ( boundary_node_space.max( Dim::K ),
+                   owned_node_space.min( Dim::K ) );
+
+        boundary_node_space =
+            local_grid->boundaryIndexSpace( Own(), Node(), 0, 1, -1, new_hw );
+        EXPECT_EQ( boundary_node_space.min( Dim::I ),
+                   owned_node_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::I ),
+                   owned_node_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_node_space.min( Dim::J ),
+                   owned_node_space.max( Dim::J ) - new_hw - 1 );
+        EXPECT_EQ( boundary_node_space.max( Dim::J ),
+                   owned_node_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_node_space.min( Dim::K ),
+                   owned_node_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_node_space.max( Dim::K ),
+                   owned_node_space.min( Dim::K ) + new_hw + 1 );
+    }
+
+    //////////////////
+    // I-FACE SPACES
+    //////////////////
+
+    IndexSpace<3> boundary_i_face_space;
+    if ( -1 == local_grid->neighborRank( -1, 0, 1 ) )
+    {
+        boundary_i_face_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Face<Dim::I>(), -1, 0, 1 );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) - halo_width );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::K ),
+                   owned_i_face_space.max( Dim::K ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::K ),
+                   owned_i_face_space.max( Dim::K ) + halo_width );
+
+        boundary_i_face_space =
+            local_grid->boundaryIndexSpace( Own(), Face<Dim::I>(), -1, 0, 1 );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) + halo_width + 1 );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::K ),
+                   owned_i_face_space.max( Dim::K ) - halo_width );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::K ),
+                   owned_i_face_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1, 0 ) )
+    {
+        boundary_i_face_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Face<Dim::I>(), 1, -1, 0 );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) + halo_width );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ), 0 );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ), halo_width );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::K ),
+                   owned_i_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::K ),
+                   owned_i_face_space.max( Dim::K ) );
+
+        boundary_i_face_space =
+            local_grid->boundaryIndexSpace( Own(), Face<Dim::I>(), 1, -1, 0 );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) - halo_width - 1 );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) + halo_width );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::K ),
+                   owned_i_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::K ),
+                   owned_i_face_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 0, 1, -1 ) )
+    {
+        boundary_i_face_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Face<Dim::I>(), 0, 1, -1 );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) + halo_width );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::K ), 0 );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::K ), halo_width );
+
+        boundary_i_face_space =
+            local_grid->boundaryIndexSpace( Own(), Face<Dim::I>(), 0, 1, -1 );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) - halo_width );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::K ),
+                   owned_i_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::K ),
+                   owned_i_face_space.min( Dim::K ) + halo_width );
+    }
+
+    // Check the boundary spaces again but this time with a
+    // specified halo width.
+    if ( -1 == local_grid->neighborRank( -1, 0, 1 ) )
+    {
+        int new_hw = 1;
+        boundary_i_face_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Face<Dim::I>(), -1, 0, 1, new_hw );
+
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) - new_hw );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::K ),
+                   owned_i_face_space.max( Dim::K ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::K ),
+                   owned_i_face_space.max( Dim::K ) + new_hw );
+
+        boundary_i_face_space = local_grid->boundaryIndexSpace(
+            Own(), Face<Dim::I>(), -1, 0, 1, new_hw );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) + new_hw + 1 );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::K ),
+                   owned_i_face_space.max( Dim::K ) - new_hw );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::K ),
+                   owned_i_face_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1, 0 ) )
+    {
+
+        int new_hw = 3;
+        boundary_i_face_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Face<Dim::I>(), 1, -1, 0, new_hw );
+
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) + new_hw );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) - new_hw );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::K ),
+                   owned_i_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::K ),
+                   owned_i_face_space.max( Dim::K ) );
+
+        boundary_i_face_space = local_grid->boundaryIndexSpace(
+            Own(), Face<Dim::I>(), 1, -1, 0, new_hw );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) - new_hw - 1 );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) + new_hw );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::K ),
+                   owned_i_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::K ),
+                   owned_i_face_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 0, 1, -1 ) )
+    {
+
+        int new_hw = 4;
+        boundary_i_face_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Face<Dim::I>(), 0, 1, -1, new_hw );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) + new_hw );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::K ),
+                   owned_i_face_space.min( Dim::K ) - new_hw );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::K ),
+                   owned_i_face_space.min( Dim::K ) );
+
+        boundary_i_face_space = local_grid->boundaryIndexSpace(
+            Own(), Face<Dim::I>(), 0, 1, -1, new_hw );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) - new_hw );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::K ),
+                   owned_i_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::K ),
+                   owned_i_face_space.min( Dim::K ) + new_hw );
+    }
+
+    //////////////////
+    // J-FACE SPACES
+    //////////////////
+
+    IndexSpace<3> boundary_j_face_space;
+    if ( -1 == local_grid->neighborRank( -1, 0, 1 ) )
+    {
+        boundary_j_face_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Face<Dim::J>(), -1, 0, 1 );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) - halo_width );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::K ),
+                   owned_j_face_space.max( Dim::K ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::K ),
+                   owned_j_face_space.max( Dim::K ) + halo_width );
+
+        boundary_j_face_space =
+            local_grid->boundaryIndexSpace( Own(), Face<Dim::J>(), -1, 0, 1 );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) + halo_width );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::K ),
+                   owned_j_face_space.max( Dim::K ) - halo_width );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::K ),
+                   owned_j_face_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1, 0 ) )
+    {
+        boundary_j_face_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Face<Dim::J>(), 1, -1, 0 );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) + halo_width );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ), 0 );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ), halo_width );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::K ),
+                   owned_j_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::K ),
+                   owned_j_face_space.max( Dim::K ) );
+
+        boundary_j_face_space =
+            local_grid->boundaryIndexSpace( Own(), Face<Dim::J>(), 1, -1, 0 );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) - halo_width );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) + halo_width + 1 );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::K ),
+                   owned_j_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::K ),
+                   owned_j_face_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 0, 1, -1 ) )
+    {
+        boundary_j_face_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Face<Dim::J>(), 0, 1, -1 );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) + halo_width );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::K ), 0 );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::K ), halo_width );
+
+        boundary_j_face_space =
+            local_grid->boundaryIndexSpace( Own(), Face<Dim::J>(), 0, 1, -1 );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) - halo_width - 1 );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::K ),
+                   owned_j_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::K ),
+                   owned_j_face_space.min( Dim::K ) + halo_width );
+    }
+
+    // Check the boundary spaces again but this time with a
+    // specified halo width.
+    if ( -1 == local_grid->neighborRank( -1, 0, 1 ) )
+    {
+        int new_hw = 1;
+        boundary_j_face_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Face<Dim::J>(), -1, 0, 1, new_hw );
+
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) - new_hw );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::K ),
+                   owned_j_face_space.max( Dim::K ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::K ),
+                   owned_j_face_space.max( Dim::K ) + new_hw );
+
+        boundary_j_face_space = local_grid->boundaryIndexSpace(
+            Own(), Face<Dim::J>(), -1, 0, 1, new_hw );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) + new_hw );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::K ),
+                   owned_j_face_space.max( Dim::K ) - new_hw );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::K ),
+                   owned_j_face_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1, 0 ) )
+    {
+
+        int new_hw = 4;
+        boundary_j_face_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Face<Dim::J>(), 1, -1, 0, new_hw );
+
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) + new_hw );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) - new_hw );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::K ),
+                   owned_j_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::K ),
+                   owned_j_face_space.max( Dim::K ) );
+
+        boundary_j_face_space = local_grid->boundaryIndexSpace(
+            Own(), Face<Dim::J>(), 1, -1, 0, new_hw );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) - new_hw );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) + new_hw + 1 );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::K ),
+                   owned_j_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::K ),
+                   owned_j_face_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 0, 1, -1 ) )
+    {
+
+        int new_hw = 3;
+        boundary_j_face_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Face<Dim::J>(), 0, 1, -1, new_hw );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) + new_hw );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::K ),
+                   owned_j_face_space.min( Dim::K ) - new_hw );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::K ),
+                   owned_j_face_space.min( Dim::K ) );
+
+        boundary_j_face_space = local_grid->boundaryIndexSpace(
+            Own(), Face<Dim::J>(), 0, 1, -1, new_hw );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) - new_hw - 1 );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::K ),
+                   owned_j_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::K ),
+                   owned_j_face_space.min( Dim::K ) + new_hw );
+    }
+
+    //////////////////
+    // K-FACE SPACES
+    //////////////////
+
+    IndexSpace<3> boundary_k_face_space;
+    if ( -1 == local_grid->neighborRank( -1, 0, 1 ) )
+    {
+        boundary_k_face_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Face<Dim::K>(), -1, 0, 1 );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::I ),
+                   owned_k_face_space.min( Dim::I ) - halo_width );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::I ),
+                   owned_k_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::J ),
+                   owned_k_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::J ),
+                   owned_k_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::K ),
+                   owned_k_face_space.max( Dim::K ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::K ),
+                   owned_k_face_space.max( Dim::K ) + halo_width );
+
+        boundary_k_face_space =
+            local_grid->boundaryIndexSpace( Own(), Face<Dim::K>(), -1, 0, 1 );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::I ),
+                   owned_k_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::I ),
+                   owned_k_face_space.min( Dim::I ) + halo_width );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::J ),
+                   owned_k_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::J ),
+                   owned_k_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::K ),
+                   owned_k_face_space.max( Dim::K ) - halo_width - 1 );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::K ),
+                   owned_k_face_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1, 0 ) )
+    {
+        boundary_k_face_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Face<Dim::K>(), 1, -1, 0 );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::I ),
+                   owned_k_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::I ),
+                   owned_k_face_space.max( Dim::I ) + halo_width );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::J ), 0 );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::J ), halo_width );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::K ),
+                   owned_k_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::K ),
+                   owned_k_face_space.max( Dim::K ) );
+
+        boundary_k_face_space =
+            local_grid->boundaryIndexSpace( Own(), Face<Dim::K>(), 1, -1, 0 );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::I ),
+                   owned_k_face_space.max( Dim::I ) - halo_width );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::I ),
+                   owned_k_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::J ),
+                   owned_k_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::J ),
+                   owned_k_face_space.min( Dim::J ) + halo_width );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::K ),
+                   owned_k_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::K ),
+                   owned_k_face_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 0, 1, -1 ) )
+    {
+        boundary_k_face_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Face<Dim::K>(), 0, 1, -1 );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::I ),
+                   owned_k_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::I ),
+                   owned_k_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::J ),
+                   owned_k_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::J ),
+                   owned_k_face_space.max( Dim::J ) + halo_width );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::K ), 0 );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::K ), halo_width );
+
+        boundary_k_face_space =
+            local_grid->boundaryIndexSpace( Own(), Face<Dim::K>(), 0, 1, -1 );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::I ),
+                   owned_k_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::I ),
+                   owned_k_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::J ),
+                   owned_k_face_space.max( Dim::J ) - halo_width );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::J ),
+                   owned_k_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::K ),
+                   owned_k_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::K ),
+                   owned_k_face_space.min( Dim::K ) + halo_width + 1 );
+    }
+
+    // Check the boundary spaces again but this time with a
+    // specified halo width.
+    if ( -1 == local_grid->neighborRank( -1, 0, 1 ) )
+    {
+        int new_hw = 3;
+        boundary_k_face_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Face<Dim::K>(), -1, 0, 1, new_hw );
+
+        EXPECT_EQ( boundary_k_face_space.min( Dim::I ),
+                   owned_k_face_space.min( Dim::I ) - new_hw );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::I ),
+                   owned_k_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::J ),
+                   owned_k_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::J ),
+                   owned_k_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::K ),
+                   owned_k_face_space.max( Dim::K ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::K ),
+                   owned_k_face_space.max( Dim::K ) + new_hw );
+
+        boundary_k_face_space = local_grid->boundaryIndexSpace(
+            Own(), Face<Dim::K>(), -1, 0, 1, new_hw );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::I ),
+                   owned_k_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::I ),
+                   owned_k_face_space.min( Dim::I ) + new_hw );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::J ),
+                   owned_k_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::J ),
+                   owned_k_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::K ),
+                   owned_k_face_space.max( Dim::K ) - new_hw - 1 );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::K ),
+                   owned_k_face_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1, 0 ) )
+    {
+
+        int new_hw = 4;
+        boundary_k_face_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Face<Dim::K>(), 1, -1, 0, new_hw );
+
+        EXPECT_EQ( boundary_k_face_space.min( Dim::I ),
+                   owned_k_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::I ),
+                   owned_k_face_space.max( Dim::I ) + new_hw );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::J ),
+                   owned_k_face_space.min( Dim::J ) - new_hw );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::J ),
+                   owned_k_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::K ),
+                   owned_k_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::K ),
+                   owned_k_face_space.max( Dim::K ) );
+
+        boundary_k_face_space = local_grid->boundaryIndexSpace(
+            Own(), Face<Dim::K>(), 1, -1, 0, new_hw );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::I ),
+                   owned_k_face_space.max( Dim::I ) - new_hw );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::I ),
+                   owned_k_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::J ),
+                   owned_k_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::J ),
+                   owned_k_face_space.min( Dim::J ) + new_hw );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::K ),
+                   owned_k_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::K ),
+                   owned_k_face_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 0, 1, -1 ) )
+    {
+
+        int new_hw = 1;
+        boundary_k_face_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Face<Dim::K>(), 0, 1, -1, new_hw );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::I ),
+                   owned_k_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::I ),
+                   owned_k_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::J ),
+                   owned_k_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::J ),
+                   owned_k_face_space.max( Dim::J ) + new_hw );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::K ),
+                   owned_k_face_space.min( Dim::K ) - new_hw );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::K ),
+                   owned_k_face_space.min( Dim::K ) );
+
+        boundary_k_face_space = local_grid->boundaryIndexSpace(
+            Own(), Face<Dim::K>(), 0, 1, -1, new_hw );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::I ),
+                   owned_k_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::I ),
+                   owned_k_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::J ),
+                   owned_k_face_space.max( Dim::J ) - new_hw );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::J ),
+                   owned_k_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_k_face_space.min( Dim::K ),
+                   owned_k_face_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_k_face_space.max( Dim::K ),
+                   owned_k_face_space.min( Dim::K ) + new_hw + 1 );
+    }
+
+    //////////////////
+    // I-EDGE SPACES
+    //////////////////
+
+    auto owned_i_edge_space =
+        local_grid->indexSpace( Own(), Edge<Dim::I>(), Local() );
+
+    IndexSpace<3> boundary_i_edge_space;
+    if ( -1 == local_grid->neighborRank( -1, 0, 1 ) )
+    {
+        boundary_i_edge_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Edge<Dim::I>(), -1, 0, 1 );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::I ),
+                   owned_i_edge_space.min( Dim::I ) - halo_width );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::I ),
+                   owned_i_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::J ),
+                   owned_i_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::J ),
+                   owned_i_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::K ),
+                   owned_i_edge_space.max( Dim::K ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::K ),
+                   owned_i_edge_space.max( Dim::K ) + halo_width );
+
+        boundary_i_edge_space =
+            local_grid->boundaryIndexSpace( Own(), Edge<Dim::I>(), -1, 0, 1 );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::I ),
+                   owned_i_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::I ),
+                   owned_i_edge_space.min( Dim::I ) + halo_width );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::J ),
+                   owned_i_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::J ),
+                   owned_i_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::K ),
+                   owned_i_edge_space.max( Dim::K ) - halo_width - 1 );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::K ),
+                   owned_i_edge_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1, 0 ) )
+    {
+        boundary_i_edge_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Edge<Dim::I>(), 1, -1, 0 );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::I ),
+                   owned_i_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::I ),
+                   owned_i_edge_space.max( Dim::I ) + halo_width );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::J ), 0 );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::J ), halo_width );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::K ),
+                   owned_i_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::K ),
+                   owned_i_edge_space.max( Dim::K ) );
+
+        boundary_i_edge_space =
+            local_grid->boundaryIndexSpace( Own(), Edge<Dim::I>(), 1, -1, 0 );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::I ),
+                   owned_i_edge_space.max( Dim::I ) - halo_width );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::I ),
+                   owned_i_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::J ),
+                   owned_i_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::J ),
+                   owned_i_edge_space.min( Dim::J ) + halo_width + 1 );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::K ),
+                   owned_i_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::K ),
+                   owned_i_edge_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 0, 1, -1 ) )
+    {
+        boundary_i_edge_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Edge<Dim::I>(), 0, 1, -1 );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::I ),
+                   owned_i_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::I ),
+                   owned_i_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::J ),
+                   owned_i_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::J ),
+                   owned_i_edge_space.max( Dim::J ) + halo_width );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::K ), 0 );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::K ), halo_width );
+
+        boundary_i_edge_space =
+            local_grid->boundaryIndexSpace( Own(), Edge<Dim::I>(), 0, 1, -1 );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::I ),
+                   owned_i_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::I ),
+                   owned_i_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::J ),
+                   owned_i_edge_space.max( Dim::J ) - halo_width - 1 );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::J ),
+                   owned_i_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::K ),
+                   owned_i_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::K ),
+                   owned_i_edge_space.min( Dim::K ) + halo_width + 1 );
+    }
+
+    // Check the boundary spaces again but this time with a
+    // specified halo width.
+    if ( -1 == local_grid->neighborRank( -1, 0, 1 ) )
+    {
+        int new_hw = 1;
+        boundary_i_edge_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Edge<Dim::I>(), -1, 0, 1, new_hw );
+
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::I ),
+                   owned_i_edge_space.min( Dim::I ) - new_hw );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::I ),
+                   owned_i_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::J ),
+                   owned_i_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::J ),
+                   owned_i_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::K ),
+                   owned_i_edge_space.max( Dim::K ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::K ),
+                   owned_i_edge_space.max( Dim::K ) + new_hw );
+
+        boundary_i_edge_space = local_grid->boundaryIndexSpace(
+            Own(), Edge<Dim::I>(), -1, 0, 1, new_hw );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::I ),
+                   owned_i_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::I ),
+                   owned_i_edge_space.min( Dim::I ) + new_hw );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::J ),
+                   owned_i_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::J ),
+                   owned_i_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::K ),
+                   owned_i_edge_space.max( Dim::K ) - new_hw - 1 );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::K ),
+                   owned_i_edge_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1, 0 ) )
+    {
+
+        int new_hw = 3;
+        boundary_i_edge_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Edge<Dim::I>(), 1, -1, 0, new_hw );
+
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::I ),
+                   owned_i_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::I ),
+                   owned_i_edge_space.max( Dim::I ) + new_hw );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::J ),
+                   owned_i_edge_space.min( Dim::J ) - new_hw );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::J ),
+                   owned_i_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::K ),
+                   owned_i_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::K ),
+                   owned_i_edge_space.max( Dim::K ) );
+
+        boundary_i_edge_space = local_grid->boundaryIndexSpace(
+            Own(), Edge<Dim::I>(), 1, -1, 0, new_hw );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::I ),
+                   owned_i_edge_space.max( Dim::I ) - new_hw );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::I ),
+                   owned_i_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::J ),
+                   owned_i_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::J ),
+                   owned_i_edge_space.min( Dim::J ) + new_hw + 1 );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::K ),
+                   owned_i_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::K ),
+                   owned_i_edge_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 0, 1, -1 ) )
+    {
+
+        int new_hw = 4;
+        boundary_i_edge_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Edge<Dim::I>(), 0, 1, -1, new_hw );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::I ),
+                   owned_i_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::I ),
+                   owned_i_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::J ),
+                   owned_i_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::J ),
+                   owned_i_edge_space.max( Dim::J ) + new_hw );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::K ),
+                   owned_i_edge_space.min( Dim::K ) - new_hw );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::K ),
+                   owned_i_edge_space.min( Dim::K ) );
+
+        boundary_i_edge_space = local_grid->boundaryIndexSpace(
+            Own(), Edge<Dim::I>(), 0, 1, -1, new_hw );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::I ),
+                   owned_i_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::I ),
+                   owned_i_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::J ),
+                   owned_i_edge_space.max( Dim::J ) - new_hw - 1 );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::J ),
+                   owned_i_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_edge_space.min( Dim::K ),
+                   owned_i_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_i_edge_space.max( Dim::K ),
+                   owned_i_edge_space.min( Dim::K ) + new_hw + 1 );
+    }
+
+    //////////////////
+    // J-EDGE SPACES
+    //////////////////
+
+    auto owned_j_edge_space =
+        local_grid->indexSpace( Own(), Edge<Dim::J>(), Local() );
+
+    IndexSpace<3> boundary_j_edge_space;
+    if ( -1 == local_grid->neighborRank( -1, 0, 1 ) )
+    {
+        boundary_j_edge_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Edge<Dim::J>(), -1, 0, 1 );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::I ),
+                   owned_j_edge_space.min( Dim::I ) - halo_width );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::I ),
+                   owned_j_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::J ),
+                   owned_j_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::J ),
+                   owned_j_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::K ),
+                   owned_j_edge_space.max( Dim::K ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::K ),
+                   owned_j_edge_space.max( Dim::K ) + halo_width );
+
+        boundary_j_edge_space =
+            local_grid->boundaryIndexSpace( Own(), Edge<Dim::J>(), -1, 0, 1 );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::I ),
+                   owned_j_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::I ),
+                   owned_j_edge_space.min( Dim::I ) + halo_width + 1 );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::J ),
+                   owned_j_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::J ),
+                   owned_j_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::K ),
+                   owned_j_edge_space.max( Dim::K ) - halo_width - 1 );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::K ),
+                   owned_j_edge_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1, 0 ) )
+    {
+        boundary_j_edge_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Edge<Dim::J>(), 1, -1, 0 );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::I ),
+                   owned_j_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::I ),
+                   owned_j_edge_space.max( Dim::I ) + halo_width );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::J ), 0 );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::J ), halo_width );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::K ),
+                   owned_j_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::K ),
+                   owned_j_edge_space.max( Dim::K ) );
+
+        boundary_j_edge_space =
+            local_grid->boundaryIndexSpace( Own(), Edge<Dim::J>(), 1, -1, 0 );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::I ),
+                   owned_j_edge_space.max( Dim::I ) - halo_width - 1 );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::I ),
+                   owned_j_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::J ),
+                   owned_j_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::J ),
+                   owned_j_edge_space.min( Dim::J ) + halo_width );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::K ),
+                   owned_j_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::K ),
+                   owned_j_edge_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 0, 1, -1 ) )
+    {
+        boundary_j_edge_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Edge<Dim::J>(), 0, 1, -1 );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::I ),
+                   owned_j_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::I ),
+                   owned_j_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::J ),
+                   owned_j_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::J ),
+                   owned_j_edge_space.max( Dim::J ) + halo_width );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::K ), 0 );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::K ), halo_width );
+
+        boundary_j_edge_space =
+            local_grid->boundaryIndexSpace( Own(), Edge<Dim::J>(), 0, 1, -1 );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::I ),
+                   owned_j_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::I ),
+                   owned_j_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::J ),
+                   owned_j_edge_space.max( Dim::J ) - halo_width );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::J ),
+                   owned_j_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::K ),
+                   owned_j_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::K ),
+                   owned_j_edge_space.min( Dim::K ) + halo_width + 1 );
+    }
+
+    // Check the boundary spaces again but this time with a
+    // specified halo width.
+    if ( -1 == local_grid->neighborRank( -1, 0, 1 ) )
+    {
+        int new_hw = 1;
+        boundary_j_edge_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Edge<Dim::J>(), -1, 0, 1, new_hw );
+
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::I ),
+                   owned_j_edge_space.min( Dim::I ) - new_hw );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::I ),
+                   owned_j_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::J ),
+                   owned_j_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::J ),
+                   owned_j_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::K ),
+                   owned_j_edge_space.max( Dim::K ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::K ),
+                   owned_j_edge_space.max( Dim::K ) + new_hw );
+
+        boundary_j_edge_space = local_grid->boundaryIndexSpace(
+            Own(), Edge<Dim::J>(), -1, 0, 1, new_hw );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::I ),
+                   owned_j_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::I ),
+                   owned_j_edge_space.min( Dim::I ) + new_hw + 1 );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::J ),
+                   owned_j_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::J ),
+                   owned_j_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::K ),
+                   owned_j_edge_space.max( Dim::K ) - new_hw - 1 );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::K ),
+                   owned_j_edge_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1, 0 ) )
+    {
+
+        int new_hw = 3;
+        boundary_j_edge_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Edge<Dim::J>(), 1, -1, 0, new_hw );
+
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::I ),
+                   owned_j_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::I ),
+                   owned_j_edge_space.max( Dim::I ) + new_hw );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::J ),
+                   owned_j_edge_space.min( Dim::J ) - new_hw );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::J ),
+                   owned_j_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::K ),
+                   owned_j_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::K ),
+                   owned_j_edge_space.max( Dim::K ) );
+
+        boundary_j_edge_space = local_grid->boundaryIndexSpace(
+            Own(), Edge<Dim::J>(), 1, -1, 0, new_hw );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::I ),
+                   owned_j_edge_space.max( Dim::I ) - new_hw - 1 );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::I ),
+                   owned_j_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::J ),
+                   owned_j_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::J ),
+                   owned_j_edge_space.min( Dim::J ) + new_hw );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::K ),
+                   owned_j_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::K ),
+                   owned_j_edge_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 0, 1, -1 ) )
+    {
+
+        int new_hw = 4;
+        boundary_j_edge_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Edge<Dim::J>(), 0, 1, -1, new_hw );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::I ),
+                   owned_j_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::I ),
+                   owned_j_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::J ),
+                   owned_j_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::J ),
+                   owned_j_edge_space.max( Dim::J ) + new_hw );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::K ),
+                   owned_j_edge_space.min( Dim::K ) - new_hw );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::K ),
+                   owned_j_edge_space.min( Dim::K ) );
+
+        boundary_j_edge_space = local_grid->boundaryIndexSpace(
+            Own(), Edge<Dim::J>(), 0, 1, -1, new_hw );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::I ),
+                   owned_j_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::I ),
+                   owned_j_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::J ),
+                   owned_j_edge_space.max( Dim::J ) - new_hw );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::J ),
+                   owned_j_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_edge_space.min( Dim::K ),
+                   owned_j_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_j_edge_space.max( Dim::K ),
+                   owned_j_edge_space.min( Dim::K ) + new_hw + 1 );
+    }
+
+    //////////////////
+    // K-EDGE SPACES
+    //////////////////
+
+    auto owned_k_edge_space =
+        local_grid->indexSpace( Own(), Edge<Dim::K>(), Local() );
+
+    IndexSpace<3> boundary_k_edge_space;
+    if ( -1 == local_grid->neighborRank( -1, 0, 1 ) )
+    {
+        boundary_k_edge_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Edge<Dim::K>(), -1, 0, 1 );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::I ),
+                   owned_k_edge_space.min( Dim::I ) - halo_width );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::I ),
+                   owned_k_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::J ),
+                   owned_k_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::J ),
+                   owned_k_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::K ),
+                   owned_k_edge_space.max( Dim::K ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::K ),
+                   owned_k_edge_space.max( Dim::K ) + halo_width );
+
+        boundary_k_edge_space =
+            local_grid->boundaryIndexSpace( Own(), Edge<Dim::K>(), -1, 0, 1 );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::I ),
+                   owned_k_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::I ),
+                   owned_k_edge_space.min( Dim::I ) + halo_width + 1 );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::J ),
+                   owned_k_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::J ),
+                   owned_k_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::K ),
+                   owned_k_edge_space.max( Dim::K ) - halo_width );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::K ),
+                   owned_k_edge_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1, 0 ) )
+    {
+        boundary_k_edge_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Edge<Dim::K>(), 1, -1, 0 );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::I ),
+                   owned_k_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::I ),
+                   owned_k_edge_space.max( Dim::I ) + halo_width );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::J ), 0 );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::J ), halo_width );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::K ),
+                   owned_k_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::K ),
+                   owned_k_edge_space.max( Dim::K ) );
+
+        boundary_k_edge_space =
+            local_grid->boundaryIndexSpace( Own(), Edge<Dim::K>(), 1, -1, 0 );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::I ),
+                   owned_k_edge_space.max( Dim::I ) - halo_width - 1 );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::I ),
+                   owned_k_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::J ),
+                   owned_k_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::J ),
+                   owned_k_edge_space.min( Dim::J ) + halo_width + 1 );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::K ),
+                   owned_k_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::K ),
+                   owned_k_edge_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 0, 1, -1 ) )
+    {
+        boundary_k_edge_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Edge<Dim::K>(), 0, 1, -1 );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::I ),
+                   owned_k_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::I ),
+                   owned_k_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::J ),
+                   owned_k_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::J ),
+                   owned_k_edge_space.max( Dim::J ) + halo_width );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::K ), 0 );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::K ), halo_width );
+
+        boundary_k_edge_space =
+            local_grid->boundaryIndexSpace( Own(), Edge<Dim::K>(), 0, 1, -1 );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::I ),
+                   owned_k_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::I ),
+                   owned_k_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::J ),
+                   owned_k_edge_space.max( Dim::J ) - halo_width - 1 );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::J ),
+                   owned_k_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::K ),
+                   owned_k_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::K ),
+                   owned_k_edge_space.min( Dim::K ) + halo_width );
+    }
+
+    // Check the boundary spaces again but this time with a
+    // specified halo width.
+    if ( -1 == local_grid->neighborRank( -1, 0, 1 ) )
+    {
+        int new_hw = 1;
+        boundary_k_edge_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Edge<Dim::K>(), -1, 0, 1, new_hw );
+
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::I ),
+                   owned_k_edge_space.min( Dim::I ) - new_hw );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::I ),
+                   owned_k_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::J ),
+                   owned_k_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::J ),
+                   owned_k_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::K ),
+                   owned_k_edge_space.max( Dim::K ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::K ),
+                   owned_k_edge_space.max( Dim::K ) + new_hw );
+
+        boundary_k_edge_space = local_grid->boundaryIndexSpace(
+            Own(), Edge<Dim::K>(), -1, 0, 1, new_hw );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::I ),
+                   owned_k_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::I ),
+                   owned_k_edge_space.min( Dim::I ) + new_hw + 1 );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::J ),
+                   owned_k_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::J ),
+                   owned_k_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::K ),
+                   owned_k_edge_space.max( Dim::K ) - new_hw );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::K ),
+                   owned_k_edge_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1, 0 ) )
+    {
+
+        int new_hw = 3;
+        boundary_k_edge_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Edge<Dim::K>(), 1, -1, 0, new_hw );
+
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::I ),
+                   owned_k_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::I ),
+                   owned_k_edge_space.max( Dim::I ) + new_hw );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::J ),
+                   owned_k_edge_space.min( Dim::J ) - new_hw );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::J ),
+                   owned_k_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::K ),
+                   owned_k_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::K ),
+                   owned_k_edge_space.max( Dim::K ) );
+
+        boundary_k_edge_space = local_grid->boundaryIndexSpace(
+            Own(), Edge<Dim::K>(), 1, -1, 0, new_hw );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::I ),
+                   owned_k_edge_space.max( Dim::I ) - new_hw - 1 );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::I ),
+                   owned_k_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::J ),
+                   owned_k_edge_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::J ),
+                   owned_k_edge_space.min( Dim::J ) + new_hw + 1 );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::K ),
+                   owned_k_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::K ),
+                   owned_k_edge_space.max( Dim::K ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 0, 1, -1 ) )
+    {
+
+        int new_hw = 4;
+        boundary_k_edge_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Edge<Dim::K>(), 0, 1, -1, new_hw );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::I ),
+                   owned_k_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::I ),
+                   owned_k_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::J ),
+                   owned_k_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::J ),
+                   owned_k_edge_space.max( Dim::J ) + new_hw );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::K ),
+                   owned_k_edge_space.min( Dim::K ) - new_hw );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::K ),
+                   owned_k_edge_space.min( Dim::K ) );
+
+        boundary_k_edge_space = local_grid->boundaryIndexSpace(
+            Own(), Edge<Dim::K>(), 0, 1, -1, new_hw );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::I ),
+                   owned_k_edge_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::I ),
+                   owned_k_edge_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::J ),
+                   owned_k_edge_space.max( Dim::J ) - new_hw - 1 );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::J ),
+                   owned_k_edge_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_k_edge_space.min( Dim::K ),
+                   owned_k_edge_space.min( Dim::K ) );
+        EXPECT_EQ( boundary_k_edge_space.max( Dim::K ),
+                   owned_k_edge_space.min( Dim::K ) + new_hw );
     }
 
     // Free the serial communicator we made
@@ -3076,7 +4542,7 @@ void notPeriodicTest2d()
     auto grid_comm = global_grid->comm();
 
     // Create a local mesh.
-    int halo_width = 2;
+    int halo_width = 5;
     auto local_grid = createLocalGrid( global_grid, halo_width );
 
     // Check sizes
@@ -3203,7 +4669,14 @@ void notPeriodicTest2d()
             }
         }
 
+    ///////////////////////////////////////
     // Check the boundary spaces.
+    ///////////////////////////////////////
+
+    //////////////////
+    // CELL SPACES
+    //////////////////
+
     IndexSpace<2> boundary_cell_space;
     if ( -1 == local_grid->neighborRank( -1, 0 ) )
     {
@@ -3279,21 +4752,24 @@ void notPeriodicTest2d()
     // specified halo width.
     if ( -1 == local_grid->neighborRank( -1, 0 ) )
     {
+        int new_hw = 1;
         boundary_cell_space =
-            local_grid->boundaryIndexSpace( Ghost{}, Cell(), -1, 0, 1 );
-        EXPECT_EQ( boundary_cell_space.min( Dim::I ), halo_width - 1 );
-        EXPECT_EQ( boundary_cell_space.max( Dim::I ), halo_width );
+            local_grid->boundaryIndexSpace( Ghost{}, Cell(), -1, 0, new_hw );
+        EXPECT_EQ( boundary_cell_space.min( Dim::I ),
+                   owned_cell_space.min( Dim::I ) - new_hw );
+        EXPECT_EQ( boundary_cell_space.max( Dim::I ),
+                   owned_cell_space.min( Dim::I ) );
         EXPECT_EQ( boundary_cell_space.min( Dim::J ),
                    owned_cell_space.min( Dim::J ) );
         EXPECT_EQ( boundary_cell_space.max( Dim::J ),
                    owned_cell_space.max( Dim::J ) );
 
         boundary_cell_space =
-            local_grid->boundaryIndexSpace( Own(), Cell(), -1, 0, 1 );
+            local_grid->boundaryIndexSpace( Own(), Cell(), -1, 0, new_hw );
         EXPECT_EQ( boundary_cell_space.min( Dim::I ),
                    owned_cell_space.min( Dim::I ) );
         EXPECT_EQ( boundary_cell_space.max( Dim::I ),
-                   owned_cell_space.min( Dim::I ) + 1 );
+                   owned_cell_space.min( Dim::I ) + new_hw );
         EXPECT_EQ( boundary_cell_space.min( Dim::J ),
                    owned_cell_space.min( Dim::J ) );
         EXPECT_EQ( boundary_cell_space.max( Dim::J ),
@@ -3302,31 +4778,35 @@ void notPeriodicTest2d()
 
     if ( -1 == local_grid->neighborRank( 1, -1 ) )
     {
+        int new_hw = 3;
         boundary_cell_space =
-            local_grid->boundaryIndexSpace( Ghost{}, Cell(), 1, -1, 1 );
+            local_grid->boundaryIndexSpace( Ghost{}, Cell(), 1, -1, new_hw );
         EXPECT_EQ( boundary_cell_space.min( Dim::I ),
                    owned_cell_space.max( Dim::I ) );
         EXPECT_EQ( boundary_cell_space.max( Dim::I ),
-                   owned_cell_space.max( Dim::I ) + 1 );
-        EXPECT_EQ( boundary_cell_space.min( Dim::J ), halo_width - 1 );
-        EXPECT_EQ( boundary_cell_space.max( Dim::J ), halo_width );
+                   owned_cell_space.max( Dim::I ) + new_hw );
+        EXPECT_EQ( boundary_cell_space.min( Dim::J ),
+                   owned_cell_space.min( Dim::J ) - new_hw );
+        EXPECT_EQ( boundary_cell_space.max( Dim::J ),
+                   owned_cell_space.min( Dim::J ) );
 
         boundary_cell_space =
-            local_grid->boundaryIndexSpace( Own(), Cell(), 1, -1, 1 );
+            local_grid->boundaryIndexSpace( Own(), Cell(), 1, -1, new_hw );
         EXPECT_EQ( boundary_cell_space.min( Dim::I ),
-                   owned_cell_space.max( Dim::I ) - 1 );
+                   owned_cell_space.max( Dim::I ) - new_hw );
         EXPECT_EQ( boundary_cell_space.max( Dim::I ),
                    owned_cell_space.max( Dim::I ) );
         EXPECT_EQ( boundary_cell_space.min( Dim::J ),
                    owned_cell_space.min( Dim::J ) );
         EXPECT_EQ( boundary_cell_space.max( Dim::J ),
-                   owned_cell_space.min( Dim::J ) + 1 );
+                   owned_cell_space.min( Dim::J ) + new_hw );
     }
 
     if ( -1 == local_grid->neighborRank( 0, 1 ) )
     {
+        int new_hw = 4;
         boundary_cell_space =
-            local_grid->boundaryIndexSpace( Ghost{}, Cell(), 0, 1, 1 );
+            local_grid->boundaryIndexSpace( Ghost{}, Cell(), 0, 1, new_hw );
         EXPECT_EQ( boundary_cell_space.min( Dim::I ),
                    owned_cell_space.min( Dim::I ) );
         EXPECT_EQ( boundary_cell_space.max( Dim::I ),
@@ -3334,21 +4814,24 @@ void notPeriodicTest2d()
         EXPECT_EQ( boundary_cell_space.min( Dim::J ),
                    owned_cell_space.max( Dim::J ) );
         EXPECT_EQ( boundary_cell_space.max( Dim::J ),
-                   owned_cell_space.max( Dim::J ) + 1 );
+                   owned_cell_space.max( Dim::J ) + new_hw );
 
         boundary_cell_space =
-            local_grid->boundaryIndexSpace( Own(), Cell(), 0, 1, 1 );
+            local_grid->boundaryIndexSpace( Own(), Cell(), 0, 1, new_hw );
         EXPECT_EQ( boundary_cell_space.min( Dim::I ),
                    owned_cell_space.min( Dim::I ) );
         EXPECT_EQ( boundary_cell_space.max( Dim::I ),
                    owned_cell_space.max( Dim::I ) );
         EXPECT_EQ( boundary_cell_space.min( Dim::J ),
-                   owned_cell_space.max( Dim::J ) - 1 );
+                   owned_cell_space.max( Dim::J ) - new_hw );
         EXPECT_EQ( boundary_cell_space.max( Dim::J ),
                    owned_cell_space.max( Dim::J ) );
     }
 
-    // Check the boundary spaces.
+    //////////////////
+    // NODE SPACES
+    //////////////////
+
     IndexSpace<2> boundary_node_space;
     if ( -1 == local_grid->neighborRank( -1, 0 ) )
     {
@@ -3366,7 +4849,7 @@ void notPeriodicTest2d()
         EXPECT_EQ( boundary_node_space.min( Dim::I ),
                    owned_node_space.min( Dim::I ) );
         EXPECT_EQ( boundary_node_space.max( Dim::I ),
-                   owned_node_space.min( Dim::I ) + halo_width );
+                   owned_node_space.min( Dim::I ) + halo_width + 1 );
         EXPECT_EQ( boundary_node_space.min( Dim::J ),
                    owned_node_space.min( Dim::J ) );
         EXPECT_EQ( boundary_node_space.max( Dim::J ),
@@ -3387,13 +4870,13 @@ void notPeriodicTest2d()
         boundary_node_space =
             local_grid->boundaryIndexSpace( Own(), Node(), 1, -1 );
         EXPECT_EQ( boundary_node_space.min( Dim::I ),
-                   owned_node_space.max( Dim::I ) - halo_width );
+                   owned_node_space.max( Dim::I ) - halo_width - 1 );
         EXPECT_EQ( boundary_node_space.max( Dim::I ),
                    owned_node_space.max( Dim::I ) );
         EXPECT_EQ( boundary_node_space.min( Dim::J ),
                    owned_node_space.min( Dim::J ) );
         EXPECT_EQ( boundary_node_space.max( Dim::J ),
-                   owned_node_space.min( Dim::J ) + halo_width );
+                   owned_node_space.min( Dim::J ) + halo_width + 1 );
     }
     if ( -1 == local_grid->neighborRank( 0, 1 ) )
     {
@@ -3415,7 +4898,7 @@ void notPeriodicTest2d()
         EXPECT_EQ( boundary_node_space.max( Dim::I ),
                    owned_node_space.max( Dim::I ) );
         EXPECT_EQ( boundary_node_space.min( Dim::J ),
-                   owned_node_space.max( Dim::J ) - halo_width );
+                   owned_node_space.max( Dim::J ) - halo_width - 1 );
         EXPECT_EQ( boundary_node_space.max( Dim::J ),
                    owned_node_space.max( Dim::J ) );
     }
@@ -3424,21 +4907,24 @@ void notPeriodicTest2d()
     // specified halo width.
     if ( -1 == local_grid->neighborRank( -1, 0 ) )
     {
+        int new_hw = 1;
         boundary_node_space =
-            local_grid->boundaryIndexSpace( Ghost{}, Node(), -1, 0, 1 );
-        EXPECT_EQ( boundary_node_space.min( Dim::I ), halo_width - 1 );
-        EXPECT_EQ( boundary_node_space.max( Dim::I ), halo_width );
+            local_grid->boundaryIndexSpace( Ghost{}, Node(), -1, 0, new_hw );
+        EXPECT_EQ( boundary_node_space.min( Dim::I ),
+                   owned_node_space.min( Dim::I ) - new_hw );
+        EXPECT_EQ( boundary_node_space.max( Dim::I ),
+                   owned_node_space.min( Dim::I ) );
         EXPECT_EQ( boundary_node_space.min( Dim::J ),
                    owned_node_space.min( Dim::J ) );
         EXPECT_EQ( boundary_node_space.max( Dim::J ),
                    owned_node_space.max( Dim::J ) );
 
         boundary_node_space =
-            local_grid->boundaryIndexSpace( Own(), Node(), -1, 0, 1 );
+            local_grid->boundaryIndexSpace( Own(), Node(), -1, 0, new_hw );
         EXPECT_EQ( boundary_node_space.min( Dim::I ),
                    owned_node_space.min( Dim::I ) );
         EXPECT_EQ( boundary_node_space.max( Dim::I ),
-                   owned_node_space.min( Dim::I ) + 1 );
+                   owned_node_space.min( Dim::I ) + new_hw + 1 );
         EXPECT_EQ( boundary_node_space.min( Dim::J ),
                    owned_node_space.min( Dim::J ) );
         EXPECT_EQ( boundary_node_space.max( Dim::J ),
@@ -3447,31 +4933,35 @@ void notPeriodicTest2d()
 
     if ( -1 == local_grid->neighborRank( 1, -1 ) )
     {
+        int new_hw = 3;
         boundary_node_space =
-            local_grid->boundaryIndexSpace( Ghost{}, Node(), 1, -1, 1 );
+            local_grid->boundaryIndexSpace( Ghost{}, Node(), 1, -1, new_hw );
         EXPECT_EQ( boundary_node_space.min( Dim::I ),
                    owned_node_space.max( Dim::I ) );
         EXPECT_EQ( boundary_node_space.max( Dim::I ),
-                   owned_node_space.max( Dim::I ) + 1 );
-        EXPECT_EQ( boundary_node_space.min( Dim::J ), halo_width - 1 );
-        EXPECT_EQ( boundary_node_space.max( Dim::J ), halo_width );
+                   owned_node_space.max( Dim::I ) + new_hw );
+        EXPECT_EQ( boundary_node_space.min( Dim::J ),
+                   owned_node_space.min( Dim::J ) - new_hw );
+        EXPECT_EQ( boundary_node_space.max( Dim::J ),
+                   owned_node_space.min( Dim::J ) );
 
         boundary_node_space =
-            local_grid->boundaryIndexSpace( Own(), Node(), 1, -1, 1 );
+            local_grid->boundaryIndexSpace( Own(), Node(), 1, -1, new_hw );
         EXPECT_EQ( boundary_node_space.min( Dim::I ),
-                   owned_node_space.max( Dim::I ) - 1 );
+                   owned_node_space.max( Dim::I ) - new_hw - 1 );
         EXPECT_EQ( boundary_node_space.max( Dim::I ),
                    owned_node_space.max( Dim::I ) );
         EXPECT_EQ( boundary_node_space.min( Dim::J ),
                    owned_node_space.min( Dim::J ) );
         EXPECT_EQ( boundary_node_space.max( Dim::J ),
-                   owned_node_space.min( Dim::J ) + 1 );
+                   owned_node_space.min( Dim::J ) + new_hw + 1 );
     }
 
     if ( -1 == local_grid->neighborRank( 0, 1 ) )
     {
+        int new_hw = 4;
         boundary_node_space =
-            local_grid->boundaryIndexSpace( Ghost{}, Node(), 0, 1, 1 );
+            local_grid->boundaryIndexSpace( Ghost{}, Node(), 0, 1, new_hw );
         EXPECT_EQ( boundary_node_space.min( Dim::I ),
                    owned_node_space.min( Dim::I ) );
         EXPECT_EQ( boundary_node_space.max( Dim::I ),
@@ -3479,18 +4969,328 @@ void notPeriodicTest2d()
         EXPECT_EQ( boundary_node_space.min( Dim::J ),
                    owned_node_space.max( Dim::J ) );
         EXPECT_EQ( boundary_node_space.max( Dim::J ),
-                   owned_node_space.max( Dim::J ) + 1 );
+                   owned_node_space.max( Dim::J ) + new_hw );
 
         boundary_node_space =
-            local_grid->boundaryIndexSpace( Own(), Node(), 0, 1, 1 );
+            local_grid->boundaryIndexSpace( Own(), Node(), 0, 1, new_hw );
         EXPECT_EQ( boundary_node_space.min( Dim::I ),
                    owned_node_space.min( Dim::I ) );
         EXPECT_EQ( boundary_node_space.max( Dim::I ),
                    owned_node_space.max( Dim::I ) );
         EXPECT_EQ( boundary_node_space.min( Dim::J ),
-                   owned_node_space.max( Dim::J ) - 1 );
+                   owned_node_space.max( Dim::J ) - new_hw - 1 );
         EXPECT_EQ( boundary_node_space.max( Dim::J ),
                    owned_node_space.max( Dim::J ) );
+    }
+
+    //////////////////
+    // I-FACE SPACES
+    //////////////////
+
+    IndexSpace<2> boundary_i_face_space;
+    if ( -1 == local_grid->neighborRank( -1, 0 ) )
+    {
+        boundary_i_face_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Face<Dim::I>(), -1, 0 );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ), 0 );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ), halo_width );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) );
+
+        boundary_i_face_space =
+            local_grid->boundaryIndexSpace( Own(), Face<Dim::I>(), -1, 0 );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) + halo_width + 1 );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1 ) )
+    {
+        boundary_i_face_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Face<Dim::I>(), 1, -1 );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) + halo_width );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ), 0 );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ), halo_width );
+
+        boundary_i_face_space =
+            local_grid->boundaryIndexSpace( Own(), Face<Dim::I>(), 1, -1 );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) - halo_width - 1 );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) + halo_width );
+    }
+    if ( -1 == local_grid->neighborRank( 0, 1 ) )
+    {
+        boundary_i_face_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Face<Dim::I>(), 0, 1 );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) + halo_width );
+
+        boundary_i_face_space =
+            local_grid->boundaryIndexSpace( Own(), Face<Dim::I>(), 0, 1 );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) - halo_width );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) );
+    }
+
+    // Check the boundary spaces again but this time with a
+    // specified halo width.
+    if ( -1 == local_grid->neighborRank( -1, 0 ) )
+    {
+        int new_hw = 1;
+        boundary_i_face_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Face<Dim::I>(), -1, 0, new_hw );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) - new_hw );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) );
+
+        boundary_i_face_space = local_grid->boundaryIndexSpace(
+            Own(), Face<Dim::I>(), -1, 0, new_hw );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) + new_hw + 1 );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1 ) )
+    {
+        int new_hw = 3;
+        boundary_i_face_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Face<Dim::I>(), 1, -1, new_hw );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) + new_hw );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) - new_hw );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) );
+
+        boundary_i_face_space = local_grid->boundaryIndexSpace(
+            Own(), Face<Dim::I>(), 1, -1, new_hw );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) - new_hw - 1 );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.min( Dim::J ) + new_hw );
+    }
+
+    if ( -1 == local_grid->neighborRank( 0, 1 ) )
+    {
+        int new_hw = 4;
+        boundary_i_face_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Face<Dim::I>(), 0, 1, new_hw );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) + new_hw );
+
+        boundary_i_face_space = local_grid->boundaryIndexSpace(
+            Own(), Face<Dim::I>(), 0, 1, new_hw );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::I ),
+                   owned_i_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::I ),
+                   owned_i_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_i_face_space.min( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) - new_hw );
+        EXPECT_EQ( boundary_i_face_space.max( Dim::J ),
+                   owned_i_face_space.max( Dim::J ) );
+    }
+
+    //////////////////
+    // J-FACE SPACES
+    //////////////////
+
+    IndexSpace<2> boundary_j_face_space;
+    if ( -1 == local_grid->neighborRank( -1, 0 ) )
+    {
+        boundary_j_face_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Face<Dim::J>(), -1, 0 );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ), 0 );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ), halo_width );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) );
+
+        boundary_j_face_space =
+            local_grid->boundaryIndexSpace( Own(), Face<Dim::J>(), -1, 0 );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) + halo_width );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1 ) )
+    {
+        boundary_j_face_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Face<Dim::J>(), 1, -1 );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) + halo_width );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ), 0 );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ), halo_width );
+
+        boundary_j_face_space =
+            local_grid->boundaryIndexSpace( Own(), Face<Dim::J>(), 1, -1 );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) - halo_width );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) + halo_width + 1 );
+    }
+    if ( -1 == local_grid->neighborRank( 0, 1 ) )
+    {
+        boundary_j_face_space =
+            local_grid->boundaryIndexSpace( Ghost{}, Face<Dim::J>(), 0, 1 );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) + halo_width );
+
+        boundary_j_face_space =
+            local_grid->boundaryIndexSpace( Own(), Face<Dim::J>(), 0, 1 );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) - halo_width - 1 );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) );
+    }
+
+    // Check the boundary spaces again but this time with a
+    // specified halo width.
+    if ( -1 == local_grid->neighborRank( -1, 0 ) )
+    {
+        int new_hw = 1;
+        boundary_j_face_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Face<Dim::J>(), -1, 0, new_hw );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) - new_hw );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) );
+
+        boundary_j_face_space = local_grid->boundaryIndexSpace(
+            Own(), Face<Dim::J>(), -1, 0, new_hw );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) + new_hw );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) );
+    }
+
+    if ( -1 == local_grid->neighborRank( 1, -1 ) )
+    {
+        int new_hw = 3;
+        boundary_j_face_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Face<Dim::J>(), 1, -1, new_hw );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) + new_hw );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) - new_hw );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) );
+
+        boundary_j_face_space = local_grid->boundaryIndexSpace(
+            Own(), Face<Dim::J>(), 1, -1, new_hw );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) - new_hw );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.min( Dim::J ) + new_hw + 1 );
+    }
+
+    if ( -1 == local_grid->neighborRank( 0, 1 ) )
+    {
+        int new_hw = 4;
+        boundary_j_face_space = local_grid->boundaryIndexSpace(
+            Ghost{}, Face<Dim::J>(), 0, 1, new_hw );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) + new_hw );
+
+        boundary_j_face_space = local_grid->boundaryIndexSpace(
+            Own(), Face<Dim::J>(), 0, 1, new_hw );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::I ),
+                   owned_j_face_space.min( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::I ),
+                   owned_j_face_space.max( Dim::I ) );
+        EXPECT_EQ( boundary_j_face_space.min( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) - new_hw - 1 );
+        EXPECT_EQ( boundary_j_face_space.max( Dim::J ),
+                   owned_j_face_space.max( Dim::J ) );
     }
 
     // Free the serial communicator we made
