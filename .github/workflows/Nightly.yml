@@ -13,7 +13,7 @@ jobs:
       matrix:
         backend: ["OPENMP", "SERIAL"]
         cxx: ['g++', 'clang++']
-        distro: ['ubuntu:latest', 'fedora:rawhide']
+        distro: ['ubuntu:latest', 'fedora:rawhide', 'opensuse:latest']
     runs-on: ubuntu-20.04
     container:
       image: ghcr.io/ecp-copa/ci-containers/${{ matrix.distro }}
