@@ -658,7 +658,7 @@ void permute(
 
     // Get the number of components in the slice.
     std::size_t num_comp = 1;
-    for ( std::size_t d = 2; d < slice.rank(); ++d )
+    for ( std::size_t d = 2; d < slice.viewRank(); ++d )
         num_comp *= slice.extent( d );
 
     // Get the raw slice data.

@@ -149,23 +149,27 @@ void apiTest()
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Check the raw pointer interface sizes.
-    EXPECT_EQ( slice_0.rank(), 5 );
+    EXPECT_EQ( slice_0.viewRank(), 5 );
+    EXPECT_EQ( slice_0.rank, 4 );
     EXPECT_EQ( slice_0.extent( 0 ), 3 );
     EXPECT_EQ( slice_0.extent( 1 ), 16 );
     EXPECT_EQ( slice_0.extent( 2 ), dim_1 );
     EXPECT_EQ( slice_0.extent( 3 ), dim_2 );
     EXPECT_EQ( slice_0.extent( 4 ), dim_3 );
 
-    EXPECT_EQ( slice_1.rank(), 2 );
+    EXPECT_EQ( slice_1.viewRank(), 2 );
+    EXPECT_EQ( slice_1.rank, 1 );
     EXPECT_EQ( slice_1.extent( 0 ), 3 );
     EXPECT_EQ( slice_1.extent( 1 ), 16 );
 
-    EXPECT_EQ( slice_2.rank(), 3 );
+    EXPECT_EQ( slice_2.viewRank(), 3 );
+    EXPECT_EQ( slice_2.rank, 2 );
     EXPECT_EQ( slice_2.extent( 0 ), 3 );
     EXPECT_EQ( slice_2.extent( 1 ), 16 );
     EXPECT_EQ( slice_2.extent( 2 ), dim_1 );
 
-    EXPECT_EQ( slice_3.rank(), 4 );
+    EXPECT_EQ( slice_3.viewRank(), 4 );
+    EXPECT_EQ( slice_3.rank, 3 );
     EXPECT_EQ( slice_3.extent( 0 ), 3 );
     EXPECT_EQ( slice_3.extent( 1 ), 16 );
     EXPECT_EQ( slice_3.extent( 2 ), dim_1 );

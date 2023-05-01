@@ -584,7 +584,7 @@ class Slice
     // compatibility with Kokkos views.
     enum
     {
-        Rank = std::rank<DataType>::value + 1
+        rank = std::rank<DataType>::value + 1
     };
 
   public:
@@ -794,7 +794,7 @@ class Slice
       \return The rank of the data for this slice.
     */
     KOKKOS_INLINE_FUNCTION
-    constexpr size_type rank() const { return _view.rank; }
+    constexpr size_type viewRank() const { return _view.rank; }
 
     /*!
       \brief Get the extent of a given raw slice data dimension. This includes
