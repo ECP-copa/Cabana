@@ -45,7 +45,8 @@ class IndexSpace
     /*!
       \brief Initializer list size constructor.
     */
-    IndexSpace( const std::initializer_list<long>& size )
+    template <typename Scalar>
+    IndexSpace( const std::initializer_list<Scalar>& size )
     {
         std::fill( _min.data(), _min.data() + Rank, 0 );
         std::copy( size.begin(), size.end(), _max.data() );
@@ -54,8 +55,9 @@ class IndexSpace
     /*!
       \brief Initializer list range constructor.
     */
-    IndexSpace( const std::initializer_list<long>& min,
-                const std::initializer_list<long>& max )
+    template <typename Scalar>
+    IndexSpace( const std::initializer_list<Scalar>& min,
+                const std::initializer_list<Scalar>& max )
     {
         std::copy( min.begin(), min.end(), _min.data() );
         std::copy( max.begin(), max.end(), _max.data() );
