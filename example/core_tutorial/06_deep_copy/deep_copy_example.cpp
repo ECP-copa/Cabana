@@ -32,6 +32,8 @@ void deepCopyExample()
       copy. This example will demonstrate performing this deep copy.
     */
 
+    std::cout << "Cabana Deep Copy Example\n" << std::endl;
+
     /*
        Start by declaring the types in our tuples will store. Store a rank-2
        array of doubles, a rank-1 array of floats, and a single integer in

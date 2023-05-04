@@ -34,6 +34,8 @@ void aosoaExample()
       types of accelerators or programming models.
     */
 
+    std::cout << "Cabana AoSoA Example\n" << std::endl;
+
     /*
        Start by declaring the types in our tuples will store. Store a rank-2
        array of doubles, a rank-1 array of floats, and a single integer in

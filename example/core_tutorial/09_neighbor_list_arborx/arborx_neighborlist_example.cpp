@@ -25,11 +25,16 @@ void arborxNeighborListExample()
 
       This example follows very closely to the previous Verlet neighbor list
       example - more detail is included there.
+    */
 
+    std::cout << "Cabana ArborX Neighbor List Example\n" << std::endl;
+
+    /*
       First we define the data types for the particles. We use the host space
       here for the purposes of this example but all memory spaces and other
       choices are configurable.
     */
+
     using DataTypes = Cabana::MemberTypes<double[3], int>;
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;

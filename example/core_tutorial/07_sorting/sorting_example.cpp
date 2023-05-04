@@ -27,6 +27,8 @@ void sortingExample()
       slice of data as the keys.
     */
 
+    std::cout << "Cabana Sort Example\n" << std::endl;
+
     /*
        Start by declaring the types in our tuples will store. We will use the
        integer as the sorting key in this example.

@@ -22,11 +22,6 @@
 void simdParallelForExample()
 {
     /*
-      In previous examples we have demonstrated using the Slice directly with
-      programming models such as OpenMP and CUDA. Now we present a more
-      portable strategy for threading over slices using Kokkos as well as
-      Cabana variations of Kokkos concepts.
-
       Just as we demonstrated in previous examples using the Slice, both 1D
       and 2D indexing schemes are available to access data within the
       slice. Depending on the kernel to be used with the slice different types
@@ -48,6 +43,8 @@ void simdParallelForExample()
 
       We demonstrate both cases in this example.
     */
+
+    std::cout << "Cabana SIMD Parallel Example\n" << std::endl;
 
     /*
       Declare the AoSoA parameters.

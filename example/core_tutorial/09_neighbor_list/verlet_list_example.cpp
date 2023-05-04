@@ -27,6 +27,8 @@ void verletListExample()
       this example.
     */
 
+    std::cout << "Cabana Verlet Neighbor List Example\n" << std::endl;
+
     /*
        Start by declaring the types in our tuples will store. The first
        member will be the coordinates, the second an id.

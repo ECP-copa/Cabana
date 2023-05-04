@@ -40,6 +40,8 @@ void migrationExample()
       allocated in GPU memory, this feature will be used automatically.
     */
 
+    std::cout << "Cabana Migration Example\n" << std::endl;
+
     /*
        Get parameters from the communicator. We will use MPI_COMM_WORLD for
        this example but any MPI communicator may be used.
