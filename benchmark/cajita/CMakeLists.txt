@@ -30,15 +30,15 @@ endif()
 
 if(Cabana_ENABLE_TESTING)
   if(NOT Kokkos_ENABLE_SYCL) #FIXME_SYCL
-    add_test(NAME Cajita_SparseMapPerformance COMMAND ${NONMPI_PRECOMMAND} SparseMapPerformance sparsemap_output.txt)
-    add_test(NAME Cajita_SparsePartitionerPerformance COMMAND ${NONMPI_PRECOMMAND} SparsePartitionerPerformance sparsepartitioner_output.txt)
+    add_test(NAME Cajita_SparseMapPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:SparseMapPerformance> sparsemap_output.txt)
+    add_test(NAME Cajita_SparsePartitionerPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:SparsePartitionerPerformance> sparsepartitioner_output.txt)
   endif()
 
-  add_test(NAME Cajita_HaloPerformance COMMAND ${NONMPI_PRECOMMAND} HaloPerformance halo_output.txt)
+  add_test(NAME Cajita_HaloPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:HaloPerformance> halo_output.txt)
 
-  add_test(NAME Cajita_InterpolationPerformance COMMAND ${NONMPI_PRECOMMAND} InterpolationPerformance interpolation_output.txt)
+  add_test(NAME Cajita_InterpolationPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:InterpolationPerformance> interpolation_output.txt)
 
   if (Cabana_ENABLE_HEFFTE)
-    add_test(NAME Cajita_FastFourierTransformPerformance COMMAND ${NONMPI_PRECOMMAND} FastFourierTransformPerformance fastfouriertransform_output.txt)
+    add_test(NAME Cajita_FastFourierTransformPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:FastFourierTransformPerformance> fastfouriertransform_output.txt)
   endif()
 endif()
