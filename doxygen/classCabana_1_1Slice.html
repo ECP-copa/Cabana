@@ -90,7 +90,7 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a7dc0ca8d6326f3a0426399fd652894b5"><td class="memItemLeft" align="right" valign="top"><a id="a7dc0ca8d6326f3a0426399fd652894b5" name="a7dc0ca8d6326f3a0426399fd652894b5"></a>enum &#160;</td><td class="memItemRight" valign="bottom">{ <b>Rank</b> = std::rank&lt;DataType&gt;::value + 1
+<tr class="memitem:a7dc0ca8d6326f3a0426399fd652894b5"><td class="memItemLeft" align="right" valign="top"><a id="a7dc0ca8d6326f3a0426399fd652894b5" name="a7dc0ca8d6326f3a0426399fd652894b5"></a>enum &#160;</td><td class="memItemRight" valign="bottom">{ <b>rank</b> = std::rank&lt;DataType&gt;::value + 1
  }</td></tr>
 <tr class="separator:a7dc0ca8d6326f3a0426399fd652894b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0f3072c02e772ae03cc58999f19f79a"><td class="memItemLeft" align="right" valign="top"><a id="af0f3072c02e772ae03cc58999f19f79a" name="af0f3072c02e772ae03cc58999f19f79a"></a>
@@ -230,9 +230,9 @@ template&lt;typename U  = DataType&gt; </td></tr>
 <tr class="memitem:a7d1d9203682dd4a3156b3ff04868702c"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#a5c9d92c165481cc23048244992bd0eb0">pointer_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a7d1d9203682dd4a3156b3ff04868702c">data</a> () const</td></tr>
 <tr class="memdesc:a7d1d9203682dd4a3156b3ff04868702c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a raw pointer to the data for this member.  <br /></td></tr>
 <tr class="separator:a7d1d9203682dd4a3156b3ff04868702c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33614ed6d9aa8f39dd843cdad7ff37ef"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION constexpr <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a33614ed6d9aa8f39dd843cdad7ff37ef">rank</a> () const</td></tr>
-<tr class="memdesc:a33614ed6d9aa8f39dd843cdad7ff37ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the rank of the raw data for this slice. This includes the struct dimension, array dimension, and all tuple slice dimensions.  <br /></td></tr>
-<tr class="separator:a33614ed6d9aa8f39dd843cdad7ff37ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa6e2a826d8b85fd5037d317373aa5f1"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION constexpr <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#aaa6e2a826d8b85fd5037d317373aa5f1">viewRank</a> () const</td></tr>
+<tr class="memdesc:aaa6e2a826d8b85fd5037d317373aa5f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the rank of the raw data for this slice. This includes the struct dimension, array dimension, and all tuple slice dimensions.  <br /></td></tr>
+<tr class="separator:aaa6e2a826d8b85fd5037d317373aa5f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5af1df12099d43c179f356816c2f1f15"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a5af1df12099d43c179f356816c2f1f15">extent</a> (const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> d) const</td></tr>
 <tr class="memdesc:a5af1df12099d43c179f356816c2f1f15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the extent of a given raw slice data dimension. This includes the struct dimension, array dimension, and all tuple slice dimensions.  <br /></td></tr>
 <tr class="separator:a5af1df12099d43c179f356816c2f1f15"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -594,36 +594,6 @@ template&lt;class MAT &gt; </div>
 
 </div>
 </div>
-<a id="a33614ed6d9aa8f39dd843cdad7ff37ef" name="a33614ed6d9aa8f39dd843cdad7ff37ef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a33614ed6d9aa8f39dd843cdad7ff37ef">&#9670;&#160;</a></span>rank()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename DataType , typename DeviceType , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION constexpr <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;::rank </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Get the rank of the raw data for this slice. This includes the struct dimension, array dimension, and all tuple slice dimensions. </p>
-<dl class="section return"><dt>Returns</dt><dd>The rank of the data for this slice. </dd></dl>
-
-</div>
-</div>
 <a id="a56916eee341b8184856f125ef5db0c93" name="a56916eee341b8184856f125ef5db0c93"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a56916eee341b8184856f125ef5db0c93">&#9670;&#160;</a></span>size()</h2>
 
@@ -688,6 +658,36 @@ template&lt;typename DataType , typename DeviceType , typename MemoryAccessType 
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The stride of the given member data dimension. </dd></dl>
+
+</div>
+</div>
+<a id="aaa6e2a826d8b85fd5037d317373aa5f1" name="aaa6e2a826d8b85fd5037d317373aa5f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa6e2a826d8b85fd5037d317373aa5f1">&#9670;&#160;</a></span>viewRank()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename DataType , typename DeviceType , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION constexpr <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;::viewRank </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the rank of the raw data for this slice. This includes the struct dimension, array dimension, and all tuple slice dimensions. </p>
+<dl class="section return"><dt>Returns</dt><dd>The rank of the data for this slice. </dd></dl>
 
 </div>
 </div>

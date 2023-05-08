@@ -474,7 +474,7 @@ $(function() {
 <div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span> </div>
 <div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span>    <span class="comment">// Get the number of components in the slice.</span></div>
 <div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>    std::size_t num_comp = 1;</div>
-<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>    <span class="keywordflow">for</span> ( std::size_t d = 2; d &lt; <a class="code hl_function" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>.rank(); ++d )</div>
+<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>    <span class="keywordflow">for</span> ( std::size_t d = 2; d &lt; <a class="code hl_function" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>.viewRank(); ++d )</div>
 <div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span>        num_comp *= <a class="code hl_function" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>.extent( d );</div>
 <div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span> </div>
 <div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>    <span class="comment">// Get the raw slice data.</span></div>

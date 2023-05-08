@@ -32,5 +32,6 @@ var searchData=
   ['view_29',['view',['../classCajita_1_1Array.html#a3a891184b75173bd18a60d6a6c1ceff4',1,'Cajita::Array::view()'],['../classCabana_1_1Slice.html#acbc023e3e2e2c8b470aad6819341f53b',1,'Cabana::Slice::view() const']]],
   ['view_5flayout_30',['view_layout',['../classCabana_1_1Slice.html#af13aee8b4f316b789528d8cfb2254d22',1,'Cabana::Slice']]],
   ['view_5ftype_31',['view_type',['../classCajita_1_1Array.html#a73d46b6b87ce132cf9ea774392747df5',1,'Cajita::Array']]],
-  ['view_5fwrapper_32',['view_wrapper',['../classCabana_1_1Slice.html#af3abd3f2a4c436ebc82656dbf87ca561',1,'Cabana::Slice']]]
+  ['view_5fwrapper_32',['view_wrapper',['../classCabana_1_1Slice.html#af3abd3f2a4c436ebc82656dbf87ca561',1,'Cabana::Slice']]],
+  ['viewrank_33',['viewRank',['../classCabana_1_1Slice.html#aaa6e2a826d8b85fd5037d317373aa5f1',1,'Cabana::Slice']]]
 ];

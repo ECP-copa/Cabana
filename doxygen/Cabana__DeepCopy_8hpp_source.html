@@ -336,7 +336,7 @@ $(function() {
 <div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span> </div>
 <div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>    <span class="comment">// Get the number of components in each slice element.</span></div>
 <div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>    std::size_t num_comp = 1;</div>
-<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>    <span class="keywordflow">for</span> ( std::size_t d = 2; d &lt; dst.rank(); ++d )</div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>    <span class="keywordflow">for</span> ( std::size_t d = 2; d &lt; dst.viewRank(); ++d )</div>
 <div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>        num_comp *= dst.extent( d );</div>
 <div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span> </div>
 <div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>    <span class="comment">// Gather the slice data in a flat view in the source space and copy it to</span></div>
