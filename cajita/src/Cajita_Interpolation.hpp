@@ -912,7 +912,7 @@ struct ScalarValueG2P
         : _x( x )
         , _multiplier( multiplier )
     {
-        static_assert( 1 == ViewType::Rank, "View must be of scalars" );
+        static_assert( 1 == ViewType::rank, "View must be of scalars" );
     }
 
     //! Apply spline interplation.
@@ -961,7 +961,7 @@ struct VectorValueG2P
         : _x( x )
         , _multiplier( multiplier )
     {
-        static_assert( 2 == ViewType::Rank, "View must be of vectors" );
+        static_assert( 2 == ViewType::rank, "View must be of vectors" );
     }
 
     //! Apply spline interplation.
@@ -1011,7 +1011,7 @@ struct ScalarGradientG2P
         : _x( x )
         , _multiplier( multiplier )
     {
-        static_assert( 2 == ViewType::Rank, "View must be of vectors" );
+        static_assert( 2 == ViewType::rank, "View must be of vectors" );
     }
 
     //! Apply spline interplation.
@@ -1061,7 +1061,7 @@ struct VectorGradientG2P
         : _x( x )
         , _multiplier( multiplier )
     {
-        static_assert( 3 == ViewType::Rank, "View must be of tensors" );
+        static_assert( 3 == ViewType::rank, "View must be of tensors" );
     }
 
     //! Apply spline interplation.
@@ -1113,7 +1113,7 @@ struct VectorDivergenceG2P
         : _x( x )
         , _multiplier( multiplier )
     {
-        static_assert( 1 == ViewType::Rank, "View must be of scalars" );
+        static_assert( 1 == ViewType::rank, "View must be of scalars" );
     }
 
     //! Apply spline interplation.
@@ -1259,7 +1259,7 @@ struct ScalarValueP2G
         : _x( x )
         , _multiplier( multiplier )
     {
-        static_assert( 1 == ViewType::Rank, "View must be of scalars" );
+        static_assert( 1 == ViewType::rank, "View must be of scalars" );
     }
 
     //! Apply spline interplation.
@@ -1307,7 +1307,7 @@ struct VectorValueP2G
         : _x( x )
         , _multiplier( multiplier )
     {
-        static_assert( 2 == ViewType::Rank, "View must be of vectors" );
+        static_assert( 2 == ViewType::rank, "View must be of vectors" );
     }
 
     //! Apply spline interplation.
@@ -1357,7 +1357,7 @@ struct ScalarGradientP2G
         : _x( x )
         , _multiplier( multiplier )
     {
-        static_assert( 1 == ViewType::Rank, "View must be of scalars" );
+        static_assert( 1 == ViewType::rank, "View must be of scalars" );
     }
 
     //! Apply spline interplation.
@@ -1405,7 +1405,7 @@ struct VectorDivergenceP2G
         : _x( x )
         , _multiplier( multiplier )
     {
-        static_assert( 2 == ViewType::Rank, "View must be of vectors" );
+        static_assert( 2 == ViewType::rank, "View must be of vectors" );
     }
 
     //! Apply spline interplation.
@@ -1455,7 +1455,7 @@ struct TensorDivergenceP2G
         : _x( x )
         , _multiplier( multiplier )
     {
-        static_assert( 3 == ViewType::Rank, "View must be of tensors" );
+        static_assert( 3 == ViewType::rank, "View must be of tensors" );
     }
 
     //! Apply spline interplation.

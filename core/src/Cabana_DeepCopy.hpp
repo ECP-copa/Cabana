@@ -327,7 +327,7 @@ deep_copy( DstSlice& dst, const SrcSlice& src,
 
     // Get the number of components in each slice element.
     std::size_t num_comp = 1;
-    for ( std::size_t d = 2; d < dst.rank(); ++d )
+    for ( std::size_t d = 2; d < dst.viewRank(); ++d )
         num_comp *= dst.extent( d );
 
     // Gather the slice data in a flat view in the source space and copy it to
