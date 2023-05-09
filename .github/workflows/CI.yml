@@ -273,7 +273,7 @@ jobs:
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DKokkos_ENABLE_HWLOC=ON \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
-            ${kokkos_cmake_opts}
+            ${kokkos_cmake_opts[@]}
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout arborx
@@ -316,7 +316,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
             -DMKL_ROOT=/opt/intel/oneapi/mkl/latest \
             -DHeffte_MKL_IOMP5=/opt/intel/oneapi/compiler/latest/linux/compiler/lib/intel64_lin/libiomp5.so \
-            ${heffte_cmake_opts}
+            ${heffte_cmake_opts[@]}
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout hypre
@@ -337,7 +337,7 @@ jobs:
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
             -DHYPRE_WITH_MPI=ON \
-            ${hypre_cmake_opts}
+            ${hypre_cmake_opts[@]}
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout ALL
