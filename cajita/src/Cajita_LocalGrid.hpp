@@ -250,6 +250,17 @@ class LocalGrid
                         const int off_j, const int halo_width = -1 ) const;
 
   private:
+    // Helper functions
+    template <class OwnedIndexSpace>
+    auto getBound( OwnedIndexSpace owned_space, const int upper_lower,
+                   const std::array<int, num_space_dim>& off_ijk,
+                   const int lower_shift, const int upper_shift ) const;
+    template <int Dir, class OwnedIndexSpace>
+    auto getBound( OwnedIndexSpace owned_space, const int upper_lower,
+                   const std::array<int, num_space_dim>& off_ijk,
+                   const int lower_shift_dir, const int lower_shift,
+                   const int upper_shift_dir, const int upper_shift ) const;
+
     // 3D and 2D entity types
     IndexSpace<num_space_dim> indexSpaceImpl( Own, Cell, Local ) const;
     IndexSpace<num_space_dim> indexSpaceImpl( Ghost, Cell, Local ) const;
