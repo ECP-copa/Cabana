@@ -28,6 +28,7 @@ jobs:
         backend: ['OPENMP', 'SERIAL']
         cmake_build_type: ['Debug', 'Release']
         kokkos_ver: ['3.6.01']
+        bounds_check: ['OFF']
         arborx: ['NoArborX']
         heffte: ['NoheFFTe' ]
         hypre: ['NoHYPRE']
@@ -224,6 +225,19 @@ jobs:
             liball: 'libALL'
             silo: 'Silo'
             hdf5: 'HDF5'
+            bounds_check: 'BoundsCheck'
+            coverage: 'OFF'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            backend: 'OPENMP'
+            cmake_build_type: 'Debug'
+            kokkos_ver: '3.6.01'
+            arborx: 'ArborX'
+            heffte: 'heFFTe_FFTW'
+            hypre: 'HYPRE'
+            liball: 'libALL'
+            silo: 'Silo'
+            hdf5: 'HDF5'
             coverage: 'ON'
     runs-on: ubuntu-20.04
     container:
@@ -246,10 +260,13 @@ jobs:
           ref: ${{ matrix.kokkos_ver }}
           path: kokkos
       - name: Build kokkos
+        env:
+          BOUNDS: ${{ matrix.bounds_check }}
         working-directory: kokkos
         run: |
           [[ ${{ matrix.backend }} == "OPENMP" ]] && kokkos_cmake_opts+=( -DKokkos_ENABLE_OPENMP==ON )
           [[ ${{ matrix.backend }} == "THREADS" ]] && kokkos_cmake_opts+=( -DKokkos_ENABLE_THREADS==ON )
+          [[ ${BOUNDS} == "BoundsCheck" ]] && kokkos_cmake_opts+=( -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=ON )
           cmake -B build \
             -DCMAKE_INSTALL_PREFIX=$HOME/kokkos \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
