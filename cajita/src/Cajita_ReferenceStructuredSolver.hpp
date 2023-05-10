@@ -141,18 +141,21 @@ class ReferenceConjugateGradient
     : public ReferenceStructuredSolver<Scalar, EntityType, MeshType, DeviceType>
 {
   public:
+    //! Base type.
+    using base_type =
+        ReferenceStructuredSolver<Scalar, EntityType, MeshType, DeviceType>;
     //! Entity type.
-    using entity_type = EntityType;
+    using entity_type = typename base_type::entity_type;
     //! Kokkos device type.
-    using device_type = DeviceType;
+    using device_type = = typename base_type::device_type;
     //! Scalar value type.
-    using value_type = Scalar;
+    using value_type = = typename base_type::value_type;
     //! Kokkos execution space.
-    using execution_space = typename device_type::execution_space;
+    using execution_space = typename base_type::execution_space;
     //! Kokkos memory space.
-    using memory_space = typename device_type::memory_space;
+    using memory_space = typename base_type::memory_space;
     //! Array type.
-    using Array_t = Array<Scalar, EntityType, MeshType, DeviceType>;
+    using Array_t = = typename base_type::Array_t;
     //! Spatial dimension.
     static constexpr std::size_t num_space_dim = MeshType::num_space_dim;
 
