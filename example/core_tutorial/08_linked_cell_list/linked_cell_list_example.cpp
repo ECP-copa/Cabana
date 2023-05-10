@@ -33,6 +33,8 @@ void linkedCellListExample()
       uniform Cartesian grid.
     */
 
+    std::cout << "Cabana Linked Cell List Example\n" << std::endl;
+
     /*
        Start by declaring the types in our tuples will store. The first
        member will be the coordinates, the second an id.
@@ -46,7 +48,7 @@ void linkedCellListExample()
     */
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::Serial;
+    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
     using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*

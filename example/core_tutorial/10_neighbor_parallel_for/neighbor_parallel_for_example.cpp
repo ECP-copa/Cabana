@@ -42,6 +42,8 @@ void neighborParallelForExample()
       We demonstrate both cases in this example.
     */
 
+    std::cout << "Cabana Neighbor Parallel Example\n" << std::endl;
+
     /*
        Start by declaring the types in our tuples will store. The first
        member will be the coordinates, the second and third counters.
@@ -53,7 +55,7 @@ void neighborParallelForExample()
     */
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::OpenMP;
+    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
     using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*

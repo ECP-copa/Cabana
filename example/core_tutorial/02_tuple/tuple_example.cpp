@@ -54,6 +54,8 @@ void tupleExample()
          values within the tuple.
     */
 
+    std::cout << "Cabana Tuple Example\n" << std::endl;
+
     /* Start by declaring the types in our tuple will store. Store a rank-2
        array of doubles, a rank-1 array of floats, and a single integer in
        each tuple.

@@ -26,6 +26,8 @@ void atomicSliceExample()
       operations with slices.
     */
 
+    std::cout << "Cabana OpenMP Atomic Slice Example\n" << std::endl;
+
     /*
       Declare the AoSoA parameters.
     */

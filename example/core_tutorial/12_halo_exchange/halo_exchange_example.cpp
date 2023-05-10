@@ -44,6 +44,8 @@ void haloExchangeExample()
       allocated in GPU memory, this feature will be used automatically.
     */
 
+    std::cout << "Cabana Halo Example\n" << std::endl;
+
     /*
        Get parameters from the communicator. We will use MPI_COMM_WORLD for
        this example but any MPI communicator may be used.
@@ -59,7 +61,7 @@ void haloExchangeExample()
     using DataTypes = Cabana::MemberTypes<double, double>;
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::Serial;
+    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
     using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
@@ -233,11 +235,11 @@ void haloExchangeExample()
 int main( int argc, char* argv[] )
 {
     MPI_Init( &argc, &argv );
+    {
+        Kokkos::ScopeGuard scope_guard( argc, argv );
 
-    Kokkos::ScopeGuard scope_guard( argc, argv );
-
-    haloExchangeExample();
-
+        haloExchangeExample();
+    }
     MPI_Finalize();
 
     return 0;

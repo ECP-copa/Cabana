@@ -27,6 +27,8 @@ void sortingExample()
       slice of data as the keys.
     */
 
+    std::cout << "Cabana Sort Example\n" << std::endl;
+
     /*
        Start by declaring the types in our tuples will store. We will use the
        integer as the sorting key in this example.
@@ -40,7 +42,7 @@ void sortingExample()
     */
     const int VectorLength = 4;
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::Serial;
+    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
     using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
