@@ -193,6 +193,8 @@ class ReferenceConjugateGradient
             createArrayLayout( layout.localGrid(), 6, EntityType() );
         _vectors =
             createArray<Scalar, DeviceType>( "cg_vectors", vector_layout );
+        _A_halo_vectors = createSubarray( *_vectors, 0, 2 );
+        _M_halo_vectors = createSubarray( *_vectors, 2, 4 );
     }
 
     /*!
@@ -207,7 +209,8 @@ class ReferenceConjugateGradient
         const std::vector<std::array<int, num_space_dim>>& stencil,
         const bool is_symmetric = false ) override
     {
-        setStencil( stencil, is_symmetric, _A_stencil, _A_halo, _A );
+        setStencil( stencil, is_symmetric, _A_stencil, _A_halo, _A,
+                    _A_halo_vectors );
     }
 
     /*!
@@ -232,7 +235,8 @@ class ReferenceConjugateGradient
         const std::vector<std::array<int, num_space_dim>>& stencil,
         const bool is_symmetric = false ) override
     {
-        setStencil( stencil, is_symmetric, _M_stencil, _M_halo, _M );
+        setStencil( stencil, is_symmetric, _M_stencil, _M_halo, _M,
+                    _M_halo_vectors );
     }
 
     /*!
@@ -289,8 +293,6 @@ class ReferenceConjugateGradient
         auto q = createSubarray( *_vectors, 3, 4 );
         auto p_new = createSubarray( *_vectors, 4, 5 );
         auto r_new = createSubarray( *_vectors, 5, 6 );
-        auto A_halo_vectors = createSubarray( *_vectors, 0, 2 );
-        auto M_halo_vectors = createSubarray( *_vectors, 2, 4 );
 
         // Views.
         auto x_view = x.view();
@@ -315,7 +317,7 @@ class ReferenceConjugateGradient
         Kokkos::deep_copy( p_old_view, x_view );
 
         // Gather the LHS through gatheing p and z.
-        _A_halo->gather( execution_space(), *A_halo_vectors );
+        _A_halo->gather( execution_space(), *_A_halo_vectors );
 
         // Compute the initial residual and norm.
         _residual_norm = 0.0;
@@ -340,7 +342,7 @@ class ReferenceConjugateGradient
             return;
 
         // r and q.
-        _M_halo->gather( execution_space(), *M_halo_vectors );
+        _M_halo->gather( execution_space(), *_M_halo_vectors );
 
         // Compute the initial preconditioned residual.
         Scalar zTr_old = 0.0;
@@ -356,7 +358,7 @@ class ReferenceConjugateGradient
                        MPI_SUM, local_grid->globalGrid().comm() );
 
         // Gather the LHS through gatheing p and z.
-        _A_halo->gather( execution_space(), *A_halo_vectors );
+        _A_halo->gather( execution_space(), *_A_halo_vectors );
 
         // Compute A*p and pT*A*p.
         Scalar pTAp = 0.0;
@@ -379,7 +381,7 @@ class ReferenceConjugateGradient
         while ( _residual_norm > _tol && _num_iter < _max_iter )
         {
             // Gather r and q.
-            _M_halo->gather( execution_space(), *M_halo_vectors );
+            _M_halo->gather( execution_space(), *_M_halo_vectors );
 
             // Kernel 1: Compute x, r, residual norm, and zTr
             alpha = zTr_old / pTAp;
@@ -416,7 +418,7 @@ class ReferenceConjugateGradient
             }
 
             // Gather p and z.
-            _A_halo->gather( execution_space(), *A_halo_vectors );
+            _A_halo->gather( execution_space(), *_A_halo_vectors );
 
             // Kernel 2: Compute p, A*p, and p^T*A*p
             beta = zTr_new / zTr_old;
@@ -880,7 +882,8 @@ class ReferenceConjugateGradient
                 const bool is_symmetric,
                 Kokkos::View<int* [num_space_dim], DeviceType>& device_stencil,
                 std::shared_ptr<Halo<memory_space>>& halo,
-                std::shared_ptr<Array_t>& matrix )
+                std::shared_ptr<Array_t>& matrix,
+                std::shared_ptr<subarray_type>& halo_matrix )
     {
         // For now we don't support symmetry.
         if ( is_symmetric )
@@ -932,7 +935,7 @@ class ReferenceConjugateGradient
         // Build the halo.
         HaloPattern<num_space_dim> pattern;
         pattern.setNeighbors( halo_neighbors );
-        halo = createHalo( pattern, width, *matrix );
+        halo = createHalo( pattern, width, *halo_matrix );
     }
 
   private:
@@ -949,6 +952,8 @@ class ReferenceConjugateGradient
     std::shared_ptr<Array_t> _A;
     std::shared_ptr<Array_t> _M;
     std::shared_ptr<Array_t> _vectors;
+    std::shared_ptr<subarray_type> _A_halo_vectors;
+    std::shared_ptr<subarray_type> _M_halo_vectors;
 };
 
 //---------------------------------------------------------------------------//
