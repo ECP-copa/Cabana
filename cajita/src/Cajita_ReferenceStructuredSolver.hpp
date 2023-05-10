@@ -56,6 +56,8 @@ class ReferenceStructuredSolver
     using value_type = Scalar;
     //! Array type.
     using Array_t = Array<Scalar, EntityType, MeshType, DeviceType>;
+    //! SubArray type.
+    using subarray_type = typename Array_t::subarray_type;
     //! Spatial dimension.
     static constexpr std::size_t num_space_dim = MeshType::num_space_dim;
 
@@ -156,6 +158,8 @@ class ReferenceConjugateGradient
     using memory_space = typename base_type::memory_space;
     //! Array type.
     using Array_t = = typename base_type::Array_t;
+    //! SubArray type.
+    using subarray_type = typename base_type::subarray_type;
     //! Spatial dimension.
     static constexpr std::size_t num_space_dim = MeshType::num_space_dim;
 
