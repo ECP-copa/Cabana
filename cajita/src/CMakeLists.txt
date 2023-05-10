@@ -45,6 +45,7 @@ set(HEADERS_PUBLIC
 if(Cabana_ENABLE_HYPRE)
   list(APPEND HEADERS_PUBLIC
     Cajita_HypreStructuredSolver.hpp
+    Cajita_HypreSemiStructuredSolver.hpp
     )
 endif()
 

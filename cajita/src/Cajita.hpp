@@ -47,6 +47,7 @@
 
 #ifdef Cabana_ENABLE_HYPRE
 #include <Cajita_HypreStructuredSolver.hpp>
+#include <Cajita_HypreSemiStructuredSolver.hpp>
 #endif
 
 #ifdef Cabana_ENABLE_HEFFTE
