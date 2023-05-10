@@ -11,5 +11,5 @@
 
 add_executable(Spline spline_example.cpp)
 target_link_libraries(Spline Cajita)
-add_test(NAME Cajita_tutorial_14 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} Spline ${MPIEXEC_POSTFLAGS})
+add_test(NAME Cajita_tutorial_14 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:Spline> ${MPIEXEC_POSTFLAGS})
 set_tests_properties(Cajita_tutorial_14 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

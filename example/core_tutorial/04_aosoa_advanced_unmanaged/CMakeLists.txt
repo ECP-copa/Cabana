@@ -11,4 +11,4 @@
 
 add_executable(AdvancedUnmanagedAoSoA advanced_aosoa_unmanaged.cpp)
 target_link_libraries(AdvancedUnmanagedAoSoA cabanacore)
-add_test(NAME Core_tutorial_04_unmanaged COMMAND ${NONMPI_PRECOMMAND} AdvancedUnmanagedAoSoA)
+add_test(NAME Core_tutorial_04_unmanaged COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:AdvancedUnmanagedAoSoA>)
