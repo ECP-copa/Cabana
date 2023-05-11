@@ -437,7 +437,7 @@ void migrate( const Distributor_t& distributor, const Slice_t& src,
 
     // Get the number of components in the slices.
     size_t num_comp = 1;
-    for ( size_t d = 2; d < src.rank(); ++d )
+    for ( size_t d = 2; d < src.viewRank(); ++d )
         num_comp *= src.extent( d );
 
     // Get the raw slice data.

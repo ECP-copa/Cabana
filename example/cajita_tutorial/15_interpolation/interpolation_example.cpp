@@ -38,8 +38,8 @@ struct P2GExampleFunctor
         : _x( x )
         , _y( y )
     {
-        static_assert( 1 == ScalarView::Rank, "First View must be of scalars" );
-        static_assert( 2 == VectorView::Rank,
+        static_assert( 1 == ScalarView::rank, "First View must be of scalars" );
+        static_assert( 2 == VectorView::rank,
                        "Second View must be of vectors" );
     }
 
@@ -84,8 +84,8 @@ struct G2PExampleFunctor
         : _x( x )
         , _t( t )
     {
-        static_assert( 1 == ScalarView::Rank, "First View must be of scalars" );
-        static_assert( 3 == TensorView::Rank,
+        static_assert( 1 == ScalarView::rank, "First View must be of scalars" );
+        static_assert( 3 == TensorView::rank,
                        "Second View must be of tensors" );
     }
 

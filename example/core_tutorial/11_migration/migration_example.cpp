@@ -40,6 +40,8 @@ void migrationExample()
       allocated in GPU memory, this feature will be used automatically.
     */
 
+    std::cout << "Cabana Migration Example\n" << std::endl;
+
     /*
        Get parameters from the communicator. We will use MPI_COMM_WORLD for
        this example but any MPI communicator may be used.
@@ -55,7 +57,7 @@ void migrationExample()
     using DataTypes = Cabana::MemberTypes<int, int>;
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::Serial;
+    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
     using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
@@ -225,11 +227,11 @@ void migrationExample()
 int main( int argc, char* argv[] )
 {
     MPI_Init( &argc, &argv );
+    {
+        Kokkos::ScopeGuard scope_guard( argc, argv );
 
-    Kokkos::ScopeGuard scope_guard( argc, argv );
-
-    migrationExample();
-
+        migrationExample();
+    }
     MPI_Finalize();
 
     return 0;

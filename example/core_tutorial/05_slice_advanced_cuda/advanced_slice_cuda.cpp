@@ -41,6 +41,8 @@ void atomicSliceExample()
       operations with slices.
     */
 
+    std::cout << "Cabana Cuda Atomic Slice Example\n" << std::endl;
+
     /*
       Declare the AoSoA parameters.
     */

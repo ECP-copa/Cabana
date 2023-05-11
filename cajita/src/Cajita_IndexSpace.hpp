@@ -45,7 +45,8 @@ class IndexSpace
     /*!
       \brief Initializer list size constructor.
     */
-    IndexSpace( const std::initializer_list<long>& size )
+    template <typename Scalar>
+    IndexSpace( const std::initializer_list<Scalar>& size )
     {
         std::fill( _min.data(), _min.data() + Rank, 0 );
         std::copy( size.begin(), size.end(), _max.data() );
@@ -54,8 +55,9 @@ class IndexSpace
     /*!
       \brief Initializer list range constructor.
     */
-    IndexSpace( const std::initializer_list<long>& min,
-                const std::initializer_list<long>& max )
+    template <typename Scalar>
+    IndexSpace( const std::initializer_list<Scalar>& min,
+                const std::initializer_list<Scalar>& max )
     {
         std::copy( min.begin(), min.end(), _min.data() );
         std::copy( max.begin(), max.end(), _max.data() );
@@ -354,7 +356,7 @@ KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType& view,
                                            const IndexSpace<1>& index_space )
     -> decltype( Kokkos::subview( view, index_space.range( 0 ) ) )
 {
-    static_assert( 1 == ViewType::Rank, "Incorrect view rank" );
+    static_assert( 1 == ViewType::rank, "Incorrect view rank" );
     return Kokkos::subview( view, index_space.range( 0 ) );
 }
 
@@ -370,7 +372,7 @@ KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType& view,
     -> decltype( Kokkos::subview( view, index_space.range( 0 ),
                                   index_space.range( 1 ) ) )
 {
-    static_assert( 2 == ViewType::Rank, "Incorrect view rank" );
+    static_assert( 2 == ViewType::rank, "Incorrect view rank" );
     return Kokkos::subview( view, index_space.range( 0 ),
                             index_space.range( 1 ) );
 }
@@ -388,7 +390,7 @@ KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType& view,
                                   index_space.range( 1 ),
                                   index_space.range( 2 ) ) )
 {
-    static_assert( 3 == ViewType::Rank, "Incorrect view rank" );
+    static_assert( 3 == ViewType::rank, "Incorrect view rank" );
     return Kokkos::subview( view, index_space.range( 0 ),
                             index_space.range( 1 ), index_space.range( 2 ) );
 }
@@ -407,7 +409,7 @@ KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType& view,
                                   index_space.range( 2 ),
                                   index_space.range( 3 ) ) )
 {
-    static_assert( 4 == ViewType::Rank, "Incorrect view rank" );
+    static_assert( 4 == ViewType::rank, "Incorrect view rank" );
     return Kokkos::subview( view, index_space.range( 0 ),
                             index_space.range( 1 ), index_space.range( 2 ),
                             index_space.range( 3 ) );

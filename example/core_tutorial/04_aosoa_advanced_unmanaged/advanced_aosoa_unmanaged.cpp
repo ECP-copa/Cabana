@@ -34,6 +34,8 @@ void unmanagedAoAoAExample()
      * SoA and AoS data as found in many applications.
      */
 
+    std::cout << "Cabana Unmanaged AoSoA Example\n" << std::endl;
+
     /* Declare general run parameters */
     using MemorySpace = Kokkos::HostSpace;
     const int VectorLength = 8;

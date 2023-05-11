@@ -1043,7 +1043,7 @@ struct CommunicationDataSlice
     void setSliceComponents()
     {
         _num_comp = 1;
-        for ( std::size_t d = 2; d < _particles.rank(); ++d )
+        for ( std::size_t d = 2; d < _particles.viewRank(); ++d )
             _num_comp *= _particles.extent( d );
     }
 
