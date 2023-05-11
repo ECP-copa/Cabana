@@ -149,15 +149,15 @@ class ReferenceConjugateGradient
     //! Entity type.
     using entity_type = typename base_type::entity_type;
     //! Kokkos device type.
-    using device_type = = typename base_type::device_type;
+    using device_type = typename base_type::device_type;
     //! Scalar value type.
-    using value_type = = typename base_type::value_type;
+    using value_type = typename base_type::value_type;
     //! Kokkos execution space.
     using execution_space = typename base_type::execution_space;
     //! Kokkos memory space.
     using memory_space = typename base_type::memory_space;
     //! Array type.
-    using Array_t = = typename base_type::Array_t;
+    using Array_t = typename base_type::Array_t;
     //! SubArray type.
     using subarray_type = typename base_type::subarray_type;
     //! Spatial dimension.
