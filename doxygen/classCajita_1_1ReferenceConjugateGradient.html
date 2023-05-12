@@ -114,30 +114,38 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ae3371df058e01840f6be60df0905e205"><td class="memItemLeft" align="right" valign="top"><a id="ae3371df058e01840f6be60df0905e205" name="ae3371df058e01840f6be60df0905e205"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>entity_type</b> = EntityType</td></tr>
-<tr class="memdesc:ae3371df058e01840f6be60df0905e205"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entity type. <br /></td></tr>
-<tr class="separator:ae3371df058e01840f6be60df0905e205"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83ed2b8037cc6b03bb5b994fc33d26bb"><td class="memItemLeft" align="right" valign="top"><a id="a83ed2b8037cc6b03bb5b994fc33d26bb" name="a83ed2b8037cc6b03bb5b994fc33d26bb"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = DeviceType</td></tr>
-<tr class="memdesc:a83ed2b8037cc6b03bb5b994fc33d26bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos device type. <br /></td></tr>
-<tr class="separator:a83ed2b8037cc6b03bb5b994fc33d26bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89422b1244bdb948683c00710a0f7836"><td class="memItemLeft" align="right" valign="top"><a id="a89422b1244bdb948683c00710a0f7836" name="a89422b1244bdb948683c00710a0f7836"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>value_type</b> = Scalar</td></tr>
-<tr class="memdesc:a89422b1244bdb948683c00710a0f7836"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scalar value type. <br /></td></tr>
-<tr class="separator:a89422b1244bdb948683c00710a0f7836"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae20f95bcb6dece361df8ce22ae5edbb7"><td class="memItemLeft" align="right" valign="top"><a id="ae20f95bcb6dece361df8ce22ae5edbb7" name="ae20f95bcb6dece361df8ce22ae5edbb7"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename device_type::execution_space</td></tr>
-<tr class="memdesc:ae20f95bcb6dece361df8ce22ae5edbb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos execution space. <br /></td></tr>
-<tr class="separator:ae20f95bcb6dece361df8ce22ae5edbb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae97d599a38f1638b281c8353e95fdae5"><td class="memItemLeft" align="right" valign="top"><a id="ae97d599a38f1638b281c8353e95fdae5" name="ae97d599a38f1638b281c8353e95fdae5"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename device_type::memory_space</td></tr>
-<tr class="memdesc:ae97d599a38f1638b281c8353e95fdae5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
-<tr class="separator:ae97d599a38f1638b281c8353e95fdae5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41f9ec7f1607d156ac8d44662ea70264"><td class="memItemLeft" align="right" valign="top"><a id="a41f9ec7f1607d156ac8d44662ea70264" name="a41f9ec7f1607d156ac8d44662ea70264"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>Array_t</b> = <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, DeviceType &gt;</td></tr>
-<tr class="memdesc:a41f9ec7f1607d156ac8d44662ea70264"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1Array.html" title="Array of field data on the local mesh.">Array</a> type. <br /></td></tr>
-<tr class="separator:a41f9ec7f1607d156ac8d44662ea70264"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2aaa94946ed5a68667a089d798da0775"><td class="memItemLeft" align="right" valign="top"><a id="a2aaa94946ed5a68667a089d798da0775" name="a2aaa94946ed5a68667a089d798da0775"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>base_type</b> = <a class="el" href="classCajita_1_1ReferenceStructuredSolver.html">ReferenceStructuredSolver</a>&lt; Scalar, EntityType, MeshType, DeviceType &gt;</td></tr>
+<tr class="memdesc:a2aaa94946ed5a68667a089d798da0775"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base type. <br /></td></tr>
+<tr class="separator:a2aaa94946ed5a68667a089d798da0775"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f704bff9a9216832fef901bc4bfd9a8"><td class="memItemLeft" align="right" valign="top"><a id="a2f704bff9a9216832fef901bc4bfd9a8" name="a2f704bff9a9216832fef901bc4bfd9a8"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>entity_type</b> = typename <a class="el" href="classCajita_1_1ReferenceStructuredSolver.html#acb3b7abb3a07f2f110af49254175f471">base_type::entity_type</a></td></tr>
+<tr class="memdesc:a2f704bff9a9216832fef901bc4bfd9a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entity type. <br /></td></tr>
+<tr class="separator:a2f704bff9a9216832fef901bc4bfd9a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa109f96f77781393c9a53ba5af76feee"><td class="memItemLeft" align="right" valign="top"><a id="aa109f96f77781393c9a53ba5af76feee" name="aa109f96f77781393c9a53ba5af76feee"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = typename <a class="el" href="classCajita_1_1ReferenceStructuredSolver.html#a6e00c44ca14597f62c07a03f228cd7bc">base_type::device_type</a></td></tr>
+<tr class="memdesc:aa109f96f77781393c9a53ba5af76feee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos device type. <br /></td></tr>
+<tr class="separator:aa109f96f77781393c9a53ba5af76feee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72fd4bd2bb6771a2f81407dab4b16564"><td class="memItemLeft" align="right" valign="top"><a id="a72fd4bd2bb6771a2f81407dab4b16564" name="a72fd4bd2bb6771a2f81407dab4b16564"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>value_type</b> = typename <a class="el" href="classCajita_1_1ReferenceStructuredSolver.html#a65f2be4def284961d3bb736980b2326f">base_type::value_type</a></td></tr>
+<tr class="memdesc:a72fd4bd2bb6771a2f81407dab4b16564"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scalar value type. <br /></td></tr>
+<tr class="separator:a72fd4bd2bb6771a2f81407dab4b16564"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aafda1e81179ac9423894dccb5020c8b5"><td class="memItemLeft" align="right" valign="top"><a id="aafda1e81179ac9423894dccb5020c8b5" name="aafda1e81179ac9423894dccb5020c8b5"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename <a class="el" href="classCajita_1_1ReferenceStructuredSolver.html#a6d022709d5f192d001252b8bedebe812">base_type::execution_space</a></td></tr>
+<tr class="memdesc:aafda1e81179ac9423894dccb5020c8b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos execution space. <br /></td></tr>
+<tr class="separator:aafda1e81179ac9423894dccb5020c8b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac406a927473077f91aff379fcd3b3b25"><td class="memItemLeft" align="right" valign="top"><a id="ac406a927473077f91aff379fcd3b3b25" name="ac406a927473077f91aff379fcd3b3b25"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename <a class="el" href="classCajita_1_1ReferenceStructuredSolver.html#ac79c9f23b0909916ab6e1dc73325f9ac">base_type::memory_space</a></td></tr>
+<tr class="memdesc:ac406a927473077f91aff379fcd3b3b25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
+<tr class="separator:ac406a927473077f91aff379fcd3b3b25"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5841d67ce1a0a4684d31d2480c40d42b"><td class="memItemLeft" align="right" valign="top"><a id="a5841d67ce1a0a4684d31d2480c40d42b" name="a5841d67ce1a0a4684d31d2480c40d42b"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>Array_t</b> = typename <a class="el" href="classCajita_1_1ReferenceStructuredSolver.html#a46493d4c0c0c7e27a100ff35e54d19e8">base_type::Array_t</a></td></tr>
+<tr class="memdesc:a5841d67ce1a0a4684d31d2480c40d42b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1Array.html" title="Array of field data on the local mesh.">Array</a> type. <br /></td></tr>
+<tr class="separator:a5841d67ce1a0a4684d31d2480c40d42b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7b7e9b8d6bec6f9741cc03e2e9edac2"><td class="memItemLeft" align="right" valign="top"><a id="ab7b7e9b8d6bec6f9741cc03e2e9edac2" name="ab7b7e9b8d6bec6f9741cc03e2e9edac2"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>subarray_type</b> = typename <a class="el" href="classCajita_1_1ReferenceStructuredSolver.html#a6cde60894053503a94067b43b276a02b">base_type::subarray_type</a></td></tr>
+<tr class="memdesc:ab7b7e9b8d6bec6f9741cc03e2e9edac2"><td class="mdescLeft">&#160;</td><td class="mdescRight">SubArray type. <br /></td></tr>
+<tr class="separator:ab7b7e9b8d6bec6f9741cc03e2e9edac2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_types_classCajita_1_1ReferenceStructuredSolver"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classCajita_1_1ReferenceStructuredSolver')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classCajita_1_1ReferenceStructuredSolver.html">Cajita::ReferenceStructuredSolver&lt; Scalar, EntityType, MeshType, DeviceType &gt;</a></td></tr>
 <tr class="memitem:acb3b7abb3a07f2f110af49254175f471 inherit pub_types_classCajita_1_1ReferenceStructuredSolver"><td class="memItemLeft" align="right" valign="top"><a id="acb3b7abb3a07f2f110af49254175f471" name="acb3b7abb3a07f2f110af49254175f471"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>entity_type</b> = EntityType</td></tr>
@@ -163,6 +171,10 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>value_type</b> = Sca
 using&#160;</td><td class="memItemRight" valign="bottom"><b>Array_t</b> = <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, DeviceType &gt;</td></tr>
 <tr class="memdesc:a46493d4c0c0c7e27a100ff35e54d19e8 inherit pub_types_classCajita_1_1ReferenceStructuredSolver"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1Array.html" title="Array of field data on the local mesh.">Array</a> type. <br /></td></tr>
 <tr class="separator:a46493d4c0c0c7e27a100ff35e54d19e8 inherit pub_types_classCajita_1_1ReferenceStructuredSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cde60894053503a94067b43b276a02b inherit pub_types_classCajita_1_1ReferenceStructuredSolver"><td class="memItemLeft" align="right" valign="top"><a id="a6cde60894053503a94067b43b276a02b" name="a6cde60894053503a94067b43b276a02b"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>subarray_type</b> = typename <a class="el" href="classCajita_1_1Array.html#ad4048251df71f238e1f74719ca68372e">Array_t::subarray_type</a></td></tr>
+<tr class="memdesc:a6cde60894053503a94067b43b276a02b inherit pub_types_classCajita_1_1ReferenceStructuredSolver"><td class="mdescLeft">&#160;</td><td class="mdescRight">SubArray type. <br /></td></tr>
+<tr class="separator:a6cde60894053503a94067b43b276a02b inherit pub_types_classCajita_1_1ReferenceStructuredSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -173,13 +185,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5ed616e21f6af55a639a1dddc4d50277"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a5ed616e21f6af55a639a1dddc4d50277">setMatrixStencil</a> (const std::vector&lt; std::array&lt; int, <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a58fa7831a4f8e58a40fed035e79a1819">num_space_dim</a> &gt; &gt; &amp;stencil, const bool is_symmetric=false) override</td></tr>
 <tr class="memdesc:a5ed616e21f6af55a639a1dddc4d50277"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the matrix stencil.  <br /></td></tr>
 <tr class="separator:a5ed616e21f6af55a639a1dddc4d50277"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab1546537f4c8eb93e4e70ed21f373094"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a41f9ec7f1607d156ac8d44662ea70264">Array_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#ab1546537f4c8eb93e4e70ed21f373094">getMatrixValues</a> () override</td></tr>
+<tr class="memitem:ab1546537f4c8eb93e4e70ed21f373094"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a5841d67ce1a0a4684d31d2480c40d42b">Array_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#ab1546537f4c8eb93e4e70ed21f373094">getMatrixValues</a> () override</td></tr>
 <tr class="memdesc:ab1546537f4c8eb93e4e70ed21f373094"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the matrix values.  <br /></td></tr>
 <tr class="separator:ab1546537f4c8eb93e4e70ed21f373094"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afecc8f09b5357aaa758cc321c1388367"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#afecc8f09b5357aaa758cc321c1388367">setPreconditionerStencil</a> (const std::vector&lt; std::array&lt; int, <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a58fa7831a4f8e58a40fed035e79a1819">num_space_dim</a> &gt; &gt; &amp;stencil, const bool is_symmetric=false) override</td></tr>
 <tr class="memdesc:afecc8f09b5357aaa758cc321c1388367"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the preconditioner stencil.  <br /></td></tr>
 <tr class="separator:afecc8f09b5357aaa758cc321c1388367"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f6519c420f625a98933274df26c2437"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a41f9ec7f1607d156ac8d44662ea70264">Array_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a5f6519c420f625a98933274df26c2437">getPreconditionerValues</a> () override</td></tr>
+<tr class="memitem:a5f6519c420f625a98933274df26c2437"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a5841d67ce1a0a4684d31d2480c40d42b">Array_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a5f6519c420f625a98933274df26c2437">getPreconditionerValues</a> () override</td></tr>
 <tr class="memdesc:a5f6519c420f625a98933274df26c2437"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the preconditioner values.  <br /></td></tr>
 <tr class="separator:a5f6519c420f625a98933274df26c2437"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae070f0c5e9873d68cf68b4a0142b915d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#ae070f0c5e9873d68cf68b4a0142b915d">setTolerance</a> (const double tol) override</td></tr>
@@ -194,7 +206,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aabb53ab0c27127a173f9dc985bd14e61"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#aabb53ab0c27127a173f9dc985bd14e61">setup</a> () override</td></tr>
 <tr class="memdesc:aabb53ab0c27127a173f9dc985bd14e61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setup the problem.  <br /></td></tr>
 <tr class="separator:aabb53ab0c27127a173f9dc985bd14e61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02e16b4d417d40a3ddefbb9a76f79ca0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a02e16b4d417d40a3ddefbb9a76f79ca0">solve</a> (const <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a41f9ec7f1607d156ac8d44662ea70264">Array_t</a> &amp;b, <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a41f9ec7f1607d156ac8d44662ea70264">Array_t</a> &amp;x) override</td></tr>
+<tr class="memitem:a02e16b4d417d40a3ddefbb9a76f79ca0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a02e16b4d417d40a3ddefbb9a76f79ca0">solve</a> (const <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a5841d67ce1a0a4684d31d2480c40d42b">Array_t</a> &amp;b, <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a5841d67ce1a0a4684d31d2480c40d42b">Array_t</a> &amp;x) override</td></tr>
 <tr class="memdesc:a02e16b4d417d40a3ddefbb9a76f79ca0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solve the problem Ax = b for x.  <br /></td></tr>
 <tr class="separator:a02e16b4d417d40a3ddefbb9a76f79ca0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39740d7b3cfa84ffa365b4915ba12149"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a39740d7b3cfa84ffa365b4915ba12149">getNumIter</a> () override</td></tr>
@@ -296,7 +308,7 @@ template&lt;class Scalar , class EntityType , class MeshType , class DeviceType 
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a41f9ec7f1607d156ac8d44662ea70264">Array_t</a> &amp; <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html">Cajita::ReferenceConjugateGradient</a>&lt; Scalar, EntityType, MeshType, DeviceType &gt;::getMatrixValues </td>
+          <td class="memname">const <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a5841d67ce1a0a4684d31d2480c40d42b">Array_t</a> &amp; <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html">Cajita::ReferenceConjugateGradient</a>&lt; Scalar, EntityType, MeshType, DeviceType &gt;::getMatrixValues </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -359,7 +371,7 @@ template&lt;class Scalar , class EntityType , class MeshType , class DeviceType 
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a41f9ec7f1607d156ac8d44662ea70264">Array_t</a> &amp; <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html">Cajita::ReferenceConjugateGradient</a>&lt; Scalar, EntityType, MeshType, DeviceType &gt;::getPreconditionerValues </td>
+          <td class="memname">const <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a5841d67ce1a0a4684d31d2480c40d42b">Array_t</a> &amp; <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html">Cajita::ReferenceConjugateGradient</a>&lt; Scalar, EntityType, MeshType, DeviceType &gt;::getPreconditionerValues </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -618,13 +630,13 @@ template&lt;class Scalar , class EntityType , class MeshType , class DeviceType 
         <tr>
           <td class="memname">void <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html">Cajita::ReferenceConjugateGradient</a>&lt; Scalar, EntityType, MeshType, DeviceType &gt;::solve </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a41f9ec7f1607d156ac8d44662ea70264">Array_t</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a5841d67ce1a0a4684d31d2480c40d42b">Array_t</a> &amp;&#160;</td>
           <td class="paramname"><em>b</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a41f9ec7f1607d156ac8d44662ea70264">Array_t</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a5841d67ce1a0a4684d31d2480c40d42b">Array_t</a> &amp;&#160;</td>
           <td class="paramname"><em>x</em>&#160;</td>
         </tr>
         <tr>
