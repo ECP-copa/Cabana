@@ -28,12 +28,13 @@ jobs:
         backend: ['OPENMP', 'SERIAL']
         cmake_build_type: ['Debug', 'Release']
         kokkos_ver: ['3.6.01']
-        arborx: ['NoArborX']
-        heffte: ['NoheFFTe' ]
-        hypre: ['NoHYPRE']
-        liball: ['NolibALL']
-        silo: ['NoSilo']
-        hdf5: ['NoHDF5']
+        bounds_check: ['OFF']
+        arborx: ['OFF']
+        heffte: ['OFF' ]
+        hypre: ['OFF']
+        liball: ['OFF']
+        silo: ['OFF']
+        hdf5: ['OFF']
         coverage: ['OFF']
         include:
           - distro: 'ubuntu:latest'
@@ -41,64 +42,64 @@ jobs:
             backend: 'THREADS'
             cmake_build_type: 'Debug'
             kokkos_ver: '3.7.00'
-            arborx: 'NoArborX'
-            heffte: 'NoheFFTe'
-            hypre: 'NoHYPRE'
-            silo: 'NoSilo'
+            arborx: 'OFF'
+            heffte: 'OFF'
+            hypre: 'OFF'
+            silo: 'OFF'
             coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpx'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: '3.6.01'
-            arborx: 'NoArborX'
-            heffte: 'NoheFFTe'
-            hypre: 'NoHYPRE'
+            arborx: 'OFF'
+            heffte: 'OFF'
+            hypre: 'OFF'
             coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpx'
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
             kokkos_ver: '3.6.01'
-            arborx: 'NoArborX'
-            heffte: 'NoheFFTe'
-            hypre: 'NoHYPRE'
+            arborx: 'OFF'
+            heffte: 'OFF'
+            hypre: 'OFF'
             coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpx'
             backend: 'SERIAL'
             cmake_build_type: 'Release'
             kokkos_ver: '3.6.01'
-            arborx: 'NoArborX'
-            heffte: 'NoheFFTe'
-            hypre: 'NoHYPRE'
+            arborx: 'OFF'
+            heffte: 'OFF'
+            hypre: 'OFF'
             coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpx'
             backend: 'SERIAL'
             cmake_build_type: 'Debug'
             kokkos_ver: '3.6.01'
-            arborx: 'NoArborX'
-            heffte: 'NoheFFTe'
-            hypre: 'NoHYPRE'
+            arborx: 'OFF'
+            heffte: 'OFF'
+            hypre: 'OFF'
             coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpx'
             backend: 'SERIAL'
             cmake_build_type: 'Debug'
             kokkos_ver: '3.6.01'
-            arborx: 'NoArborX'
-            heffte: 'heFFTe_MKL'
-            hypre: 'NoHYPRE'
+            arborx: 'OFF'
+            heffte: 'MKL'
+            hypre: 'OFF'
             coverage: 'OFF'
           - distro: 'fedora:latest'
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: '4.0.00'
-            arborx: 'NoArborX'
-            heffte: 'NoheFFTe'
-            hypre: 'NoHYPRE'
+            arborx: 'OFF'
+            heffte: 'OFF'
+            hypre: 'OFF'
             coverage: 'OFF'
             doxygen: 'ON'
           - distro: 'fedora:latest'
@@ -106,27 +107,27 @@ jobs:
             backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: '4.0.00'
-            arborx: 'NoArborX'
-            heffte: 'NoheFFTe'
-            hypre: 'NoHYPRE'
+            arborx: 'OFF'
+            heffte: 'OFF'
+            hypre: 'OFF'
             coverage: 'OFF'
           - distro: 'opensuse:latest'
             cxx: 'g++'
             cmake_build_type: 'Release'
             backend: 'OPENMP'
             kokkos_ver: '4.0.00'
-            arborx: 'NoArborX'
-            heffte: 'NoheFFTe'
-            hypre: 'NoHYPRE'
+            arborx: 'OFF'
+            heffte: 'OFF'
+            hypre: 'OFF'
             coverage: 'OFF'
           - distro: 'opensuse:latest'
             cxx: 'clang++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: '4.0.00'
-            arborx: 'NoArborX'
-            heffte: 'NoheFFTe'
-            hypre: 'NoHYPRE'
+            arborx: 'OFF'
+            heffte: 'OFF'
+            hypre: 'OFF'
             hdf5: 'HDF5'
             coverage: 'OFF'
           - distro: 'ubuntu:rolling'
@@ -134,18 +135,18 @@ jobs:
             cmake_build_type: 'Release'
             backend: 'OPENMP'
             kokkos_ver: '3.6.01'
-            arborx: 'NoArborX'
-            heffte: 'NoheFFTe'
-            hypre: 'NoHYPRE'
+            arborx: 'OFF'
+            heffte: 'OFF'
+            hypre: 'OFF'
             coverage: 'OFF'
           - distro: 'ubuntu:rolling'
             cxx: 'clang++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: '3.6.01'
-            arborx: 'NoArborX'
-            heffte: 'NoheFFTe'
-            hypre: 'NoHYPRE'
+            arborx: 'OFF'
+            heffte: 'OFF'
+            hypre: 'OFF'
             coverage: 'OFF'
           - distro: 'fedora:nompi'
             cxx: 'g++'
@@ -153,8 +154,8 @@ jobs:
             cmake_build_type: 'Debug'
             kokkos_ver: '4.0.00'
             arborx: 'ArborX'
-            heffte: 'NoheFFTe'
-            hypre: 'NoHYPRE'
+            heffte: 'OFF'
+            hypre: 'OFF'
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
@@ -162,26 +163,26 @@ jobs:
             cmake_build_type: 'Release'
             kokkos_ver: '3.6.01'
             arborx: 'ArborX'
-            heffte: 'NoheFFTe'
-            hypre: 'NoHYPRE'
+            heffte: 'OFF'
+            hypre: 'OFF'
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: '3.6.01'
-            arborx: 'NoArborX'
-            heffte: 'heFFTe_FFTW'
-            hypre: 'NoHYPRE'
+            arborx: 'OFF'
+            heffte: 'FFTW'
+            hypre: 'OFF'
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: '3.6.01'
-            arborx: 'NoArborX'
-            heffte: 'NoheFFTe'
-            hypre: 'NoHYPRE'
+            arborx: 'OFF'
+            heffte: 'OFF'
+            hypre: 'OFF'
             liball: 'libALL'
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
@@ -189,8 +190,8 @@ jobs:
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
             kokkos_ver: '3.6.01'
-            arborx: 'NoArborX'
-            heffte: 'NoheFFTe'
+            arborx: 'OFF'
+            heffte: 'OFF'
             hypre: 'HYPRE'
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
@@ -198,9 +199,9 @@ jobs:
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
             kokkos_ver: '3.6.01'
-            arborx: 'NoArborX'
-            heffte: 'NoheFFTe'
-            hypre: 'NoHYPRE'
+            arborx: 'OFF'
+            heffte: 'OFF'
+            hypre: 'OFF'
             silo: 'Silo'
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
@@ -208,9 +209,9 @@ jobs:
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
             kokkos_ver: '3.6.01'
-            arborx: 'NoArborX'
-            heffte: 'NoheFFTe'
-            hypre: 'NoHYPRE'
+            arborx: 'OFF'
+            heffte: 'OFF'
+            hypre: 'OFF'
             hdf5: 'HDF5'
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
@@ -219,7 +220,20 @@ jobs:
             cmake_build_type: 'Debug'
             kokkos_ver: '3.6.01'
             arborx: 'ArborX'
-            heffte: 'heFFTe_FFTW'
+            heffte: 'FFTW'
+            hypre: 'HYPRE'
+            liball: 'libALL'
+            silo: 'Silo'
+            hdf5: 'HDF5'
+            bounds_check: 'BoundsCheck'
+            coverage: 'OFF'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            backend: 'OPENMP'
+            cmake_build_type: 'Debug'
+            kokkos_ver: '3.6.01'
+            arborx: 'ArborX'
+            heffte: 'FFTW'
             hypre: 'HYPRE'
             liball: 'libALL'
             silo: 'Silo'
@@ -246,17 +260,20 @@ jobs:
           ref: ${{ matrix.kokkos_ver }}
           path: kokkos
       - name: Build kokkos
+        env:
+          BOUNDS: ${{ matrix.bounds_check }}
         working-directory: kokkos
         run: |
           [[ ${{ matrix.backend }} == "OPENMP" ]] && kokkos_cmake_opts+=( -DKokkos_ENABLE_OPENMP==ON )
           [[ ${{ matrix.backend }} == "THREADS" ]] && kokkos_cmake_opts+=( -DKokkos_ENABLE_THREADS==ON )
+          [[ ${BOUNDS} == "BoundsCheck" ]] && kokkos_cmake_opts+=( -DKokkos_ENABLE_DEBUG_BOUNDS_CHECK=ON )
           cmake -B build \
             -DCMAKE_INSTALL_PREFIX=$HOME/kokkos \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DKokkos_ENABLE_HWLOC=ON \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
-            ${kokkos_cmake_opts}
+            ${kokkos_cmake_opts[@]}
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout arborx
@@ -279,16 +296,16 @@ jobs:
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout heffte
-        if: ${{ matrix.heffte != 'NoheFFTe' }}
+        if: ${{ matrix.heffte != 'OFF' }}
         # actions/checkout doesn't work for external repos yet (actions/checkout#447)
         run: |
           git clone --depth 1 --branch v2.1.0 https://bitbucket.org/icl/heffte.git heffte
       - name: Build heffte
-        if: ${{ matrix.heffte != 'NoheFFTe' }}
+        if: ${{ matrix.heffte != 'OFF' }}
         working-directory: heffte
         run: |
-          [[ ${{ matrix.heffte }} == "heFFTe_FFTW" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_FFTW=ON )
-          [[ ${{ matrix.heffte }} == "heFFTe_MKL" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_MKL=ON )
+          [[ ${{ matrix.heffte }} == "FFTW" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_FFTW=ON )
+          [[ ${{ matrix.heffte }} == "MKL" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_MKL=ON )
           # FIXME: Remove MKL path below when we update heFFTe
           cmake -B build \
             -DCMAKE_CXX_STANDARD="11" \
@@ -299,7 +316,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
             -DMKL_ROOT=/opt/intel/oneapi/mkl/latest \
             -DHeffte_MKL_IOMP5=/opt/intel/oneapi/compiler/latest/linux/compiler/lib/intel64_lin/libiomp5.so \
-            ${heffte_cmake_opts}
+            ${heffte_cmake_opts[@]}
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout hypre
@@ -320,7 +337,7 @@ jobs:
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
             -DHYPRE_WITH_MPI=ON \
-            ${hypre_cmake_opts}
+            ${hypre_cmake_opts[@]}
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout ALL
