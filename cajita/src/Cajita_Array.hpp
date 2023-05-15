@@ -306,6 +306,9 @@ class Array
     using subview_layout = typename subview_type::array_layout;
     //! Subview memory traits.
     using subview_memory_traits = typename subview_type::memory_traits;
+    //! Subarray type.
+    using subarray_type = Array<Scalar, EntityType, MeshType, subview_layout,
+                                device_type, subview_memory_traits>;
 };
 
 //---------------------------------------------------------------------------//
