@@ -32,9 +32,9 @@ void localGridExample()
       most and it includes interfaces to all other grid/mesh classes.
     */
 
-    // Here we partition only in x to simplify the example below.
-    Cajita::DimBlockPartitioner<3> partitioner( Cajita::Dim::J,
-                                                Cajita::Dim::K );
+    // Here we partition only in z to simplify the example below.
+    Cajita::DimBlockPartitioner<3> partitioner( Cajita::Dim::I,
+                                                Cajita::Dim::J );
 
     // Create the global mesh.
     std::array<int, 3> global_num_cell = { 20, 10, 10 };
@@ -64,6 +64,16 @@ void localGridExample()
     int halo_width = 2;
     auto local_grid = Cajita::createLocalGrid( global_grid, halo_width );
     std::cout << "Minimum halo cell width: " << local_grid->haloCellWidth()
+              << "\n"
+              << std::endl;
+
+    /*
+      Also note that the local grid stores the global grid it was built from.
+    */
+    const auto global_grid_copy = local_grid->globalGrid();
+    int num_blocks = global_grid_copy.totalNumBlock();
+    std::cout << "Global grid copied (total blocks still " << num_blocks
+              << ")\n"
               << std::endl;
 
     /*
@@ -81,7 +91,7 @@ void localGridExample()
                 {
                     std::cout << local_grid->neighborRank( i, j, k ) << " ";
                 }
-        std::cout << std::endl;
+        std::cout << "\n" << std::endl;
     }
 
     /*
@@ -103,12 +113,19 @@ void localGridExample()
     */
     auto own_local_cell_space = local_grid->indexSpace(
         Cajita::Own(), Cajita::Cell(), Cajita::Local() );
+
+    /*
+      The index spaces include the upper and lower bounds, as well as the total
+      size (across all dimensions).
+    */
     std::cout << "Index space (Own, Cell, Local):\nMin: ";
     for ( int d = 0; d < 3; ++d )
         std::cout << own_local_cell_space.min( d ) << " ";
-    std::cout << std::endl << "Max: ";
+    std::cout << "\nMax: ";
     for ( int d = 0; d < 3; ++d )
         std::cout << own_local_cell_space.max( d ) << " ";
+    std::cout << "\nSize: ";
+    std::cout << own_local_cell_space.size() << " ";
     std::cout << "\n" << std::endl;
 
     /*
@@ -121,7 +138,7 @@ void localGridExample()
     std::cout << "Index space  (Own, I-Edge, Local):\nMin: ";
     for ( int d = 0; d < 3; ++d )
         std::cout << ghost_local_edge_space.min( d ) << " ";
-    std::cout << std::endl << "Max: ";
+    std::cout << "\nMax: ";
     for ( int d = 0; d < 3; ++d )
         std::cout << ghost_local_edge_space.max( d ) << " ";
     std::cout << "\n" << std::endl;
@@ -137,7 +154,7 @@ void localGridExample()
     std::cout << "Index space  (Own, I-Edge, Global):\nMin: ";
     for ( int d = 0; d < 3; ++d )
         std::cout << own_global_node_space.min( d ) << " ";
-    std::cout << std::endl << "Max: ";
+    std::cout << "\nMax: ";
     for ( int d = 0; d < 3; ++d )
         std::cout << own_global_node_space.max( d ) << " ";
     std::cout << "\n" << std::endl;
@@ -159,7 +176,7 @@ void localGridExample()
     std::cout << "Shared index space (Own, Cell):\nMin: ";
     for ( int d = 0; d < 3; ++d )
         std::cout << owned_shared_cell_space.min( d ) << " ";
-    std::cout << std::endl << "Max: ";
+    std::cout << "\nMax: ";
     for ( int d = 0; d < 3; ++d )
         std::cout << owned_shared_cell_space.max( d ) << " ";
     std::cout << "\n" << std::endl;
@@ -170,10 +187,10 @@ void localGridExample()
     */
     owned_shared_cell_space = local_grid->sharedIndexSpace(
         Cajita::Own(), Cajita::Cell(), -1, 0, 1, 1 );
-    std::cout << "Shared index space (Own, Cell, halo_width=1) :\nMin: ";
+    std::cout << "Shared index space (Own, Cell, halo_width=1):\nMin: ";
     for ( int d = 0; d < 3; ++d )
         std::cout << owned_shared_cell_space.min( d ) << " ";
-    std::cout << std::endl << "Max: ";
+    std::cout << "\nMax: ";
     for ( int d = 0; d < 3; ++d )
         std::cout << owned_shared_cell_space.max( d ) << " ";
     std::cout << "\n" << std::endl;
@@ -187,7 +204,7 @@ void localGridExample()
     std::cout << "Shared index space (Ghost, Cell):\nMin: ";
     for ( int d = 0; d < 3; ++d )
         std::cout << ghost_shared_cell_space.min( d ) << " ";
-    std::cout << std::endl << "Max: ";
+    std::cout << "\nMax: ";
     for ( int d = 0; d < 3; ++d )
         std::cout << ghost_shared_cell_space.max( d ) << " ";
     std::cout << "\n" << std::endl;
@@ -202,22 +219,88 @@ void localGridExample()
     auto boundary_cell_space = local_grid->boundaryIndexSpace(
         Cajita::Ghost(), Cajita::Cell(), -1, 0, 1 );
     std::cout << "Boundary index space (Ghost, Cell) size: "
-              << boundary_cell_space.size() << std::endl;
-
-    /*
-      As a useful exercise, the periodicity of the global grid can be set to
-      false in one or more dimensions and the example re-run to compare the
-      differences in the local grid index spaces.
-    */
-
-    /*
-      Also note that the local grid stores the global grid it was built from
-      directly.
-    */
-    const auto global_grid_copy = local_grid->globalGrid();
-    int num_blocks = global_grid_copy.totalNumBlock();
-    std::cout << "Global grid copied (total blocks still " << num_blocks << ")"
+              << boundary_cell_space.size() << "\n"
               << std::endl;
+
+    /*
+      We now create a partially non-periodic global grid to highlight some
+      details of the local grid boundary index spaces.
+    */
+    is_dim_periodic = { true, true, false };
+    auto non_periodic_global_grid = Cajita::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
+    auto non_periodic_local_grid =
+        Cajita::createLocalGrid( non_periodic_global_grid, halo_width );
+
+    /*
+      For the non-periodic dimension with Cell, the ghosted boundaryIndexSpace,
+      is equivalent to the sharedIndexSpace: indexing over a boundary is the
+      same as an MPI neighbor in this case (and uses the same halo width).
+    */
+    auto non_periodic_boundary = non_periodic_local_grid->boundaryIndexSpace(
+        Cajita::Ghost(), Cajita::Cell(), -1, 0, 1 );
+    std::cout << "Non-periodic Boundary index space (Ghost, Cell):\nMin: ";
+    for ( int d = 0; d < 3; ++d )
+        std::cout << non_periodic_boundary.min( d ) << " ";
+    std::cout << "\nMax: ";
+    for ( int d = 0; d < 3; ++d )
+        std::cout << non_periodic_boundary.max( d ) << " ";
+    std::cout << "\n" << std::endl;
+
+    /*
+      The owned boundaryIndexSpace is the opposite - the cells within the halo
+      width, but within the owned boundary rather than outside of it.
+    */
+    non_periodic_boundary = non_periodic_local_grid->boundaryIndexSpace(
+        Cajita::Own(), Cajita::Cell(), -1, 0, 1 );
+    std::cout << "Non-periodic Boundary index space (Own, Cell):\nMin: ";
+    for ( int d = 0; d < 3; ++d )
+        std::cout << non_periodic_boundary.min( d ) << " ";
+    std::cout << "\nMax: ";
+    for ( int d = 0; d < 3; ++d )
+        std::cout << non_periodic_boundary.max( d ) << " ";
+    std::cout << "\n" << std::endl;
+
+    /*
+      For Nodes, Faces, and Edges, the ghosted boundaryIndexSpace is still equal
+      to the halo width, but shifted as compared to Cells (which sit on the cell
+      centers).
+    */
+    non_periodic_boundary = non_periodic_local_grid->boundaryIndexSpace(
+        Cajita::Ghost(), Cajita::Node(), -1, 0, 1 );
+    std::cout << "Non-periodic Boundary index space (Ghost, Node):\nMin: ";
+    for ( int d = 0; d < 3; ++d )
+        std::cout << non_periodic_boundary.min( d ) << " ";
+    std::cout << "\nMax: ";
+    for ( int d = 0; d < 3; ++d )
+        std::cout << non_periodic_boundary.max( d ) << " ";
+    std::cout << "\n" << std::endl;
+
+    /*
+      For Nodes, Faces, and Edges, the ghosted boundaryIndexSpace can be subtly
+      different than the sharedIndexSpace. This is again because an entity is
+      always uniquely owned, but Nodes, Faces, and Edges sit directly between
+      MPI ranks (where there is symmetry between which rank owns and ghosts), as
+      well as on the (non-periodic) system boundaries where there is only an
+      owning MPI rank.
+    */
+    non_periodic_boundary = non_periodic_local_grid->boundaryIndexSpace(
+        Cajita::Own(), Cajita::Node(), -1, 0, 1 );
+    std::cout << "Non-periodic Boundary index space (Own, Node):\nMin: ";
+    for ( int d = 0; d < 3; ++d )
+        std::cout << non_periodic_boundary.min( d ) << " ";
+    std::cout << "\nMax: ";
+    for ( int d = 0; d < 3; ++d )
+        std::cout << non_periodic_boundary.max( d ) << " ";
+    std::cout << "\n" << std::endl;
+
+    /*
+      As an exercise, try creating index spaces with Faces or Edges and compare
+      to Cells and Nodes. Note in particular that for these entities the
+      index spaces will be different in dimensions that do or do not match the
+      direction of the entity (e.g. Dim::I vs Dim::J index spaces for
+      Face<Dim::I> ).
+    */
 }
 
 //---------------------------------------------------------------------------//
