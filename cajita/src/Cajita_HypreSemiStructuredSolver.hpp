@@ -140,6 +140,9 @@ class HypreSemiStructuredSolver
         int n_parts = 1;
         int part = 0;
 
+        // Need to pass this from constructor but for now we do this for example and unit test
+        n_vars = 1;
+
         // Only create data structures if this is not a preconditioner.
         if ( !_is_preconditioner )
         {
@@ -181,13 +184,9 @@ class HypreSemiStructuredSolver
             error = HYPRE_SStructGridSetPeriodic( _grid, part, periodic );
             checkHypreError( error );
 
-            // *FIX* set up for n-variate solution 
             // Set the variables on the HYPRE grid
             std::vector<HYPRE_SStructVariable> vartypes;
             vartypes.resize( n_vars );
-//            HYPRE_SStructVariable vartypes[3]= { HYPRE_SSTRUCT_VARIABLE_NODE,
-//                                                 HYPRE_SSTRUCT_VARIABLE_NODE,
-//                                                 HYPRE_SSTRUCT_VARIABLE_NODE};
             for (int i = 0; i < n_vars; ++i) 
             {
                 vartypes[ i ] = HYPRE_SSTRUCT_VARIABLE_NODE;
@@ -249,7 +248,6 @@ class HypreSemiStructuredSolver
         }
     }
 
-    // *FIX* destroy the vector of HYPRE stencils `_stencils`
     // Destructor.
     virtual ~HypreSemiStructuredSolver()
     {
@@ -262,8 +260,6 @@ class HypreSemiStructuredSolver
             for (std::size_t i = 0; i < _stencils.size(); ++i ){
             HYPRE_SStructStencilDestroy( _stencils[i] );
             }
-//            HYPRE_SStructStencilDestroy( _stencil1 );
-//            HYPRE_SStructStencilDestroy( _stencil2 );
             HYPRE_SStructGridDestroy( _grid );
             HYPRE_SStructGraphDestroy( _graph );
         }
@@ -307,8 +303,6 @@ class HypreSemiStructuredSolver
                checkHypreError( error );
             }
         }
-//        _stencil_size[var] = _stencils[var]->size();
-
     }
 
 
@@ -324,19 +318,19 @@ class HypreSemiStructuredSolver
             throw std::logic_error(
                 "Cannot call setMatrixStencil() on preconditioners" );
 
-        int part = 1;
+        int part = 0;
 
         // Setup the Graph for the non-zero structure of the matrix
         // Create the graph with hypre
         auto error = HYPRE_SStructGraphCreate( _comm, _grid, &_graph );
         checkHypreError( error );
-        
+
         // Set up the object type
         error = HYPRE_SStructGraphSetObjectType( _graph, object_type );
         checkHypreError( error );
 
         // Set the stencil to the graph
-        for ( int i = 1; i < n_vars; ++i)
+        for ( int i = 0; i < n_vars; ++i)
         {
             error = HYPRE_SStructGraphSetStencil( _graph, part, i, _stencils[i] );
             checkHypreError( error );
@@ -349,9 +343,14 @@ class HypreSemiStructuredSolver
         // Create the matrix.
         error = HYPRE_SStructMatrixCreate( _comm, _graph, &_A );
         checkHypreError( error );
-//        error = HYPRE_SStructMatrixSetSymmetric( _A, part,  is_symmetric );
-//        checkHypreError( error );
-        
+
+        // Set the SStruct matrix object type
+        error = HYPRE_SStructMatrixSetObjectType(_A, object_type);
+        checkHypreError( error );
+
+        // Initialize the matrix.
+        error = HYPRE_SStructMatrixInitialize( _A );
+        checkHypreError( error );
     }
 
     /*!
@@ -407,11 +406,13 @@ class HypreSemiStructuredSolver
         {
             reorder_size[d] = owned_space.extent( d );
         }
+
         reorder_size.back() = _stencil_size[v_x];
         IndexSpace<num_space_dim + 1> reorder_space( reorder_size );
         auto a_values =
             createView<HYPRE_Complex, Kokkos::LayoutRight, memory_space>(
                 "a_values", reorder_space );
+
         auto values_subv = createSubview( values.view(), owned_space );
         Kokkos::deep_copy( a_values, values_subv );
 
@@ -612,9 +613,6 @@ class HypreSemiStructuredSolver
     std::vector<HYPRE_Int> _lower;
     std::vector<HYPRE_Int> _upper;
     std::vector<HYPRE_SStructStencil> _stencils;
-//    HYPRE_SStructStencil _stencil0;
-//    HYPRE_SStructStencil _stencil1;
-//    HYPRE_SStructStencil _stencil2;
     HYPRE_SStructGraph _graph;
     std::vector<unsigned> _stencil_size;
     HYPRE_SStructMatrix _A;

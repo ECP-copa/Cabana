@@ -56,6 +56,7 @@ if(Cabana_ENABLE_HYPRE)
   list(APPEND MPI_TESTS
     HypreStructuredSolver3d
     HypreStructuredSolver2d
+    HypreSemiStructuredSolver
     )
 endif()
 
