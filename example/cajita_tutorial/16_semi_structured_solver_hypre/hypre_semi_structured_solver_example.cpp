@@ -84,7 +84,7 @@ void hypreSemiStructuredSolverExample()
 
     // Create a solver.
     auto solver = Cajita::createHypreSemiStructuredSolver<double, MemorySpace>(
-        "BiCGSTAB", *vector_layout, false, 1 );
+        "PCG", *vector_layout, false, 1 );
 
     // Create a 7-point 3d laplacian stencil.
     std::vector<std::array<int, 3>> stencil = {
@@ -130,11 +130,11 @@ void hypreSemiStructuredSolverExample()
       Create a preconditioner - in this case we use Jacobi (other available
       options are shown above).
     */
-//    std::string precond_type = "Jacobi";
-//    auto preconditioner =
-//        Cajita::createHypreStructuredSolver<double, MemorySpace>(
-//            precond_type, *vector_layout, true );
-//    solver->setPreconditioner( preconditioner );
+    std::string precond_type = "Diagonal";
+    auto preconditioner =
+        Cajita::createHypreSemiStructuredSolver<double, MemorySpace>(
+            precond_type, *vector_layout, true, 1 );
+    solver->setPreconditioner( preconditioner );
 
     // Setup the problem - this is necessary before solving.
     solver->setup();

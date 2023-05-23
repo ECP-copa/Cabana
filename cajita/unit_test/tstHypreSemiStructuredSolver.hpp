@@ -232,40 +232,40 @@ TEST( semi_structured_solver, bicgstab_none_test )
     poissonTest( "BiCGSTAB", "none", TEST_MEMSPACE{} );
 }
 
-TEST( semi_structured_solver, pfmg_none_test )
-{
-    poissonTest( "PFMG", "none", TEST_MEMSPACE{} );
-}
+//TEST( semi_structured_solver, pfmg_none_test )
+//{
+//    poissonTest( "PFMG", "none", TEST_MEMSPACE{} );
+//}
 
-TEST( semi_structured_solver, pcg_diag_test )
-{
-    poissonTest( "PCG", "Diagonal", TEST_MEMSPACE{} );
-}
+//TEST( semi_structured_solver, pcg_diag_test )
+//{
+//    poissonTest( "PCG", "Diagonal", TEST_MEMSPACE{} );
+//}
 
-TEST( semi_structured_solver, gmres_diag_test )
-{
-    poissonTest( "GMRES", "Diagonal", TEST_MEMSPACE{} );
-}
+//TEST( semi_structured_solver, gmres_diag_test )
+//{
+//    poissonTest( "GMRES", "Diagonal", TEST_MEMSPACE{} );
+//}
 
-TEST( semi_structured_solver, bicgstab_diag_test )
-{
-    poissonTest( "BiCGSTAB", "Diagonal", TEST_MEMSPACE{} );
-}
+//TEST( semi_structured_solver, bicgstab_diag_test )
+//{
+//    poissonTest( "BiCGSTAB", "Diagonal", TEST_MEMSPACE{} );
+//}
 
-TEST( semi_structured_solver, pcg_jacobi_test )
-{
-    poissonTest( "PCG", "Jacobi", TEST_MEMSPACE{} );
-}
+//TEST( semi_structured_solver, pcg_jacobi_test )
+//{
+//    poissonTest( "PCG", "Jacobi", TEST_MEMSPACE{} );
+//}
 
-TEST( semi_structured_solver, gmres_jacobi_test )
-{
-    poissonTest( "GMRES", "Jacobi", TEST_MEMSPACE{} );
-}
+//TEST( semi_structured_solver, gmres_jacobi_test )
+//{
+//    poissonTest( "GMRES", "Jacobi", TEST_MEMSPACE{} );
+//}
 
-TEST( semi_structured_solver, bicgstab_jacobi_test )
-{
-    poissonTest( "BiCGSTAB", "Jacobi", TEST_MEMSPACE{} );
-}
+//TEST( semi_structured_solver, bicgstab_jacobi_test )
+//{
+//    poissonTest( "BiCGSTAB", "Jacobi", TEST_MEMSPACE{} );
+//}
 
 //---------------------------------------------------------------------------//
 

@@ -523,9 +523,9 @@ class HypreSemiStructuredSolver
         {
             error = HYPRE_SStructVectorSetBoxValues(
                 _b, part, _lower.data(), _upper.data(), var, vector_values.data() );
+            checkHypreError( error );
         }
 
-        checkHypreError( error );
         error = HYPRE_SStructVectorAssemble( _b );
         checkHypreError( error );
 
@@ -535,8 +535,9 @@ class HypreSemiStructuredSolver
         // Extract the solution from the LHS
         for ( int var = 0; var < n_vars; ++var )
         {
-            error = HYPRE_SStructVectorSetBoxValues(
+            error = HYPRE_SStructVectorGetBoxValues(
                 _x, part, _lower.data(), _upper.data(), var, vector_values.data() );
+            checkHypreError( error );
         }
 
         // Copy the HYPRE solution to the LHS.
@@ -1180,241 +1181,6 @@ class HypreSemiStructPFMG
 };
 
 //---------------------------------------------------------------------------//
-//! SMG solver.
-// Appears Unsupported by HYPRE currently
-/*
-template <class Scalar, class EntityType, class MemorySpace>
-class HypreSemiStructSMG
-    : public HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>
-{
-  public:
-    //! Base HYPRE structured solver type.
-    using Base = HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>;
-    //! Constructor
-    template <class ArrayLayout_t>
-    HypreSemiStructSMG( const ArrayLayout_t& layout,
-                    const bool is_preconditioner = false )
-        : Base( layout, is_preconditioner )
-    {
-        auto error = HYPRE_SStructSMGCreate(
-            layout.localGrid()->globalGrid().comm(), &_solver );
-        this->checkHypreError( error );
-
-        if ( is_preconditioner )
-        {
-            error = HYPRE_SStructSMGSetZeroGuess( _solver );
-            this->checkHypreError( error );
-        }
-    }
-
-    ~HypreSemiStructSMG() { HYPRE_SStructSMGDestroy( _solver ); }
-
-    // SMG Settings
-
-    //! Additionally require that the relative difference in successive
-    //! iterates be small.
-    void setRelChange( const int rel_change )
-    {
-        auto error = HYPRE_SStructSMGSetRelChange( _solver, rel_change );
-        this->checkHypreError( error );
-    }
-
-    //! Set number of relaxation sweeps before coarse-grid correction.
-    void setNumPreRelax( const int num_pre_relax )
-    {
-        auto error = HYPRE_SStructSMGSetNumPreRelax( _solver, num_pre_relax );
-        this->checkHypreError( error );
-    }
-
-    //! Set number of relaxation sweeps before coarse-grid correction.
-    void setNumPostRelax( const int num_post_relax )
-    {
-        auto error = HYPRE_SStructSMGSetNumPostRelax( _solver, num_post_relax );
-        this->checkHypreError( error );
-    }
-
-    //! Set the amount of logging to do.
-    void setLogging( const int logging )
-    {
-        auto error = HYPRE_SStructSMGSetLogging( _solver, logging );
-        this->checkHypreError( error );
-    }
-
-    HYPRE_SStructSolver getHypreSolver() const override { return _solver; }
-    HYPRE_PtrToSStructSolverFcn getHypreSetupFunction() const override
-    {
-        return HYPRE_SStructSMGSetup;
-    }
-    HYPRE_SPtrToStructSolverFcn getHypreSolveFunction() const override
-    {
-        return HYPRE_SStructSMGSolve;
-    }
-
-  protected:
-    void setToleranceImpl( const double tol ) override
-    {
-        auto error = HYPRE_SStructSMGSetTol( _solver, tol );
-        this->checkHypreError( error );
-    }
-
-    void setMaxIterImpl( const int max_iter ) override
-    {
-        auto error = HYPRE_SStructSMGSetMaxIter( _solver, max_iter );
-        this->checkHypreError( error );
-    }
-
-    void setPrintLevelImpl( const int print_level ) override
-    {
-        auto error = HYPRE_SStructSMGSetPrintLevel( _solver, print_level );
-        this->checkHypreError( error );
-    }
-
-    void setupImpl( HYPRE_SStructMatrix A, HYPRE_SStructVector b,
-                    HYPRE_SStructVector x ) override
-    {
-        auto error = HYPRE_SStructSMGSetup( _solver, A, b, x );
-        this->checkHypreError( error );
-    }
-
-    void solveImpl( HYPRE_SStructMatrix A, HYPRE_SStructVector b,
-                    HYPRE_SStructVector x ) override
-    {
-        auto error = HYPRE_SStructSMGSolve( _solver, A, b, x );
-        this->checkHypreError( error );
-    }
-
-    int getNumIterImpl() override
-    {
-        HYPRE_Int num_iter;
-        auto error = HYPRE_SStructSMGGetNumIterations( _solver, &num_iter );
-        this->checkHypreError( error );
-        return num_iter;
-    }
-
-    double getFinalRelativeResidualNormImpl() override
-    {
-        HYPRE_Real norm;
-        auto error =
-            HYPRE_SStructSMGGetFinalRelativeResidualNorm( _solver, &norm );
-        this->checkHypreError( error );
-        return norm;
-    }
-
-    void setPreconditionerImpl(
-        const HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>& ) override
-    {
-        throw std::logic_error(
-            "HYPRE SMG solver does not support preconditioning." );
-    }
-
-  private:
-    HYPRE_SStructSolver _solver;
-};
-*/
-
-//---------------------------------------------------------------------------//
-//! Jacobi solver.
-// Appears unimplemented by HYPRE currently
-/*
-template <class Scalar, class EntityType, class MemorySpace>
-class HypreSemiStructJacobi
-    : public HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>
-{
-  public:
-    //! Base HYPRE structured solver type.
-    using Base = HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>;
-    //! Constructor
-    template <class ArrayLayout_t>
-    HypreSemiStructJacobi( const ArrayLayout_t& layout,
-                       const bool is_preconditioner = false )
-        : Base( layout, is_preconditioner )
-    {
-        auto error = HYPRE_SStructJacobiCreate(
-            layout.localGrid()->globalGrid().comm(), &_solver );
-        this->checkHypreError( error );
-
-        if ( is_preconditioner )
-        {
-            error = HYPRE_SStructJacobiSetZeroGuess( _solver );
-            this->checkHypreError( error );
-        }
-    }
-
-    ~HypreSemiStructJacobi() { HYPRE_SStructJacobiDestroy( _solver ); }
-
-    HYPRE_SStructSolver getHypreSolver() const override { return _solver; }
-    HYPRE_PtrToSStructSolverFcn getHypreSetupFunction() const override
-    {
-        return HYPRE_SStructJacobiSetup;
-    }
-    HYPRE_PtrToSStructSolverFcn getHypreSolveFunction() const override
-    {
-        return HYPRE_SStructJacobiSolve;
-    }
-
-  protected:
-    void setToleranceImpl( const double tol ) override
-    {
-        auto error = HYPRE_SStructJacobiSetTol( _solver, tol );
-        this->checkHypreError( error );
-    }
-
-    void setMaxIterImpl( const int max_iter ) override
-    {
-        auto error = HYPRE_SStructJacobiSetMaxIter( _solver, max_iter );
-        this->checkHypreError( error );
-    }
-
-    void setPrintLevelImpl( const int ) override
-    {
-        // The Jacobi solver does not support a print level.
-    }
-
-    void setupImpl( HYPRE_SStructMatrix A, HYPRE_SStructVector b,
-                    HYPRE_SStructVector x ) override
-    {
-        auto error = HYPRE_SStructJacobiSetup( _solver, A, b, x );
-        this->checkHypreError( error );
-    }
-
-    void solveImpl( HYPRE_SStructMatrix A, HYPRE_SStructVector b,
-                    HYPRE_SStructVector x ) override
-    {
-        auto error = HYPRE_SStructJacobiSolve( _solver, A, b, x );
-        this->checkHypreError( error );
-    }
-
-    int getNumIterImpl() override
-    {
-        HYPRE_Int num_iter;
-        auto error = HYPRE_SStructJacobiGetNumIterations( _solver, &num_iter );
-        this->checkHypreError( error );
-        return num_iter;
-    }
-
-    double getFinalRelativeResidualNormImpl() override
-    {
-        HYPRE_Real norm;
-        auto error =
-            HYPRE_SStructJacobiGetFinalRelativeResidualNorm( _solver, &norm );
-        this->checkHypreError( error );
-        return norm;
-    }
-
-    void setPreconditionerImpl(
-        const HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>& ) override
-    {
-        throw std::logic_error(
-            "HYPRE Jacobi solver does not support preconditioning." );
-    }
-
-  private:
-    HYPRE_SStructSolver _solver;
-};
-
-*/
-
-//---------------------------------------------------------------------------//
 //! Diagonal preconditioner.
 template <class Scalar, class EntityType, class MemorySpace>
 class HypreSemiStructDiagonal
@@ -1500,7 +1266,7 @@ class HypreSemiStructDiagonal
 //---------------------------------------------------------------------------//
 // Builders
 //---------------------------------------------------------------------------//
-//! Create a HYPRE PCG structured solver.
+//! Create a HYPRE PCG semi-structured solver.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
 std::shared_ptr<
     HypreSemiStructPCG<Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
@@ -1514,7 +1280,7 @@ createHypreSemiStructPCG( const ArrayLayout_t& layout,
         layout, is_preconditioner );
 }
 
-//! Create a HYPRE GMRES structured solver.
+//! Create a HYPRE GMRES semi-structured solver.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
 std::shared_ptr<
     HypreSemiStructGMRES<Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
@@ -1528,7 +1294,7 @@ createHypreSemiStructGMRES( const ArrayLayout_t& layout,
         layout, is_preconditioner );
 }
 
-//! Create a HYPRE BiCGSTAB structured solver.
+//! Create a HYPRE BiCGSTAB semi-structured solver.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
 std::shared_ptr<HypreSemiStructBiCGSTAB<Scalar, typename ArrayLayout_t::entity_type,
                                     MemorySpace>>
@@ -1542,7 +1308,7 @@ createHypreSemiStructBiCGSTAB( const ArrayLayout_t& layout,
         layout, is_preconditioner );
 }
 
-//! Create a HYPRE PFMG structured solver.
+//! Create a HYPRE PFMG semi-structured solver.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
 std::shared_ptr<
     HypreSemiStructPFMG<Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
@@ -1555,35 +1321,7 @@ createHypreSemiStructPFMG( const ArrayLayout_t& layout,
         Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>(
         layout, is_preconditioner );
 }
-/*
-//! Create a HYPRE SMG structured solver.
-template <class Scalar, class MemorySpace, class ArrayLayout_t>
-std::shared_ptr<
-    HypreSemiStructSMG<Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
-createHypreSemiStructSMG( const ArrayLayout_t& layout,
-                      const bool is_preconditioner = false, int n_vars )
-{
-    static_assert( is_array_layout<ArrayLayout_t>::value,
-                   "Must use an array layout" );
-    return std::make_shared<HypreSemiStructSMG<
-        Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>(
-        layout, is_preconditioner );
-}
 
-//! Create a HYPRE Jacobi structured solver.
-template <class Scalar, class MemorySpace, class ArrayLayout_t>
-std::shared_ptr<
-    HypreSemiStructJacobi<Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
-createHypreSemiStructJacobi( const ArrayLayout_t& layout,
-                         const bool is_preconditioner = false, int n_vars )
-{
-    static_assert( is_array_layout<ArrayLayout_t>::value,
-                   "Must use an array layout" );
-    return std::make_shared<HypreSemiStructJacobi<
-        Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>(
-        layout, is_preconditioner );
-}
-*/
 //! Create a HYPRE Diagonal structured solver.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
 std::shared_ptr<HypreSemiStructDiagonal<Scalar, typename ArrayLayout_t::entity_type,
@@ -1630,14 +1368,6 @@ createHypreSemiStructuredSolver( const std::string& solver_type,
     else if ( "PFMG" == solver_type )
         return createHypreSemiStructPFMG<Scalar, MemorySpace>( layout,
                                                            is_preconditioner );
-/*
-    else if ( "SMG" == solver_type )
-        return createHypreSemiStructSMG<Scalar, MemorySpace>( layout,
-                                                          is_preconditioner );
-    else if ( "Jacobi" == solver_type )
-        return createHypreSemiStructJacobi<Scalar, MemorySpace>(
-            layout, is_preconditioner );
-*/
     else if ( "Diagonal" == solver_type )
         return createHypreSemiStructDiagonal<Scalar, MemorySpace>(
             layout, is_preconditioner, n_vars );
