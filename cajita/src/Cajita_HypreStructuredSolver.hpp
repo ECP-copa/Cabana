@@ -120,6 +120,8 @@ class HypreStructuredSolver
         : _comm( layout.localGrid()->globalGrid().comm() )
         , _is_preconditioner( is_preconditioner )
     {
+        HYPRE_Init();
+
         static_assert( is_array_layout<ArrayLayout_t>::value,
                        "Must use an array layout" );
         static_assert(
@@ -221,6 +223,8 @@ class HypreStructuredSolver
             HYPRE_StructMatrixDestroy( _A );
             HYPRE_StructStencilDestroy( _stencil );
             HYPRE_StructGridDestroy( _grid );
+
+            HYPRE_Finalize();
         }
     }
 
