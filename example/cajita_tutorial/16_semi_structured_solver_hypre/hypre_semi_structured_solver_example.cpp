@@ -127,14 +127,14 @@ void hypreSemiStructuredSolverExample()
     solver->setPrintLevel( 2 );
 
     /*
-      Create a preconditioner - in this case we use Jacobi (other available
-      options are shown above).
+      Create a preconditioner - in this case we use Diagonal
+      FIXME: preconditioners not currently functioning with hypre semi-structured solvers
     */
-    std::string precond_type = "Diagonal";
-    auto preconditioner =
-        Cajita::createHypreSemiStructuredSolver<double, MemorySpace>(
-            precond_type, *vector_layout, true, 1 );
-    solver->setPreconditioner( preconditioner );
+//    std::string precond_type = "Diagonal";
+//    auto preconditioner =
+//        Cajita::createHypreSemiStructuredSolver<double, MemorySpace>(
+//            precond_type, *vector_layout, true, 1 );
+//    solver->setPreconditioner( preconditioner );
 
     // Setup the problem - this is necessary before solving.
     solver->setup();
