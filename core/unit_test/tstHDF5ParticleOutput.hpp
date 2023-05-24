@@ -164,12 +164,24 @@ void writeReadTest()
             coords_mirror( p, d ) += 1.32;
     Cabana::deep_copy( coords, coords_mirror );
     Cabana::Experimental::HDF5ParticleOutput::writeTimeStep(
-        h5_config, "particles", MPI_COMM_WORLD, step, time, coords.size(),
-        coords, ids, matrix, vec );
+        h5_config, "particles-update", MPI_COMM_WORLD, step, time,
+        coords.size(), coords, ids, matrix, vec );
 
     // Read the data back in and compare.
     Cabana::Experimental::HDF5ParticleOutput::readTimeStep(
-        h5_config, "particles", MPI_COMM_WORLD, step, coords_read.size(),
+        h5_config, "particles-update", MPI_COMM_WORLD, step, coords_read.size(),
+        coords.label(), time_read, coords_read );
+    checkVector( coords_mirror, coords_read );
+    EXPECT_DOUBLE_EQ( time, time_read );
+
+    // Now check writing only positions.
+    Cabana::Experimental::HDF5ParticleOutput::writeTimeStep(
+        h5_config, "positions_only", MPI_COMM_WORLD, step, time, coords.size(),
+        coords );
+
+    // Read the data back in and compare.
+    Cabana::Experimental::HDF5ParticleOutput::readTimeStep(
+        h5_config, "positions_only", MPI_COMM_WORLD, step, coords_read.size(),
         coords.label(), time_read, coords_read );
     checkVector( coords_mirror, coords_read );
     EXPECT_DOUBLE_EQ( time, time_read );
