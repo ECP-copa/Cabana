@@ -25,6 +25,8 @@
 #include <HYPRE_config.h>
 #include <HYPRE_sstruct_ls.h>
 #include <HYPRE_sstruct_mv.h>
+#include <HYPRE_struct_ls.h>
+#include <HYPRE_struct_mv.h>
 
 #include <Kokkos_Core.hpp>
 
@@ -169,6 +171,7 @@ class HypreSemiStructuredSolver
                     global_space.min( num_space_dim - d - 1 ) );
                 _upper[d] = static_cast<HYPRE_Int>(
                     global_space.max( num_space_dim - d - 1 ) - 1 );
+                std::cout << _lower[d] << " " << _upper[d] << std::endl;
             }
             error = HYPRE_SStructGridSetExtents( _grid, part, _lower.data(),
                                                 _upper.data() );
@@ -431,6 +434,12 @@ class HypreSemiStructuredSolver
         error = HYPRE_SStructMatrixAssemble( _A );
         checkHypreError( error );
     }
+
+    void printMatrix() { HYPRE_SStructMatrixPrint( "SStruct.mat", _A, 0 ); }
+
+    void printLHS() { HYPRE_SStructVectorPrint( "SStruct.x", _x, 0 ); }
+
+    void printRHS() { HYPRE_SStructVectorPrint( "SStruct.b", _b, 0 ); }
 
     //! Set convergence tolerance implementation.
     void setTolerance( const double tol ) { this->setToleranceImpl( tol ); }
@@ -1268,6 +1277,89 @@ class HypreSemiStructDiagonal
 };
 
 //---------------------------------------------------------------------------//
+//! Jacobi preconditioner.
+template <class Scalar, class EntityType, class MemorySpace>
+class HypreSemiStructJacobi
+    : public HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>
+{
+  public:
+    //! Base HYPRE structured solver type.
+    using Base = HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>;
+    //! Constructor
+    template <class ArrayLayout_t>
+    HypreSemiStructJacobi( const ArrayLayout_t& layout,
+                         const bool is_preconditioner = false )
+        : Base( layout, is_preconditioner )
+    {
+        if ( !is_preconditioner )
+            throw std::logic_error(
+                "Jacobi preconditioner cannot be used as a solver" );
+    }
+
+    HYPRE_StructSolver getHypreSolver() const override { return nullptr; }
+    HYPRE_PtrToStructSolverFcn getHypreSetupFunction() const override
+    {
+        return HYPRE_StructJacobiSetup;
+    }
+    HYPRE_PtrToStructSolverFcn getHypreSolveFunction() const override
+    {
+        return HYPRE_StructJacobiSolve;
+    }
+
+  protected:
+    void setToleranceImpl( const double ) override
+    {
+        throw std::logic_error(
+            "Jacobi preconditioner cannot be used as a solver" );
+    }
+
+    void setMaxIterImpl( const int ) override
+    {
+        throw std::logic_error(
+            "Jacobi preconditioner cannot be used as a solver" );
+    }
+
+    void setPrintLevelImpl( const int ) override
+    {
+        throw std::logic_error(
+            "Jacobi preconditioner cannot be used as a solver" );
+    }
+
+    void setupImpl( HYPRE_SStructMatrix, HYPRE_SStructVector,
+                    HYPRE_SStructVector ) override
+    {
+        throw std::logic_error(
+            "Jacobi preconditioner cannot be used as a solver" );
+    }
+
+    void solveImpl( HYPRE_SStructMatrix, HYPRE_SStructVector,
+                    HYPRE_SStructVector ) override
+    {
+        throw std::logic_error(
+            "Jacobi preconditioner cannot be used as a solver" );
+    }
+
+    int getNumIterImpl() override
+    {
+        throw std::logic_error(
+            "Jacobi preconditioner cannot be used as a solver" );
+    }
+
+    double getFinalRelativeResidualNormImpl() override
+    {
+        throw std::logic_error(
+            "Jacobi preconditioner cannot be used as a solver" );
+    }
+
+    void setPreconditionerImpl(
+        const HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>& ) override
+    {
+        throw std::logic_error(
+            "Jacobi preconditioner does not support preconditioning." );
+    }
+};
+
+//---------------------------------------------------------------------------//
 // Builders
 //---------------------------------------------------------------------------//
 //! Create a HYPRE PCG semi-structured solver.
@@ -1326,7 +1418,7 @@ createHypreSemiStructPFMG( const ArrayLayout_t& layout,
         layout, is_preconditioner );
 }
 
-//! Create a HYPRE Diagonal structured solver.
+//! Create a HYPRE Diagonal semi-structured solver.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
 std::shared_ptr<HypreSemiStructDiagonal<Scalar, typename ArrayLayout_t::entity_type,
                                     MemorySpace>>
@@ -1336,6 +1428,20 @@ createHypreSemiStructDiagonal( const ArrayLayout_t& layout,
     static_assert( is_array_layout<ArrayLayout_t>::value,
                    "Must use an array layout" );
     return std::make_shared<HypreSemiStructDiagonal<
+        Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>(
+        layout, is_preconditioner );
+}
+
+//! Create a HYPRE Jacobi semi-structured solver.
+template <class Scalar, class MemorySpace, class ArrayLayout_t>
+std::shared_ptr<HypreSemiStructJacobi<Scalar, typename ArrayLayout_t::entity_type,
+                                    MemorySpace>>
+createHypreSemiStructJacobi( const ArrayLayout_t& layout,
+                           const bool is_preconditioner = false, int n_vars = 3 )
+{
+    static_assert( is_array_layout<ArrayLayout_t>::value,
+                   "Must use an array layout" );
+    return std::make_shared<HypreSemiStructJacobi<
         Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>(
         layout, is_preconditioner );
 }
@@ -1373,6 +1479,9 @@ createHypreSemiStructuredSolver( const std::string& solver_type,
         return createHypreSemiStructPFMG<Scalar, MemorySpace>( layout,
                                                            is_preconditioner );
     else if ( "Diagonal" == solver_type )
+        return createHypreSemiStructDiagonal<Scalar, MemorySpace>(
+            layout, is_preconditioner, n_vars );
+    else if ( "Jacobi" == solver_type )
         return createHypreSemiStructDiagonal<Scalar, MemorySpace>(
             layout, is_preconditioner, n_vars );
     else

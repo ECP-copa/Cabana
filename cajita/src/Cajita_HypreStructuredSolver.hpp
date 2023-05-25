@@ -120,8 +120,6 @@ class HypreStructuredSolver
         : _comm( layout.localGrid()->globalGrid().comm() )
         , _is_preconditioner( is_preconditioner )
     {
-        HYPRE_Init();
-
         static_assert( is_array_layout<ArrayLayout_t>::value,
                        "Must use an array layout" );
         static_assert(
@@ -156,6 +154,7 @@ class HypreStructuredSolver
                     global_space.min( num_space_dim - d - 1 ) );
                 _upper[d] = static_cast<HYPRE_Int>(
                     global_space.max( num_space_dim - d - 1 ) - 1 );
+                std::cout << _lower[d] << " " << _upper[d] << std::endl;
             }
             error = HYPRE_StructGridSetExtents( _grid, _lower.data(),
                                                 _upper.data() );
@@ -223,8 +222,6 @@ class HypreStructuredSolver
             HYPRE_StructMatrixDestroy( _A );
             HYPRE_StructStencilDestroy( _stencil );
             HYPRE_StructGridDestroy( _grid );
-
-            HYPRE_Finalize();
         }
     }
 
@@ -336,6 +333,8 @@ class HypreStructuredSolver
         error = HYPRE_StructMatrixAssemble( _A );
         checkHypreError( error );
     }
+
+    void printMatrix() { HYPRE_StructMatrixPrint( "Struct.mat", _A, 0 ); }
 
     //! Set convergence tolerance implementation.
     void setTolerance( const double tol ) { this->setToleranceImpl( tol ); }

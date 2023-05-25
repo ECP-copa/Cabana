@@ -71,6 +71,8 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
     auto lhs = createArray<double, MemorySpace>( "lhs", vector_layout );
     ArrayOp::assign( *lhs, 0.0, Own() );
 
+    HYPRE_Init();
+
     // Create a solver.
     auto solver = createHypreStructuredSolver<double, MemorySpace>(
         solver_type, *vector_layout );
@@ -209,6 +211,8 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
                   k < owned_space.max( Dim::K ); ++k )
                 EXPECT_FLOAT_EQ( lhs_host( i, j, k, 0 ),
                                  lhs_ref_host( i, j, k, 0 ) );
+
+    HYPRE_Finalize();
 }
 
 //---------------------------------------------------------------------------//
