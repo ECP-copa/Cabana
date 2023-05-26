@@ -188,39 +188,10 @@ void checkBoundary( Own, Edge<Dir>, BoundaryType boundary_space,
 
 template <class EntityType, class LocalGridType, class OwnedType,
           std::size_t NSD>
-void checkRepresentativeOwnBoundaries(
-    EntityType, LocalGridType local_grid, OwnedType owned_space,
-    std::vector<std::array<int, NSD>> neighbors, const int halo_width,
-    const int new_hw )
-{
-    IndexSpace<NSD> boundary_space;
-    for ( std::array<int, NSD> neigh : neighbors )
-    {
-        if ( -1 == local_grid->neighborRank( neigh ) )
-        {
-            boundary_space =
-                local_grid->boundaryIndexSpace( Own(), EntityType(), neigh );
-            checkBoundary( Own(), EntityType(), boundary_space, owned_space,
-                           neigh, halo_width );
-        }
-
-        // Check the boundary again but this time with a specified halo width.
-        if ( -1 == local_grid->neighborRank( neigh ) )
-        {
-            boundary_space = local_grid->boundaryIndexSpace(
-                Own(), EntityType(), neigh, new_hw );
-            checkBoundary( Own(), EntityType(), boundary_space, owned_space,
-                           neigh, new_hw );
-        }
-    }
-}
-
-template <class EntityType, class LocalGridType, class OwnedType,
-          std::size_t NSD>
-void checkRepresentativeGhostBoundaries(
-    EntityType, LocalGridType local_grid, OwnedType owned_space,
-    std::vector<std::array<int, NSD>> neighbors, const int halo_width,
-    const int new_hw )
+void checkRepresentativeBoundaries( EntityType, LocalGridType local_grid,
+                                    OwnedType owned_space,
+                                    std::vector<std::array<int, NSD>> neighbors,
+                                    const int halo_width, const int new_hw )
 {
     IndexSpace<NSD> boundary_space;
     for ( std::array<int, NSD> neigh : neighbors )
@@ -231,6 +202,10 @@ void checkRepresentativeGhostBoundaries(
                 local_grid->boundaryIndexSpace( Ghost(), EntityType(), neigh );
             checkBoundary( Ghost(), EntityType(), boundary_space, owned_space,
                            neigh, halo_width );
+            boundary_space =
+                local_grid->boundaryIndexSpace( Own(), EntityType(), neigh );
+            checkBoundary( Own(), EntityType(), boundary_space, owned_space,
+                           neigh, halo_width );
         }
 
         // Check the boundary again but this time with a specified halo width.
@@ -240,21 +215,12 @@ void checkRepresentativeGhostBoundaries(
                 Ghost(), EntityType(), neigh, new_hw );
             checkBoundary( Ghost(), EntityType(), boundary_space, owned_space,
                            neigh, new_hw );
+            boundary_space = local_grid->boundaryIndexSpace(
+                Own(), EntityType(), neigh, new_hw );
+            checkBoundary( Own(), EntityType(), boundary_space, owned_space,
+                           neigh, new_hw );
         }
     }
-}
-
-template <class EntityType, class LocalGridType, class OwnedType,
-          std::size_t NSD>
-void checkRepresentativeBoundaries( EntityType entity, LocalGridType local_grid,
-                                    OwnedType owned_space,
-                                    std::vector<std::array<int, NSD>> neighbors,
-                                    const int halo_width, const int new_hw )
-{
-    checkRepresentativeGhostBoundaries( entity, local_grid, owned_space,
-                                        neighbors, halo_width, new_hw );
-    checkRepresentativeOwnBoundaries( entity, local_grid, owned_space,
-                                      neighbors, halo_width, new_hw );
 }
 
 //---------------------------------------------------------------------------//
@@ -2274,9 +2240,6 @@ void notPeriodicTest3d()
     checkRepresentativeBoundaries( Node(), local_grid, owned_node_space,
                                    neighbors, halo_width, new_hw );
 
-    //////////////////
-    // I-FACE SPACES
-    //////////////////
     new_hw = 1;
     checkRepresentativeBoundaries( Face<Dim::I>(), local_grid,
                                    owned_i_face_space, neighbors, halo_width,
@@ -2287,9 +2250,6 @@ void notPeriodicTest3d()
                                    owned_i_face_space, neighbors, halo_width,
                                    new_hw );
 
-    //////////////////
-    // J-FACE SPACES
-    //////////////////
     new_hw = 1;
     checkRepresentativeBoundaries( Face<Dim::J>(), local_grid,
                                    owned_j_face_space, neighbors, halo_width,
@@ -2300,9 +2260,6 @@ void notPeriodicTest3d()
                                    owned_j_face_space, neighbors, halo_width,
                                    new_hw );
 
-    //////////////////
-    // K-FACE SPACES
-    //////////////////
     new_hw = 1;
     checkRepresentativeBoundaries( Face<Dim::K>(), local_grid,
                                    owned_k_face_space, neighbors, halo_width,
@@ -2312,10 +2269,6 @@ void notPeriodicTest3d()
     checkRepresentativeBoundaries( Face<Dim::K>(), local_grid,
                                    owned_k_face_space, neighbors, halo_width,
                                    new_hw );
-
-    //////////////////
-    // I-EDGE SPACES
-    //////////////////
 
     auto owned_i_edge_space =
         local_grid->indexSpace( Own(), Edge<Dim::I>(), Local() );
@@ -2330,10 +2283,6 @@ void notPeriodicTest3d()
                                    owned_i_edge_space, neighbors, halo_width,
                                    new_hw );
 
-    //////////////////
-    // J-EDGE SPACES
-    //////////////////
-
     auto owned_j_edge_space =
         local_grid->indexSpace( Own(), Edge<Dim::J>(), Local() );
 
@@ -2346,10 +2295,6 @@ void notPeriodicTest3d()
     checkRepresentativeBoundaries( Edge<Dim::J>(), local_grid,
                                    owned_j_edge_space, neighbors, halo_width,
                                    new_hw );
-
-    //////////////////
-    // K-EDGE SPACES
-    //////////////////
 
     auto owned_k_edge_space =
         local_grid->indexSpace( Own(), Edge<Dim::K>(), Local() );
@@ -3360,17 +3305,9 @@ void notPeriodicTest2d()
     checkRepresentativeBoundaries( Node(), local_grid, owned_node_space,
                                    neighbors, halo_width, new_hw );
 
-    //////////////////
-    // I-FACE SPACES
-    //////////////////
-
     checkRepresentativeBoundaries( Face<Dim::I>(), local_grid,
                                    owned_i_face_space, neighbors, halo_width,
                                    new_hw );
-
-    //////////////////
-    // J-FACE SPACES
-    //////////////////
 
     checkRepresentativeBoundaries( Face<Dim::I>(), local_grid,
                                    owned_i_face_space, neighbors, halo_width,
