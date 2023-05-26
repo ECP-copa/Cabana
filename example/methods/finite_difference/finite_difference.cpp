@@ -18,32 +18,44 @@
 
 #include <Cabana_Grid.hpp>
 
+// Apply boundary conditions. For simplicity of the code, rebuild the index
+// spaces each step even though it's a fixed geometry. Apply all boundaries in
+// one kernel for performance.
 template <class ExecutionSpace, class LocalGridType, class ArrayType>
 void updateBoundaries( ExecutionSpace exec_space, LocalGridType local_grid,
                        ArrayType& field )
 {
-    // Update the boundary on each face of the cube.
+    // Create boundary indices for each plane.
+    Kokkos::Array<Cabana::Grid::IndexSpace<3>, 6> boundary_spaces;
+    // Store the boundary details in device-accessible fixed-size arrays.
+    Kokkos::Array<Kokkos::Array<int, 3>, 6> planes;
+    // Generate the boundary condition index spaces.
+    int count = 0;
     for ( int d = 0; d < 3; d++ )
     {
         for ( int dir = -1; dir < 2; dir += 2 )
         {
-            std::array<int, 3> plane = { 0, 0, 0 };
-            plane[d] = dir;
+            planes[count] = { 0, 0, 0 };
+            planes[count][d] = dir;
 
             // Get the boundary indices for this plane (each one is a separate,
             // contiguous index space).
-            auto boundary_space = local_grid->boundaryIndexSpace(
-                Cabana::Grid::Own(), Cabana::Grid::Cell(), plane );
-
-            Cabana::Grid::grid_parallel_for(
-                "boundary_update", exec_space, boundary_space,
-                KOKKOS_LAMBDA( const int i, const int j, const int k ) {
-                    // Neumann boundary condition example
-                    field( i, j, k, 0 ) =
-                        field( i - plane[0], j - plane[1], k - plane[2], 0 );
-                } );
+            boundary_spaces[count] = local_grid->boundaryIndexSpace(
+                Cabana::Grid::Own(), Cabana::Grid::Cell(), planes[count][0],
+                planes[count][1], planes[count][2] );
+            count++;
         }
     }
+
+    // Update the boundary on each face of the cube. Pass the vector of index
+    // spaces to avoid launching 6 separate kernels.
+    Cajita::grid_parallel_for(
+        "boundary_update", exec_space, boundary_spaces,
+        KOKKOS_LAMBDA( const int b, const int i, const int j, const int k ) {
+            // Set boundary cells to the nearest internal value.
+            field( i, j, k, 0 ) = field( i - planes[b][0], j - planes[b][1],
+                                         k - planes[b][2], 0 );
+        } );
 }
 
 /*
