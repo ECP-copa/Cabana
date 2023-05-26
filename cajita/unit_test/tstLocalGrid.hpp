@@ -32,28 +32,39 @@ template <class BoundaryType, class OwnedType, std::size_t NSD>
 void checkBoundary( BoundaryType boundary_space, OwnedType owned_space,
                     const std::array<int, NSD> neighbor,
                     const int min_lower_shift, const int min_upper_shift,
-                    const int max_lower_shift, const int max_upper_shift )
+                    const int max_lower_shift, const int max_upper_shift,
+                    const std::size_t d )
+{
+    if ( neighbor[d] == -1 )
+    {
+        EXPECT_EQ( boundary_space.min( d ),
+                   owned_space.min( d ) + min_lower_shift );
+        EXPECT_EQ( boundary_space.max( d ),
+                   owned_space.min( d ) + max_lower_shift );
+    }
+    else if ( neighbor[d] == 0 )
+    {
+        EXPECT_EQ( boundary_space.min( d ), owned_space.min( d ) );
+        EXPECT_EQ( boundary_space.max( d ), owned_space.max( d ) );
+    }
+    else if ( neighbor[d] == 1 )
+    {
+        EXPECT_EQ( boundary_space.min( d ),
+                   owned_space.max( d ) + min_upper_shift );
+        EXPECT_EQ( boundary_space.max( d ),
+                   owned_space.max( d ) + max_upper_shift );
+    }
+}
+
+template <class BoundaryType, class OwnedType, std::size_t NSD>
+void checkCellBoundary( BoundaryType boundary_space, OwnedType owned_space,
+                        const std::array<int, NSD> neighbor,
+                        const int min_lower_shift, const int min_upper_shift,
+                        const int max_lower_shift, const int max_upper_shift )
 {
     for ( std::size_t d = 0; d < NSD; ++d )
-        if ( neighbor[d] == -1 )
-        {
-            EXPECT_EQ( boundary_space.min( d ),
-                       owned_space.min( d ) + min_lower_shift );
-            EXPECT_EQ( boundary_space.max( d ),
-                       owned_space.min( d ) + max_lower_shift );
-        }
-        else if ( neighbor[d] == 0 )
-        {
-            EXPECT_EQ( boundary_space.min( d ), owned_space.min( d ) );
-            EXPECT_EQ( boundary_space.max( d ), owned_space.max( d ) );
-        }
-        else if ( neighbor[d] == 1 )
-        {
-            EXPECT_EQ( boundary_space.min( d ),
-                       owned_space.max( d ) + min_upper_shift );
-            EXPECT_EQ( boundary_space.max( d ),
-                       owned_space.max( d ) + max_upper_shift );
-        }
+        checkBoundary( boundary_space, owned_space, neighbor, min_lower_shift,
+                       min_upper_shift, max_lower_shift, max_upper_shift, d );
 }
 
 //---------------------------------------------------------------------------//
@@ -74,27 +85,10 @@ void checkFaceBoundary( BoundaryType boundary_space, OwnedType owned_space,
             max_lower_shift_dir = 1;
         }
 
-        if ( neighbor[d] == -1 )
-        {
-            EXPECT_EQ( boundary_space.min( d ),
-                       owned_space.min( d ) + min_lower_shift );
-            EXPECT_EQ( boundary_space.max( d ), owned_space.min( d ) +
-                                                    max_lower_shift +
-                                                    max_lower_shift_dir );
-        }
-        else if ( neighbor[d] == 0 )
-        {
-            EXPECT_EQ( boundary_space.min( d ), owned_space.min( d ) );
-            EXPECT_EQ( boundary_space.max( d ), owned_space.max( d ) );
-        }
-        else if ( neighbor[d] == 1 )
-        {
-            EXPECT_EQ( boundary_space.min( d ), owned_space.max( d ) +
-                                                    min_upper_shift +
-                                                    min_upper_shift_dir );
-            EXPECT_EQ( boundary_space.max( d ),
-                       owned_space.max( d ) + max_upper_shift );
-        }
+        checkBoundary( boundary_space, owned_space, neighbor, min_lower_shift,
+                       min_upper_shift + min_upper_shift_dir,
+                       max_lower_shift + max_lower_shift_dir, max_upper_shift,
+                       d );
     }
 }
 
@@ -116,29 +110,13 @@ void checkEdgeBoundary( BoundaryType boundary_space, OwnedType owned_space,
             max_lower_shift_dir = 1;
         }
 
-        if ( neighbor[d] == -1 )
-        {
-            EXPECT_EQ( boundary_space.min( d ),
-                       owned_space.min( d ) + min_lower_shift );
-            EXPECT_EQ( boundary_space.max( d ), owned_space.min( d ) +
-                                                    max_lower_shift +
-                                                    max_lower_shift_dir );
-        }
-        else if ( neighbor[d] == 0 )
-        {
-            EXPECT_EQ( boundary_space.min( d ), owned_space.min( d ) );
-            EXPECT_EQ( boundary_space.max( d ), owned_space.max( d ) );
-        }
-        else if ( neighbor[d] == 1 )
-        {
-            EXPECT_EQ( boundary_space.min( d ), owned_space.max( d ) +
-                                                    min_upper_shift +
-                                                    min_upper_shift_dir );
-            EXPECT_EQ( boundary_space.max( d ),
-                       owned_space.max( d ) + max_upper_shift );
-        }
+        checkBoundary( boundary_space, owned_space, neighbor, min_lower_shift,
+                       min_upper_shift + min_upper_shift_dir,
+                       max_lower_shift + max_lower_shift_dir, max_upper_shift,
+                       d );
     }
 }
+
 template <class EntityType, class BoundaryType, class OwnedType,
           std::size_t NSD>
 void checkBoundary( Ghost, EntityType, BoundaryType boundary_space,
@@ -146,8 +124,8 @@ void checkBoundary( Ghost, EntityType, BoundaryType boundary_space,
                     const int halo_width )
 {
     // All cases match for ghosts.
-    checkBoundary( boundary_space, owned_space, neighbor, -halo_width, 0, 0,
-                   halo_width );
+    checkCellBoundary( boundary_space, owned_space, neighbor, -halo_width, 0, 0,
+                       halo_width );
 }
 
 template <class BoundaryType, class OwnedType, std::size_t NSD>
@@ -155,8 +133,8 @@ void checkBoundary( Own, Cell, BoundaryType boundary_space,
                     OwnedType owned_space, const std::array<int, NSD> neighbor,
                     const int halo_width )
 {
-    checkBoundary( boundary_space, owned_space, neighbor, 0, -halo_width,
-                   halo_width, 0 );
+    checkCellBoundary( boundary_space, owned_space, neighbor, 0, -halo_width,
+                       halo_width, 0 );
 }
 
 template <class BoundaryType, class OwnedType, std::size_t NSD>
@@ -164,8 +142,8 @@ void checkBoundary( Own, Node, BoundaryType boundary_space,
                     OwnedType owned_space, const std::array<int, NSD> neighbor,
                     const int halo_width )
 {
-    checkBoundary( boundary_space, owned_space, neighbor, 0, -halo_width - 1,
-                   halo_width + 1, 0 );
+    checkCellBoundary( boundary_space, owned_space, neighbor, 0,
+                       -halo_width - 1, halo_width + 1, 0 );
 }
 
 template <class BoundaryType, class OwnedType, int Dir, std::size_t NSD>
