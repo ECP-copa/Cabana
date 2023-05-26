@@ -62,7 +62,7 @@ void checkFaceBoundary( BoundaryType boundary_space, OwnedType owned_space,
                         const std::array<int, NSD> neighbor,
                         const int min_lower_shift, const int min_upper_shift,
                         const int max_lower_shift, const int max_upper_shift,
-                        const int Dir )
+                        const std::size_t Dir )
 {
     for ( std::size_t d = 0; d < NSD; ++d )
     {
@@ -104,7 +104,7 @@ void checkEdgeBoundary( BoundaryType boundary_space, OwnedType owned_space,
                         const std::array<int, NSD> neighbor,
                         const int min_lower_shift, const int min_upper_shift,
                         const int max_lower_shift, const int max_upper_shift,
-                        const int Dir )
+                        const std::size_t Dir )
 {
     for ( std::size_t d = 0; d < NSD; ++d )
     {
