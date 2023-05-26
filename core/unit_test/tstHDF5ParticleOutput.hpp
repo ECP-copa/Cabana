@@ -124,7 +124,8 @@ void writeReadTest()
         coords, ids, matrix, vec );
 
     // Make an empty copy to read into.
-    auto aosoa_read = Cabana::create_mirror_view( Kokkos::HostSpace(), aosoa );
+    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> aosoa_read( "read",
+                                                            aosoa.size() );
     auto coords_read = Cabana::slice<0>( aosoa_read, "coords" );
     auto vec_read = Cabana::slice<1>( aosoa_read, "vec" );
     auto matrix_read = Cabana::slice<2>( aosoa_read, "matrix" );
