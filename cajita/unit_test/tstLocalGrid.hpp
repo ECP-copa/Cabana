@@ -67,6 +67,18 @@ void checkCellBoundary( BoundaryType boundary_space, OwnedType owned_space,
                        min_upper_shift, max_lower_shift, max_upper_shift, d );
 }
 
+template <class BoundaryType, class OwnedType, std::size_t NSD>
+void checkNodeBoundary( BoundaryType boundary_space, OwnedType owned_space,
+                        const std::array<int, NSD> neighbor,
+                        const int min_lower_shift, const int min_upper_shift,
+                        const int max_lower_shift, const int max_upper_shift )
+{
+    for ( std::size_t d = 0; d < NSD; ++d )
+        checkBoundary( boundary_space, owned_space, neighbor, min_lower_shift,
+                       min_upper_shift - 1, max_lower_shift + 1,
+                       max_upper_shift, d );
+}
+
 //---------------------------------------------------------------------------//
 template <class BoundaryType, class OwnedType, std::size_t NSD>
 void checkFaceBoundary( BoundaryType boundary_space, OwnedType owned_space,
@@ -142,8 +154,8 @@ void checkBoundary( Own, Node, BoundaryType boundary_space,
                     OwnedType owned_space, const std::array<int, NSD> neighbor,
                     const int halo_width )
 {
-    checkCellBoundary( boundary_space, owned_space, neighbor, 0,
-                       -halo_width - 1, halo_width + 1, 0 );
+    checkNodeBoundary( boundary_space, owned_space, neighbor, 0, -halo_width,
+                       halo_width, 0 );
 }
 
 template <class BoundaryType, class OwnedType, int Dir, std::size_t NSD>
