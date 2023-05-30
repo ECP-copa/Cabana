@@ -74,7 +74,7 @@ void hypreSemiStructuredSolverExample()
     /************************************************************************/
 
     // Create the RHS.
-    auto vector_layout = createArrayLayout( local_mesh, 1, Cajita::Cell() );
+    auto vector_layout = createArrayLayout( local_mesh, 3, Cajita::Cell() );
     auto rhs = Cajita::createArray<double, MemorySpace>( "rhs", vector_layout );
     Cajita::ArrayOp::assign( *rhs, 1.0, Cajita::Own() );
 
@@ -91,16 +91,19 @@ void hypreSemiStructuredSolverExample()
 
     // Create a solver.
     auto solver = Cajita::createHypreSemiStructuredSolver<double, MemorySpace>(
-        "PCG", *vector_layout, false, 1 );
+        "PCG", *vector_layout, false, 3 );
 
     // Create a 7-point 3d laplacian stencil.
     std::vector<std::array<int, 3>> stencil = {
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
         { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
-    solver->createMatrixStencil( 3, false, 0, 1, 7);
-    solver->setMatrixStencil( stencil, false, 0, 1, 0 );
+    for ( int v = 0; v < 3; ++v)
+    {
+        solver->createMatrixStencil( 3, false, v, 3, 7);
+        solver->setMatrixStencil( stencil, false, v, 3, v );
+    }
 
-    solver->setSolverGraph( 1 );
+    solver->setSolverGraph( 3 );
 
     // Create the matrix entries. The stencil is defined over cells.
     auto matrix_entry_layout =
@@ -121,13 +124,19 @@ void hypreSemiStructuredSolverExample()
             entry_view( i, j, k, 6 ) = -1.0;
         } );
 
-    std::cout << "setMatrixValues" << std::endl;
+    std::cout << "start MatrixValues loop" << std::endl;
 
-    solver->setMatrixValues( *matrix_entries, 0, 0 );
+    for ( int v_h = 0; v_h < 3; ++v_h )
+    {
+        std::cout << " MatrixValues set " << v_h << std::endl;
+        solver->setMatrixValues( *matrix_entries, v_h, v_h );
+    }
 
-    std::cout << "Print Matrix" << std::endl;
+    std::cout << " MatrixValues have been set " << std::endl;
 
     solver->printMatrix();
+
+    std::cout << " Matrix printed " << std::endl;
 
     // The desired tolerance must be set for each solve.
     solver->setTolerance( 1.0e-9 );
@@ -148,14 +157,20 @@ void hypreSemiStructuredSolverExample()
 //    std::string precond_type = "Diagonal";
 //    auto preconditioner =
 //        Cajita::createHypreSemiStructuredSolver<double, MemorySpace>(
-//            precond_type, *vector_layout, true, 1 );
+//            precond_type, *vector_layout, true, 3 );
 //    solver->setPreconditioner( preconditioner );
+
+    std::cout << "setting up the solver " << std::endl;
 
     // Setup the problem - this is necessary before solving.
     solver->setup();
 
+    std::cout << "solving " << std::endl;
+
     // Now solve the problem.
-    solver->solve( *rhs, *lhs, 1 );
+    solver->solve( *rhs, *lhs, 3 );
+
+    std::cout << "solve complete " << std::endl;
 
     /*
       Setup the problem again. We would need to do this if we changed the matrix
@@ -165,7 +180,7 @@ void hypreSemiStructuredSolverExample()
     // Reset to the same initial condition and solve the problem again.
     Cajita::ArrayOp::assign( *rhs, 2.0, Cajita::Own() );
     Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
-    solver->solve( *rhs, *lhs, 1 );
+    solver->solve( *rhs, *lhs, 3 );
 
     /*
         The hypre solver capabilities used by Cabana must be initialized and finalized.

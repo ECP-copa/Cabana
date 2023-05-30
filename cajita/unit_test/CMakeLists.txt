@@ -57,6 +57,7 @@ if(Cabana_ENABLE_HYPRE)
     HypreStructuredSolver3d
     HypreStructuredSolver2d
     HypreSemiStructuredSolver
+    HypreSemiStructuredSolverMulti
     )
 endif()
 

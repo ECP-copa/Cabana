@@ -93,10 +93,6 @@ void hypreStructuredSolverExample()
     auto solver = Cajita::createHypreStructuredSolver<double, MemorySpace>(
         "PCG", *vector_layout );
 
-    // Create a solver.
-    auto solver2 = Cajita::createHypreStructuredSolver<double, MemorySpace>(
-        "PCG", *vector_layout );
-
     // Create a 7-point 3d laplacian stencil.
     std::vector<std::array<int, 3>> stencil = {
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
