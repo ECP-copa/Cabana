@@ -82,13 +82,6 @@ void hypreStructuredSolverExample()
     auto lhs = Cajita::createArray<double, MemorySpace>( "lhs", vector_layout );
     Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
 
-    /*
-        The hypre solver capabilities used by Cabana must be initialized and finalized.
-        HYPRE_Init() initializes hypre. A call to HYPRE_Init() must be included before
-        any hypre calls occur
-    */
-    HYPRE_Init();
-
     // Create a solver.
     auto solver = Cajita::createHypreStructuredSolver<double, MemorySpace>(
         "PCG", *vector_layout );
@@ -157,13 +150,6 @@ void hypreStructuredSolverExample()
     Cajita::ArrayOp::assign( *rhs, 2.0, Cajita::Own() );
     Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
     solver->solve( *rhs, *lhs );
-
-    /*
-        The hypre solver capabilities used by Cabana must be initialized and finalized.
-        HYPRE_Finalize() finalizes hypre. A call to HYPRE_Finalize() should not occur
-        before all calls to hypre capabilites are finished.
-    */
-    HYPRE_Finalize();
 }
 
 //---------------------------------------------------------------------------//
@@ -177,7 +163,22 @@ int main( int argc, char* argv[] )
     {
         Kokkos::ScopeGuard scope_guard( argc, argv );
 
+        /*
+            The hypre solver capabilities used by Cabana must be initialized and finalized.
+            HYPRE_Init() initializes hypre. A call to HYPRE_Init() must be included before
+            any hypre calls occur
+        */
+        HYPRE_Init();
+
         hypreStructuredSolverExample();
+
+        /*
+            The hypre solver capabilities used by Cabana must be initialized and finalized.
+            HYPRE_Finalize() finalizes hypre. A call to HYPRE_Finalize() should not occur
+            before all calls to hypre capabilites are finished. This call is placed outside
+            the hypre solver function to ensure the hypre objects and capabilities are out of scope
+        */
+        HYPRE_Finalize();
     }
     MPI_Finalize();
 

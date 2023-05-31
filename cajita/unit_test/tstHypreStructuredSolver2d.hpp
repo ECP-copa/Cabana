@@ -71,9 +71,6 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
     auto lhs = createArray<double, MemorySpace>( "lhs", vector_layout );
     ArrayOp::assign( *lhs, 0.0, Own() );
 
-    //Initialize Hypre
-    HYPRE_Init();
-
     // Create a solver.
     auto solver = createHypreStructuredSolver<double, MemorySpace>(
         solver_type, *vector_layout );
@@ -199,9 +196,6 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
         for ( int j = owned_space.min( Dim::J ); j < owned_space.max( Dim::J );
               ++j )
             EXPECT_FLOAT_EQ( lhs_host( i, j, 0 ), lhs_ref_host( i, j, 0 ) );
-
-    // finalize hypre
-    HYPRE_Finalize();
 }
 
 //---------------------------------------------------------------------------//
@@ -209,52 +203,72 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
 //---------------------------------------------------------------------------//
 TEST( structured_solver, pcg_none_test )
 {
+    HYPRE_Init();
     poissonTest( "PCG", "none", TEST_MEMSPACE{} );
+    HYPRE_Finalize();
 }
 
 TEST( structured_solver, gmres_none_test )
 {
+    HYPRE_Init();
     poissonTest( "GMRES", "none", TEST_MEMSPACE{} );
+    HYPRE_Finalize();
 }
 
 TEST( structured_solver, bicgstab_none_test )
 {
+    HYPRE_Init();
     poissonTest( "BiCGSTAB", "none", TEST_MEMSPACE{} );
+    HYPRE_Finalize();
 }
 
 TEST( structured_solver, pfmg_none_test )
 {
+    HYPRE_Init();
     poissonTest( "PFMG", "none", TEST_MEMSPACE{} );
+    HYPRE_Finalize();
 }
 
 TEST( structured_solver, pcg_diag_test )
 {
+    HYPRE_Init();
     poissonTest( "PCG", "Diagonal", TEST_MEMSPACE{} );
+    HYPRE_Finalize();
 }
 
 TEST( structured_solver, gmres_diag_test )
 {
+    HYPRE_Init();
     poissonTest( "GMRES", "Diagonal", TEST_MEMSPACE{} );
+    HYPRE_Finalize();
 }
 
 TEST( structured_solver, bicgstab_diag_test )
 {
+    HYPRE_Init();
     poissonTest( "BiCGSTAB", "Diagonal", TEST_MEMSPACE{} );
+    HYPRE_Finalize();
 }
 
 TEST( structured_solver, pcg_jacobi_test )
 {
+    HYPRE_Init();
     poissonTest( "PCG", "Jacobi", TEST_MEMSPACE{} );
+    HYPRE_Finalize();
 }
 
 TEST( structured_solver, gmres_jacobi_test )
 {
+    HYPRE_Init();
     poissonTest( "GMRES", "Jacobi", TEST_MEMSPACE{} );
+    HYPRE_Finalize();
 }
 
 TEST( structured_solver, bicgstab_jacobi_test )
 {
+    HYPRE_Init();
     poissonTest( "BiCGSTAB", "Jacobi", TEST_MEMSPACE{} );
+    HYPRE_Finalize();
 }
 
 //---------------------------------------------------------------------------//
