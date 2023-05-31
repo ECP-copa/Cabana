@@ -124,19 +124,14 @@ void hypreSemiStructuredSolverExample()
             entry_view( i, j, k, 6 ) = -1.0;
         } );
 
-    std::cout << "start MatrixValues loop" << std::endl;
+    solver->initializeHypreMatrix();
 
     for ( int v_h = 0; v_h < 3; ++v_h )
     {
-        std::cout << " MatrixValues set " << v_h << std::endl;
         solver->setMatrixValues( *matrix_entries, v_h, v_h );
     }
 
-    std::cout << " MatrixValues have been set " << std::endl;
-
     solver->printMatrix();
-
-    std::cout << " Matrix printed " << std::endl;
 
     // The desired tolerance must be set for each solve.
     solver->setTolerance( 1.0e-9 );
@@ -160,17 +155,11 @@ void hypreSemiStructuredSolverExample()
 //            precond_type, *vector_layout, true, 3 );
 //    solver->setPreconditioner( preconditioner );
 
-    std::cout << "setting up the solver " << std::endl;
-
     // Setup the problem - this is necessary before solving.
     solver->setup();
 
-    std::cout << "solving " << std::endl;
-
     // Now solve the problem.
     solver->solve( *rhs, *lhs, 3 );
-
-    std::cout << "solve complete " << std::endl;
 
     /*
       Setup the problem again. We would need to do this if we changed the matrix

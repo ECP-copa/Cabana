@@ -79,14 +79,10 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
     auto solver = createHypreSemiStructuredSolver<double, MemorySpace>(
         solver_type, *vector_layout, false, 3);
 
-    std::cout << "solver create" << std::endl;
-
     // Create a 7-point 3d laplacian stencil.
     std::vector<std::array<int, 3>> stencil = {
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
         { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
-
-    std::cout << "stencil create" << std::endl;
 
     for ( int v_h = 0; v_h < 3; ++v_h )
     {
@@ -94,11 +90,7 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
         solver->setMatrixStencil( stencil, false, v_h , 3, v_h);
     }
 
-    std::cout << "stencil created" << std::endl;
-
     solver->setSolverGraph( 3 );
-
-    std::cout << "graph create" << std::endl;
 
     // Create the matrix entries. The stencil is defined over cells.
     auto matrix_entry_layout = createArrayLayout( local_mesh, 7, Cell() );
@@ -118,15 +110,12 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
             entry_view( i, j, k, 6 ) = -1.0;
         } );
 
-    std::cout << 'entry view create' << std::endl;
-
+    solver->initializeHypreMatrix();
     
     for ( int v_h = 0; v_h < 3; ++v_h )
     {
         solver->setMatrixValues( *matrix_entries, v_h, v_h );
     }
-
-    std::cout << "matrix values set" << std::endl;
 
     // Set the tolerance.
     solver->setTolerance( 1.0e-9 );
@@ -148,12 +137,8 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
     // Setup the problem.
     solver->setup();
 
-    std::cout << "solver setup" << std::endl;
-
     // Solve the problem.
     solver->solve( *rhs, *lhs , 3 );
-
-    std::cout << "solver solve" << std::endl;
 
     // Create a solver reference for comparison.
     auto lhs_ref = createArray<double, MemorySpace>( "lhs_ref", vector_layout );

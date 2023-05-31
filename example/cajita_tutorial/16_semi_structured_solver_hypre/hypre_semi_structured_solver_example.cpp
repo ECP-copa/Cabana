@@ -121,11 +121,9 @@ void hypreSemiStructuredSolverExample()
             entry_view( i, j, k, 6 ) = -1.0;
         } );
 
-    std::cout << "setMatrixValues" << std::endl;
+    solver->initializeHypreMatrix();
 
     solver->setMatrixValues( *matrix_entries, 0, 0 );
-
-    std::cout << "Print Matrix" << std::endl;
 
     solver->printMatrix();
 
