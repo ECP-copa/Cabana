@@ -71,131 +71,140 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
     auto lhs = createArray<double, MemorySpace>( "lhs", vector_layout );
     ArrayOp::assign( *lhs, 0.0, Own() );
 
-    // Create a solver.
-    auto solver = createHypreStructuredSolver<double, MemorySpace>(
-        solver_type, *vector_layout );
-
-    // Create a 5-point 2d laplacian stencil.
-    std::vector<std::array<int, 2>> stencil = {
-        { 0, 0 }, { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
-    solver->setMatrixStencil( stencil );
-
-    // Create the matrix entries. The stencil is defined over cells.
-    auto matrix_entry_layout = createArrayLayout( local_mesh, 5, Cell() );
-    auto matrix_entries = createArray<double, MemorySpace>(
-        "matrix_entries", matrix_entry_layout );
-    auto entry_view = matrix_entries->view();
-    Kokkos::parallel_for(
-        "fill_matrix_entries",
-        createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
-        KOKKOS_LAMBDA( const int i, const int j ) {
-            entry_view( i, j, 0 ) = 4.0;
-            entry_view( i, j, 1 ) = -1.0;
-            entry_view( i, j, 2 ) = -1.0;
-            entry_view( i, j, 3 ) = -1.0;
-            entry_view( i, j, 4 ) = -1.0;
-        } );
-
-    solver->setMatrixValues( *matrix_entries );
-
-    // Set the tolerance.
-    solver->setTolerance( 1.0e-9 );
-
-    // Set the maximum iterations.
-    solver->setMaxIter( 2000 );
-
-    // Set the print level.
-    solver->setPrintLevel( 1 );
-
-    // Create a preconditioner.
-    if ( "none" != precond_type )
+    HYPRE_Init();
     {
-        auto preconditioner = createHypreStructuredSolver<double, MemorySpace>(
-            precond_type, *vector_layout, true );
-        solver->setPreconditioner( preconditioner );
+        // Create a solver.
+        auto solver = createHypreStructuredSolver<double, MemorySpace>(
+            solver_type, *vector_layout );
+
+        // Create a 5-point 2d laplacian stencil.
+        std::vector<std::array<int, 2>> stencil = {
+            { 0, 0 }, { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
+        solver->setMatrixStencil( stencil );
+
+        // Create the matrix entries. The stencil is defined over cells.
+        auto matrix_entry_layout = createArrayLayout( local_mesh, 5, Cell() );
+        auto matrix_entries = createArray<double, MemorySpace>(
+            "matrix_entries", matrix_entry_layout );
+        auto entry_view = matrix_entries->view();
+        Kokkos::parallel_for(
+            "fill_matrix_entries",
+            createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
+            KOKKOS_LAMBDA( const int i, const int j ) {
+                entry_view( i, j, 0 ) = 4.0;
+                entry_view( i, j, 1 ) = -1.0;
+                entry_view( i, j, 2 ) = -1.0;
+                entry_view( i, j, 3 ) = -1.0;
+                entry_view( i, j, 4 ) = -1.0;
+            } );
+
+        solver->setMatrixValues( *matrix_entries );
+
+        // Set the tolerance.
+        solver->setTolerance( 1.0e-9 );
+
+        // Set the maximum iterations.
+        solver->setMaxIter( 2000 );
+
+        // Set the print level.
+        solver->setPrintLevel( 1 );
+
+        // Create a preconditioner.
+        if ( "none" != precond_type )
+        {
+            auto preconditioner =
+                createHypreStructuredSolver<double, MemorySpace>(
+                    precond_type, *vector_layout, true );
+            solver->setPreconditioner( preconditioner );
+        }
+
+        // Setup the problem.
+        solver->setup();
+
+        // Solve the problem.
+        solver->solve( *rhs, *lhs );
+
+        // Create a solver reference for comparison.
+        auto lhs_ref =
+            createArray<double, MemorySpace>( "lhs_ref", vector_layout );
+        ArrayOp::assign( *lhs_ref, 0.0, Own() );
+
+        auto ref_solver = createReferenceConjugateGradient<double, MemorySpace>(
+            *vector_layout );
+        ref_solver->setMatrixStencil( stencil );
+        const auto& ref_entries = ref_solver->getMatrixValues();
+        auto matrix_view = ref_entries.view();
+        auto global_space = local_mesh->indexSpace( Own(), Cell(), Global() );
+        int ncell_i = global_grid->globalNumEntity( Cell(), Dim::I );
+        int ncell_j = global_grid->globalNumEntity( Cell(), Dim::J );
+        Kokkos::parallel_for(
+            "fill_ref_entries",
+            createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
+            KOKKOS_LAMBDA( const int i, const int j ) {
+                int gi =
+                    i + global_space.min( Dim::I ) - owned_space.min( Dim::I );
+                int gj =
+                    j + global_space.min( Dim::J ) - owned_space.min( Dim::J );
+                matrix_view( i, j, 0 ) = 4.0;
+                matrix_view( i, j, 1 ) = ( gi > 0 ) ? -1.0 : 0.0;
+                matrix_view( i, j, 2 ) = ( gi < ncell_i - 1 ) ? -1.0 : 0.0;
+                matrix_view( i, j, 3 ) = ( gj > 0 ) ? -1.0 : 0.0;
+                matrix_view( i, j, 4 ) = ( gj < ncell_j - 1 ) ? -1.0 : 0.0;
+            } );
+
+        std::vector<std::array<int, 2>> diag_stencil = { { 0, 0 } };
+        ref_solver->setPreconditionerStencil( diag_stencil );
+        const auto& preconditioner_entries =
+            ref_solver->getPreconditionerValues();
+        auto preconditioner_view = preconditioner_entries.view();
+        Kokkos::parallel_for(
+            "fill_preconditioner_entries",
+            createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
+            KOKKOS_LAMBDA( const int i, const int j ) {
+                preconditioner_view( i, j, 0 ) = 1.0 / 4.0;
+            } );
+
+        ref_solver->setTolerance( 1.0e-11 );
+        ref_solver->setPrintLevel( 1 );
+        ref_solver->setup();
+        ref_solver->solve( *rhs, *lhs_ref );
+
+        // Check the results.
+        auto lhs_host = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), lhs->view() );
+        auto lhs_ref_host = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), lhs_ref->view() );
+        for ( int i = owned_space.min( Dim::I ); i < owned_space.max( Dim::I );
+              ++i )
+            for ( int j = owned_space.min( Dim::J );
+                  j < owned_space.max( Dim::J ); ++j )
+                EXPECT_FLOAT_EQ( lhs_host( i, j, 0 ), lhs_ref_host( i, j, 0 ) );
+
+        // Setup the problem again. We would need to do this if we changed the
+        // matrix entries.
+        solver->setup();
+
+        // Solve the problem again
+        ArrayOp::assign( *rhs, 2.0, Own() );
+        ArrayOp::assign( *lhs, 0.0, Own() );
+        solver->solve( *rhs, *lhs );
+
+        // Compute another reference solution.
+        ArrayOp::assign( *lhs_ref, 0.0, Own() );
+        ref_solver->solve( *rhs, *lhs_ref );
+
+        // Check the results again
+        lhs_host = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
+                                                        lhs->view() );
+        lhs_ref_host = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
+                                                            lhs_ref->view() );
+        for ( int i = owned_space.min( Dim::I ); i < owned_space.max( Dim::I );
+              ++i )
+            for ( int j = owned_space.min( Dim::J );
+                  j < owned_space.max( Dim::J ); ++j )
+                EXPECT_FLOAT_EQ( lhs_host( i, j, 0 ), lhs_ref_host( i, j, 0 ) );
     }
-
-    // Setup the problem.
-    solver->setup();
-
-    // Solve the problem.
-    solver->solve( *rhs, *lhs );
-
-    // Create a solver reference for comparison.
-    auto lhs_ref = createArray<double, MemorySpace>( "lhs_ref", vector_layout );
-    ArrayOp::assign( *lhs_ref, 0.0, Own() );
-
-    auto ref_solver =
-        createReferenceConjugateGradient<double, MemorySpace>( *vector_layout );
-    ref_solver->setMatrixStencil( stencil );
-    const auto& ref_entries = ref_solver->getMatrixValues();
-    auto matrix_view = ref_entries.view();
-    auto global_space = local_mesh->indexSpace( Own(), Cell(), Global() );
-    int ncell_i = global_grid->globalNumEntity( Cell(), Dim::I );
-    int ncell_j = global_grid->globalNumEntity( Cell(), Dim::J );
-    Kokkos::parallel_for(
-        "fill_ref_entries",
-        createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
-        KOKKOS_LAMBDA( const int i, const int j ) {
-            int gi = i + global_space.min( Dim::I ) - owned_space.min( Dim::I );
-            int gj = j + global_space.min( Dim::J ) - owned_space.min( Dim::J );
-            matrix_view( i, j, 0 ) = 4.0;
-            matrix_view( i, j, 1 ) = ( gi > 0 ) ? -1.0 : 0.0;
-            matrix_view( i, j, 2 ) = ( gi < ncell_i - 1 ) ? -1.0 : 0.0;
-            matrix_view( i, j, 3 ) = ( gj > 0 ) ? -1.0 : 0.0;
-            matrix_view( i, j, 4 ) = ( gj < ncell_j - 1 ) ? -1.0 : 0.0;
-        } );
-
-    std::vector<std::array<int, 2>> diag_stencil = { { 0, 0 } };
-    ref_solver->setPreconditionerStencil( diag_stencil );
-    const auto& preconditioner_entries = ref_solver->getPreconditionerValues();
-    auto preconditioner_view = preconditioner_entries.view();
-    Kokkos::parallel_for(
-        "fill_preconditioner_entries",
-        createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
-        KOKKOS_LAMBDA( const int i, const int j ) {
-            preconditioner_view( i, j, 0 ) = 1.0 / 4.0;
-        } );
-
-    ref_solver->setTolerance( 1.0e-11 );
-    ref_solver->setPrintLevel( 1 );
-    ref_solver->setup();
-    ref_solver->solve( *rhs, *lhs_ref );
-
-    // Check the results.
-    auto lhs_host =
-        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), lhs->view() );
-    auto lhs_ref_host = Kokkos::create_mirror_view_and_copy(
-        Kokkos::HostSpace(), lhs_ref->view() );
-    for ( int i = owned_space.min( Dim::I ); i < owned_space.max( Dim::I );
-          ++i )
-        for ( int j = owned_space.min( Dim::J ); j < owned_space.max( Dim::J );
-              ++j )
-            EXPECT_FLOAT_EQ( lhs_host( i, j, 0 ), lhs_ref_host( i, j, 0 ) );
-
-    // Setup the problem again. We would need to do this if we changed the
-    // matrix entries.
-    solver->setup();
-
-    // Solve the problem again
-    ArrayOp::assign( *rhs, 2.0, Own() );
-    ArrayOp::assign( *lhs, 0.0, Own() );
-    solver->solve( *rhs, *lhs );
-
-    // Compute another reference solution.
-    ArrayOp::assign( *lhs_ref, 0.0, Own() );
-    ref_solver->solve( *rhs, *lhs_ref );
-
-    // Check the results again
-    lhs_host =
-        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), lhs->view() );
-    lhs_ref_host = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
-                                                        lhs_ref->view() );
-    for ( int i = owned_space.min( Dim::I ); i < owned_space.max( Dim::I );
-          ++i )
-        for ( int j = owned_space.min( Dim::J ); j < owned_space.max( Dim::J );
-              ++j )
-            EXPECT_FLOAT_EQ( lhs_host( i, j, 0 ), lhs_ref_host( i, j, 0 ) );
+    HYPRE_Finalize();
 }
 
 //---------------------------------------------------------------------------//
