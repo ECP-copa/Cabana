@@ -82,8 +82,8 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
     std::vector<std::array<int, 3>> stencil = {
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
         { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
-    solver->createMatrixStencil( 3, false, 0 ,1, 0 );
-    solver->setMatrixStencil( stencil, false, 0 ,1, 0 );
+    solver->createMatrixStencil( 3, false, 0, 1, {7} );
+    solver->setMatrixStencil( stencil, false, 0, 1, 0 );
 
     solver->setSolverGraph( 1 );
 

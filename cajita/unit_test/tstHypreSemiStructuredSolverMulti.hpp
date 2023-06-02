@@ -1,4 +1,5 @@
 
+
 /****************************************************************************
  * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
@@ -84,10 +85,12 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
         { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
 
+    solver->createMatrixStencil( 3, false, 0, 3, {7, 0, 0} );
+    solver->createMatrixStencil( 3, false, 1, 3, {0, 7, 0} );
+    solver->createMatrixStencil( 3, false, 2, 3, {0, 0, 7} );
     for ( int v_h = 0; v_h < 3; ++v_h )
     {
-        solver->createMatrixStencil( 3, false, v_h ,1, v_h );
-        solver->setMatrixStencil( stencil, false, v_h , 3, v_h);
+        solver->setMatrixStencil( stencil, false, v_h, 3, v_h);
     }
 
     solver->setSolverGraph( 3 );
@@ -141,8 +144,13 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
     solver->solve( *rhs, *lhs , 3 );
 
     // Create a solver reference for comparison.
+    vector_layout = createArrayLayout( local_mesh, 1, Cell() );
+
     auto lhs_ref = createArray<double, MemorySpace>( "lhs_ref", vector_layout );
     ArrayOp::assign( *lhs_ref, 0.0, Own() );
+
+    auto rhs_ref = createArray<double, MemorySpace>( "rhs_ref", vector_layout );
+    ArrayOp::assign( *rhs_ref, 1.0, Own() );
 
     auto ref_solver =
         createReferenceConjugateGradient<double, MemorySpace>( *vector_layout );
@@ -183,7 +191,7 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
     ref_solver->setTolerance( 1.0e-11 );
     ref_solver->setPrintLevel( 1 );
     ref_solver->setup();
-    ref_solver->solve( *rhs, *lhs_ref );
+    ref_solver->solve( *rhs_ref, *lhs_ref );
 
     // Check the results.
     auto lhs_host =
@@ -196,7 +204,7 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
               ++j )
             for ( int k = owned_space.min( Dim::K );
                   k < owned_space.max( Dim::K ); ++k )
-                EXPECT_FLOAT_EQ( lhs_host( i, j, k, 0 ),
+                EXPECT_FLOAT_EQ( lhs_host( i, j, k, 1 ),
                                  lhs_ref_host( i, j, k, 0 ) );
 
     // Setup the problem again. We would need to do this if we changed the
@@ -210,7 +218,8 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
 
     // Compute another reference solution.
     ArrayOp::assign( *lhs_ref, 0.0, Own() );
-    ref_solver->solve( *rhs, *lhs_ref );
+    ArrayOp::assign( *rhs_ref, 2.0, Own() );
+    ref_solver->solve( *rhs_ref, *lhs_ref );
 
     // Check the results again
     lhs_host =
@@ -223,7 +232,7 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
               ++j )
             for ( int k = owned_space.min( Dim::K );
                   k < owned_space.max( Dim::K ); ++k )
-                EXPECT_FLOAT_EQ( lhs_host( i, j, k, 0 ),
+                EXPECT_FLOAT_EQ( lhs_host( i, j, k, 1 ),
                                  lhs_ref_host( i, j, k, 0 ) );
 
     HYPRE_Finalize();

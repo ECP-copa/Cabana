@@ -97,9 +97,12 @@ void hypreSemiStructuredSolverExample()
     std::vector<std::array<int, 3>> stencil = {
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
         { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
+
+    solver->createMatrixStencil( 3, false, 0, 3, {7, 0, 0} );
+    solver->createMatrixStencil( 3, false, 1, 3, {0, 7, 0} );
+    solver->createMatrixStencil( 3, false, 2, 3, {0, 0, 7} );
     for ( int v = 0; v < 3; ++v)
     {
-        solver->createMatrixStencil( 3, false, v, 3, 7);
         solver->setMatrixStencil( stencil, false, v, 3, v );
     }
 
@@ -130,8 +133,6 @@ void hypreSemiStructuredSolverExample()
     {
         solver->setMatrixValues( *matrix_entries, v_h, v_h );
     }
-
-    solver->printMatrix();
 
     // The desired tolerance must be set for each solve.
     solver->setTolerance( 1.0e-9 );

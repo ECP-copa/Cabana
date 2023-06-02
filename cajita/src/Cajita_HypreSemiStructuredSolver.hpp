@@ -216,6 +216,7 @@ class HypreSemiStructuredSolver
 
             _stencils.resize( n_vars );
             _stencil_size.resize( n_vars );
+            _stencil_index.resize( n_vars, std::vector<unsigned>( n_vars+1) );
 
             error = HYPRE_SStructVectorCreate( _comm, _grid, &_b );
             checkHypreError( error );
@@ -285,15 +286,24 @@ class HypreSemiStructuredSolver
     */
     void
     createMatrixStencil( int NumSpaceDim, const bool is_symmetric = false, int var = 0, 
-                         int n_vars = 3, int stencil_size = 7 )
+                         int n_vars = 3, std::vector<unsigned> stencil_length = { 7, 7, 7 } )
     {
         // This function is only valid for non-preconditioners.
         if ( _is_preconditioner )
             throw std::logic_error(
-                "Cannot call setMatrixStencil() on preconditioners" );
+                "Cannot call createMatrixStencil() on preconditioners" );
+
+        // Generate the stencil indexing
+        unsigned index = 0;
+        for ( int i = 0; i < n_vars; ++i )
+        {
+            _stencil_index[var][i] = index;
+            index += stencil_length[i]; 
+        }
+        _stencil_index[var][n_vars] = index;
 
         // Create the stencil.
-        _stencil_size[var] = stencil_size;
+        _stencil_size[var] = index;
         auto error =
             HYPRE_SStructStencilCreate( NumSpaceDim, _stencil_size[var], &_stencils[var] );
         checkHypreError( error );
@@ -418,7 +428,7 @@ class HypreSemiStructuredSolver
 
         // Ensure the values array matches up in dimension with the stencil size
         if ( values.layout()->dofsPerEntity() !=
-             static_cast<int>( _stencil_size[v_x] ) )
+             static_cast<int>( _stencil_size[v_h] ) )
             throw std::runtime_error(
                 "Number of matrix values does not match stencil size" );
 
@@ -426,10 +436,6 @@ class HypreSemiStructuredSolver
         const std::size_t num_space_dim = Array_t::num_space_dim;
 
         int part = 0;
-
-        // Intialize the matrix for setting values.
-//        auto error = HYPRE_SStructMatrixInitialize( _A );
-//        checkHypreError( error );
 
         // Copy the matrix entries into HYPRE. The HYPRE layout is fixed as
         // layout-right.
@@ -440,7 +446,7 @@ class HypreSemiStructuredSolver
             reorder_size[d] = owned_space.extent( d );
         }
 
-        reorder_size.back() = _stencil_size[v_x];
+        reorder_size.back() = _stencil_size[v_h];
         IndexSpace<num_space_dim + 1> reorder_space( reorder_size );
         auto a_values =
             createView<HYPRE_Complex, Kokkos::LayoutRight, memory_space>(
@@ -450,9 +456,9 @@ class HypreSemiStructuredSolver
         Kokkos::deep_copy( a_values, values_subv );
 
         // Insert values into the HYPRE matrix.
-        std::vector<HYPRE_Int> indices( _stencil_size[v_x] );
-//        int start = _stencil_size[v_x] * v_x;
-        int start = 0;
+        int index_size = _stencil_index[v_h][v_x+1] - _stencil_index[v_h][v_x];
+        std::vector<HYPRE_Int> indices( index_size );
+        int start = _stencil_index[v_h][v_x];
         std::iota( indices.begin(), indices.end(), start );
         auto error = HYPRE_SStructMatrixSetBoxValues(
             _A, part, _lower.data(), _upper.data(), v_h, indices.size(), indices.data(),
@@ -657,6 +663,7 @@ class HypreSemiStructuredSolver
     std::vector<HYPRE_SStructStencil> _stencils;
     HYPRE_SStructGraph _graph;
     std::vector<unsigned> _stencil_size;
+    std::vector<std::vector<unsigned>> _stencil_index;
     HYPRE_SStructMatrix _A;
     HYPRE_SStructVector _b;
     HYPRE_SStructVector _x;
