@@ -7,6 +7,8 @@ jobs:
     name: clang-format
     if: ${{ github.event.comment.body == 'format this please' }}
     runs-on: ubuntu-20.04
+    container:
+      image: ghcr.io/ecp-copa/ci-containers/${{ matrix.distro }}
     env:
       CLANG_FORMAT: clang-format
     steps:
