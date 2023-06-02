@@ -112,8 +112,9 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
         // Create a preconditioner.
         if ( "none" != precond_type )
         {
-            auto preconditioner = createHypreStructuredSolver<double, MemorySpace>(
-                precond_type, *vector_layout, true );
+            auto preconditioner =
+                createHypreStructuredSolver<double, MemorySpace>(
+                    precond_type, *vector_layout, true );
             solver->setPreconditioner( preconditioner );
         }
 
@@ -124,11 +125,12 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
         solver->solve( *rhs, *lhs );
 
         // Create a solver reference for comparison.
-        auto lhs_ref = createArray<double, MemorySpace>( "lhs_ref", vector_layout );
+        auto lhs_ref =
+            createArray<double, MemorySpace>( "lhs_ref", vector_layout );
         ArrayOp::assign( *lhs_ref, 0.0, Own() );
 
-        auto ref_solver =
-            createReferenceConjugateGradient<double, MemorySpace>( *vector_layout );
+        auto ref_solver = createReferenceConjugateGradient<double, MemorySpace>(
+            *vector_layout );
         ref_solver->setMatrixStencil( stencil );
         const auto& ref_entries = ref_solver->getMatrixValues();
         auto matrix_view = ref_entries.view();
@@ -139,18 +141,21 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
             "fill_ref_entries",
             createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
             KOKKOS_LAMBDA( const int i, const int j ) {
-                int gi = i + global_space.min( Dim::I ) - owned_space.min( Dim::I );
-                int gj = j + global_space.min( Dim::J ) - owned_space.min( Dim::J );
+                int gi =
+                    i + global_space.min( Dim::I ) - owned_space.min( Dim::I );
+                int gj =
+                    j + global_space.min( Dim::J ) - owned_space.min( Dim::J );
                 matrix_view( i, j, 0 ) = 4.0;
                 matrix_view( i, j, 1 ) = ( gi > 0 ) ? -1.0 : 0.0;
                 matrix_view( i, j, 2 ) = ( gi < ncell_i - 1 ) ? -1.0 : 0.0;
                 matrix_view( i, j, 3 ) = ( gj > 0 ) ? -1.0 : 0.0;
                 matrix_view( i, j, 4 ) = ( gj < ncell_j - 1 ) ? -1.0 : 0.0;
-        } );
+            } );
 
         std::vector<std::array<int, 2>> diag_stencil = { { 0, 0 } };
         ref_solver->setPreconditionerStencil( diag_stencil );
-        const auto& preconditioner_entries = ref_solver->getPreconditionerValues();
+        const auto& preconditioner_entries =
+            ref_solver->getPreconditionerValues();
         auto preconditioner_view = preconditioner_entries.view();
         Kokkos::parallel_for(
             "fill_preconditioner_entries",
@@ -165,14 +170,14 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
         ref_solver->solve( *rhs, *lhs_ref );
 
         // Check the results.
-        auto lhs_host =
-            Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), lhs->view() );
+        auto lhs_host = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), lhs->view() );
         auto lhs_ref_host = Kokkos::create_mirror_view_and_copy(
             Kokkos::HostSpace(), lhs_ref->view() );
         for ( int i = owned_space.min( Dim::I ); i < owned_space.max( Dim::I );
               ++i )
-            for ( int j = owned_space.min( Dim::J ); j < owned_space.max( Dim::J );
-                  ++j )
+            for ( int j = owned_space.min( Dim::J );
+                  j < owned_space.max( Dim::J ); ++j )
                 EXPECT_FLOAT_EQ( lhs_host( i, j, 0 ), lhs_ref_host( i, j, 0 ) );
 
         // Setup the problem again. We would need to do this if we changed the
@@ -189,14 +194,14 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
         ref_solver->solve( *rhs, *lhs_ref );
 
         // Check the results again
-        lhs_host =
-            Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), lhs->view() );
+        lhs_host = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
+                                                        lhs->view() );
         lhs_ref_host = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
                                                             lhs_ref->view() );
         for ( int i = owned_space.min( Dim::I ); i < owned_space.max( Dim::I );
               ++i )
-            for ( int j = owned_space.min( Dim::J ); j < owned_space.max( Dim::J );
-                  ++j )
+            for ( int j = owned_space.min( Dim::J );
+                  j < owned_space.max( Dim::J ); ++j )
                 EXPECT_FLOAT_EQ( lhs_host( i, j, 0 ), lhs_ref_host( i, j, 0 ) );
     }
     HYPRE_Finalize();
