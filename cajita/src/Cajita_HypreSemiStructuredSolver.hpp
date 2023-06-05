@@ -190,7 +190,8 @@ class HypreSemiStructuredSolver
             vartypes.resize( n_vars );
             for (int i = 0; i < n_vars; ++i) 
             {
-                vartypes[ i ] = HYPRE_SSTRUCT_VARIABLE_NODE;
+//                vartypes[ i ] = HYPRE_SSTRUCT_VARIABLE_NODE;
+                vartypes[ i ] = HYPRE_SSTRUCT_VARIABLE_CELL;
             }
             error = HYPRE_SStructGridSetVariables( _grid, part, n_vars, vartypes.data() );
 
@@ -557,6 +558,7 @@ class HypreSemiStructuredSolver
         {
             reorder_size[d] = owned_space.extent( d );
         }
+
         reorder_size.back() = n_vars;
         IndexSpace<num_space_dim+1> reorder_space( reorder_size );
         auto vector_values =
@@ -565,11 +567,23 @@ class HypreSemiStructuredSolver
         auto b_subv = createSubview( b.view(), owned_space );
         Kokkos::deep_copy( vector_values, b_subv );
 
+        std::array<long, num_space_dim + 1> variable_size_min;
+        std::array<long, num_space_dim + 1> variable_size_max;
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+        {
+            variable_size_min[d] = 0;
+            variable_size_max[d] = owned_space.extent( d );
+        }
+
         // Insert b values into the HYPRE vector.
         for ( int var = 0; var < n_vars; ++var )
         {
+            variable_size_min.back() = var;
+            variable_size_max.back() = var + 1;
+            IndexSpace<num_space_dim+1> variable_space( variable_size_min, variable_size_max);
+            auto vector_values_sv = createSubview( vector_values, variable_space );
             error = HYPRE_SStructVectorSetBoxValues(
-                _b, part, _lower.data(), _upper.data(), var, vector_values.data() );
+                _b, part, _lower.data(), _upper.data(), var, vector_values_sv.data() );
             checkHypreError( error );
         }
 
@@ -579,11 +593,17 @@ class HypreSemiStructuredSolver
         // Solve the problem
         this->solveImpl( _A, _b, _x );
 
+        error = HYPRE_SStructVectorGather( _x );
+
         // Extract the solution from the LHS
         for ( int var = 0; var < n_vars; ++var )
         {
+            variable_size_min.back() = var;
+            variable_size_max.back() = var + 1;
+            IndexSpace<num_space_dim+1> variable_space( variable_size_min, variable_size_max);
+            auto vector_values_sv = createSubview( vector_values, variable_space );
             error = HYPRE_SStructVectorGetBoxValues(
-                _x, part, _lower.data(), _upper.data(), var, vector_values.data() );
+                _x, part, _lower.data(), _upper.data(), var, vector_values_sv.data() );
             checkHypreError( error );
         }
 
@@ -1326,10 +1346,18 @@ class HypreSemiStructJacobi
                          const bool is_preconditioner = false, int n_vars = 3 )
         : Base( layout, n_vars, is_preconditioner )
     {
-        if ( !is_preconditioner )
-            throw std::logic_error(
-                "Jacobi preconditioner cannot be used as a solver" );
+        auto error = HYPRE_StructJacobiCreate(
+            layout.localGrid()->globalGrid().comm(), &_solver );
+        this->checkHypreError( error );
+
+        if ( is_preconditioner )
+        {
+            error = HYPRE_StructJacobiSetZeroGuess( _solver );
+            this->checkHypreError( error );
+        }
     }
+    
+    ~HypreSemiStructJacobi() { HYPRE_StructJacobiDestroy( _solver ); }
 
     HYPRE_StructSolver getHypreSolver() const override { return nullptr; }
     HYPRE_PtrToStructSolverFcn getHypreSetupFunction() const override
@@ -1342,56 +1370,63 @@ class HypreSemiStructJacobi
     }
 
   protected:
-    void setToleranceImpl( const double ) override
+   void setToleranceImpl( const double tol ) override
     {
-        throw std::logic_error(
-            "Jacobi preconditioner cannot be used as a solver" );
+        auto error = HYPRE_StructJacobiSetTol( _solver, tol );
+        this->checkHypreError( error );
     }
 
-    void setMaxIterImpl( const int ) override
+    void setMaxIterImpl( const int max_iter ) override
     {
-        throw std::logic_error(
-            "Jacobi preconditioner cannot be used as a solver" );
+        auto error = HYPRE_StructJacobiSetMaxIter( _solver, max_iter );
+        this->checkHypreError( error );
     }
 
     void setPrintLevelImpl( const int ) override
     {
-        throw std::logic_error(
-            "Jacobi preconditioner cannot be used as a solver" );
+        // The Jacobi solver does not support a print level.
     }
 
-    void setupImpl( HYPRE_SStructMatrix, HYPRE_SStructVector,
-                    HYPRE_SStructVector ) override
+   void setupImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
+                    HYPRE_StructVector x ) override
     {
-        throw std::logic_error(
-            "Jacobi preconditioner cannot be used as a solver" );
+        auto error = HYPRE_StructJacobiSetup( _solver, A, b, x );
+        this->checkHypreError( error );
     }
 
-    void solveImpl( HYPRE_SStructMatrix, HYPRE_SStructVector,
-                    HYPRE_SStructVector ) override
+    void solveImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
+                    HYPRE_StructVector x ) override
     {
-        throw std::logic_error(
-            "Jacobi preconditioner cannot be used as a solver" );
+        auto error = HYPRE_StructJacobiSolve( _solver, A, b, x );
+        this->checkHypreError( error );
     }
 
     int getNumIterImpl() override
     {
-        throw std::logic_error(
-            "Jacobi preconditioner cannot be used as a solver" );
+        HYPRE_Int num_iter;
+        auto error = HYPRE_StructJacobiGetNumIterations( _solver, &num_iter );
+        this->checkHypreError( error );
+        return num_iter;
     }
 
     double getFinalRelativeResidualNormImpl() override
     {
-        throw std::logic_error(
-            "Jacobi preconditioner cannot be used as a solver" );
+        HYPRE_Real norm;
+        auto error =
+            HYPRE_StructJacobiGetFinalRelativeResidualNorm( _solver, &norm );
+        this->checkHypreError( error );
+        return norm;
     }
 
     void setPreconditionerImpl(
-        const HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>& ) override
+        const HypreStructuredSolver<Scalar, EntityType, MemorySpace>& ) override
     {
         throw std::logic_error(
-            "Jacobi preconditioner does not support preconditioning." );
+            "HYPRE Jacobi solver does not support preconditioning." );
     }
+
+    private:
+      HYPRE_StructSolver _solver;
 };
 
 //---------------------------------------------------------------------------//
