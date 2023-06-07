@@ -68,10 +68,12 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
     // Create the RHS.
     auto vector_layout = createArrayLayout( local_mesh, 3, Cell() );
     auto rhs = createArray<double, MemorySpace>( "rhs", vector_layout );
+//    auto rhs = createArray<double, Kokkos::LayoutRight, MemorySpace>( "rhs", vector_layout );
     ArrayOp::assign( *rhs, 1.0, Own() );
 
     // Create the LHS.
     auto lhs = createArray<double, MemorySpace>( "lhs", vector_layout );
+//    auto lhs = createArray<double, Kokkos::LayoutRight, MemorySpace>( "lhs", vector_layout );
     ArrayOp::assign( *lhs, 0.0, Own() );
 
     HYPRE_Init();
@@ -85,12 +87,12 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
         { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
 
-    solver->createMatrixStencil( 3, false, 0, 3, {7, 0, 0} );
-    solver->createMatrixStencil( 3, false, 1, 3, {0, 7, 0} );
-    solver->createMatrixStencil( 3, false, 2, 3, {0, 0, 7} );
+    solver->createMatrixStencil( 3, 0, 3, {7, 0, 0} );
+    solver->createMatrixStencil( 3, 1, 3, {0, 7, 0} );
+    solver->createMatrixStencil( 3, 2, 3, {0, 0, 7} );
     for ( int v_h = 0; v_h < 3; ++v_h )
     {
-        solver->setMatrixStencil( stencil, false, v_h, 3, v_h);
+        solver->setMatrixStencil( stencil, v_h, v_h);
     }
 
     solver->setSolverGraph( 3 );
@@ -141,7 +143,7 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
     solver->setup();
 
     // Solve the problem.
-    solver->solve( *rhs, *lhs , 3 );
+    solver->solve( *rhs, *lhs, 3 );
 
     // Create a solver reference for comparison.
     vector_layout = createArrayLayout( local_mesh, 1, Cell() );
@@ -204,7 +206,7 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
               ++j )
             for ( int k = owned_space.min( Dim::K );
                   k < owned_space.max( Dim::K ); ++k )
-                EXPECT_FLOAT_EQ( lhs_host( i, j, k, 1 ),
+                EXPECT_FLOAT_EQ( lhs_host( i, j, k, 0 ),
                                  lhs_ref_host( i, j, k, 0 ) );
 
     // Setup the problem again. We would need to do this if we changed the
@@ -261,35 +263,35 @@ TEST( semi_structured_solver, bicgstab_none_test )
 //    poissonTest( "PFMG", "none", TEST_MEMSPACE{} );
 //}
 
-//TEST( semi_structured_solver, pcg_diag_test )
-//{
-//    poissonTest( "PCG", "Diagonal", TEST_MEMSPACE{} );
-//}
+TEST( semi_structured_solver, pcg_diag_test )
+{
+    poissonTest( "PCG", "Diagonal", TEST_MEMSPACE{} );
+}
 
-//TEST( semi_structured_solver, gmres_diag_test )
-//{
-//    poissonTest( "GMRES", "Diagonal", TEST_MEMSPACE{} );
-//}
+TEST( semi_structured_solver, gmres_diag_test )
+{
+    poissonTest( "GMRES", "Diagonal", TEST_MEMSPACE{} );
+}
 
-//TEST( semi_structured_solver, bicgstab_diag_test )
-//{
-//    poissonTest( "BiCGSTAB", "Diagonal", TEST_MEMSPACE{} );
-//}
+TEST( semi_structured_solver, bicgstab_diag_test )
+{
+    poissonTest( "BiCGSTAB", "Diagonal", TEST_MEMSPACE{} );
+}
 
-//TEST( semi_structured_solver, pcg_jacobi_test )
-//{
-//    poissonTest( "PCG", "Jacobi", TEST_MEMSPACE{} );
-//}
+TEST( semi_structured_solver, pcg_jacobi_test )
+{
+    poissonTest( "PCG", "Jacobi", TEST_MEMSPACE{} );
+}
 
-//TEST( semi_structured_solver, gmres_jacobi_test )
-//{
-//    poissonTest( "GMRES", "Jacobi", TEST_MEMSPACE{} );
-//}
+TEST( semi_structured_solver, gmres_jacobi_test )
+{
+    poissonTest( "GMRES", "Jacobi", TEST_MEMSPACE{} );
+}
 
-//TEST( semi_structured_solver, bicgstab_jacobi_test )
-//{
-//    poissonTest( "BiCGSTAB", "Jacobi", TEST_MEMSPACE{} );
-//}
+TEST( semi_structured_solver, bicgstab_jacobi_test )
+{
+    poissonTest( "BiCGSTAB", "Jacobi", TEST_MEMSPACE{} );
+}
 
 //---------------------------------------------------------------------------//
 

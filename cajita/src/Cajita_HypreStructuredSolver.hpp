@@ -154,7 +154,6 @@ class HypreStructuredSolver
                     global_space.min( num_space_dim - d - 1 ) );
                 _upper[d] = static_cast<HYPRE_Int>(
                     global_space.max( num_space_dim - d - 1 ) - 1 );
-                std::cout << _lower[d] << " " << _upper[d] << std::endl;
             }
             error = HYPRE_StructGridSetExtents( _grid, _lower.data(),
                                                 _upper.data() );

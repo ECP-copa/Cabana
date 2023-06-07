@@ -82,8 +82,8 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
     std::vector<std::array<int, 3>> stencil = {
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
         { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
-    solver->createMatrixStencil( 3, false, 0, 1, {7} );
-    solver->setMatrixStencil( stencil, false, 0, 1, 0 );
+    solver->createMatrixStencil( 3, 0, 1, {7} );
+    solver->setMatrixStencil( stencil, 0, 0 );
 
     solver->setSolverGraph( 1 );
 
@@ -244,35 +244,35 @@ TEST( semi_structured_solver, bicgstab_none_test )
 //    poissonTest( "PFMG", "none", TEST_MEMSPACE{} );
 //}
 
-//TEST( semi_structured_solver, pcg_diag_test )
-//{
-//    poissonTest( "PCG", "Diagonal", TEST_MEMSPACE{} );
-//}
+TEST( semi_structured_solver, pcg_diag_test )
+{
+    poissonTest( "PCG", "Diagonal", TEST_MEMSPACE{} );
+}
 
-//TEST( semi_structured_solver, gmres_diag_test )
-//{
-//    poissonTest( "GMRES", "Diagonal", TEST_MEMSPACE{} );
-//}
+TEST( semi_structured_solver, gmres_diag_test )
+{
+    poissonTest( "GMRES", "Diagonal", TEST_MEMSPACE{} );
+}
 
-//TEST( semi_structured_solver, bicgstab_diag_test )
-//{
-//    poissonTest( "BiCGSTAB", "Diagonal", TEST_MEMSPACE{} );
-//}
+TEST( semi_structured_solver, bicgstab_diag_test )
+{
+    poissonTest( "BiCGSTAB", "Diagonal", TEST_MEMSPACE{} );
+}
 
-//TEST( semi_structured_solver, pcg_jacobi_test )
-//{
-//    poissonTest( "PCG", "Jacobi", TEST_MEMSPACE{} );
-//}
+TEST( semi_structured_solver, pcg_jacobi_test )
+{
+    poissonTest( "PCG", "Jacobi", TEST_MEMSPACE{} );
+}
 
-//TEST( semi_structured_solver, gmres_jacobi_test )
-//{
-//    poissonTest( "GMRES", "Jacobi", TEST_MEMSPACE{} );
-//}
+TEST( semi_structured_solver, gmres_jacobi_test )
+{
+    poissonTest( "GMRES", "Jacobi", TEST_MEMSPACE{} );
+}
 
-//TEST( semi_structured_solver, bicgstab_jacobi_test )
-//{
-//    poissonTest( "BiCGSTAB", "Jacobi", TEST_MEMSPACE{} );
-//}
+TEST( semi_structured_solver, bicgstab_jacobi_test )
+{
+    poissonTest( "BiCGSTAB", "Jacobi", TEST_MEMSPACE{} );
+}
 
 //---------------------------------------------------------------------------//
 

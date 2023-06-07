@@ -97,8 +97,8 @@ void hypreSemiStructuredSolverExample()
     std::vector<std::array<int, 3>> stencil = {
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
         { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
-    solver->createMatrixStencil( 3, false, 0, 1, {7} );
-    solver->setMatrixStencil( stencil, false, 0, 1, 0 );
+    solver->createMatrixStencil( 3, 0, 1, {7} );
+    solver->setMatrixStencil( stencil, 0, 0 );
 
     solver->setSolverGraph( 1 );
 
@@ -138,14 +138,12 @@ void hypreSemiStructuredSolverExample()
 
     /*
       Create a preconditioner - in this case we use Diagonal
-      FIXME: preconditioners not currently functioning with hypre semi-structured solvers
     */
-//    std::string precond_type = "Jacobi";
-//    std::string precond_type = "Diagonal";
-//    auto preconditioner =
-//        Cajita::createHypreSemiStructuredSolver<double, MemorySpace>(
-//            precond_type, *vector_layout, true, 1 );
-//    solver->setPreconditioner( preconditioner );
+    std::string precond_type = "Jacobi";
+    auto preconditioner =
+        Cajita::createHypreSemiStructuredSolver<double, MemorySpace>(
+            precond_type, *vector_layout, true, 1 );
+    solver->setPreconditioner( preconditioner );
 
     // Setup the problem - this is necessary before solving.
     solver->setup();
