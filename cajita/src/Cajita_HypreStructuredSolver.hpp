@@ -280,7 +280,11 @@ class HypreStructuredSolver
         checkHypreError( error );
     }
 
-    void printMatrix() { HYPRE_StructMatrixPrint( "Struct.mat", _A, 0 ); }
+    void printMatrix(const char* prefix) { HYPRE_StructMatrixPrint( prefix, _A, 0 ); }
+
+    void printLHS(const char* prefix) { HYPRE_StructMatrixPrint( prefix, _A, 0 ); }
+
+    void printRHS(const char* prefix) { HYPRE_StructMatrixPrint( prefix, _A, 0 ); }
 
     //! Set convergence tolerance implementation.
     void setTolerance( const double tol ) { this->setToleranceImpl( tol ); }
