@@ -206,8 +206,9 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
               ++j )
             for ( int k = owned_space.min( Dim::K );
                   k < owned_space.max( Dim::K ); ++k )
-                EXPECT_FLOAT_EQ( lhs_host( i, j, k, 0 ),
-                                 lhs_ref_host( i, j, k, 0 ) );
+                for ( int var = 0; var < 3; ++var )
+                    EXPECT_FLOAT_EQ( lhs_host( i, j, k, var ),
+                                     lhs_ref_host( i, j, k, 0 ) );
 
     // Setup the problem again. We would need to do this if we changed the
     // matrix entries.

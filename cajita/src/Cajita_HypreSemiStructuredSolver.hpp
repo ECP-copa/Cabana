@@ -21,6 +21,7 @@
 #include <Cajita_IndexSpace.hpp>
 #include <Cajita_LocalGrid.hpp>
 #include <Cajita_Types.hpp>
+#include <Cajita_Hypre.hpp>
 
 #include <HYPRE_config.h>
 #include <HYPRE_sstruct_ls.h>
@@ -40,63 +41,6 @@
 
 namespace Cajita
 {
-//---------------------------------------------------------------------------//
-// Hypre memory space selection. Don't compile if HYPRE wasn't configured to
-// use the device.
-// ---------------------------------------------------------------------------//
-
-/*
-
-//! Hypre device compatibility check.
-template <class MemorySpace>
-struct HypreIsCompatibleWithMemorySpace : std::false_type
-{
-};
-
-// FIXME: This is currently written in this structure because HYPRE only has
-// compile-time switches for backends and hence only one can be used at a
-// time. Once they have a run-time switch we can use that instead.
-#ifdef HYPRE_USING_CUDA
-#ifdef KOKKOS_ENABLE_CUDA
-#ifdef HYPRE_USING_DEVICE_MEMORY
-//! Hypre device compatibility check - CUDA memory.
-template <>
-struct HypreIsCompatibleWithMemorySpace<Kokkos::CudaSpace> : std::true_type
-{
-};
-#endif // end HYPRE_USING_DEVICE_MEMORY
-
-//! Hypre device compatibility check - CUDA UVM memory.
-#ifdef HYPRE_USING_UNIFIED_MEMORY
-template <>
-struct HypreIsCompatibleWithMemorySpace<Kokkos::CudaUVMSpace> : std::true_type
-{
-};
-#endif // end HYPRE_USING_UNIFIED_MEMORY
-#endif // end KOKKOS_ENABLE_CUDA
-#endif // end HYPRE_USING_CUDA
-
-#ifdef HYPRE_USING_HIP
-#ifdef KOKKOS_ENABLE_HIP
-//! Hypre device compatibility check - HIP memory. FIXME - make this true when
-//! the HYPRE CMake includes HIP
-template <>
-struct HypreIsCompatibleWithMemorySpace<Kokkos::ExperimentalHIPSpace>
-    : std::false_type
-{
-};
-#endif // end KOKKOS_ENABLE_HIP
-#endif // end HYPRE_USING_HIP
-
-#ifndef HYPRE_USING_GPU
-//! Hypre device compatibility check - host memory.
-template <>
-struct HypreIsCompatibleWithMemorySpace<Kokkos::HostSpace> : std::true_type
-{
-};
-#endif // end HYPRE_USING_GPU
-
-*/
 
 //---------------------------------------------------------------------------//
 //! Hypre semi-structured solver interface for scalar fields.
@@ -119,6 +63,7 @@ class HypreSemiStructuredSolver
     /*!
       \brief Constructor.
       \param layout The array layout defining the vector space of the solver.
+      \param n_vars Number of variable in the system domain
       \param is_preconditioner Flag indicating if this solver will be used as
       a preconditioner.
     */
@@ -277,13 +222,13 @@ class HypreSemiStructuredSolver
 
     /*!
       /brief Create the operator stencil to be filled by setMatrixStencil
-      /param stencil The (i,j,k) offsets describing the semi-structured matrix
-       entried at each grid point. Offsets are defined relative to an index
+      /param NumSpaceDim The number of spatial dimensions in the linear system being
+      solved.
       /param var The variable number that the stencil corresponds to, in essence 
        which equation number in the linear system
       /param n_vars number of variables in the linear system
-      /param stencil_size The size of the stencil to be created. This must match
-       the size of the stencils being passed to setMatrixStencil for var.
+      /param stencil_length A vector containing the length of the stencil for variable
+      `var` for each variable in the system to be created for HYPRE 
     */
     void
     createMatrixStencil( int NumSpaceDim, int var = 0, 
@@ -317,7 +262,6 @@ class HypreSemiStructuredSolver
       entries at each grid point. Offsets are defined relative to an index.
       /param var The variable number that the stencil corresponds to, in essence 
        which equation number in the linear system
-      /param n_vars number of variables in the linear system
       /param dep The integer for the independent variable in the linear system that
        is currently being set
     */
@@ -404,8 +348,10 @@ class HypreSemiStructuredSolver
       required. The order of the stencil elements is that same as that in the
       stencil definition. Note that values corresponding to stencil entries
       outside of the domain should be set to zero.
-      \param var The variable number that the matrix entry values apply to.
-      This will correspond to the stencil and graph setup.
+      \param v_x The variable index for the independent variable (column)
+      that is being set by the current call to setMatrixValues
+      \param v_h The variable index for the equation (row) that is being
+      set by the current call to setMatrixValues
     */
     template <class Array_t>
     void setMatrixValues( const Array_t& values, int v_x, int v_h )
@@ -467,11 +413,11 @@ class HypreSemiStructuredSolver
         checkHypreError( error );
     }
 
-    void printMatrix() { HYPRE_SStructMatrixPrint( "SStruct.mat", _A, 0 ); }
+    void printMatrix(const char* prefix) { HYPRE_SStructMatrixPrint( prefix, _A, 0 ); }
 
-    void printLHS() { HYPRE_SStructVectorPrint( "SStruct.x", _x, 0 ); }
+    void printLHS(const char* prefix) { HYPRE_SStructVectorPrint( prefix, _x, 0 ); }
 
-    void printRHS() { HYPRE_SStructVectorPrint( "SStruct.b", _b, 0 ); }
+    void printRHS(const char* prefix) { HYPRE_SStructVectorPrint( prefix, _b, 0 ); }
 
     //! Set convergence tolerance implementation.
     void setTolerance( const double tol ) { this->setToleranceImpl( tol ); }
@@ -520,6 +466,7 @@ class HypreSemiStructuredSolver
       \brief Solve the problem Ax = b for x.
       \param b The forcing term.
       \param x The solution.
+      \param n_vars Number of variables in the solution domain
     */
     template <class Array_t>
     void solve( const Array_t& b, Array_t& x, int n_vars = 3 )
