@@ -120,7 +120,7 @@ void hypreStructuredSolverExample()
 
     solver->setMatrixValues( *matrix_entries );
 
-    solver->printMatrix();
+    solver->printMatrix( "Struct.mat" );
 
     // The desired tolerance must be set for each solve.
     solver->setTolerance( 1.0e-9 );
