@@ -120,8 +120,16 @@ else()
   Cabana_add_dependency( PACKAGE HDF5 COMPONENTS C )
 endif()
 
-if(Cabana_ENABLE_HDF5 AND NOT Cabana_ENABLE_MPI)
-  message(FATAL_ERROR "Cabana HDF5 support requires MPI.")
+if(Cabana_ENABLE_HDF5)
+  if(NOT Cabana_ENABLE_MPI)
+    message(FATAL_ERROR "Cabana HDF5 support requires MPI.")
+  endif()
+
+  include(CheckSymbolExists)
+  check_symbol_exists(H5_HAVE_PARALLEL "H5pubconf.h" HDF5_IS_PARALLEL)
+  if(NOT HDF5_IS_PARALLEL)
+    message(FATAL_ERROR "Cabana HDF5 support requires parallel HDF5.")
+  endif()
 endif()
 
 #------------------------------------------------------------------------------#
