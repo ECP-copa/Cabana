@@ -106,6 +106,9 @@ if(SILO_FOUND)
 endif()
 
 # find HDF5 (XDMF)
+# Set this to always get the parallel version in case both serial and parallel are installed.
+# Parallel is required (see below).
+set(HDF5_PREFER_PARALLEL TRUE)
 # FIXME: not automatically finding since we need to enable C to use it (which
 #        would break pure CXX projects downstream) unless CMake is new enough
 if(CMAKE_VERSION VERSION_LESS 3.26)
