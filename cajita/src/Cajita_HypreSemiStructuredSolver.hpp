@@ -18,10 +18,10 @@
 
 #include <Cajita_Array.hpp>
 #include <Cajita_GlobalGrid.hpp>
+#include <Cajita_Hypre.hpp>
 #include <Cajita_IndexSpace.hpp>
 #include <Cajita_LocalGrid.hpp>
 #include <Cajita_Types.hpp>
-#include <Cajita_Hypre.hpp>
 
 #include <HYPRE_config.h>
 #include <HYPRE_sstruct_ls.h>
@@ -69,7 +69,7 @@ class HypreSemiStructuredSolver
     */
     template <class ArrayLayout_t>
     HypreSemiStructuredSolver( const ArrayLayout_t& layout, int n_vars,
-                           const bool is_preconditioner = false)
+                               const bool is_preconditioner = false )
         : _comm( layout.localGrid()->globalGrid().comm() )
         , _is_preconditioner( is_preconditioner )
     {
@@ -93,7 +93,8 @@ class HypreSemiStructuredSolver
         if ( !_is_preconditioner )
         {
             // Create the grid.
-            auto error = HYPRE_SStructGridCreate( _comm, num_space_dim, n_parts, &_grid );
+            auto error = HYPRE_SStructGridCreate( _comm, num_space_dim, n_parts,
+                                                  &_grid );
             checkHypreError( error );
 
             // Get the global index space spanned by the local grid on this
@@ -115,7 +116,7 @@ class HypreSemiStructuredSolver
                     global_space.max( num_space_dim - d - 1 ) - 1 );
             }
             error = HYPRE_SStructGridSetExtents( _grid, part, _lower.data(),
-                                                _upper.data() );
+                                                 _upper.data() );
             checkHypreError( error );
 
             // Get periodicity. Note we invert the order of this to KJI as well.
@@ -133,12 +134,13 @@ class HypreSemiStructuredSolver
             // Set the variables on the HYPRE grid
             std::vector<HYPRE_SStructVariable> vartypes;
             vartypes.resize( n_vars );
-            for (int i = 0; i < n_vars; ++i) 
+            for ( int i = 0; i < n_vars; ++i )
             {
-//                vartypes[ i ] = HYPRE_SSTRUCT_VARIABLE_NODE;
-                vartypes[ i ] = HYPRE_SSTRUCT_VARIABLE_CELL;
+                //                vartypes[ i ] = HYPRE_SSTRUCT_VARIABLE_NODE;
+                vartypes[i] = HYPRE_SSTRUCT_VARIABLE_CELL;
             }
-            error = HYPRE_SStructGridSetVariables( _grid, part, n_vars, vartypes.data() );
+            error = HYPRE_SStructGridSetVariables( _grid, part, n_vars,
+                                                   vartypes.data() );
 
             // Assemble the grid.
             error = HYPRE_SStructGridAssemble( _grid );
@@ -147,14 +149,14 @@ class HypreSemiStructuredSolver
             // Allocate LHS and RHS vectors and initialize to zero. Note that we
             // are fixing the views under these vectors to layout-right.
 
-            std::array<long, num_space_dim+1> reorder_size;
+            std::array<long, num_space_dim + 1> reorder_size;
             for ( std::size_t d = 0; d < num_space_dim; ++d )
             {
                 reorder_size[d] = global_space.extent( d );
             }
             reorder_size.back() = n_vars;
             // Is the size of the vector_values array correct?
-            IndexSpace<num_space_dim+1> reorder_space( reorder_size );
+            IndexSpace<num_space_dim + 1> reorder_space( reorder_size );
             auto vector_values =
                 createView<HYPRE_Complex, Kokkos::LayoutRight, memory_space>(
                     "vector_values0", reorder_space );
@@ -162,18 +164,20 @@ class HypreSemiStructuredSolver
 
             _stencils.resize( n_vars );
             _stencil_size.resize( n_vars );
-            _stencil_index.resize( n_vars, std::vector<unsigned>( n_vars+1) );
+            _stencil_index.resize( n_vars,
+                                   std::vector<unsigned>( n_vars + 1 ) );
 
             error = HYPRE_SStructVectorCreate( _comm, _grid, &_b );
             checkHypreError( error );
-            error = HYPRE_SStructVectorSetObjectType(_b, object_type);
+            error = HYPRE_SStructVectorSetObjectType( _b, object_type );
             checkHypreError( error );
             error = HYPRE_SStructVectorInitialize( _b );
             checkHypreError( error );
             for ( int i = 0; i < n_vars; ++i )
             {
                 error = HYPRE_SStructVectorSetBoxValues(
-                    _b, part, _lower.data(), _upper.data(), i, vector_values.data() );
+                    _b, part, _lower.data(), _upper.data(), i,
+                    vector_values.data() );
                 checkHypreError( error );
             }
             error = HYPRE_SStructVectorAssemble( _b );
@@ -181,14 +185,15 @@ class HypreSemiStructuredSolver
 
             error = HYPRE_SStructVectorCreate( _comm, _grid, &_x );
             checkHypreError( error );
-            error = HYPRE_SStructVectorSetObjectType(_x, object_type);
+            error = HYPRE_SStructVectorSetObjectType( _x, object_type );
             checkHypreError( error );
             error = HYPRE_SStructVectorInitialize( _x );
             checkHypreError( error );
             for ( int i = 0; i < n_vars; ++i )
             {
                 error = HYPRE_SStructVectorSetBoxValues(
-                    _x, part, _lower.data(), _upper.data(), i, vector_values.data() );
+                    _x, part, _lower.data(), _upper.data(), i,
+                    vector_values.data() );
                 checkHypreError( error );
             }
             checkHypreError( error );
@@ -206,8 +211,9 @@ class HypreSemiStructuredSolver
             HYPRE_SStructVectorDestroy( _x );
             HYPRE_SStructVectorDestroy( _b );
             HYPRE_SStructMatrixDestroy( _A );
-            for (std::size_t i = 0; i < _stencils.size(); ++i ){
-            HYPRE_SStructStencilDestroy( _stencils[i] );
+            for ( std::size_t i = 0; i < _stencils.size(); ++i )
+            {
+                HYPRE_SStructStencilDestroy( _stencils[i] );
             }
             HYPRE_SStructGridDestroy( _grid );
             HYPRE_SStructGraphDestroy( _graph );
@@ -219,20 +225,18 @@ class HypreSemiStructuredSolver
     //! Return if this solver is a preconditioner.
     bool isPreconditioner() const { return _is_preconditioner; }
 
-
     /*!
       /brief Create the operator stencil to be filled by setMatrixStencil
-      /param NumSpaceDim The number of spatial dimensions in the linear system being
-      solved.
-      /param var The variable number that the stencil corresponds to, in essence 
-       which equation number in the linear system
-      /param n_vars number of variables in the linear system
-      /param stencil_length A vector containing the length of the stencil for variable
-      `var` for each variable in the system to be created for HYPRE 
+      /param NumSpaceDim The number of spatial dimensions in the linear system
+      being solved. /param var The variable number that the stencil corresponds
+      to, in essence which equation number in the linear system /param n_vars
+      number of variables in the linear system /param stencil_length A vector
+      containing the length of the stencil for variable `var` for each variable
+      in the system to be created for HYPRE
     */
-    void
-    createMatrixStencil( int NumSpaceDim, int var = 0, 
-                         int n_vars = 3, std::vector<unsigned> stencil_length = { 7, 7, 7 } )
+    void createMatrixStencil( int NumSpaceDim, int var = 0, int n_vars = 3,
+                              std::vector<unsigned> stencil_length = { 7, 7,
+                                                                       7 } )
     {
         // This function is only valid for non-preconditioners.
         if ( _is_preconditioner )
@@ -244,26 +248,25 @@ class HypreSemiStructuredSolver
         for ( int i = 0; i < n_vars; ++i )
         {
             _stencil_index[var][i] = index;
-            index += stencil_length[i]; 
+            index += stencil_length[i];
         }
         _stencil_index[var][n_vars] = index;
 
         // Create the stencil.
         _stencil_size[var] = index;
-        auto error =
-            HYPRE_SStructStencilCreate( NumSpaceDim, _stencil_size[var], &_stencils[var] );
+        auto error = HYPRE_SStructStencilCreate(
+            NumSpaceDim, _stencil_size[var], &_stencils[var] );
         checkHypreError( error );
     }
-
 
     /*!
       \brief Set the operator stencil.
       \param stencil The (i,j,k) offsets describing the structured matrix
       entries at each grid point. Offsets are defined relative to an index.
-      /param var The variable number that the stencil corresponds to, in essence 
+      /param var The variable number that the stencil corresponds to, in essence
        which equation number in the linear system
-      /param dep The integer for the independent variable in the linear system that
-       is currently being set
+      /param dep The integer for the independent variable in the linear system
+      that is currently being set
     */
     template <std::size_t NumSpaceDim>
     void
@@ -281,7 +284,8 @@ class HypreSemiStructuredSolver
         {
             for ( std::size_t d = 0; d < NumSpaceDim; ++d )
                 offset[d] = stencil[n][d];
-            auto error = HYPRE_SStructStencilSetEntry( _stencils[var], n, offset.data(), dep );
+            auto error = HYPRE_SStructStencilSetEntry( _stencils[var], n,
+                                                       offset.data(), dep );
             checkHypreError( error );
         }
     }
@@ -312,7 +316,8 @@ class HypreSemiStructuredSolver
         // Set the stencil to the graph
         for ( int i = 0; i < n_vars; ++i )
         {
-            error = HYPRE_SStructGraphSetStencil( _graph, part, i, _stencils[i] );
+            error =
+                HYPRE_SStructGraphSetStencil( _graph, part, i, _stencils[i] );
             checkHypreError( error );
         }
 
@@ -325,21 +330,19 @@ class HypreSemiStructuredSolver
         checkHypreError( error );
 
         // Set the SStruct matrix object type
-        error = HYPRE_SStructMatrixSetObjectType(_A, object_type);
+        error = HYPRE_SStructMatrixSetObjectType( _A, object_type );
         checkHypreError( error );
     }
-
 
     /*
         \brief Prepare the hypre matrix to have it's values set
     */
-     void initializeHypreMatrix( )
+    void initializeHypreMatrix()
     {
         // Initialize the matrix.
         auto error = HYPRE_SStructMatrixInitialize( _A );
         checkHypreError( error );
     }
-
 
     /*!
       \brief Set the matrix values.
@@ -403,21 +406,31 @@ class HypreSemiStructuredSolver
         Kokkos::deep_copy( a_values, values_subv );
 
         // Insert values into the HYPRE matrix.
-        int index_size = _stencil_index[v_h][v_x+1] - _stencil_index[v_h][v_x];
+        int index_size =
+            _stencil_index[v_h][v_x + 1] - _stencil_index[v_h][v_x];
         std::vector<HYPRE_Int> indices( index_size );
         int start = _stencil_index[v_h][v_x];
         std::iota( indices.begin(), indices.end(), start );
         auto error = HYPRE_SStructMatrixSetBoxValues(
-            _A, part, _lower.data(), _upper.data(), v_h, indices.size(), indices.data(),
-            a_values.data() );
+            _A, part, _lower.data(), _upper.data(), v_h, indices.size(),
+            indices.data(), a_values.data() );
         checkHypreError( error );
     }
 
-    void printMatrix(const char* prefix) { HYPRE_SStructMatrixPrint( prefix, _A, 0 ); }
+    void printMatrix( const char* prefix )
+    {
+        HYPRE_SStructMatrixPrint( prefix, _A, 0 );
+    }
 
-    void printLHS(const char* prefix) { HYPRE_SStructVectorPrint( prefix, _x, 0 ); }
+    void printLHS( const char* prefix )
+    {
+        HYPRE_SStructVectorPrint( prefix, _x, 0 );
+    }
 
-    void printRHS(const char* prefix) { HYPRE_SStructVectorPrint( prefix, _b, 0 ); }
+    void printRHS( const char* prefix )
+    {
+        HYPRE_SStructVectorPrint( prefix, _b, 0 );
+    }
 
     //! Set convergence tolerance implementation.
     void setTolerance( const double tol ) { this->setToleranceImpl( tol ); }
@@ -471,7 +484,8 @@ class HypreSemiStructuredSolver
     template <class Array_t>
     void solve( const Array_t& b, Array_t& x, int n_vars = 3 )
     {
-        Kokkos::Profiling::pushRegion( "Cajita::HypreSemiStructuredSolver::solve" );
+        Kokkos::Profiling::pushRegion(
+            "Cajita::HypreSemiStructuredSolver::solve" );
 
         static_assert( is_array<Array_t>::value, "Must use an array" );
         static_assert(
@@ -510,33 +524,38 @@ class HypreSemiStructuredSolver
         reorder_min.back() = 0;
         reorder_max.back() = n_vars;
 
-        IndexSpace<num_space_dim+1> reorder_space( reorder_min, reorder_max );
+        IndexSpace<num_space_dim + 1> reorder_space( reorder_min, reorder_max );
         auto vector_values_view =
-           createView<HYPRE_Complex, Kokkos::LayoutRight, memory_space>(
+            createView<HYPRE_Complex, Kokkos::LayoutRight, memory_space>(
                 "vector_values", reorder_space );
         auto b_subv = createSubview( b.view(), owned_space );
         Kokkos::deep_copy( vector_values_view, b_subv );
 
         reorder_max.back() = 1;
-              
-        IndexSpace<num_space_dim+1> reorder_space_1( reorder_min, reorder_max );
-        auto vector_values_subv =
-           createView<HYPRE_Complex, Kokkos::LayoutRight, memory_space>(
-                "vector_values", reorder_space_1 );
 
+        IndexSpace<num_space_dim + 1> reorder_space_1( reorder_min,
+                                                       reorder_max );
+        auto vector_values_subv =
+            createView<HYPRE_Complex, Kokkos::LayoutRight, memory_space>(
+                "vector_values", reorder_space_1 );
 
         // Insert b values into the HYPRE vector.
         for ( int var = 0; var < n_vars; ++var )
         {
-            for ( int i = 0; i < owned_space.extent( 0 ); ++i ) {
-                for ( int j = 0; j < owned_space.extent( 1 ); ++j ) {
-                    for ( int k = 0; k < owned_space.extent( 2 ); ++k ) {
-                        vector_values_subv( i, j, k, 0 ) = vector_values_view( i, j, k, var );
+            for ( int i = 0; i < owned_space.extent( 0 ); ++i )
+            {
+                for ( int j = 0; j < owned_space.extent( 1 ); ++j )
+                {
+                    for ( int k = 0; k < owned_space.extent( 2 ); ++k )
+                    {
+                        vector_values_subv( i, j, k, 0 ) =
+                            vector_values_view( i, j, k, var );
                     }
                 }
             }
             error = HYPRE_SStructVectorSetBoxValues(
-                _b, part, _lower.data(), _upper.data(), var, vector_values_subv.data() );
+                _b, part, _lower.data(), _upper.data(), var,
+                vector_values_subv.data() );
             checkHypreError( error );
         }
 
@@ -553,12 +572,17 @@ class HypreSemiStructuredSolver
         for ( int var = 0; var < n_vars; ++var )
         {
             error = HYPRE_SStructVectorGetBoxValues(
-                _x, part, _lower.data(), _upper.data(), var, vector_values_subv.data() );
+                _x, part, _lower.data(), _upper.data(), var,
+                vector_values_subv.data() );
             checkHypreError( error );
-            for ( int i = 0; i < owned_space.extent( 0 ); ++i ){
-                for ( int j = 0; j < owned_space.extent( 1 ); ++j ){
-                    for ( int k = 0; k < owned_space.extent( 2 ); ++k ){
-                        vector_values_view( i, j, k, var ) = vector_values_subv( i, j, k, 0 );
+            for ( int i = 0; i < owned_space.extent( 0 ); ++i )
+            {
+                for ( int j = 0; j < owned_space.extent( 1 ); ++j )
+                {
+                    for ( int k = 0; k < owned_space.extent( 2 ); ++k )
+                    {
+                        vector_values_view( i, j, k, var ) =
+                            vector_values_subv( i, j, k, 0 );
                     }
                 }
             }
@@ -660,7 +684,7 @@ class HypreSemiStructPCG
     //! Constructor
     template <class ArrayLayout_t>
     HypreSemiStructPCG( const ArrayLayout_t& layout, int n_vars,
-                    const bool is_preconditioner = false)
+                        const bool is_preconditioner = false )
         : Base( layout, n_vars, is_preconditioner )
     {
         if ( is_preconditioner )
@@ -787,7 +811,7 @@ class HypreSemiStructGMRES
     //! Constructor
     template <class ArrayLayout_t>
     HypreSemiStructGMRES( const ArrayLayout_t& layout, int n_vars,
-                      const bool is_preconditioner = false )
+                          const bool is_preconditioner = false )
         : Base( layout, n_vars, is_preconditioner )
     {
         if ( is_preconditioner )
@@ -911,7 +935,8 @@ class HypreSemiStructBiCGSTAB
     //! Constructor
     template <class ArrayLayout_t>
     HypreSemiStructBiCGSTAB( const ArrayLayout_t& layout,
-                         const bool is_preconditioner = false, int n_vars = 3 )
+                             const bool is_preconditioner = false,
+                             int n_vars = 3 )
         : Base( layout, n_vars, is_preconditioner )
     {
         if ( is_preconditioner )
@@ -987,7 +1012,8 @@ class HypreSemiStructBiCGSTAB
     int getNumIterImpl() override
     {
         HYPRE_Int num_iter;
-        auto error = HYPRE_SStructBiCGSTABGetNumIterations( _solver, &num_iter );
+        auto error =
+            HYPRE_SStructBiCGSTABGetNumIterations( _solver, &num_iter );
         this->checkHypreError( error );
         return num_iter;
     }
@@ -1028,7 +1054,7 @@ class HypreSemiStructPFMG
     //! Constructor
     template <class ArrayLayout_t>
     HypreSemiStructPFMG( const ArrayLayout_t& layout, int n_vars,
-                     const bool is_preconditioner = false )
+                         const bool is_preconditioner = false )
         : Base( layout, n_vars, is_preconditioner )
     {
         auto error = HYPRE_SStructSysPFMGCreate(
@@ -1046,14 +1072,14 @@ class HypreSemiStructPFMG
 
     // PFMG SETTINGS
 
-/*
-    //! Set the maximum number of multigrid levels.
-    void setMaxLevels( const int max_levels )
-    {
-        auto error = HYPRE_SStructSysPFMGSetMaxLevels( _solver, max_levels );
-        this->checkHypreError( error );
-    }
-*/
+    /*
+        //! Set the maximum number of multigrid levels.
+        void setMaxLevels( const int max_levels )
+        {
+            auto error = HYPRE_SStructSysPFMGSetMaxLevels( _solver, max_levels
+       ); this->checkHypreError( error );
+        }
+    */
 
     //! Additionally require that the relative difference in successive
     //! iterates be small.
@@ -1096,25 +1122,27 @@ class HypreSemiStructPFMG
       levels. The stencil coefficients are computed by averaging techniques.
     */
 
-/*
-    void setRAPType( const int rap_type )
-    {
-//        auto error = HYPRE_SStructSysPFMGSetRAPType( _solver, rap_type );
-//        this->checkHypreError( error );
-    }
-*/
+    /*
+        void setRAPType( const int rap_type )
+        {
+    //        auto error = HYPRE_SStructSysPFMGSetRAPType( _solver, rap_type );
+    //        this->checkHypreError( error );
+        }
+    */
 
     //! Set number of relaxation sweeps before coarse-grid correction.
     void setNumPreRelax( const int num_pre_relax )
     {
-        auto error = HYPRE_SStructSysPFMGSetNumPreRelax( _solver, num_pre_relax );
+        auto error =
+            HYPRE_SStructSysPFMGSetNumPreRelax( _solver, num_pre_relax );
         this->checkHypreError( error );
     }
 
     //! Set number of relaxation sweeps before coarse-grid correction.
     void setNumPostRelax( const int num_post_relax )
     {
-        auto error = HYPRE_SStructSysPFMGSetNumPostRelax( _solver, num_post_relax );
+        auto error =
+            HYPRE_SStructSysPFMGSetNumPostRelax( _solver, num_post_relax );
         this->checkHypreError( error );
     }
 
@@ -1195,7 +1223,8 @@ class HypreSemiStructPFMG
     }
 
     void setPreconditionerImpl(
-        const HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>& ) override
+        const HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>& )
+        override
     {
         throw std::logic_error(
             "HYPRE PFMG solver does not support preconditioning." );
@@ -1217,7 +1246,8 @@ class HypreSemiStructDiagonal
     //! Constructor
     template <class ArrayLayout_t>
     HypreSemiStructDiagonal( const ArrayLayout_t& layout,
-                         const bool is_preconditioner = false, int n_vars = 3 )
+                             const bool is_preconditioner = false,
+                             int n_vars = 3 )
         : Base( layout, n_vars, is_preconditioner )
     {
         if ( !is_preconditioner )
@@ -1281,7 +1311,8 @@ class HypreSemiStructDiagonal
     }
 
     void setPreconditionerImpl(
-        const HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>& ) override
+        const HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>& )
+        override
     {
         throw std::logic_error(
             "Diagonal preconditioner does not support preconditioning." );
@@ -1300,7 +1331,8 @@ class HypreSemiStructJacobi
     //! Constructor
     template <class ArrayLayout_t>
     HypreSemiStructJacobi( const ArrayLayout_t& layout,
-                         const bool is_preconditioner = false, int n_vars = 3 )
+                           const bool is_preconditioner = false,
+                           int n_vars = 3 )
         : Base( layout, n_vars, is_preconditioner )
     {
         auto error = HYPRE_StructJacobiCreate(
@@ -1313,7 +1345,7 @@ class HypreSemiStructJacobi
             this->checkHypreError( error );
         }
     }
-    
+
     ~HypreSemiStructJacobi() { HYPRE_StructJacobiDestroy( _solver ); }
 
     HYPRE_StructSolver getHypreSolver() const override { return nullptr; }
@@ -1327,7 +1359,7 @@ class HypreSemiStructJacobi
     }
 
   protected:
-   void setToleranceImpl( const double tol ) override
+    void setToleranceImpl( const double tol ) override
     {
         auto error = HYPRE_StructJacobiSetTol( _solver, tol );
         this->checkHypreError( error );
@@ -1344,7 +1376,7 @@ class HypreSemiStructJacobi
         // The Jacobi solver does not support a print level.
     }
 
-   void setupImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
+    void setupImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
                     HYPRE_StructVector x ) override
     {
         auto error = HYPRE_StructJacobiSetup( _solver, A, b, x );
@@ -1382,8 +1414,8 @@ class HypreSemiStructJacobi
             "HYPRE Jacobi solver does not support preconditioning." );
     }
 
-    private:
-      HYPRE_StructSolver _solver;
+  private:
+    HYPRE_StructSolver _solver;
 };
 
 //---------------------------------------------------------------------------//
@@ -1391,10 +1423,10 @@ class HypreSemiStructJacobi
 //---------------------------------------------------------------------------//
 //! Create a HYPRE PCG semi-structured solver.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
-std::shared_ptr<
-    HypreSemiStructPCG<Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
+std::shared_ptr<HypreSemiStructPCG<Scalar, typename ArrayLayout_t::entity_type,
+                                   MemorySpace>>
 createHypreSemiStructPCG( const ArrayLayout_t& layout,
-                      const bool is_preconditioner = false, int n_vars = 3 )
+                          const bool is_preconditioner = false, int n_vars = 3 )
 {
     static_assert( is_array_layout<ArrayLayout_t>::value,
                    "Must use an array layout" );
@@ -1405,10 +1437,11 @@ createHypreSemiStructPCG( const ArrayLayout_t& layout,
 
 //! Create a HYPRE GMRES semi-structured solver.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
-std::shared_ptr<
-    HypreSemiStructGMRES<Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
+std::shared_ptr<HypreSemiStructGMRES<
+    Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
 createHypreSemiStructGMRES( const ArrayLayout_t& layout,
-                        const bool is_preconditioner = false, int n_vars = 3 )
+                            const bool is_preconditioner = false,
+                            int n_vars = 3 )
 {
     static_assert( is_array_layout<ArrayLayout_t>::value,
                    "Must use an array layout" );
@@ -1419,24 +1452,25 @@ createHypreSemiStructGMRES( const ArrayLayout_t& layout,
 
 //! Create a HYPRE BiCGSTAB semi-structured solver.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
-std::shared_ptr<HypreSemiStructBiCGSTAB<Scalar, typename ArrayLayout_t::entity_type,
-                                    MemorySpace>>
+std::shared_ptr<HypreSemiStructBiCGSTAB<
+    Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
 createHypreSemiStructBiCGSTAB( const ArrayLayout_t& layout,
-                           const bool is_preconditioner = false, int n_vars = 3 )
+                               const bool is_preconditioner = false,
+                               int n_vars = 3 )
 {
     static_assert( is_array_layout<ArrayLayout_t>::value,
                    "Must use an array layout" );
     return std::make_shared<HypreSemiStructBiCGSTAB<
         Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>(
-        layout, is_preconditioner,n_vars );
+        layout, is_preconditioner, n_vars );
 }
 
 //! Create a HYPRE PFMG semi-structured solver.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
-std::shared_ptr<
-    HypreSemiStructPFMG<Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
+std::shared_ptr<HypreSemiStructPFMG<Scalar, typename ArrayLayout_t::entity_type,
+                                    MemorySpace>>
 createHypreSemiStructPFMG( const ArrayLayout_t& layout,
-                       const bool is_preconditioner = false )
+                           const bool is_preconditioner = false )
 {
     static_assert( is_array_layout<ArrayLayout_t>::value,
                    "Must use an array layout" );
@@ -1447,10 +1481,11 @@ createHypreSemiStructPFMG( const ArrayLayout_t& layout,
 
 //! Create a HYPRE Diagonal semi-structured solver.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
-std::shared_ptr<HypreSemiStructDiagonal<Scalar, typename ArrayLayout_t::entity_type,
-                                    MemorySpace>>
+std::shared_ptr<HypreSemiStructDiagonal<
+    Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
 createHypreSemiStructDiagonal( const ArrayLayout_t& layout,
-                           const bool is_preconditioner = false, int n_vars = 3 )
+                               const bool is_preconditioner = false,
+                               int n_vars = 3 )
 {
     static_assert( is_array_layout<ArrayLayout_t>::value,
                    "Must use an array layout" );
@@ -1461,10 +1496,11 @@ createHypreSemiStructDiagonal( const ArrayLayout_t& layout,
 
 //! Create a HYPRE Jacobi semi-structured solver.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
-std::shared_ptr<HypreSemiStructJacobi<Scalar, typename ArrayLayout_t::entity_type,
-                                    MemorySpace>>
+std::shared_ptr<HypreSemiStructJacobi<
+    Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
 createHypreSemiStructJacobi( const ArrayLayout_t& layout,
-                           const bool is_preconditioner = false, int n_vars = 3 )
+                             const bool is_preconditioner = false,
+                             int n_vars = 3 )
 {
     static_assert( is_array_layout<ArrayLayout_t>::value,
                    "Must use an array layout" );
@@ -1487,24 +1523,25 @@ template <class Scalar, class MemorySpace, class ArrayLayout_t>
 std::shared_ptr<HypreSemiStructuredSolver<
     Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
 createHypreSemiStructuredSolver( const std::string& solver_type,
-                             const ArrayLayout_t& layout, 
-                             const bool is_preconditioner = false, int n_vars = 3 )
+                                 const ArrayLayout_t& layout,
+                                 const bool is_preconditioner = false,
+                                 int n_vars = 3 )
 {
     static_assert( is_array_layout<ArrayLayout_t>::value,
                    "Must use an array layout" );
 
     if ( "PCG" == solver_type )
-        return createHypreSemiStructPCG<Scalar, MemorySpace>( layout,
-                                                          is_preconditioner, n_vars );
+        return createHypreSemiStructPCG<Scalar, MemorySpace>(
+            layout, is_preconditioner, n_vars );
     else if ( "GMRES" == solver_type )
-        return createHypreSemiStructGMRES<Scalar, MemorySpace>( layout,
-                                                            is_preconditioner, n_vars );
+        return createHypreSemiStructGMRES<Scalar, MemorySpace>(
+            layout, is_preconditioner, n_vars );
     else if ( "BiCGSTAB" == solver_type )
         return createHypreSemiStructBiCGSTAB<Scalar, MemorySpace>(
             layout, is_preconditioner, n_vars );
     else if ( "PFMG" == solver_type )
-        return createHypreSemiStructPFMG<Scalar, MemorySpace>( layout,
-                                                           is_preconditioner );
+        return createHypreSemiStructPFMG<Scalar, MemorySpace>(
+            layout, is_preconditioner );
     else if ( "Diagonal" == solver_type )
         return createHypreSemiStructDiagonal<Scalar, MemorySpace>(
             layout, is_preconditioner, n_vars );
