@@ -1,0 +1,149 @@
+name: CI-e4s
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+concurrency:
+  group: ${ {github.event_name }}-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{github.event_name == 'pull_request'}}
+
+jobs:
+  HIP:
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        cxx: ['hipcc']
+        cmake_build_type: ['Debug', 'Release']
+        kokkos_ver: ['3.6.01']
+        arborx: ['OFF']
+        heffte: ['OFF' ]
+        hypre: ['OFF']
+        liball: ['OFF']
+        silo: ['OFF']
+        hdf5: ['OFF']
+    runs-on: ubuntu-20.04
+    container: docker.io/ecpe4s/e4s-base-rocm:23.05
+    steps:
+      - name: Checkout GTest
+        uses: actions/checkout@v3
+        with:
+          repository: google/googletest
+          ref: release-1.11.0
+          path: gtest
+      - name: Build gtest
+        working-directory: gtest
+        run: |
+          cmake -B build \
+            -DCMAKE_INSTALL_PREFIX=$HOME/gtest \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
+          cmake --build build --parallel 2
+          cmake --install build
+      - name: Checkout kokkos
+        uses: actions/checkout@v3
+        with:
+          repository: kokkos/kokkos
+          ref: ${{ matrix.kokkos_ver }}
+          path: kokkos
+      - name: Build kokkos
+        working-directory: kokkos
+        run: |
+          cmake -B build \
+            -DCMAKE_INSTALL_PREFIX=$HOME/kokkos \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
+            -DKokkos_ENABLE_HIP=ON \
+            -DKokkos_ARCH_VEGA908=ON
+          cmake --build build --parallel 2
+          cmake --install build
+      - name: Checkout arborx
+        if: ${{ matrix.arborx == 'ArborX' }}
+        uses: actions/checkout@v3
+        with:
+          repository: arborx/ArborX
+          ref: v1.2
+          path: arborx
+      - name: Build arborx
+        if: ${{ matrix.arborx == 'ArborX' }}
+        working-directory: arborx
+        run: |
+          cmake -B build \
+            -DCMAKE_PREFIX_PATH=${HOME}/kokkos \
+            -DCMAKE_INSTALL_PREFIX=$HOME/arborx \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
+          cmake --build build --parallel 2
+          cmake --install build
+      - name: Checkout heffte
+        if: ${{ matrix.heffte != 'OFF' }}
+        # actions/checkout doesn't work for external repos yet (actions/checkout#447)
+        run: |
+          git clone --depth 1 --branch v2.1.0 https://bitbucket.org/icl/heffte.git heffte
+      - name: Build heffte
+        if: ${{ matrix.heffte != 'OFF' }}
+        working-directory: heffte
+        run: |
+          cmake -B build \
+            -DCMAKE_CXX_STANDARD="11" \
+            -DBUILD_SHARED_LIBS=ON \
+            -DCMAKE_INSTALL_PREFIX=$HOME/heffte \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
+            -DHeffte_ENABLE_ROCFFT=ON
+          cmake --build build --parallel 2
+          cmake --install build
+      - name: Checkout ALL
+        if: ${{ matrix.liball == 'libALL' }}
+        run: |
+          git clone --depth 1 --branch v0.9.2 https://gitlab.jsc.fz-juelich.de/SLMS/loadbalancing ALL
+      - name: Build ALL
+        if: ${{ matrix.liball == 'libALL' }}
+        working-directory: ALL
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/ALL
+          cmake --build build --parallel 2
+          cmake --install build
+      - name: Checkout Cabana
+        uses: actions/checkout@v3
+      - name: Build Cabana
+        env:
+          SILO: ${{ matrix.silo }}
+          HDF5: ${{ matrix.hdf5 }}
+        run: |
+          if [[ ${SILO} == 'Silo' ]]; then
+            cabana_cmake_opts+=( -DCabana_REQUIRE_SILO=ON )
+          else
+            cabana_cmake_opts+=( -DCMAKE_DISABLE_FIND_PACKAGE_SILO=ON )
+          fi
+          if [[ ${HDF5} == 'HDF5' ]]; then
+            cabana_cmake_opts+=( -DCabana_REQUIRE_HDF5=ON )
+          else
+            cabana_cmake_opts+=( -DCMAKE_DISABLE_FIND_PACKAGE_HDF5=ON )
+          fi
+          cmake -B build \
+            -DCMAKE_INSTALL_PREFIX=$HOME/Cabana \
+            -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe" \
+            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/gtest;$HOME/arborx;$HOME/heffte;$HOME/ALL" \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DCMAKE_CXX_FLAGS="-Wall -Wextra -pedantic -Werror" \
+            -DCabana_ENABLE_TESTING=ON \
+            -DCabana_ENABLE_EXAMPLES=ON \
+            -DCabana_ENABLE_PERFORMANCE_TESTING=ON \
+            -DCabana_PERFORMANCE_EXPECTED_FLOPS=0 \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
+            -DDOXYGEN_WARN_AS_ERROR=FAIL_ON_WARNINGS \
+            ${cabana_cmake_opts[@]}
+          cmake --build build --parallel 2 --verbose
+          cmake --install build
+      - name: Test Cabana Export Target
+        working-directory: example/core_tutorial/01_hello_world
+        run: |
+          cmake -B build \
+            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/hypre;$HOME/Cabana" \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }}
+          cmake --build build
