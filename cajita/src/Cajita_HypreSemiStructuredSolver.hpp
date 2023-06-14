@@ -226,13 +226,16 @@ class HypreSemiStructuredSolver
     bool isPreconditioner() const { return _is_preconditioner; }
 
     /*!
-      /brief Create the operator stencil to be filled by setMatrixStencil
-      /param NumSpaceDim The number of spatial dimensions in the linear system
-      being solved. /param var The variable number that the stencil corresponds
-      to, in essence which equation number in the linear system /param n_vars
-      number of variables in the linear system /param stencil_length A vector
-      containing the length of the stencil for variable `var` for each variable
-      in the system to be created for HYPRE
+      \brief Create the operator stencil to be filled by setMatrixStencil
+      \param NumSpaceDim The number of spatial dimensions in the linear system
+      being solved. 
+      \param var The variable number that the stencil corresponds
+      to, in essence which equation number in the linear system
+      /param n_vars
+      number of variables in the linear system
+      /param stencil_length A vector
+      containing the length of the stencil for variable `var` for each 
+      variable in the system to be created for HYPRE
     */
     void createMatrixStencil( int NumSpaceDim, int var = 0, int n_vars = 3,
                               std::vector<unsigned> stencil_length = { 7, 7,
@@ -263,9 +266,9 @@ class HypreSemiStructuredSolver
       \brief Set the operator stencil.
       \param stencil The (i,j,k) offsets describing the structured matrix
       entries at each grid point. Offsets are defined relative to an index.
-      /param var The variable number that the stencil corresponds to, in essence
+      \param var The variable number that the stencil corresponds to, in essence
        which equation number in the linear system
-      /param dep The integer for the independent variable in the linear system
+      \param dep The integer for the independent variable in the linear system
       that is currently being set
     */
     template <std::size_t NumSpaceDim>
@@ -521,25 +524,23 @@ class HypreSemiStructuredSolver
             reorder_min[d] = owned_space.min( d );
             reorder_max[d] = owned_space.max( d );
         }
-        reorder_min.back() = 0;
-        reorder_max.back() = n_vars;
-
-        IndexSpace<num_space_dim + 1> reorder_space( reorder_min, reorder_max );
-        auto b_values =
-            createView<HYPRE_Complex, Kokkos::LayoutRight, memory_space>(
-                "vector_values", reorder_space );
-        auto values_subv = createSubview( b.view(), owned_space );
-        Kokkos::deep_copy( b_values, values_subv );
 
         // Insert b values into the HYPRE vector.
         for ( int var = 0; var < n_vars; ++var )
         {
-            // Extract one variable at at time.
-            auto b_subv = Kokkos::subview( b_values, Kokkos::ALL, Kokkos::ALL,
-                                           Kokkos::ALL, var );
+            reorder_min.back() = var;
+            reorder_max.back() = var+1;
 
+            IndexSpace<num_space_dim + 1> reorder_space( reorder_min, reorder_max );
+            auto b_values =
+                createView<HYPRE_Complex, Kokkos::LayoutRight, memory_space>(
+                    "vector_values", reorder_space );
+            // Extract one variable at at time.
+            auto b_subv = createSubview( b.view(), reorder_space );
+
+            Kokkos::deep_copy( b_values, b_subv );
             error = HYPRE_SStructVectorSetBoxValues(
-                _b, part, _lower.data(), _upper.data(), var, b_subv.data() );
+                _b, part, _lower.data(), _upper.data(), var, b_values.data() );
             checkHypreError( error );
         }
 
@@ -553,31 +554,27 @@ class HypreSemiStructuredSolver
         checkHypreError( error );
 
         // Extract the solution from the LHS
-        reorder_max.back() = 1;
         for ( int var = 0; var < n_vars; ++var )
         {
+            reorder_min.back() = var;
+            reorder_max.back() = var+1;
+
+            IndexSpace<num_space_dim + 1> reorder_space( reorder_min, reorder_max );
+            auto x_values =
+                createView<HYPRE_Complex, Kokkos::LayoutRight, memory_space>(
+                    "vector_values", reorder_space );
+
             // Extract one variable at at time.
             // Use a pair here to retain the view rank.
-            auto b_subv = Kokkos::subview(
-                b_values, Kokkos::ALL, Kokkos::ALL, Kokkos::ALL,
-                std::pair<int, int>( var, var + 1 ) );
 
             error = HYPRE_SStructVectorGetBoxValues(
-                _x, part, _lower.data(), _upper.data(), var, b_subv.data() );
+                _x, part, _lower.data(), _upper.data(), var, x_values.data() );
             checkHypreError( error );
-            std::cout << b_subv( 0, 0, 0, var ) << std::endl;
-
-            reorder_max.back() += 1;
-            reorder_min.back() += 1;
-            IndexSpace<num_space_dim + 1> fill_space( reorder_min,
-                                                      reorder_max );
 
             // Copy the HYPRE solution to the LHS.
-            auto x_subv = createSubview( x.view(), fill_space );
-            Kokkos::deep_copy( x_subv, b_subv );
+            auto x_subv = createSubview( x.view(), reorder_space );
+            Kokkos::deep_copy( x_subv, x_values );
         }
-        this->printLHS( "test_lhs" );
-        this->printRHS( "test_rhs" );
 
         Kokkos::Profiling::popRegion();
     }
