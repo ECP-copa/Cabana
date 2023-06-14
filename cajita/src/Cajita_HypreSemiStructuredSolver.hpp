@@ -293,7 +293,7 @@ class HypreSemiStructuredSolver
         }
     }
 
-    /*
+    /*!
       \brief Set the solver graph
       \param n_vars The number of variables (and equations) in the
       specified problem domain
@@ -337,7 +337,7 @@ class HypreSemiStructuredSolver
         checkHypreError( error );
     }
 
-    /*
+    /*!
         \brief Prepare the hypre matrix to have it's values set
     */
     void initializeHypreMatrix()
@@ -420,16 +420,28 @@ class HypreSemiStructuredSolver
         checkHypreError( error );
     }
 
+    /*!
+      \brief Print the hypre matrix to ouput file
+      \param prefix File prefix for where hypre output is written
+    */
     void printMatrix( const char* prefix )
     {
         HYPRE_SStructMatrixPrint( prefix, _A, 0 );
     }
 
+    /*!
+      \brief Print the hypre LHS to ouput file
+      \param prefix File prefix for where hypre output is written
+    */
     void printLHS( const char* prefix )
     {
         HYPRE_SStructVectorPrint( prefix, _x, 0 );
     }
 
+    /*!
+      \brief Print the hypre RHS to ouput file
+      \param prefix File prefix for where hypre output is written
+    */
     void printRHS( const char* prefix )
     {
         HYPRE_SStructVectorPrint( prefix, _b, 0 );
@@ -1502,6 +1514,7 @@ createHypreSemiStructJacobi( const ArrayLayout_t& layout,
   \param solver_type Solver name.
   \param layout The ArrayLayout defining the vector space of the solver.
   \param is_preconditioner Use as a preconditioner.
+  \param n_vars Number of variables in the solver
 */
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
 std::shared_ptr<HypreSemiStructuredSolver<
