@@ -518,44 +518,28 @@ class HypreSemiStructuredSolver
         std::array<long, num_space_dim + 1> reorder_max;
         for ( std::size_t d = 0; d < num_space_dim; ++d )
         {
-            reorder_min[d] = 0;
-            reorder_max[d] = owned_space.extent( d );
+            reorder_min[d] = owned_space.min( d );
+            reorder_max[d] = owned_space.max( d );
         }
         reorder_min.back() = 0;
         reorder_max.back() = n_vars;
 
         IndexSpace<num_space_dim + 1> reorder_space( reorder_min, reorder_max );
-        auto vector_values_view =
+        auto b_values =
             createView<HYPRE_Complex, Kokkos::LayoutRight, memory_space>(
                 "vector_values", reorder_space );
-        auto b_subv = createSubview( b.view(), owned_space );
-        Kokkos::deep_copy( vector_values_view, b_subv );
-
-        reorder_max.back() = 1;
-
-        IndexSpace<num_space_dim + 1> reorder_space_1( reorder_min,
-                                                       reorder_max );
-        auto vector_values_subv =
-            createView<HYPRE_Complex, Kokkos::LayoutRight, memory_space>(
-                "vector_values", reorder_space_1 );
+        auto values_subv = createSubview( b.view(), owned_space );
+        Kokkos::deep_copy( b_values, values_subv );
 
         // Insert b values into the HYPRE vector.
         for ( int var = 0; var < n_vars; ++var )
         {
-            for ( int i = 0; i < owned_space.extent( 0 ); ++i )
-            {
-                for ( int j = 0; j < owned_space.extent( 1 ); ++j )
-                {
-                    for ( int k = 0; k < owned_space.extent( 2 ); ++k )
-                    {
-                        vector_values_subv( i, j, k, 0 ) =
-                            vector_values_view( i, j, k, var );
-                    }
-                }
-            }
+            // Extract one variable at at time.
+            auto b_subv = Kokkos::subview( b_values, Kokkos::ALL, Kokkos::ALL,
+                                           Kokkos::ALL, var );
+
             error = HYPRE_SStructVectorSetBoxValues(
-                _b, part, _lower.data(), _upper.data(), var,
-                vector_values_subv.data() );
+                _b, part, _lower.data(), _upper.data(), var, b_subv.data() );
             checkHypreError( error );
         }
 
@@ -569,28 +553,31 @@ class HypreSemiStructuredSolver
         checkHypreError( error );
 
         // Extract the solution from the LHS
+        reorder_max.back() = 1;
         for ( int var = 0; var < n_vars; ++var )
         {
-            error = HYPRE_SStructVectorGetBoxValues(
-                _x, part, _lower.data(), _upper.data(), var,
-                vector_values_subv.data() );
-            checkHypreError( error );
-            for ( int i = 0; i < owned_space.extent( 0 ); ++i )
-            {
-                for ( int j = 0; j < owned_space.extent( 1 ); ++j )
-                {
-                    for ( int k = 0; k < owned_space.extent( 2 ); ++k )
-                    {
-                        vector_values_view( i, j, k, var ) =
-                            vector_values_subv( i, j, k, 0 );
-                    }
-                }
-            }
-        }
+            // Extract one variable at at time.
+            // Use a pair here to retain the view rank.
+            auto b_subv = Kokkos::subview(
+                b_values, Kokkos::ALL, Kokkos::ALL, Kokkos::ALL,
+                std::pair<int, int>( var, var + 1 ) );
 
-        // Copy the HYPRE solution to the LHS.
-        auto x_subv = createSubview( x.view(), owned_space );
-        Kokkos::deep_copy( x_subv, vector_values_view );
+            error = HYPRE_SStructVectorGetBoxValues(
+                _x, part, _lower.data(), _upper.data(), var, b_subv.data() );
+            checkHypreError( error );
+            std::cout << b_subv( 0, 0, 0, var ) << std::endl;
+
+            reorder_max.back() += 1;
+            reorder_min.back() += 1;
+            IndexSpace<num_space_dim + 1> fill_space( reorder_min,
+                                                      reorder_max );
+
+            // Copy the HYPRE solution to the LHS.
+            auto x_subv = createSubview( x.view(), fill_space );
+            Kokkos::deep_copy( x_subv, b_subv );
+        }
+        this->printLHS( "test_lhs" );
+        this->printRHS( "test_rhs" );
 
         Kokkos::Profiling::popRegion();
     }
