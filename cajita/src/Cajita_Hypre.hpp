@@ -92,6 +92,6 @@ struct HypreIsCompatibleWithMemorySpace<Kokkos::HostSpace> : std::true_type
 };
 #endif // end HYPRE_USING_GPU
 
-} //namespace Cajita
+} // namespace Cajita
 
 #endif // end HYPRE_HPP

@@ -18,10 +18,10 @@
 
 #include <Cajita_Array.hpp>
 #include <Cajita_GlobalGrid.hpp>
+#include <Cajita_Hypre.hpp>
 #include <Cajita_IndexSpace.hpp>
 #include <Cajita_LocalGrid.hpp>
 #include <Cajita_Types.hpp>
-#include <Cajita_Hypre.hpp>
 
 #include <HYPRE_config.h>
 #include <HYPRE_struct_ls.h>
@@ -280,11 +280,20 @@ class HypreStructuredSolver
         checkHypreError( error );
     }
 
-    void printMatrix(const char* prefix) { HYPRE_StructMatrixPrint( prefix, _A, 0 ); }
+    void printMatrix( const char* prefix )
+    {
+        HYPRE_StructMatrixPrint( prefix, _A, 0 );
+    }
 
-    void printLHS(const char* prefix) { HYPRE_StructMatrixPrint( prefix, _A, 0 ); }
+    void printLHS( const char* prefix )
+    {
+        HYPRE_StructMatrixPrint( prefix, _A, 0 );
+    }
 
-    void printRHS(const char* prefix) { HYPRE_StructMatrixPrint( prefix, _A, 0 ); }
+    void printRHS( const char* prefix )
+    {
+        HYPRE_StructMatrixPrint( prefix, _A, 0 );
+    }
 
     //! Set convergence tolerance implementation.
     void setTolerance( const double tol ) { this->setToleranceImpl( tol ); }

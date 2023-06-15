@@ -78,14 +78,14 @@ void hypreSemiStructuredSolverExample()
     auto rhs = Cajita::createArray<double, MemorySpace>( "rhs", vector_layout );
     Cajita::ArrayOp::assign( *rhs, 1.0, Cajita::Own() );
 
-   // Create the LHS.
+    // Create the LHS.
     auto lhs = Cajita::createArray<double, MemorySpace>( "lhs", vector_layout );
     Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
 
     /*
-        The hypre solver capabilities used by Cabana must be initialized and finalized.
-        HYPRE_Init() initializes hypre. A call to HYPRE_Init() must be included before
-        any hypre calls occur
+        The hypre solver capabilities used by Cabana must be initialized and
+       finalized. HYPRE_Init() initializes hypre. A call to HYPRE_Init() must be
+       included before any hypre calls occur
     */
     HYPRE_Init();
 
@@ -97,7 +97,7 @@ void hypreSemiStructuredSolverExample()
     std::vector<std::array<int, 3>> stencil = {
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
         { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
-    solver->createMatrixStencil( 3, 0, 1, {7} );
+    solver->createMatrixStencil( 3, 0, 1, { 7 } );
     solver->setMatrixStencil( stencil, 0, 0 );
 
     solver->setSolverGraph( 1 );
@@ -162,9 +162,9 @@ void hypreSemiStructuredSolverExample()
     solver->solve( *rhs, *lhs, 1 );
 
     /*
-        The hypre solver capabilities used by Cabana must be initialized and finalized.
-        HYPRE_Finalize() finalizes hypre. A call to HYPRE_Finalize() should not occur
-        before all calls to hypre capabilites are finished.
+        The hypre solver capabilities used by Cabana must be initialized and
+       finalized. HYPRE_Finalize() finalizes hypre. A call to HYPRE_Finalize()
+       should not occur before all calls to hypre capabilites are finished.
     */
     HYPRE_Finalize();
 }

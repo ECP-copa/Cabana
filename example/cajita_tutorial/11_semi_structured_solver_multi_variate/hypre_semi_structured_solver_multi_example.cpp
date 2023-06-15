@@ -78,14 +78,14 @@ void hypreSemiStructuredSolverExample()
     auto rhs = Cajita::createArray<double, MemorySpace>( "rhs", vector_layout );
     Cajita::ArrayOp::assign( *rhs, 1.0, Cajita::Own() );
 
-   // Create the LHS.
+    // Create the LHS.
     auto lhs = Cajita::createArray<double, MemorySpace>( "lhs", vector_layout );
     Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
 
     /*
-        The hypre solver capabilities used by Cabana must be initialized and finalized.
-        HYPRE_Init() initializes hypre. A call to HYPRE_Init() must be included before
-        any hypre calls occur
+        The hypre solver capabilities used by Cabana must be initialized and
+       finalized. HYPRE_Init() initializes hypre. A call to HYPRE_Init() must be
+       included before any hypre calls occur
     */
     HYPRE_Init();
 
@@ -98,10 +98,10 @@ void hypreSemiStructuredSolverExample()
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
         { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
 
-    solver->createMatrixStencil( 3, 0, 3, {7, 0, 0} );
-    solver->createMatrixStencil( 3, 1, 3, {0, 7, 0} );
-    solver->createMatrixStencil( 3, 2, 3, {0, 0, 7} );
-    for ( int v = 0; v < 3; ++v)
+    solver->createMatrixStencil( 3, 0, 3, { 7, 0, 0 } );
+    solver->createMatrixStencil( 3, 1, 3, { 0, 7, 0 } );
+    solver->createMatrixStencil( 3, 2, 3, { 0, 0, 7 } );
+    for ( int v = 0; v < 3; ++v )
     {
         solver->setMatrixStencil( stencil, v, v );
     }
@@ -171,9 +171,9 @@ void hypreSemiStructuredSolverExample()
     solver->solve( *rhs, *lhs, 3 );
 
     /*
-        The hypre solver capabilities used by Cabana must be initialized and finalized.
-        HYPRE_Finalize() finalizes hypre. A call to HYPRE_Finalize() should not occur
-        before all calls to hypre capabilites are finished.
+        The hypre solver capabilities used by Cabana must be initialized and
+       finalized. HYPRE_Finalize() finalizes hypre. A call to HYPRE_Finalize()
+       should not occur before all calls to hypre capabilites are finished.
     */
     HYPRE_Finalize();
 }

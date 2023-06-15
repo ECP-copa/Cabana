@@ -12,8 +12,8 @@
 #include <Cajita_Array.hpp>
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_GlobalMesh.hpp>
-#include <Cajita_HypreStructuredSolver.hpp>
 #include <Cajita_HypreSemiStructuredSolver.hpp>
+#include <Cajita_HypreStructuredSolver.hpp>
 #include <Cajita_Partitioner.hpp>
 #include <Cajita_ReferenceStructuredSolver.hpp>
 #include <Cajita_Types.hpp>
@@ -76,13 +76,13 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
 
     // Create a solver.
     auto solver = createHypreSemiStructuredSolver<double, MemorySpace>(
-        solver_type, *vector_layout, false, 1);
+        solver_type, *vector_layout, false, 1 );
 
     // Create a 7-point 3d laplacian stencil.
     std::vector<std::array<int, 3>> stencil = {
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
         { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
-    solver->createMatrixStencil( 3, 0, 1, {7} );
+    solver->createMatrixStencil( 3, 0, 1, { 7 } );
     solver->setMatrixStencil( stencil, 0, 0 );
 
     solver->setSolverGraph( 1 );
@@ -121,8 +121,9 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
     // Create a preconditioner.
     if ( "none" != precond_type )
     {
-        auto preconditioner = createHypreSemiStructuredSolver<double, MemorySpace>(
-            precond_type, *vector_layout, true );
+        auto preconditioner =
+            createHypreSemiStructuredSolver<double, MemorySpace>(
+                precond_type, *vector_layout, true );
         solver->setPreconditioner( preconditioner );
     }
 
@@ -130,7 +131,7 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
     solver->setup();
 
     // Solve the problem.
-    solver->solve( *rhs, *lhs , 1);
+    solver->solve( *rhs, *lhs, 1 );
 
     // Create a solver reference for comparison.
     auto lhs_ref = createArray<double, MemorySpace>( "lhs_ref", vector_layout );
@@ -198,7 +199,7 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
     // Solve the problem again
     ArrayOp::assign( *rhs, 2.0, Own() );
     ArrayOp::assign( *lhs, 0.0, Own() );
-    solver->solve( *rhs, *lhs , 1);
+    solver->solve( *rhs, *lhs, 1 );
 
     // Compute another reference solution.
     ArrayOp::assign( *lhs_ref, 0.0, Own() );
@@ -239,10 +240,10 @@ TEST( semi_structured_solver, bicgstab_none_test )
     poissonTest( "BiCGSTAB", "none", TEST_MEMSPACE{} );
 }
 
-//TEST( semi_structured_solver, pfmg_none_test )
+// TEST( semi_structured_solver, pfmg_none_test )
 //{
-//    poissonTest( "PFMG", "none", TEST_MEMSPACE{} );
-//}
+//     poissonTest( "PFMG", "none", TEST_MEMSPACE{} );
+// }
 
 TEST( semi_structured_solver, pcg_diag_test )
 {

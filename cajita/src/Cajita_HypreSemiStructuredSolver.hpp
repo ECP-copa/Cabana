@@ -228,13 +228,13 @@ class HypreSemiStructuredSolver
     /*!
       \brief Create the operator stencil to be filled by setMatrixStencil
       \param NumSpaceDim The number of spatial dimensions in the linear system
-      being solved. 
+      being solved.
       \param var The variable number that the stencil corresponds
       to, in essence which equation number in the linear system
       /param n_vars
       number of variables in the linear system
       /param stencil_length A vector
-      containing the length of the stencil for variable `var` for each 
+      containing the length of the stencil for variable `var` for each
       variable in the system to be created for HYPRE
     */
     void createMatrixStencil( int NumSpaceDim, int var = 0, int n_vars = 3,
@@ -541,9 +541,10 @@ class HypreSemiStructuredSolver
         for ( int var = 0; var < n_vars; ++var )
         {
             reorder_min.back() = var;
-            reorder_max.back() = var+1;
+            reorder_max.back() = var + 1;
 
-            IndexSpace<num_space_dim + 1> reorder_space( reorder_min, reorder_max );
+            IndexSpace<num_space_dim + 1> reorder_space( reorder_min,
+                                                         reorder_max );
             auto b_values =
                 createView<HYPRE_Complex, Kokkos::LayoutRight, memory_space>(
                     "vector_values", reorder_space );
@@ -569,9 +570,10 @@ class HypreSemiStructuredSolver
         for ( int var = 0; var < n_vars; ++var )
         {
             reorder_min.back() = var;
-            reorder_max.back() = var+1;
+            reorder_max.back() = var + 1;
 
-            IndexSpace<num_space_dim + 1> reorder_space( reorder_min, reorder_max );
+            IndexSpace<num_space_dim + 1> reorder_space( reorder_min,
+                                                         reorder_max );
             auto x_values =
                 createView<HYPRE_Complex, Kokkos::LayoutRight, memory_space>(
                     "vector_values", reorder_space );

@@ -83,9 +83,9 @@ void hypreStructuredSolverExample()
     Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
 
     /*
-        The hypre solver capabilities used by Cabana must be initialized and finalized.
-        HYPRE_Init() initializes hypre. A call to HYPRE_Init() must be included before
-        any hypre calls occur
+        The hypre solver capabilities used by Cabana must be initialized and
+       finalized. HYPRE_Init() initializes hypre. A call to HYPRE_Init() must be
+       included before any hypre calls occur
     */
     HYPRE_Init();
 
@@ -138,7 +138,7 @@ void hypreStructuredSolverExample()
       options are shown above).
     */
     std::string precond_type = "Jacobi";
-//    std::string precond_type = "Diagonal";
+    //    std::string precond_type = "Diagonal";
     auto preconditioner =
         Cajita::createHypreStructuredSolver<double, MemorySpace>(
             precond_type, *vector_layout, true );
@@ -162,9 +162,9 @@ void hypreStructuredSolverExample()
     solver->solve( *rhs, *lhs );
 
     /*
-        The hypre solver capabilities used by Cabana must be initialized and finalized.
-        HYPRE_Finalize() finalizes hypre. A call to HYPRE_Finalize() should not occur
-        before all calls to hypre capabilites are finished.
+        The hypre solver capabilities used by Cabana must be initialized and
+       finalized. HYPRE_Finalize() finalizes hypre. A call to HYPRE_Finalize()
+       should not occur before all calls to hypre capabilites are finished.
     */
     HYPRE_Finalize();
 }

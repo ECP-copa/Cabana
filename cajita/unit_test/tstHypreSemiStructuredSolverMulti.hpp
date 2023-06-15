@@ -14,8 +14,8 @@
 #include <Cajita_Array.hpp>
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_GlobalMesh.hpp>
-#include <Cajita_HypreStructuredSolver.hpp>
 #include <Cajita_HypreSemiStructuredSolver.hpp>
+#include <Cajita_HypreStructuredSolver.hpp>
 #include <Cajita_Partitioner.hpp>
 #include <Cajita_ReferenceStructuredSolver.hpp>
 #include <Cajita_Types.hpp>
@@ -68,31 +68,33 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
     // Create the RHS.
     auto vector_layout = createArrayLayout( local_mesh, 3, Cell() );
     auto rhs = createArray<double, MemorySpace>( "rhs", vector_layout );
-//    auto rhs = createArray<double, Kokkos::LayoutRight, MemorySpace>( "rhs", vector_layout );
+    //    auto rhs = createArray<double, Kokkos::LayoutRight, MemorySpace>(
+    //    "rhs", vector_layout );
     ArrayOp::assign( *rhs, 1.0, Own() );
 
     // Create the LHS.
     auto lhs = createArray<double, MemorySpace>( "lhs", vector_layout );
-//    auto lhs = createArray<double, Kokkos::LayoutRight, MemorySpace>( "lhs", vector_layout );
+    //    auto lhs = createArray<double, Kokkos::LayoutRight, MemorySpace>(
+    //    "lhs", vector_layout );
     ArrayOp::assign( *lhs, 0.0, Own() );
 
     HYPRE_Init();
 
     // Create a solver.
     auto solver = createHypreSemiStructuredSolver<double, MemorySpace>(
-        solver_type, *vector_layout, false, 3);
+        solver_type, *vector_layout, false, 3 );
 
     // Create a 7-point 3d laplacian stencil.
     std::vector<std::array<int, 3>> stencil = {
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
         { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
 
-    solver->createMatrixStencil( 3, 0, 3, {7, 0, 0} );
-    solver->createMatrixStencil( 3, 1, 3, {0, 7, 0} );
-    solver->createMatrixStencil( 3, 2, 3, {0, 0, 7} );
+    solver->createMatrixStencil( 3, 0, 3, { 7, 0, 0 } );
+    solver->createMatrixStencil( 3, 1, 3, { 0, 7, 0 } );
+    solver->createMatrixStencil( 3, 2, 3, { 0, 0, 7 } );
     for ( int v_h = 0; v_h < 3; ++v_h )
     {
-        solver->setMatrixStencil( stencil, v_h, v_h);
+        solver->setMatrixStencil( stencil, v_h, v_h );
     }
 
     solver->setSolverGraph( 3 );
@@ -116,7 +118,7 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
         } );
 
     solver->initializeHypreMatrix();
-    
+
     for ( int v_h = 0; v_h < 3; ++v_h )
     {
         solver->setMatrixValues( *matrix_entries, v_h, v_h );
@@ -134,8 +136,9 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
     // Create a preconditioner.
     if ( "none" != precond_type )
     {
-        auto preconditioner = createHypreSemiStructuredSolver<double, MemorySpace>(
-            precond_type, *vector_layout, true );
+        auto preconditioner =
+            createHypreSemiStructuredSolver<double, MemorySpace>(
+                precond_type, *vector_layout, true );
         solver->setPreconditioner( preconditioner );
     }
 
@@ -217,7 +220,7 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
     // Solve the problem again
     ArrayOp::assign( *rhs, 2.0, Own() );
     ArrayOp::assign( *lhs, 0.0, Own() );
-    solver->solve( *rhs, *lhs , 3 );
+    solver->solve( *rhs, *lhs, 3 );
 
     // Compute another reference solution.
     ArrayOp::assign( *lhs_ref, 0.0, Own() );
@@ -259,10 +262,10 @@ TEST( semi_structured_solver, bicgstab_none_test )
     poissonTest( "BiCGSTAB", "none", TEST_MEMSPACE{} );
 }
 
-//TEST( semi_structured_solver, pfmg_none_test )
+// TEST( semi_structured_solver, pfmg_none_test )
 //{
-//    poissonTest( "PFMG", "none", TEST_MEMSPACE{} );
-//}
+//     poissonTest( "PFMG", "none", TEST_MEMSPACE{} );
+// }
 
 TEST( semi_structured_solver, pcg_diag_test )
 {
