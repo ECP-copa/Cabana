@@ -124,7 +124,8 @@ void writeReadTest()
         coords, ids, matrix, vec );
 
     // Make an empty copy to read into.
-    auto aosoa_read = Cabana::create_mirror_view( Kokkos::HostSpace(), aosoa );
+    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> aosoa_read( "read",
+                                                            aosoa.size() );
     auto coords_read = Cabana::slice<0>( aosoa_read, "coords" );
     auto vec_read = Cabana::slice<1>( aosoa_read, "vec" );
     auto matrix_read = Cabana::slice<2>( aosoa_read, "matrix" );
@@ -164,12 +165,24 @@ void writeReadTest()
             coords_mirror( p, d ) += 1.32;
     Cabana::deep_copy( coords, coords_mirror );
     Cabana::Experimental::HDF5ParticleOutput::writeTimeStep(
-        h5_config, "particles", MPI_COMM_WORLD, step, time, coords.size(),
-        coords, ids, matrix, vec );
+        h5_config, "particles-update", MPI_COMM_WORLD, step, time,
+        coords.size(), coords, ids, matrix, vec );
 
     // Read the data back in and compare.
     Cabana::Experimental::HDF5ParticleOutput::readTimeStep(
-        h5_config, "particles", MPI_COMM_WORLD, step, coords_read.size(),
+        h5_config, "particles-update", MPI_COMM_WORLD, step, coords_read.size(),
+        coords.label(), time_read, coords_read );
+    checkVector( coords_mirror, coords_read );
+    EXPECT_DOUBLE_EQ( time, time_read );
+
+    // Now check writing only positions.
+    Cabana::Experimental::HDF5ParticleOutput::writeTimeStep(
+        h5_config, "positions_only", MPI_COMM_WORLD, step, time, coords.size(),
+        coords );
+
+    // Read the data back in and compare.
+    Cabana::Experimental::HDF5ParticleOutput::readTimeStep(
+        h5_config, "positions_only", MPI_COMM_WORLD, step, coords_read.size(),
         coords.label(), time_read, coords_read );
     checkVector( coords_mirror, coords_read );
     EXPECT_DOUBLE_EQ( time, time_read );

@@ -450,6 +450,12 @@ void writeFields(
 //! \endcond
 } // namespace Impl
 
+//! Write particle data to HDF5 output. Empty overload if only writing coords.
+inline void writeFields( HDF5Config, hid_t, std::size_t, std::size_t, hsize_t,
+                         int, const char*, const char* )
+{
+}
+
 //! Write particle data to HDF5 output.
 template <class SliceType>
 void writeFields( HDF5Config h5_config, hid_t file_id, std::size_t n_local,
