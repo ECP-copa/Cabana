@@ -231,9 +231,9 @@ class HypreSemiStructuredSolver
       being solved.
       \param var The variable number that the stencil corresponds
       to, in essence which equation number in the linear system
-      /param n_vars
+      \param n_vars
       number of variables in the linear system
-      /param stencil_length A vector
+      \param stencil_length A vector
       containing the length of the stencil for variable `var` for each
       variable in the system to be created for HYPRE
     */
@@ -1406,7 +1406,7 @@ class HypreSemiStructJacobi
     }
 
     void setPreconditionerImpl(
-        const HypreStructuredSolver<Scalar, EntityType, MemorySpace>& ) override
+        const HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>& ) override
     {
         throw std::logic_error(
             "HYPRE Jacobi solver does not support preconditioning." );
