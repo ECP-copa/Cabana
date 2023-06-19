@@ -1406,7 +1406,8 @@ class HypreSemiStructJacobi
     }
 
     void setPreconditionerImpl(
-        const HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>& ) override
+        const HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>&
+            preconditioner ) override
     {
         throw std::logic_error(
             "HYPRE Jacobi solver does not support preconditioning." );
@@ -1511,7 +1512,7 @@ createHypreSemiStructJacobi( const ArrayLayout_t& layout,
 // Factory
 //---------------------------------------------------------------------------//
 /*!
-  \brief Create a HYPRE structured solver.
+  \brief Create a HYPRE semi-structured solver.
 
   \param solver_type Solver name.
   \param layout The ArrayLayout defining the vector space of the solver.
