@@ -78,25 +78,24 @@ generate_random_partition( std::array<int, 3> ranks_per_dim,
 // convert std::set to device-side view
 template <typename T>
 auto set2view( const std::set<std::array<T, 3>>& in_set )
-    -> Kokkos::View<T* [3], TEST_MEMSPACE>
-{
-    // set => view (host)
-    typedef typename TEST_EXECSPACE::array_layout layout;
-    Kokkos::View<T* [3], layout, Kokkos::HostSpace> host_view( "view_host",
-                                                               in_set.size() );
-    int i = 0;
-    for ( auto it = in_set.begin(); it != in_set.end(); ++it )
-    {
-        for ( int d = 0; d < 3; ++d )
-            host_view( i, d ) = ( *it )[d];
-        ++i;
-    }
+    -> Kokkos::View<T* [3], TEST_MEMSPACE> {
+        // set => view (host)
+        typedef typename TEST_EXECSPACE::array_layout layout;
+        Kokkos::View<T* [3], layout, Kokkos::HostSpace> host_view(
+            "view_host", in_set.size() );
+        int i = 0;
+        for ( auto it = in_set.begin(); it != in_set.end(); ++it )
+        {
+            for ( int d = 0; d < 3; ++d )
+                host_view( i, d ) = ( *it )[d];
+            ++i;
+        }
 
-    // create tiles view on device
-    Kokkos::View<T* [3], TEST_MEMSPACE> dev_view =
-        Kokkos::create_mirror_view_and_copy( TEST_MEMSPACE(), host_view );
-    return dev_view;
-}
+        // create tiles view on device
+        Kokkos::View<T* [3], TEST_MEMSPACE> dev_view =
+            Kokkos::create_mirror_view_and_copy( TEST_MEMSPACE(), host_view );
+        return dev_view;
+    }
 
 // return random generated particles and occupied tile numbers (last two params)
 template <typename T>
@@ -118,9 +117,9 @@ void generate_random_particles( const int particle_number,
         // all the activated tiles sit inside the valid partition range
         start[d] = global_low_corner[d] +
                    cell_size * ( 2.01f + cell_per_tile_dim * (T)part_start[d] );
-        size[d] =
-            cell_size *
-            ( cell_per_tile_dim * (T)( part_end[d] - part_start[d] ) - 4.02f );
+        size[d] = cell_size *
+                  ( cell_per_tile_dim * ( T )( part_end[d] - part_start[d] ) -
+                    4.02f );
     }
 
     // insert random particles to the set

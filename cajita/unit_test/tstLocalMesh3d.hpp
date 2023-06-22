@@ -583,12 +583,15 @@ void irregularTest3d( const std::array<int, 3>& ranks_per_dim )
     double ref_cell_size = 8.0 * std::atan( 1.0 ) / ncell;
     std::array<int, 3> num_cell = { ncell, ncell, ncell };
 
-    auto i_func = [=]( const int i )
-    { return 0.5 * std::cos( i * ref_cell_size ) + low_corner[Dim::I]; };
-    auto j_func = [=]( const int j )
-    { return 2.0 * std::cos( j * ref_cell_size ) + low_corner[Dim::J]; };
-    auto k_func = [=]( const int k )
-    { return 1.5 * std::cos( k * ref_cell_size ) + low_corner[Dim::K]; };
+    auto i_func = [=]( const int i ) {
+        return 0.5 * std::cos( i * ref_cell_size ) + low_corner[Dim::I];
+    };
+    auto j_func = [=]( const int j ) {
+        return 2.0 * std::cos( j * ref_cell_size ) + low_corner[Dim::J];
+    };
+    auto k_func = [=]( const int k ) {
+        return 1.5 * std::cos( k * ref_cell_size ) + low_corner[Dim::K];
+    };
 
     std::array<std::vector<double>, 3> edges;
     for ( int n = 0; n < num_cell[Dim::I] + 1; ++n )

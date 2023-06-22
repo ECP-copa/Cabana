@@ -116,8 +116,9 @@ struct ParallelFor<SimdPolicy<VectorLength, Properties...>, Functor>
         Kokkos::parallel_for(
             Kokkos::ThreadVectorRange( team, exec_policy_.arrayBegin( s ),
                                        exec_policy_.arrayEnd( s ) ),
-            [&]( index_type a )
-            { Impl::functorTagDispatch<work_tag>( functor_, s, a ); } );
+            [&]( index_type a ) {
+                Impl::functorTagDispatch<work_tag>( functor_, s, a );
+            } );
     }
 };
 
@@ -417,8 +418,7 @@ inline void neighbor_parallel_for(
         Kokkos::parallel_for(
             Kokkos::TeamThreadRange(
                 team, neighbor_list_traits::numNeighbor( list, i ) ),
-            [&]( const index_type n )
-            {
+            [&]( const index_type n ) {
                 Impl::functorTagDispatch<work_tag>(
                     functor, i,
                     static_cast<index_type>(
@@ -489,9 +489,7 @@ inline void neighbor_parallel_for(
 
         const index_type nn = neighbor_list_traits::numNeighbor( list, i );
         Kokkos::parallel_for(
-            Kokkos::TeamThreadRange( team, nn ),
-            [&]( const index_type n )
-            {
+            Kokkos::TeamThreadRange( team, nn ), [&]( const index_type n ) {
                 const index_type j =
                     neighbor_list_traits::getNeighbor( list, i, n );
 
@@ -568,16 +566,13 @@ inline void neighbor_parallel_for(
 
         const index_type nn = neighbor_list_traits::numNeighbor( list, i );
         Kokkos::parallel_for(
-            Kokkos::TeamThreadRange( team, nn ),
-            [&]( const index_type n )
-            {
+            Kokkos::TeamThreadRange( team, nn ), [&]( const index_type n ) {
                 const index_type j =
                     neighbor_list_traits::getNeighbor( list, i, n );
 
                 Kokkos::parallel_for(
                     Kokkos::ThreadVectorRange( team, n + 1, nn ),
-                    [&]( const index_type a )
-                    {
+                    [&]( const index_type a ) {
                         const index_type k =
                             neighbor_list_traits::getNeighbor( list, i, a );
                         Impl::functorTagDispatch<work_tag>( functor, i, j, k );
@@ -820,8 +815,7 @@ inline void neighbor_parallel_reduce(
         Kokkos::parallel_reduce(
             Kokkos::TeamThreadRange(
                 team, neighbor_list_traits::numNeighbor( list, i ) ),
-            [&]( const index_type n, ReduceType& nval )
-            {
+            [&]( const index_type n, ReduceType& nval ) {
                 Impl::functorTagDispatch<work_tag>(
                     functor, i,
                     static_cast<index_type>(
@@ -901,8 +895,7 @@ inline void neighbor_parallel_reduce(
         const index_type nn = neighbor_list_traits::numNeighbor( list, i );
         Kokkos::parallel_reduce(
             Kokkos::TeamThreadRange( team, nn ),
-            [&]( const index_type n, ReduceType& nval )
-            {
+            [&]( const index_type n, ReduceType& nval ) {
                 const index_type j =
                     neighbor_list_traits::getNeighbor( list, i, n );
 
@@ -987,16 +980,14 @@ inline void neighbor_parallel_reduce(
         const index_type nn = neighbor_list_traits::numNeighbor( list, i );
         Kokkos::parallel_reduce(
             Kokkos::TeamThreadRange( team, nn ),
-            [&]( const index_type n, ReduceType& nval )
-            {
+            [&]( const index_type n, ReduceType& nval ) {
                 const index_type j =
                     neighbor_list_traits::getNeighbor( list, i, n );
                 ReduceType reduce_a = 0;
 
                 Kokkos::parallel_reduce(
                     Kokkos::ThreadVectorRange( team, n + 1, nn ),
-                    [&]( const index_type a, ReduceType& aval )
-                    {
+                    [&]( const index_type a, ReduceType& aval ) {
                         const index_type k =
                             neighbor_list_traits::getNeighbor( list, i, a );
                         Impl::functorTagDispatch<work_tag>( functor, i, j, k,
@@ -1094,8 +1085,7 @@ for_each_neighbor( const IndexType i, const TeamMemberType team,
     Kokkos::parallel_for(
         Kokkos::TeamThreadRange( team,
                                  neighbor_list_traits::numNeighbor( list, i ) ),
-        [&]( const IndexType n )
-        {
+        [&]( const IndexType n ) {
             Impl::functorTagDispatch<void>(
                 neighbor_functor, i,
                 static_cast<IndexType>(

@@ -440,7 +440,7 @@ void interpolationExample()
      * *************************************************************************/
     G2PExampleFunctor<Kokkos::View<double*, ExecutionSpace>,
                       Kokkos::View<double* [2][2], ExecutionSpace>>
-        example_g2p { scalar_particle_field, tensor_particle_field };
+        example_g2p{ scalar_particle_field, tensor_particle_field };
     Cajita::g2p( *vector_grid_field, *vector_halo, particle_positions,
                  num_particles, Cajita::Spline<1>(), example_g2p );
 }

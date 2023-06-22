@@ -243,7 +243,7 @@ class ParticleList
     //! Get a slice of a given field.
     template <class FieldTag>
     slice_type<TypeIndexer<FieldTag, FieldTags...>::index>
-    slice( FieldTag ) const
+        slice( FieldTag ) const
     {
         return Cabana::slice<TypeIndexer<FieldTag, FieldTags...>::index>(
             _aosoa, FieldTag::label() );

@@ -65,8 +65,7 @@ void checkGather( const std::array<bool, 3>& is_dim_periodic,
 
     // This function checks if an index is in the low boundary halo in the
     // given dimension
-    auto in_boundary_min_halo = [&]( const int i, const int dim )
-    {
+    auto in_boundary_min_halo = [&]( const int i, const int dim ) {
         if ( is_dim_periodic[dim] || !global_grid.onLowBoundary( dim ) )
             return false;
         else
@@ -75,8 +74,7 @@ void checkGather( const std::array<bool, 3>& is_dim_periodic,
 
     // This function checks if an index is in the high boundary halo of in the
     // given dimension
-    auto in_boundary_max_halo = [&]( const int i, const int dim )
-    {
+    auto in_boundary_max_halo = [&]( const int i, const int dim ) {
         if ( is_dim_periodic[dim] || !global_grid.onHighBoundary( dim ) )
             return false;
         else
@@ -131,8 +129,7 @@ void checkScatter( const std::array<bool, 3>& is_dim_periodic,
 
     // This function checks if an index is in the halo of a low neighbor in
     // the given dimension
-    auto in_dim_min_halo = [&]( const int i, const int dim )
-    {
+    auto in_dim_min_halo = [&]( const int i, const int dim ) {
         if ( is_dim_periodic[dim] || global_grid.dimBlockId( dim ) > 0 )
             return i < ( owned_space.min( dim ) + halo_width +
                          haloPad( typename Array::entity_type(), dim ) );
@@ -142,8 +139,7 @@ void checkScatter( const std::array<bool, 3>& is_dim_periodic,
 
     // This function checks if an index is in the halo of a high neighbor in
     // the given dimension
-    auto in_dim_max_halo = [&]( const int i, const int dim )
-    {
+    auto in_dim_max_halo = [&]( const int i, const int dim ) {
         if ( is_dim_periodic[dim] || global_grid.dimBlockId( dim ) <
                                          global_grid.dimNumBlock( dim ) - 1 )
             return i >= ( owned_space.max( dim ) - halo_width );

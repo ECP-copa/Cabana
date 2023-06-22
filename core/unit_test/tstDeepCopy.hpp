@@ -202,8 +202,7 @@ void testMirror()
     using SameSpaceMirror = decltype( same_space_mirror );
     using HostSpaceMirror = decltype( host_space_mirror );
     auto check_mirrors = [&]( SameSpaceMirror same_space_mirror,
-                              HostSpaceMirror host_space_mirror )
-    {
+                              HostSpaceMirror host_space_mirror ) {
         static_assert(
             std::is_same<TEST_MEMSPACE,
                          decltype( same_space_mirror )::memory_space>::value,

@@ -49,16 +49,14 @@ GlobalGrid<MeshType>::GlobalGrid(
         // Duplicate the communicator and store in a std::shared_ptr so that
         // all copies point to the same object
         [comm, num_space_dim_copy, ranks_per_dim_copy, periodic_dims_copy,
-         reorder_cart_ranks]()
-        {
+         reorder_cart_ranks]() {
             auto p = std::make_unique<MPI_Comm>();
             MPI_Cart_create( comm, num_space_dim_copy, ranks_per_dim_copy,
                              periodic_dims_copy, reorder_cart_ranks, p.get() );
             return p.release();
         }(),
         // Custom deleter to mark the communicator for deallocation
-        []( MPI_Comm* p )
-        {
+        []( MPI_Comm* p ) {
             MPI_Comm_free( p );
             delete p;
         } );
