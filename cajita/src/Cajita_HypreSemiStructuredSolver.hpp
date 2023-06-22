@@ -229,13 +229,11 @@ class HypreSemiStructuredSolver
       \brief Create the operator stencil to be filled by setMatrixStencil
       \param NumSpaceDim The number of spatial dimensions in the linear system
       being solved.
-      \param var The variable number that the stencil corresponds
-      to, in essence which equation number in the linear system
-      \param n_vars
-      number of variables in the linear system
-      \param stencil_length A vector
-      containing the length of the stencil for variable `var` for each
-      variable in the system to be created for HYPRE
+      \param var The variable number that the stencil corresponds to, in essence
+      which equation number in the linear system
+      \param n_vars number of variables in the linear system
+      \param stencil_length A vector containing the length of the stencil for
+      variable `var` for each variable in the system to be created for HYPRE
     */
     void createMatrixStencil( int NumSpaceDim, int var = 0, int n_vars = 3,
                               std::vector<unsigned> stencil_length = { 7, 7,
@@ -1357,6 +1355,7 @@ class HypreSemiStructJacobi
     }
 
   protected:
+    //! \cond Impl
     void setToleranceImpl( const double tol ) override
     {
         auto error = HYPRE_StructJacobiSetTol( _solver, tol );
@@ -1412,6 +1411,7 @@ class HypreSemiStructJacobi
         throw std::logic_error(
             "HYPRE Jacobi solver does not support preconditioning." );
     }
+    //! \endcond
 
   private:
     HYPRE_StructSolver _solver;
