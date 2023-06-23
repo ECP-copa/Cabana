@@ -46,6 +46,7 @@
 #include <Cajita_UniformDimPartitioner.hpp>
 
 #ifdef Cabana_ENABLE_HYPRE
+#include <Cajita_Hypre.hpp>
 #include <Cajita_HypreSemiStructuredSolver.hpp>
 #include <Cajita_HypreStructuredSolver.hpp>
 #endif

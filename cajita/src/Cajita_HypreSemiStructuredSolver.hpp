@@ -536,6 +536,9 @@ class HypreSemiStructuredSolver
         }
 
         // Insert b values into the HYPRE vector.
+        // The process of creating the view and then deep copying each 
+        // variable is functional, but we should avoid this process
+        // for performance if possible
         for ( int var = 0; var < n_vars; ++var )
         {
             reorder_min.back() = var;
@@ -560,9 +563,6 @@ class HypreSemiStructuredSolver
 
         // Solve the problem
         this->solveImpl( _A, _b, _x );
-
-        error = HYPRE_SStructVectorGather( _x );
-        checkHypreError( error );
 
         // Extract the solution from the LHS
         for ( int var = 0; var < n_vars; ++var )

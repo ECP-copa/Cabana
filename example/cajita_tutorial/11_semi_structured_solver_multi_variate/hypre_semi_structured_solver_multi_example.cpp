@@ -24,8 +24,9 @@
 void hypreSemiStructuredSolverExample()
 {
     /*
-      In this example we will demonstrate building a HYPRE Structured Solver
-      that solve a Poisson equation with designated solution tolerance,
+      In this example we will demonstrate building a HYPRE semi-structured 
+      solver that solves 3, indpenedent, Poisson equations with designated 
+      solution tolerance,
 
            Laplacian( lhs ) = rhs,
 
@@ -40,7 +41,7 @@ void hypreSemiStructuredSolverExample()
 
       You can try one of the following solver type and preconditioner type
 
-        solver type : PCG, GMRES, BiCGSTAB, PFMG,
+        solver type : PCG, GMRES, BiCGSTAB,
         preconditioner type : none, Diagonal, Jacobi
     */
 
@@ -81,13 +82,6 @@ void hypreSemiStructuredSolverExample()
     // Create the LHS.
     auto lhs = Cajita::createArray<double, MemorySpace>( "lhs", vector_layout );
     Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
-
-    /*
-        The hypre solver capabilities used by Cabana must be initialized and
-       finalized. HYPRE_Init() initializes hypre. A call to HYPRE_Init() must be
-       included before any hypre calls occur
-    */
-    HYPRE_Init();
 
     // Create a solver.
     auto solver = Cajita::createHypreSemiStructuredSolver<double, MemorySpace>(
@@ -169,13 +163,6 @@ void hypreSemiStructuredSolverExample()
     Cajita::ArrayOp::assign( *rhs, 2.0, Cajita::Own() );
     Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
     solver->solve( *rhs, *lhs, 3 );
-
-    /*
-        The hypre solver capabilities used by Cabana must be initialized and
-       finalized. HYPRE_Finalize() finalizes hypre. A call to HYPRE_Finalize()
-       should not occur before all calls to hypre capabilites are finished.
-    */
-    HYPRE_Finalize();
 }
 
 //---------------------------------------------------------------------------//
@@ -189,7 +176,21 @@ int main( int argc, char* argv[] )
     {
         Kokkos::ScopeGuard scope_guard( argc, argv );
 
+        /*
+            The hypre solver capabilities used by Cabana must be initialized and
+            finalized. HYPRE_Init() initializes hypre. A call to HYPRE_Init() must be
+            included before any hypre calls occur
+        */
+        HYPRE_Init();
+
         hypreSemiStructuredSolverExample();
+
+        /*
+            The hypre solver capabilities used by Cabana must be initialized and
+            finalized. HYPRE_Finalize() finalizes hypre. A call to HYPRE_Finalize()
+            should not occur before all calls to hypre capabilites are finished.
+        */
+    HYPRE_Finalize();
     }
     MPI_Finalize();
 

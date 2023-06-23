@@ -295,7 +295,7 @@ class HypreStructuredSolver
     */
     void printLHS( const char* prefix )
     {
-        HYPRE_StructMatrixPrint( prefix, _A, 0 );
+        HYPRE_StructVectorPrint( prefix, _x, 0 );
     }
 
     /*!
@@ -304,7 +304,7 @@ class HypreStructuredSolver
     */
     void printRHS( const char* prefix )
     {
-        HYPRE_StructMatrixPrint( prefix, _A, 0 );
+        HYPRE_StructVectorPrint( prefix, _b, 0 );
     }
 
     //! Set convergence tolerance implementation.

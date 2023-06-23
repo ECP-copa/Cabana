@@ -16,25 +16,13 @@
 #ifndef CAJITA_HYPRE_HPP
 #define CAJITA_HYPRE_HPP
 
-#include <Cajita_Array.hpp>
-#include <Cajita_GlobalGrid.hpp>
-#include <Cajita_IndexSpace.hpp>
-#include <Cajita_LocalGrid.hpp>
-#include <Cajita_Types.hpp>
-
 #include <HYPRE_config.h>
 #include <HYPRE_struct_ls.h>
 #include <HYPRE_struct_mv.h>
 
 #include <Kokkos_Core.hpp>
 
-#include <array>
 #include <memory>
-#include <numeric>
-#include <sstream>
-#include <string>
-#include <type_traits>
-#include <vector>
 
 namespace Cajita
 {

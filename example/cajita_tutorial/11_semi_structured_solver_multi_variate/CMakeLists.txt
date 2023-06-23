@@ -11,5 +11,5 @@
 
 add_executable(HypreSemiStructuredSolverMulti hypre_semi_structured_solver_multi_example.cpp)
 target_link_libraries(HypreSemiStructuredSolverMulti Cajita)
-add_test(NAME Cajita_tutorial_17_hypre_SS COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:HypreSemiStructuredSolverMulti> ${MPIEXEC_POSTFLAGS})
-set_tests_properties(Cajita_tutorial_17_hypre_SS PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
+add_test(NAME Cajita_tutorial_11_hypre_SS COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:HypreSemiStructuredSolverMulti> ${MPIEXEC_POSTFLAGS})
+set_tests_properties(Cajita_tutorial_11_hypre_SS PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
