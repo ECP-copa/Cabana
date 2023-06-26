@@ -51,7 +51,7 @@ struct Bar : public Cabana::Field::Scalar<double>
 
 //---------------------------------------------------------------------------//
 template <class InitType>
-void InitTest( InitType init_type, int ppc )
+void initParticleListTest( InitType init_type, int ppc )
 {
     // Global bounding box.
     double cell_size = 0.23;
@@ -149,16 +149,82 @@ void InitTest( InitType init_type, int ppc )
 }
 
 //---------------------------------------------------------------------------//
+template <class InitType>
+void initSliceTest( InitType init_type, int ppc )
+{
+    // Global bounding box.
+    double cell_size = 0.23;
+    std::array<int, 3> global_num_cell = { 43, 32, 39 };
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
+    std::array<double, 3> global_high_corner = {
+        global_low_corner[0] + cell_size * global_num_cell[0],
+        global_low_corner[1] + cell_size * global_num_cell[1],
+        global_low_corner[2] + cell_size * global_num_cell[2] };
+    auto global_mesh = Cajita::createUniformGlobalMesh(
+        global_low_corner, global_high_corner, global_num_cell );
+
+    std::array<bool, 3> is_dim_periodic = { true, true, true };
+    Cajita::DimBlockPartitioner<3> partitioner;
+    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
+                                                 is_dim_periodic, partitioner );
+    auto local_grid = Cajita::createLocalGrid( global_grid, 0 );
+    auto owned_cells = local_grid->indexSpace( Cajita::Own(), Cajita::Cell(),
+                                               Cajita::Local() );
+
+    int num_particle =
+        owned_cells.size() * totalParticlesPerCell( init_type, ppc );
+    Cabana::AoSoA<Cabana::MemberTypes<double[3]>, TEST_MEMSPACE> aosoa(
+        "random", num_particle );
+    auto positions = Cabana::slice<0>( aosoa );
+
+    // Particle initialization functor.
+    const Kokkos::Array<double, 6> box = {
+        global_low_corner[Dim::I], global_high_corner[Dim::I],
+        global_low_corner[Dim::J], global_high_corner[Dim::J],
+        global_low_corner[Dim::K], global_high_corner[Dim::K] };
+
+    // Initialize all particles.
+    Cajita::createParticles( init_type, TEST_EXECSPACE(), positions, ppc,
+                             *local_grid );
+
+    // Check that we created all particles.
+    int global_num_particle = positions.size();
+    MPI_Allreduce( MPI_IN_PLACE, &global_num_particle, 1, MPI_INT, MPI_SUM,
+                   MPI_COMM_WORLD );
+    int expect_num_particle =
+        totalParticlesPerCell( init_type, ppc ) *
+        global_grid->globalNumEntity( Cajita::Cell(), Dim::I ) *
+        global_grid->globalNumEntity( Cajita::Cell(), Dim::J ) *
+        global_grid->globalNumEntity( Cajita::Cell(), Dim::K );
+    EXPECT_EQ( global_num_particle, expect_num_particle );
+
+    // Check that all particles are in the box.
+    auto host_aosoa =
+        Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
+    auto host_positions = Cabana::slice<0>( host_aosoa );
+    for ( std::size_t p = 0; p < host_positions.size(); ++p )
+    {
+        for ( std::size_t d = 0; d < 3; ++d )
+        {
+            EXPECT_TRUE( host_positions( p, d ) > box[2 * d] );
+            EXPECT_TRUE( host_positions( p, d ) < box[2 * d + 1] );
+        }
+    }
+}
+
+//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, random_init_test )
 {
-    InitTest( Cabana::InitRandom(), 17 );
+    initParticleListTest( Cabana::InitRandom(), 17 );
+    initSliceTest( Cabana::InitRandom(), 17 );
 }
 
 TEST( TEST_CATEGORY, uniform_init_test )
 {
-    InitTest( Cabana::InitUniform(), 3 );
+    initParticleListTest( Cabana::InitUniform(), 3 );
+    initSliceTest( Cabana::InitUniform(), 3 );
 }
 
 //---------------------------------------------------------------------------//
