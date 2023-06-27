@@ -118,7 +118,7 @@ void filterEmpties( const ExecutionSpace& exec_space,
 */
 template <class ExecutionSpace, class InitFunctor, class ParticleListType,
           class LocalGridType>
-void createParticles(
+int createParticles(
     Cabana::InitRandom, const ExecutionSpace& exec_space,
     const InitFunctor& create_functor, ParticleListType& particle_list,
     const int particles_per_cell, LocalGridType& local_grid,
@@ -225,14 +225,11 @@ void createParticles(
     // Filter empties.
     filterEmpties( exec_space, local_num_create, particle_created, aosoa,
                    shrink_to_fit );
+    return local_num_create;
 }
 
 /*!
   \brief Initialize random particles per cell given an initialization functor.
-
-  \tparam ParticleListType The type of particle list to initialize.
-  \tparam InitFunctor Initialization functor type. See the documentation below
-  for the create_functor parameter on the signature of this functor.
 
   \param tag Initialization type tag.
   \param create_functor A functor which populates a particle given the logical
@@ -249,7 +246,7 @@ void createParticles(
   \param seed Optional random seed for generating particles.
 */
 template <class InitFunctor, class ParticleListType, class LocalGridType>
-void createParticles(
+int createParticles(
     Cabana::InitRandom tag, const InitFunctor& create_functor,
     ParticleListType& particle_list, const int particles_per_cell,
     LocalGridType& local_grid, const bool shrink_to_fit = true,
@@ -258,8 +255,9 @@ void createParticles(
                             int>::type* = 0 )
 {
     using exec_space = typename ParticleListType::memory_space::execution_space;
-    createParticles( tag, exec_space{}, create_functor, particle_list,
-                     particles_per_cell, local_grid, shrink_to_fit, seed );
+    return createParticles( tag, exec_space{}, create_functor, particle_list,
+                            particles_per_cell, local_grid, shrink_to_fit,
+                            seed );
 }
 
 //---------------------------------------------------------------------------//
@@ -375,10 +373,6 @@ void createParticles(
   \brief Initialize uniform particles per cell given an initialization
   functor.
 
-  \tparam ParticleListType The type of particle list to initialize.
-  \tparam InitFunctor Initialization functor type. See the documentation
-  below for the create_functor parameter on the signature of this functor.
-
   \param exec_space Kokkos execution space.
   \param create_functor A functor which populates a particle given the
   logical position of a particle. This functor returns true if a particle
@@ -396,7 +390,7 @@ void createParticles(
 */
 template <class ExecutionSpace, class InitFunctor, class ParticleListType,
           class LocalGridType>
-void createParticles(
+int createParticles(
     Cabana::InitUniform, const ExecutionSpace& exec_space,
     const InitFunctor& create_functor, ParticleListType& particle_list,
     const int particles_per_cell_dim, LocalGridType& local_grid,
@@ -504,6 +498,7 @@ void createParticles(
     // Filter empties.
     filterEmpties( exec_space, local_num_create, particle_created, aosoa,
                    shrink_to_fit );
+    return local_num_create;
 }
 
 /*!
@@ -524,7 +519,7 @@ void createParticles(
   \param shrink_to_fit Optionally remove unused allocated space after creation.
 */
 template <class InitFunctor, class ParticleListType, class LocalGridType>
-void createParticles(
+int createParticles(
     Cabana::InitUniform tag, const InitFunctor& create_functor,
     ParticleListType& particle_list, const int particles_per_cell_dim,
     LocalGridType& local_grid, const bool shrink_to_fit = true,
@@ -532,8 +527,8 @@ void createParticles(
                             int>::type* = 0 )
 {
     using exec_space = typename ParticleListType::memory_space::execution_space;
-    createParticles( tag, exec_space{}, create_functor, particle_list,
-                     particles_per_cell_dim, local_grid, shrink_to_fit );
+    return createParticles( tag, exec_space{}, create_functor, particle_list,
+                            particles_per_cell_dim, local_grid, shrink_to_fit );
 }
 
 //---------------------------------------------------------------------------//
