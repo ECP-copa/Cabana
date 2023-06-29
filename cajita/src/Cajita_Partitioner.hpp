@@ -272,6 +272,43 @@ class DimBlockPartitioner : public BlockPartitioner<NumSpaceDim>
     //! Spatial dimension.
     static constexpr std::size_t num_space_dim = NumSpaceDim;
 
+    //! Default constructor (automatically partitioned in all dimensions).
+    DimBlockPartitioner()
+    {
+        // Initialize so that all ranks will be modified when requested.
+        initUnpartitionedDims();
+    };
+
+    /*!
+      \brief Constructor for NumSpaceDim-1 (1d for 2d system).
+      \param dim Dimension to ignore for MPI decomposition.
+    */
+    DimBlockPartitioner( const int dim )
+    {
+        initUnpartitionedDims();
+
+        // Only partition in the other dimensions.
+        _unpartitioned_dim[dim] = 1;
+    };
+
+    /*!
+      \brief Constructor for 1d decomposition (3d systems only).
+      \param dim_1 First dimension to ignore for MPI decomposition.
+      \param dim_2 Second dimension to ignore for MPI decomposition.
+    */
+    DimBlockPartitioner( const int dim_1, const int dim_2 )
+    {
+        static_assert(
+            NumSpaceDim > 2,
+            "Cannot partition 2d system with 2 unpartitioned dimensions." );
+
+        initUnpartitionedDims();
+
+        // Only partition in the third dimension.
+        _unpartitioned_dim[dim_1] = 1;
+        _unpartitioned_dim[dim_2] = 1;
+    };
+
     /*!
       \brief Get the MPI ranks per dimension.
       \param comm MPI communicator.
@@ -282,10 +319,7 @@ class DimBlockPartitioner : public BlockPartitioner<NumSpaceDim>
     {
         int comm_size;
         MPI_Comm_size( comm, &comm_size );
-
-        std::array<int, NumSpaceDim> ranks_per_dim;
-        for ( std::size_t d = 0; d < NumSpaceDim; ++d )
-            ranks_per_dim[d] = 0;
+        auto ranks_per_dim = _unpartitioned_dim;
         MPI_Dims_create( comm_size, NumSpaceDim, ranks_per_dim.data() );
 
         return ranks_per_dim;
@@ -348,6 +382,15 @@ class DimBlockPartitioner : public BlockPartitioner<NumSpaceDim>
     }
 
   private:
+    std::array<int, NumSpaceDim> _unpartitioned_dim;
+
+    //! Initialize all partition dimensions to zero (allow them to be modified).
+    void initUnpartitionedDims()
+    {
+        for ( std::size_t d = 0; d < NumSpaceDim; ++d )
+            _unpartitioned_dim[d] = 0;
+    }
+
     /*!
       \brief Get the average owned number of cells and the remainder.
       \param cart_comm The MPI Cartesian communicator for the partitioning.
