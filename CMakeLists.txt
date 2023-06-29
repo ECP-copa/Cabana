@@ -129,6 +129,7 @@ if(Cabana_ENABLE_HDF5)
   endif()
 
   include(CheckSymbolExists)
+  LIST(APPEND CMAKE_REQUIRED_INCLUDES ${HDF5_INCLUDE_DIRS})
   check_symbol_exists(H5_HAVE_PARALLEL "H5pubconf.h" HDF5_IS_PARALLEL)
   if(NOT HDF5_IS_PARALLEL)
     message(FATAL_ERROR "Cabana HDF5 support requires parallel HDF5.")
