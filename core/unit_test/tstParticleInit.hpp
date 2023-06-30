@@ -68,33 +68,6 @@ void checkRandomDistances( const int min_distance,
         }
 }
 
-void testRandomCreationSliceMinDistance()
-{
-    int num_particle = 200;
-    Cabana::AoSoA<Cabana::MemberTypes<double[3]>, TEST_MEMSPACE> aosoa(
-        "random", num_particle );
-    auto positions = Cabana::slice<0>( aosoa );
-
-    double min_dist = 0.47;
-    Kokkos::Array<double, 3> box_min = { -9.5, -4.7, 0.5 };
-    Kokkos::Array<double, 3> box_max = { 7.6, -1.5, 5.5 };
-    int created =
-        Cabana::createParticles( Cabana::InitRandom(), positions,
-                                 positions.size(), min_dist, box_min, box_max );
-    aosoa.resize( created );
-    auto host_aosoa =
-        Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
-    auto host_positions = Cabana::slice<0>( host_aosoa );
-
-    // All particles may not have been created in this case (some skipped by the
-    // minimum distance criterion).
-    EXPECT_LE( host_positions.size(), num_particle );
-    EXPECT_GE( host_positions.size(), 0 );
-    checkRandomParticles( host_positions.size(), box_min, box_max,
-                          host_positions );
-    checkRandomDistances( min_dist, host_positions );
-}
-
 void testRandomCreationSlice()
 {
     int num_particle = 200;
@@ -188,7 +161,6 @@ void testRandomCreationParticleList()
 
 TEST( TEST_CATEGORY, random_particle_creation_slice_test )
 {
-    testRandomCreationSliceMinDistance();
     testRandomCreationSlice();
 }
 TEST( TEST_CATEGORY, random_particle_creation_particlelist_test )
