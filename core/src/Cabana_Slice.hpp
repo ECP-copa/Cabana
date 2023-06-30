@@ -981,6 +981,26 @@ void copyViewToSlice( ViewType& view, const SliceType& slice,
     copyViewToSlice( exec_space{}, view, slice, begin, end );
 }
 
+//! Check slice size (differs from Kokkos View).
+template <class SliceType>
+void checkSize(
+    [[maybe_unused]] SliceType slice, [[maybe_unused]] const std::size_t size,
+    typename std::enable_if<is_slice<SliceType>::value, int>::type* = 0 )
+{
+    // Allow unused for release builds.
+    assert( slice.size() == size );
+}
+
+//! Check View size (differs from Slice).
+template <class ViewType>
+void checkSize(
+    [[maybe_unused]] ViewType view, [[maybe_unused]] const std::size_t size,
+    typename std::enable_if<Kokkos::is_view<ViewType>::value, int>::type* = 0 )
+{
+    // Allow unused for release builds.
+    assert( view.extent( 0 ) == size );
+}
+
 //---------------------------------------------------------------------------//
 
 } // end namespace Cabana

@@ -204,8 +204,8 @@ void createParticles(
                               Kokkos::is_view<PositionType>::value ),
                             int>::type* = 0 )
 {
-    // Ensure correct space for the particles.
-    assert( positions.size() == num_particles );
+    // Ensure correct space for the particles (View or Slice).
+    checkSize( positions, num_particles );
 
     // Copy corners to device accessible arrays.
     auto kokkos_min = Impl::copyArray( box_min );
