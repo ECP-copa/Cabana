@@ -212,6 +212,74 @@ GlobalGrid<MeshType>::blockRank( const int i, const int j ) const
 }
 
 //---------------------------------------------------------------------------//
+// Get the MPI sub communicator for given direction
+template <class MeshType>
+MPI_Comm GlobalGrid<MeshType>::subComm( const int dim ) const
+{
+    MPI_Comm sub_comm;
+
+    // Set colors same within the dimBlockId of the dim
+    MPI_Comm_split( comm(), dimBlockId( dim ), blockId(), &sub_comm );
+    return sub_comm;
+}
+
+//---------------------------------------------------------------------------//
+// Get the MPI sub communicator for reduction in the given direction
+template <class MeshType>
+MPI_Comm GlobalGrid<MeshType>::reductionSubComm( const int dim ) const
+{
+    MPI_Comm sub_comm;
+
+    // non reduciton directions
+    std::array<int, num_space_dim - 1> no_dir;
+    if ( num_space_dim == 2 )
+    {
+        switch ( dim )
+        {
+        case Dim::I:
+            no_dir[0] = Dim::J;
+            break;
+        case Dim::J:
+            no_dir[0] = Dim::I;
+            break;
+        }
+    }
+    else if ( num_space_dim == 3 )
+    {
+        switch ( dim )
+        {
+        case Dim::I:
+            no_dir[0] = Dim::J;
+            no_dir[1] = Dim::K;
+            break;
+        case Dim::J:
+            no_dir[0] = Dim::I;
+            no_dir[1] = Dim::K;
+            break;
+        case Dim::K:
+            no_dir[0] = Dim::I;
+            no_dir[1] = Dim::J;
+            break;
+        }
+    }
+
+    // Set colors same within the reduciton direction
+    int colors;
+    if ( num_space_dim == 2 )
+    {
+        colors = dimBlockId( no_dir[0] );
+    }
+    else if ( num_space_dim == 3 )
+    {
+        colors = dimNumBlock( no_dir[0] ) * dimBlockId( no_dir[1] ) +
+                 dimBlockId( no_dir[0] );
+    }
+    MPI_Comm_split( comm(), colors, blockId(), &sub_comm );
+
+    return sub_comm;
+}
+
+//---------------------------------------------------------------------------//
 // Get the global number of cells in a given dimension.
 template <class MeshType>
 int GlobalGrid<MeshType>::globalNumEntity( Cell, const int dim ) const

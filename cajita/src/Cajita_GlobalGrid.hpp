@@ -119,6 +119,22 @@ class GlobalGrid
     template <std::size_t NSD = num_space_dim>
     std::enable_if_t<2 == NSD, int> blockRank( const int i, const int j ) const;
 
+    /*!
+      \brief Get the MPI sub communicator for given direction. The color is
+      same within the block Id of the given direction
+
+      \param dim Spation dimention
+    */
+    MPI_Comm subComm( const int dim ) const;
+
+    /*!
+      \brief Get the MPI sub communicator for reduction in given direction.
+      The color is same within the given reduction direciton
+
+      \param dim Spation dimention
+    */
+    MPI_Comm reductionSubComm( const int dim ) const;
+
     //! \brief Get the global number of entities in a given dimension.
     //! \param dim Spatial dimension.
     int globalNumEntity( Cell, const int dim ) const;
