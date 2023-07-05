@@ -37,15 +37,6 @@ void gridHaloExample()
       plan and performing both scatter and gather operations.
     */
 
-    int comm_rank = -1;
-    MPI_Comm_rank( MPI_COMM_WORLD, &comm_rank );
-
-    if ( comm_rank == 0 )
-    {
-        std::cout << "Cajita Grid Halo Example" << std::endl;
-        std::cout << "    (intended to be run with MPI)\n" << std::endl;
-    }
-
     using exec_space = Kokkos::DefaultHostExecutionSpace;
     using device_type = exec_space::device_type;
 
@@ -80,6 +71,14 @@ void gridHaloExample()
         global_low_corner, global_high_corner, global_num_cell );
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                          is_dim_periodic, partitioner );
+
+    // Get the current rank for printing output.
+    int comm_rank = global_grid->blockId();
+    if ( comm_rank == 0 )
+    {
+        std::cout << "Cajita Grid Halo Example" << std::endl;
+        std::cout << "    (intended to be run with MPI)\n" << std::endl;
+    }
 
     /*
       Here the halo width allocated for the system is not necessarily always

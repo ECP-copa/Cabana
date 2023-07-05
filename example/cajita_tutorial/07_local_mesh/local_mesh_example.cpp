@@ -32,15 +32,6 @@ void localMeshExample()
       local mesh, including ghost information.
     */
 
-    int comm_rank = -1;
-    MPI_Comm_rank( MPI_COMM_WORLD, &comm_rank );
-
-    if ( comm_rank == 0 )
-    {
-        std::cout << "Cajita Local Mesh Example" << std::endl;
-        std::cout << "    (intended to be run with MPI)\n" << std::endl;
-    }
-
     using exec_space = Kokkos::DefaultHostExecutionSpace;
     using device_type = exec_space::device_type;
 
@@ -64,6 +55,14 @@ void localMeshExample()
     std::array<bool, 3> is_dim_periodic = { true, true, true };
     auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                                  is_dim_periodic, partitioner );
+
+    // Get the current rank for printing output.
+    int comm_rank = global_grid->blockId();
+    if ( comm_rank == 0 )
+    {
+        std::cout << "Cajita Local Mesh Example" << std::endl;
+        std::cout << "    (intended to be run with MPI)\n" << std::endl;
+    }
 
     // Create a local grid
     int halo_width = 1;

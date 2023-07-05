@@ -61,14 +61,6 @@ void loadBalancerExample()
      * application using Cajita without load balancing; the comments will be
      * focused on the additions/changes due to including the load balancer.
      */
-    int comm_rank = -1;
-    MPI_Comm_rank( MPI_COMM_WORLD, &comm_rank );
-
-    if ( comm_rank == 0 )
-    {
-        std::cout << "Cajita Load Balancer Example" << std::endl;
-        std::cout << "    (intended to be run with MPI)\n" << std::endl;
-    }
 
     /*
      * The example system is 2D and its size based on the number of ranks. Every
@@ -98,6 +90,14 @@ void loadBalancerExample()
     std::array<bool, 2> is_dim_periodic = { false, false };
     auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                                  is_dim_periodic, partitioner );
+
+    // Get the current rank for printing output.
+    int comm_rank = global_grid->blockId();
+    if ( comm_rank == 0 )
+    {
+        std::cout << "Cajita Load Balancer Example" << std::endl;
+        std::cout << "    (intended to be run with MPI)\n" << std::endl;
+    }
 
     /*
      * The load balancer is initialized using the global grid and MPI

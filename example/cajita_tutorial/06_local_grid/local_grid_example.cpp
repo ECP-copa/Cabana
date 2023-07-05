@@ -31,14 +31,6 @@ void localGridExample()
       Cajita subpackage as application users will likely interact with it the
       most and it includes interfaces to all other grid/mesh classes.
     */
-    int comm_rank = -1;
-    MPI_Comm_rank( MPI_COMM_WORLD, &comm_rank );
-
-    if ( comm_rank == 0 )
-    {
-        std::cout << "Cajita Local Grid Example" << std::endl;
-        std::cout << "    (intended to be run with MPI)\n" << std::endl;
-    }
 
     // Here we partition only in x to simplify the example below.
     int comm_size;
@@ -57,6 +49,14 @@ void localGridExample()
     std::array<bool, 3> is_dim_periodic = { true, true, true };
     auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                                  is_dim_periodic, partitioner );
+
+    // Get the current rank for printing output.
+    int comm_rank = global_grid->blockId();
+    if ( comm_rank == 0 )
+    {
+        std::cout << "Cajita Local Grid Example" << std::endl;
+        std::cout << "    (intended to be run with MPI)\n" << std::endl;
+    }
 
     /*
       We create the local grid from the global grid and a halo width -
