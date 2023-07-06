@@ -24,8 +24,8 @@
 void hypreSemiStructuredSolverExample()
 {
     /*
-      In this example we will demonstrate building a HYPRE semi-structured 
-      solver that solves 3, independent, Poisson equations with designated 
+      In this example we will demonstrate building a HYPRE semi-structured
+      solver that solves 3, independent, Poisson equations with designated
       solution tolerance,
 
            Laplacian( lhs ) = rhs,
@@ -178,8 +178,8 @@ int main( int argc, char* argv[] )
 
         /*
             The hypre solver capabilities used by Cabana must be initialized and
-            finalized. HYPRE_Init() initializes hypre. A call to HYPRE_Init() must be
-            included before any hypre calls occur
+            finalized. HYPRE_Init() initializes hypre. A call to HYPRE_Init()
+           must be included before any hypre calls occur
         */
         HYPRE_Init();
 
@@ -187,10 +187,11 @@ int main( int argc, char* argv[] )
 
         /*
             The hypre solver capabilities used by Cabana must be initialized and
-            finalized. HYPRE_Finalize() finalizes hypre. A call to HYPRE_Finalize()
-            should not occur before all calls to hypre capabilites are finished.
+            finalized. HYPRE_Finalize() finalizes hypre. A call to
+           HYPRE_Finalize() should not occur before all calls to hypre
+           capabilites are finished.
         */
-    HYPRE_Finalize();
+        HYPRE_Finalize();
     }
     MPI_Finalize();
 

@@ -536,7 +536,7 @@ class HypreSemiStructuredSolver
         }
 
         // Insert b values into the HYPRE vector.
-        // The process of creating the view and then deep copying each 
+        // The process of creating the view and then deep copying each
         // variable is functional, but we should avoid this process
         // for performance if possible
         for ( int var = 0; var < n_vars; ++var )

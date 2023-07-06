@@ -152,7 +152,6 @@ void hypreStructuredSolverExample()
     Cajita::ArrayOp::assign( *rhs, 2.0, Cajita::Own() );
     Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
     solver->solve( *rhs, *lhs );
-
 }
 
 //---------------------------------------------------------------------------//
