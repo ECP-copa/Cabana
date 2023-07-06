@@ -10,8 +10,8 @@
  ****************************************************************************/
 
 /*!
-  \file Cajita_HypreStructuredSolver.hpp
-  \brief HYPRE structured solver interface
+  \file Cajita_Hypre.hpp
+  \brief HYPRE memory space handling
 */
 #ifndef CAJITA_HYPRE_HPP
 #define CAJITA_HYPRE_HPP

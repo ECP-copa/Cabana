@@ -25,7 +25,7 @@ void hypreSemiStructuredSolverExample()
 {
     /*
       In this example we will demonstrate building a HYPRE semi-structured 
-      solver that solves 3, indpenedent, Poisson equations with designated 
+      solver that solves 3, independent, Poisson equations with designated 
       solution tolerance,
 
            Laplacian( lhs ) = rhs,

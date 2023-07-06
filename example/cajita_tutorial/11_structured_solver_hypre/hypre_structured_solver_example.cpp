@@ -131,7 +131,6 @@ void hypreStructuredSolverExample()
       options are shown above).
     */
     std::string precond_type = "Jacobi";
-    //    std::string precond_type = "Diagonal";
     auto preconditioner =
         Cajita::createHypreStructuredSolver<double, MemorySpace>(
             precond_type, *vector_layout, true );
