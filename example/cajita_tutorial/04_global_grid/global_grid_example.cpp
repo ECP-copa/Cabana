@@ -23,14 +23,6 @@ void globalGridExample()
       physical size and characteristics of the mesh. The global grid accordingly
       defines indexing throughout the entire mesh domain.
     */
-    int comm_rank = -1;
-    MPI_Comm_rank( MPI_COMM_WORLD, &comm_rank );
-
-    if ( comm_rank == 0 )
-    {
-        std::cout << "Cajita Global Grid Example" << std::endl;
-        std::cout << "    (intended to be run with MPI)\n" << std::endl;
-    }
 
     /*
       Both the global mesh and partitioning information are necessary to create
@@ -61,6 +53,14 @@ void globalGridExample()
     // Create the global grid.
     auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                                  is_dim_periodic, partitioner );
+
+    // Get the current rank for printing output.
+    int comm_rank = global_grid->blockId();
+    if ( comm_rank == 0 )
+    {
+        std::cout << "Cajita Global Grid Example" << std::endl;
+        std::cout << "    (intended to be run with MPI)\n" << std::endl;
+    }
 
     /*
       Now extract grid details that are the same globally (on each MPI rank):

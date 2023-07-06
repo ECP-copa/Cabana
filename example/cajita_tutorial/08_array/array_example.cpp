@@ -29,15 +29,6 @@ void arrayExample()
       data itself and may only be defined on a single entity type.
     */
 
-    int comm_rank = -1;
-    MPI_Comm_rank( MPI_COMM_WORLD, &comm_rank );
-
-    if ( comm_rank == 0 )
-    {
-        std::cout << "Cajita Array Example" << std::endl;
-        std::cout << "    (intended to be run with MPI)\n" << std::endl;
-    }
-
     using exec_space = Kokkos::DefaultHostExecutionSpace;
     using device_type = exec_space::device_type;
 
@@ -68,6 +59,14 @@ void arrayExample()
     // Create the global grid.
     auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                                  is_dim_periodic, partitioner );
+
+    // Get the current rank for printing output.
+    int comm_rank = global_grid->blockId();
+    if ( comm_rank == 0 )
+    {
+        std::cout << "Cajita Array Example" << std::endl;
+        std::cout << "    (intended to be run with MPI)\n" << std::endl;
+    }
 
     /*
       An array layout includes the local grid size information together with the
