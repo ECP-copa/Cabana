@@ -50,11 +50,8 @@ void gridHaloExample()
     using device_type = exec_space::device_type;
 
     // Use linear MPI partitioning to make this example simpler.
-    int comm_size;
-    MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
-    std::array<int, 3> ranks_per_dim = { comm_size, 1, 1 };
-    MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
-    Cajita::ManualBlockPartitioner<3> partitioner( ranks_per_dim );
+    Cajita::DimBlockPartitioner<3> partitioner( Cajita::Dim::J,
+                                                Cajita::Dim::K );
 
     /*
       Boundaries are not periodic in this example, thus ranks at system
