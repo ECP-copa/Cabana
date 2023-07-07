@@ -262,6 +262,9 @@ TEST( semi_structured_solver, bicgstab_none_test )
     poissonTest( "BiCGSTAB", "none", TEST_MEMSPACE{} );
 }
 
+/*
+    PFMG support is not currently implemented for the semi-structured solver
+*/
 // TEST( semi_structured_solver, pfmg_none_test )
 //{
 //     poissonTest( "PFMG", "none", TEST_MEMSPACE{} );
