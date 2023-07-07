@@ -288,7 +288,7 @@ jobs:
         working-directory: arborx
         run: |
           cmake -B build \
-            -DCMAKE_PREFIX_PATH=${HOME}/kokkos \
+            -DKokkos_ROOT=${HOME}/kokkos \
             -DCMAKE_INSTALL_PREFIX=$HOME/arborx \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
@@ -308,7 +308,6 @@ jobs:
           [[ ${{ matrix.heffte }} == "MKL" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_MKL=ON )
           # FIXME: Remove MKL path below when we update heFFTe
           cmake -B build \
-            -DCMAKE_CXX_STANDARD="11" \
             -DBUILD_SHARED_LIBS=ON \
             -DCMAKE_INSTALL_PREFIX=$HOME/heffte \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
