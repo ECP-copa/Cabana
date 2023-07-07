@@ -127,11 +127,49 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                 // Create the neighbor list.
                 double cutoff = cutoff_ratios[c];
                 create_timer.start( pid );
+
+                // Note: this needs to match the neighbor function used below
+                // (only necessary for the neighbor statistics printing).
+                using neigh_type =
+                    Cabana::Experimental::Dense<memory_space, ListTag>;
+
                 auto const nlist = Cabana::Experimental::make2DNeighborList(
                     ListTag{}, Cabana::slice<0>( aosoas[p], "position" ), 0,
                     num_p, cutoff );
                 create_timer.stop( pid );
 
+                // Print neighbor statistics once per system.
+                if ( t == 0 )
+                {
+                    std::size_t max_neigh;
+                    Kokkos::Max<std::size_t> max_reducer( max_neigh );
+                    std::size_t min_neigh;
+                    Kokkos::Min<std::size_t> min_reducer( min_neigh );
+                    std::size_t total_neigh;
+                    Kokkos::Sum<std::size_t> total_reducer( total_neigh );
+                    Kokkos::parallel_reduce(
+                        "Cabana::Benchmark::countNeighbors", policy,
+                        KOKKOS_LAMBDA( const int p, std::size_t& min,
+                                       std::size_t& max, std::size_t& sum ) {
+                            auto const val =
+                                Cabana::NeighborList<neigh_type>::numNeighbor(
+                                    nlist, p );
+                            if ( val < min )
+                                min = val;
+                            if ( val > max )
+                                max = val;
+                            sum += val;
+                        },
+                        min_reducer, max_reducer, total_reducer );
+                    Kokkos::fence();
+                    std::cout << "List min neighbors: " << min_neigh
+                              << std::endl;
+                    std::cout << "List max neighbors: " << max_neigh
+                              << std::endl;
+                    std::cout << "List avg neighbors: " << total_neigh / num_p
+                              << std::endl;
+                    std::cout << std::endl;
+                }
                 // Iterate through the neighbor list.
                 iteration_timer.start( pid );
                 Cabana::neighbor_parallel_for( policy, count_op, nlist,
