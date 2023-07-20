@@ -24,6 +24,24 @@ jobs:
     runs-on: ubuntu-20.04
     container: docker.io/ecpe4s/e4s-base-rocm:23.05
     steps:
+      - name: Build fftw
+        run: |
+          wget --quiet http://www.fftw.org/fftw-3.3.8.tar.gz --output-document=fftw.tar.gz
+          mkdir -p fftw
+          tar -xf fftw.tar.gz -C fftw --strip-components=1
+          cd fftw
+          cmake -B build \
+            -D CMAKE_INSTALL_PREFIX=$HOME/fftw \
+            -D CMAKE_BUILD_TYPE=Release \
+            -D ENABLE_FLOAT=ON
+          cmake --build build --parallel 2
+          cmake --install build
+          cmake -B build \
+            -D CMAKE_INSTALL_PREFIX=$HOME/fftw \
+            -D CMAKE_BUILD_TYPE=Release \
+            -D ENABLE_FLOAT=OFF
+          cmake --build build --parallel 2
+          cmake --install build
       - name: Checkout GTest
         uses: actions/checkout@v3
         with:
@@ -83,8 +101,10 @@ jobs:
           cmake -B build \
             -DBUILD_SHARED_LIBS=ON \
             -DCMAKE_INSTALL_PREFIX=$HOME/heffte \
+            -DCMAKE_PREFIX_PATH="$HOME/fftw" \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
+            -DHeffte_ENABLE_FFTW=ON \
             -DHeffte_ENABLE_ROCM=ON
           cmake --build build --parallel 2
           cmake --install build
