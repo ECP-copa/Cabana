@@ -33,10 +33,8 @@ void localGridExample()
     */
 
     // Here we partition only in x to simplify the example below.
-    int comm_size;
-    MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
-    std::array<int, 3> input_ranks_per_dim = { comm_size, 1, 1 };
-    Cajita::ManualBlockPartitioner<3> partitioner( input_ranks_per_dim );
+    Cajita::DimBlockPartitioner<3> partitioner( Cajita::Dim::J,
+                                                Cajita::Dim::K );
 
     // Create the global mesh.
     std::array<int, 3> global_num_cell = { 20, 10, 10 };
