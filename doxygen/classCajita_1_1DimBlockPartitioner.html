@@ -106,6 +106,16 @@ Collaboration diagram for Cajita::DimBlockPartitioner&lt; NumSpaceDim &gt;:</div
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a769be199e7457f52889f1eea8e9c1d37"><td class="memItemLeft" align="right" valign="top"><a id="a769be199e7457f52889f1eea8e9c1d37" name="a769be199e7457f52889f1eea8e9c1d37"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>DimBlockPartitioner</b> ()</td></tr>
+<tr class="memdesc:a769be199e7457f52889f1eea8e9c1d37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor (automatically partitioned in all dimensions). <br /></td></tr>
+<tr class="separator:a769be199e7457f52889f1eea8e9c1d37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf12bf52161319a63574144f3dbba16b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1DimBlockPartitioner.html#abf12bf52161319a63574144f3dbba16b">DimBlockPartitioner</a> (const int dim)</td></tr>
+<tr class="memdesc:abf12bf52161319a63574144f3dbba16b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for NumSpaceDim-1 (1d for 2d system).  <br /></td></tr>
+<tr class="separator:abf12bf52161319a63574144f3dbba16b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab43bfdc70b579cb2c3b2e04b4056bbcf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1DimBlockPartitioner.html#ab43bfdc70b579cb2c3b2e04b4056bbcf">DimBlockPartitioner</a> (const int dim_1, const int dim_2)</td></tr>
+<tr class="memdesc:ab43bfdc70b579cb2c3b2e04b4056bbcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for 1d decomposition (3d systems only).  <br /></td></tr>
+<tr class="separator:ab43bfdc70b579cb2c3b2e04b4056bbcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9185cbd234f9bd36d8ca4ad39758f57"><td class="memItemLeft" align="right" valign="top">std::array&lt; int, NumSpaceDim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1DimBlockPartitioner.html#af9185cbd234f9bd36d8ca4ad39758f57">ranksPerDimension</a> (MPI_Comm comm, const std::array&lt; int, NumSpaceDim &gt; &amp;) const override</td></tr>
 <tr class="memdesc:af9185cbd234f9bd36d8ca4ad39758f57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the MPI ranks per dimension.  <br /></td></tr>
 <tr class="separator:af9185cbd234f9bd36d8ca4ad39758f57"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -144,7 +154,91 @@ class Cajita::DimBlockPartitioner&lt; NumSpaceDim &gt;</div><p>Dimension-only pa
   </table>
   </dd>
 </dl>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="abf12bf52161319a63574144f3dbba16b" name="abf12bf52161319a63574144f3dbba16b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf12bf52161319a63574144f3dbba16b">&#9670;&#160;</a></span>DimBlockPartitioner() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t NumSpaceDim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classCajita_1_1DimBlockPartitioner.html">Cajita::DimBlockPartitioner</a>&lt; NumSpaceDim &gt;::DimBlockPartitioner </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>dim</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructor for NumSpaceDim-1 (1d for 2d system). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dim</td><td>Dimension to ignore for MPI decomposition. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ab43bfdc70b579cb2c3b2e04b4056bbcf" name="ab43bfdc70b579cb2c3b2e04b4056bbcf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab43bfdc70b579cb2c3b2e04b4056bbcf">&#9670;&#160;</a></span>DimBlockPartitioner() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t NumSpaceDim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classCajita_1_1DimBlockPartitioner.html">Cajita::DimBlockPartitioner</a>&lt; NumSpaceDim &gt;::DimBlockPartitioner </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>dim_1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>dim_2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructor for 1d decomposition (3d systems only). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dim_1</td><td>First dimension to ignore for MPI decomposition. </td></tr>
+    <tr><td class="paramname">dim_2</td><td>Second dimension to ignore for MPI decomposition. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="acdb78cb798e9727a7e709d46268d3309" name="acdb78cb798e9727a7e709d46268d3309"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acdb78cb798e9727a7e709d46268d3309">&#9670;&#160;</a></span>ownedCellInfo()</h2>
 
