@@ -92,7 +92,13 @@ Cabana_add_dependency( PACKAGE ALL )
 find_package( CLANG_FORMAT 10 )
 
 # find hypre
-Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.1 )
+if(Kokkos_ENABLE_HIP)
+  # FIXME: remove when hypre supports HIP CMake builds
+  pkg_check_modules(PC_HYPRE hypre IMPORTED_TARGET)
+  add_library(HYPRE::HYPRE ALIAS pkgconfig:PC_HYPRE)
+else()
+  Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.1 )
+endif()
 
 # find heffte
 Cabana_add_dependency( PACKAGE Heffte VERSION 2.3.0 )
