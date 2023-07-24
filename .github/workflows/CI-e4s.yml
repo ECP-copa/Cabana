@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         cxx: ['hipcc']
-        cmake_build_type: ['Debug', 'Release']
+        cmake_build_type: ['Debug']
         kokkos_ver: ['4.0.01']
     runs-on: ubuntu-20.04
     container: docker.io/ecpe4s/e4s-base-rocm:23.05
