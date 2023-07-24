@@ -133,6 +133,7 @@ jobs:
             -DCabana_ENABLE_PERFORMANCE_TESTING=ON \
             -DCabana_PERFORMANCE_EXPECTED_FLOPS=0 \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
-            -DCMAKE_DISABLE_FIND_PACKAGE_HDF5=ON
+            -DCMAKE_DISABLE_FIND_PACKAGE_HDF5=ON \
+            -DGPU_TARGETS="gfx908"
           cmake --build build --parallel 2 --verbose
           cmake --install build
