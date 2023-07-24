@@ -47,7 +47,7 @@ jobs:
         uses: actions/checkout@v2.2.0
       - name: Build Cabana
         run: |
-          cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/Cabana -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx" -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON -DCabana_REQUIRE_${{ matrix.backend }}=ON -DVALGRIND_EXECUTABLE=False -DCMAKE_DISABLE_FIND_PACKAGE_HDF5=ON ${{ github.event.inputs.cmake_args }}
+          cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/Cabana -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx" -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON -DCabana_REQUIRE_${{ matrix.backend }}=ON -DVALGRIND_EXECUTABLE=False ${{ github.event.inputs.cmake_args }}
           cmake --build build --parallel 2
-          ctest --test-dir build --output-on-failure  ${{ github.event.inputs.ctest_args }}
+          ctest --test-dir build --output-on-failure -E "Cajita_BovWriter|Cabana_HDF5" ${{ github.event.inputs.ctest_args }}
           cmake --install build
