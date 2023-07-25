@@ -31,11 +31,10 @@
 template <class Device>
 void performanceTest( std::ostream& stream,
                       const Cajita::DimBlockPartitioner<3> partitioner,
-                      const int problem_global_cells_per_dim,
+                      const std::array<int, 3> grid_sizes_per_dim,
                       const std::string& test_prefix,
                       std::vector<int> problem_halo_width, MPI_Comm comm )
 {
-
     using exec_space = typename Device::execution_space;
     using device_type = Device;
 
@@ -48,19 +47,16 @@ void performanceTest( std::ostream& stream,
     std::array<bool, 3> is_dim_periodic = { false, false, false };
 
     // Create the mesh and grid structures as usual.
-    double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = { problem_global_cells_per_dim,
-                                           problem_global_cells_per_dim,
-                                           problem_global_cells_per_dim };
     std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
-    std::array<double, 3> global_high_corner = {
-        global_low_corner[0] + cell_size * global_num_cell[0],
-        global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2] };
+    std::array<double, 3> global_high_corner = { 2.4, -0.4, -1.5 };
     auto global_mesh = Cajita::createUniformGlobalMesh(
-        global_low_corner, global_high_corner, global_num_cell );
+        global_low_corner, global_high_corner, grid_sizes_per_dim );
     auto global_grid =
         createGlobalGrid( comm, global_mesh, is_dim_periodic, partitioner );
+
+    std::cout << global_grid->ownedNumCell( 0 ) << " "
+              << global_grid->ownedNumCell( 1 ) << " "
+              << global_grid->ownedNumCell( 2 ) << " " << std::endl;
 
     // Create insertion timers
     std::stringstream halo_create_name;
@@ -149,11 +145,11 @@ int main( int argc, char* argv[] )
     std::string run_type = "";
     if ( argc > 2 )
         run_type = argv[2];
-    std::vector<int> problem_global_cells_per_dim = { 16 };
+    std::vector<int> grid_sizes_per_dim_per_rank = { 16 };
     std::vector<int> problem_halo_width = { 1, 2 };
     if ( run_type == "large" )
     {
-        problem_global_cells_per_dim = { 16, 32, 64, 128, 256 };
+        grid_sizes_per_dim_per_rank = { 16, 32, 64, 128, 256 };
         problem_halo_width = { 1, 2, 3, 4, 5 };
     }
 
@@ -168,20 +164,26 @@ int main( int argc, char* argv[] )
 
     // Get partitioner
     Cajita::DimBlockPartitioner<3> partitioner;
+    // Get ranks per dimension
+    std::array<int, 3> ranks_per_dimension =
+        partitioner.ranksPerDimension( MPI_COMM_WORLD, { 0, 0, 0 } );
 
-    int global_cells_per_dim_size = problem_global_cells_per_dim.size();
-    for ( int p = 0; p < global_cells_per_dim_size; ++p )
+    int num_grid_size = grid_sizes_per_dim_per_rank.size();
+    for ( int p = 0; p < num_grid_size; ++p )
     {
         // Open the output file on rank 0.
         std::fstream file;
         if ( 0 == comm_rank )
             file.open( filename + "_" + std::to_string( comm_size ) + "_" +
-                           std::to_string( problem_global_cells_per_dim[p] ),
+                           std::to_string( grid_sizes_per_dim_per_rank[p] ),
                        std::fstream::out );
 
-        // Get ranks per dimension
-        std::array<int, 3> ranks_per_dimension = partitioner.ranksPerDimension(
-            MPI_COMM_WORLD, ranks_per_dimension );
+        std::array<int, 3> grid_sizes_per_dim;
+        for ( int d = 0; d < 3; ++d )
+        {
+            grid_sizes_per_dim[d] =
+                grid_sizes_per_dim_per_rank[p] * ranks_per_dimension[d];
+        }
 
         // Output problem details.
         if ( 0 == comm_rank )
@@ -195,8 +197,8 @@ int main( int argc, char* argv[] )
             file << "MPI Cartesian Dim Ranks: (" << ranks_per_dimension[0]
                  << ", " << ranks_per_dimension[1] << ", "
                  << ranks_per_dimension[2] << ")\n";
-            file << "Global Cells per Dim: " << problem_global_cells_per_dim[p]
-                 << "\n";
+            file << "Global Cells per Dim per Rank: "
+                 << grid_sizes_per_dim_per_rank[p] << "\n";
             file << "----------------------------------------------"
                  << "\n";
             file << "\n";
@@ -212,13 +214,13 @@ int main( int argc, char* argv[] )
         // Don't run twice on the CPU if only host enabled.
         if ( !std::is_same<device_type, host_device_type>{} )
         {
-            performanceTest<device_type>(
-                file, partitioner, problem_global_cells_per_dim[p], "device_",
-                problem_halo_width, MPI_COMM_WORLD );
+            performanceTest<device_type>( file, partitioner, grid_sizes_per_dim,
+                                          "device_", problem_halo_width,
+                                          MPI_COMM_WORLD );
         }
-        performanceTest<host_device_type>(
-            file, partitioner, problem_global_cells_per_dim[p], "host_",
-            problem_halo_width, MPI_COMM_WORLD );
+        performanceTest<host_device_type>( file, partitioner,
+                                           grid_sizes_per_dim, "host_",
+                                           problem_halo_width, MPI_COMM_WORLD );
     }
     // Finalize
     Kokkos::finalize();
