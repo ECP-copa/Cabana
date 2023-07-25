@@ -36,8 +36,8 @@
 namespace Test
 {
 
-template <class SliceType>
-void checkScalar( SliceType write, SliceType read )
+template <class SliceType1, class SliceType2>
+void checkScalar( SliceType1 write, SliceType2 read )
 {
     for ( std::size_t p = 0; p < write.size(); ++p )
     {
@@ -45,8 +45,8 @@ void checkScalar( SliceType write, SliceType read )
     }
 }
 
-template <class SliceType>
-void checkVector( SliceType write, SliceType read )
+template <class SliceType1, class SliceType2>
+void checkVector( SliceType1 write, SliceType2 read )
 {
     for ( std::size_t p = 0; p < write.size(); ++p )
     {
@@ -57,8 +57,8 @@ void checkVector( SliceType write, SliceType read )
     }
 }
 
-template <class SliceType>
-void checkMatrix( SliceType write, SliceType read )
+template <class SliceType1, class SliceType2>
+void checkMatrix( SliceType1 write, SliceType2 read )
 {
     for ( std::size_t p = 0; p < write.size(); ++p )
     {
