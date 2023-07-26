@@ -31,6 +31,7 @@ using namespace Cajita;
 // Performance test.
 template <class Device>
 void performanceTest( std::ostream& stream,
+                      const Cajita::DimBlockPartitioner<3> partitioner,
                       std::vector<double> grid_sizes_per_dim_per_rank,
                       MPI_Comm comm, const std::string& test_prefix )
 {
@@ -47,10 +48,6 @@ void performanceTest( std::ostream& stream,
     // number of runs in test loops
     int num_runs = 10;
 
-    // get MPI rank
-    int comm_rank;
-    MPI_Comm_rank( comm, &comm_rank );
-
     // create timers
     Cabana::Benchmark::Timer setup_timer( test_prefix + "setup",
                                           num_grid_size );
@@ -60,9 +57,7 @@ void performanceTest( std::ostream& stream,
     // loop over the grid sizes
     for ( int p = 0; p < num_grid_size; ++p )
     {
-        DimBlockPartitioner<3> partitioner;
-        std::array<int, 3> ranks_per_dim =
-            partitioner.ranksPerDimension( comm, { 0, 0, 0 } );
+        auto ranks_per_dim = partitioner.ranksPerDimension( comm, { 0, 0, 0 } );
 
         std::array<int, 3> num_cell;
         for ( int d = 0; d < 3; ++d )
@@ -113,16 +108,14 @@ void performanceTest( std::ostream& stream,
 
         setup_timer.stop( p );
 
-        transforms_timer.start( p );
-
         // Loop over number of runs
         for ( int t = 0; t < num_runs; ++t )
         {
+            transforms_timer.start( p );
             fft->forward( *lhs, Experimental::FFTScaleFull() );
             fft->reverse( *lhs, Experimental::FFTScaleNone() );
+            transforms_timer.stop( p );
         }
-
-        transforms_timer.stop( p );
     }
 
     outputResults( stream, "grid_size_per_dim", grid_sizes_per_dim_per_rank,
@@ -171,23 +164,38 @@ int main( int argc, char* argv[] )
     // Barrier before continuing
     MPI_Barrier( MPI_COMM_WORLD );
 
-    // Get comm rank;
+    // Get comm rank and size;
     int comm_rank;
     MPI_Comm_rank( MPI_COMM_WORLD, &comm_rank );
+    int comm_size;
+    MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
+
+    // Get partitioner
+    Cajita::DimBlockPartitioner<3> partitioner;
+    // Get ranks per dimension
+    std::array<int, 3> ranks_per_dimension =
+        partitioner.ranksPerDimension( MPI_COMM_WORLD, { 0, 0, 0 } );
 
     // Open the output file on rank 0.
     std::fstream file;
-    if ( 0 == comm_rank )
-        file.open( filename, std::fstream::out );
 
-    // Output file header
+    // Output problem details.
     if ( 0 == comm_rank )
     {
+        file.open( filename + "_" + std::to_string( comm_size ),
+                   std::fstream::out );
         file << "\n";
         file << "Cajita FFT Performance Benchmark"
              << "\n";
         file << "----------------------------------------------"
              << "\n";
+        file << "MPI Ranks: " << comm_size << "\n";
+        file << "MPI Cartesian Dim Ranks: (" << ranks_per_dimension[0] << ", "
+             << ranks_per_dimension[1] << ", " << ranks_per_dimension[2]
+             << ")\n";
+        file << "----------------------------------------------"
+             << "\n";
+        file << "\n";
         file << std::flush;
     }
 
@@ -201,10 +209,12 @@ int main( int argc, char* argv[] )
     // Don't run twice on the CPU if only host enabled.
     if ( !std::is_same<device_type, host_device_type>{} )
     {
-        performanceTest<device_type>( file, grid_sizes_per_dim_per_rank,
+        performanceTest<device_type>( file, partitioner,
+                                      grid_sizes_per_dim_per_rank,
                                       MPI_COMM_WORLD, "device_default_" );
     }
-    performanceTest<host_device_type>( file, grid_sizes_per_dim_per_rank,
+    performanceTest<host_device_type>( file, partitioner,
+                                       grid_sizes_per_dim_per_rank,
                                        MPI_COMM_WORLD, "host_default_" );
 
     // Close the output file on rank 0.
