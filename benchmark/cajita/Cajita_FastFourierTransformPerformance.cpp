@@ -72,7 +72,8 @@ void performanceTest( std::ostream& stream,
             createGlobalGrid( comm, global_mesh, is_dim_periodic, partitioner );
 
         // Create a local grid
-        auto local_grid = createLocalGrid( global_grid, 0 );
+        int halo_width = 0;
+        auto local_grid = createLocalGrid( global_grid, halo_width );
         auto owned_space = local_grid->indexSpace( Own(), Cell(), Local() );
         auto ghosted_space = local_grid->indexSpace( Ghost(), Cell(), Local() );
 
