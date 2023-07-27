@@ -66,10 +66,11 @@ class DataPoint:
         self.size = int(float(results[0]))
         self._initTimeResults(results[1:])
 
+    # Get times (in microseconds)
     def _initTimeResults(self, results):
-        self.min = float(results[0])
-        self.max = float(results[1])
-        self.ave = float(results[2])
+        self.min = float(results[0]) / 1e6
+        self.max = float(results[1]) / 1e6
+        self.ave = float(results[2]) / 1e6
 
 # Single MPI result (single line in results file).
 class DataPointMPI(DataPoint):
