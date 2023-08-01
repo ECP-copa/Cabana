@@ -298,18 +298,22 @@ template&lt;class Space , class SrcAoSoA &gt; </td></tr>
 <tr class="memitem:a72b0a5aebc7bad1d55552382aa1cd853"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a>&lt; typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a72b0a5aebc7bad1d55552382aa1cd853">create_mirror_view</a> (const Space &amp;space, const SrcAoSoA &amp;src, typename std::enable_if&lt;(!std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value)&gt;::type *=0)</td></tr>
 <tr class="memdesc:a72b0a5aebc7bad1d55552382aa1cd853"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a mirror view of the given <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the given memory space. Different space specialization allocates a new <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.  <br /></td></tr>
 <tr class="separator:a72b0a5aebc7bad1d55552382aa1cd853"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab22f02b41130e19d3e1f071373ac69c9"><td class="memTemplParams" colspan="2">template&lt;class Space , class SrcAoSoA &gt; </td></tr>
-<tr class="memitem:ab22f02b41130e19d3e1f071373ac69c9"><td class="memTemplItemLeft" align="right" valign="top">SrcAoSoA&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ab22f02b41130e19d3e1f071373ac69c9">create_mirror_view_and_copy</a> (const Space &amp;, const SrcAoSoA &amp;src, typename std::enable_if&lt;(std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value)&gt;::type *=0)</td></tr>
-<tr class="memdesc:ab22f02b41130e19d3e1f071373ac69c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a mirror view of the given <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the given memory space and copy the contents of the input <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. Same space specialization returns the input <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.  <br /></td></tr>
-<tr class="separator:ab22f02b41130e19d3e1f071373ac69c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7602b9c68d46e44db05fc410a595f687"><td class="memTemplParams" colspan="2">template&lt;class Space , class SrcAoSoA &gt; </td></tr>
-<tr class="memitem:a7602b9c68d46e44db05fc410a595f687"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a>&lt; typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a7602b9c68d46e44db05fc410a595f687">create_mirror_view_and_copy</a> (const Space &amp;space, const SrcAoSoA &amp;src, typename std::enable_if&lt;(!std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value)&gt;::type *=0)</td></tr>
-<tr class="memdesc:a7602b9c68d46e44db05fc410a595f687"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a mirror of the given <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the given memory space and deep copy the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> into the mirror. Different space specialization allocates a new <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> and performs the deep copy.  <br /></td></tr>
-<tr class="separator:a7602b9c68d46e44db05fc410a595f687"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe27556a6136fe14b11c7c2f943aa63c"><td class="memTemplParams" colspan="2">template&lt;class Space , class SrcAoSoA &gt; </td></tr>
+<tr class="memitem:abe27556a6136fe14b11c7c2f943aa63c"><td class="memTemplItemLeft" align="right" valign="top">SrcAoSoA&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#abe27556a6136fe14b11c7c2f943aa63c">create_mirror_view_and_copy</a> (const Space &amp;, const SrcAoSoA &amp;src, typename std::enable_if&lt;(std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; SrcAoSoA &gt;::value)&gt;::type *=0)</td></tr>
+<tr class="memdesc:abe27556a6136fe14b11c7c2f943aa63c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a mirror view of the given <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the given memory space and copy the contents of the input <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. Same space specialization returns the input <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.  <br /></td></tr>
+<tr class="separator:abe27556a6136fe14b11c7c2f943aa63c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e2750b69be547c4aa520c3ac6c1d033"><td class="memTemplParams" colspan="2">template&lt;class Space , class SrcAoSoA &gt; </td></tr>
+<tr class="memitem:a3e2750b69be547c4aa520c3ac6c1d033"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a>&lt; typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a3e2750b69be547c4aa520c3ac6c1d033">create_mirror_view_and_copy</a> (const Space &amp;space, const SrcAoSoA &amp;src, typename std::enable_if&lt;(!std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; SrcAoSoA &gt;::value)&gt;::type *=0)</td></tr>
+<tr class="memdesc:a3e2750b69be547c4aa520c3ac6c1d033"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a mirror of the given <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the given memory space and deep copy the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> into the mirror. Different space specialization allocates a new <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> and performs the deep copy.  <br /></td></tr>
+<tr class="separator:a3e2750b69be547c4aa520c3ac6c1d033"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1932d2c9be351d64dfcb6e2d22fc68c8"><td class="memTemplParams" colspan="2">template&lt;class DstAoSoA , class SrcAoSoA &gt; </td></tr>
 <tr class="memitem:a1932d2c9be351d64dfcb6e2d22fc68c8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a1932d2c9be351d64dfcb6e2d22fc68c8">deep_copy</a> (DstAoSoA &amp;dst, const SrcAoSoA &amp;src, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; DstAoSoA &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; SrcAoSoA &gt;::value)&gt;::type *=0)</td></tr>
 <tr class="memdesc:a1932d2c9be351d64dfcb6e2d22fc68c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deep copy data between compatible <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> objects.  <br /></td></tr>
 <tr class="separator:a1932d2c9be351d64dfcb6e2d22fc68c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a398ca6f49fc8299604e07cf099202c3c"><td class="memTemplParams" colspan="2">template&lt;class DstMemorySpace , class SrcMemorySpace , class... FieldTags&gt; </td></tr>
+<tr class="memitem:a398ca6f49fc8299604e07cf099202c3c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a398ca6f49fc8299604e07cf099202c3c">deep_copy</a> (<a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; DstMemorySpace, FieldTags... &gt; &amp;dst, const <a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; SrcMemorySpace, FieldTags... &gt; &amp;src)</td></tr>
+<tr class="memdesc:a398ca6f49fc8299604e07cf099202c3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deep copy data between compatible <a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> objects.  <br /></td></tr>
+<tr class="separator:a398ca6f49fc8299604e07cf099202c3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f82fe027dec446d5ff114b36e2a30be"><td class="memTemplParams" colspan="2">template&lt;class AoSoA_t &gt; </td></tr>
 <tr class="memitem:a0f82fe027dec446d5ff114b36e2a30be"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a0f82fe027dec446d5ff114b36e2a30be">deep_copy</a> (AoSoA_t &amp;aosoa, const typename AoSoA_t::tuple_type &amp;tuple)</td></tr>
 <tr class="memdesc:a0f82fe027dec446d5ff114b36e2a30be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fill an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> with a tuple.  <br /></td></tr>
@@ -322,6 +326,14 @@ template&lt;class Space , class SrcAoSoA &gt; </td></tr>
 <tr class="memitem:ae209c92053381625d4d040bb1f74682b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ae209c92053381625d4d040bb1f74682b">deep_copy</a> (Slice_t &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const typename Slice_t::value_type scalar)</td></tr>
 <tr class="memdesc:ae209c92053381625d4d040bb1f74682b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fill a slice with a scalar.  <br /></td></tr>
 <tr class="separator:ae209c92053381625d4d040bb1f74682b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12ae6dfd86c34e4bf97ccc005eef4189"><td class="memTemplParams" colspan="2">template&lt;class DstMemorySpace , class SrcMemorySpace , class... FieldTags&gt; </td></tr>
+<tr class="memitem:a12ae6dfd86c34e4bf97ccc005eef4189"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a12ae6dfd86c34e4bf97ccc005eef4189">create_mirror_view_and_copy</a> (DstMemorySpace, <a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; SrcMemorySpace, FieldTags... &gt; plist_src, typename std::enable_if&lt; std::is_same&lt; SrcMemorySpace, DstMemorySpace &gt;::value &gt;::type *=0)</td></tr>
+<tr class="memdesc:a12ae6dfd86c34e4bf97ccc005eef4189"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a mirror of the given <a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> in the given memory space.  <br /></td></tr>
+<tr class="separator:a12ae6dfd86c34e4bf97ccc005eef4189"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fe269dbc215b08357a0f68d108a6e67"><td class="memTemplParams" colspan="2">template&lt;class DstMemorySpace , class SrcMemorySpace , class... FieldTags&gt; </td></tr>
+<tr class="memitem:a0fe269dbc215b08357a0f68d108a6e67"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a0fe269dbc215b08357a0f68d108a6e67">create_mirror_view_and_copy</a> (DstMemorySpace, <a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; SrcMemorySpace, FieldTags... &gt; plist_src, typename std::enable_if&lt; !std::is_same&lt; SrcMemorySpace, DstMemorySpace &gt;::value &gt;::type *=0)</td></tr>
+<tr class="memdesc:a0fe269dbc215b08357a0f68d108a6e67"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a mirror of the given <a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> in the given memory space.  <br /></td></tr>
+<tr class="separator:a0fe269dbc215b08357a0f68d108a6e67"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb10ac278624d871f6079c4e24ccb219"><td class="memTemplParams" colspan="2">template&lt;class Distributor_t , class AoSoA_t &gt; </td></tr>
 <tr class="memitem:adb10ac278624d871f6079c4e24ccb219"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#adb10ac278624d871f6079c4e24ccb219">migrate</a> (const Distributor_t &amp;distributor, const AoSoA_t &amp;src, AoSoA_t &amp;dst, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__distributor.html">is_distributor</a>&lt; Distributor_t &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; AoSoA_t &gt;::value), int &gt;::type *=0)</td></tr>
 <tr class="memdesc:adb10ac278624d871f6079c4e24ccb219"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously migrate data between two different decompositions using the distributor forward communication plan. Multiple <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> version.  <br /></td></tr>
@@ -1114,8 +1126,8 @@ template&lt;class Space , class SrcAoSoA &gt; </div>
 
 </div>
 </div>
-<a id="ab22f02b41130e19d3e1f071373ac69c9" name="ab22f02b41130e19d3e1f071373ac69c9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab22f02b41130e19d3e1f071373ac69c9">&#9670;&#160;</a></span>create_mirror_view_and_copy() <span class="overload">[1/2]</span></h2>
+<a id="abe27556a6136fe14b11c7c2f943aa63c" name="abe27556a6136fe14b11c7c2f943aa63c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe27556a6136fe14b11c7c2f943aa63c">&#9670;&#160;</a></span>create_mirror_view_and_copy() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1140,7 +1152,7 @@ template&lt;class Space , class SrcAoSoA &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename std::enable_if&lt;(std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value)&gt;::type *&#160;</td>
+          <td class="paramtype">typename std::enable_if&lt;(std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; SrcAoSoA &gt;::value)&gt;::type *&#160;</td>
           <td class="paramname"> = <code>0</code>&#160;</td>
         </tr>
         <tr>
@@ -1161,8 +1173,8 @@ template&lt;class Space , class SrcAoSoA &gt; </div>
 
 </div>
 </div>
-<a id="a7602b9c68d46e44db05fc410a595f687" name="a7602b9c68d46e44db05fc410a595f687"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7602b9c68d46e44db05fc410a595f687">&#9670;&#160;</a></span>create_mirror_view_and_copy() <span class="overload">[2/2]</span></h2>
+<a id="a3e2750b69be547c4aa520c3ac6c1d033" name="a3e2750b69be547c4aa520c3ac6c1d033"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e2750b69be547c4aa520c3ac6c1d033">&#9670;&#160;</a></span>create_mirror_view_and_copy() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1187,7 +1199,7 @@ template&lt;class Space , class SrcAoSoA &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename std::enable_if&lt;(!std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value)&gt;::type *&#160;</td>
+          <td class="paramtype">typename std::enable_if&lt;(!std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; SrcAoSoA &gt;::value)&gt;::type *&#160;</td>
           <td class="paramname"> = <code>0</code>&#160;</td>
         </tr>
         <tr>
@@ -1205,6 +1217,84 @@ template&lt;class Space , class SrcAoSoA &gt; </div>
 
 <p>Create a mirror of the given <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the given memory space and deep copy the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> into the mirror. Different space specialization allocates a new <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> and performs the deep copy. </p>
 <dl class="section note"><dt>Note</dt><dd>Memory allocation will only occur if the requested mirror memory space is different from that of the input <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. If they are the same, the original <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> (e.g. a view of that <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>) is returned. </dd></dl>
+
+</div>
+</div>
+<a id="a0fe269dbc215b08357a0f68d108a6e67" name="a0fe269dbc215b08357a0f68d108a6e67"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fe269dbc215b08357a0f68d108a6e67">&#9670;&#160;</a></span>create_mirror_view_and_copy() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class DstMemorySpace , class SrcMemorySpace , class... FieldTags&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto Cabana::create_mirror_view_and_copy </td>
+          <td>(</td>
+          <td class="paramtype">DstMemorySpace&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; SrcMemorySpace, FieldTags... &gt;&#160;</td>
+          <td class="paramname"><em>plist_src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename std::enable_if&lt; !std::is_same&lt; SrcMemorySpace, DstMemorySpace &gt;::value &gt;::type *&#160;</td>
+          <td class="paramname"> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a mirror of the given <a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> in the given memory space. </p>
+<dl class="section note"><dt>Note</dt><dd>Memory allocation will only occur if the requested mirror memory space is different from that of the input <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. If they are the same, the original <a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> is returned. </dd></dl>
+
+</div>
+</div>
+<a id="a12ae6dfd86c34e4bf97ccc005eef4189" name="a12ae6dfd86c34e4bf97ccc005eef4189"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12ae6dfd86c34e4bf97ccc005eef4189">&#9670;&#160;</a></span>create_mirror_view_and_copy() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class DstMemorySpace , class SrcMemorySpace , class... FieldTags&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto Cabana::create_mirror_view_and_copy </td>
+          <td>(</td>
+          <td class="paramtype">DstMemorySpace&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; SrcMemorySpace, FieldTags... &gt;&#160;</td>
+          <td class="paramname"><em>plist_src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename std::enable_if&lt; std::is_same&lt; SrcMemorySpace, DstMemorySpace &gt;::value &gt;::type *&#160;</td>
+          <td class="paramname"> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a mirror of the given <a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> in the given memory space. </p>
+<dl class="section note"><dt>Note</dt><dd>Memory allocation will only occur if the requested mirror memory space is different from that of the input <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. If they are the same, the original <a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> is returned. </dd></dl>
 
 </div>
 </div>
@@ -1454,7 +1544,7 @@ template&lt;class HaloType , class SliceType &gt; </div>
 </div>
 </div>
 <a id="a0f82fe027dec446d5ff114b36e2a30be" name="a0f82fe027dec446d5ff114b36e2a30be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0f82fe027dec446d5ff114b36e2a30be">&#9670;&#160;</a></span>deep_copy() <span class="overload">[1/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f82fe027dec446d5ff114b36e2a30be">&#9670;&#160;</a></span>deep_copy() <span class="overload">[1/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1501,7 +1591,7 @@ template&lt;class AoSoA_t &gt; </div>
 </div>
 </div>
 <a id="a1932d2c9be351d64dfcb6e2d22fc68c8" name="a1932d2c9be351d64dfcb6e2d22fc68c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1932d2c9be351d64dfcb6e2d22fc68c8">&#9670;&#160;</a></span>deep_copy() <span class="overload">[2/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a1932d2c9be351d64dfcb6e2d22fc68c8">&#9670;&#160;</a></span>deep_copy() <span class="overload">[2/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1555,7 +1645,7 @@ template&lt;class DstAoSoA , class SrcAoSoA &gt; </div>
 </div>
 </div>
 <a id="ab6c2588c68205d46f36b60be2afff96e" name="ab6c2588c68205d46f36b60be2afff96e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab6c2588c68205d46f36b60be2afff96e">&#9670;&#160;</a></span>deep_copy() <span class="overload">[3/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6c2588c68205d46f36b60be2afff96e">&#9670;&#160;</a></span>deep_copy() <span class="overload">[3/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1608,8 +1698,55 @@ template&lt;class DstSlice , class SrcSlice &gt; </div>
 
 </div>
 </div>
+<a id="a398ca6f49fc8299604e07cf099202c3c" name="a398ca6f49fc8299604e07cf099202c3c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a398ca6f49fc8299604e07cf099202c3c">&#9670;&#160;</a></span>deep_copy() <span class="overload">[4/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class DstMemorySpace , class SrcMemorySpace , class... FieldTags&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cabana::deep_copy </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; DstMemorySpace, FieldTags... &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dst</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; SrcMemorySpace, FieldTags... &gt; &amp;&#160;</td>
+          <td class="paramname"><em>src</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Deep copy data between compatible <a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> objects. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dst</td><td>The destination for the copied data. </td></tr>
+    <tr><td class="paramname">src</td><td>The source of the copied data. s </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ae209c92053381625d4d040bb1f74682b" name="ae209c92053381625d4d040bb1f74682b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae209c92053381625d4d040bb1f74682b">&#9670;&#160;</a></span>deep_copy() <span class="overload">[4/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae209c92053381625d4d040bb1f74682b">&#9670;&#160;</a></span>deep_copy() <span class="overload">[5/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
