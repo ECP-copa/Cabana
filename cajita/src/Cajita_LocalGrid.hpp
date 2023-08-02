@@ -250,6 +250,17 @@ class LocalGrid
                         const int off_j, const int halo_width = -1 ) const;
 
   private:
+    // Helper functions
+    template <class OwnedIndexSpace>
+    auto getBound( OwnedIndexSpace owned_space, const int upper_lower,
+                   const std::array<int, num_space_dim>& off_ijk,
+                   const int lower_shift, const int upper_shift ) const;
+    template <int Dir, class OwnedIndexSpace>
+    auto getBound( OwnedIndexSpace owned_space, const int upper_lower,
+                   const std::array<int, num_space_dim>& off_ijk,
+                   const int lower_shift_dir, const int lower_shift,
+                   const int upper_shift_dir, const int upper_shift ) const;
+
     // 3D and 2D entity types
     IndexSpace<num_space_dim> indexSpaceImpl( Own, Cell, Local ) const;
     IndexSpace<num_space_dim> indexSpaceImpl( Ghost, Cell, Local ) const;
@@ -404,6 +415,96 @@ class LocalGrid
                           const std::array<int, 3>& off_ijk,
                           const int halo_width = -1 ) const;
 
+    // 3D and 2D entity types.
+    IndexSpace<num_space_dim>
+    boundaryIndexSpaceImpl( Own, Cell,
+                            const std::array<int, num_space_dim>& off_ijk,
+                            const int halo_width = -1 ) const;
+
+    IndexSpace<num_space_dim>
+    boundaryIndexSpaceImpl( Ghost, Cell,
+                            const std::array<int, num_space_dim>& off_ijk,
+                            const int halo_width = -1 ) const;
+
+    IndexSpace<num_space_dim>
+    boundaryIndexSpaceImpl( Own, Node,
+                            const std::array<int, num_space_dim>& off_ijk,
+                            const int halo_width = -1 ) const;
+
+    IndexSpace<num_space_dim>
+    boundaryIndexSpaceImpl( Ghost, Node,
+                            const std::array<int, num_space_dim>& off_ijk,
+                            const int halo_width = -1 ) const;
+
+    IndexSpace<num_space_dim>
+    boundaryIndexSpaceImpl( Own, Face<Dim::I>,
+                            const std::array<int, num_space_dim>& off_ijk,
+                            const int halo_width = -1 ) const;
+
+    IndexSpace<num_space_dim>
+    boundaryIndexSpaceImpl( Ghost, Face<Dim::I>,
+                            const std::array<int, num_space_dim>& off_ijk,
+                            const int halo_width = -1 ) const;
+
+    IndexSpace<num_space_dim>
+    boundaryIndexSpaceImpl( Own, Face<Dim::J>,
+                            const std::array<int, num_space_dim>& off_ijk,
+                            const int halo_width = -1 ) const;
+
+    IndexSpace<num_space_dim>
+    boundaryIndexSpaceImpl( Ghost, Face<Dim::J>,
+                            const std::array<int, num_space_dim>& off_ijk,
+                            const int halo_width = -1 ) const;
+
+    // 3D-only entity types
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    boundaryIndexSpaceImpl( Own, Face<Dim::K>,
+                            const std::array<int, 3>& off_ijk,
+                            const int halo_width = -1 ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    boundaryIndexSpaceImpl( Ghost, Face<Dim::K>,
+                            const std::array<int, 3>& off_ijk,
+                            const int halo_width = -1 ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    boundaryIndexSpaceImpl( Own, Edge<Dim::I>,
+                            const std::array<int, 3>& off_ijk,
+                            const int halo_width = -1 ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    boundaryIndexSpaceImpl( Ghost, Edge<Dim::I>,
+                            const std::array<int, 3>& off_ijk,
+                            const int halo_width = -1 ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    boundaryIndexSpaceImpl( Own, Edge<Dim::J>,
+                            const std::array<int, 3>& off_ijk,
+                            const int halo_width = -1 ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    boundaryIndexSpaceImpl( Ghost, Edge<Dim::J>,
+                            const std::array<int, 3>& off_ijk,
+                            const int halo_width = -1 ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    boundaryIndexSpaceImpl( Own, Edge<Dim::K>,
+                            const std::array<int, 3>& off_ijk,
+                            const int halo_width = -1 ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    boundaryIndexSpaceImpl( Ghost, Edge<Dim::K>,
+                            const std::array<int, 3>& off_ijk,
+                            const int halo_width = -1 ) const;
+
     // Get the global index space of the local grid.
     template <class EntityType>
     IndexSpace<num_space_dim> globalIndexSpace( Own, EntityType ) const;
@@ -430,6 +531,21 @@ class LocalGrid
                           const std::array<int, num_space_dim>& off_ijk,
                           const int halo_width ) const;
 
+    // Given the relative offset of a boundary relative to this local grid's
+    // get the set of local Dir-direction face indices shared with that
+    // boundary in the given decomposition.
+    template <int Dir>
+    IndexSpace<num_space_dim>
+    faceBoundaryIndexSpace( Own, Face<Dir>,
+                            const std::array<int, num_space_dim>& off_ijk,
+                            const int halo_width ) const;
+
+    template <int Dir>
+    IndexSpace<num_space_dim>
+    faceBoundaryIndexSpace( Ghost, Face<Dir>,
+                            const std::array<int, num_space_dim>& off_ijk,
+                            const int halo_width ) const;
+
     // Get the edge index space of the local grid.
     template <int Dir, std::size_t NSD = num_space_dim>
     std::enable_if_t<3 == NSD, IndexSpace<3>> edgeIndexSpace( Own, Edge<Dir>,
@@ -454,6 +570,19 @@ class LocalGrid
     std::enable_if_t<3 == NSD, IndexSpace<3>>
     edgeSharedIndexSpace( Ghost, Edge<Dir>, const std::array<int, 3>& off_ijk,
                           const int halo_width ) const;
+
+    // Given the relative offset of a boundary relative to this local grid's
+    // get the set of local Dir-direction edge indices shared with that
+    // boundary in the given decomposition.
+    template <int Dir, std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    edgeBoundaryIndexSpace( Own, Edge<Dir>, const std::array<int, 3>& off_ijk,
+                            const int halo_width ) const;
+
+    template <int Dir, std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    edgeBoundaryIndexSpace( Ghost, Edge<Dir>, const std::array<int, 3>& off_ijk,
+                            const int halo_width ) const;
 
   private:
     std::shared_ptr<GlobalGrid<MeshType>> _global_grid;

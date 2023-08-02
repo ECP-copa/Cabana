@@ -410,6 +410,69 @@ void arrayOpTest()
 }
 
 //---------------------------------------------------------------------------//
+template <class DecompositionType, class EntityType>
+void arrayBoundaryTest()
+{
+    // Let MPI compute the partitioning for this test.
+    DimBlockPartitioner<3> partitioner;
+
+    // Create the global mesh.
+    double cell_size = 0.23;
+    std::array<int, 3> global_num_cell = { 37, 15, 20 };
+    std::array<bool, 3> is_dim_periodic = { true, true, true };
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
+    std::array<double, 3> global_high_corner = {
+        global_low_corner[0] + cell_size * global_num_cell[0],
+        global_low_corner[1] + cell_size * global_num_cell[1],
+        global_low_corner[2] + cell_size * global_num_cell[2] };
+    auto global_mesh = createUniformGlobalMesh(
+        global_low_corner, global_high_corner, global_num_cell );
+
+    // Create the global grid.
+    auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
+                                         is_dim_periodic, partitioner );
+
+    // Create an array layout on the cells.
+    int halo_width = 2;
+    int dofs_per_cell = 4;
+    auto node_layout = createArrayLayout( global_grid, halo_width,
+                                          dofs_per_cell, EntityType() );
+
+    // Create an array.
+    std::string label( "test_array" );
+    auto array = createArray<double, TEST_DEVICE>( label, node_layout );
+
+    // Assign a value to the entire the array.
+    // This test is simply to ensure the boundary index space is valid for the
+    // array.
+    ArrayOp::assign( *array, 2.0, Ghost() );
+    auto host_view = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
+                                                          array->view() );
+    for ( int x = -1; x <= 1; x++ )
+    {
+        for ( int y = -1; y <= 1; y++ )
+        {
+            for ( int z = -1; z <= 1; z++ )
+            {
+                std::array<int, 3> dir = { x, y, z };
+                auto boundary_space =
+                    array->layout()->localGrid()->boundaryIndexSpace(
+                        Ghost(), EntityType(), dir );
+                for ( long i = boundary_space.min( Dim::I );
+                      i < boundary_space.max( Dim::I ); ++i )
+                    for ( long j = boundary_space.min( Dim::J );
+                          j < boundary_space.max( Dim::J ); ++j )
+                        for ( long k = boundary_space.min( Dim::K );
+                              k < boundary_space.max( Dim::K ); ++k )
+                            for ( long l = 0; l < dofs_per_cell; ++l )
+                                EXPECT_DOUBLE_EQ( host_view( i, j, k, l ),
+                                                  2.0 );
+            }
+        }
+    }
+}
+
+//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST( array, array_test )
@@ -417,6 +480,26 @@ TEST( array, array_test )
     layoutTest();
     arrayTest();
     arrayOpTest();
+}
+TEST( array, array_boundary_test )
+{
+    arrayBoundaryTest<Own, Cell>();
+    arrayBoundaryTest<Own, Node>();
+    arrayBoundaryTest<Own, Face<Dim::I>>();
+    arrayBoundaryTest<Own, Face<Dim::J>>();
+    arrayBoundaryTest<Own, Face<Dim::K>>();
+    arrayBoundaryTest<Own, Edge<Dim::I>>();
+    arrayBoundaryTest<Own, Edge<Dim::J>>();
+    arrayBoundaryTest<Own, Edge<Dim::K>>();
+
+    arrayBoundaryTest<Ghost, Cell>();
+    arrayBoundaryTest<Ghost, Node>();
+    arrayBoundaryTest<Ghost, Face<Dim::I>>();
+    arrayBoundaryTest<Ghost, Face<Dim::J>>();
+    arrayBoundaryTest<Ghost, Face<Dim::K>>();
+    arrayBoundaryTest<Ghost, Edge<Dim::I>>();
+    arrayBoundaryTest<Ghost, Edge<Dim::J>>();
+    arrayBoundaryTest<Ghost, Edge<Dim::K>>();
 }
 
 //---------------------------------------------------------------------------//
