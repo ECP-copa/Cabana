@@ -438,7 +438,8 @@ auto create_mirror_view_and_copy(
     // Create an AoSoA in the new memory space.
     using src_plist_type = ParticleList<SrcMemorySpace, FieldTags...>;
     using member_types = typename src_plist_type::member_types;
-    AoSoA<member_types, DstMemorySpace> aosoa_dst( aosoa_src.label() );
+    AoSoA<member_types, DstMemorySpace> aosoa_dst( aosoa_src.label(),
+                                                   aosoa_src.size() );
 
     // Copy data to new AoAoA.
     deep_copy( aosoa_dst, aosoa_src );
