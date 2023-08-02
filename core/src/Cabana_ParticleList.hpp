@@ -207,8 +207,7 @@ class ParticleList
     }
 
     //! Constructor from existing AoSoA.
-    template <class AoSoAType>
-    ParticleList( const AoSoAType aosoa )
+    ParticleList( const aosoa_type& aosoa )
         : _aosoa( aosoa )
     {
     }
