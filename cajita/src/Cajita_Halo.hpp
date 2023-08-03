@@ -473,7 +473,7 @@ class Halo
         // arrays.
         int result;
         MPI_Comm_compare( comm, getComm( arrays... ), &result );
-        if ( result != MPI_CONGRUENT )
+        if ( result != MPI_IDENT && result != MPI_CONGRUENT )
             throw std::runtime_error( "Arrays have different communicators" );
 
         return comm;
