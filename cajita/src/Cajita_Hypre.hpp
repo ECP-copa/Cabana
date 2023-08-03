@@ -66,7 +66,7 @@ struct HypreIsCompatibleWithMemorySpace<Kokkos::CudaUVMSpace> : std::true_type
 //! the HYPRE CMake includes HIP
 template <>
 struct HypreIsCompatibleWithMemorySpace<Kokkos::ExperimentalHIPSpace>
-    : std::false_type
+    : std::true_type
 {
 };
 #endif // end KOKKOS_ENABLE_HIP
