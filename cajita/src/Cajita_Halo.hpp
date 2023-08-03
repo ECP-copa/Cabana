@@ -220,10 +220,6 @@ class Halo
         // Spatial dimension.
         const std::size_t num_space_dim = Pattern::num_space_dim;
 
-        // Get the MPI communicator. All arrays must have the same
-        // communicator.
-        getComm( arrays... );
-
         // Get the local grid.
         auto local_grid = getLocalGrid( arrays... );
 
@@ -280,9 +276,6 @@ class Halo
         }
     }
 
-    // Destructor.
-    ~Halo() { MPI_Comm_free( &_comm ); }
-
     /*!
       \brief Gather data into our ghosts from their owners.
 
@@ -304,6 +297,9 @@ class Halo
         if ( 0 == num_n )
             return;
 
+        // Get the MPI communicator.
+        auto comm = getComm( arrays... );
+
         // Allocate requests.
         std::vector<MPI_Request> requests( 2 * num_n, MPI_REQUEST_NULL );
 
@@ -319,8 +315,8 @@ class Halo
             {
                 MPI_Irecv( _ghosted_buffers[n].data(),
                            _ghosted_buffers[n].size(), MPI_BYTE,
-                           _neighbor_ranks[n], mpi_tag + _receive_tags[n],
-                           _comm, &requests[n] );
+                           _neighbor_ranks[n], mpi_tag + _receive_tags[n], comm,
+                           &requests[n] );
             }
         }
 
@@ -337,7 +333,7 @@ class Halo
                 // Post a send.
                 MPI_Isend( _owned_buffers[n].data(), _owned_buffers[n].size(),
                            MPI_BYTE, _neighbor_ranks[n],
-                           mpi_tag + _send_tags[n], _comm,
+                           mpi_tag + _send_tags[n], comm,
                            &requests[num_n + n] );
             }
         }
@@ -390,6 +386,9 @@ class Halo
         if ( 0 == num_n )
             return;
 
+        // Get the MPI communicator.
+        auto comm = getComm( arrays... );
+
         // Requests.
         std::vector<MPI_Request> requests( 2 * num_n, MPI_REQUEST_NULL );
 
@@ -405,7 +404,7 @@ class Halo
             {
                 MPI_Irecv( _owned_buffers[n].data(), _owned_buffers[n].size(),
                            MPI_BYTE, _neighbor_ranks[n],
-                           mpi_tag + _receive_tags[n], _comm, &requests[n] );
+                           mpi_tag + _receive_tags[n], comm, &requests[n] );
             }
         }
 
@@ -422,7 +421,7 @@ class Halo
                 // Post a send.
                 MPI_Isend( _ghosted_buffers[n].data(),
                            _ghosted_buffers[n].size(), MPI_BYTE,
-                           _neighbor_ranks[n], mpi_tag + _send_tags[n], _comm,
+                           _neighbor_ranks[n], mpi_tag + _send_tags[n], comm,
                            &requests[num_n + n] );
             }
         }
@@ -457,29 +456,27 @@ class Halo
     }
 
   public:
-    //! Get the communicator and check to make sure all are the same.
+    //! Get the communicator.
     template <class Array_t>
-    void getComm( const Array_t& array )
+    MPI_Comm getComm( const Array_t& array ) const
     {
-        // Duplicate the communicator so we have our own communication space.
-        MPI_Comm_dup( array.layout()->localGrid()->globalGrid().comm(),
-                      &_comm );
+        return array.layout()->localGrid()->globalGrid().comm();
     }
 
     //! Get the communicator and check to make sure all are the same.
     template <class Array_t, class... ArrayTypes>
-    void getComm( const Array_t& array, const ArrayTypes&... arrays )
+    MPI_Comm getComm( const Array_t& array, const ArrayTypes&... arrays ) const
     {
-        // Recurse.
-        getComm( arrays... );
+        auto comm = getComm( array );
 
-        // Check that the communicator of this array is the same as the halo
-        // comm.
+        // Check that the communicator of this array is the same as the other
+        // arrays.
         int result;
-        MPI_Comm_compare( array.layout()->localGrid()->globalGrid().comm(),
-                          _comm, &result );
+        MPI_Comm_compare( comm, getComm( arrays... ), &result );
         if ( result != MPI_CONGRUENT )
             throw std::runtime_error( "Arrays have different communicators" );
+
+        return comm;
     }
 
     //! Get the local grid from the arrays. Check that the grids have the same
@@ -911,9 +908,6 @@ class Halo
     }
 
   private:
-    // MPI communicator.
-    MPI_Comm _comm;
-
     // The ranks we will send/receive from.
     std::vector<int> _neighbor_ranks;
 
