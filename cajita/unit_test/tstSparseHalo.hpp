@@ -465,8 +465,8 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
     auto sparse_array = createSparseArray<TEST_DEVICE>(
         std::string( "test_sparse_grid" ), *sparse_layout );
 
-    SparseHalo<TEST_MEMSPACE, DataTypes, EntityType, 3, cell_bits_per_tile_dim>
-        halo( NodeHaloPattern<3>(), local_grid, MPI_COMM_WORLD );
+    auto halo = createSparseHalo<TEST_DEVICE, cell_bits_per_tile_dim>(
+        NodeHaloPattern<3>(), sparse_array );
 
     // sample valid halos on rank 0 and broadcast to other ranks
     // Kokkos::View<T* [3], TEST_MEMSPACE> tile_view;
@@ -517,7 +517,7 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
             } );
 
         sparse_array->resize( sparse_map.sizeCell() );
-        halo.template register_halo<TEST_EXECSPACE>( sparse_map );
+        halo->template register_halo<TEST_EXECSPACE>( sparse_map );
         MPI_Barrier( MPI_COMM_WORLD );
     }
 
@@ -605,10 +605,10 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
     // halo scatter and gather
     /// false means the heighbors' halo counting information is not
     /// collected
-    halo.scatter( TEST_EXECSPACE(), reduce_op, *sparse_array, false );
+    halo->scatter( TEST_EXECSPACE(), reduce_op, *sparse_array, false );
     /// halo counting info already collected in the previous scatter, thus true
     /// and no need to recount again
-    halo.gather( TEST_EXECSPACE(), *sparse_array, true );
+    halo->gather( TEST_EXECSPACE(), *sparse_array, true );
     MPI_Barrier( MPI_COMM_WORLD );
 
     // check results
