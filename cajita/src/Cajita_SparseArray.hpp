@@ -91,9 +91,10 @@ class SparseArrayLayout
     SparseArrayLayout( const std::shared_ptr<LocalGrid<MeshType>>& local_grid,
                        SparseMapType& sparse_map, const float over_allocation )
         : _over_allocation( over_allocation )
+        , _local_grid( local_grid )
         , _map( std::forward<sparse_map_type>( sparse_map ) )
     {
-        auto sparse_mesh = local_grid->globalGrid().globalMesh();
+        auto sparse_mesh = _local_grid->globalGrid().globalMesh();
         _cell_size[0] = sparse_mesh.cellSize( 0 );
         _cell_size[1] = sparse_mesh.cellSize( 1 );
         _cell_size[2] = sparse_mesh.cellSize( 2 );
@@ -104,6 +105,12 @@ class SparseArrayLayout
 
     //! get reference of sparse map
     SparseMapType& sparseMap() { return _map; }
+
+    //! Get the local grid over which this layout is defined.
+    const std::shared_ptr<LocalGrid<MeshType>> localGrid() const
+    {
+        return _local_grid;
+    }
 
     //! array size in cell
     inline uint64_t sizeCell() const { return _map.sizeCell(); }
@@ -236,6 +243,8 @@ class SparseArrayLayout
     Kokkos::Array<scalar_type, 3> _cell_size;
     //! global low corner
     Kokkos::Array<scalar_type, 3> _global_low_corner;
+    //! Sparse local grid
+    std::shared_ptr<LocalGrid<MeshType>> _local_grid;
     //！ sparse map
     sparse_map_type _map;
 }; // end class SparseArrayLayout
@@ -278,12 +287,12 @@ struct is_sparse_array_layout<
 */
 template <class DataTypes, class EntityType, class MeshType,
           class SparseMapType>
-SparseArrayLayout<DataTypes, EntityType, MeshType, SparseMapType>
-createSparseArrayLayout( const std::shared_ptr<LocalGrid<MeshType>>& local_grid,
-                         SparseMapType& sparse_map, EntityType,
-                         const float over_allocation = 1.01f )
+auto createSparseArrayLayout(
+    const std::shared_ptr<LocalGrid<MeshType>>& local_grid,
+    SparseMapType& sparse_map, EntityType, const float over_allocation = 1.01f )
 {
-    return SparseArrayLayout<DataTypes, EntityType, MeshType, SparseMapType>(
+    return std::make_shared<
+        SparseArrayLayout<DataTypes, EntityType, MeshType, SparseMapType>>(
         local_grid, sparse_map, over_allocation );
 }
 
@@ -349,8 +358,8 @@ class SparseArray
       \param label array description
       \param layout sparse array layout
     */
-    SparseArray( const std::string label, array_layout& layout )
-        : _layout( std::forward<array_layout>( layout ) )
+    SparseArray( const std::string label, array_layout layout )
+        : _layout( layout )
         , _data( label )
     {
     }
@@ -364,8 +373,10 @@ class SparseArray
       \return Array label (description)
     */
     std::string label() const { return _data.label(); }
-    //! Get array layout reference
+    //! Get reference to the array layout (device accessible)
     array_layout& layout() { return _layout; }
+    //! Get const reference to the array layout (device accessible)
+    const array_layout& layout() const { return _layout; }
 
     /*!
       \brief Resize the AoSoA array according to the input.
@@ -676,13 +687,13 @@ struct is_sparse_array<const SparseArray<DataTypes, DeviceType, EntityType,
 */
 template <class DeviceType, class DataTypes, class EntityType, class MeshType,
           class SparseMapType>
-SparseArray<DataTypes, DeviceType, EntityType, MeshType, SparseMapType>
-createSparseArray(
+auto createSparseArray(
     const std::string label,
     SparseArrayLayout<DataTypes, EntityType, MeshType, SparseMapType>& layout )
 {
-    return SparseArray<DataTypes, DeviceType, EntityType, MeshType,
-                       SparseMapType>( label, layout );
+    return std::make_shared<SparseArray<DataTypes, DeviceType, EntityType,
+                                        MeshType, SparseMapType>>( label,
+                                                                   layout );
 }
 
 } // namespace Experimental

@@ -244,20 +244,20 @@ void sparse_array_test( int par_num, EntityType entity )
     auto test_layout =
         createSparseArrayLayout<DataTypes>( local_grid, sparse_map, entity );
     auto test_array = createSparseArray<TEST_DEVICE>(
-        std::string( "test_sparse_grid" ), test_layout );
+        std::string( "test_sparse_grid" ), *test_layout );
 
     // insert particles
-    test_array.registerSparseGrid( par_view, par_num );
-    test_array.reserveFromMap( 1.2 );
+    test_array->registerSparseGrid( par_view, par_num );
+    test_array->reserveFromMap( 1.2 );
 
     // size-related tests
-    EXPECT_EQ( test_array.size(), sparse_map.sizeCell() );
-    EXPECT_EQ( test_array.capacity() >= sparse_map.reservedCellSize( 1.2 ),
+    EXPECT_EQ( test_array->size(), sparse_map.sizeCell() );
+    EXPECT_EQ( test_array->capacity() >= sparse_map.reservedCellSize( 1.2 ),
                true );
-    EXPECT_EQ( test_array.empty(), false );
-    EXPECT_EQ( test_array.numSoA(), sparse_map.sizeTile() );
-    for ( std::size_t i = 0; i < test_array.numSoA(); ++i )
-        EXPECT_EQ( test_array.arraySize( i ), cell_per_tile );
+    EXPECT_EQ( test_array->empty(), false );
+    EXPECT_EQ( test_array->numSoA(), sparse_map.sizeTile() );
+    for ( std::size_t i = 0; i < test_array->numSoA(); ++i )
+        EXPECT_EQ( test_array->arraySize( i ), cell_per_tile );
 
     // check particle insertion results
     int cell_num = par_view.extent( 0 ) * 27;
@@ -296,16 +296,17 @@ void sparse_array_test( int par_num, EntityType entity )
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), qtid_res );
     for ( int i = 0; i < cell_num; ++i )
     {
-        EXPECT_EQ( qtid_mirror( i ) < (int)test_array.numSoA(), true );
+        EXPECT_EQ( qtid_mirror( i ) < (int)test_array->numSoA(), true );
         EXPECT_EQ( qtid_mirror( i ) >= 0, true );
     }
 
     // assign value
-    auto& map = test_layout.sparseMap();
+    auto& map = test_layout->sparseMap();
     // tile ijk, cell ijk, tile key
     Kokkos::View<int* [7], TEST_DEVICE> info(
         Kokkos::ViewAllocateWithoutInitializing( "tile_cell_info" ),
-        test_array.size() );
+        test_array->size() );
+    auto array = *test_array;
     Kokkos::parallel_for(
         "assign_value_to_sparse_cells",
         Kokkos::RangePolicy<TEST_EXECSPACE>( 0, map.capacity() ),
@@ -332,28 +333,26 @@ void sparse_array_test( int par_num, EntityType entity )
                                 { ci, cj, ck } );
 
                             // access: cell ijk (- channel id)
-                            test_array.template get<0>( cell_ijk, 0 ) = ti;
-                            test_array.template get<0>( cell_ijk, 1 ) = tj;
-                            test_array.template get<0>( cell_ijk, 2 ) = tk;
+                            array.template get<0>( cell_ijk, 0 ) = ti;
+                            array.template get<0>( cell_ijk, 1 ) = tj;
+                            array.template get<0>( cell_ijk, 2 ) = tk;
 
                             // access: tile ijk - cell ijk
-                            auto& second = test_array.template get<1>(
+                            auto& second = array.template get<1>(
                                 tile_ijk, local_cell_ijk );
                             second = tid + cid;
 
                             // access: tile id - cell ijk (- channel id)
-                            test_array.template get<2>( tid, local_cell_ijk,
-                                                        0 ) = ci * 0.1;
-                            test_array.template get<2>( tid, local_cell_ijk,
-                                                        1 ) = cj * 0.1;
-                            test_array.template get<2>( tid, local_cell_ijk,
-                                                        2 ) = ck * 0.1;
+                            array.template get<2>( tid, local_cell_ijk, 0 ) =
+                                ci * 0.1;
+                            array.template get<2>( tid, local_cell_ijk, 1 ) =
+                                cj * 0.1;
+                            array.template get<2>( tid, local_cell_ijk, 2 ) =
+                                ck * 0.1;
 
                             // access: tile id - cell id (- channel id)
-                            test_array.template get<3>( tid, cid, 0 ) =
-                                (int)tkey;
-                            test_array.template get<3>( tid, cid, 1 ) =
-                                (int)tid;
+                            array.template get<3>( tid, cid, 0 ) = (int)tkey;
+                            array.template get<3>( tid, cid, 1 ) = (int)tid;
 
                             // record info
                             info( tid * cell_per_tile + cid, 0 ) = ti;
@@ -370,7 +369,7 @@ void sparse_array_test( int par_num, EntityType entity )
 
     // check value
     auto mirror = Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(),
-                                                       test_array.aosoa() );
+                                                       test_array->aosoa() );
     auto info_mirror =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), info );
     auto slice_0 = Cabana::slice<0>( mirror );
@@ -396,9 +395,9 @@ void sparse_array_test( int par_num, EntityType entity )
     }
     // check value end
 
-    test_array.clear();
-    EXPECT_EQ( test_array.size(), 0 );
-    EXPECT_EQ( test_layout.sparseMap().sizeTile(), 0 );
+    test_array->clear();
+    EXPECT_EQ( test_array->size(), 0 );
+    EXPECT_EQ( test_layout->sparseMap().sizeTile(), 0 );
 }
 
 template <typename EntityType>
@@ -476,7 +475,7 @@ void full_occupy_test( EntityType entity )
     auto test_layout =
         createSparseArrayLayout<DataTypes>( local_grid, sparse_map, entity );
     auto test_array = createSparseArray<TEST_DEVICE>(
-        std::string( "test_sparse_grid" ), test_layout );
+        std::string( "test_sparse_grid" ), *test_layout );
 
     // valid tile range
     Kokkos::Array<int, 3> start = {
@@ -489,20 +488,21 @@ void full_occupy_test( EntityType entity )
         gt_partitions[2][cart_rank[2] + 1] * cell_per_tile_dim };
 
     // fully insert
-    auto& map = test_layout.sparseMap();
+    auto& map = test_layout->sparseMap();
     Kokkos::parallel_for(
         "sparse_grid_fully_insert",
         Kokkos::MDRangePolicy<TEST_EXECSPACE, Kokkos::Rank<3>>( start, end ),
         KOKKOS_LAMBDA( const int i, const int j, const int k ) {
             map.insertCell( i, j, k );
         } );
-    test_array.resize( map.sizeCell() );
+    test_array->resize( map.sizeCell() );
 
     // assign value
     Kokkos::View<int*** [2], TEST_DEVICE> info(
         Kokkos::ViewAllocateWithoutInitializing( "tile_cell_info" ),
         size_tile_per_dim, size_tile_per_dim, size_tile_per_dim );
 
+    auto array = *test_array;
     Kokkos::parallel_for(
         "assign_value_fully_occupy_grid",
         Kokkos::RangePolicy<TEST_EXECSPACE>( 0, map.capacity() ),
@@ -529,24 +529,22 @@ void full_occupy_test( EntityType entity )
                                 { ci, cj, ck } );
 
                             // access: cell ijk (- channel id)
-                            test_array.template get<0>( cell_ijk, 0 ) = ti;
-                            test_array.template get<0>( cell_ijk, 1 ) = tj;
-                            test_array.template get<0>( cell_ijk, 2 ) = tk;
+                            array.template get<0>( cell_ijk, 1 ) = tj;
+                            array.template get<0>( cell_ijk, 0 ) = ti;
+                            array.template get<0>( cell_ijk, 2 ) = tk;
 
                             // access: tile ijk - cell ijk (- channel id)
-                            test_array.template get<1>(
-                                tile_ijk, local_cell_ijk, 0 ) = ci * 0.1;
-                            test_array.template get<1>(
-                                tile_ijk, local_cell_ijk, 1 ) = cj * 0.1;
+                            array.template get<1>( tile_ijk, local_cell_ijk,
+                                                   0 ) = ci * 0.1;
+                            array.template get<1>( tile_ijk, local_cell_ijk,
+                                                   1 ) = cj * 0.1;
                             // access: tile id - cell ijk (- channel id)
-                            test_array.template get<1>( tid, local_cell_ijk,
-                                                        2 ) = ck * 0.1;
+                            array.template get<1>( tid, local_cell_ijk, 2 ) =
+                                ck * 0.1;
 
                             // access: tile id - cell id (- channel id)
-                            test_array.template get<2>( tid, cid, 0 ) =
-                                (int)tkey;
-                            test_array.template get<2>( tid, cid, 1 ) =
-                                (int)tid;
+                            array.template get<2>( tid, cid, 0 ) = (int)tkey;
+                            array.template get<2>( tid, cid, 1 ) = (int)tid;
 
                             // record info
                             info( ti, tj, tk, 0 ) = (int)tid;
@@ -559,7 +557,7 @@ void full_occupy_test( EntityType entity )
 
     // check value
     auto mirror = Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(),
-                                                       test_array.aosoa() );
+                                                       test_array->aosoa() );
     auto info_mirror =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), info );
     auto slice_0 = Cabana::slice<0>( mirror );
@@ -598,9 +596,9 @@ void full_occupy_test( EntityType entity )
                 cid++;
             }
 
-    test_array.clear();
-    EXPECT_EQ( test_array.size(), 0 );
-    EXPECT_EQ( test_layout.sparseMap().sizeTile(), 0 );
+    test_array->clear();
+    EXPECT_EQ( test_array->size(), 0 );
+    EXPECT_EQ( test_layout->sparseMap().sizeTile(), 0 );
 }
 
 //---------------------------------------------------------------------------//

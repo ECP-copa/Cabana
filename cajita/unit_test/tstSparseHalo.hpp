@@ -463,7 +463,7 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
     auto sparse_layout =
         createSparseArrayLayout<DataTypes>( local_grid, sparse_map, entity );
     auto sparse_array = createSparseArray<TEST_DEVICE>(
-        std::string( "test_sparse_grid" ), sparse_layout );
+        std::string( "test_sparse_grid" ), *sparse_layout );
 
     SparseHalo<TEST_MEMSPACE, DataTypes, EntityType, 3, cell_bits_per_tile_dim>
         halo( NodeHaloPattern<3>(), local_grid, MPI_COMM_WORLD );
@@ -516,7 +516,7 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
                 }
             } );
 
-        sparse_array.resize( sparse_map.sizeCell() );
+        sparse_array->resize( sparse_map.sizeCell() );
         halo.template register_halo<TEST_EXECSPACE>( sparse_map );
         MPI_Barrier( MPI_COMM_WORLD );
     }
@@ -528,7 +528,7 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
 
     Kokkos::View<int* [3], TEST_DEVICE> info(
         Kokkos::ViewAllocateWithoutInitializing( "tile_cell_info" ),
-        sparse_array.size() );
+        sparse_array->size() );
     {
         Kokkos::Array<int, 3> low = { gt_partitions[0][cart_rank[0]],
                                       gt_partitions[1][cart_rank[1]],
@@ -540,6 +540,7 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
                              base_values.ds[2] };
         float base_1 = base_values.f;
         auto& map = sparse_map;
+        auto array = *sparse_array;
         Kokkos::parallel_for(
             "assign values to sparse array",
             Kokkos::RangePolicy<TEST_EXECSPACE>( 0, map.capacity() ),
@@ -560,14 +561,13 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
                                 {
                                     int cid = map.cell_local_id( ci, cj, ck );
 
-                                    sparse_array.template get<0>(
-                                        tid, cid, 0 ) = base_0[0];
-                                    sparse_array.template get<0>(
-                                        tid, cid, 1 ) = base_0[1];
-                                    sparse_array.template get<0>(
-                                        tid, cid, 2 ) = base_0[2];
-                                    sparse_array.template get<1>( tid, cid ) =
-                                        base_1;
+                                    array.template get<0>( tid, cid, 0 ) =
+                                        base_0[0];
+                                    array.template get<0>( tid, cid, 1 ) =
+                                        base_0[1];
+                                    array.template get<0>( tid, cid, 2 ) =
+                                        base_0[2];
+                                    array.template get<1>( tid, cid ) = base_1;
                                 }
                     }
                     // ghosted tiles
@@ -578,13 +578,13 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
                                 for ( int ck = 0; ck < cell_per_tile_dim; ck++ )
                                 {
                                     int cid = map.cell_local_id( ci, cj, ck );
-                                    sparse_array.template get<0>(
-                                        tid, cid, 0 ) = base_0[0] * 0.1;
-                                    sparse_array.template get<0>(
-                                        tid, cid, 1 ) = base_0[1] * 0.1;
-                                    sparse_array.template get<0>(
-                                        tid, cid, 2 ) = base_0[2] * 0.1;
-                                    sparse_array.template get<1>( tid, cid ) =
+                                    array.template get<0>( tid, cid, 0 ) =
+                                        base_0[0] * 0.1;
+                                    array.template get<0>( tid, cid, 1 ) =
+                                        base_0[1] * 0.1;
+                                    array.template get<0>( tid, cid, 2 ) =
+                                        base_0[2] * 0.1;
+                                    array.template get<1>( tid, cid ) =
                                         base_1 * 0.1f;
                                 }
                     }
@@ -605,15 +605,15 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
     // halo scatter and gather
     /// false means the heighbors' halo counting information is not
     /// collected
-    halo.scatter( TEST_EXECSPACE(), reduce_op, sparse_array, false );
+    halo.scatter( TEST_EXECSPACE(), reduce_op, *sparse_array, false );
     /// halo counting info already collected in the previous scatter, thus true
     /// and no need to recount again
-    halo.gather( TEST_EXECSPACE(), sparse_array, true );
+    halo.gather( TEST_EXECSPACE(), *sparse_array, true );
     MPI_Barrier( MPI_COMM_WORLD );
 
     // check results
     auto mirror = Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(),
-                                                       sparse_array.aosoa() );
+                                                       sparse_array->aosoa() );
     auto info_mirror =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), info );
     auto slice_0 = Cabana::slice<0>( mirror );
