@@ -121,8 +121,7 @@ class SparseHalo
     SparseHalo( halo_pattern_type pattern,
                 const std::shared_ptr<LocalGridType>& local_grid_ptr,
                 MPI_Comm comm )
-        : _comm( comm )
-        , _pattern( pattern )
+        : _pattern( pattern )
     {
         // Function to get the local id of the neighbor.
         auto neighbor_id = []( const std::array<int, num_space_dim>& ijk )
@@ -202,6 +201,13 @@ class SparseHalo
                 _valid_neighbor_ids.emplace_back( n );
             }
         }
+    }
+
+    //! Get the communicator.
+    template <class SparseArrayType>
+    MPI_Comm getComm( const SparseArrayType sparse_array ) const
+    {
+        return sparse_array.layout().localGrid()->globalGrid().comm();
     }
 
     /*!
@@ -370,11 +376,13 @@ class SparseHalo
 
     //---------------------------------------------------------------------------//
     /*!
-        \brief clear guiding information in sparse halo, we need to clear the
-       steering and counting, and also recollect those information before halo
-       communication in each step
+        \brief clear guiding information in sparse halo,
+        \param comm MPI communicator
+
+       This information needs to be cleared before steering and counting, then
+       recollected before halo communication in each step.
     */
-    void clear()
+    void clear( MPI_Comm comm )
     {
         // clear counting
         for ( std::size_t i = 0; i < _valid_counting.size(); ++i )
@@ -389,19 +397,20 @@ class SparseHalo
         for ( std::size_t i = 0; i < _tmp_tile_steering.size(); ++i )
             Kokkos::deep_copy( _tmp_tile_steering[i], invalid_key );
         // sync
-        MPI_Barrier( _comm );
+        MPI_Barrier( comm );
     }
 
     //---------------------------------------------------------------------------//
     /*!
         \brief neighbor tile counting, communication needed only if the counting
        is non-zero
+        \param comm MPI communicator
         \param is_neighbor_counting_collected label if the neighbor has already
        been collected; if true, it means all neighbor counting information is
        up-to-date and there's no need for recollection
     */
     void collectNeighborCounting(
-        const bool is_neighbor_counting_collected = false ) const
+        MPI_Comm comm, const bool is_neighbor_counting_collected = false ) const
     {
         // the valid halo size is already counted, no need to recount
         if ( is_neighbor_counting_collected )
@@ -422,7 +431,7 @@ class SparseHalo
             MPI_Irecv( _neighbor_counting[nid].data(),
                        Index::total * sizeof( int ), MPI_BYTE,
                        _neighbor_ranks[nid],
-                       mpi_tag_counting + _receive_tags[nid], _comm,
+                       mpi_tag_counting + _receive_tags[nid], comm,
                        &counting_requests[nid] );
         }
         // send to all valid neighbors
@@ -431,7 +440,7 @@ class SparseHalo
             MPI_Isend( _valid_counting[nid].data(),
                        Index::total * sizeof( int ), MPI_BYTE,
                        _neighbor_ranks[nid], mpi_tag_counting + _send_tags[nid],
-                       _comm, &counting_requests[nid + num_n] );
+                       comm, &counting_requests[nid + num_n] );
         }
 
         // wait until all counting data sending finished
@@ -441,11 +450,12 @@ class SparseHalo
         // check if the counting communication succeed
         if ( MPI_SUCCESS != ec )
             throw std::logic_error( "sparse_halo: counting sending failed." );
-        MPI_Barrier( _comm );
+        MPI_Barrier( comm );
     }
 
     /*!
        \brief collect all valid ranks for sparse grid scatter operations
+       \param comm MPI communicator
        \param valid_sends neighbor array id that requires data from current rank
        \param valid_recvs neighbor array id the current ranks requires data from
        \param is_neighbor_counting_collected label if the neighbor has already
@@ -453,11 +463,12 @@ class SparseHalo
        up-to-date and there's no need for recollection
     */
     void scatterValidSendAndRecvRanks(
-        std::vector<int>& valid_sends, std::vector<int>& valid_recvs,
+        MPI_Comm comm, std::vector<int>& valid_sends,
+        std::vector<int>& valid_recvs,
         const bool is_neighbor_counting_collected = false ) const
     {
         // collect neighbor counting if needed
-        collectNeighborCounting( is_neighbor_counting_collected );
+        collectNeighborCounting( comm, is_neighbor_counting_collected );
 
         // loop over all valid neighbors to check if there's data communication
         // needed
@@ -489,6 +500,7 @@ class SparseHalo
 
     /*!
        \brief collect all valid ranks for sparse grid gather operations
+       \param comm MPI communicator
        \param valid_sends neighbor array id that requires data from current rank
        \param valid_recvs neighbor array id the current ranks requires data from
        \param is_neighbor_counting_collected label if the neighbor has already
@@ -496,11 +508,12 @@ class SparseHalo
        up-to-date and there's no need for recollection
     */
     void gatherValidSendAndRecvRanks(
-        std::vector<int>& valid_sends, std::vector<int>& valid_recvs,
+        MPI_Comm comm, std::vector<int>& valid_sends,
+        std::vector<int>& valid_recvs,
         const bool is_neighbor_counting_collected = false ) const
     {
         // collect neighbor counting if needed
-        collectNeighborCounting( is_neighbor_counting_collected );
+        collectNeighborCounting( comm, is_neighbor_counting_collected );
 
         // loop over all valid neighbors to check if there's data communication
         // needed
@@ -548,15 +561,18 @@ class SparseHalo
         if ( 0 == _neighbor_ranks.size() )
             return;
 
+        // Get the MPI communicator.
+        auto comm = getComm( sparse_array );
+
         const auto& map = sparse_array.layout().sparseMap();
 
         // communicate "counting" among neighbors, to decide if the grid data
         // communication is needed
         std::vector<int> valid_sends;
         std::vector<int> valid_recvs;
-        gatherValidSendAndRecvRanks( valid_sends, valid_recvs,
+        gatherValidSendAndRecvRanks( comm, valid_sends, valid_recvs,
                                      is_neighbor_counting_collected );
-        MPI_Barrier( _comm );
+        MPI_Barrier( comm );
 
         // ------------------------------------------------------------------
         // communicate steering (array keys) for all valid sends and recieves
@@ -577,7 +593,7 @@ class SparseHalo
             MPI_Irecv( _tmp_tile_steering[nid].data(),
                        h_neighbor_counting( Index::own ) * sizeof( key_type ),
                        MPI_BYTE, _neighbor_ranks[nid],
-                       mpi_tag_steering + _receive_tags[nid], _comm,
+                       mpi_tag_steering + _receive_tags[nid], comm,
                        &steering_requests[i] );
         }
 
@@ -593,7 +609,7 @@ class SparseHalo
             MPI_Isend( _owned_tile_steering[nid].data(),
                        h_counting( Index::own ) * sizeof( key_type ), MPI_BYTE,
                        _neighbor_ranks[nid], mpi_tag_steering + _send_tags[nid],
-                       _comm, &steering_requests[i + valid_recvs.size()] );
+                       comm, &steering_requests[i + valid_recvs.size()] );
         }
 
         // wait for all sending work finish
@@ -603,7 +619,7 @@ class SparseHalo
         if ( MPI_SUCCESS != ec_ss )
             throw std::logic_error(
                 "sparse_halo_gather: steering sending failed." );
-        MPI_Barrier( _comm );
+        MPI_Barrier( comm );
 
         // ------------------------------------------------------------------
         // communicate sparse array data
@@ -626,7 +642,7 @@ class SparseHalo
                        h_neighbor_counting( Index::own ) * cell_num_per_tile *
                            _soa_total_bytes,
                        MPI_BYTE, _neighbor_ranks[nid],
-                       mpi_tag + _receive_tags[nid], _comm, &requests[i] );
+                       mpi_tag + _receive_tags[nid], comm, &requests[i] );
         }
 
         // pack send buffers and post sends
@@ -646,8 +662,8 @@ class SparseHalo
             MPI_Isend(
                 _owned_buffers[nid].data(),
                 h_counting( Index::own ) * cell_num_per_tile * _soa_total_bytes,
-                MPI_BYTE, _neighbor_ranks[nid], mpi_tag + _send_tags[nid],
-                _comm, &requests[i + valid_recvs.size()] );
+                MPI_BYTE, _neighbor_ranks[nid], mpi_tag + _send_tags[nid], comm,
+                &requests[i + valid_recvs.size()] );
         }
 
         // unpack receive buffers
@@ -691,7 +707,7 @@ class SparseHalo
         // reinit steerings for next round of communication
         for ( std::size_t i = 0; i < _tmp_tile_steering.size(); ++i )
             Kokkos::deep_copy( _tmp_tile_steering[i], invalid_key );
-        MPI_Barrier( _comm );
+        MPI_Barrier( comm );
     }
 
     /*!
@@ -716,15 +732,19 @@ class SparseHalo
         // return if no valid neighbor
         if ( 0 == _neighbor_ranks.size() )
             return;
+
+        // Get the MPI communicator.
+        auto comm = getComm( sparse_array );
+
         const auto& map = sparse_array.layout().sparseMap();
 
         // communicate "counting" among neighbors, to decide if the grid data
         // transfer is needed
         std::vector<int> valid_sends;
         std::vector<int> valid_recvs;
-        scatterValidSendAndRecvRanks( valid_sends, valid_recvs,
+        scatterValidSendAndRecvRanks( comm, valid_sends, valid_recvs,
                                       is_neighbor_counting_collected );
-        MPI_Barrier( _comm );
+        MPI_Barrier( comm );
 
         // ------------------------------------------------------------------
         // communicate steering (array keys) for all valid sends and recieves
@@ -746,7 +766,7 @@ class SparseHalo
             MPI_Irecv( _tmp_tile_steering[nid].data(),
                        h_neighbor_counting( Index::ghost ) * sizeof( key_type ),
                        MPI_BYTE, _neighbor_ranks[nid],
-                       mpi_tag_steering + _receive_tags[nid], _comm,
+                       mpi_tag_steering + _receive_tags[nid], comm,
                        &steering_requests[i] );
         }
 
@@ -763,7 +783,7 @@ class SparseHalo
             MPI_Isend( _ghosted_tile_steering[nid].data(),
                        h_counting( Index::ghost ) * sizeof( key_type ),
                        MPI_BYTE, _neighbor_ranks[nid],
-                       mpi_tag_steering + _send_tags[nid], _comm,
+                       mpi_tag_steering + _send_tags[nid], comm,
                        &steering_requests[i + valid_recvs.size()] );
         }
 
@@ -774,7 +794,7 @@ class SparseHalo
         if ( MPI_SUCCESS != ec_ss )
             throw std::logic_error(
                 "sparse_halo_scatter: steering sending failed." );
-        MPI_Barrier( _comm );
+        MPI_Barrier( comm );
 
         // ------------------------------------------------------------------
         // communicate sparse array data
@@ -797,7 +817,7 @@ class SparseHalo
                        h_neighbor_counting( Index::ghost ) * cell_num_per_tile *
                            _soa_total_bytes,
                        MPI_BYTE, _neighbor_ranks[nid],
-                       mpi_tag + _receive_tags[nid], _comm, &requests[i] );
+                       mpi_tag + _receive_tags[nid], comm, &requests[i] );
         }
 
         // pack send buffers and post sends
@@ -817,7 +837,7 @@ class SparseHalo
                        h_counting( Index::ghost ) * cell_num_per_tile *
                            _soa_total_bytes,
                        MPI_BYTE, _neighbor_ranks[nid],
-                       mpi_tag + _send_tags[nid], _comm,
+                       mpi_tag + _send_tags[nid], comm,
                        &requests[i + valid_recvs.size()] );
         }
 
@@ -861,7 +881,7 @@ class SparseHalo
         // reinit steerings for next round of communication
         for ( std::size_t i = 0; i < _tmp_tile_steering.size(); ++i )
             Kokkos::deep_copy( _tmp_tile_steering[i], invalid_key );
-        MPI_Barrier( _comm );
+        MPI_Barrier( comm );
     }
 
     //---------------------------------------------------------------------------//
@@ -1222,9 +1242,6 @@ class SparseHalo
     }
 
   private:
-    // MPI communicator.
-    MPI_Comm _comm;
-
     // Current MPI linear rank ID
     int _self_rank;
     // Hallo pattern
