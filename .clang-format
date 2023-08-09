@@ -8,3 +8,4 @@ IndentWidth: 4
 SpacesInParentheses: true
 BreakConstructorInitializersBeforeComma: true
 PointerAlignment: Left
+KeepEmptyLinesAtTheStartOfBlocks: false
