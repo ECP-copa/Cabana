@@ -375,9 +375,12 @@ class HypreSemiStructuredSolver
             throw std::logic_error(
                 "Cannot call setMatrixValues() on preconditioners" );
 
+        int index_size =
+            _stencil_index[v_h][v_x + 1] - _stencil_index[v_h][v_x];
+
         // Ensure the values array matches up in dimension with the stencil size
         if ( values.layout()->dofsPerEntity() !=
-             static_cast<int>( _stencil_size[v_h] ) )
+             static_cast<int>( index_size ) )
             throw std::runtime_error(
                 "Number of matrix values does not match stencil size" );
 
@@ -395,7 +398,7 @@ class HypreSemiStructuredSolver
             reorder_size[d] = owned_space.extent( d );
         }
 
-        reorder_size.back() = _stencil_size[v_h];
+        reorder_size.back() = index_size;
         IndexSpace<num_space_dim + 1> reorder_space( reorder_size );
         auto a_values =
             createView<HYPRE_Complex, Kokkos::LayoutRight, memory_space>(
@@ -405,8 +408,6 @@ class HypreSemiStructuredSolver
         Kokkos::deep_copy( a_values, values_subv );
 
         // Insert values into the HYPRE matrix.
-        int index_size =
-            _stencil_index[v_h][v_x + 1] - _stencil_index[v_h][v_x];
         std::vector<HYPRE_Int> indices( index_size );
         int start = _stencil_index[v_h][v_x];
         std::iota( indices.begin(), indices.end(), start );
