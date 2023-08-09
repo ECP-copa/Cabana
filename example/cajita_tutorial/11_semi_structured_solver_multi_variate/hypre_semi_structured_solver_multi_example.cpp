@@ -42,7 +42,7 @@ void hypreSemiStructuredSolverExample()
       You can try one of the following solver type and preconditioner type
 
         solver type : PCG, GMRES, BiCGSTAB,
-        preconditioner type : none, Diagonal, Jacobi
+        preconditioner type : none, Diagonal
     */
 
     std::cout << "Cajita HYPRE Semi-Structured Solver Example\n" << std::endl;
@@ -142,7 +142,7 @@ void hypreSemiStructuredSolverExample()
     /*
       Create a preconditioner - in this case we use Diagonal
     */
-    std::string precond_type = "Jacobi";
+    std::string precond_type = "Diagonal";
     auto preconditioner =
         Cajita::createHypreSemiStructuredSolver<double, MemorySpace>(
             precond_type, *vector_layout, true, 3 );
