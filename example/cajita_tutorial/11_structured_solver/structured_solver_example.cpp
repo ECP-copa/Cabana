@@ -23,7 +23,6 @@
 //---------------------------------------------------------------------------//
 void structuredSolverExample()
 {
-
     /*
       In this example we will demonstrate building a Cajita Reference Conjugate
       Gradient Solver that solves a Poisson equation with designated solution

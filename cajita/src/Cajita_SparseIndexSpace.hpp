@@ -248,7 +248,6 @@ struct TileID2HashKey<Key, HashTypes::Morton>
     //! Constructor (Host) from three integers
     TileID2HashKey( int i, int j, int k )
     {
-
         _tile_num[0] = i;
         _tile_num[1] = j;
         _tile_num[2] = k;

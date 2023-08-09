@@ -282,7 +282,6 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
                                  std::vector<int>& rec_partition_j,
                                  std::vector<int>& rec_partition_k )
     {
-
         int max_size = 0;
         for ( std::size_t d = 0; d < num_space_dim; ++d )
             max_size =
@@ -887,7 +886,6 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
 
     void allocate( const std::array<int, num_space_dim>& global_cells_per_dim )
     {
-
         _workload_per_tile = workload_view(
             Kokkos::view_alloc( Kokkos::WithoutInitializing,
                                 "workload_per_tile" ),

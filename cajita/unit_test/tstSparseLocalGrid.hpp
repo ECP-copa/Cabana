@@ -207,7 +207,6 @@ void sparseLocalGridTest( EntityType t2 )
     }
     if ( cart_rank[Dim::J] > 0 )
     {
-
         auto owned_shared_tile_space =
             local_grid_ptr->sharedTileIndexSpace<2>( Own(), t2, 0, -1, 0 );
         EXPECT_EQ( owned_shared_tile_space.min( Dim::I ) *
@@ -278,7 +277,6 @@ void sparseLocalGridTest( EntityType t2 )
     }
     if ( cart_rank[Dim::J] + 1 < cart_dims[Dim::J] )
     {
-
         auto owned_shared_tile_space =
             local_grid_ptr->sharedTileIndexSpace<2>( Own(), t2, 0, 1, 0 );
         EXPECT_EQ( owned_shared_tile_space.min( Dim::I ) *
