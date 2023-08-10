@@ -396,24 +396,25 @@ void permute(
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Given a linked cell list permute a slice.
+  \brief Given a linked cell list permute positions.
 
   \tparam LinkedCellListType The linked cell list type.
 
-  \tparam SliceType The slice type.
+  \tparam PositionType Positions type.
 
-  \param linked_cell_list The linked cell list to permute the slice with.
+  \param linked_cell_list The linked cell list to permute the positions with.
 
-  \param slice The slice to permute.
+  \param positions Positions to permute.
  */
-template <class LinkedCellListType, class SliceType>
+template <class LinkedCellListType, class PositionType>
 void permute(
-    const LinkedCellListType& linked_cell_list, SliceType& slice,
+    const LinkedCellListType& linked_cell_list, PositionType& positions,
     typename std::enable_if<( is_linked_cell_list<LinkedCellListType>::value &&
-                              is_slice<SliceType>::value ),
+                              ( is_slice<PositionType>::value ||
+                                Kokkos::is_view<PositionType>::value ) ),
                             int>::type* = 0 )
 {
-    permute( linked_cell_list.binningData(), slice );
+    permute( linked_cell_list.binningData(), positions );
 }
 
 //---------------------------------------------------------------------------//
