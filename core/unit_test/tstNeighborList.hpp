@@ -323,6 +323,36 @@ void testModifyNeighbors()
                 EXPECT_EQ( list_copy.neighbors( p, n ), new_id );
     }
 }
+
+template <class LayoutTag>
+void testNeighborView()
+{
+    // Create the AoSoA and fill with random particle positions.
+    NeighborListTestData test_data;
+    auto slice = Cabana::slice<0>( test_data.aosoa );
+
+    // Copy manually into a View.
+    Kokkos::View<double**, TEST_MEMSPACE> view( "positions", slice.size(), 3 );
+    auto view_copy = KOKKOS_LAMBDA( const int i )
+    {
+        for ( std::size_t d = 0; d < 3; ++d )
+            view( i, d ) = slice( i, d );
+    };
+    Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, slice.size() );
+    Kokkos::parallel_for( "view_copy", policy, view_copy );
+    Kokkos::fence();
+
+    // Create the neighbor list with the View data.
+    using ListType = Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag,
+                                        LayoutTag, Cabana::TeamOpTag>;
+    ListType nlist( view, 0, view.extent( 0 ), test_data.test_radius,
+                    test_data.cell_size_ratio, test_data.grid_min,
+                    test_data.grid_max );
+
+    checkFullNeighborList( nlist, test_data.N2_list_copy,
+                           test_data.num_particle );
+}
+
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
@@ -399,6 +429,16 @@ TEST( TEST_CATEGORY, modify_list_test )
 #endif
     testModifyNeighbors<Cabana::VerletLayout2D>();
 }
+
+//---------------------------------------------------------------------------//
+TEST( TEST_CATEGORY, view_test )
+{
+#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
+    testNeighborView<Cabana::VerletLayoutCSR>();
+#endif
+    testNeighborView<Cabana::VerletLayout2D>();
+}
+
 //---------------------------------------------------------------------------//
 
 } // end namespace Test
