@@ -723,51 +723,26 @@ struct is_linked_cell_list
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Given a linked cell list permute an AoSoA.
+  \brief Given a linked cell list permute positions.
 
   \tparam LinkedCellListType The linked cell list type.
 
-  \tparam AoSoA_t The AoSoA type.
+  \tparam PositionType Positions type (AoSoA or Slice or Kokkos::View).
 
-  \param linked_cell_list The linked cell list to permute the AoSoA with.
+  \param linked_cell_list The linked cell list to permute the positions with.
 
-  \param aosoa The AoSoA to permute.
+  \param positions Positions to permute.
  */
-template <class LinkedCellListType, class AoSoA_t>
+template <class LinkedCellListType, class PositionType>
 void permute(
-    LinkedCellListType& linked_cell_list, AoSoA_t& aosoa,
+    LinkedCellListType& linked_cell_list, PositionType& positions,
     typename std::enable_if<( is_linked_cell_list<LinkedCellListType>::value &&
-                              is_aosoa<AoSoA_t>::value ),
+                              ( is_aosoa<PositionType>::value ||
+                                is_slice<PositionType>::value ||
+                                Kokkos::is_view<PositionType>::value ) ),
                             int>::type* = 0 )
 {
-    permute( linked_cell_list.binningData(), aosoa );
-
-    // Update internal state.
-    linked_cell_list.update( true );
-
-    linked_cell_list.storeParticleBins();
-}
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Given a linked cell list permute a slice.
-
-  \tparam LinkedCellListType The linked cell list type.
-
-  \tparam SliceType The slice type.
-
-  \param linked_cell_list The linked cell list to permute the slice with.
-
-  \param slice The slice to permute.
- */
-template <class LinkedCellListType, class SliceType>
-void permute(
-    LinkedCellListType& linked_cell_list, SliceType& slice,
-    typename std::enable_if<( is_linked_cell_list<LinkedCellListType>::value &&
-                              is_slice<SliceType>::value ),
-                            int>::type* = 0 )
-{
-    permute( linked_cell_list.binningData(), slice );
+    permute( linked_cell_list.binningData(), positions );
 
     // Update internal state.
     linked_cell_list.update( true );
