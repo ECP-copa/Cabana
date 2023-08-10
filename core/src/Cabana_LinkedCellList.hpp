@@ -374,33 +374,11 @@ struct is_linked_cell_list
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Given a linked cell list permute an AoSoA.
-
-  \tparam LinkedCellListType The linked cell list type.
-
-  \tparam AoSoA_t The AoSoA type.
-
-  \param linked_cell_list The linked cell list to permute the AoSoA with.
-
-  \param aosoa The AoSoA to permute.
- */
-template <class LinkedCellListType, class AoSoA_t>
-void permute(
-    const LinkedCellListType& linked_cell_list, AoSoA_t& aosoa,
-    typename std::enable_if<( is_linked_cell_list<LinkedCellListType>::value &&
-                              is_aosoa<AoSoA_t>::value ),
-                            int>::type* = 0 )
-{
-    permute( linked_cell_list.binningData(), aosoa );
-}
-
-//---------------------------------------------------------------------------//
-/*!
   \brief Given a linked cell list permute positions.
 
   \tparam LinkedCellListType The linked cell list type.
 
-  \tparam PositionType Positions type.
+  \tparam PositionType Positions type (AoSoA or Slice or Kokkos::View).
 
   \param linked_cell_list The linked cell list to permute the positions with.
 
@@ -410,7 +388,8 @@ template <class LinkedCellListType, class PositionType>
 void permute(
     const LinkedCellListType& linked_cell_list, PositionType& positions,
     typename std::enable_if<( is_linked_cell_list<LinkedCellListType>::value &&
-                              ( is_slice<PositionType>::value ||
+                              ( is_aosoa<PositionType>::value ||
+                                is_slice<PositionType>::value ||
                                 Kokkos::is_view<PositionType>::value ) ),
                             int>::type* = 0 )
 {
