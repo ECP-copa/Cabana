@@ -974,11 +974,11 @@ void copyViewToSlice(
 
 //! Copy from slice to View with default execution space.
 template <class ViewType, class SliceType>
-void copyViewToSlice( ViewType& view, const SliceType& slice,
+void copyViewToSlice( SliceType& slice, const ViewType& view,
                       const std::size_t begin, const std::size_t end )
 {
     using exec_space = typename SliceType::execution_space;
-    copyViewToSlice( exec_space{}, view, slice, begin, end );
+    copyViewToSlice( exec_space{}, slice, view, begin, end );
 }
 
 //---------------------------------------------------------------------------//
