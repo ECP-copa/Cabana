@@ -99,7 +99,6 @@ void gridHaloExample()
 
         // Assign the owned cells a value of 1 and ghosted 0.
         Cajita::ArrayOp::assign( *array, 0.0, Cajita::Ghost() );
-        Cajita::ArrayOp::assign( *array, 1.0, Cajita::Own() );
 
         // create host mirror view
         auto array_view = array->view();
