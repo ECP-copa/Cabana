@@ -42,63 +42,6 @@ namespace Cajita
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Filter out empty particles that weren't created.
-
-  \param exec_space Kokkos execution space.
-  \param local_num_create The number of particles created.
-  \param aosoa The particle AoSoA.
-  \param particle_created Whether to remove unused allocated space.
-  \param shrink_to_fit Whether to remove unused allocated space.
-*/
-template <class CreationView, class ParticleAoSoA, class ExecutionSpace>
-void filterEmpties( const ExecutionSpace& exec_space,
-                    const int local_num_create,
-                    const CreationView& particle_created, ParticleAoSoA& aosoa,
-                    const bool shrink_to_fit )
-{
-    using memory_space = typename CreationView::memory_space;
-
-    // Determine the empty particle positions in the compaction zone.
-    int num_particles = aosoa.size();
-    Kokkos::View<int*, memory_space> empties(
-        Kokkos::ViewAllocateWithoutInitializing( "empties" ),
-        std::min( num_particles - local_num_create, local_num_create ) );
-    Kokkos::parallel_scan(
-        "Cabana::ParticleInit::FindEmpty",
-        Kokkos::RangePolicy<ExecutionSpace>( exec_space, 0, local_num_create ),
-        KOKKOS_LAMBDA( const int i, int& count, const bool final_pass ) {
-            if ( !particle_created( i ) )
-            {
-                if ( final_pass )
-                {
-                    empties( count ) = i;
-                }
-                ++count;
-            }
-        } );
-
-    // Compact the list so the it only has real particles.
-    Kokkos::parallel_scan(
-        "Cabana::ParticleInit::RemoveEmpty",
-        Kokkos::RangePolicy<ExecutionSpace>( exec_space, local_num_create,
-                                             num_particles ),
-        KOKKOS_LAMBDA( const int i, int& count, const bool final_pass ) {
-            if ( particle_created( i ) )
-            {
-                if ( final_pass )
-                {
-                    aosoa.setTuple( empties( count ), aosoa.getTuple( i ) );
-                }
-                ++count;
-            }
-        } );
-    aosoa.resize( local_num_create );
-    if ( shrink_to_fit )
-        aosoa.shrinkToFit();
-}
-
-//---------------------------------------------------------------------------//
-/*!
   \brief Initialize a random number of particles in each cell given an
   initialization functor.
 
@@ -154,17 +97,13 @@ int createParticles(
     int num_particles = particles_per_cell * owned_cells.size();
     aosoa.resize( num_particles );
 
-    // Creation status.
-    auto particle_created = Kokkos::View<bool*, memory_space>(
-        Kokkos::ViewAllocateWithoutInitializing( "particle_created" ),
-        num_particles );
+    // Creation count.
+    auto count = Kokkos::View<int*, memory_space>( "particle_count", 1 );
 
     // Initialize particles.
-    int local_num_create = 0;
-    Cajita::grid_parallel_reduce(
+    Cajita::grid_parallel_for(
         "Cajita::ParticleInit::Random", exec_space, owned_cells,
-        KOKKOS_LAMBDA( const int i, const int j, const int k,
-                       int& create_count ) {
+        KOKKOS_LAMBDA( const int i, const int j, const int k ) {
             // Compute the owned local cell id.
             int i_own = i - owned_cells.min( Dim::I );
             int j_own = j - owned_cells.min( Dim::J );
@@ -209,23 +148,24 @@ int createParticles(
 
                 // Create a new particle with the given logical coordinates.
                 auto particle = particle_list.getParticle( pid );
-                particle_created( pid ) =
-                    create_functor( pid, px, pv, particle );
+                bool created = create_functor( pid, px, pv, particle );
 
                 // If we created a new particle insert it into the list.
-                if ( particle_created( pid ) )
+                if ( created )
                 {
-                    particle_list.setParticle( particle, pid );
-                    ++create_count;
+                    auto c = Kokkos::atomic_fetch_add( &count( 0 ), 1 );
+                    particle_list.setParticle( particle, c );
                 }
             }
-        },
-        local_num_create );
+        } );
+    Kokkos::fence();
 
-    // Filter empties.
-    filterEmpties( exec_space, local_num_create, particle_created, aosoa,
-                   shrink_to_fit );
-    return local_num_create;
+    auto count_host =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), count );
+    aosoa.resize( count_host( 0 ) );
+    if ( shrink_to_fit )
+        aosoa.shrinkToFit();
+    return count_host( 0 );
 }
 
 /*!
@@ -417,17 +357,13 @@ int createParticles(
     int num_particles = particles_per_cell * owned_cells.size();
     aosoa.resize( num_particles );
 
-    // Creation status.
-    auto particle_created = Kokkos::View<bool*, memory_space>(
-        Kokkos::ViewAllocateWithoutInitializing( "particle_created" ),
-        num_particles );
+    // Creation count.
+    auto count = Kokkos::View<int*, memory_space>( "particle_count", 1 );
 
     // Initialize particles.
-    int local_num_create = 0;
-    Cajita::grid_parallel_reduce(
+    Cajita::grid_parallel_for(
         "Cajita::ParticleInit::Uniform", exec_space, owned_cells,
-        KOKKOS_LAMBDA( const int i, const int j, const int k,
-                       int& create_count ) {
+        KOKKOS_LAMBDA( const int i, const int j, const int k ) {
             // Compute the owned local cell id.
             int i_own = i - owned_cells.min( Dim::I );
             int j_own = j - owned_cells.min( Dim::J );
@@ -482,23 +418,26 @@ int createParticles(
                         // Create a new particle with the given logical
                         // coordinates.
                         auto particle = particle_list.getParticle( pid );
-                        particle_created( pid ) =
-                            create_functor( pid, px, pv, particle );
+                        bool created = create_functor( pid, px, pv, particle );
 
                         // If we created a new particle insert it into the list.
-                        if ( particle_created( pid ) )
+                        if ( created )
                         {
-                            particle_list.setParticle( particle, pid );
-                            ++create_count;
+                            // TODO: replace atomic with fill (use pid directly)
+                            // and filter of empty list entries.
+                            auto c = Kokkos::atomic_fetch_add( &count( 0 ), 1 );
+                            particle_list.setParticle( particle, c );
                         }
                     }
-        },
-        local_num_create );
+        } );
+    Kokkos::fence();
 
-    // Filter empties.
-    filterEmpties( exec_space, local_num_create, particle_created, aosoa,
-                   shrink_to_fit );
-    return local_num_create;
+    auto count_host =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), count );
+    aosoa.resize( count_host( 0 ) );
+    if ( shrink_to_fit )
+        aosoa.shrinkToFit();
+    return count_host( 0 );
 }
 
 /*!

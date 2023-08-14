@@ -106,15 +106,14 @@ void initParticleListTest( InitType init_type, int ppc )
     };
 
     // Initialize particles.
-    Cajita::createParticles( init_type, TEST_EXECSPACE(), init_func, particles,
-                             ppc, *local_grid );
+    int num_p = Cajita::createParticles( init_type, TEST_EXECSPACE(), init_func,
+                                         particles, ppc, *local_grid );
 
     // Check that we made particles.
-    int num_p = particles.size();
     EXPECT_TRUE( num_p > 0 );
 
     // Compute the global number of particles.
-    int global_num_particle = num_p;
+    int global_num_particle = particles.size();
     MPI_Allreduce( MPI_IN_PLACE, &global_num_particle, 1, MPI_INT, MPI_SUM,
                    MPI_COMM_WORLD );
     int expect_num_particle =
@@ -144,7 +143,7 @@ void initParticleListTest( InitType init_type, int ppc )
             EXPECT_TRUE( px < box[2 * d + 1] );
         }
         auto pv = get( particle, Bar() );
-        EXPECT_EQ( pv, volume );
+        EXPECT_DOUBLE_EQ( pv, volume );
     }
 }
 
