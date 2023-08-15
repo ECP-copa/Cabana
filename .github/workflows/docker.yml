@@ -34,7 +34,7 @@ jobs:
       - name: Checkout heffte
         # actions/checkout doesn't work for external repos yet
         run: |
-          git clone --depth 1 --branch v2.1.0 https://bitbucket.org/icl/heffte.git heffte
+          git clone --depth 1 --branch v2.3.0 https://bitbucket.org/icl/heffte.git heffte
       - name: Checkout hypre
         uses: actions/checkout@v2.2.0
         with:

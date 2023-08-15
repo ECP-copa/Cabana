@@ -299,7 +299,7 @@ jobs:
         if: ${{ matrix.heffte != 'OFF' }}
         # actions/checkout doesn't work for external repos yet (actions/checkout#447)
         run: |
-          git clone --depth 1 --branch v2.1.0 https://bitbucket.org/icl/heffte.git heffte
+          git clone --depth 1 --branch v2.3.0 https://bitbucket.org/icl/heffte.git heffte
       - name: Build heffte
         if: ${{ matrix.heffte != 'OFF' }}
         working-directory: heffte

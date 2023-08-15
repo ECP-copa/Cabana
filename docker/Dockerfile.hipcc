@@ -133,7 +133,7 @@ RUN FFTW_URL=http://www.fftw.org/fftw-${FFTW_VERSION}.tar.gz && \
     rm -rf ${SCRATCH_DIR}
 
 # Install heffte
-ARG HEFFTE_VERSION=2.1.0
+ARG HEFFTE_VERSION=2.3.0
 ENV HEFFTE_DIR=/opt/heffte
 RUN HEFFTE_URL=https://bitbucket.org/icl/heffte/get/v${HEFFTE_VERSION}.tar.gz && \
     HEFFTE_ARCHIVE=heffte.tar.gz && \
