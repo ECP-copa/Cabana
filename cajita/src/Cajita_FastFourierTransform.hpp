@@ -104,33 +104,33 @@ class FastFourierTransformParams
 
   public:
     /*!
-      \brief setAllToAll Set MPI communication.
+      \brief Set MPI communication strategy.
       \param value Use all to all MPI communication.
     */
     void setAllToAll( bool value ) { alltoall = value; }
     /*!
-      \brief setPencils Set data exchange type (pencil or slab).
+      \brief Set data exchange type (pencil or slab).
       \param value Use pencil (true) or slab (false) decomposition.
     */
     void setPencils( bool value ) { pencils = value; }
     /*!
-      \brief setReorder Set data handling (contiguous or strided memory).
+      \brief Set data handling (contiguous or strided memory).
       \param value Use contiguous (true) or strided (false) memory layout.
       Contiguous layout requires tensor transposition; strided layout does not.
     */
     void setReorder( bool value ) { reorder = value; }
     /*!
-      \brief getAllToAll Get MPI communication.
-      \return Using all to all MPI communication or not.
+      \brief Get MPI communication strategy.
+      \return Using AllToAll or not.
     */
     bool getAllToAll() const { return alltoall; }
     /*!
-      \brief getPencils Get data exchange type (pencil or slab).
+      \brief Get data exchange type (pencil or slab).
       \return Using pencil (true) or slab (false) decomposition.
     */
     bool getPencils() const { return pencils; }
     /*!
-      \brief getReorder Get data handling (contiguous or strided memory).
+      \brief Get data handling (contiguous or strided memory).
       \return Using contiguous (true) or strided (false) memory layout.
       Contiguous layout requires tensor transposition; strided layout does not.
     */
