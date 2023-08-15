@@ -15,7 +15,7 @@ RUN sudo cmake --install arborx/build
 
 COPY heffte/ /home/kokkos/src/heffte
 RUN sudo chown -R kokkos:kokkos heffte
-RUN cmake -S heffte -B heffte/build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_STANDARD="11" -DHeffte_ENABLE_FFTW=ON
+RUN cmake -S heffte -B heffte/build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DHeffte_ENABLE_FFTW=ON -DBUILD_SHARED_LIBS=ON
 RUN cmake --build heffte/build -j2
 RUN sudo cmake --install heffte/build
 
@@ -25,6 +25,8 @@ RUN cmake -S hypre/src -B hypre/build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL
 RUN cmake --build hypre/build -j2
 RUN sudo cmake --install hypre/build
 
+# This is for the heffte install
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib
 COPY cabana/ /home/kokkos/src/cabana
 RUN sudo chown -R kokkos:kokkos cabana
 RUN cmake -S cabana -B cabana/build -DCMAKE_BUILD_TYPE=Release -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON -DCabana_ENABLE_PERFORMANCE_TESTING=ON -DCabana_PERFORMANCE_EXPECTED_FLOPS=0 -DVALGRIND_EXECUTABLE=False -DCabana_REQUIRE_ARBORX=ON -DCabana_REQUIRE_HEFFTE=ON -DCabana_REQUIRE_HYPRE=ON
