@@ -66,7 +66,8 @@ void calculateFFT( bool use_default, bool use_params,
         fft->forward( *lhs, Experimental::FFTScaleFull() );
         fft->reverse( *lhs, Experimental::FFTScaleNone() );
     }
-#if !defined( KOKKOS_ENABLE_CUDA ) && !defined( KOKKOS_ENABLE_HIP )
+#if !defined( KOKKOS_ENABLE_CUDA ) && !defined( KOKKOS_ENABLE_HIP ) &&         \
+    !defined( KOKKOS_ENABLE_SYCL )
     else if ( use_params )
     {
         auto fft = Experimental::createHeffteFastFourierTransform<

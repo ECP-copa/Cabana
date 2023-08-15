@@ -65,8 +65,8 @@ struct FFTBackendDefault
 } // namespace Impl
 
 //! Matching Array static type checker.
-template <class ArrayEntity, class ArrayMesh, class ArrayDevice,
-          class ArrayScalar, class Entity, class Mesh, class Device,
+template <class ArrayEntity, class ArrayMesh, class ArrayMemorySpace,
+          class ArrayScalar, class Entity, class Mesh, class MemorySpace,
           class Scalar, typename SFINAE = void>
 struct is_matching_array : public std::false_type
 {
@@ -74,20 +74,21 @@ struct is_matching_array : public std::false_type
                    "Array entity type mush match FFT entity type." );
     static_assert( std::is_same<ArrayMesh, Mesh>::value,
                    "Array mesh type mush match FFT mesh type." );
-    static_assert( std::is_same<ArrayDevice, Device>::value,
+    static_assert( std::is_same<ArrayMemorySpace, MemorySpace>::value,
                    "Array device type must match FFT device type." );
 };
 
 //! Matching Array static type checker.
-template <class ArrayEntity, class ArrayMesh, class ArrayDevice,
-          class ArrayScalar, class Entity, class Mesh, class Device,
+template <class ArrayEntity, class ArrayMesh, class ArrayMemorySpace,
+          class ArrayScalar, class Entity, class Mesh, class MemorySpace,
           class Scalar>
 struct is_matching_array<
-    ArrayEntity, ArrayMesh, ArrayDevice, ArrayScalar, Entity, Mesh, Device,
-    Scalar,
-    typename std::enable_if<std::is_same<ArrayEntity, Entity>::value &&
-                            std::is_same<ArrayMesh, Mesh>::value &&
-                            std::is_same<ArrayDevice, Device>::value>::type>
+    ArrayEntity, ArrayMesh, ArrayMemorySpace, ArrayScalar, Entity, Mesh,
+    MemorySpace, Scalar,
+    typename std::enable_if<
+        std::is_same<ArrayEntity, Entity>::value &&
+        std::is_same<ArrayMesh, Mesh>::value &&
+        std::is_same<ArrayMemorySpace, MemorySpace>::value>::type>
     : public std::true_type
 {
 };
@@ -141,7 +142,7 @@ class FastFourierTransformParams
 /*!
   \brief 2D/3D distributed fast Fourier transform base implementation.
 */
-template <class EntityType, class MeshType, class Scalar, class DeviceType,
+template <class EntityType, class MeshType, class Scalar, class MemorySpace,
           class Derived>
 class FastFourierTransform
 {
@@ -152,10 +153,16 @@ class FastFourierTransform
     using mesh_type = MeshType;
     //! Scalar value type.
     using value_type = Scalar;
-    //! Kokkos device type.
-    using device_type = DeviceType;
+    // FIXME: extracting the self type for backwards compatibility with previous
+    // template on DeviceType. Should simply be MemorySpace after next release.
+    //! Kokkos memory space.
+    using memory_space = typename MemorySpace::memory_space;
     //! Kokkos execution space.
-    using exec_space = typename device_type::execution_space;
+    using execution_space = typename memory_space::execution_space;
+    //! Kokkos execution space.
+    using exec_space [[deprecated]] = execution_space;
+    //! Default Kokkos device type.
+    using device_type [[deprecated]] = typename memory_space::device_type;
 
     //! Spatial dimension.
     static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
@@ -215,8 +222,8 @@ class FastFourierTransform
             ( is_array<Array_t>::value &&
               is_matching_array<
                   typename Array_t::entity_type, typename Array_t::mesh_type,
-                  typename Array_t::device_type, typename Array_t::value_type,
-                  entity_type, mesh_type, device_type, value_type>::value ),
+                  typename Array_t::memory_space, typename Array_t::value_type,
+                  entity_type, mesh_type, memory_space, value_type>::value ),
             int>::type* = 0 )
     {
         Kokkos::Profiling::pushRegion( "Cabana::FFT::forward" );
@@ -239,8 +246,8 @@ class FastFourierTransform
             ( is_array<Array_t>::value &&
               is_matching_array<
                   typename Array_t::entity_type, typename Array_t::mesh_type,
-                  typename Array_t::device_type, typename Array_t::value_type,
-                  entity_type, mesh_type, device_type, value_type>::value ),
+                  typename Array_t::memory_space, typename Array_t::value_type,
+                  entity_type, mesh_type, memory_space, value_type>::value ),
             int>::type* = 0 )
     {
         Kokkos::Profiling::pushRegion( "Cabana::FFT::reverse" );
@@ -254,15 +261,14 @@ class FastFourierTransform
     /*!
       \brief Copy owned data for FFT.
     */
-    template <class IndexSpaceType, class LViewType, class LGViewType,
-              std::size_t NSD = num_space_dim>
+    template <class ExecutionSpace, class IndexSpaceType, class LViewType,
+              class LGViewType, std::size_t NSD = num_space_dim>
     std::enable_if_t<3 == NSD, void>
-    copyToLocal( const IndexSpaceType own_space, LViewType& l_view,
-                 const LGViewType lg_view )
+    copyToLocal( ExecutionSpace exec_space, const IndexSpaceType own_space,
+                 LViewType& l_view, const LGViewType lg_view )
     {
         Kokkos::parallel_for(
-            "fft_copy_to_work",
-            createExecutionPolicy( own_space, exec_space() ),
+            "fft_copy_to_work", createExecutionPolicy( own_space, exec_space ),
             KOKKOS_LAMBDA( const int i, const int j, const int k ) {
                 auto iw = i - own_space.min( Dim::I );
                 auto jw = j - own_space.min( Dim::J );
@@ -275,15 +281,14 @@ class FastFourierTransform
     /*!
       \brief Copy owned data for FFT.
     */
-    template <class IndexSpaceType, class LViewType, class LGViewType,
-              std::size_t NSD = num_space_dim>
+    template <class ExecutionSpace, class IndexSpaceType, class LViewType,
+              class LGViewType, std::size_t NSD = num_space_dim>
     std::enable_if_t<2 == NSD, void>
-    copyToLocal( const IndexSpaceType own_space, LViewType& l_view,
-                 const LGViewType lg_view )
+    copyToLocal( ExecutionSpace space, const IndexSpaceType own_space,
+                 LViewType& l_view, const LGViewType lg_view )
     {
         Kokkos::parallel_for(
-            "fft_copy_to_work",
-            createExecutionPolicy( own_space, exec_space() ),
+            "fft_copy_to_work", createExecutionPolicy( own_space, space ),
             KOKKOS_LAMBDA( const int i, const int j ) {
                 auto iw = i - own_space.min( Dim::I );
                 auto jw = j - own_space.min( Dim::J );
@@ -295,15 +300,14 @@ class FastFourierTransform
     /*!
       \brief Copy owned data back after FFT.
     */
-    template <class IndexSpaceType, class LViewType, class LGViewType,
-              std::size_t NSD = num_space_dim>
+    template <class ExecutionSpace, class IndexSpaceType, class LViewType,
+              class LGViewType, std::size_t NSD = num_space_dim>
     std::enable_if_t<3 == NSD, void>
-    copyFromLocal( const IndexSpaceType own_space, const LViewType l_view,
-                   LGViewType& lg_view )
+    copyFromLocal( ExecutionSpace space, const IndexSpaceType own_space,
+                   const LViewType l_view, LGViewType& lg_view )
     {
         Kokkos::parallel_for(
-            "fft_copy_from_work",
-            createExecutionPolicy( own_space, exec_space() ),
+            "fft_copy_from_work", createExecutionPolicy( own_space, space ),
             KOKKOS_LAMBDA( const int i, const int j, const int k ) {
                 auto iw = i - own_space.min( Dim::I );
                 auto jw = j - own_space.min( Dim::J );
@@ -316,15 +320,14 @@ class FastFourierTransform
     /*!
       \brief Copy owned data back after FFT.
     */
-    template <class IndexSpaceType, class LViewType, class LGViewType,
-              std::size_t NSD = num_space_dim>
+    template <class ExecutionSpace, class IndexSpaceType, class LViewType,
+              class LGViewType, std::size_t NSD = num_space_dim>
     std::enable_if_t<2 == NSD, void>
-    copyFromLocal( const IndexSpaceType own_space, const LViewType l_view,
-                   LGViewType& lg_view )
+    copyFromLocal( ExecutionSpace space, const IndexSpaceType own_space,
+                   const LViewType l_view, LGViewType& lg_view )
     {
         Kokkos::parallel_for(
-            "fft_copy_from_work",
-            createExecutionPolicy( own_space, exec_space() ),
+            "fft_copy_from_work", createExecutionPolicy( own_space, space ),
             KOKKOS_LAMBDA( const int i, const int j ) {
                 auto iw = i - own_space.min( Dim::I );
                 auto jw = j - own_space.min( Dim::J );
@@ -344,30 +347,35 @@ template <class ExecutionSpace, class BackendType>
 struct HeffteBackendTraits
 {
 };
-#ifdef Heffte_ENABLE_FFTW
-template <class ExecutionSpace>
-struct HeffteBackendTraits<ExecutionSpace, FFTBackendFFTW>
-{
-    using backend_type = heffte::backend::fftw;
-};
-template <class ExecutionSpace>
-struct HeffteBackendTraits<ExecutionSpace, Impl::FFTBackendDefault>
-{
-    using backend_type = heffte::backend::fftw;
-};
-#endif
 #ifdef Heffte_ENABLE_MKL
 template <class ExecutionSpace>
 struct HeffteBackendTraits<ExecutionSpace, FFTBackendMKL>
 {
     using backend_type = heffte::backend::mkl;
 };
-#ifndef Heffte_ENABLE_FFTW
+#endif
+#ifdef Heffte_ENABLE_FFTW
+template <class ExecutionSpace>
+struct HeffteBackendTraits<ExecutionSpace, FFTBackendFFTW>
+{
+    using backend_type = heffte::backend::fftw;
+};
+#endif
+#ifdef Heffte_ENABLE_FFTW
+template <class ExecutionSpace>
+struct HeffteBackendTraits<ExecutionSpace, Impl::FFTBackendDefault>
+{
+    using backend_type = heffte::backend::fftw;
+};
+#else
+#ifdef Heffte_ENABLE_MKL
 template <class ExecutionSpace>
 struct HeffteBackendTraits<ExecutionSpace, Impl::FFTBackendDefault>
 {
     using backend_type = heffte::backend::mkl;
 };
+#else
+throw std::runtime_error( "Must enable at least one heFFTe host backend." );
 #endif
 #endif
 #ifdef Heffte_ENABLE_CUDA
@@ -388,6 +396,16 @@ struct HeffteBackendTraits<Kokkos::Experimental::HIP, Impl::FFTBackendDefault>
 };
 #endif
 #endif
+#ifdef Heffte_ENABLE_ONEAPI
+#ifdef KOKKOS_ENABLE_SYCL
+template <>
+struct HeffteBackendTraits<Kokkos::Experimental::SYCL, Impl::FFTBackendDefault>
+{
+    using backend_type = heffte::backend::onemkl;
+};
+#endif
+#endif
+
 template <class ScaleType>
 struct HeffteScalingTraits
 {
@@ -407,6 +425,42 @@ struct HeffteScalingTraits<FFTScaleSymmetric>
 {
     static const auto scaling_type = heffte::scale::symmetric;
 };
+
+#ifdef KOKKOS_ENABLE_SYCL
+// Overload for SYCL.
+template <class ExecSpace, class HeffteBackendType>
+auto createHeffteFft3d(
+    ExecSpace exec_space, HeffteBackendType, heffte::box3d<> inbox,
+    heffte::box3d<> outbox, MPI_Comm comm, heffte::plan_options params,
+    typename std::enable_if<
+        std::is_same<HeffteBackendType, heffte::backend::onemkl>::value,
+        int>::type* = 0 )
+{
+    // Set FFT options from given parameters
+    // heFFTe correctly handles 2D or 3D FFTs within "fft3d"
+    sycl::queue& q = exec_space.sycl_queue();
+    return std::make_shared<heffte::fft3d<HeffteBackendType>>( q, inbox, outbox,
+                                                               comm, params );
+}
+#endif
+
+template <class ExecSpace, class HeffteBackendType>
+auto createHeffteFft3d(
+    ExecSpace, HeffteBackendType, heffte::box3d<> inbox, heffte::box3d<> outbox,
+    MPI_Comm comm, heffte::plan_options params,
+    typename std::enable_if<
+        std::is_same<HeffteBackendType, heffte::backend::fftw>::value ||
+            std::is_same<HeffteBackendType, heffte::backend::mkl>::value ||
+            std::is_same<HeffteBackendType, heffte::backend::cufft>::value ||
+            std::is_same<HeffteBackendType, heffte::backend::rocfft>::value,
+        int>::type* = 0 )
+{
+    // Set FFT options from given parameters
+    // heFFTe correctly handles 2D or 3D FFTs within "fft3d"
+    return std::make_shared<heffte::fft3d<HeffteBackendType>>( inbox, outbox,
+                                                               comm, params );
+}
+
 //! \endcond
 } // namespace Impl
 
@@ -414,23 +468,29 @@ struct HeffteScalingTraits<FFTScaleSymmetric>
 /*!
   \brief Interface to heFFTe fast Fourier transform library.
 */
-template <class EntityType, class MeshType, class Scalar, class DeviceType,
-          class BackendType>
+template <class EntityType, class MeshType, class Scalar, class MemorySpace,
+          class ExecSpace, class BackendType>
 class HeffteFastFourierTransform
     : public FastFourierTransform<
-          EntityType, MeshType, Scalar, DeviceType,
-          HeffteFastFourierTransform<EntityType, MeshType, Scalar, DeviceType,
-                                     BackendType>>
+          EntityType, MeshType, Scalar, MemorySpace,
+          HeffteFastFourierTransform<EntityType, MeshType, Scalar, MemorySpace,
+                                     ExecSpace, BackendType>>
 {
   public:
     //! Scalar value type.
     using value_type = Scalar;
-    //! Kokkos device type.
-    using device_type = DeviceType;
+    // FIXME: extracting the self type for backwards compatibility with previous
+    // template on DeviceType. Should simply be MemorySpace after next release.
+    //! Kokkos memory space.
+    using memory_space = typename MemorySpace::memory_space;
+    //! Kokkos execution space.
+    using execution_space = ExecSpace;
+    //! Kokkos execution space.
+    using exec_space [[deprecated]] = execution_space;
+    //! Default Kokkos device type.
+    using device_type [[deprecated]] = typename memory_space::device_type;
     //! FFT backend type.
     using backend_type = BackendType;
-    //! Kokkos execution space.
-    using exec_space = typename device_type::execution_space;
     //! Mesh type.
     using mesh_type = MeshType;
 
@@ -439,20 +499,27 @@ class HeffteFastFourierTransform
 
     //! heFFTe backend type.
     using heffte_backend_type =
-        typename Impl::HeffteBackendTraits<exec_space,
+        typename Impl::HeffteBackendTraits<execution_space,
                                            backend_type>::backend_type;
+
+    //! Stored execution space used by heFFTe.
+    execution_space heffte_execution_space;
 
     /*!
       \brief Constructor
+      \param exec_space Kokkos execution space
       \param layout The array layout defining the vector space of the transform.
       \param params Parameters for the FFT.
     */
-    HeffteFastFourierTransform( const ArrayLayout<EntityType, MeshType>& layout,
+    HeffteFastFourierTransform( execution_space exec_space,
+                                const ArrayLayout<EntityType, MeshType>& layout,
                                 const FastFourierTransformParams& params )
         : FastFourierTransform<
-              EntityType, MeshType, Scalar, DeviceType,
+              EntityType, MeshType, Scalar, MemorySpace,
               HeffteFastFourierTransform<EntityType, MeshType, Scalar,
-                                         DeviceType, BackendType>>( layout )
+                                         MemorySpace, ExecSpace, BackendType>>(
+              layout )
+        , heffte_execution_space( exec_space )
     {
         // heFFTe correctly handles 2D or 3D domains within "box3d"
         heffte::box3d<> inbox = { this->global_low, this->global_high };
@@ -469,12 +536,11 @@ class HeffteFastFourierTransform
         heffte_params.use_pencils = params.getPencils();
         heffte_params.use_reorder = params.getReorder();
 
-        // Set FFT options from given parameters
-        // heFFTe correctly handles 2D or 3D FFTs within "fft3d"
-        _fft = std::make_shared<heffte::fft3d<heffte_backend_type>>(
-            inbox, outbox, layout.localGrid()->globalGrid().comm(),
-            heffte_params );
-
+        // Create the heFFTe main class (separated to handle SYCL queue
+        // correctly).
+        _fft = Impl::createHeffteFft3d(
+            heffte_execution_space, heffte_backend_type{}, inbox, outbox,
+            layout.localGrid()->globalGrid().comm(), heffte_params );
         int fftsize = std::max( _fft->size_outbox(), _fft->size_inbox() );
 
         // Check the size.
@@ -484,10 +550,10 @@ class HeffteFastFourierTransform
             throw std::logic_error( "Expected FFT allocation size smaller "
                                     "than local grid size" );
 
-        _fft_work = Kokkos::View<Scalar*, DeviceType>(
+        _fft_work = Kokkos::View<Scalar*, MemorySpace>(
             Kokkos::ViewAllocateWithoutInitializing( "fft_work" ),
             2 * fftsize );
-        _workspace = Kokkos::View<Scalar* [2], DeviceType>(
+        _workspace = Kokkos::View<Scalar* [2], MemorySpace>(
             Kokkos::ViewAllocateWithoutInitializing( "workspace" ),
             4 * fftsize );
     }
@@ -527,14 +593,15 @@ class HeffteFastFourierTransform
         auto own_space =
             x.layout()->localGrid()->indexSpace( Own(), EntityType(), Local() );
         auto local_view_space = appendDimension( own_space, 2 );
-        auto local_view = createView<Scalar, Kokkos::LayoutRight, DeviceType>(
+        auto local_view = createView<Scalar, Kokkos::LayoutRight, MemorySpace>(
             local_view_space, _fft_work.data() );
 
         // TODO: pull this out to template function
         // Copy to the work array. The work array only contains owned data.
         auto localghost_view = x.view();
 
-        this->copyToLocal( own_space, local_view, localghost_view );
+        this->copyToLocal( heffte_execution_space, own_space, local_view,
+                           localghost_view );
 
         if ( flag == 1 )
         {
@@ -559,60 +626,62 @@ class HeffteFastFourierTransform
         }
 
         // Copy back to output array.
-        this->copyFromLocal( own_space, local_view, localghost_view );
+        this->copyFromLocal( heffte_execution_space, own_space, local_view,
+                             localghost_view );
     }
 
   private:
     // heFFTe correctly handles 2D or 3D FFTs within "fft3d"
     std::shared_ptr<heffte::fft3d<heffte_backend_type>> _fft;
-    Kokkos::View<Scalar*, DeviceType> _fft_work;
-    Kokkos::View<Scalar* [2], DeviceType> _workspace;
+    Kokkos::View<Scalar*, memory_space> _fft_work;
+    Kokkos::View<Scalar* [2], memory_space> _workspace;
 };
 
 //---------------------------------------------------------------------------//
 // heFFTe creation
 //---------------------------------------------------------------------------//
 //! Creation function for heFFTe FFT with explict FFT backend.
+//! \param exec_space Kokkos execution space
 //! \param layout FFT entity array
 //! \param params FFT parameters
-template <class Scalar, class DeviceType, class BackendType, class EntityType,
-          class MeshType>
+template <class Scalar, class MemorySpace, class BackendType, class EntityType,
+          class MeshType, class ExecSpace>
 auto createHeffteFastFourierTransform(
-    const ArrayLayout<EntityType, MeshType>& layout,
+    ExecSpace exec_space, const ArrayLayout<EntityType, MeshType>& layout,
     const FastFourierTransformParams& params )
 {
     return std::make_shared<HeffteFastFourierTransform<
-        EntityType, MeshType, Scalar, DeviceType, BackendType>>( layout,
-                                                                 params );
+        EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType>>(
+        exec_space, layout, params );
 }
 
 //! Creation function for heFFTe FFT with default FFT backend.
+//! \param exec_space Kokkos execution space
 //! \param layout FFT entity array
 //! \param params FFT parameters
-template <class Scalar, class DeviceType, class EntityType, class MeshType>
+template <class Scalar, class MemorySpace, class EntityType, class MeshType,
+          class ExecSpace>
 auto createHeffteFastFourierTransform(
-    const ArrayLayout<EntityType, MeshType>& layout,
+    ExecSpace exec_space, const ArrayLayout<EntityType, MeshType>& layout,
     const FastFourierTransformParams& params )
 {
-    return createHeffteFastFourierTransform<
-        Scalar, DeviceType, Impl::FFTBackendDefault, EntityType, MeshType>(
-        layout, params );
+    return createHeffteFastFourierTransform<Scalar, MemorySpace,
+                                            Impl::FFTBackendDefault>(
+        exec_space, layout, params );
 }
 
 //! Creation function for heFFTe FFT with explict FFT backend and default
 //! parameters.
+//! \param exec_space Kokkos execution space
 //! \param layout FFT entity array
-template <class Scalar, class DeviceType, class BackendType, class EntityType,
-          class MeshType>
+template <class Scalar, class MemorySpace, class BackendType, class EntityType,
+          class MeshType, class ExecSpace>
 auto createHeffteFastFourierTransform(
-    const ArrayLayout<EntityType, MeshType>& layout )
+    ExecSpace exec_space, const ArrayLayout<EntityType, MeshType>& layout )
 {
-    using device_type = DeviceType;
-    using backend_type = BackendType;
-    using exec_space = typename device_type::execution_space;
     using heffte_backend_type =
-        typename Impl::HeffteBackendTraits<exec_space,
-                                           backend_type>::backend_type;
+        typename Impl::HeffteBackendTraits<ExecSpace,
+                                           BackendType>::backend_type;
 
     // use default heFFTe params for this backend
     const heffte::plan_options heffte_params =
@@ -624,20 +693,78 @@ auto createHeffteFastFourierTransform(
     params.setReorder( heffte_params.use_reorder );
 
     return std::make_shared<HeffteFastFourierTransform<
-        EntityType, MeshType, Scalar, DeviceType, BackendType>>( layout,
-                                                                 params );
+        EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType>>(
+        exec_space, layout, params );
+}
+
+//! Creation function for heFFTe FFT with default FFT backend and default
+//! parameters.
+//! \param exec_space Kokkos execution space
+//! \param layout FFT entity array
+template <class Scalar, class MemorySpace, class EntityType, class MeshType,
+          class ExecSpace>
+auto createHeffteFastFourierTransform(
+    ExecSpace exec_space, const ArrayLayout<EntityType, MeshType>& layout )
+{
+    return createHeffteFastFourierTransform<
+        Scalar, MemorySpace, Impl::FFTBackendDefault, EntityType, MeshType>(
+        exec_space, layout );
+}
+
+//! Creation function for heFFTe FFT with explict FFT backend.
+//! \param layout FFT entity array
+//! \param params FFT parameters
+template <class Scalar, class MemorySpace, class BackendType, class EntityType,
+          class MeshType>
+auto createHeffteFastFourierTransform(
+    const ArrayLayout<EntityType, MeshType>& layout,
+    const FastFourierTransformParams& params )
+{
+    using exec_space = typename MemorySpace::execution_space;
+    return createHeffteFastFourierTransform<Scalar, MemorySpace, BackendType,
+                                            EntityType, MeshType>(
+        exec_space{}, layout, params );
+}
+
+//! Creation function for heFFTe FFT with default FFT backend.
+//! \param layout FFT entity array
+//! \param params FFT parameters
+template <class Scalar, class MemorySpace, class EntityType, class MeshType>
+auto createHeffteFastFourierTransform(
+    const ArrayLayout<EntityType, MeshType>& layout,
+    const FastFourierTransformParams& params )
+{
+    using exec_space = typename MemorySpace::execution_space;
+    return createHeffteFastFourierTransform<
+        Scalar, MemorySpace, Impl::FFTBackendDefault, EntityType, MeshType>(
+        exec_space{}, layout, params );
+}
+
+//! Creation function for heFFTe FFT with explict FFT backend and default
+//! parameters.
+//! \param layout FFT entity array
+template <class Scalar, class MemorySpace, class BackendType, class EntityType,
+          class MeshType>
+auto createHeffteFastFourierTransform(
+    const ArrayLayout<EntityType, MeshType>& layout )
+{
+    using exec_space = typename MemorySpace::execution_space;
+    return createHeffteFastFourierTransform<Scalar, MemorySpace, BackendType,
+                                            EntityType, MeshType>( exec_space{},
+                                                                   layout );
 }
 
 //! Creation function for heFFTe FFT with default FFT backend and default
 //! parameters.
 //! \param layout FFT entity array
-template <class Scalar, class DeviceType, class EntityType, class MeshType>
+template <class Scalar, class MemorySpace, class EntityType, class MeshType>
 auto createHeffteFastFourierTransform(
     const ArrayLayout<EntityType, MeshType>& layout )
 {
+    using exec_space = typename MemorySpace::execution_space;
     return createHeffteFastFourierTransform<
-        Scalar, DeviceType, Impl::FFTBackendDefault, EntityType, MeshType>(
-        layout );
+        Scalar, MemorySpace, Impl::FFTBackendDefault, EntityType, MeshType>(
+        exec_space{}, layout );
 }
 
 //---------------------------------------------------------------------------//
