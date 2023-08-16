@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_ParticleGridDistributor.hpp
+  \brief Multi-node particle redistribution using the grid halo.
+*/
 #ifndef CABANA_PARTICLEGRIDDISTRIBUTOR_HPP
 #define CABANA_PARTICLEGRIDDISTRIBUTOR_HPP
 
