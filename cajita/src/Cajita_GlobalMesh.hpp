@@ -181,6 +181,7 @@ class GlobalMesh
 
   \param global_low_corner, global_high_corner Location of the mesh corner.
   \param cell_size Uniform cell size for every dimension.
+  \return Shared pointer to a GlobalMesh.
 */
 template <class Scalar, std::size_t NumSpaceDim>
 std::shared_ptr<GlobalMesh<UniformMesh<Scalar, NumSpaceDim>>>
@@ -201,6 +202,7 @@ createUniformGlobalMesh(
 
   \param global_low_corner, global_high_corner Location of the mesh corner.
   \param cell_size %Array ofuniform cell size per dimension.
+  \return Shared pointer to a GlobalMesh.
 */
 template <class Scalar, std::size_t NumSpaceDim>
 std::shared_ptr<GlobalMesh<UniformMesh<Scalar, NumSpaceDim>>>
@@ -221,6 +223,7 @@ createUniformGlobalMesh(
 
   \param global_low_corner, global_high_corner Location of the mesh corner.
   \param global_num_cell %Array ofnumber of cells per dimension.
+  \return Shared pointer to a GlobalMesh.
 */
 template <class Scalar, std::size_t NumSpaceDim>
 std::shared_ptr<GlobalMesh<UniformMesh<Scalar, NumSpaceDim>>>
@@ -242,6 +245,7 @@ createUniformGlobalMesh(
 
   \param global_low_corner, global_high_corner Location of the mesh corner.
   \param cell_size Uniform cell size for every dimension.
+  \return Shared pointer to a GlobalMesh.
 */
 template <class Scalar, std::size_t NumSpaceDim>
 std::shared_ptr<GlobalMesh<SparseMesh<Scalar, NumSpaceDim>>>
@@ -262,6 +266,7 @@ createSparseGlobalMesh(
 
   \param global_low_corner, global_high_corner Location of the mesh corner.
   \param cell_size %Array ofuniform cell size per dimension.
+  \return Shared pointer to a GlobalMesh.
 */
 template <class Scalar, std::size_t NumSpaceDim>
 std::shared_ptr<GlobalMesh<SparseMesh<Scalar, NumSpaceDim>>>
@@ -282,6 +287,7 @@ createSparseGlobalMesh(
 
   \param global_low_corner, global_high_corner Location of the mesh corner.
   \param global_num_cell %Array ofnumber of cells per dimension.
+  \return Shared pointer to a GlobalMesh.
 */
 template <class Scalar, std::size_t NumSpaceDim>
 std::shared_ptr<GlobalMesh<SparseMesh<Scalar, NumSpaceDim>>>
@@ -373,6 +379,7 @@ class GlobalMesh<NonUniformMesh<Scalar, 3>>
   \brief Create a non-uniform 3D mesh.
   \param i_edges, j_edges, k_edges List of edges defining the mesh in each
   dimension.
+  \return Shared pointer to a GlobalMesh.
 */
 template <class Scalar>
 std::shared_ptr<GlobalMesh<NonUniformMesh<Scalar, 3>>>
@@ -462,6 +469,7 @@ class GlobalMesh<NonUniformMesh<Scalar, 2>>
   \brief Create a non-uniform 2D mesh.
   \tparam Scalar Mesh scalar type.
   \param i_edges, j_edges List of edges defining the mesh in each dimension.
+  \return Shared pointer to a GlobalMesh.
 */
 template <class Scalar>
 std::shared_ptr<GlobalMesh<NonUniformMesh<Scalar, 2>>>

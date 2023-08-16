@@ -959,8 +959,11 @@ class ReferenceConjugateGradient
 //---------------------------------------------------------------------------//
 // Builders.
 //---------------------------------------------------------------------------//
-//! Creation function for reference structured preconditioned block conjugate
-//! gradient.
+/*!
+  \brief Creation function for reference structured preconditioned block
+  conjugate gradient.
+  \return Shared pointer to a ReferenceConjugateGradient.
+*/
 template <class Scalar, class DeviceType, class EntityType, class MeshType>
 std::shared_ptr<
     ReferenceConjugateGradient<Scalar, EntityType, MeshType, DeviceType>>

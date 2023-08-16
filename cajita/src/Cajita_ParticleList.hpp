@@ -67,8 +67,7 @@ class ParticleList : public Cabana::ParticleList<MemorySpace, FieldTags...>
 
     /*!
       \brief Redistribute particles to new owning grids.
-
-      Return true if the particles were actually redistributed.
+      \return Whether the particles were actually redistributed.
     */
     template <class LocalGridType>
     bool redistribute( const LocalGridType& local_grid,
@@ -81,9 +80,8 @@ class ParticleList : public Cabana::ParticleList<MemorySpace, FieldTags...>
 
     /*!
       \brief Redistribute particles to new owning grids with explicit field.
-
       \tparam PositionFieldTag Field tag for position data.
-      Return true if the particles were actually redistributed.
+      \return Whether the particles were actually redistributed.
     */
     template <class PositionFieldTag, class LocalGridType>
     bool redistribute( const LocalGridType& local_grid, PositionFieldTag,
@@ -100,7 +98,10 @@ class ParticleList : public Cabana::ParticleList<MemorySpace, FieldTags...>
 };
 
 //---------------------------------------------------------------------------//
-//! ParticleList creation function.
+/*!
+  \brief ParticleList creation function.
+  \return ParticleList
+*/
 template <class MemorySpace, class... FieldTags>
 auto createParticleList( const std::string& label,
                          Cabana::ParticleTraits<FieldTags...> )

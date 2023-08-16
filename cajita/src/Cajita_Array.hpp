@@ -179,6 +179,7 @@ struct is_array_layout<const ArrayLayout<EntityType, MeshType>>
   \brief Create an array layout over the entities of a local grid.
   \param local_grid The local grid over which to create the layout.
   \param dofs_per_entity The number of degrees-of-freedom per grid entity.
+  \return Shared pointer to an ArrayLayout.
   \note EntityType The entity: Cell, Node, Face, or Edge
 */
 template <class EntityType, class MeshType>
@@ -199,6 +200,7 @@ createArrayLayout( const std::shared_ptr<LocalGrid<MeshType>>& local_grid,
   \param halo_cell_width The number of halo cells surrounding the locally owned
   cells.
   \param dofs_per_entity The number of degrees-of-freedom per grid entity.
+  \return Shared pointer to an ArrayLayout.
   \note EntityType The entity: Cell, Node, Face, or Edge
 */
 template <class EntityType, class MeshType>
@@ -340,6 +342,7 @@ struct is_array<const Array<Scalar, EntityType, MeshType, Params...>>
   over the ghosted index space of the layout.
   \param label A label for the view.
   \param layout The array layout over which to construct the view.
+  \return Shared pointer to an Array.
 */
 template <class Scalar, class... Params, class EntityType, class MeshType>
 std::shared_ptr<Array<Scalar, EntityType, MeshType, Params...>>
@@ -359,6 +362,7 @@ createArray( const std::string& label,
   \param array The array from which to create a subarray
   \param dof_min The minimum degree-of-freedom index of the subarray.
   \param dof_max The maximum degree-of-freedom index of the subarray.
+  \return Shared pointer to a new Array.
 */
 template <class Scalar, class EntityType, class MeshType, class... Params>
 std::shared_ptr<Array<

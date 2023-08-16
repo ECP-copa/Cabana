@@ -947,6 +947,7 @@ struct ArrayPackMemorySpace
   \param pattern The pattern to build the halo from.
   \param width Must be less than or equal to the width of the array halo.
   \param arrays The arrays over which to build the halo.
+  \return Shared pointer to a Halo.
 */
 template <class Pattern, class... ArrayTypes>
 auto createHalo( const Pattern& pattern, const int width,

@@ -927,7 +927,8 @@ struct ScalarValueG2P
     }
 };
 
-//! Creation function for grid-to-point with scalar value.
+//! \brief Creation function for grid-to-point with scalar value.
+//! \return ScalarValueG2P interpolation functor.
 template <class ViewType>
 ScalarValueG2P<ViewType>
 createScalarValueG2P( const ViewType& x,
@@ -977,7 +978,8 @@ struct VectorValueG2P
     }
 };
 
-//! Creation function for grid-to-point with vector value.
+//! \brief Creation function for grid-to-point with vector value.
+//! \return VectorValueG2P interpolation functor.
 template <class ViewType>
 VectorValueG2P<ViewType>
 createVectorValueG2P( const ViewType& x,
@@ -1027,7 +1029,8 @@ struct ScalarGradientG2P
     }
 };
 
-//! Creation function for grid-to-point with scalar gradient.
+//! \brief Creation function for grid-to-point with scalar gradient.
+//! \return ScalarGradientG2P interpolation functor.
 template <class ViewType>
 ScalarGradientG2P<ViewType>
 createScalarGradientG2P( const ViewType& x,
@@ -1079,7 +1082,8 @@ struct VectorGradientG2P
     }
 };
 
-//! Creation function for grid-to-point with vector gradient.
+//! \brief Creation function for grid-to-point with vector gradient.
+//! \return VectorGradientG2P interpolation functor.
 template <class ViewType>
 VectorGradientG2P<ViewType>
 createVectorGradientG2P( const ViewType& x,
@@ -1128,7 +1132,8 @@ struct VectorDivergenceG2P
     }
 };
 
-//! Creation function for grid-to-point with vector divergence.
+//! \brief Creation function for grid-to-point with vector divergence.
+//! \return VectorDivergenceG2P interpolation functor.
 template <class ViewType>
 VectorDivergenceG2P<ViewType>
 createVectorDivergenceG2P( const ViewType& x,
@@ -1273,7 +1278,8 @@ struct ScalarValueP2G
     }
 };
 
-//! Creation function for point-to-grid with scalar value.
+//! \brief Creation function for point-to-grid with scalar value.
+//! \return ScalarValueP2G interpolation functor.
 template <class ViewType>
 ScalarValueP2G<ViewType>
 createScalarValueP2G( const ViewType& x,
@@ -1323,7 +1329,8 @@ struct VectorValueP2G
     }
 };
 
-//! Creation function for point-to-grid with vector value.
+//! \brief Creation function for point-to-grid with vector value.
+//! \return VectorValueP2G interpolation functor.
 template <class ViewType>
 VectorValueP2G<ViewType>
 createVectorValueP2G( const ViewType& x,
@@ -1371,7 +1378,8 @@ struct ScalarGradientP2G
     }
 };
 
-//! Creation function for point-to-grid with scalar gradient.
+//! \brief Creation function for point-to-grid with scalar gradient.
+//! \return ScalarGradientP2G interpolation functor.
 template <class ViewType>
 ScalarGradientP2G<ViewType>
 createScalarGradientP2G( const ViewType& x,
@@ -1421,7 +1429,8 @@ struct VectorDivergenceP2G
     }
 };
 
-//! Creation function for point-to-grid with vector divergence.
+//! \brief Creation function for point-to-grid with vector divergence.
+//! \return VectorDivergenceP2G interpolation functor.
 template <class ViewType>
 VectorDivergenceP2G<ViewType>
 createVectorDivergenceP2G( const ViewType& x,
@@ -1473,7 +1482,8 @@ struct TensorDivergenceP2G
     }
 };
 
-//! Creation function for point-to-grid with tensor divergence.
+//! \brief Creation function for point-to-grid with tensor divergence.
+//! \return TensorDivergenceP2G interpolation functor.
 template <class ViewType>
 TensorDivergenceP2G<ViewType>
 createTensorDivergenceP2G( const ViewType& x,

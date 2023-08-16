@@ -240,19 +240,14 @@ kokkosBinSort1d( KeyViewType keys, const int nbin, const bool sort_within_bins,
   over the given Kokkos View of keys.
 
   \tparam KeyViewType The Kokkos::View type for keys.
-
   \tparam Comparator Kokkos::BinSort compatible comparator type.
 
   \param keys The key values to use for sorting. A key value is needed for
   every element of the AoSoA.
-
   \param comp The comparator to use for sorting. Must be compatible with
   Kokkos::BinSort.
-
   \param begin The beginning index of the AoSoA range to sort.
-
   \param end The end index of the AoSoA range to sort.
-
   \return The permutation vector associated with the sorting.
 */
 template <class KeyViewType, class Comparator,
@@ -274,15 +269,12 @@ BinningData<DeviceType> sortByKeyWithComparator(
   Kokkos View of keys.
 
   \tparam KeyViewType The Kokkos::View type for keys.
-
   \tparam Comparator Kokkos::BinSort compatible comparator type.
 
   \param keys The key values to use for sorting. A key value is needed for
   every element of the AoSoA.
-
   \param comp The comparator to use for sorting. Must be compatible with
   Kokkos::BinSort.
-
   \return The permutation vector associated with the sorting.
 */
 template <class KeyViewType, class Comparator,
@@ -302,19 +294,14 @@ BinningData<DeviceType> sortByKeyWithComparator(
   over the given Kokkos View of keys.
 
   \tparam KeyViewType The Kokkos::View type for keys.
-
   \tparam Comparator Kokkos::BinSort compatible comparator type.
 
   \param keys The key values to use for binning. A key value is needed for
   every element of the AoSoA.
-
   \param comp The comparator to use for binning. Must be compatible with
   Kokkos::BinSort.
-
   \param begin The beginning index of the AoSoA range to bin.
-
   \param end The end index of the AoSoA range to bin.
-
   \return The binning data (e.g. bin sizes and offsets).
 */
 template <class KeyViewType, class Comparator,
@@ -366,11 +353,8 @@ BinningData<DeviceType> binByKeyWithComparator(
 
   \param keys The key values to use for sorting. A key value is needed for
   every element of the AoSoA.
-
   \param begin The beginning index of the AoSoA range to sort.
-
   \param end The end index of the AoSoA range to sort.
-
   \return The permutation vector associated with the sorting.
 */
 template <class KeyViewType,
@@ -393,7 +377,6 @@ sortByKey( KeyViewType keys, const std::size_t begin, const std::size_t end,
 
   \param keys The key values to use for sorting. A key value is needed for
   every element of the AoSoA.
-
   \return The permutation vector associated with the sorting.
 
 */
@@ -417,14 +400,10 @@ sortByKey( KeyViewType keys,
 
   \param keys The key values to use for binning. A key value is needed for
   every element of the AoSoA.
-
   \param nbin The number of bins to use for binning. The range of key values
   will subdivided equally by the number of bins.
-
   \param begin The beginning index of the AoSoA range to bin.
-
   \param end The end index of the AoSoA range to bin.
-
   \return The binning data (e.g. bin sizes and offsets).
 */
 template <class KeyViewType,
@@ -448,10 +427,8 @@ binByKey( KeyViewType keys, const int nbin, const std::size_t begin,
 
   \param keys The key values to use for binning. A key value is needed for
   every element of the AoSoA.
-
   \param nbin The number of bins to use for binning. The range of key values
   will subdivided equally by the number of bins.
-
   \return The binning data (e.g. bin sizes and offsets).
 */
 template <class KeyViewType,
@@ -473,11 +450,8 @@ binByKey( KeyViewType keys, const int nbin,
   \tparam SliceType Slice type for keys.
 
   \param slice Slice of keys.
-
   \param begin The beginning index of the AoSoA range to sort.
-
   \param end The end index of the AoSoA range to sort.
-
   \return The permutation vector associated with the sorting.
 */
 template <class SliceType, class DeviceType = typename SliceType::device_type>
@@ -499,7 +473,6 @@ BinningData<DeviceType> sortByKey(
   \tparam SliceType Slice type for keys.
 
   \param slice Slice of keys.
-
   \return The permutation vector associated with the sorting.
 */
 template <class SliceType, class DeviceType = typename SliceType::device_type>
@@ -518,14 +491,10 @@ BinningData<DeviceType> sortByKey(
   \tparam SliceType Slice type for keys
 
   \param slice Slice of keys.
-
   \param nbin The number of bins to use for binning. The range of key values
   will subdivided equally by the number of bins.
-
   \param begin The beginning index of the AoSoA range to bin.
-
   \param end The end index of the AoSoA range to bin.
-
   \return The binning data (e.g. bin sizes and offsets).
 */
 template <class SliceType, class DeviceType = typename SliceType::device_type>
@@ -548,10 +517,8 @@ BinningData<DeviceType> binByKey(
   \tparam SliceType Slice type for keys.
 
   \param slice Slice of keys.
-
   \param nbin The number of bins to use for binning. The range of key values
   will subdivided equally by the number of bins.
-
   \return The binning data (e.g. bin sizes and offsets).
 */
 template <class SliceType, class DeviceType = typename SliceType::device_type>
@@ -567,11 +534,8 @@ BinningData<DeviceType> binByKey(
   \brief Given binning data permute an AoSoA.
 
   \tparam BinningDataType The binning data type.
-
   \tparam AoSoA_t The AoSoA type.
-
   \param binning_data The binning data.
-
   \param aosoa The AoSoA to permute.
  */
 template <class BinningDataType, class AoSoA_t,
@@ -620,11 +584,9 @@ void permute(
   \brief Given binning data permute a slice.
 
   \tparam BinningDataType The binning data type.
-
   \tparam SliceType The slice type.
 
   \param binning_data The binning data.
-
   \param slice The slice to permute.
  */
 template <class BinningDataType, class SliceType,

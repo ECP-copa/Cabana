@@ -263,7 +263,10 @@ class ParticleList
 };
 
 //---------------------------------------------------------------------------//
-//! ParticleList creation function.
+/*!
+  \brief ParticleList creation function.
+  \return ParticleList
+*/
 template <class MemorySpace, class... FieldTags>
 auto createParticleList( const std::string& label,
                          ParticleTraits<FieldTags...> )

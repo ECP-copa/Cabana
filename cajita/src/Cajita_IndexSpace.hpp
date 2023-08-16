@@ -163,7 +163,7 @@ class IndexSpace
 //---------------------------------------------------------------------------//
 /*!
   \brief Create a multi-dimensional execution policy over an index space.
-
+  \return Kokkos::RangePolicy
   Rank-1 specialization.
 */
 template <class ExecutionSpace>
@@ -177,6 +177,7 @@ createExecutionPolicy( const IndexSpace<1>& index_space, const ExecutionSpace& )
 //---------------------------------------------------------------------------//
 /*!
   \brief Create a multi-dimensional execution policy over an index space.
+  \return Kokkos::RangePolicy
 
   Rank-1 specialization with a work tag.
 */
@@ -192,6 +193,7 @@ createExecutionPolicy( const IndexSpace<1>& index_space, const ExecutionSpace&,
 //---------------------------------------------------------------------------//
 /*!
   \brief Create a multi-dimensional execution policy over an index space.
+  \return Kokkos::MDRangePolicy
 */
 template <class IndexSpace_t, class ExecutionSpace>
 Kokkos::MDRangePolicy<ExecutionSpace, Kokkos::Rank<IndexSpace_t::Rank>>
@@ -206,6 +208,7 @@ createExecutionPolicy( const IndexSpace_t& index_space, const ExecutionSpace& )
 /*!
   \brief Create a multi-dimensional execution policy over an index space with
   a work tag.
+  \return Kokkos::MDRangePolicy
 */
 template <class IndexSpace_t, class ExecutionSpace, class WorkTag>
 Kokkos::MDRangePolicy<ExecutionSpace, WorkTag, Kokkos::Rank<IndexSpace_t::Rank>>
@@ -219,8 +222,8 @@ createExecutionPolicy( const IndexSpace_t& index_space, const ExecutionSpace&,
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Given an index space create a view over the extent of that index
-  space.
+  \brief Given an index space create a view over the extent of that index space.
+  \return Uninitialized Kokkos::View
 
   Rank-1 specialization.
 */
@@ -237,6 +240,7 @@ Kokkos::View<Scalar*, Params...> createView( const std::string& label,
 /*!
   \brief Given an index space and a data pointer create an unmanaged view over
   the extent of that index space.
+  \return Unmanaged Kokkos::View
 
   Rank-1 specialization.
 */
@@ -252,6 +256,7 @@ createView( const IndexSpace<1>& index_space, Scalar* data )
 /*!
   \brief Given an index space create a view over the extent of that index
   space.
+  \return Uninitialized Kokkos::View
 
   Rank-2 specialization.
 */
@@ -268,6 +273,7 @@ Kokkos::View<Scalar**, Params...> createView( const std::string& label,
 /*!
   \brief Given an index space and a data pointer create an unmanaged view over
   the extent of that index space.
+  \return Unmanaged Kokkos::View
 
   Rank-2 specialization.
 */
@@ -283,6 +289,7 @@ createView( const IndexSpace<2>& index_space, Scalar* data )
 /*!
   \brief Given an index space create a view over the extent of that index
   space.
+  \return Uninitialized Kokkos::View
 
   Rank-3 specialization.
 */
@@ -300,6 +307,7 @@ createView( const std::string& label, const IndexSpace<3>& index_space )
 /*!
   \brief Given an index space and a data pointer create an unmanaged view over
   the extent of that index space.
+  \return Unmanaged Kokkos::View
 
   Rank-3 specialization.
 */
@@ -314,8 +322,8 @@ createView( const IndexSpace<3>& index_space, Scalar* data )
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Given an index space create a view over the extent of that index
-  space.
+  \brief Given an index space create a view over the extent of that index space.
+  \return Uninitialized Kokkos::View
 
   Rank-4 specialization.
 */
@@ -333,6 +341,7 @@ createView( const std::string& label, const IndexSpace<4>& index_space )
 /*!
   \brief Given an index space and a data pointer create an unmanaged view over
   the extent of that index space.
+  \return Unmanaged Kokkos::View
 
   Rank-4 specialization.
 */
@@ -348,6 +357,7 @@ createView( const IndexSpace<4>& index_space, Scalar* data )
 //---------------------------------------------------------------------------//
 /*!
   \brief Given a view create a subview over the given index space.
+  \return subview of the original Kokkos::View
 
   Rank-1 specialization.
 */
@@ -363,6 +373,7 @@ KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType& view,
 //---------------------------------------------------------------------------//
 /*!
   \brief Given a view create a subview over the given index space.
+  \return subview of the original Kokkos::View
 
   Rank-2 specialization.
 */
@@ -380,6 +391,7 @@ KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType& view,
 //---------------------------------------------------------------------------//
 /*!
   \brief Given a view create a subview over the given index space.
+  \return subview of the original Kokkos::View
 
   Rank-3 specialization.
 */
@@ -398,6 +410,7 @@ KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType& view,
 //---------------------------------------------------------------------------//
 /*!
   \brief Given a view create a subview over the given index space.
+  \return subview of the original Kokkos::View
 
   Rank-4 specialization.
 */
@@ -417,8 +430,9 @@ KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType& view,
 
 //---------------------------------------------------------------------------//
 /*!
-  Given an N-dimensional index space append an additional dimension with the
-  given size.
+  \brief Given an N-dimensional index space append an additional dimension with
+  the given size.
+  \return IndexSpace with dimension N+1.
 */
 template <long N>
 IndexSpace<N + 1> appendDimension( const IndexSpace<N>& index_space,
@@ -439,8 +453,9 @@ IndexSpace<N + 1> appendDimension( const IndexSpace<N>& index_space,
 
 //---------------------------------------------------------------------------//
 /*!
-  Given an N-dimensional index space append an additional dimension with the
-  given range.
+  \brief Given an N-dimensional index space append an additional dimension with
+  the given range.
+  \return IndexSpace with dimension N+1.
 */
 template <long N>
 IndexSpace<N + 1> appendDimension( const IndexSpace<N>& index_space,
