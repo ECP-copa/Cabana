@@ -586,7 +586,7 @@ void testTopology()
     std::vector<int> neighbor_ranks = { 0, 2, 2,  1,  1,      1,
                                         2, 3, 10, 27, my_rank };
     auto unique_ranks =
-        Cabana::Impl::getUniqueTopology( MPI_COMM_WORLD, neighbor_ranks );
+        Cabana::getUniqueTopology( MPI_COMM_WORLD, neighbor_ranks );
 
     // Check this rank is first.
     EXPECT_EQ( my_rank, unique_ranks[0] );
