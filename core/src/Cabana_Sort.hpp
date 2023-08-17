@@ -231,28 +231,6 @@ kokkosBinSort1d( KeyViewType keys, const int nbin, const bool sort_within_bins,
 }
 
 //---------------------------------------------------------------------------//
-//! Copy the a 1D slice into a Kokkos view.
-template <class SliceType, class DeviceType = typename SliceType::device_type>
-Kokkos::View<typename SliceType::value_type*, typename SliceType::device_type>
-copySliceToKeys( SliceType slice )
-{
-    using KeyViewType =
-        Kokkos::View<typename SliceType::value_type*, DeviceType>;
-    KeyViewType keys( Kokkos::ViewAllocateWithoutInitializing( "slice_keys" ),
-                      slice.size() );
-    Kokkos::RangePolicy<typename DeviceType::execution_space> exec_policy(
-        0, slice.size() );
-    auto copy_op = KOKKOS_LAMBDA( const std::size_t i )
-    {
-        keys( i ) = slice( i );
-    };
-    Kokkos::parallel_for( "Cabana::copySliceToKeys::copy_op", exec_policy,
-                          copy_op );
-    Kokkos::fence();
-    return keys;
-}
-
-//---------------------------------------------------------------------------//
 
 } // end namespace Impl
 
@@ -507,7 +485,10 @@ BinningData<DeviceType> sortByKey(
     SliceType slice, const std::size_t begin, const std::size_t end,
     typename std::enable_if<( is_slice<SliceType>::value ), int>::type* = 0 )
 {
-    auto keys = Impl::copySliceToKeys<SliceType, DeviceType>( slice );
+    Kokkos::View<typename SliceType::value_type*, DeviceType> keys(
+        Kokkos::ViewAllocateWithoutInitializing( "slice_keys" ), slice.size() );
+
+    copySliceToView( keys, slice, 0, slice.size() );
     return sortByKey<decltype( keys ), DeviceType>( keys, begin, end );
 }
 
@@ -553,7 +534,10 @@ BinningData<DeviceType> binByKey(
     const std::size_t end,
     typename std::enable_if<( is_slice<SliceType>::value ), int>::type* = 0 )
 {
-    auto keys = Impl::copySliceToKeys<SliceType, DeviceType>( slice );
+    Kokkos::View<typename SliceType::value_type*, DeviceType> keys(
+        Kokkos::ViewAllocateWithoutInitializing( "slice_keys" ), slice.size() );
+
+    copySliceToView( keys, slice, 0, slice.size() );
     return binByKey<decltype( keys ), DeviceType>( keys, nbin, begin, end );
 }
 
