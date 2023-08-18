@@ -66,10 +66,11 @@ class DataPoint:
         self.size = int(float(results[0]))
         self._initTimeResults(results[1:])
 
+    # Get times (in microseconds)
     def _initTimeResults(self, results):
-        self.min = float(results[0])
-        self.max = float(results[1])
-        self.ave = float(results[2])
+        self.min = float(results[0]) / 1e6
+        self.max = float(results[1]) / 1e6
+        self.ave = float(results[2]) / 1e6
 
 # Single MPI result (single line in results file).
 class DataPointMPI(DataPoint):
@@ -87,6 +88,18 @@ class DataPointMPI(DataPoint):
         # Ignoring the actual send_bytes since it changes based on system size
         #self.description.params.append(results[1])
         self.description.params.append(str(n))
+
+# Single Cajita result (single line in results file).
+class DataPointCajita(DataPoint):
+    def __init__(self, description, line):
+        self.description = description
+
+        #rank grid_size_per_dim min max ave
+        self.line = line
+        results = line.split()
+        self.num_rank = int(results[0])
+        self.size = int(float(results[1]))
+        self._initTimeResults(results[2:])
 
 # Single p2g/g2p result (single line in results file).
 class DataPointInterpolation(DataPoint):
@@ -213,6 +226,31 @@ class AllDataMPI(AllData):
             else:
                 l += 1
 
+# All MPI performance results from multiple files.
+class AllDataCajita(AllData):
+    def _endOfFile(self, l):
+        return l > self.total
+
+    def _readFile(self, filename):
+        with open(filename) as f:
+            txt = f.readlines()
+
+        l = 7
+        self.total = len(txt)-1
+        while not self._endOfFile(l):
+            if self._emptyLine(txt[l]):
+                l += 1
+                description = DataDescription(txt[l])
+            elif self._headerLine(txt[l]):
+                l += 1
+                n = 0
+                while not self._endOfFile(l) and not self._emptyLine(txt[l]):
+                    self.results.append(DataPointCajita(description, txt[l]))
+                    l += 1
+                    n += 1
+            else:
+                l += 1
+
 # All p2g/g2p performance results from multiple files.
 class AllDataInterpolation(AllData):
     def _getDescription(self, line):
@@ -244,8 +282,8 @@ def getData(filelist):
         txt = f.read()
     if "Cabana Comm" in txt:
         return AllDataMPI(filelist)
-    elif "Cajita Halo" in txt:
-        return AllDataMPI(filelist, grid=True)
+    elif "Cajita Halo" in txt or "Cajita FFT" in txt:
+        return AllDataCajita(filelist, grid=True)
     elif "g2p" in txt:
         return AllDataInterpolation(filelist, grid=True)
 
