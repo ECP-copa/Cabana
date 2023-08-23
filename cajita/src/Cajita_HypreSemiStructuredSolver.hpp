@@ -279,10 +279,10 @@ class HypreSemiStructuredSolver
 
         std::array<HYPRE_Int, NumSpaceDim> offset;
 
-        for ( unsigned n = 0; n < stencil.size(); ++n )
+        for ( unsigned n = _stencil_index[var][dep]; n < _stencil_index[var][dep] + stencil.size(); ++n )
         {
             for ( std::size_t d = 0; d < NumSpaceDim; ++d )
-                offset[d] = stencil[n][d];
+                offset[d] = stencil[ n - _stencil_index[var][dep] ][d];
             auto error = HYPRE_SStructStencilSetEntry( _stencils[var], n,
                                                        offset.data(), dep );
             checkHypreError( error );
@@ -643,7 +643,7 @@ class HypreSemiStructuredSolver
             char error_msg[256];
             HYPRE_DescribeError( error, error_msg );
             std::stringstream out;
-            out << "HYPRE structured solver error: ";
+            out << "HYPRE semi-structured solver error: ";
             out << error << " " << error_msg;
             HYPRE_ClearError( error );
             throw std::runtime_error( out.str() );
@@ -674,7 +674,7 @@ class HypreSemiStructPCG
     : public HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>
 {
   public:
-    //! Base HYPRE structured solver type.
+    //! Base HYPRE semi-structured solver type.
     using Base = HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>;
     //! Constructor
     template <class ArrayLayout_t>
@@ -801,7 +801,7 @@ class HypreSemiStructGMRES
     : public HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>
 {
   public:
-    //! Base HYPRE structured solver type.
+    //! Base HYPRE semi-structured solver type.
     using Base = HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>;
     //! Constructor
     template <class ArrayLayout_t>
@@ -925,7 +925,7 @@ class HypreSemiStructBiCGSTAB
     : public HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>
 {
   public:
-    //! Base HYPRE structured solver type.
+    //! Base HYPRE semi-structured solver type.
     using Base = HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>;
     //! Constructor
     template <class ArrayLayout_t>
@@ -1044,7 +1044,7 @@ class HypreSemiStructDiagonal
     : public HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>
 {
   public:
-    //! Base HYPRE structured solver type.
+    //! Base HYPRE semi-structured solver type.
     using Base = HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>;
     //! Constructor
     template <class ArrayLayout_t>
