@@ -356,7 +356,16 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
 }
 
 //---------------------------------------------------------------------------//
-// Return unique neighbor ranks, with the current rank first.
+//! \endcond
+} // end namespace Impl
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Return unique neighbor ranks, with the current rank first.
+  \param comm MPI communicator.
+  \param topology MPI neighbor ranks in any order with possible duplication.
+  \return Unique MPI neighbor ranks, with the current rank first.
+*/
 inline std::vector<int> getUniqueTopology( MPI_Comm comm,
                                            std::vector<int> topology )
 {
@@ -378,10 +387,6 @@ inline std::vector<int> getUniqueTopology( MPI_Comm comm,
     }
     return topology;
 }
-
-//---------------------------------------------------------------------------//
-//! \endcond
-} // end namespace Impl
 
 //---------------------------------------------------------------------------//
 /*!
@@ -596,7 +601,7 @@ class CommunicationPlan
         _num_export_element = element_export_ranks.size();
 
         // Store the unique neighbors (this rank first).
-        _neighbors = Impl::getUniqueTopology( comm(), neighbor_ranks );
+        _neighbors = getUniqueTopology( comm(), neighbor_ranks );
         int num_n = _neighbors.size();
 
         // Get the size of this communicator.

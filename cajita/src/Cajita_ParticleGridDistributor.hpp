@@ -31,12 +31,12 @@ namespace Cajita
 // Particle Grid Distributor
 //---------------------------------------------------------------------------//
 
-namespace Impl
-{
-//! \cond Impl
-
-// Build neighbor topology of 27 nearest 3D neighbors. Some of the ranks in
-// this list may be invalid.
+/*!
+  \brief Build neighbor topology of 27 nearest 3D neighbors. Some of the ranks
+  in this list may be invalid.
+  \param local_grid Local grid from which MPI neighbors will be extracted.
+  \return MPI neighbor ranks in k,j,i order.
+*/
 template <class LocalGridType, std::size_t NSD = LocalGridType::num_space_dim>
 std::enable_if_t<3 == NSD, std::vector<int>>
 getTopology( const LocalGridType& local_grid )
@@ -50,8 +50,12 @@ getTopology( const LocalGridType& local_grid )
     return topology;
 }
 
-// Build neighbor topology of 8 nearest 2D neighbors. Some of the ranks in
-// this list may be invalid.
+/*!
+  \brief Build neighbor topology of 8 nearest 2D neighbors. Some of the ranks
+  in this list may be invalid.
+  \param local_grid Local grid from which MPI neighbors will be extracted.
+  \return MPI neighbor ranks in k,j,i order.
+*/
 template <class LocalGridType, std::size_t NSD = LocalGridType::num_space_dim>
 std::enable_if_t<2 == NSD, std::vector<int>>
 getTopology( const LocalGridType& local_grid )
@@ -63,6 +67,10 @@ getTopology( const LocalGridType& local_grid )
             topology[nr] = local_grid.neighborRank( i, j );
     return topology;
 }
+
+namespace Impl
+{
+//! \cond Impl
 
 // Locate the particles in the local grid and get their destination rank.
 // Particles are assumed to only migrate to a location in the nearest
@@ -237,7 +245,7 @@ createParticleGridDistributor( const LocalGridType& local_grid,
     using device_type = typename PositionSliceType::device_type;
 
     // Get all 26 neighbor ranks.
-    auto topology = Impl::getTopology( local_grid );
+    auto topology = getTopology( local_grid );
 
     Kokkos::View<int*, Kokkos::HostSpace, Kokkos::MemoryUnmanaged>
         topology_host( topology.data(), topology.size() );
