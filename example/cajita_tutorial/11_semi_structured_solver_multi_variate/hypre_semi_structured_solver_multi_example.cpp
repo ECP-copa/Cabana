@@ -19,7 +19,7 @@
 #include <vector>
 
 //---------------------------------------------------------------------------//
-// HYPRE Structured Solver Example
+// HYPRE Semi-Structured Solver Example
 //---------------------------------------------------------------------------//
 void hypreSemiStructuredSolverExample()
 {
@@ -177,19 +177,19 @@ int main( int argc, char* argv[] )
         Kokkos::ScopeGuard scope_guard( argc, argv );
 
         /*
-            The hypre solver capabilities used by Cabana must be initialized and
-            finalized. HYPRE_Init() initializes hypre. A call to HYPRE_Init()
-           must be included before any hypre calls occur
+          The hypre solver capabilities used by Cabana must be initialized and
+          finalized. HYPRE_Init() initializes hypre. A call to HYPRE_Init() must
+          be included before any hypre calls occur
         */
         HYPRE_Init();
 
         hypreSemiStructuredSolverExample();
 
         /*
-            The hypre solver capabilities used by Cabana must be initialized and
-            finalized. HYPRE_Finalize() finalizes hypre. A call to
-           HYPRE_Finalize() should not occur before all calls to hypre
-           capabilites are finished.
+          The hypre solver capabilities used by Cabana must be initialized and
+          finalized. HYPRE_Finalize() finalizes hypre. A call to
+          HYPRE_Finalize() should not occur before all calls to hypre
+          capabilites are finished.
         */
         HYPRE_Finalize();
     }
