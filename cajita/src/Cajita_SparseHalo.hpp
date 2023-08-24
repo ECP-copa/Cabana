@@ -1224,7 +1224,6 @@ class SparseHalo
     template <class Type, std::size_t M, std::size_t... Is>
     struct compute_member_extents_impl<Type, M, std::index_sequence<Is...>>
     {
-
         KOKKOS_FORCEINLINE_FUNCTION
         Kokkos::Array<std::size_t, M> operator()()
         {
