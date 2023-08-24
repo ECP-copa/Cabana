@@ -1,0 +1,7 @@
+<map id="Cajita::HypreSemiStructuredSolver&lt; Scalar, EntityType, MemorySpace &gt;" name="Cajita::HypreSemiStructuredSolver&lt; Scalar, EntityType, MemorySpace &gt;">
+<area shape="rect" id="node1" title="Hypre semi&#45;structured solver interface for scalar fields." alt="" coords="5,109,203,164"/>
+<area shape="rect" id="node2" href="$classCajita_1_1HypreSemiStructBiCGSTAB.html" title="BiCGSTAB solver." alt="" coords="278,5,469,60"/>
+<area shape="rect" id="node3" href="$classCajita_1_1HypreSemiStructDiagonal.html" title="Diagonal preconditioner." alt="" coords="251,85,496,125"/>
+<area shape="rect" id="node4" href="$classCajita_1_1HypreSemiStructGMRES.html" title="GMRES solver." alt="" coords="251,149,496,189"/>
+<area shape="rect" id="node5" href="$classCajita_1_1HypreSemiStructPCG.html" title="PCG solver." alt="" coords="251,213,496,253"/>
+</map>

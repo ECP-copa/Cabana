@@ -135,6 +135,15 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isPreconditioner</b> 
 <tr class="memitem:aef51a194021ebb3ecc64ed530b62e85f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#aef51a194021ebb3ecc64ed530b62e85f">setMatrixValues</a> (const Array_t &amp;values)</td></tr>
 <tr class="memdesc:aef51a194021ebb3ecc64ed530b62e85f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the matrix values.  <br /></td></tr>
 <tr class="separator:aef51a194021ebb3ecc64ed530b62e85f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38871c86b9ab0784b245a1cacb646062"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#a38871c86b9ab0784b245a1cacb646062">printMatrix</a> (const char *prefix)</td></tr>
+<tr class="memdesc:a38871c86b9ab0784b245a1cacb646062"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print the hypre matrix to ouput file.  <br /></td></tr>
+<tr class="separator:a38871c86b9ab0784b245a1cacb646062"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac67a34fb52851506164b301851da8e5d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#ac67a34fb52851506164b301851da8e5d">printLHS</a> (const char *prefix)</td></tr>
+<tr class="memdesc:ac67a34fb52851506164b301851da8e5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print the hypre LHS to ouput file.  <br /></td></tr>
+<tr class="separator:ac67a34fb52851506164b301851da8e5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a197a969e29afd3990d4d4248753de128"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#a197a969e29afd3990d4d4248753de128">printRHS</a> (const char *prefix)</td></tr>
+<tr class="memdesc:a197a969e29afd3990d4d4248753de128"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print the hypre RHS to ouput file.  <br /></td></tr>
+<tr class="separator:a197a969e29afd3990d4d4248753de128"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aceb79e43171fc8cb4e2774b04618bfd3"><td class="memItemLeft" align="right" valign="top"><a id="aceb79e43171fc8cb4e2774b04618bfd3" name="aceb79e43171fc8cb4e2774b04618bfd3"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setTolerance</b> (const double tol)</td></tr>
 <tr class="memdesc:aceb79e43171fc8cb4e2774b04618bfd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set convergence tolerance implementation. <br /></td></tr>
@@ -414,6 +423,114 @@ template&lt;class Scalar , class EntityType , class MemorySpace &gt; </div>
 <p>Get the number of iterations taken on the last solve. </p>
 
 <p>Implemented in <a class="el" href="classCajita_1_1HypreStructPCG.html#a590dbcd96c5125efd33a679a4c246b6f">Cajita::HypreStructPCG&lt; Scalar, EntityType, MemorySpace &gt;</a>, <a class="el" href="classCajita_1_1HypreStructGMRES.html#a42954bb267dc0a5522ba5f0b4c7a712b">Cajita::HypreStructGMRES&lt; Scalar, EntityType, MemorySpace &gt;</a>, <a class="el" href="classCajita_1_1HypreStructBiCGSTAB.html#a88398a1f760a6429606f54db3d386133">Cajita::HypreStructBiCGSTAB&lt; Scalar, EntityType, MemorySpace &gt;</a>, <a class="el" href="classCajita_1_1HypreStructPFMG.html#a8f03a3f5eab55411754ccb23550398a4">Cajita::HypreStructPFMG&lt; Scalar, EntityType, MemorySpace &gt;</a>, <a class="el" href="classCajita_1_1HypreStructSMG.html#a8171afbe1ceac3d6271976f3aac57730">Cajita::HypreStructSMG&lt; Scalar, EntityType, MemorySpace &gt;</a>, <a class="el" href="classCajita_1_1HypreStructJacobi.html#a7a8752854fa33e44bdc9b7af8c199849">Cajita::HypreStructJacobi&lt; Scalar, EntityType, MemorySpace &gt;</a>, and <a class="el" href="classCajita_1_1HypreStructDiagonal.html#a42474daa0a10b6b368be5cd45b679fe8">Cajita::HypreStructDiagonal&lt; Scalar, EntityType, MemorySpace &gt;</a>.</p>
+
+</div>
+</div>
+<a id="ac67a34fb52851506164b301851da8e5d" name="ac67a34fb52851506164b301851da8e5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac67a34fb52851506164b301851da8e5d">&#9670;&#160;</a></span>printLHS()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class EntityType , class MemorySpace &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classCajita_1_1HypreStructuredSolver.html">Cajita::HypreStructuredSolver</a>&lt; Scalar, EntityType, MemorySpace &gt;::printLHS </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>prefix</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Print the hypre LHS to ouput file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">prefix</td><td>File prefix for where hypre output is written </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a38871c86b9ab0784b245a1cacb646062" name="a38871c86b9ab0784b245a1cacb646062"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38871c86b9ab0784b245a1cacb646062">&#9670;&#160;</a></span>printMatrix()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class EntityType , class MemorySpace &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classCajita_1_1HypreStructuredSolver.html">Cajita::HypreStructuredSolver</a>&lt; Scalar, EntityType, MemorySpace &gt;::printMatrix </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>prefix</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Print the hypre matrix to ouput file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">prefix</td><td>File prefix for where hypre output is written </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a197a969e29afd3990d4d4248753de128" name="a197a969e29afd3990d4d4248753de128"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a197a969e29afd3990d4d4248753de128">&#9670;&#160;</a></span>printRHS()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class EntityType , class MemorySpace &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classCajita_1_1HypreStructuredSolver.html">Cajita::HypreStructuredSolver</a>&lt; Scalar, EntityType, MemorySpace &gt;::printRHS </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>prefix</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Print the hypre RHS to ouput file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">prefix</td><td>File prefix for where hypre output is written </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

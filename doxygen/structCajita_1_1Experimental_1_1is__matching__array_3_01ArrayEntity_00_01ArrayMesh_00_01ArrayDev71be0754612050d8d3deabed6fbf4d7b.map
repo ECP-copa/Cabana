@@ -1,4 +1,0 @@
-<map id="Cajita::Experimental::is_matching_array&lt; ArrayEntity, ArrayMesh, ArrayDevice, ArrayScalar, Entity, Mesh, Device, Scalar, typename std::enable_if&lt; std::is_same&lt; ArrayEntity, Entity &gt;::value &amp;&amp;std::is_same&lt; ArrayMesh, Mesh &gt;::value &amp;&amp;std::is_same&lt; ArrayDevice, Device &gt;::value &gt;::type &gt;" name="Cajita::Experimental::is_matching_array&lt; ArrayEntity, ArrayMesh, ArrayDevice, ArrayScalar, Entity, Mesh, Device, Scalar, typename std::enable_if&lt; std::is_same&lt; ArrayEntity, Entity &gt;::value &amp;&amp;std::is_same&lt; ArrayMesh, Mesh &gt;::value &amp;&amp;std::is_same&lt; ArrayDevice, Device &gt;::value &gt;::type &gt;">
-<area shape="rect" id="node1" title="Matching Array static type checker." alt="" coords="5,79,304,236"/>
-<area shape="rect" id="node2" title=" " alt="" coords="99,5,210,31"/>
-</map>

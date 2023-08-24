@@ -7,8 +7,8 @@ var searchData=
   ['facehalopattern_4',['FaceHaloPattern',['../classCajita_1_1FaceHaloPattern.html',1,'Cajita']]],
   ['facehalopattern_3c_202_20_3e_5',['FaceHaloPattern&lt; 2 &gt;',['../classCajita_1_1FaceHaloPattern_3_012_01_4.html',1,'Cajita']]],
   ['facehalopattern_3c_203_20_3e_6',['FaceHaloPattern&lt; 3 &gt;',['../classCajita_1_1FaceHaloPattern_3_013_01_4.html',1,'Cajita']]],
-  ['fastfouriertransform_7',['FastFourierTransform',['../classCajita_1_1Experimental_1_1FastFourierTransform.html',1,'Cajita::Experimental::FastFourierTransform&lt; EntityType, MeshType, Scalar, DeviceType, Derived &gt;'],['../classCajita_1_1Experimental_1_1FastFourierTransform.html#aa6f421851d709189dae9459c57c8c4db',1,'Cajita::Experimental::FastFourierTransform::FastFourierTransform()']]],
-  ['fastfouriertransform_3c_20entitytype_2c_20meshtype_2c_20scalar_2c_20devicetype_2c_20hefftefastfouriertransform_3c_20entitytype_2c_20meshtype_2c_20scalar_2c_20devicetype_2c_20backendtype_20_3e_20_3e_8',['FastFourierTransform&lt; EntityType, MeshType, Scalar, DeviceType, HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, DeviceType, BackendType &gt; &gt;',['../classCajita_1_1Experimental_1_1FastFourierTransform.html',1,'Cajita::Experimental']]],
+  ['fastfouriertransform_7',['FastFourierTransform',['../classCajita_1_1Experimental_1_1FastFourierTransform.html',1,'Cajita::Experimental::FastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, Derived &gt;'],['../classCajita_1_1Experimental_1_1FastFourierTransform.html#a93c6428b9516bfb2fbead6169de2d466',1,'Cajita::Experimental::FastFourierTransform::FastFourierTransform()']]],
+  ['fastfouriertransform_3c_20entitytype_2c_20meshtype_2c_20scalar_2c_20memoryspace_2c_20hefftefastfouriertransform_3c_20entitytype_2c_20meshtype_2c_20scalar_2c_20memoryspace_2c_20execspace_2c_20backendtype_20_3e_20_3e_8',['FastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType &gt; &gt;',['../classCajita_1_1Experimental_1_1FastFourierTransform.html',1,'Cajita::Experimental']]],
   ['fastfouriertransformparams_9',['FastFourierTransformParams',['../classCajita_1_1Experimental_1_1FastFourierTransformParams.html',1,'Cajita::Experimental']]],
   ['fftbackendfftw_10',['FFTBackendFFTW',['../structCajita_1_1Experimental_1_1FFTBackendFFTW.html',1,'Cajita::Experimental']]],
   ['fftbackendmkl_11',['FFTBackendMKL',['../structCajita_1_1Experimental_1_1FFTBackendMKL.html',1,'Cajita::Experimental']]],
@@ -20,8 +20,8 @@ var searchData=
   ['findkey_17',['findKey',['../classCajita_1_1BlockMap.html#a975a4fa0ff9bbe40b2503b39b931caac',1,'Cajita::BlockMap']]],
   ['firstneighborstag_18',['FirstNeighborsTag',['../classCabana_1_1FirstNeighborsTag.html',1,'Cabana']]],
   ['for_5feach_5fneighbor_19',['for_each_neighbor',['../namespaceCabana.html#a15dca4f62c3f1f9cb7a9c869c7ae3486',1,'Cabana::for_each_neighbor(const IndexType i, const FunctorType &amp;neighbor_functor, const NeighborListType &amp;list, const FirstNeighborsTag)'],['../namespaceCabana.html#a366034424ecf96ad51645694c2d71676',1,'Cabana::for_each_neighbor(const IndexType i, const TeamMemberType team, const FunctorType &amp;neighbor_functor, const NeighborListType &amp;list, const FirstNeighborsTag)']]],
-  ['forward_20',['forward',['../classCajita_1_1Experimental_1_1FastFourierTransform.html#abcc749fe58374d9921c2d7eb38b539b2',1,'Cajita::Experimental::FastFourierTransform']]],
-  ['forwardimpl_21',['forwardImpl',['../classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a0365e2cef74a08fbfa4a6c730aa69d6a',1,'Cajita::Experimental::HeffteFastFourierTransform']]],
+  ['forward_20',['forward',['../classCajita_1_1Experimental_1_1FastFourierTransform.html#a4b8b7912b4ef07c4ce9fdf659d36e3b7',1,'Cajita::Experimental::FastFourierTransform']]],
+  ['forwardimpl_21',['forwardImpl',['../classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a475e1e29be12bcd8c4568990e0257e57',1,'Cajita::Experimental::HeffteFastFourierTransform']]],
   ['fullhalopattern_22',['FullHaloPattern',['../classCajita_1_1FullHaloPattern.html',1,'Cajita']]],
   ['fullneighbortag_23',['FullNeighborTag',['../classCabana_1_1FullNeighborTag.html',1,'Cabana']]]
 ];

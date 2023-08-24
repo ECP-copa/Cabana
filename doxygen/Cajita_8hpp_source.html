@@ -112,33 +112,38 @@ $(function() {
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#ifndef KOKKOS_ENABLE_SYCL </span><span class="comment">// FIXME_SYCL</span></div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__SparseArray_8hpp.html">Cajita_SparseArray.hpp</a>&gt;</span></div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__SparseDimPartitioner_8hpp.html">Cajita_SparseDimPartitioner.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__SparseIndexSpace_8hpp.html">Cajita_SparseIndexSpace.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__SparseLocalGrid_8hpp.html">Cajita_SparseLocalGrid.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__Splines_8hpp.html">Cajita_Splines.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__Types_8hpp.html">Cajita_Types.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__UniformDimPartitioner_8hpp.html">Cajita_UniformDimPartitioner.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="preprocessor">#ifdef Cabana_ENABLE_HYPRE</span></div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__HypreStructuredSolver_8hpp.html">Cajita_HypreStructuredSolver.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#ifdef Cabana_ENABLE_HEFFTE</span></div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__FastFourierTransform_8hpp.html">Cajita_FastFourierTransform.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="preprocessor">#ifdef Cabana_ENABLE_SILO</span></div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__SiloParticleOutput_8hpp.html">Cajita_SiloParticleOutput.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="preprocessor">#endif </span><span class="comment">// end CAJITA_HPP</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#include &lt;Cajita_SparseHalo.hpp&gt;</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__SparseIndexSpace_8hpp.html">Cajita_SparseIndexSpace.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__SparseLocalGrid_8hpp.html">Cajita_SparseLocalGrid.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__Splines_8hpp.html">Cajita_Splines.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__Types_8hpp.html">Cajita_Types.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__UniformDimPartitioner_8hpp.html">Cajita_UniformDimPartitioner.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="preprocessor">#ifdef Cabana_ENABLE_HYPRE</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__Hypre_8hpp.html">Cajita_Hypre.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__HypreSemiStructuredSolver_8hpp.html">Cajita_HypreSemiStructuredSolver.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__HypreStructuredSolver_8hpp.html">Cajita_HypreStructuredSolver.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="preprocessor">#ifdef Cabana_ENABLE_HEFFTE</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__FastFourierTransform_8hpp.html">Cajita_FastFourierTransform.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="preprocessor">#ifdef Cabana_ENABLE_SILO</span></div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__SiloParticleOutput_8hpp.html">Cajita_SiloParticleOutput.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="preprocessor">#endif </span><span class="comment">// end CAJITA_HPP</span></div>
 <div class="ttc" id="aCajita__Array_8hpp_html"><div class="ttname"><a href="Cajita__Array_8hpp.html">Cajita_Array.hpp</a></div><div class="ttdoc">Grid field arrays.</div></div>
 <div class="ttc" id="aCajita__BovWriter_8hpp_html"><div class="ttname"><a href="Cajita__BovWriter_8hpp.html">Cajita_BovWriter.hpp</a></div><div class="ttdoc">Brick of values (BOV) grid output.</div></div>
 <div class="ttc" id="aCajita__FastFourierTransform_8hpp_html"><div class="ttname"><a href="Cajita__FastFourierTransform_8hpp.html">Cajita_FastFourierTransform.hpp</a></div><div class="ttdoc">Fast Fourier transforms.</div></div>
 <div class="ttc" id="aCajita__GlobalGrid_8hpp_html"><div class="ttname"><a href="Cajita__GlobalGrid_8hpp.html">Cajita_GlobalGrid.hpp</a></div><div class="ttdoc">Global grid.</div></div>
 <div class="ttc" id="aCajita__GlobalMesh_8hpp_html"><div class="ttname"><a href="Cajita__GlobalMesh_8hpp.html">Cajita_GlobalMesh.hpp</a></div><div class="ttdoc">Global mesh.</div></div>
 <div class="ttc" id="aCajita__Halo_8hpp_html"><div class="ttname"><a href="Cajita__Halo_8hpp.html">Cajita_Halo.hpp</a></div><div class="ttdoc">Multi-node grid scatter/gather.</div></div>
+<div class="ttc" id="aCajita__HypreSemiStructuredSolver_8hpp_html"><div class="ttname"><a href="Cajita__HypreSemiStructuredSolver_8hpp.html">Cajita_HypreSemiStructuredSolver.hpp</a></div><div class="ttdoc">HYPRE semi-structured solver interface.</div></div>
 <div class="ttc" id="aCajita__HypreStructuredSolver_8hpp_html"><div class="ttname"><a href="Cajita__HypreStructuredSolver_8hpp.html">Cajita_HypreStructuredSolver.hpp</a></div><div class="ttdoc">HYPRE structured solver interface.</div></div>
+<div class="ttc" id="aCajita__Hypre_8hpp_html"><div class="ttname"><a href="Cajita__Hypre_8hpp.html">Cajita_Hypre.hpp</a></div><div class="ttdoc">HYPRE memory space handling.</div></div>
 <div class="ttc" id="aCajita__IndexConversion_8hpp_html"><div class="ttname"><a href="Cajita__IndexConversion_8hpp.html">Cajita_IndexConversion.hpp</a></div><div class="ttdoc">Local to global index conversion.</div></div>
 <div class="ttc" id="aCajita__IndexSpace_8hpp_html"><div class="ttname"><a href="Cajita__IndexSpace_8hpp.html">Cajita_IndexSpace.hpp</a></div><div class="ttdoc">Logical grid indexing.</div></div>
 <div class="ttc" id="aCajita__Interpolation_8hpp_html"><div class="ttname"><a href="Cajita__Interpolation_8hpp.html">Cajita_Interpolation.hpp</a></div><div class="ttdoc">Particle to grid and grid to particle interpolation.</div></div>

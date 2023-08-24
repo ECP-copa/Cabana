@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['values_0',['Values',['../structCajita_1_1Dim.html#aa7f353f85b88b20e88e9bf5a8d333f7f',1,'Cajita::Dim']]]
+  ['index_0',['Index',['../classCajita_1_1Experimental_1_1SparseHalo.html#a3ac83f5f48ee62b01ee4a0c219365171',1,'Cajita::Experimental::SparseHalo']]]
 ];

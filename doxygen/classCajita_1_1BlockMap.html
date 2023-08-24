@@ -121,6 +121,9 @@ KOKKOS_INLINE_FUNCTION uint32_t&#160;</td><td class="memItemRight" valign="botto
 <tr class="memitem:a1e18d522aa88fe37ee5b503e1573a255"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#a1e18d522aa88fe37ee5b503e1573a255">valid_at</a> (uint32_t index) const</td></tr>
 <tr class="memdesc:a1e18d522aa88fe37ee5b503e1573a255"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Valid tile at index.  <br /></td></tr>
 <tr class="separator:a1e18d522aa88fe37ee5b503e1573a255"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23edc6051ddf2939cfc372d2b18a3798"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#a23edc6051ddf2939cfc372d2b18a3798">isValidKey</a> (<a class="el" href="classCajita_1_1BlockMap.html#a9dc48457a379832c3554689f0b0296e3">key_type</a> key) const</td></tr>
+<tr class="memdesc:a23edc6051ddf2939cfc372d2b18a3798"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Check if the tile key is valid.  <br /></td></tr>
+<tr class="separator:a23edc6051ddf2939cfc372d2b18a3798"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab373ab6ebe66918e8348769ec610d529"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1BlockMap.html#a9dc48457a379832c3554689f0b0296e3">key_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#ab373ab6ebe66918e8348769ec610d529">key_at</a> (uint32_t index) const</td></tr>
 <tr class="memdesc:ab373ab6ebe66918e8348769ec610d529"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Get tile key at index.  <br /></td></tr>
 <tr class="separator:ab373ab6ebe66918e8348769ec610d529"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -437,6 +440,42 @@ template&lt;typename MemorySpace , unsigned long long CBits, unsigned long long 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tile_i,tile_j,tile_k</td><td>Tile ID in each dimension </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a23edc6051ddf2939cfc372d2b18a3798" name="a23edc6051ddf2939cfc372d2b18a3798"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23edc6051ddf2939cfc372d2b18a3798">&#9670;&#160;</a></span>isValidKey()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename MemorySpace , unsigned long long CBits, unsigned long long CNumPerDim, unsigned long long CNumPerTile, <a class="el" href="namespaceCajita.html#a2ec822f40e278e94dbe22325c2b4c824">HashTypes</a> Hash, typename Key , typename Value &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION bool <a class="el" href="classCajita_1_1BlockMap.html">Cajita::BlockMap</a>&lt; MemorySpace, CBits, CNumPerDim, CNumPerTile, Hash, Key, Value &gt;::isValidKey </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classCajita_1_1BlockMap.html#a9dc48457a379832c3554689f0b0296e3">key_type</a>&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>(Device) Check if the tile key is valid. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>tile key to check </td></tr>
   </table>
   </dd>
 </dl>

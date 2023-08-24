@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Cabana: Cajita::Experimental::HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, DeviceType, BackendType &gt; Class Template Reference</title>
+<title>Cabana: Cajita::Experimental::HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -76,9 +76,10 @@ $(function() {
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">Cajita::Experimental::HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, DeviceType, BackendType &gt; Class Template Reference</div></div>
+  <div class="headertitle"><div class="title">Cajita::Experimental::HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -87,161 +88,187 @@ $(function() {
 
 <p><code>#include &lt;<a class="el" href="Cajita__FastFourierTransform_8hpp_source.html">Cajita_FastFourierTransform.hpp</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for Cajita::Experimental::HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, DeviceType, BackendType &gt;:</div>
+Inheritance diagram for Cajita::Experimental::HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classCajita_1_1Experimental_1_1HeffteFastFourierTransform__inherit__graph.png" border="0" usemap="#aCajita_1_1Experimental_1_1HeffteFastFourierTransform_3_01EntityType_00_01MeshType_00_01Scalar_00_01DeviceType_00_01BackendType_01_4_inherit__map" alt="Inheritance graph"/></div>
-<map name="aCajita_1_1Experimental_1_1HeffteFastFourierTransform_3_01EntityType_00_01MeshType_00_01Scalar_00_01DeviceType_00_01BackendType_01_4_inherit__map" id="aCajita_1_1Experimental_1_1HeffteFastFourierTransform_3_01EntityType_00_01MeshType_00_01Scalar_00_01DeviceType_00_01BackendType_01_4_inherit__map">
-<area shape="rect" title="Interface to heFFTe fast Fourier transform library." alt="" coords="265,27,479,97"/>
-<area shape="rect" href="classCajita_1_1Experimental_1_1FastFourierTransform.html" title=" " alt="" coords="5,5,217,119"/>
+<div class="center"><img src="classCajita_1_1Experimental_1_1HeffteFastFourierTransform__inherit__graph.png" border="0" usemap="#aCajita_1_1Experimental_1_1HeffteFastFourierTransform_3_01EntityType_00_01MeshType_00_01Scalar_00_01MemorySpace_00_01ExecSpace_00_01BackendType_01_4_inherit__map" alt="Inheritance graph"/></div>
+<map name="aCajita_1_1Experimental_1_1HeffteFastFourierTransform_3_01EntityType_00_01MeshType_00_01Scalar_00_01MemorySpace_00_01ExecSpace_00_01BackendType_01_4_inherit__map" id="aCajita_1_1Experimental_1_1HeffteFastFourierTransform_3_01EntityType_00_01MeshType_00_01Scalar_00_01MemorySpace_00_01ExecSpace_00_01BackendType_01_4_inherit__map">
+<area shape="rect" title="Interface to heFFTe fast Fourier transform library." alt="" coords="283,27,569,97"/>
+<area shape="rect" href="classCajita_1_1Experimental_1_1FastFourierTransform.html" title=" " alt="" coords="5,5,235,119"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
-Collaboration diagram for Cajita::Experimental::HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, DeviceType, BackendType &gt;:</div>
+Collaboration diagram for Cajita::Experimental::HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classCajita_1_1Experimental_1_1HeffteFastFourierTransform__coll__graph.png" border="0" usemap="#aCajita_1_1Experimental_1_1HeffteFastFourierTransform_3_01EntityType_00_01MeshType_00_01Scalar_00_01DeviceType_00_01BackendType_01_4_coll__map" alt="Collaboration graph"/></div>
-<map name="aCajita_1_1Experimental_1_1HeffteFastFourierTransform_3_01EntityType_00_01MeshType_00_01Scalar_00_01DeviceType_00_01BackendType_01_4_coll__map" id="aCajita_1_1Experimental_1_1HeffteFastFourierTransform_3_01EntityType_00_01MeshType_00_01Scalar_00_01DeviceType_00_01BackendType_01_4_coll__map">
-<area shape="rect" title="Interface to heFFTe fast Fourier transform library." alt="" coords="265,27,479,97"/>
-<area shape="rect" href="classCajita_1_1Experimental_1_1FastFourierTransform.html" title=" " alt="" coords="5,5,217,119"/>
+<div class="center"><img src="classCajita_1_1Experimental_1_1HeffteFastFourierTransform__coll__graph.png" border="0" usemap="#aCajita_1_1Experimental_1_1HeffteFastFourierTransform_3_01EntityType_00_01MeshType_00_01Scalar_00_01MemorySpace_00_01ExecSpace_00_01BackendType_01_4_coll__map" alt="Collaboration graph"/></div>
+<map name="aCajita_1_1Experimental_1_1HeffteFastFourierTransform_3_01EntityType_00_01MeshType_00_01Scalar_00_01MemorySpace_00_01ExecSpace_00_01BackendType_01_4_coll__map" id="aCajita_1_1Experimental_1_1HeffteFastFourierTransform_3_01EntityType_00_01MeshType_00_01Scalar_00_01MemorySpace_00_01ExecSpace_00_01BackendType_01_4_coll__map">
+<area shape="rect" title="Interface to heFFTe fast Fourier transform library." alt="" coords="283,27,569,97"/>
+<area shape="rect" href="classCajita_1_1Experimental_1_1FastFourierTransform.html" title=" " alt="" coords="5,5,235,119"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a7b0d2bc9bffc84b368acfc107718fe22"><td class="memItemLeft" align="right" valign="top"><a id="a7b0d2bc9bffc84b368acfc107718fe22" name="a7b0d2bc9bffc84b368acfc107718fe22"></a>
+<tr class="memitem:a381018efd471ed2795c5b071381e57e3"><td class="memItemLeft" align="right" valign="top"><a id="a381018efd471ed2795c5b071381e57e3" name="a381018efd471ed2795c5b071381e57e3"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>value_type</b> = Scalar</td></tr>
-<tr class="memdesc:a7b0d2bc9bffc84b368acfc107718fe22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scalar value type. <br /></td></tr>
-<tr class="separator:a7b0d2bc9bffc84b368acfc107718fe22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaad2bd170602493a1a22d6804bb7db92"><td class="memItemLeft" align="right" valign="top"><a id="aaad2bd170602493a1a22d6804bb7db92" name="aaad2bd170602493a1a22d6804bb7db92"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = DeviceType</td></tr>
-<tr class="memdesc:aaad2bd170602493a1a22d6804bb7db92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos device type. <br /></td></tr>
-<tr class="separator:aaad2bd170602493a1a22d6804bb7db92"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab03f25a84312a5c157fed72f86f15833"><td class="memItemLeft" align="right" valign="top"><a id="ab03f25a84312a5c157fed72f86f15833" name="ab03f25a84312a5c157fed72f86f15833"></a>
+<tr class="memdesc:a381018efd471ed2795c5b071381e57e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scalar value type. <br /></td></tr>
+<tr class="separator:a381018efd471ed2795c5b071381e57e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0543cd13142a1f693884cdd405b5f535"><td class="memItemLeft" align="right" valign="top"><a id="a0543cd13142a1f693884cdd405b5f535" name="a0543cd13142a1f693884cdd405b5f535"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename MemorySpace::memory_space</td></tr>
+<tr class="memdesc:a0543cd13142a1f693884cdd405b5f535"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
+<tr class="separator:a0543cd13142a1f693884cdd405b5f535"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f1ed21925c1497eb2b82876d1bdd6ce"><td class="memItemLeft" align="right" valign="top"><a id="a7f1ed21925c1497eb2b82876d1bdd6ce" name="a7f1ed21925c1497eb2b82876d1bdd6ce"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = ExecSpace</td></tr>
+<tr class="memdesc:a7f1ed21925c1497eb2b82876d1bdd6ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos execution space. <br /></td></tr>
+<tr class="separator:a7f1ed21925c1497eb2b82876d1bdd6ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99697aa92a9cf935c28e13aab18a38fb"><td class="memItemLeft" align="right" valign="top"><a id="a99697aa92a9cf935c28e13aab18a38fb" name="a99697aa92a9cf935c28e13aab18a38fb"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>exec_space</b> = <a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a7f1ed21925c1497eb2b82876d1bdd6ce">execution_space</a></td></tr>
+<tr class="memdesc:a99697aa92a9cf935c28e13aab18a38fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos execution space. <br /></td></tr>
+<tr class="separator:a99697aa92a9cf935c28e13aab18a38fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a8a38037dc68a059e359338b39c4b61"><td class="memItemLeft" align="right" valign="top"><a id="a4a8a38037dc68a059e359338b39c4b61" name="a4a8a38037dc68a059e359338b39c4b61"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = typename memory_space::device_type</td></tr>
+<tr class="memdesc:a4a8a38037dc68a059e359338b39c4b61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Kokkos device type. <br /></td></tr>
+<tr class="separator:a4a8a38037dc68a059e359338b39c4b61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d4aa63cf80d93b1bbc65d93a796dff5"><td class="memItemLeft" align="right" valign="top"><a id="a9d4aa63cf80d93b1bbc65d93a796dff5" name="a9d4aa63cf80d93b1bbc65d93a796dff5"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>backend_type</b> = BackendType</td></tr>
-<tr class="memdesc:ab03f25a84312a5c157fed72f86f15833"><td class="mdescLeft">&#160;</td><td class="mdescRight">FFT backend type. <br /></td></tr>
-<tr class="separator:ab03f25a84312a5c157fed72f86f15833"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a9f491fc9d86e9d4d231414cbb60bab"><td class="memItemLeft" align="right" valign="top"><a id="a1a9f491fc9d86e9d4d231414cbb60bab" name="a1a9f491fc9d86e9d4d231414cbb60bab"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>exec_space</b> = typename device_type::execution_space</td></tr>
-<tr class="memdesc:a1a9f491fc9d86e9d4d231414cbb60bab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos execution space. <br /></td></tr>
-<tr class="separator:a1a9f491fc9d86e9d4d231414cbb60bab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15f508f5b61b381a17703b05148023ca"><td class="memItemLeft" align="right" valign="top"><a id="a15f508f5b61b381a17703b05148023ca" name="a15f508f5b61b381a17703b05148023ca"></a>
+<tr class="memdesc:a9d4aa63cf80d93b1bbc65d93a796dff5"><td class="mdescLeft">&#160;</td><td class="mdescRight">FFT backend type. <br /></td></tr>
+<tr class="separator:a9d4aa63cf80d93b1bbc65d93a796dff5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d06b2187ca879618c94199c2247b5a6"><td class="memItemLeft" align="right" valign="top"><a id="a5d06b2187ca879618c94199c2247b5a6" name="a5d06b2187ca879618c94199c2247b5a6"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>mesh_type</b> = MeshType</td></tr>
-<tr class="memdesc:a15f508f5b61b381a17703b05148023ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mesh type. <br /></td></tr>
-<tr class="separator:a15f508f5b61b381a17703b05148023ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00473b89e6e2c9699d8e52a5ecbc5120"><td class="memItemLeft" align="right" valign="top"><a id="a00473b89e6e2c9699d8e52a5ecbc5120" name="a00473b89e6e2c9699d8e52a5ecbc5120"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>heffte_backend_type</b> = typename Impl::HeffteBackendTraits&lt; <a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a1a9f491fc9d86e9d4d231414cbb60bab">exec_space</a>, <a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#ab03f25a84312a5c157fed72f86f15833">backend_type</a> &gt;<a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#ab03f25a84312a5c157fed72f86f15833">::backend_type</a></td></tr>
-<tr class="memdesc:a00473b89e6e2c9699d8e52a5ecbc5120"><td class="mdescLeft">&#160;</td><td class="mdescRight">heFFTe backend type. <br /></td></tr>
-<tr class="separator:a00473b89e6e2c9699d8e52a5ecbc5120"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classCajita_1_1Experimental_1_1FastFourierTransform')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html">Cajita::Experimental::FastFourierTransform&lt; EntityType, MeshType, Scalar, DeviceType, HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, DeviceType, BackendType &gt; &gt;</a></td></tr>
-<tr class="memitem:a5d6e192b25799cc7422773a83e5d673e inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="a5d6e192b25799cc7422773a83e5d673e" name="a5d6e192b25799cc7422773a83e5d673e"></a>
+<tr class="memdesc:a5d06b2187ca879618c94199c2247b5a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mesh type. <br /></td></tr>
+<tr class="separator:a5d06b2187ca879618c94199c2247b5a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a6c714c44bd215df6c96bf119b8c08d"><td class="memItemLeft" align="right" valign="top"><a id="a6a6c714c44bd215df6c96bf119b8c08d" name="a6a6c714c44bd215df6c96bf119b8c08d"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>heffte_backend_type</b> = typename Impl::HeffteBackendTraits&lt; <a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a7f1ed21925c1497eb2b82876d1bdd6ce">execution_space</a>, <a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a9d4aa63cf80d93b1bbc65d93a796dff5">backend_type</a> &gt;<a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a9d4aa63cf80d93b1bbc65d93a796dff5">::backend_type</a></td></tr>
+<tr class="memdesc:a6a6c714c44bd215df6c96bf119b8c08d"><td class="mdescLeft">&#160;</td><td class="mdescRight">heFFTe backend type. <br /></td></tr>
+<tr class="separator:a6a6c714c44bd215df6c96bf119b8c08d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classCajita_1_1Experimental_1_1FastFourierTransform')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html">Cajita::Experimental::FastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType &gt; &gt;</a></td></tr>
+<tr class="memitem:a95bd92169ab383ca4529a7430b046f96 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="a95bd92169ab383ca4529a7430b046f96" name="a95bd92169ab383ca4529a7430b046f96"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>entity_type</b> = EntityType</td></tr>
-<tr class="memdesc:a5d6e192b25799cc7422773a83e5d673e inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1Array.html" title="Array of field data on the local mesh.">Array</a> entity type. <br /></td></tr>
-<tr class="separator:a5d6e192b25799cc7422773a83e5d673e inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5be35953343e489b1cd164348990701 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="ae5be35953343e489b1cd164348990701" name="ae5be35953343e489b1cd164348990701"></a>
+<tr class="memdesc:a95bd92169ab383ca4529a7430b046f96 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1Array.html" title="Array of field data on the local mesh.">Array</a> entity type. <br /></td></tr>
+<tr class="separator:a95bd92169ab383ca4529a7430b046f96 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb76f8ecaccbcd962a3c5dfb3736941f inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="afb76f8ecaccbcd962a3c5dfb3736941f" name="afb76f8ecaccbcd962a3c5dfb3736941f"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>mesh_type</b> = MeshType</td></tr>
-<tr class="memdesc:ae5be35953343e489b1cd164348990701 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mesh type. <br /></td></tr>
-<tr class="separator:ae5be35953343e489b1cd164348990701 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4aaa94b5256df2207a0eca444849365a inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="a4aaa94b5256df2207a0eca444849365a" name="a4aaa94b5256df2207a0eca444849365a"></a>
+<tr class="memdesc:afb76f8ecaccbcd962a3c5dfb3736941f inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mesh type. <br /></td></tr>
+<tr class="separator:afb76f8ecaccbcd962a3c5dfb3736941f inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a105a90b71decfd1413690b796912354d inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="a105a90b71decfd1413690b796912354d" name="a105a90b71decfd1413690b796912354d"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>value_type</b> = Scalar</td></tr>
-<tr class="memdesc:a4aaa94b5256df2207a0eca444849365a inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scalar value type. <br /></td></tr>
-<tr class="separator:a4aaa94b5256df2207a0eca444849365a inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac25a33408a80e78deed0c7288f882ba0 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="ac25a33408a80e78deed0c7288f882ba0" name="ac25a33408a80e78deed0c7288f882ba0"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = DeviceType</td></tr>
-<tr class="memdesc:ac25a33408a80e78deed0c7288f882ba0 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos device type. <br /></td></tr>
-<tr class="separator:ac25a33408a80e78deed0c7288f882ba0 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c0202628cafe0315528219def706385 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="a5c0202628cafe0315528219def706385" name="a5c0202628cafe0315528219def706385"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>exec_space</b> = typename device_type::execution_space</td></tr>
-<tr class="memdesc:a5c0202628cafe0315528219def706385 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos execution space. <br /></td></tr>
-<tr class="separator:a5c0202628cafe0315528219def706385 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:a105a90b71decfd1413690b796912354d inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scalar value type. <br /></td></tr>
+<tr class="separator:a105a90b71decfd1413690b796912354d inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00e42e60decb9aceda57932af6475d85 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="a00e42e60decb9aceda57932af6475d85" name="a00e42e60decb9aceda57932af6475d85"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename MemorySpace::memory_space</td></tr>
+<tr class="memdesc:a00e42e60decb9aceda57932af6475d85 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
+<tr class="separator:a00e42e60decb9aceda57932af6475d85 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a640020b36239ccea2f45a16aff48fc46 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="a640020b36239ccea2f45a16aff48fc46" name="a640020b36239ccea2f45a16aff48fc46"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename memory_space::execution_space</td></tr>
+<tr class="memdesc:a640020b36239ccea2f45a16aff48fc46 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos execution space. <br /></td></tr>
+<tr class="separator:a640020b36239ccea2f45a16aff48fc46 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a669650669a7dae1c77ce0bfe2e69e662 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="a669650669a7dae1c77ce0bfe2e69e662" name="a669650669a7dae1c77ce0bfe2e69e662"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>exec_space</b> = <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a640020b36239ccea2f45a16aff48fc46">execution_space</a></td></tr>
+<tr class="memdesc:a669650669a7dae1c77ce0bfe2e69e662 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos execution space. <br /></td></tr>
+<tr class="separator:a669650669a7dae1c77ce0bfe2e69e662 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fb084d12e85d18d781a3ad5a740ea76 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="a9fb084d12e85d18d781a3ad5a740ea76" name="a9fb084d12e85d18d781a3ad5a740ea76"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = typename memory_space::device_type</td></tr>
+<tr class="memdesc:a9fb084d12e85d18d781a3ad5a740ea76 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Kokkos device type. <br /></td></tr>
+<tr class="separator:a9fb084d12e85d18d781a3ad5a740ea76 inherit pub_types_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a279da649ad7aa7ae0f8d2ddfdb5281bc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a279da649ad7aa7ae0f8d2ddfdb5281bc">HeffteFastFourierTransform</a> (const <a class="el" href="classCajita_1_1ArrayLayout.html">ArrayLayout</a>&lt; EntityType, MeshType &gt; &amp;layout, const <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransformParams.html">FastFourierTransformParams</a> &amp;params)</td></tr>
-<tr class="memdesc:a279da649ad7aa7ae0f8d2ddfdb5281bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
-<tr class="separator:a279da649ad7aa7ae0f8d2ddfdb5281bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0365e2cef74a08fbfa4a6c730aa69d6a"><td class="memTemplParams" colspan="2">template&lt;class Array_t , class ScaleType &gt; </td></tr>
-<tr class="memitem:a0365e2cef74a08fbfa4a6c730aa69d6a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a0365e2cef74a08fbfa4a6c730aa69d6a">forwardImpl</a> (const Array_t &amp;x, const ScaleType)</td></tr>
-<tr class="memdesc:a0365e2cef74a08fbfa4a6c730aa69d6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do a forward FFT.  <br /></td></tr>
-<tr class="separator:a0365e2cef74a08fbfa4a6c730aa69d6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6cd93413bc1fd2dbc0d75dba485b0c51"><td class="memTemplParams" colspan="2">template&lt;class Array_t , class ScaleType &gt; </td></tr>
-<tr class="memitem:a6cd93413bc1fd2dbc0d75dba485b0c51"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a6cd93413bc1fd2dbc0d75dba485b0c51">reverseImpl</a> (const Array_t &amp;x, const ScaleType)</td></tr>
-<tr class="memdesc:a6cd93413bc1fd2dbc0d75dba485b0c51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do a reverse FFT.  <br /></td></tr>
-<tr class="separator:a6cd93413bc1fd2dbc0d75dba485b0c51"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8fc03c1a0fb70fc99189b2409d2583fb"><td class="memTemplParams" colspan="2">template&lt;class Array_t &gt; </td></tr>
-<tr class="memitem:a8fc03c1a0fb70fc99189b2409d2583fb"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a8fc03c1a0fb70fc99189b2409d2583fb">compute</a> (const Array_t &amp;x, const int flag, const heffte::scale scale)</td></tr>
-<tr class="memdesc:a8fc03c1a0fb70fc99189b2409d2583fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do the FFT.  <br /></td></tr>
-<tr class="separator:a8fc03c1a0fb70fc99189b2409d2583fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html">Cajita::Experimental::FastFourierTransform&lt; EntityType, MeshType, Scalar, DeviceType, HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, DeviceType, BackendType &gt; &gt;</a></td></tr>
-<tr class="memitem:aa6f421851d709189dae9459c57c8c4db inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#aa6f421851d709189dae9459c57c8c4db">FastFourierTransform</a> (const <a class="el" href="classCajita_1_1ArrayLayout.html">ArrayLayout</a>&lt; EntityType, MeshType &gt; &amp;layout)</td></tr>
-<tr class="memdesc:aa6f421851d709189dae9459c57c8c4db inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
-<tr class="separator:aa6f421851d709189dae9459c57c8c4db inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d961cc096f29651800c6d3075a0db78 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a1d961cc096f29651800c6d3075a0db78">checkArrayDofs</a> (const int dof)</td></tr>
-<tr class="memdesc:a1d961cc096f29651800c6d3075a0db78 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ensure the FFT compute array has the correct DoFs.  <br /></td></tr>
-<tr class="separator:a1d961cc096f29651800c6d3075a0db78 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abcc749fe58374d9921c2d7eb38b539b2 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#abcc749fe58374d9921c2d7eb38b539b2">forward</a> (const Array_t &amp;x, const ScaleType scaling, typename std::enable_if&lt;(<a class="el" href="structCajita_1_1is__array.html">is_array</a>&lt; Array_t &gt;::value &amp;&amp;<a class="el" href="structCajita_1_1Experimental_1_1is__matching__array.html">is_matching_array</a>&lt; typename Array_t::entity_type, typename Array_t::mesh_type, typename Array_t::device_type, typename Array_t::value_type, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a5d6e192b25799cc7422773a83e5d673e">entity_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ae5be35953343e489b1cd164348990701">mesh_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ac25a33408a80e78deed0c7288f882ba0">device_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a4aaa94b5256df2207a0eca444849365a">value_type</a> &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:abcc749fe58374d9921c2d7eb38b539b2 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do a forward FFT.  <br /></td></tr>
-<tr class="separator:abcc749fe58374d9921c2d7eb38b539b2 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae33cfc6c8d8dc73b34155def55555db9 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ae33cfc6c8d8dc73b34155def55555db9">reverse</a> (const Array_t &amp;x, const ScaleType scaling, typename std::enable_if&lt;(<a class="el" href="structCajita_1_1is__array.html">is_array</a>&lt; Array_t &gt;::value &amp;&amp;<a class="el" href="structCajita_1_1Experimental_1_1is__matching__array.html">is_matching_array</a>&lt; typename Array_t::entity_type, typename Array_t::mesh_type, typename Array_t::device_type, typename Array_t::value_type, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a5d6e192b25799cc7422773a83e5d673e">entity_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ae5be35953343e489b1cd164348990701">mesh_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ac25a33408a80e78deed0c7288f882ba0">device_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a4aaa94b5256df2207a0eca444849365a">value_type</a> &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:ae33cfc6c8d8dc73b34155def55555db9 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do a reverse FFT.  <br /></td></tr>
-<tr class="separator:ae33cfc6c8d8dc73b34155def55555db9 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab4e80099687753f3f618a1be69309f5 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="aab4e80099687753f3f618a1be69309f5" name="aab4e80099687753f3f618a1be69309f5"></a>
-std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>copyToLocal</b> (const IndexSpaceType own_space, LViewType &amp;l_view, const LGViewType lg_view)</td></tr>
-<tr class="memdesc:aab4e80099687753f3f618a1be69309f5 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy owned data for FFT. <br /></td></tr>
-<tr class="separator:aab4e80099687753f3f618a1be69309f5 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e63f9c9d471ab6634d7786e6ad2ac80 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="a9e63f9c9d471ab6634d7786e6ad2ac80" name="a9e63f9c9d471ab6634d7786e6ad2ac80"></a>
-std::enable_if_t&lt; 2==NSD, void &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>copyToLocal</b> (const IndexSpaceType own_space, LViewType &amp;l_view, const LGViewType lg_view)</td></tr>
-<tr class="memdesc:a9e63f9c9d471ab6634d7786e6ad2ac80 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy owned data for FFT. <br /></td></tr>
-<tr class="separator:a9e63f9c9d471ab6634d7786e6ad2ac80 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9f1c43eefacae7488a51c65c80f1897 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="aa9f1c43eefacae7488a51c65c80f1897" name="aa9f1c43eefacae7488a51c65c80f1897"></a>
-std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>copyFromLocal</b> (const IndexSpaceType own_space, const LViewType l_view, LGViewType &amp;lg_view)</td></tr>
-<tr class="memdesc:aa9f1c43eefacae7488a51c65c80f1897 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy owned data back after FFT. <br /></td></tr>
-<tr class="separator:aa9f1c43eefacae7488a51c65c80f1897 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa84520417f385c4faf1571c8e741aa4 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="afa84520417f385c4faf1571c8e741aa4" name="afa84520417f385c4faf1571c8e741aa4"></a>
-std::enable_if_t&lt; 2==NSD, void &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>copyFromLocal</b> (const IndexSpaceType own_space, const LViewType l_view, LGViewType &amp;lg_view)</td></tr>
-<tr class="memdesc:afa84520417f385c4faf1571c8e741aa4 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy owned data back after FFT. <br /></td></tr>
-<tr class="separator:afa84520417f385c4faf1571c8e741aa4 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e1e6a811cb526d48ae08535baa489a9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a1e1e6a811cb526d48ae08535baa489a9">HeffteFastFourierTransform</a> (<a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a7f1ed21925c1497eb2b82876d1bdd6ce">execution_space</a> <a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a99697aa92a9cf935c28e13aab18a38fb">exec_space</a>, const <a class="el" href="classCajita_1_1ArrayLayout.html">ArrayLayout</a>&lt; EntityType, MeshType &gt; &amp;layout, const <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransformParams.html">FastFourierTransformParams</a> &amp;params)</td></tr>
+<tr class="memdesc:a1e1e6a811cb526d48ae08535baa489a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
+<tr class="separator:a1e1e6a811cb526d48ae08535baa489a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a475e1e29be12bcd8c4568990e0257e57"><td class="memTemplParams" colspan="2">template&lt;class Array_t , class ScaleType &gt; </td></tr>
+<tr class="memitem:a475e1e29be12bcd8c4568990e0257e57"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a475e1e29be12bcd8c4568990e0257e57">forwardImpl</a> (const Array_t &amp;x, const ScaleType)</td></tr>
+<tr class="memdesc:a475e1e29be12bcd8c4568990e0257e57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do a forward FFT.  <br /></td></tr>
+<tr class="separator:a475e1e29be12bcd8c4568990e0257e57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8ed92da8583cbee8a061a51d32c3c67"><td class="memTemplParams" colspan="2">template&lt;class Array_t , class ScaleType &gt; </td></tr>
+<tr class="memitem:ab8ed92da8583cbee8a061a51d32c3c67"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#ab8ed92da8583cbee8a061a51d32c3c67">reverseImpl</a> (const Array_t &amp;x, const ScaleType)</td></tr>
+<tr class="memdesc:ab8ed92da8583cbee8a061a51d32c3c67"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do a reverse FFT.  <br /></td></tr>
+<tr class="separator:ab8ed92da8583cbee8a061a51d32c3c67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b58efd8f3b7972c3b1d4ab484670917"><td class="memTemplParams" colspan="2">template&lt;class Array_t &gt; </td></tr>
+<tr class="memitem:a7b58efd8f3b7972c3b1d4ab484670917"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a7b58efd8f3b7972c3b1d4ab484670917">compute</a> (const Array_t &amp;x, const int flag, const heffte::scale scale)</td></tr>
+<tr class="memdesc:a7b58efd8f3b7972c3b1d4ab484670917"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do the FFT.  <br /></td></tr>
+<tr class="separator:a7b58efd8f3b7972c3b1d4ab484670917"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html">Cajita::Experimental::FastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType &gt; &gt;</a></td></tr>
+<tr class="memitem:a93c6428b9516bfb2fbead6169de2d466 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a93c6428b9516bfb2fbead6169de2d466">FastFourierTransform</a> (const <a class="el" href="classCajita_1_1ArrayLayout.html">ArrayLayout</a>&lt; EntityType, MeshType &gt; &amp;layout)</td></tr>
+<tr class="memdesc:a93c6428b9516bfb2fbead6169de2d466 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
+<tr class="separator:a93c6428b9516bfb2fbead6169de2d466 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ff8dd707e920171371bf087f149b0a7 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a0ff8dd707e920171371bf087f149b0a7">checkArrayDofs</a> (const int dof)</td></tr>
+<tr class="memdesc:a0ff8dd707e920171371bf087f149b0a7 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ensure the FFT compute array has the correct DoFs.  <br /></td></tr>
+<tr class="separator:a0ff8dd707e920171371bf087f149b0a7 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b8b7912b4ef07c4ce9fdf659d36e3b7 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a4b8b7912b4ef07c4ce9fdf659d36e3b7">forward</a> (const Array_t &amp;x, const ScaleType scaling, typename std::enable_if&lt;(<a class="el" href="structCajita_1_1is__array.html">is_array</a>&lt; Array_t &gt;::value &amp;&amp;<a class="el" href="structCajita_1_1Experimental_1_1is__matching__array.html">is_matching_array</a>&lt; typename Array_t::entity_type, typename Array_t::mesh_type, typename Array_t::memory_space, typename Array_t::value_type, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a95bd92169ab383ca4529a7430b046f96">entity_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#afb76f8ecaccbcd962a3c5dfb3736941f">mesh_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a00e42e60decb9aceda57932af6475d85">memory_space</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a105a90b71decfd1413690b796912354d">value_type</a> &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a4b8b7912b4ef07c4ce9fdf659d36e3b7 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do a forward FFT.  <br /></td></tr>
+<tr class="separator:a4b8b7912b4ef07c4ce9fdf659d36e3b7 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2521bfa25fb5e65153acc73e90097333 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a2521bfa25fb5e65153acc73e90097333">reverse</a> (const Array_t &amp;x, const ScaleType scaling, typename std::enable_if&lt;(<a class="el" href="structCajita_1_1is__array.html">is_array</a>&lt; Array_t &gt;::value &amp;&amp;<a class="el" href="structCajita_1_1Experimental_1_1is__matching__array.html">is_matching_array</a>&lt; typename Array_t::entity_type, typename Array_t::mesh_type, typename Array_t::memory_space, typename Array_t::value_type, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a95bd92169ab383ca4529a7430b046f96">entity_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#afb76f8ecaccbcd962a3c5dfb3736941f">mesh_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a00e42e60decb9aceda57932af6475d85">memory_space</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a105a90b71decfd1413690b796912354d">value_type</a> &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a2521bfa25fb5e65153acc73e90097333 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do a reverse FFT.  <br /></td></tr>
+<tr class="separator:a2521bfa25fb5e65153acc73e90097333 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0acd500add994c5fafc52ddce9a49ff6 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="a0acd500add994c5fafc52ddce9a49ff6" name="a0acd500add994c5fafc52ddce9a49ff6"></a>
+std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>copyToLocal</b> (ExecutionSpace <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a669650669a7dae1c77ce0bfe2e69e662">exec_space</a>, const IndexSpaceType own_space, LViewType &amp;l_view, const LGViewType lg_view)</td></tr>
+<tr class="memdesc:a0acd500add994c5fafc52ddce9a49ff6 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy owned data for FFT. <br /></td></tr>
+<tr class="separator:a0acd500add994c5fafc52ddce9a49ff6 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac948e86c9006bba39de9de2855e779c4 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="ac948e86c9006bba39de9de2855e779c4" name="ac948e86c9006bba39de9de2855e779c4"></a>
+std::enable_if_t&lt; 2==NSD, void &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>copyToLocal</b> (ExecutionSpace space, const IndexSpaceType own_space, LViewType &amp;l_view, const LGViewType lg_view)</td></tr>
+<tr class="memdesc:ac948e86c9006bba39de9de2855e779c4 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy owned data for FFT. <br /></td></tr>
+<tr class="separator:ac948e86c9006bba39de9de2855e779c4 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32041348ecd287f0cbf47201295a8de4 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="a32041348ecd287f0cbf47201295a8de4" name="a32041348ecd287f0cbf47201295a8de4"></a>
+std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>copyFromLocal</b> (ExecutionSpace space, const IndexSpaceType own_space, const LViewType l_view, LGViewType &amp;lg_view)</td></tr>
+<tr class="memdesc:a32041348ecd287f0cbf47201295a8de4 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy owned data back after FFT. <br /></td></tr>
+<tr class="separator:a32041348ecd287f0cbf47201295a8de4 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd93d950ba0de60ef7cc3f51f6c057e3 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="acd93d950ba0de60ef7cc3f51f6c057e3" name="acd93d950ba0de60ef7cc3f51f6c057e3"></a>
+std::enable_if_t&lt; 2==NSD, void &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>copyFromLocal</b> (ExecutionSpace space, const IndexSpaceType own_space, const LViewType l_view, LGViewType &amp;lg_view)</td></tr>
+<tr class="memdesc:acd93d950ba0de60ef7cc3f51f6c057e3 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy owned data back after FFT. <br /></td></tr>
+<tr class="separator:acd93d950ba0de60ef7cc3f51f6c057e3 inherit pub_methods_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:a6b6613886923886b5af5ad4e818263f2"><td class="memItemLeft" align="right" valign="top"><a id="a6b6613886923886b5af5ad4e818263f2" name="a6b6613886923886b5af5ad4e818263f2"></a>
+<a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a7f1ed21925c1497eb2b82876d1bdd6ce">execution_space</a>&#160;</td><td class="memItemRight" valign="bottom"><b>heffte_execution_space</b></td></tr>
+<tr class="memdesc:a6b6613886923886b5af5ad4e818263f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stored execution space used by heFFTe. <br /></td></tr>
+<tr class="separator:a6b6613886923886b5af5ad4e818263f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classCajita_1_1Experimental_1_1FastFourierTransform')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html">Cajita::Experimental::FastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType &gt; &gt;</a></td></tr>
+<tr class="memitem:a943550f7428c41c214f6911f92b0bb5d inherit pub_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="a943550f7428c41c214f6911f92b0bb5d" name="a943550f7428c41c214f6911f92b0bb5d"></a>
+std::array&lt; int, num_space_dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>global_high</b></td></tr>
+<tr class="memdesc:a943550f7428c41c214f6911f92b0bb5d inherit pub_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> high box corner. <br /></td></tr>
+<tr class="separator:a943550f7428c41c214f6911f92b0bb5d inherit pub_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00c8627853169f2810bf97fb6019923b inherit pub_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="a00c8627853169f2810bf97fb6019923b" name="a00c8627853169f2810bf97fb6019923b"></a>
+std::array&lt; int, num_space_dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>global_low</b></td></tr>
+<tr class="memdesc:a00c8627853169f2810bf97fb6019923b inherit pub_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> low box corner. <br /></td></tr>
+<tr class="separator:a00c8627853169f2810bf97fb6019923b inherit pub_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:aeec2c115d05238b116eb2ca0c559a5a5"><td class="memItemLeft" align="right" valign="top"><a id="aeec2c115d05238b116eb2ca0c559a5a5" name="aeec2c115d05238b116eb2ca0c559a5a5"></a>
+<tr class="memitem:af382cdb4f67d8f3f3f2d3e7ecf62f88c"><td class="memItemLeft" align="right" valign="top"><a id="af382cdb4f67d8f3f3f2d3e7ecf62f88c" name="af382cdb4f67d8f3f3f2d3e7ecf62f88c"></a>
 static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_space_dim</b> = mesh_type::num_space_dim</td></tr>
-<tr class="memdesc:aeec2c115d05238b116eb2ca0c559a5a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
-<tr class="separator:aeec2c115d05238b116eb2ca0c559a5a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_static_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td colspan="2" onclick="javascript:toggleInherit('pub_static_attribs_classCajita_1_1Experimental_1_1FastFourierTransform')"><img src="closed.png" alt="-"/>&#160;Static Public Attributes inherited from <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html">Cajita::Experimental::FastFourierTransform&lt; EntityType, MeshType, Scalar, DeviceType, HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, DeviceType, BackendType &gt; &gt;</a></td></tr>
-<tr class="memitem:a786bee1b4855c40bcac8f54f2330091e inherit pub_static_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="a786bee1b4855c40bcac8f54f2330091e" name="a786bee1b4855c40bcac8f54f2330091e"></a>
+<tr class="memdesc:af382cdb4f67d8f3f3f2d3e7ecf62f88c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
+<tr class="separator:af382cdb4f67d8f3f3f2d3e7ecf62f88c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_static_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td colspan="2" onclick="javascript:toggleInherit('pub_static_attribs_classCajita_1_1Experimental_1_1FastFourierTransform')"><img src="closed.png" alt="-"/>&#160;Static Public Attributes inherited from <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html">Cajita::Experimental::FastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType &gt; &gt;</a></td></tr>
+<tr class="memitem:a371da790c1b68c55b20880c088da74f7 inherit pub_static_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="a371da790c1b68c55b20880c088da74f7" name="a371da790c1b68c55b20880c088da74f7"></a>
 static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_space_dim</b></td></tr>
-<tr class="memdesc:a786bee1b4855c40bcac8f54f2330091e inherit pub_static_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
-<tr class="separator:a786bee1b4855c40bcac8f54f2330091e inherit pub_static_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
-Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pub_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classCajita_1_1Experimental_1_1FastFourierTransform')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html">Cajita::Experimental::FastFourierTransform&lt; EntityType, MeshType, Scalar, DeviceType, HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, DeviceType, BackendType &gt; &gt;</a></td></tr>
-<tr class="memitem:a168f2780dbdc35c2e0c16615d51469ad inherit pub_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="a168f2780dbdc35c2e0c16615d51469ad" name="a168f2780dbdc35c2e0c16615d51469ad"></a>
-std::array&lt; int, num_space_dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>global_high</b></td></tr>
-<tr class="memdesc:a168f2780dbdc35c2e0c16615d51469ad inherit pub_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> high box corner. <br /></td></tr>
-<tr class="separator:a168f2780dbdc35c2e0c16615d51469ad inherit pub_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6a88a6fe1562ff0eeb34768c4984eff inherit pub_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memItemLeft" align="right" valign="top"><a id="aa6a88a6fe1562ff0eeb34768c4984eff" name="aa6a88a6fe1562ff0eeb34768c4984eff"></a>
-std::array&lt; int, num_space_dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>global_low</b></td></tr>
-<tr class="memdesc:aa6a88a6fe1562ff0eeb34768c4984eff inherit pub_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> low box corner. <br /></td></tr>
-<tr class="separator:aa6a88a6fe1562ff0eeb34768c4984eff inherit pub_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:a371da790c1b68c55b20880c088da74f7 inherit pub_static_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
+<tr class="separator:a371da790c1b68c55b20880c088da74f7 inherit pub_static_attribs_classCajita_1_1Experimental_1_1FastFourierTransform"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;class EntityType, class MeshType, class Scalar, class DeviceType, class BackendType&gt;<br />
-class Cajita::Experimental::HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, DeviceType, BackendType &gt;</div><p>Interface to heFFTe fast Fourier transform library. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;class EntityType, class MeshType, class Scalar, class MemorySpace, class ExecSpace, class BackendType&gt;<br />
+class Cajita::Experimental::HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType &gt;</div><p>Interface to heFFTe fast Fourier transform library. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a279da649ad7aa7ae0f8d2ddfdb5281bc" name="a279da649ad7aa7ae0f8d2ddfdb5281bc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a279da649ad7aa7ae0f8d2ddfdb5281bc">&#9670;&#160;</a></span>HeffteFastFourierTransform()</h2>
+<a id="a1e1e6a811cb526d48ae08535baa489a9" name="a1e1e6a811cb526d48ae08535baa489a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e1e6a811cb526d48ae08535baa489a9">&#9670;&#160;</a></span>HeffteFastFourierTransform()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class EntityType , class MeshType , class Scalar , class DeviceType , class BackendType &gt; </div>
+template&lt;class EntityType , class MeshType , class Scalar , class MemorySpace , class ExecSpace , class BackendType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html">Cajita::Experimental::HeffteFastFourierTransform</a>&lt; EntityType, MeshType, Scalar, DeviceType, BackendType &gt;::HeffteFastFourierTransform </td>
+          <td class="memname"><a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html">Cajita::Experimental::HeffteFastFourierTransform</a>&lt; EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType &gt;::HeffteFastFourierTransform </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a7f1ed21925c1497eb2b82876d1bdd6ce">execution_space</a>&#160;</td>
+          <td class="paramname"><em>exec_space</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const <a class="el" href="classCajita_1_1ArrayLayout.html">ArrayLayout</a>&lt; EntityType, MeshType &gt; &amp;&#160;</td>
           <td class="paramname"><em>layout</em>, </td>
         </tr>
@@ -267,6 +294,7 @@ template&lt;class EntityType , class MeshType , class Scalar , class DeviceType 
 <p>Constructor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">exec_space</td><td>Kokkos execution space </td></tr>
     <tr><td class="paramname">layout</td><td>The array layout defining the vector space of the transform. </td></tr>
     <tr><td class="paramname">params</td><td>Parameters for the FFT. </td></tr>
   </table>
@@ -276,13 +304,13 @@ template&lt;class EntityType , class MeshType , class Scalar , class DeviceType 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a8fc03c1a0fb70fc99189b2409d2583fb" name="a8fc03c1a0fb70fc99189b2409d2583fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8fc03c1a0fb70fc99189b2409d2583fb">&#9670;&#160;</a></span>compute()</h2>
+<a id="a7b58efd8f3b7972c3b1d4ab484670917" name="a7b58efd8f3b7972c3b1d4ab484670917"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b58efd8f3b7972c3b1d4ab484670917">&#9670;&#160;</a></span>compute()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class EntityType , class MeshType , class Scalar , class DeviceType , class BackendType &gt; </div>
+template&lt;class EntityType , class MeshType , class Scalar , class MemorySpace , class ExecSpace , class BackendType &gt; </div>
 <div class="memtemplate">
 template&lt;class Array_t &gt; </div>
 <table class="mlabels">
@@ -290,7 +318,7 @@ template&lt;class Array_t &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html">Cajita::Experimental::HeffteFastFourierTransform</a>&lt; EntityType, MeshType, Scalar, DeviceType, BackendType &gt;::compute </td>
+          <td class="memname">void <a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html">Cajita::Experimental::HeffteFastFourierTransform</a>&lt; EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType &gt;::compute </td>
           <td>(</td>
           <td class="paramtype">const Array_t &amp;&#160;</td>
           <td class="paramname"><em>x</em>, </td>
@@ -332,13 +360,13 @@ template&lt;class Array_t &gt; </div>
 
 </div>
 </div>
-<a id="a0365e2cef74a08fbfa4a6c730aa69d6a" name="a0365e2cef74a08fbfa4a6c730aa69d6a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0365e2cef74a08fbfa4a6c730aa69d6a">&#9670;&#160;</a></span>forwardImpl()</h2>
+<a id="a475e1e29be12bcd8c4568990e0257e57" name="a475e1e29be12bcd8c4568990e0257e57"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a475e1e29be12bcd8c4568990e0257e57">&#9670;&#160;</a></span>forwardImpl()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class EntityType , class MeshType , class Scalar , class DeviceType , class BackendType &gt; </div>
+template&lt;class EntityType , class MeshType , class Scalar , class MemorySpace , class ExecSpace , class BackendType &gt; </div>
 <div class="memtemplate">
 template&lt;class Array_t , class ScaleType &gt; </div>
 <table class="mlabels">
@@ -346,7 +374,7 @@ template&lt;class Array_t , class ScaleType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html">Cajita::Experimental::HeffteFastFourierTransform</a>&lt; EntityType, MeshType, Scalar, DeviceType, BackendType &gt;::forwardImpl </td>
+          <td class="memname">void <a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html">Cajita::Experimental::HeffteFastFourierTransform</a>&lt; EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType &gt;::forwardImpl </td>
           <td>(</td>
           <td class="paramtype">const Array_t &amp;&#160;</td>
           <td class="paramname"><em>x</em>, </td>
@@ -381,13 +409,13 @@ template&lt;class Array_t , class ScaleType &gt; </div>
 
 </div>
 </div>
-<a id="a6cd93413bc1fd2dbc0d75dba485b0c51" name="a6cd93413bc1fd2dbc0d75dba485b0c51"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6cd93413bc1fd2dbc0d75dba485b0c51">&#9670;&#160;</a></span>reverseImpl()</h2>
+<a id="ab8ed92da8583cbee8a061a51d32c3c67" name="ab8ed92da8583cbee8a061a51d32c3c67"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8ed92da8583cbee8a061a51d32c3c67">&#9670;&#160;</a></span>reverseImpl()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class EntityType , class MeshType , class Scalar , class DeviceType , class BackendType &gt; </div>
+template&lt;class EntityType , class MeshType , class Scalar , class MemorySpace , class ExecSpace , class BackendType &gt; </div>
 <div class="memtemplate">
 template&lt;class Array_t , class ScaleType &gt; </div>
 <table class="mlabels">
@@ -395,7 +423,7 @@ template&lt;class Array_t , class ScaleType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html">Cajita::Experimental::HeffteFastFourierTransform</a>&lt; EntityType, MeshType, Scalar, DeviceType, BackendType &gt;::reverseImpl </td>
+          <td class="memname">void <a class="el" href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html">Cajita::Experimental::HeffteFastFourierTransform</a>&lt; EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType &gt;::reverseImpl </td>
           <td>(</td>
           <td class="paramtype">const Array_t &amp;&#160;</td>
           <td class="paramname"><em>x</em>, </td>

@@ -1,19 +1,20 @@
 <map id="core/src/Cabana_Slice.hpp" name="core/src/Cabana_Slice.hpp">
-<area shape="rect" id="node1" title="Slice a single particle property from an AoSoA." alt="" coords="1010,5,1193,31"/>
+<area shape="rect" id="node1" title="Slice a single particle property from an AoSoA." alt="" coords="847,5,1030,31"/>
 <area shape="rect" id="node2" href="$Cajita__SiloParticleOutput_8hpp.html" title="Write particle output using the Silo format." alt="" coords="5,167,192,207"/>
-<area shape="rect" id="node3" href="$Cabana__AoSoA_8hpp.html" title="Array&#45;of&#45;Struct&#45;of&#45;Arrays particle data structure." alt="" coords="603,86,799,111"/>
-<area shape="rect" id="node7" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="827,592,1011,617"/>
-<area shape="rect" id="node8" href="$Cabana__DeepCopy_8hpp.html" title="AoSoA and slice extensions for Kokkos deep copy and mirrors." alt="" coords="740,262,959,287"/>
-<area shape="rect" id="node10" href="$Cabana__Sort_8hpp.html" title="Sorting and binning built on Kokkos BinSort." alt="" coords="905,350,1087,375"/>
-<area shape="rect" id="node11" href="$Cabana__LinkedCellList_8hpp.html" title="Linked cell list binning and sorting." alt="" coords="989,431,1179,471"/>
-<area shape="rect" id="node13" href="$Cabana__Distributor_8hpp.html" title="Multi&#45;node particle redistribution." alt="" coords="217,174,437,199"/>
-<area shape="rect" id="node14" href="$Cabana__Halo_8hpp.html" title="Multi&#45;node particle scatter/gather." alt="" coords="914,174,1097,199"/>
-<area shape="rect" id="node16" href="$Cabana__Experimental__NeighborList_8hpp.html" title="ArborX tree&#45;based neighbor lists." alt="" coords="1325,79,1534,119"/>
-<area shape="rect" id="node17" href="$Cabana__SiloParticleOutput_8hpp.html" title="Write particle output using the Silo format." alt="" coords="260,79,455,119"/>
-<area shape="rect" id="node4" href="$Cajita__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="444,431,609,471"/>
-<area shape="rect" id="node6" href="$Cajita__SparseArray_8hpp.html" title="Sparse grid fields arrays using AoSoA." alt="" coords="326,255,487,295"/>
-<area shape="rect" id="node15" href="$Cabana__ParticleList_8hpp.html" title="Application&#45;level particle storage and single particle access." alt="" coords="615,167,788,207"/>
-<area shape="rect" id="node5" href="$Cajita_8hpp_source.html" title=" " alt="" coords="456,519,597,544"/>
-<area shape="rect" id="node9" href="$Cajita__ParticleGridDistributor_8hpp_source.html" title=" " alt="" coords="564,343,729,383"/>
-<area shape="rect" id="node12" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="1007,519,1222,544"/>
+<area shape="rect" id="node3" href="$Cabana__AoSoA_8hpp.html" title="Array&#45;of&#45;Struct&#45;of&#45;Arrays particle data structure." alt="" coords="726,86,922,111"/>
+<area shape="rect" id="node8" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="873,577,1057,603"/>
+<area shape="rect" id="node9" href="$Cabana__DeepCopy_8hpp.html" title="AoSoA and slice extensions for Kokkos deep copy and mirrors." alt="" coords="320,255,539,280"/>
+<area shape="rect" id="node11" href="$Cabana__Sort_8hpp.html" title="Sorting and binning built on Kokkos BinSort." alt="" coords="901,335,1083,361"/>
+<area shape="rect" id="node12" href="$Cabana__LinkedCellList_8hpp.html" title="Linked cell list binning and sorting." alt="" coords="985,416,1175,456"/>
+<area shape="rect" id="node14" href="$Cabana__Distributor_8hpp.html" title="Multi&#45;node particle redistribution." alt="" coords="217,174,437,199"/>
+<area shape="rect" id="node15" href="$Cabana__Halo_8hpp.html" title="Multi&#45;node particle scatter/gather." alt="" coords="963,174,1146,199"/>
+<area shape="rect" id="node17" href="$Cabana__Experimental__NeighborList_8hpp.html" title="ArborX tree&#45;based neighbor lists." alt="" coords="1345,79,1554,119"/>
+<area shape="rect" id="node18" href="$Cabana__SiloParticleOutput_8hpp.html" title="Write particle output using the Silo format." alt="" coords="172,79,367,119"/>
+<area shape="rect" id="node4" href="$Cajita__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="424,416,589,456"/>
+<area shape="rect" id="node6" href="$Cajita__SparseArray_8hpp.html" title="Sparse grid fields arrays using AoSoA." alt="" coords="665,328,826,368"/>
+<area shape="rect" id="node16" href="$Cabana__ParticleList_8hpp.html" title="Application&#45;level particle storage and single particle access." alt="" coords="613,167,787,207"/>
+<area shape="rect" id="node5" href="$Cajita_8hpp_source.html" title=" " alt="" coords="496,504,637,529"/>
+<area shape="rect" id="node7" href="$Cajita__SparseHalo_8hpp_source.html" title=" " alt="" coords="665,416,826,456"/>
+<area shape="rect" id="node10" href="$Cajita__ParticleGridDistributor_8hpp_source.html" title=" " alt="" coords="360,328,525,368"/>
+<area shape="rect" id="node13" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="1003,504,1218,529"/>
 </map>

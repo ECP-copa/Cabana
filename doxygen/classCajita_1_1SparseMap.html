@@ -159,6 +159,9 @@ KOKKOS_INLINE_FUNCTION uint32_t&#160;</td><td class="memItemRight" valign="botto
 <tr class="memitem:ab778cfb9e19041a91fdd4e1fac4f01ad"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseMap.html#ab778cfb9e19041a91fdd4e1fac4f01ad">valid_at</a> (uint32_t index) const</td></tr>
 <tr class="memdesc:ab778cfb9e19041a91fdd4e1fac4f01ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Valid block at index  <br /></td></tr>
 <tr class="separator:ab778cfb9e19041a91fdd4e1fac4f01ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4a5e757d8c3a37dbf6fedd98887ef64"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseMap.html#aa4a5e757d8c3a37dbf6fedd98887ef64">isValidKey</a> (<a class="el" href="classCajita_1_1SparseMap.html#ab0bdd0dd37676fc5d7b4349ab7d0f2a6">key_type</a> key) const</td></tr>
+<tr class="memdesc:aa4a5e757d8c3a37dbf6fedd98887ef64"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Check if the tile key is valid.  <br /></td></tr>
+<tr class="separator:aa4a5e757d8c3a37dbf6fedd98887ef64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac21f0acbf87da9f7306a803710ffa913"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1SparseMap.html#ab0bdd0dd37676fc5d7b4349ab7d0f2a6">key_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseMap.html#ac21f0acbf87da9f7306a803710ffa913">key_at</a> (uint32_t index) const</td></tr>
 <tr class="memdesc:ac21f0acbf87da9f7306a803710ffa913"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Get block key at index  <br /></td></tr>
 <tr class="separator:ac21f0acbf87da9f7306a803710ffa913"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -191,6 +194,9 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>rank<
 <tr class="memitem:acd5473b89a1b8562c3a4c6b840b8948a"><td class="memItemLeft" align="right" valign="top">static constexpr unsigned long long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseMap.html#acd5473b89a1b8562c3a4c6b840b8948a">cell_bits_per_tile</a></td></tr>
 <tr class="memdesc:acd5473b89a1b8562c3a4c6b840b8948a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of bits (total) needed to index the cells inside a tile.  <br /></td></tr>
 <tr class="separator:acd5473b89a1b8562c3a4c6b840b8948a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8695090d675c632b31c0b3ab987b4a87"><td class="memItemLeft" align="right" valign="top">static constexpr unsigned long long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseMap.html#a8695090d675c632b31c0b3ab987b4a87">cell_mask_per_tile</a></td></tr>
+<tr class="memdesc:a8695090d675c632b31c0b3ab987b4a87"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Cell.html" title="Mesh cell tag.">Cell</a> mask (combine all dimensions dimension)  <br /></td></tr>
+<tr class="separator:a8695090d675c632b31c0b3ab987b4a87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa902bdf8a2567e0cef7f5a832b50bebb"><td class="memItemLeft" align="right" valign="top">static constexpr unsigned long long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseMap.html#aa902bdf8a2567e0cef7f5a832b50bebb">cell_num_per_tile</a></td></tr>
 <tr class="memdesc:aa902bdf8a2567e0cef7f5a832b50bebb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of cells (total) inside each tile.  <br /></td></tr>
 <tr class="separator:aa902bdf8a2567e0cef7f5a832b50bebb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -465,6 +471,42 @@ template&lt;typename MemorySpace , unsigned long long CellPerTileDim = 4, <a cla
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tile_i,tile_j,tile_k</td><td>Tile ID in each dimension </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa4a5e757d8c3a37dbf6fedd98887ef64" name="aa4a5e757d8c3a37dbf6fedd98887ef64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4a5e757d8c3a37dbf6fedd98887ef64">&#9670;&#160;</a></span>isValidKey()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename MemorySpace , unsigned long long CellPerTileDim = 4, <a class="el" href="namespaceCajita.html#a2ec822f40e278e94dbe22325c2b4c824">HashTypes</a> Hash = HashTypes::Naive, typename Key  = uint64_t, typename Value  = uint64_t&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION bool <a class="el" href="classCajita_1_1SparseMap.html">Cajita::SparseMap</a>&lt; MemorySpace, CellPerTileDim, Hash, Key, Value &gt;::isValidKey </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classCajita_1_1SparseMap.html#ab0bdd0dd37676fc5d7b4349ab7d0f2a6">key_type</a>&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>(Device) Check if the tile key is valid. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>tile key to check </td></tr>
   </table>
   </dd>
 </dl>
@@ -999,6 +1041,35 @@ template&lt;typename MemorySpace , unsigned long long CellPerTileDim = 4, <a cla
 <div class="ttc" id="anamespaceCajita_html_abcc377ceced244c95c930331c4197420"><div class="ttname"><a href="namespaceCajita.html#abcc377ceced244c95c930331c4197420">Cajita::bitCount</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION constexpr Integer bitCount(Integer input_int) noexcept</div><div class="ttdoc">(Host/Device) Compute the lease bit number needed to index input integer</div><div class="ttdef"><b>Definition:</b> Cajita_SparseIndexSpace.hpp:77</div></div>
 </div><!-- fragment -->
 <p>Number of bits (per dimension) needed to index the cells inside a tile. </p>
+
+</div>
+</div>
+<a id="a8695090d675c632b31c0b3ab987b4a87" name="a8695090d675c632b31c0b3ab987b4a87"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8695090d675c632b31c0b3ab987b4a87">&#9670;&#160;</a></span>cell_mask_per_tile</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename MemorySpace , unsigned long long CellPerTileDim = 4, <a class="el" href="namespaceCajita.html#a2ec822f40e278e94dbe22325c2b4c824">HashTypes</a> Hash = HashTypes::Naive, typename Key  = uint64_t, typename Value  = uint64_t&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr unsigned long long <a class="el" href="classCajita_1_1SparseMap.html">Cajita::SparseMap</a>&lt; MemorySpace, CellPerTileDim, Hash, Key, Value &gt;::cell_mask_per_tile</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">=</div>
+<div class="line">        ( 1 &lt;&lt; <a class="code hl_variable" href="classCajita_1_1SparseMap.html#acd5473b89a1b8562c3a4c6b840b8948a">cell_bits_per_tile</a> ) - 1</div>
+<div class="ttc" id="aclassCajita_1_1SparseMap_html_acd5473b89a1b8562c3a4c6b840b8948a"><div class="ttname"><a href="classCajita_1_1SparseMap.html#acd5473b89a1b8562c3a4c6b840b8948a">Cajita::SparseMap::cell_bits_per_tile</a></div><div class="ttdeci">static constexpr unsigned long long cell_bits_per_tile</div><div class="ttdoc">Number of bits (total) needed to index the cells inside a tile.</div><div class="ttdef"><b>Definition:</b> Cajita_SparseIndexSpace.hpp:425</div></div>
+</div><!-- fragment -->
+<p><a class="el" href="structCajita_1_1Cell.html" title="Mesh cell tag.">Cell</a> mask (combine all dimensions dimension) </p>
 
 </div>
 </div>

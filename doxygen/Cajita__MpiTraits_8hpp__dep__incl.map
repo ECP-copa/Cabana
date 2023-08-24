@@ -1,11 +1,13 @@
 <map id="cajita/src/Cajita_MpiTraits.hpp" name="cajita/src/Cajita_MpiTraits.hpp">
-<area shape="rect" id="node1" title="MPI traits." alt="" coords="167,5,369,31"/>
-<area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="528,328,669,353"/>
-<area shape="rect" id="node3" href="$Cajita__Array_8hpp.html" title="Grid field arrays." alt="" coords="498,79,678,104"/>
-<area shape="rect" id="node4" href="$Cajita__BovWriter_8hpp.html" title="Brick of values (BOV) grid output." alt="" coords="864,247,1072,273"/>
-<area shape="rect" id="node8" href="$Cajita__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="302,240,485,280"/>
-<area shape="rect" id="node5" href="$Cajita__FastFourierTransform_8hpp.html" title="Fast Fourier transforms." alt="" coords="50,152,241,192"/>
-<area shape="rect" id="node6" href="$Cajita__Halo_8hpp.html" title="Multi&#45;node grid scatter/gather." alt="" coords="563,159,738,185"/>
-<area shape="rect" id="node7" href="$Cajita__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="560,247,789,273"/>
-<area shape="rect" id="node9" href="$Cajita__HypreStructuredSolver_8hpp.html" title="HYPRE structured solver interface." alt="" coords="265,152,487,192"/>
+<area shape="rect" id="node1" title="MPI traits." alt="" coords="202,5,405,31"/>
+<area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="372,328,513,353"/>
+<area shape="rect" id="node3" href="$Cajita__Array_8hpp.html" title="Grid field arrays." alt="" coords="531,79,711,104"/>
+<area shape="rect" id="node4" href="$Cajita__BovWriter_8hpp.html" title="Brick of values (BOV) grid output." alt="" coords="48,247,256,273"/>
+<area shape="rect" id="node8" href="$Cajita__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="802,240,984,280"/>
+<area shape="rect" id="node5" href="$Cajita__FastFourierTransform_8hpp.html" title="Fast Fourier transforms." alt="" coords="835,152,1026,192"/>
+<area shape="rect" id="node6" href="$Cajita__Halo_8hpp.html" title="Multi&#45;node grid scatter/gather." alt="" coords="534,159,708,185"/>
+<area shape="rect" id="node7" href="$Cajita__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="548,247,777,273"/>
+<area shape="rect" id="node10" href="$Cajita__HypreSemiStructuredSolver_8hpp.html" title="HYPRE semi&#45;structured solver interface." alt="" coords="76,152,262,192"/>
+<area shape="rect" id="node11" href="$Cajita__HypreStructuredSolver_8hpp.html" title="HYPRE structured solver interface." alt="" coords="287,152,510,192"/>
+<area shape="rect" id="node9" href="$Cajita__SparseHalo_8hpp_source.html" title=" " alt="" coords="362,240,523,280"/>
 </map>

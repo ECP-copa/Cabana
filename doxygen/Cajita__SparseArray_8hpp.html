@@ -139,7 +139,8 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="center"><img src="Cajita__SparseArray_8hpp__dep__incl.png" border="0" usemap="#acajita_2src_2Cajita__SparseArray_8hppdep" alt=""/></div>
 <map name="acajita_2src_2Cajita__SparseArray_8hppdep" id="acajita_2src_2Cajita__SparseArray_8hppdep">
 <area shape="rect" title="Sparse grid fields arrays using AoSoA." alt="" coords="5,5,167,45"/>
-<area shape="rect" href="Cajita_8hpp_source.html" title=" " alt="" coords="15,93,157,119"/>
+<area shape="rect" href="Cajita_8hpp_source.html" title=" " alt="" coords="15,181,157,207"/>
+<area shape="rect" href="Cajita__SparseHalo_8hpp_source.html" title=" " alt="" coords="65,93,227,133"/>
 </map>
 </div>
 </div>
@@ -180,20 +181,20 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aefd55a22f8a1d162013f4a96e7827408"><td class="memTemplParams" colspan="2">template&lt;class DataTypes , class EntityType , class MeshType , class SparseMapType &gt; </td></tr>
-<tr class="memitem:aefd55a22f8a1d162013f4a96e7827408"><td class="memTemplItemLeft" align="right" valign="top">SparseArrayLayout&lt; DataTypes, EntityType, MeshType, SparseMapType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Cajita__SparseArray_8hpp.html#aefd55a22f8a1d162013f4a96e7827408">Cajita::Experimental::createSparseArrayLayout</a> (const std::shared_ptr&lt; LocalGrid&lt; MeshType &gt; &gt; &amp;local_grid, SparseMapType &amp;sparse_map, EntityType, const float over_allocation=1.01f)</td></tr>
-<tr class="memdesc:aefd55a22f8a1d162013f4a96e7827408"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create sparse array layout over the entities of a sparse local grid.  <br /></td></tr>
-<tr class="separator:aefd55a22f8a1d162013f4a96e7827408"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f960fa560e623517e02c06d0aa6fa31"><td class="memTemplParams" colspan="2">template&lt;class DeviceType , class DataTypes , class EntityType , class MeshType , class SparseMapType &gt; </td></tr>
-<tr class="memitem:a8f960fa560e623517e02c06d0aa6fa31"><td class="memTemplItemLeft" align="right" valign="top">SparseArray&lt; DataTypes, DeviceType, EntityType, MeshType, SparseMapType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Cajita__SparseArray_8hpp.html#a8f960fa560e623517e02c06d0aa6fa31">Cajita::Experimental::createSparseArray</a> (const std::string label, SparseArrayLayout&lt; DataTypes, EntityType, MeshType, SparseMapType &gt; &amp;layout)</td></tr>
-<tr class="memdesc:a8f960fa560e623517e02c06d0aa6fa31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create sparse array based on the sparse array layout.  <br /></td></tr>
-<tr class="separator:a8f960fa560e623517e02c06d0aa6fa31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c779cd17097026c7cf79ad9ef398377"><td class="memTemplParams" colspan="2">template&lt;class DataTypes , class EntityType , class MeshType , class SparseMapType &gt; </td></tr>
+<tr class="memitem:a5c779cd17097026c7cf79ad9ef398377"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Cajita__SparseArray_8hpp.html#a5c779cd17097026c7cf79ad9ef398377">Cajita::Experimental::createSparseArrayLayout</a> (const std::shared_ptr&lt; LocalGrid&lt; MeshType &gt; &gt; &amp;local_grid, SparseMapType &amp;sparse_map, EntityType, const float over_allocation=1.01f)</td></tr>
+<tr class="memdesc:a5c779cd17097026c7cf79ad9ef398377"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create sparse array layout over the entities of a sparse local grid.  <br /></td></tr>
+<tr class="separator:a5c779cd17097026c7cf79ad9ef398377"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8233b25fa8397ab7eee8feedaf2350c9"><td class="memTemplParams" colspan="2">template&lt;class DeviceType , class DataTypes , class EntityType , class MeshType , class SparseMapType &gt; </td></tr>
+<tr class="memitem:a8233b25fa8397ab7eee8feedaf2350c9"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Cajita__SparseArray_8hpp.html#a8233b25fa8397ab7eee8feedaf2350c9">Cajita::Experimental::createSparseArray</a> (const std::string label, SparseArrayLayout&lt; DataTypes, EntityType, MeshType, SparseMapType &gt; &amp;layout)</td></tr>
+<tr class="memdesc:a8233b25fa8397ab7eee8feedaf2350c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create sparse array based on the sparse array layout.  <br /></td></tr>
+<tr class="separator:a8233b25fa8397ab7eee8feedaf2350c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Sparse grid fields arrays using AoSoA. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a8f960fa560e623517e02c06d0aa6fa31" name="a8f960fa560e623517e02c06d0aa6fa31"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f960fa560e623517e02c06d0aa6fa31">&#9670;&#160;</a></span>createSparseArray()</h2>
+<a id="a8233b25fa8397ab7eee8feedaf2350c9" name="a8233b25fa8397ab7eee8feedaf2350c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8233b25fa8397ab7eee8feedaf2350c9">&#9670;&#160;</a></span>createSparseArray()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -201,7 +202,7 @@ Functions</h2></td></tr>
 template&lt;class DeviceType , class DataTypes , class EntityType , class MeshType , class SparseMapType &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">SparseArray&lt; DataTypes, DeviceType, EntityType, MeshType, SparseMapType &gt; Cajita::Experimental::createSparseArray </td>
+          <td class="memname">auto Cajita::Experimental::createSparseArray </td>
           <td>(</td>
           <td class="paramtype">const std::string&#160;</td>
           <td class="paramname"><em>label</em>, </td>
@@ -231,8 +232,8 @@ template&lt;class DeviceType , class DataTypes , class EntityType , class MeshTy
 
 </div>
 </div>
-<a id="aefd55a22f8a1d162013f4a96e7827408" name="aefd55a22f8a1d162013f4a96e7827408"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aefd55a22f8a1d162013f4a96e7827408">&#9670;&#160;</a></span>createSparseArrayLayout()</h2>
+<a id="a5c779cd17097026c7cf79ad9ef398377" name="a5c779cd17097026c7cf79ad9ef398377"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c779cd17097026c7cf79ad9ef398377">&#9670;&#160;</a></span>createSparseArrayLayout()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -240,7 +241,7 @@ template&lt;class DeviceType , class DataTypes , class EntityType , class MeshTy
 template&lt;class DataTypes , class EntityType , class MeshType , class SparseMapType &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">SparseArrayLayout&lt; DataTypes, EntityType, MeshType, SparseMapType &gt; Cajita::Experimental::createSparseArrayLayout </td>
+          <td class="memname">auto Cajita::Experimental::createSparseArrayLayout </td>
           <td>(</td>
           <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classCajita_1_1Experimental_1_1LocalGrid.html">LocalGrid</a>&lt; MeshType &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>local_grid</em>, </td>
