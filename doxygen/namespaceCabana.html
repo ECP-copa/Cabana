@@ -285,6 +285,9 @@ Functions</h2></td></tr>
 <tr class="memitem:aa14f30ab334c57448b204fc9b304289a"><td class="memTemplItemLeft" align="right" valign="top">AoSoA_t::template member_slice_type&lt; M &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a> (const AoSoA_t &amp;aosoa, const std::string &amp;slice_label=&quot;&quot;)</td></tr>
 <tr class="memdesc:aa14f30ab334c57448b204fc9b304289a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a slice from an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.  <br /></td></tr>
 <tr class="separator:aa14f30ab334c57448b204fc9b304289a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8bb075b5a602fbfea922fd1c190ddc3e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a8bb075b5a602fbfea922fd1c190ddc3e">getUniqueTopology</a> (MPI_Comm comm, std::vector&lt; int &gt; topology)</td></tr>
+<tr class="memdesc:a8bb075b5a602fbfea922fd1c190ddc3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return unique neighbor ranks, with the current rank first.  <br /></td></tr>
+<tr class="separator:a8bb075b5a602fbfea922fd1c190ddc3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0dbb88343c498a5e729ed54e4e845971"><td class="memTemplParams" colspan="2"><a id="a0dbb88343c498a5e729ed54e4e845971" name="a0dbb88343c498a5e729ed54e4e845971"></a>
 template&lt;class Space , class SrcAoSoA &gt; </td></tr>
 <tr class="memitem:a0dbb88343c498a5e729ed54e4e845971"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a>&lt; typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>create_mirror</b> (const Space &amp;, const SrcAoSoA &amp;src, typename std::enable_if&lt;(!std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value)&gt;::type *=0)</td></tr>
@@ -1997,6 +2000,52 @@ template&lt;class HaloType , class ParticleDataType &gt; </div>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a8bb075b5a602fbfea922fd1c190ddc3e" name="a8bb075b5a602fbfea922fd1c190ddc3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8bb075b5a602fbfea922fd1c190ddc3e">&#9670;&#160;</a></span>getUniqueTopology()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; int &gt; Cabana::getUniqueTopology </td>
+          <td>(</td>
+          <td class="paramtype">MPI_Comm&#160;</td>
+          <td class="paramname"><em>comm</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; int &gt;&#160;</td>
+          <td class="paramname"><em>topology</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return unique neighbor ranks, with the current rank first. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comm</td><td>MPI communicator. </td></tr>
+    <tr><td class="paramname">topology</td><td>MPI neighbor ranks in any order with possible duplication. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Unique MPI neighbor ranks, with the current rank first. </dd></dl>
 
 </div>
 </div>
