@@ -18,6 +18,7 @@
 
 #include <Cajita_Array.hpp>
 #include <Cajita_GlobalGrid.hpp>
+#include <Cajita_Hypre.hpp>
 #include <Cajita_IndexSpace.hpp>
 #include <Cajita_LocalGrid.hpp>
 #include <Cajita_Types.hpp>
@@ -38,60 +39,6 @@
 
 namespace Cajita
 {
-//---------------------------------------------------------------------------//
-// Hypre memory space selection. Don't compile if HYPRE wasn't configured to
-// use the device.
-// ---------------------------------------------------------------------------//
-
-//! Hypre device compatibility check.
-template <class MemorySpace>
-struct HypreIsCompatibleWithMemorySpace : std::false_type
-{
-};
-
-// FIXME: This is currently written in this structure because HYPRE only has
-// compile-time switches for backends and hence only one can be used at a
-// time. Once they have a run-time switch we can use that instead.
-#ifdef HYPRE_USING_CUDA
-#ifdef KOKKOS_ENABLE_CUDA
-#ifdef HYPRE_USING_DEVICE_MEMORY
-//! Hypre device compatibility check - CUDA memory.
-template <>
-struct HypreIsCompatibleWithMemorySpace<Kokkos::CudaSpace> : std::true_type
-{
-};
-#endif // end HYPRE_USING_DEVICE_MEMORY
-
-//! Hypre device compatibility check - CUDA UVM memory.
-#ifdef HYPRE_USING_UNIFIED_MEMORY
-template <>
-struct HypreIsCompatibleWithMemorySpace<Kokkos::CudaUVMSpace> : std::true_type
-{
-};
-#endif // end HYPRE_USING_UNIFIED_MEMORY
-#endif // end KOKKOS_ENABLE_CUDA
-#endif // end HYPRE_USING_CUDA
-
-#ifdef HYPRE_USING_HIP
-#ifdef KOKKOS_ENABLE_HIP
-//! Hypre device compatibility check - HIP memory. FIXME - make this true when
-//! the HYPRE CMake includes HIP
-template <>
-struct HypreIsCompatibleWithMemorySpace<Kokkos::ExperimentalHIPSpace>
-    : std::false_type
-{
-};
-#endif // end KOKKOS_ENABLE_HIP
-#endif // end HYPRE_USING_HIP
-
-#ifndef HYPRE_USING_GPU
-//! Hypre device compatibility check - host memory.
-template <>
-struct HypreIsCompatibleWithMemorySpace<Kokkos::HostSpace> : std::true_type
-{
-};
-#endif // end HYPRE_USING_GPU
-
 //---------------------------------------------------------------------------//
 //! Hypre structured solver interface for scalar fields.
 template <class Scalar, class EntityType, class MemorySpace>
@@ -331,6 +278,33 @@ class HypreStructuredSolver
         checkHypreError( error );
         error = HYPRE_StructMatrixAssemble( _A );
         checkHypreError( error );
+    }
+
+    /*!
+      \brief Print the hypre matrix to ouput file
+      \param prefix File prefix for where hypre output is written
+    */
+    void printMatrix( const char* prefix )
+    {
+        HYPRE_StructMatrixPrint( prefix, _A, 0 );
+    }
+
+    /*!
+      \brief Print the hypre LHS to ouput file
+      \param prefix File prefix for where hypre output is written
+    */
+    void printLHS( const char* prefix )
+    {
+        HYPRE_StructVectorPrint( prefix, _x, 0 );
+    }
+
+    /*!
+      \brief Print the hypre RHS to ouput file
+      \param prefix File prefix for where hypre output is written
+    */
+    void printRHS( const char* prefix )
+    {
+        HYPRE_StructVectorPrint( prefix, _b, 0 );
     }
 
     //! Set convergence tolerance implementation.

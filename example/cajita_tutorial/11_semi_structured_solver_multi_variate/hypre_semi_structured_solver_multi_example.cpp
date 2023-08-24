@@ -19,13 +19,14 @@
 #include <vector>
 
 //---------------------------------------------------------------------------//
-// HYPRE Structured Solver Example
+// HYPRE Semi-Structured Solver Example
 //---------------------------------------------------------------------------//
-void hypreStructuredSolverExample()
+void hypreSemiStructuredSolverExample()
 {
     /*
-      In this example we will demonstrate building a HYPRE Structured Solver
-      that solve a Poisson equation with designated solution tolerance,
+      In this example we will demonstrate building a HYPRE semi-structured
+      solver that solves 3, independent, Poisson equations with designated
+      solution tolerance,
 
            Laplacian( lhs ) = rhs,
 
@@ -40,11 +41,11 @@ void hypreStructuredSolverExample()
 
       You can try one of the following solver type and preconditioner type
 
-        solver type : PCG, GMRES, BiCGSTAB, PFMG,
-        preconditioner type : none, Diagonal, Jacobi
+        solver type : PCG, GMRES, BiCGSTAB,
+        preconditioner type : none, Diagonal
     */
 
-    std::cout << "Cajita HYPRE Structured Solver Example\n" << std::endl;
+    std::cout << "Cajita HYPRE Semi-Structured Solver Example\n" << std::endl;
 
     /*
       As with all Cajita examples, we start by defining everything from the
@@ -74,7 +75,7 @@ void hypreStructuredSolverExample()
     /************************************************************************/
 
     // Create the RHS.
-    auto vector_layout = createArrayLayout( local_mesh, 1, Cajita::Cell() );
+    auto vector_layout = createArrayLayout( local_mesh, 3, Cajita::Cell() );
     auto rhs = Cajita::createArray<double, MemorySpace>( "rhs", vector_layout );
     Cajita::ArrayOp::assign( *rhs, 1.0, Cajita::Own() );
 
@@ -83,14 +84,23 @@ void hypreStructuredSolverExample()
     Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
 
     // Create a solver.
-    auto solver = Cajita::createHypreStructuredSolver<double, MemorySpace>(
-        "PCG", *vector_layout );
+    auto solver = Cajita::createHypreSemiStructuredSolver<double, MemorySpace>(
+        "PCG", *vector_layout, false, 3 );
 
     // Create a 7-point 3d laplacian stencil.
     std::vector<std::array<int, 3>> stencil = {
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
         { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
-    solver->setMatrixStencil( stencil );
+
+    solver->createMatrixStencil( 3, 0, 3, { 7, 0, 0 } );
+    solver->createMatrixStencil( 3, 1, 3, { 0, 7, 0 } );
+    solver->createMatrixStencil( 3, 2, 3, { 0, 0, 7 } );
+    for ( int v = 0; v < 3; ++v )
+    {
+        solver->setMatrixStencil( stencil, v, v );
+    }
+
+    solver->setSolverGraph( 3 );
 
     // Create the matrix entries. The stencil is defined over cells.
     auto matrix_entry_layout =
@@ -111,9 +121,12 @@ void hypreStructuredSolverExample()
             entry_view( i, j, k, 6 ) = -1.0;
         } );
 
-    solver->setMatrixValues( *matrix_entries );
+    solver->initializeHypreMatrix();
 
-    solver->printMatrix( "Struct.mat" );
+    for ( int v_h = 0; v_h < 3; ++v_h )
+    {
+        solver->setMatrixValues( *matrix_entries, v_h, v_h );
+    }
 
     // The desired tolerance must be set for each solve.
     solver->setTolerance( 1.0e-9 );
@@ -127,31 +140,29 @@ void hypreStructuredSolverExample()
     solver->setPrintLevel( 2 );
 
     /*
-      Create a preconditioner - in this case we use Jacobi (other available
-      options are shown above).
+      Create a preconditioner - in this case we use Diagonal
     */
-    std::string precond_type = "Jacobi";
+    std::string precond_type = "Diagonal";
     auto preconditioner =
-        Cajita::createHypreStructuredSolver<double, MemorySpace>(
-            precond_type, *vector_layout, true );
+        Cajita::createHypreSemiStructuredSolver<double, MemorySpace>(
+            precond_type, *vector_layout, true, 3 );
     solver->setPreconditioner( preconditioner );
 
     // Setup the problem - this is necessary before solving.
     solver->setup();
 
     // Now solve the problem.
-    solver->solve( *rhs, *lhs );
+    solver->solve( *rhs, *lhs, 3 );
 
     /*
       Setup the problem again. We would need to do this if we changed the matrix
       entries, but in this case we just leave it unchanged.
     */
     solver->setup();
-
     // Reset to the same initial condition and solve the problem again.
     Cajita::ArrayOp::assign( *rhs, 2.0, Cajita::Own() );
     Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
-    solver->solve( *rhs, *lhs );
+    solver->solve( *rhs, *lhs, 3 );
 }
 
 //---------------------------------------------------------------------------//
@@ -167,19 +178,18 @@ int main( int argc, char* argv[] )
 
         /*
           The hypre solver capabilities used by Cabana must be initialized and
-          finalized. HYPRE_Init() initializes hypre. A call to HYPRE_Init()
-          must be included before any hypre calls occur
+          finalized. HYPRE_Init() initializes hypre. A call to HYPRE_Init() must
+          be included before any hypre calls occur
         */
         HYPRE_Init();
 
-        hypreStructuredSolverExample();
+        hypreSemiStructuredSolverExample();
 
         /*
           The hypre solver capabilities used by Cabana must be initialized and
           finalized. HYPRE_Finalize() finalizes hypre. A call to
           HYPRE_Finalize() should not occur before all calls to hypre
-          capabilites are finished. This call is placed outside the hypre solver
-          function to ensure the hypre objects are out of scope
+          capabilites are finished.
         */
         HYPRE_Finalize();
     }
