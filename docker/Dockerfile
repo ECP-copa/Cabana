@@ -61,7 +61,7 @@ RUN OPENMPI_VERSION=4.0.2 && \
 ENV PATH=${OPENMPI_DIR}/bin:$PATH
 
 # Install Kokkos
-ARG KOKKOS_VERSION=3.6.01
+ARG KOKKOS_VERSION=3.7.02
 ENV KOKKOS_DIR=/opt/kokkos
 RUN KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz && \
     KOKKOS_ARCHIVE=kokkos-${KOKKOS_VERSION}.tar.gz && \
@@ -128,7 +128,7 @@ RUN FFTW_URL=http://www.fftw.org/fftw-${FFTW_VERSION}.tar.gz && \
     rm -rf ${SCRATCH_DIR}
 
 # Install heffte
-ARG HEFFTE_VERSION=2.1.0
+ARG HEFFTE_VERSION=2.3.0
 ENV HEFFTE_DIR=/opt/heffte
 RUN HEFFTE_URL=https://bitbucket.org/icl/heffte/get/v${HEFFTE_VERSION}.tar.gz && \
     HEFFTE_ARCHIVE=heffte.tar.gz && \

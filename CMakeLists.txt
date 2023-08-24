@@ -36,7 +36,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 # Dependencies
 #------------------------------------------------------------------------------#
 # find kokkos
-find_package(Kokkos 3.6 REQUIRED)
+find_package(Kokkos 3.7 REQUIRED)
 
 # set supported kokkos devices
 set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA HIP SYCL OPENMPTARGET)
@@ -95,7 +95,7 @@ find_package( CLANG_FORMAT 10 )
 Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.1 )
 
 # find heffte
-Cabana_add_dependency( PACKAGE Heffte VERSION 2.1.0 )
+Cabana_add_dependency( PACKAGE Heffte VERSION 2.3.0 )
 
 # find Silo
 Cabana_add_dependency( PACKAGE SILO )
