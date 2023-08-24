@@ -279,10 +279,11 @@ class HypreSemiStructuredSolver
 
         std::array<HYPRE_Int, NumSpaceDim> offset;
 
-        for ( unsigned n = _stencil_index[var][dep]; n < _stencil_index[var][dep] + stencil.size(); ++n )
+        auto index = _stencil_index[var][dep];
+        for ( unsigned n = index; n < index + stencil.size(); ++n )
         {
             for ( std::size_t d = 0; d < NumSpaceDim; ++d )
-                offset[d] = stencil[ n - _stencil_index[var][dep] ][d];
+                offset[d] = stencil[n - index][d];
             auto error = HYPRE_SStructStencilSetEntry( _stencils[var], n,
                                                        offset.data(), dep );
             checkHypreError( error );
