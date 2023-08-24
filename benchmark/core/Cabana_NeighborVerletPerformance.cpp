@@ -94,7 +94,6 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
         // Loop over cell ratios (linked cell grid relative to cutoff)
         for ( int c1 = 0; c1 < cell_ratios_size; ++c1 )
         {
-
             // Create timers.
             std::stringstream create_time_name;
             create_time_name << test_prefix << "neigh_create_"

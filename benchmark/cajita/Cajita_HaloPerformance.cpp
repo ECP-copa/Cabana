@@ -53,7 +53,6 @@ void performanceTest( std::ostream& stream,
     // Now we loop over halo sizes up to the size allocated to compare.
     for ( int halo_width = 0; halo_width < halo_width_size; ++halo_width )
     {
-
         // Create timers
         std::stringstream halo_create_name;
         halo_create_name << test_prefix << "halo_create_" << halo_width;

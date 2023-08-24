@@ -28,7 +28,6 @@ namespace Test
 template <typename PartitionerType>
 void owned_cell_info_test_3d( PartitionerType& partitioner )
 {
-
     // Create Ground Truth Settings
     std::array<int, 3> local_num_cell = { 104, 55, 97 };
     std::array<int, 3> global_num_cell = { 0, 0, 0 };
@@ -87,7 +86,6 @@ void owned_cell_info_test_3d( PartitionerType& partitioner )
 template <typename PartitionerType>
 void owned_cell_info_test_2d( PartitionerType& partitioner )
 {
-
     // Create Ground Truth Settings
     std::array<int, 2> local_num_cell = { 69, 203 };
     std::array<int, 2> global_num_cell = { 0, 0 };
