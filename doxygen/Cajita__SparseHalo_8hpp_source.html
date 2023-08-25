@@ -1083,92 +1083,91 @@ $(function() {
 <div class="line"><a id="l01224" name="l01224"></a><span class="lineno"> 1224</span>    <span class="keyword">template</span> &lt;<span class="keyword">class </span>Type, std::size_t M, std::size_t... Is&gt;</div>
 <div class="line"><a id="l01225" name="l01225"></a><span class="lineno"> 1225</span>    <span class="keyword">struct </span>compute_member_extents_impl&lt;Type, M, std::index_sequence&lt;Is...&gt;&gt;</div>
 <div class="line"><a id="l01226" name="l01226"></a><span class="lineno"> 1226</span>    {</div>
-<div class="line"><a id="l01227" name="l01227"></a><span class="lineno"> 1227</span> </div>
-<div class="line"><a id="l01228" name="l01228"></a><span class="lineno"> 1228</span>        KOKKOS_FORCEINLINE_FUNCTION</div>
-<div class="line"><a id="l01229" name="l01229"></a><span class="lineno"> 1229</span>        Kokkos::Array&lt;std::size_t, M&gt; operator()()</div>
-<div class="line"><a id="l01230" name="l01230"></a><span class="lineno"> 1230</span>        {</div>
-<div class="line"><a id="l01231" name="l01231"></a><span class="lineno"> 1231</span>            <span class="keywordflow">return</span> { compute_one_member_extent&lt;Type, Is&gt;()... };</div>
-<div class="line"><a id="l01232" name="l01232"></a><span class="lineno"> 1232</span>        }</div>
-<div class="line"><a id="l01233" name="l01233"></a><span class="lineno"> 1233</span>    };</div>
-<div class="line"><a id="l01234" name="l01234"></a><span class="lineno"> 1234</span> </div>
-<div class="line"><a id="l01235" name="l01235"></a><span class="lineno"> 1235</span>    template &lt;class Type, std::size_t M = std::rank&lt;Type&gt;::value,</div>
-<div class="line"><a id="l01236" name="l01236"></a><span class="lineno"> 1236</span>              <span class="keyword">typename</span> Indices = std::make_index_sequence&lt;M&gt;&gt;</div>
-<div class="line"><a id="l01237" name="l01237"></a><span class="lineno"> 1237</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> Kokkos::Array&lt;std::size_t, M&gt;</div>
-<div class="line"><a id="l01238" name="l01238"></a><span class="lineno"> 1238</span>    compute_member_extents()</div>
-<div class="line"><a id="l01239" name="l01239"></a><span class="lineno"> 1239</span>    {</div>
-<div class="line"><a id="l01240" name="l01240"></a><span class="lineno"> 1240</span>        compute_member_extents_impl&lt;Type, M, Indices&gt; op;</div>
-<div class="line"><a id="l01241" name="l01241"></a><span class="lineno"> 1241</span>        <span class="keywordflow">return</span> op();</div>
-<div class="line"><a id="l01242" name="l01242"></a><span class="lineno"> 1242</span>    }</div>
-<div class="line"><a id="l01243" name="l01243"></a><span class="lineno"> 1243</span> </div>
-<div class="line"><a id="l01244" name="l01244"></a><span class="lineno"> 1244</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l01245" name="l01245"></a><span class="lineno"> 1245</span>    <span class="comment">// Current MPI linear rank ID</span></div>
-<div class="line"><a id="l01246" name="l01246"></a><span class="lineno"> 1246</span>    <span class="keywordtype">int</span> _self_rank;</div>
-<div class="line"><a id="l01247" name="l01247"></a><span class="lineno"> 1247</span>    <span class="comment">// Hallo pattern</span></div>
-<div class="line"><a id="l01248" name="l01248"></a><span class="lineno"> 1248</span>    halo_pattern_type _pattern;</div>
-<div class="line"><a id="l01249" name="l01249"></a><span class="lineno"> 1249</span> </div>
-<div class="line"><a id="l01250" name="l01250"></a><span class="lineno"> 1250</span>    <span class="comment">// neighbor rank linear MPI rank IDs</span></div>
-<div class="line"><a id="l01251" name="l01251"></a><span class="lineno"> 1251</span>    std::vector&lt;int&gt; _neighbor_ranks;</div>
-<div class="line"><a id="l01252" name="l01252"></a><span class="lineno"> 1252</span>    <span class="comment">// valid neigber rank indices; valid means require data communication</span></div>
-<div class="line"><a id="l01253" name="l01253"></a><span class="lineno"> 1253</span>    std::vector&lt;std::array&lt;int, num_space_dim&gt;&gt; _valid_neighbor_ids;</div>
-<div class="line"><a id="l01254" name="l01254"></a><span class="lineno"> 1254</span>    <span class="comment">// sending tags</span></div>
-<div class="line"><a id="l01255" name="l01255"></a><span class="lineno"> 1255</span>    std::vector&lt;int&gt; _send_tags;</div>
-<div class="line"><a id="l01256" name="l01256"></a><span class="lineno"> 1256</span>    <span class="comment">// receiving tages</span></div>
-<div class="line"><a id="l01257" name="l01257"></a><span class="lineno"> 1257</span>    std::vector&lt;int&gt; _receive_tags;</div>
-<div class="line"><a id="l01258" name="l01258"></a><span class="lineno"> 1258</span> </div>
-<div class="line"><a id="l01259" name="l01259"></a><span class="lineno"> 1259</span>    <span class="comment">// owned view buffers</span></div>
-<div class="line"><a id="l01260" name="l01260"></a><span class="lineno"> 1260</span>    std::vector&lt;buffer_view&gt; _owned_buffers;</div>
-<div class="line"><a id="l01261" name="l01261"></a><span class="lineno"> 1261</span>    <span class="comment">// ghosted view buffers</span></div>
-<div class="line"><a id="l01262" name="l01262"></a><span class="lineno"> 1262</span>    std::vector&lt;buffer_view&gt; _ghosted_buffers;</div>
-<div class="line"><a id="l01263" name="l01263"></a><span class="lineno"> 1263</span> </div>
-<div class="line"><a id="l01264" name="l01264"></a><span class="lineno"> 1264</span>    <span class="comment">// owned tile key steerings</span></div>
-<div class="line"><a id="l01265" name="l01265"></a><span class="lineno"> 1265</span>    std::vector&lt;steering_view&gt; _owned_tile_steering;</div>
-<div class="line"><a id="l01266" name="l01266"></a><span class="lineno"> 1266</span>    <span class="comment">// key steering buffers (used to store valid keys get from neighbors)</span></div>
-<div class="line"><a id="l01267" name="l01267"></a><span class="lineno"> 1267</span>    std::vector&lt;steering_view&gt; _tmp_tile_steering;</div>
-<div class="line"><a id="l01268" name="l01268"></a><span class="lineno"> 1268</span>    <span class="comment">// ghosted tile key steerings</span></div>
-<div class="line"><a id="l01269" name="l01269"></a><span class="lineno"> 1269</span>    std::vector&lt;steering_view&gt; _ghosted_tile_steering;</div>
-<div class="line"><a id="l01270" name="l01270"></a><span class="lineno"> 1270</span> </div>
-<div class="line"><a id="l01271" name="l01271"></a><span class="lineno"> 1271</span>    <span class="comment">// valid halo grid counting on current rank (each element map to a neighbor)</span></div>
-<div class="line"><a id="l01272" name="l01272"></a><span class="lineno"> 1272</span>    std::vector&lt;counting_view&gt; _valid_counting;</div>
-<div class="line"><a id="l01273" name="l01273"></a><span class="lineno"> 1273</span>    <span class="comment">// valid halo grid counting on corresponding neighbor ranks</span></div>
-<div class="line"><a id="l01274" name="l01274"></a><span class="lineno"> 1274</span>    std::vector&lt;counting_view&gt; _neighbor_counting;</div>
-<div class="line"><a id="l01275" name="l01275"></a><span class="lineno"> 1275</span> </div>
-<div class="line"><a id="l01276" name="l01276"></a><span class="lineno"> 1276</span>    <span class="comment">// owned tile space</span></div>
-<div class="line"><a id="l01277" name="l01277"></a><span class="lineno"> 1277</span>    std::vector&lt;tile_index_space&gt; _owned_tile_spaces;</div>
-<div class="line"><a id="l01278" name="l01278"></a><span class="lineno"> 1278</span>    <span class="comment">// ghosted tile space</span></div>
-<div class="line"><a id="l01279" name="l01279"></a><span class="lineno"> 1279</span>    std::vector&lt;tile_index_space&gt; _ghosted_tile_spaces;</div>
-<div class="line"><a id="l01280" name="l01280"></a><span class="lineno"> 1280</span> </div>
-<div class="line"><a id="l01281" name="l01281"></a><span class="lineno"> 1281</span>    <span class="comment">// SoA member bytes num</span></div>
-<div class="line"><a id="l01282" name="l01282"></a><span class="lineno"> 1282</span>    Kokkos::Array&lt;std::size_t, member_num&gt; _soa_member_bytes;</div>
-<div class="line"><a id="l01283" name="l01283"></a><span class="lineno"> 1283</span>    <span class="comment">// SoA total bytes count</span></div>
-<div class="line"><a id="l01284" name="l01284"></a><span class="lineno"> 1284</span>    std::size_t _soa_total_bytes;</div>
-<div class="line"><a id="l01285" name="l01285"></a><span class="lineno"> 1285</span>};</div>
-<div class="line"><a id="l01286" name="l01286"></a><span class="lineno"> 1286</span> </div>
-<div class="line"><a id="l01287" name="l01287"></a><span class="lineno"> 1287</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l01288" name="l01288"></a><span class="lineno"> 1288</span><span class="comment">// Sparse halo creation.</span></div>
-<div class="line"><a id="l01289" name="l01289"></a><span class="lineno"> 1289</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l01295" name="l01295"></a><span class="lineno"> 1295</span><span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>DeviceType, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> cellBitsPerTileDim,</div>
-<div class="line"><a id="l01296" name="l01296"></a><span class="lineno"> 1296</span>          <span class="keyword">class </span>DataTypes, <span class="keyword">class </span>EntityType, <span class="keyword">class </span>MeshType,</div>
-<div class="line"><a id="l01297" name="l01297"></a><span class="lineno"> 1297</span>          <span class="keyword">class </span>SparseMapType, <span class="keyword">class </span>Pattern, <span class="keyword">typename</span> Value = int,</div>
-<div class="line"><a id="l01298" name="l01298"></a><span class="lineno"> 1298</span>          <span class="keyword">typename</span> Key = uint64_t&gt;</div>
-<div class="line"><a id="l01299" name="l01299"></a><span class="lineno"> 1299</span><span class="keyword">auto</span> createSparseHalo(</div>
-<div class="line"><a id="l01300" name="l01300"></a><span class="lineno"> 1300</span>    <span class="keyword">const</span> Pattern&amp; pattern,</div>
-<div class="line"><a id="l01301" name="l01301"></a><span class="lineno"> 1301</span>    <span class="keyword">const</span> std::shared_ptr&lt;</div>
-<div class="line"><a id="l01302" name="l01302"></a><span class="lineno"> 1302</span>        SparseArray&lt;DataTypes, DeviceType, EntityType, MeshType, SparseMapType&gt;&gt;</div>
-<div class="line"><a id="l01303" name="l01303"></a><span class="lineno"> 1303</span>        array )</div>
-<div class="line"><a id="l01304" name="l01304"></a><span class="lineno"> 1304</span>{</div>
-<div class="line"><a id="l01305" name="l01305"></a><span class="lineno"> 1305</span>    <span class="keyword">using </span>array_type =</div>
-<div class="line"><a id="l01306" name="l01306"></a><span class="lineno"> 1306</span>        SparseArray&lt;DataTypes, DeviceType, EntityType, MeshType, SparseMapType&gt;;</div>
-<div class="line"><a id="l01307" name="l01307"></a><span class="lineno"> 1307</span>    <span class="keyword">using </span>memory_space = <span class="keyword">typename</span> array_type::memory_space;</div>
-<div class="line"><a id="l01308" name="l01308"></a><span class="lineno"> 1308</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> std::size_t num_space_dim = array_type::num_space_dim;</div>
-<div class="line"><a id="l01309" name="l01309"></a><span class="lineno"> 1309</span>    <span class="keywordflow">return</span> std::make_shared&lt;</div>
-<div class="line"><a id="l01310" name="l01310"></a><span class="lineno"> 1310</span>        SparseHalo&lt;memory_space, DataTypes, EntityType, num_space_dim,</div>
-<div class="line"><a id="l01311" name="l01311"></a><span class="lineno"> 1311</span>                   cellBitsPerTileDim, Value, Key&gt;&gt;( pattern, array );</div>
-<div class="line"><a id="l01312" name="l01312"></a><span class="lineno"> 1312</span>}</div>
-<div class="line"><a id="l01313" name="l01313"></a><span class="lineno"> 1313</span> </div>
-<div class="line"><a id="l01314" name="l01314"></a><span class="lineno"> 1314</span>}; <span class="comment">// namespace Experimental</span></div>
-<div class="line"><a id="l01315" name="l01315"></a><span class="lineno"> 1315</span>}; <span class="comment">// end namespace Cajita</span></div>
-<div class="line"><a id="l01316" name="l01316"></a><span class="lineno"> 1316</span> </div>
-<div class="line"><a id="l01317" name="l01317"></a><span class="lineno"> 1317</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l01227" name="l01227"></a><span class="lineno"> 1227</span>        KOKKOS_FORCEINLINE_FUNCTION</div>
+<div class="line"><a id="l01228" name="l01228"></a><span class="lineno"> 1228</span>        Kokkos::Array&lt;std::size_t, M&gt; operator()()</div>
+<div class="line"><a id="l01229" name="l01229"></a><span class="lineno"> 1229</span>        {</div>
+<div class="line"><a id="l01230" name="l01230"></a><span class="lineno"> 1230</span>            <span class="keywordflow">return</span> { compute_one_member_extent&lt;Type, Is&gt;()... };</div>
+<div class="line"><a id="l01231" name="l01231"></a><span class="lineno"> 1231</span>        }</div>
+<div class="line"><a id="l01232" name="l01232"></a><span class="lineno"> 1232</span>    };</div>
+<div class="line"><a id="l01233" name="l01233"></a><span class="lineno"> 1233</span> </div>
+<div class="line"><a id="l01234" name="l01234"></a><span class="lineno"> 1234</span>    template &lt;class Type, std::size_t M = std::rank&lt;Type&gt;::value,</div>
+<div class="line"><a id="l01235" name="l01235"></a><span class="lineno"> 1235</span>              <span class="keyword">typename</span> Indices = std::make_index_sequence&lt;M&gt;&gt;</div>
+<div class="line"><a id="l01236" name="l01236"></a><span class="lineno"> 1236</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> Kokkos::Array&lt;std::size_t, M&gt;</div>
+<div class="line"><a id="l01237" name="l01237"></a><span class="lineno"> 1237</span>    compute_member_extents()</div>
+<div class="line"><a id="l01238" name="l01238"></a><span class="lineno"> 1238</span>    {</div>
+<div class="line"><a id="l01239" name="l01239"></a><span class="lineno"> 1239</span>        compute_member_extents_impl&lt;Type, M, Indices&gt; op;</div>
+<div class="line"><a id="l01240" name="l01240"></a><span class="lineno"> 1240</span>        <span class="keywordflow">return</span> op();</div>
+<div class="line"><a id="l01241" name="l01241"></a><span class="lineno"> 1241</span>    }</div>
+<div class="line"><a id="l01242" name="l01242"></a><span class="lineno"> 1242</span> </div>
+<div class="line"><a id="l01243" name="l01243"></a><span class="lineno"> 1243</span>  <span class="keyword">private</span>:</div>
+<div class="line"><a id="l01244" name="l01244"></a><span class="lineno"> 1244</span>    <span class="comment">// Current MPI linear rank ID</span></div>
+<div class="line"><a id="l01245" name="l01245"></a><span class="lineno"> 1245</span>    <span class="keywordtype">int</span> _self_rank;</div>
+<div class="line"><a id="l01246" name="l01246"></a><span class="lineno"> 1246</span>    <span class="comment">// Hallo pattern</span></div>
+<div class="line"><a id="l01247" name="l01247"></a><span class="lineno"> 1247</span>    halo_pattern_type _pattern;</div>
+<div class="line"><a id="l01248" name="l01248"></a><span class="lineno"> 1248</span> </div>
+<div class="line"><a id="l01249" name="l01249"></a><span class="lineno"> 1249</span>    <span class="comment">// neighbor rank linear MPI rank IDs</span></div>
+<div class="line"><a id="l01250" name="l01250"></a><span class="lineno"> 1250</span>    std::vector&lt;int&gt; _neighbor_ranks;</div>
+<div class="line"><a id="l01251" name="l01251"></a><span class="lineno"> 1251</span>    <span class="comment">// valid neigber rank indices; valid means require data communication</span></div>
+<div class="line"><a id="l01252" name="l01252"></a><span class="lineno"> 1252</span>    std::vector&lt;std::array&lt;int, num_space_dim&gt;&gt; _valid_neighbor_ids;</div>
+<div class="line"><a id="l01253" name="l01253"></a><span class="lineno"> 1253</span>    <span class="comment">// sending tags</span></div>
+<div class="line"><a id="l01254" name="l01254"></a><span class="lineno"> 1254</span>    std::vector&lt;int&gt; _send_tags;</div>
+<div class="line"><a id="l01255" name="l01255"></a><span class="lineno"> 1255</span>    <span class="comment">// receiving tages</span></div>
+<div class="line"><a id="l01256" name="l01256"></a><span class="lineno"> 1256</span>    std::vector&lt;int&gt; _receive_tags;</div>
+<div class="line"><a id="l01257" name="l01257"></a><span class="lineno"> 1257</span> </div>
+<div class="line"><a id="l01258" name="l01258"></a><span class="lineno"> 1258</span>    <span class="comment">// owned view buffers</span></div>
+<div class="line"><a id="l01259" name="l01259"></a><span class="lineno"> 1259</span>    std::vector&lt;buffer_view&gt; _owned_buffers;</div>
+<div class="line"><a id="l01260" name="l01260"></a><span class="lineno"> 1260</span>    <span class="comment">// ghosted view buffers</span></div>
+<div class="line"><a id="l01261" name="l01261"></a><span class="lineno"> 1261</span>    std::vector&lt;buffer_view&gt; _ghosted_buffers;</div>
+<div class="line"><a id="l01262" name="l01262"></a><span class="lineno"> 1262</span> </div>
+<div class="line"><a id="l01263" name="l01263"></a><span class="lineno"> 1263</span>    <span class="comment">// owned tile key steerings</span></div>
+<div class="line"><a id="l01264" name="l01264"></a><span class="lineno"> 1264</span>    std::vector&lt;steering_view&gt; _owned_tile_steering;</div>
+<div class="line"><a id="l01265" name="l01265"></a><span class="lineno"> 1265</span>    <span class="comment">// key steering buffers (used to store valid keys get from neighbors)</span></div>
+<div class="line"><a id="l01266" name="l01266"></a><span class="lineno"> 1266</span>    std::vector&lt;steering_view&gt; _tmp_tile_steering;</div>
+<div class="line"><a id="l01267" name="l01267"></a><span class="lineno"> 1267</span>    <span class="comment">// ghosted tile key steerings</span></div>
+<div class="line"><a id="l01268" name="l01268"></a><span class="lineno"> 1268</span>    std::vector&lt;steering_view&gt; _ghosted_tile_steering;</div>
+<div class="line"><a id="l01269" name="l01269"></a><span class="lineno"> 1269</span> </div>
+<div class="line"><a id="l01270" name="l01270"></a><span class="lineno"> 1270</span>    <span class="comment">// valid halo grid counting on current rank (each element map to a neighbor)</span></div>
+<div class="line"><a id="l01271" name="l01271"></a><span class="lineno"> 1271</span>    std::vector&lt;counting_view&gt; _valid_counting;</div>
+<div class="line"><a id="l01272" name="l01272"></a><span class="lineno"> 1272</span>    <span class="comment">// valid halo grid counting on corresponding neighbor ranks</span></div>
+<div class="line"><a id="l01273" name="l01273"></a><span class="lineno"> 1273</span>    std::vector&lt;counting_view&gt; _neighbor_counting;</div>
+<div class="line"><a id="l01274" name="l01274"></a><span class="lineno"> 1274</span> </div>
+<div class="line"><a id="l01275" name="l01275"></a><span class="lineno"> 1275</span>    <span class="comment">// owned tile space</span></div>
+<div class="line"><a id="l01276" name="l01276"></a><span class="lineno"> 1276</span>    std::vector&lt;tile_index_space&gt; _owned_tile_spaces;</div>
+<div class="line"><a id="l01277" name="l01277"></a><span class="lineno"> 1277</span>    <span class="comment">// ghosted tile space</span></div>
+<div class="line"><a id="l01278" name="l01278"></a><span class="lineno"> 1278</span>    std::vector&lt;tile_index_space&gt; _ghosted_tile_spaces;</div>
+<div class="line"><a id="l01279" name="l01279"></a><span class="lineno"> 1279</span> </div>
+<div class="line"><a id="l01280" name="l01280"></a><span class="lineno"> 1280</span>    <span class="comment">// SoA member bytes num</span></div>
+<div class="line"><a id="l01281" name="l01281"></a><span class="lineno"> 1281</span>    Kokkos::Array&lt;std::size_t, member_num&gt; _soa_member_bytes;</div>
+<div class="line"><a id="l01282" name="l01282"></a><span class="lineno"> 1282</span>    <span class="comment">// SoA total bytes count</span></div>
+<div class="line"><a id="l01283" name="l01283"></a><span class="lineno"> 1283</span>    std::size_t _soa_total_bytes;</div>
+<div class="line"><a id="l01284" name="l01284"></a><span class="lineno"> 1284</span>};</div>
+<div class="line"><a id="l01285" name="l01285"></a><span class="lineno"> 1285</span> </div>
+<div class="line"><a id="l01286" name="l01286"></a><span class="lineno"> 1286</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l01287" name="l01287"></a><span class="lineno"> 1287</span><span class="comment">// Sparse halo creation.</span></div>
+<div class="line"><a id="l01288" name="l01288"></a><span class="lineno"> 1288</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l01294" name="l01294"></a><span class="lineno"> 1294</span><span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>DeviceType, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> cellBitsPerTileDim,</div>
+<div class="line"><a id="l01295" name="l01295"></a><span class="lineno"> 1295</span>          <span class="keyword">class </span>DataTypes, <span class="keyword">class </span>EntityType, <span class="keyword">class </span>MeshType,</div>
+<div class="line"><a id="l01296" name="l01296"></a><span class="lineno"> 1296</span>          <span class="keyword">class </span>SparseMapType, <span class="keyword">class </span>Pattern, <span class="keyword">typename</span> Value = int,</div>
+<div class="line"><a id="l01297" name="l01297"></a><span class="lineno"> 1297</span>          <span class="keyword">typename</span> Key = uint64_t&gt;</div>
+<div class="line"><a id="l01298" name="l01298"></a><span class="lineno"> 1298</span><span class="keyword">auto</span> createSparseHalo(</div>
+<div class="line"><a id="l01299" name="l01299"></a><span class="lineno"> 1299</span>    <span class="keyword">const</span> Pattern&amp; pattern,</div>
+<div class="line"><a id="l01300" name="l01300"></a><span class="lineno"> 1300</span>    <span class="keyword">const</span> std::shared_ptr&lt;</div>
+<div class="line"><a id="l01301" name="l01301"></a><span class="lineno"> 1301</span>        SparseArray&lt;DataTypes, DeviceType, EntityType, MeshType, SparseMapType&gt;&gt;</div>
+<div class="line"><a id="l01302" name="l01302"></a><span class="lineno"> 1302</span>        array )</div>
+<div class="line"><a id="l01303" name="l01303"></a><span class="lineno"> 1303</span>{</div>
+<div class="line"><a id="l01304" name="l01304"></a><span class="lineno"> 1304</span>    <span class="keyword">using </span>array_type =</div>
+<div class="line"><a id="l01305" name="l01305"></a><span class="lineno"> 1305</span>        SparseArray&lt;DataTypes, DeviceType, EntityType, MeshType, SparseMapType&gt;;</div>
+<div class="line"><a id="l01306" name="l01306"></a><span class="lineno"> 1306</span>    <span class="keyword">using </span>memory_space = <span class="keyword">typename</span> array_type::memory_space;</div>
+<div class="line"><a id="l01307" name="l01307"></a><span class="lineno"> 1307</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> std::size_t num_space_dim = array_type::num_space_dim;</div>
+<div class="line"><a id="l01308" name="l01308"></a><span class="lineno"> 1308</span>    <span class="keywordflow">return</span> std::make_shared&lt;</div>
+<div class="line"><a id="l01309" name="l01309"></a><span class="lineno"> 1309</span>        SparseHalo&lt;memory_space, DataTypes, EntityType, num_space_dim,</div>
+<div class="line"><a id="l01310" name="l01310"></a><span class="lineno"> 1310</span>                   cellBitsPerTileDim, Value, Key&gt;&gt;( pattern, array );</div>
+<div class="line"><a id="l01311" name="l01311"></a><span class="lineno"> 1311</span>}</div>
+<div class="line"><a id="l01312" name="l01312"></a><span class="lineno"> 1312</span> </div>
+<div class="line"><a id="l01313" name="l01313"></a><span class="lineno"> 1313</span>}; <span class="comment">// namespace Experimental</span></div>
+<div class="line"><a id="l01314" name="l01314"></a><span class="lineno"> 1314</span>}; <span class="comment">// end namespace Cajita</span></div>
+<div class="line"><a id="l01315" name="l01315"></a><span class="lineno"> 1315</span> </div>
+<div class="line"><a id="l01316" name="l01316"></a><span class="lineno"> 1316</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aCabana__MemberTypes_8hpp_html"><div class="ttname"><a href="Cabana__MemberTypes_8hpp.html">Cabana_MemberTypes.hpp</a></div><div class="ttdoc">AoSoA tuple member types.</div></div>
 <div class="ttc" id="aCabana__SoA_8hpp_html"><div class="ttname"><a href="Cabana__SoA_8hpp.html">Cabana_SoA.hpp</a></div><div class="ttdoc">Struct-of-Arrays for building AoSoA.</div></div>
 <div class="ttc" id="aCabana__Tuple_8hpp_html"><div class="ttname"><a href="Cabana__Tuple_8hpp.html">Cabana_Tuple.hpp</a></div><div class="ttdoc">Tuple of single particle information to build AoSoA.</div></div>
