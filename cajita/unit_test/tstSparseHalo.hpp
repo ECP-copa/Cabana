@@ -96,7 +96,6 @@ bool is_ghosted_by_neighbor( const std::array<int, 3> tile_id,
                              const std::array<int, 3> high_corner,
                              const int halo_tile_width )
 {
-
     if ( neighbor_id[0] == 0 && neighbor_id[1] == 0 && neighbor_id[2] == 0 )
         return false;
     std::array<int, 3> valid_low;
