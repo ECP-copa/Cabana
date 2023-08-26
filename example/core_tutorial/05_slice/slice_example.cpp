@@ -56,16 +56,15 @@ void sliceExample()
     const int VectorLength = 4;
 
     /*
-      Finally declare the memory space in which the AoSoA will be allocated. In
-      this example we are writing basic loops that will execute on the CPU. The
-      HostSpace allocates memory in standard CPU RAM.
+      The current example uses default spaces to work across all supported
+      backends, but explicit choices like HostSpace and CudaSpace can also be
+      used.
 
-      Kokkos also supports execution on GPUs. For example, to create an AoSoA
-      allocated on NVIDIA devices use `Kokkos::CudaSpace` instead of
-      `Kokkos::HostSpace`.
+      We declare the memory space in which the AoSoA will be allocated
+      on the default execution space we are dealing with.
     */
-    using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
+    using ExecutionSpace = Kokkos::DefaultExecutionSpace;
+    using MemorySpace = typename ExecutionSpace::memory_space;
     using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
@@ -78,6 +77,9 @@ void sliceExample()
     Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "my_aosoa",
                                                               num_tuple );
 
+    // Create a mirror view of the aosoa on the host for accessing it legally
+    auto aosoa_host =
+      Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
     /*
       Create a slice over each tuple member in the AoSoA. An integer template
       parameter is used to indicate which member to slice. A slice object
@@ -88,9 +90,9 @@ void sliceExample()
       because slices are unmanaged memory but may still be used for diagnostic
       purposes.
     */
-    auto slice_0 = Cabana::slice<0>( aosoa, "my_slice_0" );
-    auto slice_1 = Cabana::slice<1>( aosoa, "my_slice_1" );
-    auto slice_2 = Cabana::slice<2>( aosoa, "my_slice_2" );
+    auto slice_0 = Cabana::slice<0>( aosoa_host, "my_slice_0" );
+    auto slice_1 = Cabana::slice<1>( aosoa_host, "my_slice_1" );
+    auto slice_2 = Cabana::slice<2>( aosoa_host, "my_slice_2" );
 
     /*
       Let's initialize the data using the 2D indexing scheme. Slice data can
