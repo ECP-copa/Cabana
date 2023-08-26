@@ -64,20 +64,30 @@ void sliceExample()
       allocated on NVIDIA devices use `Kokkos::CudaSpace` instead of
       `Kokkos::HostSpace`.
     */
-    using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
+    // using MemorySpace = Kokkos::HostSpace;
+    // using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
+
+    using ExecutionSpace = Kokkos::DefaultExecutionSpace;
+    using MemorySpace = typename ExecutionSpace::memory_space;
+
+    // using MemorySpace = Kokkos::CudaSpace;
+    // using ExecutionSpace = Kokkos::Cuda;
+
     using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
-       Create the AoSoA. We define how many tuples the aosoa will
-       contain. Note that if the number of tuples is not evenly divisible by
-       the vector length then the last SoA in the AoSoA will not be entirely
-       full (although its memory will still be allocated).
+      Create the AoSoA. We define how many tuples the aosoa will
+      contain. Note that if the number of tuples is not evenly divisible by
+      the vector length then the last SoA in the AoSoA will not be entirely
+      full (although its memory will still be allocated).
     */
     int num_tuple = 5;
     Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "my_aosoa",
                                                               num_tuple );
 
+    // Create a mirror view of the aosoa on the host for accessing it legally
+    auto aosoa_host =
+      Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
     /*
       Create a slice over each tuple member in the AoSoA. An integer template
       parameter is used to indicate which member to slice. A slice object
@@ -88,9 +98,9 @@ void sliceExample()
       because slices are unmanaged memory but may still be used for diagnostic
       purposes.
     */
-    auto slice_0 = Cabana::slice<0>( aosoa, "my_slice_0" );
-    auto slice_1 = Cabana::slice<1>( aosoa, "my_slice_1" );
-    auto slice_2 = Cabana::slice<2>( aosoa, "my_slice_2" );
+    auto slice_0 = Cabana::slice<0>( aosoa_host, "my_slice_0" );
+    auto slice_1 = Cabana::slice<1>( aosoa_host, "my_slice_1" );
+    auto slice_2 = Cabana::slice<2>( aosoa_host, "my_slice_2" );
 
     /*
       Let's initialize the data using the 2D indexing scheme. Slice data can
@@ -102,45 +112,45 @@ void sliceExample()
       sizes.
     */
     for ( std::size_t s = 0; s < slice_0.numSoA(); ++s )
-    {
-        for ( int i = 0; i < 3; ++i )
-            for ( int j = 0; j < 3; ++j )
-                for ( std::size_t a = 0; a < slice_0.arraySize( s ); ++a )
-                    slice_0.access( s, a, i, j ) = 1.0 * ( a + i + j );
+      {
+	for ( int i = 0; i < 3; ++i )
+	  for ( int j = 0; j < 3; ++j )
+	    for ( std::size_t a = 0; a < slice_0.arraySize( s ); ++a )
+	      slice_0.access( s, a, i, j ) = 1.0 * ( a + i + j );
 
-        for ( int i = 0; i < 4; ++i )
-            for ( std::size_t a = 0; a < slice_0.arraySize( s ); ++a )
-                slice_1.access( s, a, i ) = 1.0 * ( a + i );
+	for ( int i = 0; i < 4; ++i )
+	  for ( std::size_t a = 0; a < slice_0.arraySize( s ); ++a )
+	    slice_1.access( s, a, i ) = 1.0 * ( a + i );
 
-        for ( std::size_t a = 0; a < slice_0.arraySize( s ); ++a )
-            slice_2.access( s, a ) = a + 1234;
-    }
+	for ( std::size_t a = 0; a < slice_0.arraySize( s ); ++a )
+	  slice_2.access( s, a ) = a + 1234;
+      }
 
     /*
-       Now let's read the data we just wrote but this time we will access the
-       data tuple-by-tuple using 1-dimensional indexing rather than using the
-       2-dimensional indexing.
+      Now let's read the data we just wrote but this time we will access the
+      data tuple-by-tuple using 1-dimensional indexing rather than using the
+      2-dimensional indexing.
 
-       As with the AoSoA, the upside to this approach is that the indexing is
-       easy. The downside is that we lose the stride-1 vector length loops
-       over the array index.
+      As with the AoSoA, the upside to this approach is that the indexing is
+      easy. The downside is that we lose the stride-1 vector length loops
+      over the array index.
 
-       Note that the slice data access syntax in 1D uses `operator()`.
-     */
-    for ( int t = 0; t < num_tuple; ++t )
-    {
-        for ( int i = 0; i < 3; ++i )
-            for ( int j = 0; j < 3; ++j )
+      Note that the slice data access syntax in 1D uses `operator()`.
+    */
+	for ( int t = 0; t < num_tuple; ++t )
+	  {
+	    for ( int i = 0; i < 3; ++i )
+	      for ( int j = 0; j < 3; ++j )
                 std::cout << "Tuple " << t << ", member 0 element (" << i << ","
                           << j << "): " << slice_0( t, i, j ) << std::endl;
 
-        for ( int i = 0; i < 4; ++i )
-            std::cout << "Tuple " << t << ", member 1 element (" << i
-                      << "): " << slice_1( t, i ) << std::endl;
+	    for ( int i = 0; i < 4; ++i )
+	      std::cout << "Tuple " << t << ", member 1 element (" << i
+			<< "): " << slice_1( t, i ) << std::endl;
 
-        std::cout << "Tuple " << t << ", member 2: " << slice_2( t )
-                  << std::endl;
-    }
+	    std::cout << "Tuple " << t << ", member 2: " << slice_2( t )
+		      << std::endl;
+	  }
 }
 
 //---------------------------------------------------------------------------//
