@@ -1,7 +1,5 @@
-
-
 /****************************************************************************
- * Copyright (c) 2018-2022 by the Cabana authors                            *
+ * Copyright (c) 2018-2023 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
