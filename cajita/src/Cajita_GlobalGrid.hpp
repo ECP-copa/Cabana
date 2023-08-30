@@ -190,6 +190,7 @@ class GlobalGrid
   \param global_mesh The global mesh data.
   \param periodic Whether each logical dimension is periodic.
   \param partitioner The grid partitioner.
+  \return Shared pointer to a GlobalGrid.
 */
 template <class MeshType>
 std::shared_ptr<GlobalGrid<MeshType>>
@@ -208,6 +209,7 @@ createGlobalGrid( MPI_Comm comm,
   \param global_mesh The global mesh data.
   \param periodic Whether each logical dimension is periodic.
   \param partitioner The grid partitioner.
+  \return Shared pointer to a GlobalGrid.
 */
 template <class Scalar, std::size_t NumSpaceDim>
 std::shared_ptr<GlobalGrid<SparseMesh<Scalar, NumSpaceDim>>> createGlobalGrid(

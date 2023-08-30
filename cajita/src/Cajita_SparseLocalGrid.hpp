@@ -271,6 +271,7 @@ class LocalGrid<SparseMesh<Scalar, NumSpaceDim>>
   owned cells.
   \param cell_num_per_tile_dim The number of local cells in each tile in each
   dimension.
+  \return Shared pointer to a LocalGrid.
 */
 template <class MeshType>
 std::shared_ptr<LocalGrid<MeshType>>

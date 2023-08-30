@@ -598,6 +598,7 @@ class LocalGrid
   constructed.
   \param halo_cell_width The number of halo cells surrounding the locally
   owned cells.
+  \return Shared pointer to a LocalGrid.
 */
 template <class MeshType>
 std::shared_ptr<LocalGrid<MeshType>>

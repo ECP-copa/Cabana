@@ -1364,6 +1364,7 @@ class HypreStructDiagonal
 // Builders
 //---------------------------------------------------------------------------//
 //! Create a HYPRE PCG structured solver.
+//! \return Shared pointer to HypreStructPCG.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
 std::shared_ptr<
     HypreStructPCG<Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
@@ -1378,6 +1379,7 @@ createHypreStructPCG( const ArrayLayout_t& layout,
 }
 
 //! Create a HYPRE GMRES structured solver.
+//! \return Shared pointer to HypreStructGMRES.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
 std::shared_ptr<
     HypreStructGMRES<Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
@@ -1392,6 +1394,7 @@ createHypreStructGMRES( const ArrayLayout_t& layout,
 }
 
 //! Create a HYPRE BiCGSTAB structured solver.
+//! \return Shared pointer to HypreStructBiCGSTAB.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
 std::shared_ptr<HypreStructBiCGSTAB<Scalar, typename ArrayLayout_t::entity_type,
                                     MemorySpace>>
@@ -1406,6 +1409,7 @@ createHypreStructBiCGSTAB( const ArrayLayout_t& layout,
 }
 
 //! Create a HYPRE PFMG structured solver.
+//! \return Shared pointer to HypreStructPFMG.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
 std::shared_ptr<
     HypreStructPFMG<Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
@@ -1420,6 +1424,7 @@ createHypreStructPFMG( const ArrayLayout_t& layout,
 }
 
 //! Create a HYPRE SMG structured solver.
+//! \return Shared pointer to HypreStructSMG.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
 std::shared_ptr<
     HypreStructSMG<Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
@@ -1434,6 +1439,7 @@ createHypreStructSMG( const ArrayLayout_t& layout,
 }
 
 //! Create a HYPRE Jacobi structured solver.
+//! \return Shared pointer to HypreStructJacobi.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
 std::shared_ptr<
     HypreStructJacobi<Scalar, typename ArrayLayout_t::entity_type, MemorySpace>>
@@ -1448,6 +1454,7 @@ createHypreStructJacobi( const ArrayLayout_t& layout,
 }
 
 //! Create a HYPRE Diagonal structured solver.
+//! \return Shared pointer to HypreStructDiagonal.
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
 std::shared_ptr<HypreStructDiagonal<Scalar, typename ArrayLayout_t::entity_type,
                                     MemorySpace>>
@@ -1470,6 +1477,7 @@ createHypreStructDiagonal( const ArrayLayout_t& layout,
   \param solver_type Solver name.
   \param layout The ArrayLayout defining the vector space of the solver.
   \param is_preconditioner Use as a preconditioner.
+  \return Shared pointer to a HypreStructuredSolver.
 */
 template <class Scalar, class MemorySpace, class ArrayLayout_t>
 std::shared_ptr<HypreStructuredSolver<

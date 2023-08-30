@@ -31,6 +31,7 @@ namespace Cabana
 //---------------------------------------------------------------------------//
 /*!
   \brief Allocate a mirror of the given AoSoA in the given space.
+  \return AoSoA in the new space.
  */
 template <class Space, class SrcAoSoA>
 inline AoSoA<typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length>
@@ -51,6 +52,7 @@ create_mirror(
 /*!
   \brief Create a mirror view of the given AoSoA in the given space. Same
   space specialization returns the input AoSoA.
+  \return The original AoSoA.
 
   \note Memory allocation will only occur if the requested mirror memory space
   is different from that of the input AoSoA. If they are the same, the
@@ -72,6 +74,7 @@ inline SrcAoSoA create_mirror_view(
 /*!
   \brief Create a mirror view of the given AoSoA in the given memory space.
   Different space specialization allocates a new AoSoA.
+  \return AoSoA in the new space.
 
   \note Memory allocation will only occur if the requested mirror
   memory space is different from that of the input AoSoA. If they are the
@@ -95,6 +98,7 @@ create_mirror_view(
   \brief Create a mirror view of the given AoSoA in the given memory space and
   copy the contents of the input AoSoA. Same space specialization returns the
   input AoSoA.
+  \return The original AoSoA.
 
   \note Memory allocation will only occur if the requested mirror memory space
   is different from that of the input AoSoA. If they are the same, the
@@ -116,6 +120,7 @@ inline SrcAoSoA create_mirror_view_and_copy(
   \brief Create a mirror of the given AoSoA in the given memory space and deep
   copy the AoSoA into the mirror. Different space specialization allocates a
   new AoSoA and performs the deep copy.
+  \return The new AoSoA.
 
   \note Memory allocation will only occur if the requested mirror
   memory space is different from that of the input AoSoA. If they are the
@@ -142,9 +147,7 @@ create_mirror_view_and_copy(
 //---------------------------------------------------------------------------//
 /*!
   \brief Deep copy data between compatible AoSoA objects.
-
   \param dst The destination for the copied data.
-
   \param src The source of the copied data.
 
   Only AoSoA objects with the same set of member data types and size may be
@@ -233,7 +236,6 @@ deep_copy( DstAoSoA& dst, const SrcAoSoA& src,
 //---------------------------------------------------------------------------//
 /*!
   \brief Deep copy data between compatible ParticleList objects.
-
   \param dst The destination for the copied data.
   \param src The source of the copied data.
 s*/
@@ -252,9 +254,7 @@ inline void deep_copy( ParticleList<DstMemorySpace, FieldTags...>& dst,
 //---------------------------------------------------------------------------//
 /*!
   \brief Fill an AoSoA with a tuple.
-
   \param aosoa The AoSoA to fill.
-
   \param tuple The tuple to assign. All AoSoA elements will be assigned this
   value.
 */
@@ -277,9 +277,7 @@ inline void deep_copy( AoSoA_t& aosoa,
 //---------------------------------------------------------------------------//
 /*!
   \brief Deep copy data between compatible Slice objects.
-
   \param dst The destination for the copied data.
-
   \param src The source of the copied data.
 
   Only Slice objects with the same set of member data types and size may be
@@ -391,9 +389,7 @@ deep_copy( DstSlice& dst, const SrcSlice& src,
 //---------------------------------------------------------------------------//
 /*!
   \brief Fill a slice with a scalar.
-
   \param slice The slice to fill.
-
   \param scalar The scalar to assign. All slice elements will be assigned this
   value.
 */

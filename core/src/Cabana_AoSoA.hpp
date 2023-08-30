@@ -69,6 +69,7 @@ struct is_aosoa : public is_aosoa_impl<typename std::remove_cv<T>::type>::type
 
   \param aosoa AoSoA to slice from.
   \param slice_label Optional slice label.
+  \return Slice
 */
 template <std::size_t M, class AoSoA_t>
 typename AoSoA_t::template member_slice_type<M>
@@ -251,7 +252,6 @@ class AoSoA
 
     /*!
       \brief Returns the data structure label.
-
       \return A string identifying the data structure.
 
       This label will be assigned to the underlying Kokkos view managing the
@@ -261,7 +261,6 @@ class AoSoA
 
     /*!
       \brief Returns the number of tuples in the container.
-
       \return The number of tuples in the container.
 
       This is the number of actual objects held in the container, which is not
@@ -272,7 +271,6 @@ class AoSoA
 
     /*!
       \brief Returns if the container is empty or not.
-
       \return True if the number of tuples in the container is zero.
 
       This is the number of actual objects held in the container, which is not
@@ -284,7 +282,6 @@ class AoSoA
     /*!
       \brief Returns the size of the storage space currently allocated for the
       container, expressed in terms of tuples.
-
       \return The capacity of the container.
 
       This capacity is not necessarily equal to the container size. It can be
@@ -426,7 +423,6 @@ class AoSoA
 
     /*!
       \brief Get the number of structs-of-arrays in the container.
-
       \return The number of structs-of-arrays in the container.
     */
     KOKKOS_INLINE_FUNCTION
@@ -434,9 +430,7 @@ class AoSoA
 
     /*!
       \brief Get the size of the data array at a given struct member index.
-
       \param s The struct index to get the array size for.
-
       \return The size of the array at the given struct index.
     */
     KOKKOS_INLINE_FUNCTION
@@ -453,9 +447,7 @@ class AoSoA
 
     /*!
       \brief Get a reference to the SoA at a given index.
-
       \param s The SoA index.
-
       \return The SoA reference at the given index.
     */
     KOKKOS_FORCEINLINE_FUNCTION
@@ -463,9 +455,7 @@ class AoSoA
 
     /*!
       \brief Get a tuple at a given index via a deep copy.
-
       \param i The index to get the tuple from.
-
       \return A tuple containing a deep copy of the data at the given index.
     */
     KOKKOS_INLINE_FUNCTION
@@ -479,9 +469,7 @@ class AoSoA
 
     /*!
       \brief Set a tuple at a given index via a deep copy.
-
       \param i The index to set the tuple at.
-
       \param tpl The tuple to get the data from.
     */
     KOKKOS_INLINE_FUNCTION

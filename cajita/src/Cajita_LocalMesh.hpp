@@ -765,7 +765,10 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
 };
 
 //---------------------------------------------------------------------------//
-//! Creation function for local mesh.
+/*!
+  \brief Creation function for local mesh.
+  \return Shared pointer to a LocalMesh.
+*/
 template <class Device, class MeshType>
 LocalMesh<Device, MeshType>
 createLocalMesh( const LocalGrid<MeshType>& local_grid )

@@ -462,16 +462,13 @@ class CommunicationPlan
     /*!
       \brief Get the number of neighbor ranks that this rank will communicate
       with.
-
       \return The number of MPI ranks that will exchange data with this rank.
     */
     int numNeighbor() const { return _neighbors.size(); }
 
     /*!
       \brief Given a local neighbor id get its rank in the MPI communicator.
-
       \param neighbor The local id of the neighbor to get the rank for.
-
       \return The MPI rank of the neighbor with the given local id.
     */
     int neighborRank( const int neighbor ) const
@@ -482,10 +479,8 @@ class CommunicationPlan
     /*!
       \brief Get the number of elements this rank will export to a given
       neighbor.
-
       \param neighbor The local id of the neighbor to get the number of
       exports for.
-
       \return The number of elements this rank will export to the neighbor with
       the given local id.
      */
@@ -496,7 +491,6 @@ class CommunicationPlan
 
     /*!
       \brief Get the total number of exports this rank will do.
-
       \return The total number of elements this rank will export to its
       neighbors.
     */
@@ -505,10 +499,8 @@ class CommunicationPlan
     /*!
       \brief Get the number of elements this rank will import from a given
       neighbor.
-
       \param neighbor The local id of the neighbor to get the number of
       imports for.
-
       \return The number of elements this rank will import from the neighbor
       with the given local id.
      */
@@ -519,7 +511,6 @@ class CommunicationPlan
 
     /*!
       \brief Get the total number of imports this rank will do.
-
       \return The total number of elements this rank will import from its
       neighhbors.
     */
@@ -527,20 +518,18 @@ class CommunicationPlan
 
     /*!
       \brief Get the number of export elements.
+      \return The number of export elements.
 
       Whenever the communciation plan is applied, this is the total number of
       elements expected to be input on the sending ranks (in the forward
       communication plan). This will be different than the number returned by
       totalNumExport() if some of the export ranks used in the construction
       are -1 and therefore will not particpate in an export operation.
-
-      \return The number of export elements.
     */
     std::size_t exportSize() const { return _num_export_element; }
 
     /*!
       \brief Get the steering vector for the exports.
-
       \return The steering vector for the exports.
 
       The steering vector places exports in contiguous chunks by destination

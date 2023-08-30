@@ -145,8 +145,7 @@ class ManualBlockPartitioner : public BlockPartitioner<NumSpaceDim>
       current MPI rank.
       \param cart_comm The MPI Cartesian communicator for the partitioning.
       \param global_cells_per_dim The number of global cells in each dimension.
-      \return The owned number of cells of the current
-      MPI rank in each dimension.
+      \return The owned number of cells per dimension of the current MPI rank.
     */
     std::array<int, num_space_dim> ownedCellsPerDimension(
         MPI_Comm cart_comm,

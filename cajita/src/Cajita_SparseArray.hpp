@@ -684,6 +684,7 @@ struct is_sparse_array<const SparseArray<DataTypes, DeviceType, EntityType,
   \brief Create sparse array based on the sparse array layout
   \param label The sparse array data description.
   \param layout The sparse array layout.
+  \return SparseArray
 */
 template <class DeviceType, class DataTypes, class EntityType, class MeshType,
           class SparseMapType>

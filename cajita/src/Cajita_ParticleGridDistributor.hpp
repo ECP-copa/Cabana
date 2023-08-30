@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_ParticleGridDistributor.hpp
+  \brief Multi-node particle redistribution using the grid halo.
+*/
 #ifndef CABANA_PARTICLEGRIDDISTRIBUTOR_HPP
 #define CABANA_PARTICLEGRIDDISTRIBUTOR_HPP
 
@@ -158,14 +162,11 @@ void getMigrateDestinations( const LocalGridType& local_grid,
   \brief Check for the number of particles that must be communicated
 
   \tparam LocalGridType Cajita LocalGrid type.
-
   \tparam PositionSliceType Particle position type.
 
   \param local_grid The local grid containing periodicity and system bound
   information.
-
   \param positions The particle position container, either Slice or View.
-
   \param minimum_halo_width Number of halo mesh widths to include for
   ghosting.
 */
@@ -227,12 +228,10 @@ int migrateCount( const LocalGridType& local_grid,
   Cajita grid and taking periodic boundaries into account.
 
   \tparam LocalGridType Cajita LocalGrid type.
-
   \tparam PositionSliceType Position type.
 
   \param local_grid The local grid containing periodicity and system bound
   information.
-
   \param positions The particle positions.
 
   \return Distributor for later migration.
@@ -273,22 +272,17 @@ createParticleGridDistributor( const LocalGridType& local_grid,
   Cajita grid to determine which particles should be moved. In-place variant.
 
   \tparam LocalGridType Cajita LocalGrid type.
-
   \tparam ParticlePositions Particle position type.
-
   \tparam PositionContainer AoSoA type.
 
   \param local_grid The local grid containing periodicity and system bounds.
-
   \param positions Particle positions.
-
   \param particles The particle AoSoA.
-
   \param min_halo_width Number of halo mesh widths to allow particles before
   migrating.
-
   \param force_migrate Migrate particles outside the local domain regardless of
   ghosted halo.
+  \return Whether any particle migration occured.
 */
 template <class LocalGridType, class ParticlePositions, class ParticleContainer>
 bool particleGridMigrate( const LocalGridType& local_grid,
@@ -326,24 +320,18 @@ bool particleGridMigrate( const LocalGridType& local_grid,
   variant.
 
   \tparam LocalGridType Cajita LocalGrid type.
-
   \tparam ParticlePositions Particle position type.
-
   \tparam ParticleContainer AoSoA type.
 
   \param local_grid The local grid containing periodicity and system bounds.
-
   \param positions Particle positions.
-
   \param src_particles The source particle AoSoA.
-
   \param dst_particles The destination particle AoSoA.
-
   \param min_halo_width Number of halo mesh widths to allow particles before
   migrating.
-
   \param force_migrate Migrate particles outside the local domain regardless of
   ghosted halo.
+  \return Whether any particle migration occured.
 */
 template <class LocalGridType, class ParticlePositions, class ParticleContainer>
 bool particleGridMigrate( const LocalGridType& local_grid,

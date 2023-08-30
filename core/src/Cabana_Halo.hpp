@@ -607,6 +607,7 @@ class Gather<HaloType, SliceType,
   next halo.numGhost() elements()).
   \param overallocation An optional factor to keep extra space in the buffers to
   avoid frequent resizing.
+  \return Gather
 */
 template <class HaloType, class ParticleDataType>
 auto createGather( const HaloType& halo, const ParticleDataType& data,
@@ -854,6 +855,7 @@ class Scatter
   next halo.numGhost() elements()).
   \param overallocation An optional factor to keep extra space in the buffers to
   avoid frequent resizing.
+  \return Scatter
 */
 template <class HaloType, class SliceType>
 auto createScatter( const HaloType& halo, const SliceType& slice,

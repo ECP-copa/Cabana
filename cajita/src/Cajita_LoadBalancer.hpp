@@ -288,6 +288,7 @@ createLoadBalancer(
   \param comm MPI communicator to use for load balancing communication.
   \param global_grid The initial global grid.
   \param min_domain_size The minimal domain size in each dimension.
+  \return Shared pointer to a LoadBalancer.
 */
 template <class Scalar, std::size_t NumSpaceDim>
 std::shared_ptr<LoadBalancer<UniformMesh<Scalar, NumSpaceDim>>>

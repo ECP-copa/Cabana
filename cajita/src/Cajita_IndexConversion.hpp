@@ -162,6 +162,7 @@ struct L2G
 
 //---------------------------------------------------------------------------//
 //! Creation function for local-to-global indexer.
+//! \return L2G
 template <class MeshType, class EntityType>
 L2G<MeshType, EntityType> createL2G( const LocalGrid<MeshType>& local_grid,
                                      EntityType )
