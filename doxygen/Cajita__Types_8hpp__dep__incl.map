@@ -19,7 +19,7 @@
 <area shape="rect" id="node23" href="$Cajita__GlobalMesh_8hpp.html" title="Global mesh." alt="" coords="2293,79,2452,119"/>
 <area shape="rect" id="node26" href="$Cajita__IndexConversion_8hpp.html" title="Local to global index conversion." alt="" coords="2769,174,3021,199"/>
 <area shape="rect" id="node6" href="$Cajita__Halo_8hpp.html" title="Multi&#45;node grid scatter/gather." alt="" coords="641,438,816,463"/>
-<area shape="rect" id="node16" href="$Cajita__ParticleGridDistributor_8hpp_source.html" title=" " alt="" coords="2086,431,2251,471"/>
+<area shape="rect" id="node16" href="$Cajita__ParticleGridDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="2086,431,2251,471"/>
 <area shape="rect" id="node20" href="$Cajita__SiloParticleOutput_8hpp.html" title="Write particle output using the Silo format." alt="" coords="1678,255,1864,295"/>
 <area shape="rect" id="node19" href="$Cajita__Parallel_8hpp.html" title="Logical grid extension of Kokkos parallel iteration." alt="" coords="1553,438,1744,463"/>
 <area shape="rect" id="node17" href="$Cajita__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="2086,519,2251,559"/>

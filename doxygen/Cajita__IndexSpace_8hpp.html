@@ -121,7 +121,7 @@ This graph shows which files directly or indirectly include this file:</div>
 <area shape="rect" href="Cajita__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="1020,350,1250,375"/>
 <area shape="rect" href="Cajita__SparseHalo_8hpp_source.html" title=" " alt="" coords="2034,343,2196,383"/>
 <area shape="rect" href="Cajita__LocalMesh_8hpp.html" title="Local mesh." alt="" coords="1325,174,1537,199"/>
-<area shape="rect" href="Cajita__ParticleGridDistributor_8hpp_source.html" title=" " alt="" coords="1692,255,1858,295"/>
+<area shape="rect" href="Cajita__ParticleGridDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="1692,255,1858,295"/>
 <area shape="rect" href="Cajita__Splines_8hpp.html" title="Spline functions." alt="" coords="1426,262,1617,287"/>
 <area shape="rect" href="Cajita__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="1692,343,1858,383"/>
 <area shape="rect" href="Cajita__SparseArray_8hpp.html" title="Sparse grid fields arrays using AoSoA." alt="" coords="2085,255,2246,295"/>
@@ -153,15 +153,13 @@ Functions</h2></td></tr>
 <tr class="memitem:ab7ff824e39e183fe89d3edae6acfae2d"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::RangePolicy&lt; ExecutionSpace, WorkTag &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#ab7ff824e39e183fe89d3edae6acfae2d">Cajita::createExecutionPolicy</a> (const IndexSpace&lt; 1 &gt; &amp;index_space, const ExecutionSpace &amp;, const WorkTag &amp;)</td></tr>
 <tr class="memdesc:ab7ff824e39e183fe89d3edae6acfae2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a multi-dimensional execution policy over an index space.  <br /></td></tr>
 <tr class="separator:ab7ff824e39e183fe89d3edae6acfae2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ebdf82160fd53a757e368eb94c65246"><td class="memTemplParams" colspan="2"><a id="a2ebdf82160fd53a757e368eb94c65246" name="a2ebdf82160fd53a757e368eb94c65246"></a>
-template&lt;class IndexSpace_t , class ExecutionSpace &gt; </td></tr>
-<tr class="memitem:a2ebdf82160fd53a757e368eb94c65246"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::MDRangePolicy&lt; ExecutionSpace, Kokkos::Rank&lt; IndexSpace_t::Rank &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Cajita::createExecutionPolicy</b> (const IndexSpace_t &amp;index_space, const ExecutionSpace &amp;)</td></tr>
-<tr class="memdesc:a2ebdf82160fd53a757e368eb94c65246"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a multi-dimensional execution policy over an index space. <br /></td></tr>
+<tr class="memitem:a2ebdf82160fd53a757e368eb94c65246"><td class="memTemplParams" colspan="2">template&lt;class IndexSpace_t , class ExecutionSpace &gt; </td></tr>
+<tr class="memitem:a2ebdf82160fd53a757e368eb94c65246"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::MDRangePolicy&lt; ExecutionSpace, Kokkos::Rank&lt; IndexSpace_t::Rank &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a2ebdf82160fd53a757e368eb94c65246">Cajita::createExecutionPolicy</a> (const IndexSpace_t &amp;index_space, const ExecutionSpace &amp;)</td></tr>
+<tr class="memdesc:a2ebdf82160fd53a757e368eb94c65246"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a multi-dimensional execution policy over an index space.  <br /></td></tr>
 <tr class="separator:a2ebdf82160fd53a757e368eb94c65246"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeacc6c22c6ce7bb70ff0d9f78b9797b5"><td class="memTemplParams" colspan="2"><a id="aeacc6c22c6ce7bb70ff0d9f78b9797b5" name="aeacc6c22c6ce7bb70ff0d9f78b9797b5"></a>
-template&lt;class IndexSpace_t , class ExecutionSpace , class WorkTag &gt; </td></tr>
-<tr class="memitem:aeacc6c22c6ce7bb70ff0d9f78b9797b5"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::MDRangePolicy&lt; ExecutionSpace, WorkTag, Kokkos::Rank&lt; IndexSpace_t::Rank &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Cajita::createExecutionPolicy</b> (const IndexSpace_t &amp;index_space, const ExecutionSpace &amp;, const WorkTag &amp;)</td></tr>
-<tr class="memdesc:aeacc6c22c6ce7bb70ff0d9f78b9797b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a multi-dimensional execution policy over an index space with a work tag. <br /></td></tr>
+<tr class="memitem:aeacc6c22c6ce7bb70ff0d9f78b9797b5"><td class="memTemplParams" colspan="2">template&lt;class IndexSpace_t , class ExecutionSpace , class WorkTag &gt; </td></tr>
+<tr class="memitem:aeacc6c22c6ce7bb70ff0d9f78b9797b5"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::MDRangePolicy&lt; ExecutionSpace, WorkTag, Kokkos::Rank&lt; IndexSpace_t::Rank &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#aeacc6c22c6ce7bb70ff0d9f78b9797b5">Cajita::createExecutionPolicy</a> (const IndexSpace_t &amp;index_space, const ExecutionSpace &amp;, const WorkTag &amp;)</td></tr>
+<tr class="memdesc:aeacc6c22c6ce7bb70ff0d9f78b9797b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a multi-dimensional execution policy over an index space with a work tag.  <br /></td></tr>
 <tr class="separator:aeacc6c22c6ce7bb70ff0d9f78b9797b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab24fe00c83ebfa654cf17e1b37da1df4"><td class="memTemplParams" colspan="2">template&lt;class Scalar , class... Params&gt; </td></tr>
 <tr class="memitem:ab24fe00c83ebfa654cf17e1b37da1df4"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::View&lt; Scalar *, Params... &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#ab24fe00c83ebfa654cf17e1b37da1df4">Cajita::createView</a> (const std::string &amp;label, const IndexSpace&lt; 1 &gt; &amp;index_space)</td></tr>
@@ -213,9 +211,11 @@ template&lt;class IndexSpace_t , class ExecutionSpace , class WorkTag &gt; </td>
 <tr class="separator:a413c2645baa122d4cb8f079597e43fce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0652ddec74a14c5efdd4178f98cf0e38"><td class="memTemplParams" colspan="2">template&lt;long N&gt; </td></tr>
 <tr class="memitem:a0652ddec74a14c5efdd4178f98cf0e38"><td class="memTemplItemLeft" align="right" valign="top">IndexSpace&lt; N+1 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a0652ddec74a14c5efdd4178f98cf0e38">Cajita::appendDimension</a> (const IndexSpace&lt; N &gt; &amp;index_space, const long size)</td></tr>
+<tr class="memdesc:a0652ddec74a14c5efdd4178f98cf0e38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given an N-dimensional index space append an additional dimension with the given size.  <br /></td></tr>
 <tr class="separator:a0652ddec74a14c5efdd4178f98cf0e38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae72bb9627157c6ffd385b4ae8b831d20"><td class="memTemplParams" colspan="2">template&lt;long N&gt; </td></tr>
 <tr class="memitem:ae72bb9627157c6ffd385b4ae8b831d20"><td class="memTemplItemLeft" align="right" valign="top">IndexSpace&lt; N+1 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#ae72bb9627157c6ffd385b4ae8b831d20">Cajita::appendDimension</a> (const IndexSpace&lt; N &gt; &amp;index_space, const long min, const long max)</td></tr>
+<tr class="memdesc:ae72bb9627157c6ffd385b4ae8b831d20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given an N-dimensional index space append an additional dimension with the given range.  <br /></td></tr>
 <tr class="separator:ae72bb9627157c6ffd385b4ae8b831d20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>

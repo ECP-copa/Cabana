@@ -126,7 +126,7 @@ This graph shows which files directly or indirectly include this file:</div>
 <area shape="rect" href="Cabana__Core_8hpp_source.html" title=" " alt="" coords="58,416,242,441"/>
 <area shape="rect" href="Cabana__DeepCopy_8hpp.html" title="AoSoA and slice extensions for Kokkos deep copy and mirrors." alt="" coords="232,93,451,119"/>
 <area shape="rect" href="Cajita_8hpp_source.html" title=" " alt="" coords="364,343,506,368"/>
-<area shape="rect" href="Cajita__ParticleGridDistributor_8hpp_source.html" title=" " alt="" coords="332,167,498,207"/>
+<area shape="rect" href="Cajita__ParticleGridDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="332,167,498,207"/>
 <area shape="rect" href="Cabana__Sort_8hpp.html" title="Sorting and binning built on Kokkos BinSort." alt="" coords="27,174,208,199"/>
 <area shape="rect" href="Cabana__LinkedCellList_8hpp.html" title="Linked cell list binning and sorting." alt="" coords="22,255,213,295"/>
 <area shape="rect" href="Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="42,343,257,368"/>
@@ -178,10 +178,9 @@ template&lt;class FieldTag , class... FieldTags, class... IndexTypes, int Vector
 <tr class="memitem:a68a6fd2968bf1e1dd4a0c88d8b1846e5"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt; sizeof...(IndexTypes)==FieldTag::rank, typenameParticleView&lt; VectorLength, FieldTags... &gt;::soa_type::templatemember_reference_type&lt; TypeIndexer&lt; FieldTag, FieldTags... &gt;::index &gt; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Cabana::get</b> (ParticleView&lt; VectorLength, FieldTags... &gt; &amp;particle, FieldTag, IndexTypes... indices)</td></tr>
 <tr class="memdesc:a68a6fd2968bf1e1dd4a0c88d8b1846e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a single element of a single field from indices. <br /></td></tr>
 <tr class="separator:a68a6fd2968bf1e1dd4a0c88d8b1846e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:accbf302d54f1080dc3fbb2fe74f69bdb"><td class="memTemplParams" colspan="2"><a id="accbf302d54f1080dc3fbb2fe74f69bdb" name="accbf302d54f1080dc3fbb2fe74f69bdb"></a>
-template&lt;class MemorySpace , class... FieldTags&gt; </td></tr>
-<tr class="memitem:accbf302d54f1080dc3fbb2fe74f69bdb"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Cabana::createParticleList</b> (const std::string &amp;label, ParticleTraits&lt; FieldTags... &gt;)</td></tr>
-<tr class="memdesc:accbf302d54f1080dc3fbb2fe74f69bdb"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> creation function. <br /></td></tr>
+<tr class="memitem:accbf302d54f1080dc3fbb2fe74f69bdb"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace , class... FieldTags&gt; </td></tr>
+<tr class="memitem:accbf302d54f1080dc3fbb2fe74f69bdb"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#accbf302d54f1080dc3fbb2fe74f69bdb">Cabana::createParticleList</a> (const std::string &amp;label, ParticleTraits&lt; FieldTags... &gt;)</td></tr>
+<tr class="memdesc:accbf302d54f1080dc3fbb2fe74f69bdb"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> creation function.  <br /></td></tr>
 <tr class="separator:accbf302d54f1080dc3fbb2fe74f69bdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>

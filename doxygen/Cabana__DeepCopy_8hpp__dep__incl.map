@@ -1,6 +1,6 @@
 <map id="core/src/Cabana_DeepCopy.hpp" name="core/src/Cabana_DeepCopy.hpp">
 <area shape="rect" id="node1" title="AoSoA and slice extensions for Kokkos deep copy and mirrors." alt="" coords="147,5,365,31"/>
-<area shape="rect" id="node2" href="$Cajita__ParticleGridDistributor_8hpp_source.html" title=" " alt="" coords="53,79,219,119"/>
+<area shape="rect" id="node2" href="$Cajita__ParticleGridDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="53,79,219,119"/>
 <area shape="rect" id="node5" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="240,328,424,353"/>
 <area shape="rect" id="node6" href="$Cabana__Sort_8hpp.html" title="Sorting and binning built on Kokkos BinSort." alt="" coords="293,86,475,111"/>
 <area shape="rect" id="node3" href="$Cajita_8hpp_source.html" title=" " alt="" coords="5,255,147,280"/>

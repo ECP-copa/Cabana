@@ -10,7 +10,7 @@
 <area shape="rect" id="node6" href="$Cajita__LoadBalancer_8hpp.html" title="Load Balancer." alt="" coords="1338,174,1566,199"/>
 <area shape="rect" id="node7" href="$Cajita__LocalGrid_8hpp.html" title="Local grid." alt="" coords="777,174,983,199"/>
 <area shape="rect" id="node13" href="$Cajita__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="969,431,1151,471"/>
-<area shape="rect" id="node16" href="$Cajita__ParticleGridDistributor_8hpp_source.html" title=" " alt="" coords="93,343,259,383"/>
+<area shape="rect" id="node16" href="$Cajita__ParticleGridDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="93,343,259,383"/>
 <area shape="rect" id="node20" href="$Cajita__SiloParticleOutput_8hpp.html" title="Write particle output using the Silo format." alt="" coords="1591,167,1777,207"/>
 <area shape="rect" id="node21" href="$Cajita__SparseLocalGrid_8hpp.html" title="Sparse Local grid and related implementations." alt="" coords="1994,255,2155,295"/>
 <area shape="rect" id="node8" href="$Cajita__Array_8hpp.html" title="Grid field arrays." alt="" coords="1025,262,1205,287"/>

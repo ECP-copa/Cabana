@@ -288,10 +288,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a8bb075b5a602fbfea922fd1c190ddc3e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a8bb075b5a602fbfea922fd1c190ddc3e">getUniqueTopology</a> (MPI_Comm comm, std::vector&lt; int &gt; topology)</td></tr>
 <tr class="memdesc:a8bb075b5a602fbfea922fd1c190ddc3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return unique neighbor ranks, with the current rank first.  <br /></td></tr>
 <tr class="separator:a8bb075b5a602fbfea922fd1c190ddc3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0dbb88343c498a5e729ed54e4e845971"><td class="memTemplParams" colspan="2"><a id="a0dbb88343c498a5e729ed54e4e845971" name="a0dbb88343c498a5e729ed54e4e845971"></a>
-template&lt;class Space , class SrcAoSoA &gt; </td></tr>
-<tr class="memitem:a0dbb88343c498a5e729ed54e4e845971"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a>&lt; typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>create_mirror</b> (const Space &amp;, const SrcAoSoA &amp;src, typename std::enable_if&lt;(!std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value)&gt;::type *=0)</td></tr>
-<tr class="memdesc:a0dbb88343c498a5e729ed54e4e845971"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a mirror of the given <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the given space. <br /></td></tr>
+<tr class="memitem:a0dbb88343c498a5e729ed54e4e845971"><td class="memTemplParams" colspan="2">template&lt;class Space , class SrcAoSoA &gt; </td></tr>
+<tr class="memitem:a0dbb88343c498a5e729ed54e4e845971"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a>&lt; typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a0dbb88343c498a5e729ed54e4e845971">create_mirror</a> (const Space &amp;, const SrcAoSoA &amp;src, typename std::enable_if&lt;(!std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value)&gt;::type *=0)</td></tr>
+<tr class="memdesc:a0dbb88343c498a5e729ed54e4e845971"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a mirror of the given <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the given space.  <br /></td></tr>
 <tr class="separator:a0dbb88343c498a5e729ed54e4e845971"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a682f288aa48e84e44856d1a0b2239b43"><td class="memTemplParams" colspan="2">template&lt;class Space , class SrcAoSoA &gt; </td></tr>
 <tr class="memitem:a682f288aa48e84e44856d1a0b2239b43"><td class="memTemplItemLeft" align="right" valign="top">SrcAoSoA&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a682f288aa48e84e44856d1a0b2239b43">create_mirror_view</a> (const Space &amp;, const SrcAoSoA &amp;src, typename std::enable_if&lt;(std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value)&gt;::type *=0)</td></tr>
@@ -486,10 +485,9 @@ template&lt;class FieldTag , class... FieldTags, class... IndexTypes, int Vector
 <tr class="memitem:a68a6fd2968bf1e1dd4a0c88d8b1846e5"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt; sizeof...(IndexTypes)==FieldTag::rank, typenameParticleView&lt; VectorLength, FieldTags... &gt;::soa_type::templatemember_reference_type&lt; <a class="el" href="structCabana_1_1TypeIndexer.html">TypeIndexer</a>&lt; FieldTag, FieldTags... &gt;::index &gt; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (<a class="el" href="structCabana_1_1ParticleView.html">ParticleView</a>&lt; VectorLength, FieldTags... &gt; &amp;particle, FieldTag, IndexTypes... indices)</td></tr>
 <tr class="memdesc:a68a6fd2968bf1e1dd4a0c88d8b1846e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a single element of a single field from indices. <br /></td></tr>
 <tr class="separator:a68a6fd2968bf1e1dd4a0c88d8b1846e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:accbf302d54f1080dc3fbb2fe74f69bdb"><td class="memTemplParams" colspan="2"><a id="accbf302d54f1080dc3fbb2fe74f69bdb" name="accbf302d54f1080dc3fbb2fe74f69bdb"></a>
-template&lt;class MemorySpace , class... FieldTags&gt; </td></tr>
-<tr class="memitem:accbf302d54f1080dc3fbb2fe74f69bdb"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>createParticleList</b> (const std::string &amp;label, <a class="el" href="structCabana_1_1ParticleTraits.html">ParticleTraits</a>&lt; FieldTags... &gt;)</td></tr>
-<tr class="memdesc:accbf302d54f1080dc3fbb2fe74f69bdb"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> creation function. <br /></td></tr>
+<tr class="memitem:accbf302d54f1080dc3fbb2fe74f69bdb"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace , class... FieldTags&gt; </td></tr>
+<tr class="memitem:accbf302d54f1080dc3fbb2fe74f69bdb"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#accbf302d54f1080dc3fbb2fe74f69bdb">createParticleList</a> (const std::string &amp;label, <a class="el" href="structCabana_1_1ParticleTraits.html">ParticleTraits</a>&lt; FieldTags... &gt;)</td></tr>
+<tr class="memdesc:accbf302d54f1080dc3fbb2fe74f69bdb"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> creation function.  <br /></td></tr>
 <tr class="separator:accbf302d54f1080dc3fbb2fe74f69bdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a55f062f7dc8d19daf0c5b3830c04c51e"><td class="memTemplParams" colspan="2"><a id="a55f062f7dc8d19daf0c5b3830c04c51e" name="a55f062f7dc8d19daf0c5b3830c04c51e"></a>
 template&lt;class ExecutionSpace , class ViewType , class SliceType &gt; </td></tr>
@@ -734,10 +732,10 @@ template&lt;class KeyViewType , class DeviceType  = typename KeyViewType::device
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">keys</td><td>The key values to use for binning. A key value is needed for every element of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.</td></tr>
-    <tr><td class="paramname">nbin</td><td>The number of bins to use for binning. The range of key values will subdivided equally by the number of bins.</td></tr>
-    <tr><td class="paramname">begin</td><td>The beginning index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to bin.</td></tr>
-    <tr><td class="paramname">end</td><td>The end index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to bin.</td></tr>
+    <tr><td class="paramname">keys</td><td>The key values to use for binning. A key value is needed for every element of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. </td></tr>
+    <tr><td class="paramname">nbin</td><td>The number of bins to use for binning. The range of key values will subdivided equally by the number of bins. </td></tr>
+    <tr><td class="paramname">begin</td><td>The beginning index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to bin. </td></tr>
+    <tr><td class="paramname">end</td><td>The end index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to bin. </td></tr>
   </table>
   </dd>
 </dl>
@@ -788,8 +786,8 @@ template&lt;class KeyViewType , class DeviceType  = typename KeyViewType::device
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">keys</td><td>The key values to use for binning. A key value is needed for every element of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.</td></tr>
-    <tr><td class="paramname">nbin</td><td>The number of bins to use for binning. The range of key values will subdivided equally by the number of bins.</td></tr>
+    <tr><td class="paramname">keys</td><td>The key values to use for binning. A key value is needed for every element of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. </td></tr>
+    <tr><td class="paramname">nbin</td><td>The number of bins to use for binning. The range of key values will subdivided equally by the number of bins. </td></tr>
   </table>
   </dd>
 </dl>
@@ -852,10 +850,10 @@ template&lt;class SliceType , class DeviceType  = typename SliceType::device_typ
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">slice</td><td><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> of keys.</td></tr>
-    <tr><td class="paramname">nbin</td><td>The number of bins to use for binning. The range of key values will subdivided equally by the number of bins.</td></tr>
-    <tr><td class="paramname">begin</td><td>The beginning index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to bin.</td></tr>
-    <tr><td class="paramname">end</td><td>The end index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to bin.</td></tr>
+    <tr><td class="paramname">slice</td><td><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> of keys. </td></tr>
+    <tr><td class="paramname">nbin</td><td>The number of bins to use for binning. The range of key values will subdivided equally by the number of bins. </td></tr>
+    <tr><td class="paramname">begin</td><td>The beginning index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to bin. </td></tr>
+    <tr><td class="paramname">end</td><td>The end index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to bin. </td></tr>
   </table>
   </dd>
 </dl>
@@ -906,8 +904,8 @@ template&lt;class SliceType , class DeviceType  = typename SliceType::device_typ
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">slice</td><td><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> of keys.</td></tr>
-    <tr><td class="paramname">nbin</td><td>The number of bins to use for binning. The range of key values will subdivided equally by the number of bins.</td></tr>
+    <tr><td class="paramname">slice</td><td><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> of keys. </td></tr>
+    <tr><td class="paramname">nbin</td><td>The number of bins to use for binning. The range of key values will subdivided equally by the number of bins. </td></tr>
   </table>
   </dd>
 </dl>
@@ -964,17 +962,17 @@ template&lt;class KeyViewType , class Comparator , class DeviceType  = typename 
 <p>Bin an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> over a subset of its range using a general comparator over the given Kokkos View of keys. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">KeyViewType</td><td>The Kokkos::View type for keys.</td></tr>
+    <tr><td class="paramname">KeyViewType</td><td>The Kokkos::View type for keys. </td></tr>
     <tr><td class="paramname">Comparator</td><td>Kokkos::BinSort compatible comparator type.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">keys</td><td>The key values to use for binning. A key value is needed for every element of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.</td></tr>
-    <tr><td class="paramname">comp</td><td>The comparator to use for binning. Must be compatible with Kokkos::BinSort.</td></tr>
-    <tr><td class="paramname">begin</td><td>The beginning index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to bin.</td></tr>
-    <tr><td class="paramname">end</td><td>The end index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to bin.</td></tr>
+    <tr><td class="paramname">keys</td><td>The key values to use for binning. A key value is needed for every element of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. </td></tr>
+    <tr><td class="paramname">comp</td><td>The comparator to use for binning. Must be compatible with Kokkos::BinSort. </td></tr>
+    <tr><td class="paramname">begin</td><td>The beginning index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to bin. </td></tr>
+    <tr><td class="paramname">end</td><td>The end index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to bin. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1035,6 +1033,53 @@ template&lt;class KeyViewType , class Comparator , class DeviceType  = typename 
 
 </div>
 </div>
+<a id="a0dbb88343c498a5e729ed54e4e845971" name="a0dbb88343c498a5e729ed54e4e845971"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0dbb88343c498a5e729ed54e4e845971">&#9670;&#160;</a></span>create_mirror()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Space , class SrcAoSoA &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a>&lt; typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length &gt; Cabana::create_mirror </td>
+          <td>(</td>
+          <td class="paramtype">const Space &amp;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const SrcAoSoA &amp;&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename std::enable_if&lt;(!std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value)&gt;::type *&#160;</td>
+          <td class="paramname"> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Allocate a mirror of the given <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the given space. </p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the new space. </dd></dl>
+
+</div>
+</div>
 <a id="a682f288aa48e84e44856d1a0b2239b43" name="a682f288aa48e84e44856d1a0b2239b43"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a682f288aa48e84e44856d1a0b2239b43">&#9670;&#160;</a></span>create_mirror_view() <span class="overload">[1/2]</span></h2>
 
@@ -1078,6 +1123,7 @@ template&lt;class Space , class SrcAoSoA &gt; </div>
 </div><div class="memdoc">
 
 <p>Create a mirror view of the given <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the given space. Same space specialization returns the input <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. </p>
+<dl class="section return"><dt>Returns</dt><dd>The original <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Memory allocation will only occur if the requested mirror memory space is different from that of the input <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. If they are the same, the original <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> (e.g. a view of that <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>) is returned. </dd></dl>
 
 </div>
@@ -1125,6 +1171,7 @@ template&lt;class Space , class SrcAoSoA &gt; </div>
 </div><div class="memdoc">
 
 <p>Create a mirror view of the given <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the given memory space. Different space specialization allocates a new <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. </p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the new space.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Memory allocation will only occur if the requested mirror memory space is different from that of the input <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. If they are the same, the original <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> (e.g. a view of that <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>) is returned. </dd></dl>
 
 </div>
@@ -1172,6 +1219,7 @@ template&lt;class Space , class SrcAoSoA &gt; </div>
 </div><div class="memdoc">
 
 <p>Create a mirror view of the given <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the given memory space and copy the contents of the input <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. Same space specialization returns the input <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. </p>
+<dl class="section return"><dt>Returns</dt><dd>The original <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Memory allocation will only occur if the requested mirror memory space is different from that of the input <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. If they are the same, the original <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> (e.g. a view of that <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>) is returned. </dd></dl>
 
 </div>
@@ -1219,6 +1267,7 @@ template&lt;class Space , class SrcAoSoA &gt; </div>
 </div><div class="memdoc">
 
 <p>Create a mirror of the given <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the given memory space and deep copy the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> into the mirror. Different space specialization allocates a new <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> and performs the deep copy. </p>
+<dl class="section return"><dt>Returns</dt><dd>The new <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Memory allocation will only occur if the requested mirror memory space is different from that of the input <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. If they are the same, the original <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> (e.g. a view of that <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>) is returned. </dd></dl>
 
 </div>
@@ -1344,6 +1393,40 @@ template&lt;class HaloType , class ParticleDataType &gt; </div>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classCabana_1_1Gather.html">Gather</a> </dd></dl>
+
+</div>
+</div>
+<a id="accbf302d54f1080dc3fbb2fe74f69bdb" name="accbf302d54f1080dc3fbb2fe74f69bdb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#accbf302d54f1080dc3fbb2fe74f69bdb">&#9670;&#160;</a></span>createParticleList()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MemorySpace , class... FieldTags&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto Cabana::createParticleList </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>label</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structCabana_1_1ParticleTraits.html">ParticleTraits</a>&lt; FieldTags... &gt;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> creation function. </p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> </dd></dl>
 
 </div>
 </div>
@@ -1543,6 +1626,7 @@ template&lt;class HaloType , class SliceType &gt; </div>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classCabana_1_1Scatter.html" title="Synchronously scatter data from the ghosts to the local decomposition of a slice using the halo rever...">Scatter</a> </dd></dl>
 
 </div>
 </div>
@@ -1585,7 +1669,7 @@ template&lt;class AoSoA_t &gt; </div>
 <p>Fill an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> with a tuple. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">aosoa</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> to fill.</td></tr>
+    <tr><td class="paramname">aosoa</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> to fill. </td></tr>
     <tr><td class="paramname">tuple</td><td>The tuple to assign. All <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> elements will be assigned this value. </td></tr>
   </table>
   </dd>
@@ -1638,7 +1722,7 @@ template&lt;class DstAoSoA , class SrcAoSoA &gt; </div>
 <p>Deep copy data between compatible <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> objects. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">dst</td><td>The destination for the copied data.</td></tr>
+    <tr><td class="paramname">dst</td><td>The destination for the copied data. </td></tr>
     <tr><td class="paramname">src</td><td>The source of the copied data.</td></tr>
   </table>
   </dd>
@@ -1692,7 +1776,7 @@ template&lt;class DstSlice , class SrcSlice &gt; </div>
 <p>Deep copy data between compatible <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> objects. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">dst</td><td>The destination for the copied data.</td></tr>
+    <tr><td class="paramname">dst</td><td>The destination for the copied data. </td></tr>
     <tr><td class="paramname">src</td><td>The source of the copied data.</td></tr>
   </table>
   </dd>
@@ -1787,7 +1871,7 @@ template&lt;class Slice_t &gt; </div>
 <p>Fill a slice with a scalar. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">slice</td><td>The slice to fill.</td></tr>
+    <tr><td class="paramname">slice</td><td>The slice to fill. </td></tr>
     <tr><td class="paramname">scalar</td><td>The scalar to assign. All slice elements will be assigned this value. </td></tr>
   </table>
   </dd>
@@ -3188,14 +3272,14 @@ template&lt;class BinningDataType , class AoSoA_t , class DeviceType  = typename
 <p>Given binning data permute an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">BinningDataType</td><td>The binning data type.</td></tr>
-    <tr><td class="paramname">AoSoA_t</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> type.</td></tr>
+    <tr><td class="paramname">BinningDataType</td><td>The binning data type. </td></tr>
+    <tr><td class="paramname">AoSoA_t</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> type. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">binning_data</td><td>The binning data.</td></tr>
+    <tr><td class="paramname">binning_data</td><td>The binning data. </td></tr>
     <tr><td class="paramname">aosoa</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> to permute. </td></tr>
   </table>
   </dd>
@@ -3240,14 +3324,14 @@ template&lt;class BinningDataType , class SliceType , class DeviceType  = typena
 <p>Given binning data permute a slice. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">BinningDataType</td><td>The binning data type.</td></tr>
+    <tr><td class="paramname">BinningDataType</td><td>The binning data type. </td></tr>
     <tr><td class="paramname">SliceType</td><td>The slice type.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">binning_data</td><td>The binning data.</td></tr>
+    <tr><td class="paramname">binning_data</td><td>The binning data. </td></tr>
     <tr><td class="paramname">slice</td><td>The slice to permute. </td></tr>
   </table>
   </dd>
@@ -3518,6 +3602,7 @@ template&lt;std::size_t M, class AoSoA_t &gt; </div>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> </dd></dl>
 
 </div>
 </div>
@@ -3570,9 +3655,9 @@ template&lt;class KeyViewType , class DeviceType  = typename KeyViewType::device
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">keys</td><td>The key values to use for sorting. A key value is needed for every element of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.</td></tr>
-    <tr><td class="paramname">begin</td><td>The beginning index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to sort.</td></tr>
-    <tr><td class="paramname">end</td><td>The end index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to sort.</td></tr>
+    <tr><td class="paramname">keys</td><td>The key values to use for sorting. A key value is needed for every element of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. </td></tr>
+    <tr><td class="paramname">begin</td><td>The beginning index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to sort. </td></tr>
+    <tr><td class="paramname">end</td><td>The end index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to sort. </td></tr>
   </table>
   </dd>
 </dl>
@@ -3617,7 +3702,7 @@ template&lt;class KeyViewType , class DeviceType  = typename KeyViewType::device
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">keys</td><td>The key values to use for sorting. A key value is needed for every element of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.</td></tr>
+    <tr><td class="paramname">keys</td><td>The key values to use for sorting. A key value is needed for every element of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. </td></tr>
   </table>
   </dd>
 </dl>
@@ -3674,9 +3759,9 @@ template&lt;class SliceType , class DeviceType  = typename SliceType::device_typ
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">slice</td><td><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> of keys.</td></tr>
-    <tr><td class="paramname">begin</td><td>The beginning index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to sort.</td></tr>
-    <tr><td class="paramname">end</td><td>The end index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to sort.</td></tr>
+    <tr><td class="paramname">slice</td><td><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> of keys. </td></tr>
+    <tr><td class="paramname">begin</td><td>The beginning index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to sort. </td></tr>
+    <tr><td class="paramname">end</td><td>The end index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to sort. </td></tr>
   </table>
   </dd>
 </dl>
@@ -3721,7 +3806,7 @@ template&lt;class SliceType , class DeviceType  = typename SliceType::device_typ
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">slice</td><td><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> of keys.</td></tr>
+    <tr><td class="paramname">slice</td><td><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> of keys. </td></tr>
   </table>
   </dd>
 </dl>
@@ -3778,17 +3863,17 @@ template&lt;class KeyViewType , class Comparator , class DeviceType  = typename 
 <p>Sort an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> over a subset of its range using a general comparator over the given Kokkos View of keys. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">KeyViewType</td><td>The Kokkos::View type for keys.</td></tr>
+    <tr><td class="paramname">KeyViewType</td><td>The Kokkos::View type for keys. </td></tr>
     <tr><td class="paramname">Comparator</td><td>Kokkos::BinSort compatible comparator type.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">keys</td><td>The key values to use for sorting. A key value is needed for every element of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.</td></tr>
-    <tr><td class="paramname">comp</td><td>The comparator to use for sorting. Must be compatible with Kokkos::BinSort.</td></tr>
-    <tr><td class="paramname">begin</td><td>The beginning index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to sort.</td></tr>
-    <tr><td class="paramname">end</td><td>The end index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to sort.</td></tr>
+    <tr><td class="paramname">keys</td><td>The key values to use for sorting. A key value is needed for every element of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. </td></tr>
+    <tr><td class="paramname">comp</td><td>The comparator to use for sorting. Must be compatible with Kokkos::BinSort. </td></tr>
+    <tr><td class="paramname">begin</td><td>The beginning index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to sort. </td></tr>
+    <tr><td class="paramname">end</td><td>The end index of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> range to sort. </td></tr>
   </table>
   </dd>
 </dl>
@@ -3833,15 +3918,15 @@ template&lt;class KeyViewType , class Comparator , class DeviceType  = typename 
 <p>Sort an entire <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> using a general comparator over the given Kokkos View of keys. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">KeyViewType</td><td>The Kokkos::View type for keys.</td></tr>
+    <tr><td class="paramname">KeyViewType</td><td>The Kokkos::View type for keys. </td></tr>
     <tr><td class="paramname">Comparator</td><td>Kokkos::BinSort compatible comparator type.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">keys</td><td>The key values to use for sorting. A key value is needed for every element of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.</td></tr>
-    <tr><td class="paramname">comp</td><td>The comparator to use for sorting. Must be compatible with Kokkos::BinSort.</td></tr>
+    <tr><td class="paramname">keys</td><td>The key values to use for sorting. A key value is needed for every element of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. </td></tr>
+    <tr><td class="paramname">comp</td><td>The comparator to use for sorting. Must be compatible with Kokkos::BinSort. </td></tr>
   </table>
   </dd>
 </dl>

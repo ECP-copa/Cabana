@@ -122,7 +122,7 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="center"><img src="Cabana__DeepCopy_8hpp__dep__incl.png" border="0" usemap="#acore_2src_2Cabana__DeepCopy_8hppdep" alt=""/></div>
 <map name="acore_2src_2Cabana__DeepCopy_8hppdep" id="acore_2src_2Cabana__DeepCopy_8hppdep">
 <area shape="rect" title="AoSoA and slice extensions for Kokkos deep copy and mirrors." alt="" coords="147,5,365,31"/>
-<area shape="rect" href="Cajita__ParticleGridDistributor_8hpp_source.html" title=" " alt="" coords="53,79,219,119"/>
+<area shape="rect" href="Cajita__ParticleGridDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="53,79,219,119"/>
 <area shape="rect" href="Cabana__Core_8hpp_source.html" title=" " alt="" coords="240,328,424,353"/>
 <area shape="rect" href="Cabana__Sort_8hpp.html" title="Sorting and binning built on Kokkos BinSort." alt="" coords="293,86,475,111"/>
 <area shape="rect" href="Cajita_8hpp_source.html" title=" " alt="" coords="5,255,147,280"/>
@@ -142,10 +142,9 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a0dbb88343c498a5e729ed54e4e845971"><td class="memTemplParams" colspan="2"><a id="a0dbb88343c498a5e729ed54e4e845971" name="a0dbb88343c498a5e729ed54e4e845971"></a>
-template&lt;class Space , class SrcAoSoA &gt; </td></tr>
-<tr class="memitem:a0dbb88343c498a5e729ed54e4e845971"><td class="memTemplItemLeft" align="right" valign="top">AoSoA&lt; typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Cabana::create_mirror</b> (const Space &amp;, const SrcAoSoA &amp;src, typename std::enable_if&lt;(!std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value)&gt;::type *=0)</td></tr>
-<tr class="memdesc:a0dbb88343c498a5e729ed54e4e845971"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a mirror of the given <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the given space. <br /></td></tr>
+<tr class="memitem:a0dbb88343c498a5e729ed54e4e845971"><td class="memTemplParams" colspan="2">template&lt;class Space , class SrcAoSoA &gt; </td></tr>
+<tr class="memitem:a0dbb88343c498a5e729ed54e4e845971"><td class="memTemplItemLeft" align="right" valign="top">AoSoA&lt; typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a0dbb88343c498a5e729ed54e4e845971">Cabana::create_mirror</a> (const Space &amp;, const SrcAoSoA &amp;src, typename std::enable_if&lt;(!std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value)&gt;::type *=0)</td></tr>
+<tr class="memdesc:a0dbb88343c498a5e729ed54e4e845971"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a mirror of the given <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the given space.  <br /></td></tr>
 <tr class="separator:a0dbb88343c498a5e729ed54e4e845971"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a682f288aa48e84e44856d1a0b2239b43"><td class="memTemplParams" colspan="2">template&lt;class Space , class SrcAoSoA &gt; </td></tr>
 <tr class="memitem:a682f288aa48e84e44856d1a0b2239b43"><td class="memTemplItemLeft" align="right" valign="top">SrcAoSoA&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a682f288aa48e84e44856d1a0b2239b43">Cabana::create_mirror_view</a> (const Space &amp;, const SrcAoSoA &amp;src, typename std::enable_if&lt;(std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value)&gt;::type *=0)</td></tr>

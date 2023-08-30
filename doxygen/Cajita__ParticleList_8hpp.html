@@ -88,7 +88,7 @@ $(function() {
 <code>#include &lt;<a class="el" href="Cabana__ParticleList_8hpp_source.html">Cabana_ParticleList.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="Cabana__SoA_8hpp_source.html">Cabana_SoA.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="Cabana__Tuple_8hpp_source.html">Cabana_Tuple.hpp</a>&gt;</code><br />
-<code>#include &lt;Cajita_ParticleGridDistributor.hpp&gt;</code><br />
+<code>#include &lt;<a class="el" href="Cajita__ParticleGridDistributor_8hpp_source.html">Cajita_ParticleGridDistributor.hpp</a>&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
@@ -106,7 +106,7 @@ Include dependency graph for Cajita_ParticleList.hpp:</div>
 <area shape="rect" href="Cabana__Tuple_8hpp.html" title="Tuple of single particle information to build AoSoA." alt="" coords="382,387,517,412"/>
 <area shape="rect" href="Cabana__ParticleList_8hpp.html" title="Application&#45;level particle storage and single particle access." alt="" coords="693,240,861,265"/>
 <area shape="rect" title=" " alt="" coords="2623,460,2697,485"/>
-<area shape="rect" href="Cajita__ParticleGridDistributor_8hpp_source.html" title=" " alt="" coords="2397,93,2624,119"/>
+<area shape="rect" href="Cajita__ParticleGridDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="2397,93,2624,119"/>
 <area shape="rect" title=" " alt="" coords="473,607,535,632"/>
 <area shape="rect" href="Cabana__Slice_8hpp.html" title="Slice a single particle property from an AoSoA." alt="" coords="1269,387,1397,412"/>
 <area shape="rect" href="Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="878,460,1015,485"/>
@@ -167,10 +167,9 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:abe00d64b936b78a9bdcebf8499486202"><td class="memTemplParams" colspan="2"><a id="abe00d64b936b78a9bdcebf8499486202" name="abe00d64b936b78a9bdcebf8499486202"></a>
-template&lt;class MemorySpace , class... FieldTags&gt; </td></tr>
-<tr class="memitem:abe00d64b936b78a9bdcebf8499486202"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Cajita::createParticleList</b> (const std::string &amp;label, <a class="el" href="structCabana_1_1ParticleTraits.html">Cabana::ParticleTraits</a>&lt; FieldTags... &gt;)</td></tr>
-<tr class="memdesc:abe00d64b936b78a9bdcebf8499486202"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1ParticleList.html" title="List of particle fields stored in AoSoA with associated Cajita mesh.">ParticleList</a> creation function. <br /></td></tr>
+<tr class="memitem:abe00d64b936b78a9bdcebf8499486202"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace , class... FieldTags&gt; </td></tr>
+<tr class="memitem:abe00d64b936b78a9bdcebf8499486202"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#abe00d64b936b78a9bdcebf8499486202">Cajita::createParticleList</a> (const std::string &amp;label, <a class="el" href="structCabana_1_1ParticleTraits.html">Cabana::ParticleTraits</a>&lt; FieldTags... &gt;)</td></tr>
+<tr class="memdesc:abe00d64b936b78a9bdcebf8499486202"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1ParticleList.html" title="List of particle fields stored in AoSoA with associated Cajita mesh.">ParticleList</a> creation function.  <br /></td></tr>
 <tr class="separator:abe00d64b936b78a9bdcebf8499486202"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>

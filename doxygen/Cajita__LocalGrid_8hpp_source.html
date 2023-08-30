@@ -516,28 +516,28 @@ $(function() {
 <div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span><span class="comment">// Creation function.</span></div>
 <div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span><span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> MeshType&gt;</div>
-<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>std::shared_ptr&lt;LocalGrid&lt;MeshType&gt;&gt;</div>
-<div class="line"><a id="l00604" name="l00604"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a3f523da3312248cc6caa4ca35b79b66b">  604</a></span><a class="code hl_function" href="namespaceCajita.html#a3f523da3312248cc6caa4ca35b79b66b">createLocalGrid</a>( <span class="keyword">const</span> std::shared_ptr&lt;<a class="code hl_class" href="classCajita_1_1GlobalGrid.html">GlobalGrid&lt;MeshType&gt;</a>&gt;&amp; global_grid,</div>
-<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>                 <span class="keyword">const</span> <span class="keywordtype">int</span> halo_cell_width )</div>
-<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>{</div>
-<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>    <span class="keywordflow">return</span> std::make_shared&lt;LocalGrid&lt;MeshType&gt;&gt;( global_grid,</div>
-<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>                                                  halo_cell_width );</div>
-<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>}</div>
-<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span> </div>
-<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span> </div>
-<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>} <span class="comment">// end namespace Cajita</span></div>
-<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span> </div>
-<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span><span class="comment">// Template implementations</span></div>
-<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span> </div>
-<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span><span class="preprocessor">#include &lt;Cajita_LocalGrid_impl.hpp&gt;</span></div>
-<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span> </div>
-<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span> </div>
-<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span><span class="preprocessor">#endif </span><span class="comment">// end CAJITA_LOCALGRID_HPP</span></div>
+<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span><span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> MeshType&gt;</div>
+<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>std::shared_ptr&lt;LocalGrid&lt;MeshType&gt;&gt;</div>
+<div class="line"><a id="l00605" name="l00605"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a3f523da3312248cc6caa4ca35b79b66b">  605</a></span><a class="code hl_function" href="namespaceCajita.html#a3f523da3312248cc6caa4ca35b79b66b">createLocalGrid</a>( <span class="keyword">const</span> std::shared_ptr&lt;<a class="code hl_class" href="classCajita_1_1GlobalGrid.html">GlobalGrid&lt;MeshType&gt;</a>&gt;&amp; global_grid,</div>
+<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>                 <span class="keyword">const</span> <span class="keywordtype">int</span> halo_cell_width )</div>
+<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>{</div>
+<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>    <span class="keywordflow">return</span> std::make_shared&lt;LocalGrid&lt;MeshType&gt;&gt;( global_grid,</div>
+<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>                                                  halo_cell_width );</div>
+<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>}</div>
+<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span> </div>
+<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span> </div>
+<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>} <span class="comment">// end namespace Cajita</span></div>
+<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span> </div>
+<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span><span class="comment">// Template implementations</span></div>
+<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span> </div>
+<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span><span class="preprocessor">#include &lt;Cajita_LocalGrid_impl.hpp&gt;</span></div>
+<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span> </div>
+<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span> </div>
+<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span><span class="preprocessor">#endif </span><span class="comment">// end CAJITA_LOCALGRID_HPP</span></div>
 <div class="ttc" id="aCajita__GlobalGrid_8hpp_html"><div class="ttname"><a href="Cajita__GlobalGrid_8hpp.html">Cajita_GlobalGrid.hpp</a></div><div class="ttdoc">Global grid.</div></div>
 <div class="ttc" id="aCajita__IndexSpace_8hpp_html"><div class="ttname"><a href="Cajita__IndexSpace_8hpp.html">Cajita_IndexSpace.hpp</a></div><div class="ttdoc">Logical grid indexing.</div></div>
 <div class="ttc" id="aCajita__Types_8hpp_html"><div class="ttname"><a href="Cajita__Types_8hpp.html">Cajita_Types.hpp</a></div><div class="ttdoc">Grid type tags.</div></div>
@@ -558,7 +558,7 @@ $(function() {
 <div class="ttc" id="aclassCajita_1_1LocalGrid_html_ae766de0b49dbf112d789a413e2a2e384"><div class="ttname"><a href="classCajita_1_1LocalGrid.html#ae766de0b49dbf112d789a413e2a2e384">Cajita::LocalGrid::boundaryIndexSpace</a></div><div class="ttdeci">std::enable_if_t&lt; 2==NSD, IndexSpace&lt; 2 &gt; &gt; boundaryIndexSpace(DecompositionTag t1, EntityType t2, const int off_i, const int off_j, const int halo_width=-1) const</div><div class="ttdoc">Given the relative offsets of a boundary relative to this local grid's indices get the set of local e...</div></div>
 <div class="ttc" id="aclassCajita_1_1LocalGrid_html_aecf5c5de19915ff5c8c429d343c43893"><div class="ttname"><a href="classCajita_1_1LocalGrid.html#aecf5c5de19915ff5c8c429d343c43893">Cajita::LocalGrid::haloCellWidth</a></div><div class="ttdeci">int haloCellWidth() const</div><div class="ttdoc">Get the number of cells in the halo.</div><div class="ttdef"><b>Definition:</b> Cajita_LocalGrid_impl.hpp:47</div></div>
 <div class="ttc" id="anamespaceCajita_html"><div class="ttname"><a href="namespaceCajita.html">Cajita</a></div><div class="ttdoc">Cajita: grid and particle-grid data structures and algorithms.</div></div>
-<div class="ttc" id="anamespaceCajita_html_a3f523da3312248cc6caa4ca35b79b66b"><div class="ttname"><a href="namespaceCajita.html#a3f523da3312248cc6caa4ca35b79b66b">Cajita::createLocalGrid</a></div><div class="ttdeci">std::shared_ptr&lt; LocalGrid&lt; MeshType &gt; &gt; createLocalGrid(const std::shared_ptr&lt; GlobalGrid&lt; MeshType &gt; &gt; &amp;global_grid, const int halo_cell_width)</div><div class="ttdoc">Create a local grid.</div><div class="ttdef"><b>Definition:</b> Cajita_LocalGrid.hpp:604</div></div>
+<div class="ttc" id="anamespaceCajita_html_a3f523da3312248cc6caa4ca35b79b66b"><div class="ttname"><a href="namespaceCajita.html#a3f523da3312248cc6caa4ca35b79b66b">Cajita::createLocalGrid</a></div><div class="ttdeci">std::shared_ptr&lt; LocalGrid&lt; MeshType &gt; &gt; createLocalGrid(const std::shared_ptr&lt; GlobalGrid&lt; MeshType &gt; &gt; &amp;global_grid, const int halo_cell_width)</div><div class="ttdoc">Create a local grid.</div><div class="ttdef"><b>Definition:</b> Cajita_LocalGrid.hpp:605</div></div>
 <div class="ttc" id="astructCajita_1_1Cell_html"><div class="ttname"><a href="structCajita_1_1Cell.html">Cajita::Cell</a></div><div class="ttdoc">Mesh cell tag.</div><div class="ttdef"><b>Definition:</b> Cajita_Types.hpp:47</div></div>
 <div class="ttc" id="astructCajita_1_1Edge_html"><div class="ttname"><a href="structCajita_1_1Edge.html">Cajita::Edge</a></div><div class="ttdoc">Mesh edge tag.</div><div class="ttdef"><b>Definition:</b> Cajita_Types.hpp:93</div></div>
 <div class="ttc" id="astructCajita_1_1Face_html"><div class="ttname"><a href="structCajita_1_1Face.html">Cajita::Face</a></div><div class="ttdoc">Mesh face tag.</div><div class="ttdef"><b>Definition:</b> Cajita_Types.hpp:62</div></div>

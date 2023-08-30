@@ -2,7 +2,7 @@
 <area shape="rect" id="node1" title="Global mesh." alt="" coords="841,5,999,45"/>
 <area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="1019,533,1160,559"/>
 <area shape="rect" id="node3" href="$Cajita__GlobalGrid_8hpp.html" title="Global grid." alt="" coords="951,93,1110,133"/>
-<area shape="rect" id="node16" href="$Cajita__ParticleGridDistributor_8hpp_source.html" title=" " alt="" coords="2280,357,2445,397"/>
+<area shape="rect" id="node16" href="$Cajita__ParticleGridDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="2280,357,2445,397"/>
 <area shape="rect" id="node23" href="$Cajita__SparseIndexSpace_8hpp.html" title="Sparse grid mapping." alt="" coords="238,181,399,221"/>
 <area shape="rect" id="node4" href="$Cajita__HypreSemiStructuredSolver_8hpp.html" title="HYPRE semi&#45;structured solver interface." alt="" coords="619,357,805,397"/>
 <area shape="rect" id="node5" href="$Cajita__HypreStructuredSolver_8hpp.html" title="HYPRE structured solver interface." alt="" coords="1715,357,1938,397"/>

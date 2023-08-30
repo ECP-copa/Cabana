@@ -445,8 +445,8 @@ template&lt;class DeviceType &gt; </div>
 </div><div class="memdoc">
 
 <p>Get the number of export elements. </p>
-<p>Whenever the communciation plan is applied, this is the total number of elements expected to be input on the sending ranks (in the forward communication plan). This will be different than the number returned by <a class="el" href="classCabana_1_1CommunicationPlan.html#a9f3bbc1074cf677e7b73146fdcfe1657" title="Get the total number of exports this rank will do.">totalNumExport()</a> if some of the export ranks used in the construction are -1 and therefore will not particpate in an export operation.</p>
-<dl class="section return"><dt>Returns</dt><dd>The number of export elements. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of export elements.</dd></dl>
+<p>Whenever the communciation plan is applied, this is the total number of elements expected to be input on the sending ranks (in the forward communication plan). This will be different than the number returned by <a class="el" href="classCabana_1_1CommunicationPlan.html#a9f3bbc1074cf677e7b73146fdcfe1657" title="Get the total number of exports this rank will do.">totalNumExport()</a> if some of the export ranks used in the construction are -1 and therefore will not particpate in an export operation. </p>
 
 </div>
 </div>
@@ -510,7 +510,7 @@ template&lt;class DeviceType &gt; </div>
 <p>Given a local neighbor id get its rank in the MPI communicator. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">neighbor</td><td>The local id of the neighbor to get the rank for.</td></tr>
+    <tr><td class="paramname">neighbor</td><td>The local id of the neighbor to get the rank for. </td></tr>
   </table>
   </dd>
 </dl>
@@ -547,7 +547,7 @@ template&lt;class DeviceType &gt; </div>
 <p>Get the number of elements this rank will export to a given neighbor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">neighbor</td><td>The local id of the neighbor to get the number of exports for.</td></tr>
+    <tr><td class="paramname">neighbor</td><td>The local id of the neighbor to get the number of exports for. </td></tr>
   </table>
   </dd>
 </dl>
@@ -584,7 +584,7 @@ template&lt;class DeviceType &gt; </div>
 <p>Get the number of elements this rank will import from a given neighbor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">neighbor</td><td>The local id of the neighbor to get the number of imports for.</td></tr>
+    <tr><td class="paramname">neighbor</td><td>The local id of the neighbor to get the number of imports for. </td></tr>
   </table>
   </dd>
 </dl>
