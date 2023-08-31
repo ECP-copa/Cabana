@@ -13,14 +13,16 @@
   \file Cajita_MpiTraits.hpp
   \brief MPI traits
 */
-#ifndef CAJITA_MPITRAITS_HPP
-#define CAJITA_MPITRAITS_HPP
+#ifndef CABANA_GRID_MPITRAITS_HPP
+#define CABANA_GRID_MPITRAITS_HPP
 
 #include <Kokkos_Core.hpp>
 
 #include <mpi.h>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 
 //---------------------------------------------------------------------------//
@@ -71,6 +73,13 @@ struct MpiTraits<double>
 
 //---------------------------------------------------------------------------//
 
-} // end namespace Cajita
+} // namespace Grid
+} // namespace Cabana
 
-#endif // end CAJITA_MPITRAITS_HPP
+namespace Cajita
+{
+template <class T>
+using MpiTraits [[deprecated]] = Cabana::Grid::MpiTraits<T>;
+}
+
+#endif // end CABANA_GRID_MPITRAITS_HPP

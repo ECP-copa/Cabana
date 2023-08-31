@@ -13,12 +13,14 @@
   \file Cajita_Types.hpp
   \brief Grid type tags
 */
-#ifndef CAJITA_TYPES_HPP
-#define CAJITA_TYPES_HPP
+#ifndef CABANA_GRID_TYPES_HPP
+#define CABANA_GRID_TYPES_HPP
 
 #include <type_traits>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 
 //---------------------------------------------------------------------------//
@@ -346,7 +348,66 @@ struct isSparseMesh<const SparseMesh<Scalar, NumSpaceDim>>
 {
 };
 //---------------------------------------------------------------------------//
+} // namespace Grid
+} // namespace Cabana
 
-} // end namespace Cajita
+namespace Cajita
+{
+//! \cond Deprecated
+using Dim [[deprecated( "Cajita is now Cabana::Grid." )]] = Cabana::Grid::Dim;
+using Own [[deprecated( "Cajita is now Cabana::Grid." )]] = Cabana::Grid::Own;
+using Ghost [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Ghost;
+using Local [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Local;
+using Global [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Global;
+using Cell [[deprecated( "Cajita is now Cabana::Grid." )]] = Cabana::Grid::Cell;
+using Node [[deprecated( "Cajita is now Cabana::Grid." )]] = Cabana::Grid::Node;
 
-#endif // CAJITA_TYPES_HPP
+template <int D>
+using Face [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Face<D>;
+template <int D>
+using Edge [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Edge<D>;
+
+template <class T>
+using isCell [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::isCell<T>;
+template <class T>
+using isNode [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::isNode<T>;
+template <class T>
+using isFace [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::isFace<T>;
+template <class T>
+using isEdge [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::isEdge<T>;
+
+template <class Scalar, std::size_t NumSpaceDim = 3>
+using UniformMesh [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::UniformMesh<Scalar, NumSpaceDim>;
+template <class Scalar, std::size_t NumSpaceDim = 3>
+using NonUniformMesh [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::NonUniformMesh<Scalar, NumSpaceDim>;
+template <class Scalar, std::size_t NumSpaceDim = 3>
+using SparseMesh [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::SparseMesh<Scalar, NumSpaceDim>;
+
+template <class T>
+using isMeshType [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::isMeshType<T>;
+template <class T>
+using isUniformMesh [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::isUniformMesh<T>;
+template <class T>
+using isNonUniformMesh [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::isNonUniformMesh<T>;
+template <class T>
+using isSparseMesh [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::isSparseMesh<T>;
+//! \endcond
+} // namespace Cajita
+
+#endif // CABANA_GRID_TYPES_HPP

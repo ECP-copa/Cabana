@@ -13,8 +13,8 @@
   \file Cajita_IndexConversion.hpp
   \brief Local to global index conversion
 */
-#ifndef CAJITA_INDEXCONVERSION_HPP
-#define CAJITA_INDEXCONVERSION_HPP
+#ifndef CABANA_GRID_INDEXCONVERSION_HPP
+#define CABANA_GRID_INDEXCONVERSION_HPP
 
 #include <Cajita_IndexSpace.hpp>
 #include <Cajita_Types.hpp>
@@ -23,7 +23,9 @@
 
 #include <type_traits>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 namespace IndexConversion
 {
@@ -173,6 +175,25 @@ L2G<MeshType, EntityType> createL2G( const LocalGrid<MeshType>& local_grid,
 //---------------------------------------------------------------------------//
 
 } // end namespace IndexConversion
-} // end namespace Cajita
+} // namespace Grid
+} // namespace Cabana
 
-#endif // end CAJITA_INDEXCONVERSION_HPP
+namespace Cajita
+{
+namespace IndexConversion
+{
+template <class MeshType, class EntityType>
+using L2G [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::IndexConversion::L2G<EntityType, MeshType>;
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto createL2G( Args&&... args )
+{
+    return Cabana::Grid::IndexConversion::createL2G(
+        std::forward<Args>( args )... );
+}
+
+} // namespace IndexConversion
+} // namespace Cajita
+
+#endif // end CABANA_GRID_INDEXCONVERSION_HPP

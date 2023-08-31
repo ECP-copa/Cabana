@@ -9,10 +9,12 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CAJITA_LOCALGRID_IMPL_HPP
-#define CAJITA_LOCALGRID_IMPL_HPP
+#ifndef CABANA_GRID_LOCALGRID_IMPL_HPP
+#define CABANA_GRID_LOCALGRID_IMPL_HPP
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 //---------------------------------------------------------------------------//
 // Constructor.
@@ -1279,6 +1281,7 @@ LocalGrid<MeshType>::edgeBoundaryIndexSpace( Ghost, Edge<Dir>,
 
 //---------------------------------------------------------------------------//
 
-} // end namespace Cajita
+} // namespace Grid
+} // namespace Cabana
 
-#endif // end CAJITA_LOCALGRID_IMPL_HPP
+#endif // end CABANA_GRID_LOCALGRID_IMPL_HPP

@@ -16,7 +16,10 @@
 
 #define Cabana_GIT_COMMIT_HASH "@Cabana_GIT_COMMIT_HASH@"
 
-#cmakedefine Cabana_ENABLE_CAJITA
+#cmakedefine Cabana_ENABLE_GRID
+
+#cmakedefine Cabana_ENABLE_CAJITA // FIXME: remove in the next release.
+#cmakedefine Cabana_DISABLE_CAJITA_WARNINGS // FIXME: remove in the next release.
 
 #cmakedefine Cabana_ENABLE_MPI
 

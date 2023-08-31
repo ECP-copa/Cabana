@@ -9,14 +9,16 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CAJITA_GLOBALGRID_IMPL_HPP
-#define CAJITA_GLOBALGRID_IMPL_HPP
+#ifndef CABANA_GRID_GLOBALGRID_IMPL_HPP
+#define CABANA_GRID_GLOBALGRID_IMPL_HPP
 
 #include <algorithm>
 #include <cmath>
 #include <limits>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 //---------------------------------------------------------------------------//
 // Constructor.
@@ -326,6 +328,7 @@ void GlobalGrid<MeshType>::setNumCellAndOffset(
 }
 
 //---------------------------------------------------------------------------//
-} // end namespace Cajita
+} // namespace Grid
+} // namespace Cabana
 
-#endif // end CAJITA_GLOBALGRID_IMPL_HPP
+#endif // end CABANA_GRID_GLOBALGRID_IMPL_HPP

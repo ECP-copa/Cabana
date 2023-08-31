@@ -13,8 +13,8 @@
   \file Cajita_ParticleList.hpp
   \brief Application-level particle/mesh storage and single particle access.
 */
-#ifndef CAJITA_PARTICLELIST_HPP
-#define CAJITA_PARTICLELIST_HPP
+#ifndef CABANA_GRID_PARTICLELIST_HPP
+#define CABANA_GRID_PARTICLELIST_HPP
 
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_MemberTypes.hpp>
@@ -28,7 +28,9 @@
 #include <string>
 #include <type_traits>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 
 //---------------------------------------------------------------------------//
@@ -146,6 +148,37 @@ auto createParticleList( const std::string& label,
 
 //---------------------------------------------------------------------------//
 
+} // namespace Grid
+} // namespace Cabana
+
+namespace Cajita
+{
+template <class MemorySpace, int VectorLength, class... FieldTags>
+using ParticleList [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::ParticleList<MemorySpace, VectorLength, FieldTags...>;
+
+template <class T>
+using is_particle_list [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::is_particle_list<T>;
+
+// MemorySpace and VectorLength cannot be deduced.
+template <class MemorySpace, int VectorLength, class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createParticleList( Args&&... args )
+{
+    return Cabana::Grid::createParticleList<MemorySpace, VectorLength>(
+        std::forward<Args>( args )... );
+}
+
+// MemorySpace cannot be deduced.
+template <class MemorySpace, class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createParticleList( Args&&... args )
+{
+    return Cabana::Grid::createParticleList<MemorySpace>(
+        std::forward<Args>( args )... );
+}
+
 } // namespace Cajita
 
-#endif // end CAJITA_PARTICLELIST_HPP
+#endif // end CABANA_GRID_PARTICLELIST_HPP

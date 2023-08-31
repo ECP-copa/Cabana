@@ -13,8 +13,8 @@
   \file Cajita_IndexSpace.hpp
   \brief Logical grid indexing
 */
-#ifndef CAJITA_INDEXSPACE_HPP
-#define CAJITA_INDEXSPACE_HPP
+#ifndef CABANA_GRID_INDEXSPACE_HPP
+#define CABANA_GRID_INDEXSPACE_HPP
 
 #include <Kokkos_Core.hpp>
 
@@ -22,7 +22,9 @@
 #include <array>
 #include <string>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 //---------------------------------------------------------------------------//
 /*!
@@ -476,6 +478,50 @@ IndexSpace<N + 1> appendDimension( const IndexSpace<N>& index_space,
 
 //---------------------------------------------------------------------------//
 
-} // end namespace Cajita
+} // namespace Grid
+} // namespace Cabana
 
-#endif // end CAJITA_INDEXSPACE_HPP
+namespace Cajita
+{
+template <long N>
+using IndexSpace [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::IndexSpace<N>;
+
+template <typename... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createExecutionPolicy( Args&&... args )
+{
+    return Cabana::Grid::createExecutionPolicy( std::forward<Args>( args )... );
+}
+
+template <typename... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createView( Args&&... args )
+{
+    return Cabana::Grid::createView( std::forward<Args>( args )... );
+}
+
+template <class Scalar, class... Params>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createView( const std::string& label, const IndexSpace<1>& index_space )
+{
+    return Cabana::Grid::createView<Scalar, Params...>( label, index_space );
+}
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createSubview( Args&&... args )
+{
+    return Cabana::Grid::createSubview( std::forward<Args>( args )... );
+}
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+appendDimension( Args&&... args )
+{
+    return Cabana::Grid::appendDimension( std::forward<Args>( args )... );
+}
+
+} // namespace Cajita
+
+#endif // end CABANA_GRID_INDEXSPACE_HPP

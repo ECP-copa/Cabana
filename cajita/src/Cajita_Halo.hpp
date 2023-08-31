@@ -13,8 +13,8 @@
   \file Cajita_Halo.hpp
   \brief Multi-node grid scatter/gather
 */
-#ifndef CAJITA_HALO_HPP
-#define CAJITA_HALO_HPP
+#ifndef CABANA_GRID_HALO_HPP
+#define CABANA_GRID_HALO_HPP
 
 #include <Cajita_Array.hpp>
 #include <Cajita_IndexSpace.hpp>
@@ -31,7 +31,9 @@
 #include <type_traits>
 #include <vector>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 //---------------------------------------------------------------------------//
 // Halo exchange patterns.
@@ -145,11 +147,6 @@ class FaceHaloPattern<2> : public HaloPattern<2>
             { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
         this->setNeighbors( neighbors );
     }
-};
-
-//! Full 3d halo with all 26 adjacent blocks. Backwards compatibility wrapper.
-class [[deprecated]] FullHaloPattern : public NodeHaloPattern<3>
-{
 };
 
 //---------------------------------------------------------------------------//
@@ -290,7 +287,7 @@ class Halo
     void gather( const ExecutionSpace& exec_space,
                  const ArrayTypes&... arrays ) const
     {
-        Kokkos::Profiling::pushRegion( "Cajita::gather" );
+        Kokkos::Profiling::pushRegion( "Cabana::Grid::gather" );
 
         // Get the number of neighbors. Return if we have none.
         int num_n = _neighbor_ranks.size();
@@ -379,7 +376,7 @@ class Halo
     void scatter( const ExecutionSpace& exec_space, const ReduceOp& reduce_op,
                   const ArrayTypes&... arrays ) const
     {
-        Kokkos::Profiling::pushRegion( "Cajita::scatter" );
+        Kokkos::Profiling::pushRegion( "Cabana::Grid::scatter" );
 
         // Get the number of neighbors. Return if we have none.
         int num_n = _neighbor_ranks.size();
@@ -753,7 +750,7 @@ class Halo
     {
         auto pp = Cabana::makeParameterPack( array_views... );
         Kokkos::parallel_for(
-            "Cajita::Halo::pack_buffer",
+            "Cabana::Grid::Halo::pack_buffer",
             Kokkos::RangePolicy<ExecutionSpace>( exec_space, 0,
                                                  steering.extent( 0 ) ),
             KOKKOS_LAMBDA( const int i ) {
@@ -895,7 +892,7 @@ class Halo
     {
         auto pp = Cabana::makeParameterPack( array_views... );
         Kokkos::parallel_for(
-            "Cajita::Halo::unpack_buffer",
+            "Cabana::Grid::Halo::unpack_buffer",
             Kokkos::RangePolicy<ExecutionSpace>( exec_space, 0,
                                                  steering.extent( 0 ) ),
             KOKKOS_LAMBDA( const int i ) {
@@ -956,6 +953,31 @@ auto createHalo( const Pattern& pattern, const int width,
     using memory_space = typename ArrayPackMemorySpace<ArrayTypes...>::type;
     return std::make_shared<Halo<memory_space>>( pattern, width, arrays... );
 }
+
+//---------------------------------------------------------------------------//
+
+} // namespace Grid
+} // namespace Cabana
+
+namespace Cajita
+{
+template <std::size_t NumSpaceDim>
+using HaloPattern [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::HaloPattern<NumSpaceDim>;
+template <std::size_t NumSpaceDim>
+using NodeHaloPattern [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::NodeHaloPattern<NumSpaceDim>;
+template <std::size_t NumSpaceDim>
+using FaceHaloPattern [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::FaceHaloPattern<NumSpaceDim>;
+
+template <class MemorySpace>
+using Halo [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Halo<MemorySpace>;
+
+template <class ArrayT, class... Types>
+using ArrayPackMemorySpace [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::ArrayPackMemorySpace<ArrayT, Types...>;
 
 //---------------------------------------------------------------------------//
 // Backwards-compatible single array creation functions.
@@ -1028,6 +1050,48 @@ createHalo( const Array<Scalar, EntityType, MeshType, Params...>& array,
 }
 //---------------------------------------------------------------------------//
 
-} // end namespace Cajita
+template <std::size_t NumSpaceDim>
+using HaloPattern [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::HaloPattern<NumSpaceDim>;
+template <std::size_t NumSpaceDim>
+using NodeHaloPattern [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::NodeHaloPattern<NumSpaceDim>;
+template <std::size_t NumSpaceDim>
+using FaceHaloPattern [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::FaceHaloPattern<NumSpaceDim>;
 
-#endif // end CAJITA_HALO_HPP
+//! Full 3d halo with all 26 adjacent blocks. Backwards compatibility wrapper.
+class [[deprecated]] FullHaloPattern : public NodeHaloPattern<3>
+{
+};
+
+template <class MemorySpace>
+using Halo [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Halo<MemorySpace>;
+
+template <class ArrayT, class... Types>
+using ArrayPackMemorySpace [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::ArrayPackMemorySpace<ArrayT, Types...>;
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createHalo( Args&&... args )
+{
+    return Cabana::Grid::createHalo( std::forward<Args>( args )... );
+}
+
+namespace ScatterReduce
+{
+using Sum [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::ScatterReduce::Sum;
+using Min [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::ScatterReduce::Min;
+using Max [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::ScatterReduce::Max;
+using Replace [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::ScatterReduce::Replace;
+} // namespace ScatterReduce
+
+} // namespace Cajita
+
+#endif // end CABANA_GRID_HALO_HPP

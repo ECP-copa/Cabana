@@ -13,8 +13,8 @@
   \file Cajita_SparseIndexSpace.hpp
   \brief Sparse grid mapping
 */
-#ifndef CAJITA_SPARSE_INDEXSPACE_HPP
-#define CAJITA_SPARSE_INDEXSPACE_HPP
+#ifndef CABANA_GRID_SPARSE_INDEXSPACE_HPP
+#define CABANA_GRID_SPARSE_INDEXSPACE_HPP
 
 #ifdef KOKKOS_ENABLE_SYCL
 #error Not supported with the Kokkos SYCL backend (device recursion)
@@ -37,7 +37,9 @@
 //  used as hash key
 //---------------------------------------------------------------------------//
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 
 //---------------------------------------------------------------------------//
@@ -1213,5 +1215,91 @@ class TileIndexSpace : public IndexSpace<N>
     }
 };
 
-} // end namespace Cajita
-#endif ///< !CAJITA_SPARSE_INDEXSPACE_HPP
+} // namespace Grid
+} // namespace Cabana
+
+namespace Cajita
+{
+using HashTypes [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::HashTypes;
+
+template <class... Args>
+[[deprecated(
+    "Cajita is now Cabana::Grid." )]] KOKKOS_INLINE_FUNCTION constexpr auto
+bitLength( Args&&... args ) noexcept
+{
+    return Cabana::Grid::bitLength( std::forward<Args>( args )... );
+}
+template <class... Args>
+[[deprecated(
+    "Cajita is now Cabana::Grid." )]] KOKKOS_INLINE_FUNCTION constexpr auto
+bitCount( Args&&... args ) noexcept
+{
+    return Cabana::Grid::bitCount( std::forward<Args>( args )... );
+}
+template <class... Args>
+[[deprecated(
+    "Cajita is now Cabana::Grid." )]] KOKKOS_INLINE_FUNCTION constexpr auto
+binaryReverse( Args&&... args )
+{
+    return Cabana::Grid::binaryReverse( std::forward<Args>( args )... );
+}
+template <class... Args>
+[[deprecated(
+    "Cajita is now Cabana::Grid." )]] KOKKOS_INLINE_FUNCTION constexpr auto
+countLeadingZeros( Args&&... args )
+{
+    return Cabana::Grid::countLeadingZeros( std::forward<Args>( args )... );
+}
+template <class... Args>
+[[deprecated(
+    "Cajita is now Cabana::Grid." )]] KOKKOS_INLINE_FUNCTION constexpr auto
+bitPack( Args&&... args )
+{
+    return Cabana::Grid::bitPack( std::forward<Args>( args )... );
+}
+template <class... Args>
+[[deprecated(
+    "Cajita is now Cabana::Grid." )]] KOKKOS_INLINE_FUNCTION constexpr auto
+bitSpread( Args&&... args )
+{
+    return Cabana::Grid::bitSpread( std::forward<Args>( args )... );
+}
+
+template <int CBits, int CNumPerDim, int CNumPerTile>
+using TileMap [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::TileMap<CBits, CNumPerDim, CNumPerTile>;
+
+template <int CBits, int CNumPerDim, int CNumPerTile>
+using TileMap [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::TileMap<CBits, CNumPerDim, CNumPerTile>;
+
+template <class MemorySpace, unsigned long long CBits,
+          unsigned long long CNumPerDim, unsigned long long CNumPerTile,
+          Cabana::Grid::HashTypes Hash, class Key, class Value>
+using BlockMap [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::BlockMap<MemorySpace, CBits, CNumPerDim, CNumPerTile, Hash,
+                           Key, Value>;
+
+template <class MemorySpace, unsigned long long CellPerTileDim = 4,
+          Cabana::Grid::HashTypes Hash = Cabana::Grid::HashTypes::Naive,
+          class Key = uint64_t, class Value = uint64_t>
+using SparseMap [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::SparseMap<MemorySpace, CellPerTileDim, Hash, Key, Value>;
+
+// MemorySpace cannot be deduced.
+template <class MemorySpace, class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createSparseMap( Args&&... args )
+{
+    return Cabana::Grid::createSparseMap<MemorySpace>(
+        std::forward<Args>( args )... );
+}
+
+template <std::size_t N, unsigned long long cellBitsPerTileDim>
+using TileIndexSpace [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::TileIndexSpace<N, cellBitsPerTileDim>;
+
+} // namespace Cajita
+
+#endif ///< !CABANA_GRID_SPARSE_INDEXSPACE_HPP

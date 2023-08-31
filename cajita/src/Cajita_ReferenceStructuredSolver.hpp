@@ -13,8 +13,8 @@
   \file Cajita_ReferenceStructuredSolver.hpp
   \brief Reference structured solver
 */
-#ifndef CAJITA_REFERENCESTRUCTUREDSOLVER_HPP
-#define CAJITA_REFERENCESTRUCTUREDSOLVER_HPP
+#ifndef CABANA_GRID_REFERENCESTRUCTUREDSOLVER_HPP
+#define CABANA_GRID_REFERENCESTRUCTUREDSOLVER_HPP
 
 #include <Cajita_Array.hpp>
 #include <Cajita_GlobalGrid.hpp>
@@ -36,7 +36,9 @@
 #include <type_traits>
 #include <vector>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 //---------------------------------------------------------------------------//
 //! Reference preconditioned structured solver interface.
@@ -276,7 +278,7 @@ class ReferenceConjugateGradient
     void solve( const Array_t& b, Array_t& x ) override
     {
         Kokkos::Profiling::pushRegion(
-            "Cajita::ReferenceStructuredSolver::solve" );
+            "Cabana::Grid::ReferenceStructuredSolver::solve" );
 
         // Get the local grid.
         auto local_grid = _vectors->layout()->localGrid();
@@ -981,6 +983,31 @@ createReferenceConjugateGradient(
 
 //---------------------------------------------------------------------------//
 
-} // end namespace Cajita
+} // namespace Grid
+} // namespace Cabana
 
-#endif // end CAJITA_REFERENCESTRUCTUREDSOLVER_HPP
+namespace Cajita
+{
+template <class Scalar, class EntityType, class MeshType, class DeviceType>
+using ReferenceStructuredSolver
+    [[deprecated( "Cajita is now Cabana::Grid." )]] =
+        Cabana::Grid::ReferenceStructuredSolver<Scalar, EntityType, MeshType,
+                                                DeviceType>;
+
+template <class Scalar, class EntityType, class MeshType, class DeviceType>
+using ReferenceConjugateGradient
+    [[deprecated( "Cajita is now Cabana::Grid." )]] =
+        Cabana::Grid::ReferenceConjugateGradient<Scalar, EntityType, MeshType,
+                                                 DeviceType>;
+
+template <class Scalar, class... Params, class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createReferenceConjugateGradient( Args&&... args )
+{
+    return Cabana::Grid::createReferenceConjugateGradient<Scalar, Params...>(
+        std::forward<Args>( args )... );
+}
+
+} // namespace Cajita
+
+#endif // end CABANA_GRID_REFERENCESTRUCTUREDSOLVER_HPP

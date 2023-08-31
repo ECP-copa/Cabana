@@ -13,8 +13,8 @@
   \file Cajita_FastFourierTransform.hpp
   \brief Fast Fourier transforms
 */
-#ifndef CAJITA_FASTFOURIERTRANSFORM_HPP
-#define CAJITA_FASTFOURIERTRANSFORM_HPP
+#ifndef CABANA_GRID_FASTFOURIERTRANSFORM_HPP
+#define CABANA_GRID_FASTFOURIERTRANSFORM_HPP
 
 #include <Cajita_Array.hpp>
 #include <Cajita_Types.hpp>
@@ -29,7 +29,9 @@
 #include <memory>
 #include <type_traits>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 namespace Experimental
 {
@@ -780,6 +782,77 @@ auto createHeffteFastFourierTransform(
 //---------------------------------------------------------------------------//
 
 } // end namespace Experimental
-} // end namespace Cajita
+} // namespace Grid
+} // namespace Cabana
 
-#endif // end CAJITA_FASTFOURIERTRANSFORM_HPP
+namespace Cajita
+{
+namespace Experimental
+{
+
+using FFTScaleFull [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Experimental::FFTScaleFull;
+using FFTScaleNone [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Experimental::FFTScaleNone;
+using FFTScaleSymmetric [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Experimental::FFTScaleSymmetric;
+using FFTBackendFFTW [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Experimental::FFTBackendFFTW;
+using FFTBackendMKL [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Experimental::FFTBackendMKL;
+namespace Impl
+{
+using FFTBackendDefault [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Experimental::Impl::FFTBackendDefault;
+}
+
+template <class ArrayEntity, class ArrayMesh, class ArrayDevice,
+          class ArrayScalar, class Entity, class Mesh, class Device,
+          class Scalar, typename SFINAE = void>
+using is_matching_array [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Experimental::is_matching_array<
+        ArrayEntity, ArrayMesh, ArrayDevice, ArrayScalar, Entity, Mesh, Device,
+        Scalar, SFINAE>;
+
+template <class EntityType, class MeshType, class Scalar, class DeviceType,
+          class Derived>
+using FastFourierTransform [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Experimental::FastFourierTransform<
+        EntityType, MeshType, Scalar, DeviceType, Derived>;
+
+using FastFourierTransformParams
+    [[deprecated( "Cajita is now Cabana::Grid." )]] =
+        Cabana::Grid::Experimental::FastFourierTransformParams;
+
+template <class EntityType, class MeshType, class Scalar, class DeviceType,
+          class Derived>
+using FastFourierTransform [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Experimental::FastFourierTransform<
+        EntityType, MeshType, Scalar, DeviceType, Derived>;
+
+template <class EntityType, class MeshType, class Scalar, class MemorySpace,
+          class ExecSpace, class BackendType>
+using HeffteFastFourierTransform
+    [[deprecated( "Cajita is now Cabana::Grid." )]] =
+        Cabana::Grid::Experimental::HeffteFastFourierTransform<
+            EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType>;
+
+template <class Scalar, class MemorySpace, class BackendType, class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createHeffteFastFourierTransform( Args&&... args )
+{
+    return Cabana::Grid::Experimental::createHeffteFastFourierTransform<
+        Scalar, MemorySpace, BackendType>( std::forward<Args>( args )... );
+}
+template <class Scalar, class MemorySpace, class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createHeffteFastFourierTransform( Args&&... args )
+{
+    return Cabana::Grid::Experimental::createHeffteFastFourierTransform<
+        Scalar, MemorySpace>( std::forward<Args>( args )... );
+}
+
+} // namespace Experimental
+} // namespace Cajita
+
+#endif // end CABANA_GRID_FASTFOURIERTRANSFORM_HPP

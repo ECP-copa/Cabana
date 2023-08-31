@@ -13,8 +13,8 @@
   \file Cajita_GlobalMesh.hpp
   \brief Global mesh
 */
-#ifndef CAJTIA_GLOBALMESH_HPP
-#define CAJTIA_GLOBALMESH_HPP
+#ifndef CABANA_GRID_GLOBALMESH_HPP
+#define CABANA_GRID_GLOBALMESH_HPP
 
 #include <Cajita_Types.hpp>
 
@@ -26,7 +26,9 @@
 #include <type_traits>
 #include <vector>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 //---------------------------------------------------------------------------//
 // Forward declaration of global mesh.
@@ -482,6 +484,40 @@ createNonUniformGlobalMesh( const std::vector<Scalar>& i_edges,
 
 //---------------------------------------------------------------------------//
 
-} // end namespace Cajita
+} // namespace Grid
+} // namespace Cabana
 
-#endif // end CAJTIA_GLOBALMESH_HPP
+namespace Cajita
+{
+
+template <class MeshType>
+using GlobalMesh [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::GlobalMesh<MeshType>;
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createUniformGlobalMesh( Args&&... args )
+{
+    return Cabana::Grid::createUniformGlobalMesh(
+        std::forward<Args>( args )... );
+}
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createNonUniformGlobalMesh( Args&&... args )
+{
+    return Cabana::Grid::createNonUniformGlobalMesh(
+        std::forward<Args>( args )... );
+}
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createSparseGlobalMesh( Args&&... args )
+{
+    return Cabana::Grid::createSparseGlobalMesh(
+        std::forward<Args>( args )... );
+}
+
+} // namespace Cajita
+
+#endif // end CABANA_GRID_GLOBALMESH_HPP

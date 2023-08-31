@@ -13,8 +13,8 @@
   \file Cajita_LocalGrid.hpp
   \brief Local grid
 */
-#ifndef CAJITA_LOCALGRID_HPP
-#define CAJITA_LOCALGRID_HPP
+#ifndef CABANA_GRID_LOCALGRID_HPP
+#define CABANA_GRID_LOCALGRID_HPP
 
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_IndexSpace.hpp>
@@ -25,7 +25,9 @@
 #include <type_traits>
 #include <vector>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 //---------------------------------------------------------------------------//
 /*!
@@ -611,7 +613,23 @@ createLocalGrid( const std::shared_ptr<GlobalGrid<MeshType>>& global_grid,
 
 //---------------------------------------------------------------------------//
 
-} // end namespace Cajita
+} // namespace Grid
+} // namespace Cabana
+
+namespace Cajita
+{
+template <class MeshType>
+using LocalGrid [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::LocalGrid<MeshType>;
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createLocalGrid( Args&&... args )
+{
+    return Cabana::Grid::createLocalGrid( std::forward<Args>( args )... );
+}
+
+} // namespace Cajita
 
 //---------------------------------------------------------------------------//
 // Template implementations
@@ -621,4 +639,4 @@ createLocalGrid( const std::shared_ptr<GlobalGrid<MeshType>>& global_grid,
 
 //---------------------------------------------------------------------------//
 
-#endif // end CAJITA_LOCALGRID_HPP
+#endif // end CABANA_GRID_LOCALGRID_HPP

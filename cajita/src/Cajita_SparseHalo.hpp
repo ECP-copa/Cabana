@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CAJITA_SPARSEHALO_HPP
-#define CAJITA_SPARSEHALO_HPP
+#ifndef CABANA_GRID_SPARSEHALO_HPP
+#define CABANA_GRID_SPARSEHALO_HPP
 
 #include <Cabana_MemberTypes.hpp>
 #include <Cabana_SoA.hpp>
@@ -26,7 +26,9 @@
 #include <numeric>
 #include <type_traits>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 namespace Experimental
 {
@@ -1310,7 +1312,32 @@ auto createSparseHalo(
                    cellBitsPerTileDim, Value, Key>>( pattern, array );
 }
 
-}; // namespace Experimental
-}; // end namespace Cajita
+} // namespace Experimental
+} // namespace Grid
+} // namespace Cabana
 
-#endif
+namespace Cajita
+{
+namespace Experimental
+{
+template <class MemorySpace, class DataTypes, class EntityType,
+          std::size_t NumSpaceDim, unsigned long long cellBitsPerTileDim,
+          class Value = int, class Key = uint64_t>
+using SparseHalo =
+    Cabana::Grid::Experimental::SparseHalo<MemorySpace, DataTypes, EntityType,
+                                           NumSpaceDim, cellBitsPerTileDim,
+                                           Value, Key>;
+
+template <class DeviceType, unsigned long long cellBitsPerTileDim,
+          class... Args>
+auto createSparseHalo( Args&&... args )
+{
+    return Cabana::Grid::Experimental::createSparseHalo<DeviceType,
+                                                        cellBitsPerTileDim>(
+        std::forward<Args>( args )... );
+}
+
+} // namespace Experimental
+} // namespace Cajita
+
+#endif // CABANA_GRID_SPARSEHALO_HPP

@@ -13,8 +13,8 @@
   \file Cajita_SparseArray.hpp
   \brief Sparse grid fields arrays using AoSoA
 */
-#ifndef CAJITA_SPARSE_ARRAY_HPP
-#define CAJITA_SPARSE_ARRAY_HPP
+#ifndef CABANA_GRID_SPARSE_ARRAY_HPP
+#define CABANA_GRID_SPARSE_ARRAY_HPP
 
 #include <Cajita_SparseIndexSpace.hpp>
 #include <Cajita_SparseLocalGrid.hpp>
@@ -32,7 +32,9 @@
 
 #include <mpi.h>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 
 namespace Experimental
@@ -704,6 +706,53 @@ auto createSparseArray(
 }
 
 } // namespace Experimental
+} // namespace Grid
+} // namespace Cabana
+
+namespace Cajita
+{
+namespace Experimental
+{
+template <class DataTypes, class EntityType, class MeshType,
+          class SparseMapType>
+using SparseArrayLayout =
+    Cabana::Grid::Experimental::SparseArrayLayout<DataTypes, EntityType,
+                                                  MeshType, SparseMapType>;
+
+template <class DataTypes, class EntityType, class MeshType,
+          class SparseMapType>
+auto createSparseArrayLayout(
+    const std::string label,
+    SparseArrayLayout<DataTypes, EntityType, MeshType, SparseMapType>& layout )
+{
+    return Cabana::Grid::Experimental::createSparseArrayLayout( label, layout );
+}
+
+template <class T>
+using is_sparse_array_layout [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Experimental::is_sparse_array_layout<T>;
+
+template <class DataTypes, class DeviceType, class EntityType, class MeshType,
+          class SparseMapType>
+using SparseArray =
+    Cabana::Grid::Experimental::SparseArray<DataTypes, DeviceType, EntityType,
+                                            MeshType, SparseMapType>;
+
+template <class T>
+using is_sparse_array [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Experimental::is_sparse_array<T>;
+
+template <class DeviceType, class DataTypes, class EntityType, class MeshType,
+          class SparseMapType>
+auto createSparseArray( const std::string label,
+                        SparseArray<DataTypes, DeviceType, EntityType, MeshType,
+                                    SparseMapType>& layout )
+{
+    return Cabana::Grid::Experimental::createSparseArray<DeviceType>( label,
+                                                                      layout );
+}
+
+} // namespace Experimental
 } // end namespace Cajita
 
-#endif
+#endif // CABANA_GRID_SPARSE_ARRAY_HPP

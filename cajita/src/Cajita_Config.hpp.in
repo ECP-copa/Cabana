@@ -9,11 +9,11 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CAJITA_CONFIG_HPP
-#define CAJITA_CONFIG_HPP
+#ifndef CABANA_GRID_CONFIG_HPP
+#define CABANA_GRID_CONFIG_HPP
 
 #cmakedefine Cabana_ENABLE_HYPRE
 
 #cmakedefine Cabana_ENABLE_HEFFTE
 
-#endif
+#endif // CABANA_GRID_CONFIG_HPP

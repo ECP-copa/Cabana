@@ -14,8 +14,8 @@
   \brief Write particle output using the Silo format.
 */
 
-#ifndef CAJITA_SILOPARTICLEOUTPUT_HPP
-#define CAJITA_SILOPARTICLEOUTPUT_HPP
+#ifndef CABANA_GRID_SILOPARTICLEOUTPUT_HPP
+#define CABANA_GRID_SILOPARTICLEOUTPUT_HPP
 
 #include <Cajita_GlobalGrid.hpp>
 
@@ -30,7 +30,9 @@
 
 #include <pmpio.h>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 namespace Experimental
 {
@@ -90,6 +92,34 @@ void writeTimeStep( const std::string& prefix,
 
 } // namespace SiloParticleOutput
 } // namespace Experimental
+} // namespace Grid
+} // namespace Cabana
+
+namespace Cajita
+{
+namespace Experimental
+{
+namespace SiloParticleOutput
+{
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] void
+writePartialRangeTimeStep( Args&&... args )
+{
+    Cabana::Grid::Experimental::SiloParticleOutput::writePartialRangeTimeStep(
+        std::forward<Args>( args )... );
+}
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] void
+writeTimeStep( Args&&... args )
+{
+    Cabana::Grid::Experimental::SiloParticleOutput::writeTimeStep(
+        std::forward<Args>( args )... );
+}
+
+} // namespace SiloParticleOutput
+} // namespace Experimental
 } // namespace Cajita
 
-#endif // CAJITA_SILOPARTICLEOUTPUT_HPP
+#endif // CABANA_GRID_SILOPARTICLEOUTPUT_HPP

@@ -28,7 +28,9 @@
 
 #include <vector>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 
 //---------------------------------------------------------------------------//
@@ -91,8 +93,7 @@ void getMigrateDestinations( const LocalGridType& local_grid,
     using execution_space = typename PositionSliceType::execution_space;
 
     // Check within the local domain.
-    const auto& local_mesh =
-        Cajita::createLocalMesh<Kokkos::HostSpace>( local_grid );
+    const auto& local_mesh = createLocalMesh<Kokkos::HostSpace>( local_grid );
 
     // Use global domain for periodicity.
     const auto& global_grid = local_grid.globalGrid();
@@ -107,8 +108,8 @@ void getMigrateDestinations( const LocalGridType& local_grid,
 
     for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
-        local_low[d] = local_mesh.lowCorner( Cajita::Own(), d );
-        local_high[d] = local_mesh.highCorner( Cajita::Own(), d );
+        local_low[d] = local_mesh.lowCorner( Own(), d );
+        local_high[d] = local_mesh.highCorner( Own(), d );
         periodic[d] = global_grid.isPeriodic( d );
         global_low[d] = global_mesh.lowCorner( d );
         global_high[d] = global_mesh.highCorner( d );
@@ -116,7 +117,7 @@ void getMigrateDestinations( const LocalGridType& local_grid,
     }
 
     Kokkos::parallel_for(
-        "Cajita::ParticleGridMigrate::get_destinations",
+        "Cabana::Grid::ParticleGridMigrate::get_destinations",
         Kokkos::RangePolicy<execution_space>( 0, positions.size() ),
         KOKKOS_LAMBDA( const int p ) {
             // Compute the logical index of the neighbor we are sending to.
@@ -186,23 +187,22 @@ int migrateCount( const LocalGridType& local_grid,
     using execution_space = typename PositionSliceType::execution_space;
 
     // Check within the halo width, within the ghosted domain.
-    const auto& local_mesh =
-        Cajita::createLocalMesh<Kokkos::HostSpace>( local_grid );
+    const auto& local_mesh = createLocalMesh<Kokkos::HostSpace>( local_grid );
 
     Kokkos::Array<double, num_space_dim> local_low{};
     Kokkos::Array<double, num_space_dim> local_high{};
     for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         auto dx = local_grid.globalGrid().globalMesh().cellSize( d );
-        local_low[d] = local_mesh.lowCorner( Cajita::Ghost(), d ) +
-                       minimum_halo_width * dx;
-        local_high[d] = local_mesh.highCorner( Cajita::Ghost(), d ) -
-                        minimum_halo_width * dx;
+        local_low[d] =
+            local_mesh.lowCorner( Ghost(), d ) + minimum_halo_width * dx;
+        local_high[d] =
+            local_mesh.highCorner( Ghost(), d ) - minimum_halo_width * dx;
     }
 
     int comm_count = 0;
     Kokkos::parallel_reduce(
-        "Cajita::ParticleGridMigrate::count",
+        "Cabana::Grid::ParticleGridMigrate::count",
         Kokkos::RangePolicy<execution_space>( 0, positions.size() ),
         KOKKOS_LAMBDA( const int p, int& result ) {
             for ( std::size_t d = 0; d < num_space_dim; ++d )
@@ -366,6 +366,38 @@ bool particleGridMigrate( const LocalGridType& local_grid,
     // Redistribute the particles.
     migrate( distributor, src_particles, dst_particles );
     return true;
+}
+
+} // namespace Grid
+} // namespace Cabana
+
+namespace Cajita
+{
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] void
+migrateCount( Args&&... args )
+{
+    return Cabana::Grid::migrateCount( std::forward<Args>( args )... );
+}
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+getTopology( Args&&... args )
+{
+    return Cabana::Grid::getTopology( std::forward<Args>( args )... );
+}
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createParticleGridDistributor( Args&&... args )
+{
+    return Cabana::Grid::createParticleGridDistributor(
+        std::forward<Args>( args )... );
+}
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+particleGridMigrate( Args&&... args )
+{
+    return Cabana::Grid::particleGridMigrate( std::forward<Args>( args )... );
 }
 
 } // namespace Cajita

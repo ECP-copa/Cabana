@@ -9,11 +9,13 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CAJITA_LOCALGRID_SPARSE_IMPL_HPP
-#define CAJITA_LOCALGRID_SPARSE_IMPL_HPP
+#ifndef CABANA_GRID_LOCALGRID_SPARSE_IMPL_HPP
+#define CABANA_GRID_LOCALGRID_SPARSE_IMPL_HPP
 
 #include <type_traits>
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 namespace Experimental
 {
@@ -568,6 +570,7 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::sharedTileIndexSpaceImpl(
 
 //---------------------------------------------------------------------------//
 } // namespace Experimental
-} // namespace Cajita
+} // namespace Grid
+} // namespace Cabana
 
-#endif // end CAJITA_LOCALGRID_SPARSE_IMPL_HPP
+#endif // end CABANA_GRID_LOCALGRID_SPARSE_IMPL_HPP

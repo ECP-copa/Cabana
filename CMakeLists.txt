@@ -228,12 +228,19 @@ endif()
 
 add_subdirectory(core)
 
-option(Cabana_ENABLE_CAJITA "Build Cajita (grid and particle-grid)" ${Cabana_ENABLE_MPI})
-if(Cabana_ENABLE_CAJITA)
+option(Cabana_ENABLE_GRID "Build grid and particle-grid capabilities" ${Cabana_ENABLE_MPI})
+### FIXME: remove in next release.
+option(Cabana_ENABLE_CAJITA "Build grid and particle-grid capabilities" OFF)
+if (Cabana_ENABLE_CAJITA)
+  message(DEPRECATION "Option Cabana_ENABLE_CAJITA is deprecated, replaced by Cabana_ENABLE_GRID")
+  set(Cabana_ENABLE_GRID ON)
+endif()
+
+if(Cabana_ENABLE_GRID)
   if(MPI_FOUND)
     add_subdirectory(cajita)
   else()
-    message(FATAL_ERROR "Cajita requires MPI")
+    message(FATAL_ERROR "Grid subpackage requires MPI")
   endif()
 endif()
 

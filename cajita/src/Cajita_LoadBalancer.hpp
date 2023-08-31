@@ -13,8 +13,8 @@
   \file Cajita_LoadBalancer.hpp
   \brief Load Balancer
 */
-#ifndef CAJITA_LOADBALANCER_HPP
-#define CAJITA_LOADBALANCER_HPP
+#ifndef CABANA_GRID_LOADBALANCER_HPP
+#define CABANA_GRID_LOADBALANCER_HPP
 
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_Types.hpp>
@@ -30,7 +30,9 @@
 #include <memory>
 #include <vector>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 namespace Experimental
 {
@@ -119,7 +121,7 @@ class LoadBalancer<UniformMesh<Scalar, NumSpaceDim>>
         const BlockPartitioner<NumSpaceDim>& partitioner,
         const double local_work )
     {
-        Kokkos::Profiling::pushRegion( "Cajita::LoadBalancer::balance" );
+        Kokkos::Profiling::pushRegion( "Cabana::Grid::LoadBalancer::balance" );
 
         // Create new decomposition
         _liball->setWork( local_work );
@@ -303,8 +305,28 @@ createLoadBalancer(
 }
 
 } // end namespace Experimental
-} // end namespace Cajita
+} // namespace Grid
+} // namespace Cabana
 
 //---------------------------------------------------------------------------//
 
-#endif // end CAJITA_LOADBALANCER_HPP
+namespace Cajita
+{
+namespace Experimental
+{
+template <class MeshType>
+using LoadBalancer [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Experimental::LoadBalancer<MeshType>;
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createLoadBalancer( Args&&... args )
+{
+    return Cabana::Grid::Experimental::createLoadBalancer(
+        std::forward<Args>( args )... );
+}
+
+} // namespace Experimental
+} // namespace Cajita
+
+#endif // end CABANA_GRID_LOADBALANCER_HPP

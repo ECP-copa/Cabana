@@ -13,8 +13,8 @@
   \file Cajita_ManualPartitioner.hpp
   \brief Manual multi-node grid partitioner
 */
-#ifndef CAJITA_MANUALPARTITIONER_HPP
-#define CAJITA_MANUALPARTITIONER_HPP
+#ifndef CABANA_GRID_MANUALPARTITIONER_HPP
+#define CABANA_GRID_MANUALPARTITIONER_HPP
 
 #include <Cajita_Partitioner.hpp>
 
@@ -45,4 +45,4 @@ class [[deprecated]] ManualPartitioner : public ManualBlockPartitioner<3>
 
 } // end namespace Cajita
 
-#endif // end CAJITA_MANUALPARTITIONER_HPP
+#endif // end CABANA_GRID_MANUALPARTITIONER_HPP

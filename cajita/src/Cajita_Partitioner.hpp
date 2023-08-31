@@ -13,15 +13,17 @@
   \file Cajita_Partitioner.hpp
   \brief Multi-node grid partitioner
 */
-#ifndef CAJITA_PARTITIONER_HPP
-#define CAJITA_PARTITIONER_HPP
+#ifndef CABANA_GRID_PARTITIONER_HPP
+#define CABANA_GRID_PARTITIONER_HPP
 
 #include <array>
 #include <stdexcept>
 
 #include <mpi.h>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 //---------------------------------------------------------------------------//
 /*!
@@ -479,6 +481,21 @@ class DimBlockPartitioner : public BlockPartitioner<NumSpaceDim>
 
 //---------------------------------------------------------------------------//
 
-} // end namespace Cajita
+} // namespace Grid
+} // namespace Cabana
 
-#endif // end CAJITA_PARTITIONER_HPP
+namespace Cajita
+{
+template <std::size_t NumSpaceDim>
+using BlockPartitioner = Cabana::Grid::BlockPartitioner<NumSpaceDim>;
+
+template <std::size_t NumSpaceDim>
+using DimBlockPartitioner = Cabana::Grid::DimBlockPartitioner<NumSpaceDim>;
+
+template <std::size_t NumSpaceDim>
+using ManualBlockPartitioner =
+    Cabana::Grid::ManualBlockPartitioner<NumSpaceDim>;
+
+} // namespace Cajita
+
+#endif // end CABANA_GRID_PARTITIONER_HPP

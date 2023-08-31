@@ -13,8 +13,8 @@
   \file Cajita_Hypre.hpp
   \brief HYPRE memory space handling
 */
-#ifndef CAJITA_HYPRE_HPP
-#define CAJITA_HYPRE_HPP
+#ifndef CABANA_GRID_HYPRE_HPP
+#define CABANA_GRID_HYPRE_HPP
 
 #include <HYPRE_config.h>
 #include <HYPRE_struct_ls.h>
@@ -24,7 +24,9 @@
 
 #include <memory>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 //---------------------------------------------------------------------------//
 // Hypre memory space selection. Don't compile if HYPRE wasn't configured to
@@ -79,7 +81,15 @@ struct HypreIsCompatibleWithMemorySpace<Kokkos::HostSpace> : std::true_type
 {
 };
 #endif // end HYPRE_USING_GPU
+} // namespace Grid
+} // namespace Cabana
 
+namespace Cajita
+{
+template <class MemorySpace>
+using HypreIsCompatibleWithMemorySpace
+    [[deprecated( "Cajita is now Cabana::Grid." )]] =
+        Cabana::Grid::HypreIsCompatibleWithMemorySpace<MemorySpace>;
 } // namespace Cajita
 
-#endif // end HYPRE_HPP
+#endif // end CABANA_GRID_HYPRE_HPP

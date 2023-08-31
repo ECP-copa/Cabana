@@ -13,8 +13,8 @@
   \file Cajita_SparseLocalGrid.hpp
   \brief Sparse Local grid and related implementations
 */
-#ifndef CAJITA_LOCALGRID_SPARSE_HPP
-#define CAJITA_LOCALGRID_SPARSE_HPP
+#ifndef CABANA_GRID_LOCALGRID_SPARSE_HPP
+#define CABANA_GRID_LOCALGRID_SPARSE_HPP
 
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_IndexSpace.hpp>
@@ -24,7 +24,9 @@
 #include <array>
 #include <vector>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 namespace Experimental
 {
@@ -286,7 +288,27 @@ createSparseLocalGrid( const std::shared_ptr<GlobalGrid<MeshType>>& global_grid,
 }
 
 } // namespace Experimental
+} // namespace Grid
+} // namespace Cabana
 //---------------------------------------------------------------------------//
+
+namespace Cajita
+{
+namespace Experimental
+{
+template <class MeshType>
+using LocalGrid [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Experimental::LocalGrid<MeshType>;
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createSparseLocalGrid( Args&&... args )
+{
+    return Cabana::Grid::Experimental::createSparseLocalGrid(
+        std::forward<Args>( args )... );
+}
+
+} // namespace Experimental
 } // namespace Cajita
 
 //---------------------------------------------------------------------------//
@@ -296,4 +318,4 @@ createSparseLocalGrid( const std::shared_ptr<GlobalGrid<MeshType>>& global_grid,
 #include <Cajita_SparseLocalGrid_impl.hpp>
 
 //---------------------------------------------------------------------------//
-#endif // end CAJITA_LOCALGRID_SPARSE_HPP
+#endif // end CABANA_GRID_LOCALGRID_SPARSE_HPP

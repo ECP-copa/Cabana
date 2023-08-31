@@ -13,8 +13,8 @@
   \file Cajita_Array.hpp
   \brief Grid field arrays
 */
-#ifndef CAJITA_ARRAY_HPP
-#define CAJITA_ARRAY_HPP
+#ifndef CABANA_GRID_ARRAY_HPP
+#define CABANA_GRID_ARRAY_HPP
 
 #include <Cajita_IndexSpace.hpp>
 #include <Cajita_LocalGrid.hpp>
@@ -30,7 +30,9 @@
 
 #include <mpi.h>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 //---------------------------------------------------------------------------//
 /*!
@@ -426,7 +428,7 @@ template <class Array_t, class DecompositionTag>
 void assign( Array_t& array, const typename Array_t::value_type alpha,
              DecompositionTag tag )
 {
-    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     auto subview = createSubview( array.view(),
                                   array.layout()->indexSpace( tag, Local() ) );
     Kokkos::deep_copy( subview, alpha );
@@ -444,7 +446,7 @@ std::enable_if_t<3 == Array_t::num_space_dim, void>
 scale( Array_t& array, const typename Array_t::value_type alpha,
        DecompositionTag tag )
 {
-    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     auto view = array.view();
     Kokkos::parallel_for(
         "ArrayOp::scale",
@@ -466,7 +468,7 @@ std::enable_if_t<2 == Array_t::num_space_dim, void>
 scale( Array_t& array, const typename Array_t::value_type alpha,
        DecompositionTag tag )
 {
-    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     auto view = array.view();
     Kokkos::parallel_for(
         "ArrayOp::scale",
@@ -490,7 +492,7 @@ std::enable_if_t<3 == Array_t::num_space_dim, void>
 scale( Array_t& array, const std::vector<typename Array_t::value_type>& alpha,
        DecompositionTag tag )
 {
-    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     if ( alpha.size() !=
          static_cast<unsigned>( array.layout()->dofsPerEntity() ) )
         throw std::runtime_error( "Incorrect vector size" );
@@ -523,7 +525,7 @@ std::enable_if_t<2 == Array_t::num_space_dim, void>
 scale( Array_t& array, const std::vector<typename Array_t::value_type>& alpha,
        DecompositionTag tag )
 {
-    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     if ( alpha.size() !=
          static_cast<unsigned>( array.layout()->dofsPerEntity() ) )
         throw std::runtime_error( "Incorrect vector size" );
@@ -554,7 +556,7 @@ scale( Array_t& array, const std::vector<typename Array_t::value_type>& alpha,
 template <class Array_t, class DecompositionTag>
 void copy( Array_t& a, const Array_t& b, DecompositionTag tag )
 {
-    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     auto a_space = a.layout()->indexSpace( tag, Local() );
     auto b_space = b.layout()->indexSpace( tag, Local() );
     if ( a_space != b_space )
@@ -593,7 +595,7 @@ std::enable_if_t<3 == Array_t::num_space_dim, void>
 update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
         const typename Array_t::value_type beta, DecompositionTag tag )
 {
-    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     auto a_view = a.view();
     auto b_view = b.view();
     Kokkos::parallel_for(
@@ -620,7 +622,7 @@ std::enable_if_t<2 == Array_t::num_space_dim, void>
 update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
         const typename Array_t::value_type beta, DecompositionTag tag )
 {
-    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     auto a_view = a.view();
     auto b_view = b.view();
     Kokkos::parallel_for(
@@ -651,7 +653,7 @@ update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
         const typename Array_t::value_type beta, const Array_t& c,
         const typename Array_t::value_type gamma, DecompositionTag tag )
 {
-    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     auto a_view = a.view();
     auto b_view = b.view();
     auto c_view = c.view();
@@ -683,7 +685,7 @@ update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
         const typename Array_t::value_type beta, const Array_t& c,
         const typename Array_t::value_type gamma, DecompositionTag tag )
 {
-    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     auto a_view = a.view();
     auto b_view = b.view();
     auto c_view = c.view();
@@ -778,7 +780,7 @@ template <class Array_t>
 void dot( const Array_t& a, const Array_t& b,
           std::vector<typename Array_t::value_type>& products )
 {
-    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     if ( products.size() !=
          static_cast<unsigned>( a.layout()->dofsPerEntity() ) )
         throw std::runtime_error( "Incorrect vector size" );
@@ -884,7 +886,7 @@ template <class Array_t>
 void normInf( const Array_t& array,
               std::vector<typename Array_t::value_type>& norms )
 {
-    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     if ( norms.size() !=
          static_cast<unsigned>( array.layout()->dofsPerEntity() ) )
         throw std::runtime_error( "Incorrect vector size" );
@@ -984,7 +986,7 @@ template <class Array_t>
 void norm1( const Array_t& array,
             std::vector<typename Array_t::value_type>& norms )
 {
-    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     if ( norms.size() !=
          static_cast<unsigned>( array.layout()->dofsPerEntity() ) )
         throw std::runtime_error( "Incorrect vector size" );
@@ -1084,7 +1086,7 @@ template <class Array_t>
 void norm2( const Array_t& array,
             std::vector<typename Array_t::value_type>& norms )
 {
-    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     if ( norms.size() !=
          static_cast<unsigned>( array.layout()->dofsPerEntity() ) )
         throw std::runtime_error( "Incorrect vector size" );
@@ -1117,6 +1119,119 @@ void norm2( const Array_t& array,
 
 //---------------------------------------------------------------------------//
 
-} // end namespace Cajita.
+} // namespace Grid
+} // namespace Cabana
 
-#endif // end CAJITA_ARRAY_HPP
+namespace Cajita
+{
+template <class EntityType, class MeshType>
+using ArrayLayout [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::ArrayLayout<EntityType, MeshType>;
+
+template <class T>
+using is_array_layout [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::is_array_layout<T>;
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createArrayLayout( Args&&... args )
+{
+    return Cabana::Grid::createArrayLayout( std::forward<Args>( args )... );
+}
+
+template <class Scalar, class EntityType, class MeshType, class... Params>
+using Array [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::Array<Scalar, EntityType, MeshType, Params...>;
+
+template <class T>
+using is_array [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::is_array<T>;
+
+template <class Scalar, class... Params, class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createArray( Args&&... args )
+{
+    return Cabana::Grid::createArray<Scalar, Params...>(
+        std::forward<Args>( args )... );
+}
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createSubarray( Args&&... args )
+{
+    return Cabana::Grid::createSubarray( std::forward<Args>( args )... );
+}
+
+namespace ArrayOp
+{
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto clone( Args&&... args )
+{
+    return Cabana::Grid::ArrayOp::clone( std::forward<Args>( args )... );
+}
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto assign( Args&&... args )
+{
+    return Cabana::Grid::ArrayOp::assign( std::forward<Args>( args )... );
+}
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] void scale( Args&&... args )
+{
+    return Cabana::Grid::ArrayOp::scale( std::forward<Args>( args )... );
+}
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] void copy( Args&&... args )
+{
+    return Cabana::Grid::ArrayOp::copy( std::forward<Args>( args )... );
+}
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto cloneCopy( Args&&... args )
+{
+    return Cabana::Grid::ArrayOp::cloneCopy( std::forward<Args>( args )... );
+}
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] void update( Args&&... args )
+{
+    return Cabana::Grid::ArrayOp::update( std::forward<Args>( args )... );
+}
+
+template <class ViewType, std::size_t NumSpaceDim>
+using DotFunctor [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::ArrayOp::DotFunctor<ViewType, NumSpaceDim>;
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] void dot( Args&&... args )
+{
+    return Cabana::Grid::ArrayOp::dot( std::forward<Args>( args )... );
+}
+
+template <class ViewType, std::size_t NumSpaceDim>
+using NormInfFunctor [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::ArrayOp::NormInfFunctor<ViewType, NumSpaceDim>;
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] void normInf( Args&&... args )
+{
+    return Cabana::Grid::ArrayOp::normInf( std::forward<Args>( args )... );
+}
+
+template <class ViewType, std::size_t NumSpaceDim>
+using Norm1Functor [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::ArrayOp::Norm1Functor<ViewType, NumSpaceDim>;
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] void norm1( Args&&... args )
+{
+    return Cabana::Grid::ArrayOp::norm1( std::forward<Args>( args )... );
+}
+
+template <class ViewType, std::size_t NumSpaceDim>
+using Norm2Functor [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::ArrayOp::Norm2Functor<ViewType, NumSpaceDim>;
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] void norm2( Args&&... args )
+{
+    return Cabana::Grid::ArrayOp::norm2( std::forward<Args>( args )... );
+}
+
+} // namespace ArrayOp
+} // namespace Cajita
+
+#endif // end CABANA_GRID_ARRAY_HPP

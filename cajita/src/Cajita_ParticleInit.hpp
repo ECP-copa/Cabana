@@ -30,16 +30,18 @@
 #include <Cajita_Parallel.hpp>
 #include <Cajita_ParticleList.hpp>
 
-#include <Cabana_Core.hpp>
+#include <Cabana_ParticleInit.hpp>
+#include <Cabana_Slice.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Random.hpp>
 
 #include <exception>
 
-namespace Cajita
+namespace Cabana
 {
-
+namespace Grid
+{
 //---------------------------------------------------------------------------//
 /*!
   \brief Initialize a random number of particles in each cell given an
@@ -69,21 +71,20 @@ int createParticles(
     const int particles_per_cell, LocalGridType& local_grid,
     const std::size_t previous_num_particles = 0,
     const bool shrink_to_fit = true, const uint64_t seed = 123456,
-    typename std::enable_if<Cajita::is_particle_list<ParticleListType>::value,
+    typename std::enable_if<is_particle_list<ParticleListType>::value,
                             int>::type* = 0 )
 {
     // Memory space.
     using memory_space = typename ParticleListType::memory_space;
 
     // Create a local mesh.
-    auto local_mesh = Cajita::createLocalMesh<ExecutionSpace>( local_grid );
+    auto local_mesh = createLocalMesh<ExecutionSpace>( local_grid );
 
     // Get the global grid.
     const auto& global_grid = local_grid.globalGrid();
 
     // Get the local set of owned cell indices.
-    auto owned_cells =
-        local_grid.indexSpace( Cajita::Own(), Cajita::Cell(), Cajita::Local() );
+    auto owned_cells = local_grid.indexSpace( Own(), Cell(), Local() );
 
     // Create a random number generator.
     const auto local_seed =
@@ -105,8 +106,8 @@ int createParticles(
     Kokkos::deep_copy( count, previous_num_particles );
 
     // Initialize particles.
-    Cajita::grid_parallel_for(
-        "Cajita::ParticleInit::Random", exec_space, owned_cells,
+    grid_parallel_for(
+        "Cabana::Grid::ParticleInit::Random", exec_space, owned_cells,
         KOKKOS_LAMBDA( const int i, const int j, const int k ) {
             // Compute the owned local cell id.
             int i_own = i - owned_cells.min( Dim::I );
@@ -119,12 +120,12 @@ int createParticles(
             // Get the coordinates of the low cell node.
             int low_node[3] = { i, j, k };
             double low_coords[3];
-            local_mesh.coordinates( Cajita::Node(), low_node, low_coords );
+            local_mesh.coordinates( Node(), low_node, low_coords );
 
             // Get the coordinates of the high cell node.
             int high_node[3] = { i + 1, j + 1, k + 1 };
             double high_coords[3];
-            local_mesh.coordinates( Cajita::Node(), high_node, high_coords );
+            local_mesh.coordinates( Node(), high_node, high_coords );
 
             // Random number generator.
             auto rand = pool.get_state( cell_id );
@@ -133,8 +134,8 @@ int createParticles(
             double px[3];
 
             // Particle volume.
-            double pv = local_mesh.measure( Cajita::Cell(), low_node ) /
-                        particles_per_cell;
+            double pv =
+                local_mesh.measure( Cell(), low_node ) / particles_per_cell;
 
             // Create particles.
             for ( int p = 0; p < particles_per_cell; ++p )
@@ -198,7 +199,7 @@ int createParticles(
     ParticleListType& particle_list, const int particles_per_cell,
     LocalGridType& local_grid, const std::size_t previous_num_particles = 0,
     const bool shrink_to_fit = true, const uint64_t seed = 123456,
-    typename std::enable_if<Cajita::is_particle_list<ParticleListType>::value,
+    typename std::enable_if<is_particle_list<ParticleListType>::value,
                             int>::type* = 0 )
 {
     using exec_space = typename ParticleListType::memory_space::execution_space;
@@ -231,14 +232,13 @@ void createParticles(
                             int>::type* = 0 )
 {
     // Create a local mesh.
-    auto local_mesh = Cajita::createLocalMesh<ExecutionSpace>( local_grid );
+    auto local_mesh = createLocalMesh<ExecutionSpace>( local_grid );
 
     // Get the global grid.
     const auto& global_grid = local_grid.globalGrid();
 
     // Get the local set of owned cell indices.
-    auto owned_cells =
-        local_grid.indexSpace( Cajita::Own(), Cajita::Cell(), Cajita::Local() );
+    auto owned_cells = local_grid.indexSpace( Own(), Cell(), Local() );
 
     // Create a random number generator.
     const auto local_seed =
@@ -253,8 +253,8 @@ void createParticles(
                                     previous_num_particles );
 
     // Initialize particles.
-    Cajita::grid_parallel_for(
-        "Cajita::ParticleInit::Random", exec_space, owned_cells,
+    grid_parallel_for(
+        "Cabana::Grid::ParticleInit::Random", exec_space, owned_cells,
         KOKKOS_LAMBDA( const int i, const int j, const int k ) {
             // Compute the owned local cell id.
             int i_own = i - owned_cells.min( Dim::I );
@@ -267,12 +267,12 @@ void createParticles(
             // Get the coordinates of the low cell node.
             int low_node[3] = { i, j, k };
             double low_coords[3];
-            local_mesh.coordinates( Cajita::Node(), low_node, low_coords );
+            local_mesh.coordinates( Node(), low_node, low_coords );
 
             // Get the coordinates of the high cell node.
             int high_node[3] = { i + 1, j + 1, k + 1 };
             double high_coords[3];
-            local_mesh.coordinates( Cajita::Node(), high_node, high_coords );
+            local_mesh.coordinates( Node(), high_node, high_coords );
 
             // Random number generator.
             auto rand = pool.get_state( cell_id );
@@ -352,18 +352,17 @@ int createParticles(
     const int particles_per_cell_dim, LocalGridType& local_grid,
     const std::size_t previous_num_particles = 0,
     const bool shrink_to_fit = true,
-    typename std::enable_if<Cajita::is_particle_list<ParticleListType>::value,
+    typename std::enable_if<is_particle_list<ParticleListType>::value,
                             int>::type* = 0 )
 {
     // Memory space.
     using memory_space = typename ParticleListType::memory_space;
 
     // Create a local mesh.
-    auto local_mesh = Cajita::createLocalMesh<ExecutionSpace>( local_grid );
+    auto local_mesh = createLocalMesh<ExecutionSpace>( local_grid );
 
     // Get the local set of owned cell indices.
-    auto owned_cells =
-        local_grid.indexSpace( Cajita::Own(), Cajita::Cell(), Cajita::Local() );
+    auto owned_cells = local_grid.indexSpace( Own(), Cell(), Local() );
 
     // Get the aosoa.
     auto& aosoa = particle_list.aosoa();
@@ -379,8 +378,8 @@ int createParticles(
     Kokkos::deep_copy( count, previous_num_particles );
 
     // Initialize particles.
-    Cajita::grid_parallel_for(
-        "Cajita::ParticleInit::Uniform", exec_space, owned_cells,
+    grid_parallel_for(
+        "Cabana::Grid::ParticleInit::Uniform", exec_space, owned_cells,
         KOKKOS_LAMBDA( const int i, const int j, const int k ) {
             // Compute the owned local cell id.
             int i_own = i - owned_cells.min( Dim::I );
@@ -393,12 +392,12 @@ int createParticles(
             // Get the coordinates of the low cell node.
             int low_node[3] = { i, j, k };
             double low_coords[3];
-            local_mesh.coordinates( Cajita::Node(), low_node, low_coords );
+            local_mesh.coordinates( Node(), low_node, low_coords );
 
             // Get the coordinates of the high cell node.
             int high_node[3] = { i + 1, j + 1, k + 1 };
             double high_coords[3];
-            local_mesh.coordinates( Cajita::Node(), high_node, high_coords );
+            local_mesh.coordinates( Node(), high_node, high_coords );
 
             // Compute the particle spacing in each dimension.
             double spacing[3] = { ( high_coords[Dim::I] - low_coords[Dim::I] ) /
@@ -412,8 +411,8 @@ int createParticles(
             double px[3];
 
             // Particle volume.
-            double pv = local_mesh.measure( Cajita::Cell(), low_node ) /
-                        particles_per_cell;
+            double pv =
+                local_mesh.measure( Cell(), low_node ) / particles_per_cell;
 
             // Create particles.
             for ( int ip = 0; ip < particles_per_cell_dim; ++ip )
@@ -484,7 +483,7 @@ int createParticles(
     ParticleListType& particle_list, const int particles_per_cell_dim,
     LocalGridType& local_grid, const std::size_t previous_num_particles = 0,
     const bool shrink_to_fit = true,
-    typename std::enable_if<Cajita::is_particle_list<ParticleListType>::value,
+    typename std::enable_if<is_particle_list<ParticleListType>::value,
                             int>::type* = 0 )
 {
     using exec_space = typename ParticleListType::memory_space::execution_space;
@@ -516,11 +515,10 @@ void createParticles(
                             int>::type* = 0 )
 {
     // Create a local mesh.
-    auto local_mesh = Cajita::createLocalMesh<ExecutionSpace>( local_grid );
+    auto local_mesh = createLocalMesh<ExecutionSpace>( local_grid );
 
     // Get the local set of owned cell indices.
-    auto owned_cells =
-        local_grid.indexSpace( Cajita::Own(), Cajita::Cell(), Cajita::Local() );
+    auto owned_cells = local_grid.indexSpace( Own(), Cell(), Local() );
 
     int particles_per_cell = particles_per_cell_dim * particles_per_cell_dim *
                              particles_per_cell_dim;
@@ -531,8 +529,8 @@ void createParticles(
                                     previous_num_particles );
 
     // Initialize particles.
-    Cajita::grid_parallel_for(
-        "Cajita::ParticleInit::Uniform", exec_space, owned_cells,
+    grid_parallel_for(
+        "Cabana::Grid::ParticleInit::Uniform", exec_space, owned_cells,
         KOKKOS_LAMBDA( const int i, const int j, const int k ) {
             // Compute the owned local cell id.
             int i_own = i - owned_cells.min( Dim::I );
@@ -545,12 +543,12 @@ void createParticles(
             // Get the coordinates of the low cell node.
             int low_node[3] = { i, j, k };
             double low_coords[3];
-            local_mesh.coordinates( Cajita::Node(), low_node, low_coords );
+            local_mesh.coordinates( Node(), low_node, low_coords );
 
             // Get the coordinates of the high cell node.
             int high_node[3] = { i + 1, j + 1, k + 1 };
             double high_coords[3];
-            local_mesh.coordinates( Cajita::Node(), high_node, high_coords );
+            local_mesh.coordinates( Node(), high_node, high_coords );
 
             // Compute the particle spacing in each dimension.
             double spacing[3] = { ( high_coords[Dim::I] - low_coords[Dim::I] ) /
@@ -610,6 +608,17 @@ void createParticles(
     using exec_space = typename PositionType::execution_space;
     createParticles( tag, exec_space{}, positions, particles_per_cell_dim,
                      local_grid, previous_num_particles );
+}
+} // namespace Grid
+} // namespace Cabana
+
+namespace Cajita
+{
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createParticles( Args&&... args )
+{
+    return Cabana::Grid::createParticles( std::forward<Args>( args )... );
 }
 } // namespace Cajita
 

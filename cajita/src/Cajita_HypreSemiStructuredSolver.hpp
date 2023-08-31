@@ -13,8 +13,8 @@
   \file Cajita_HypreSemiStructuredSolver.hpp
   \brief HYPRE semi-structured solver interface
 */
-#ifndef CAJITA_HYPRESEMISTRUCTUREDSOLVER_HPP
-#define CAJITA_HYPRESEMISTRUCTUREDSOLVER_HPP
+#ifndef CABANA_GRID_HYPRESEMISTRUCTUREDSOLVER_HPP
+#define CABANA_GRID_HYPRESEMISTRUCTUREDSOLVER_HPP
 
 #include <Cajita_Array.hpp>
 #include <Cajita_GlobalGrid.hpp>
@@ -39,7 +39,9 @@
 #include <type_traits>
 #include <vector>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 
 //---------------------------------------------------------------------------//
@@ -498,7 +500,7 @@ class HypreSemiStructuredSolver
     void solve( const Array_t& b, Array_t& x, int n_vars = 3 )
     {
         Kokkos::Profiling::pushRegion(
-            "Cajita::HypreSemiStructuredSolver::solve" );
+            "Cabana::Grid::HypreSemiStructuredSolver::solve" );
 
         static_assert( is_array<Array_t>::value, "Must use an array" );
         static_assert(
@@ -1225,6 +1227,69 @@ createHypreSemiStructuredSolver( const std::string& solver_type,
 
 //---------------------------------------------------------------------------//
 
-} // end namespace Cajita
+} // namespace Grid
+} // namespace Cabana
 
-#endif // end CAJITA_HypreSemiStRUCTUREDSOLVER_HPP
+namespace Cajita
+{
+template <class Scalar, class EntityType, class MemorySpace>
+using HypreSemiStructuredSolver [[deprecated(
+    "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>;
+
+template <class Scalar, class EntityType, class MemorySpace>
+using HypreSemiStructPCG [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::HypreSemiStructPCG<Scalar, EntityType, MemorySpace>;
+
+template <class Scalar, class EntityType, class MemorySpace>
+using HypreSemiStructGMRES [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::HypreSemiStructGMRES<Scalar, EntityType, MemorySpace>;
+
+template <class Scalar, class EntityType, class MemorySpace>
+using HypreSemiStructBiCGSTAB [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::HypreSemiStructBiCGSTAB<Scalar, EntityType, MemorySpace>;
+
+template <class Scalar, class EntityType, class MemorySpace>
+using HypreSemiStructDiagonal [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::HypreSemiStructDiagonal<Scalar, EntityType, MemorySpace>;
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createHypreSemiStructPCG( Args&&... args )
+{
+    return Cabana::Grid::createHypreSemiStructPCG(
+        std::forward<Args>( args )... );
+}
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createHypreSemiStructGMRES( Args&&... args )
+{
+    return Cabana::Grid::createHypreSemiStructGMRES(
+        std::forward<Args>( args )... );
+}
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createHypreSemiStructBiCGSTAB( Args&&... args )
+{
+    return Cabana::Grid::createHypreSemiStructBiCGSTAB(
+        std::forward<Args>( args )... );
+}
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createHypreSemiStructDiagonal( Args&&... args )
+{
+    return Cabana::Grid::createHypreSemiStructDiagonal(
+        std::forward<Args>( args )... );
+}
+
+template <class Scalar, class MemorySpace, class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createHypreSemiStructuredSolver( Args&&... args )
+{
+    return Cabana::Grid::createHypreSemiStructuredSolver<Scalar, MemorySpace>(
+        std::forward<Args>( args )... );
+}
+
+} // namespace Cajita
+
+#endif // end CABANA_GRID_HypreSemiStRUCTUREDSOLVER_HPP

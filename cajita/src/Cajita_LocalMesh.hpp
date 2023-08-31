@@ -13,8 +13,8 @@
   \file Cajita_LocalMesh.hpp
   \brief Local mesh
 */
-#ifndef CAJTIA_LOCALMESH_HPP
-#define CAJTIA_LOCALMESH_HPP
+#ifndef CABANA_GRID_LOCALMESH_HPP
+#define CABANA_GRID_LOCALMESH_HPP
 
 #include <Cajita_LocalGrid.hpp>
 #include <Cajita_Types.hpp>
@@ -23,7 +23,9 @@
 
 #include <Kokkos_Core.hpp>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 //---------------------------------------------------------------------------//
 // Forward decalaration of local mesh.
@@ -791,6 +793,24 @@ createLocalMesh( const LocalGrid<MeshType>& local_grid )
 
 //---------------------------------------------------------------------------//
 
-} // end namespace Cajita
+} // namespace Grid
+} // namespace Cabana
 
-#endif // end CAJTIA_LOCALMESH_HPP
+namespace Cajita
+{
+template <class Device, class MeshType>
+using LocalMesh [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::LocalMesh<Device, MeshType>;
+
+// Device cannot be deduced.
+template <class Device, class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createLocalMesh( Args&&... args )
+{
+    return Cabana::Grid::createLocalMesh<Device>(
+        std::forward<Args>( args )... );
+}
+
+} // namespace Cajita
+
+#endif // end CABANA_GRID_LOCALMESH_HPP

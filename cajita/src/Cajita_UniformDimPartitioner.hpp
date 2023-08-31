@@ -13,8 +13,8 @@
   \file Cajita_UniformDimPartitioner.hpp
   \brief Uniform multi-node grid partitioner
 */
-#ifndef CAJITA_UNIFORMDIMPARTITIONER_HPP
-#define CAJITA_UNIFORMDIMPARTITIONER_HPP
+#ifndef CABANA_GRID_UNIFORMDIMPARTITIONER_HPP
+#define CABANA_GRID_UNIFORMDIMPARTITIONER_HPP
 
 #include <Cajita_Partitioner.hpp>
 
@@ -36,4 +36,4 @@ class [[deprecated]] UniformDimPartitioner : public DimBlockPartitioner<3>
 
 } // end namespace Cajita
 
-#endif // end CAJITA_UNIFORMDIMPARTITIONER_HPP
+#endif // end CABANA_GRID_UNIFORMDIMPARTITIONER_HPP

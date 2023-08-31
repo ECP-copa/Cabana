@@ -13,15 +13,17 @@
   \file Cajita_Parallel.hpp
   \brief Logical grid extension of Kokkos parallel iteration
 */
-#ifndef CAJITA_PARALLEL_HPP
-#define CAJITA_PARALLEL_HPP
+#ifndef CABANA_GRID_PARALLEL_HPP
+#define CABANA_GRID_PARALLEL_HPP
 
 #include <Cajita_IndexSpace.hpp>
 #include <Cajita_LocalGrid.hpp>
 
 #include <string>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 //---------------------------------------------------------------------------//
 // Grid Parallel For
@@ -50,7 +52,7 @@ inline void grid_parallel_for( const std::string& label,
                                const IndexSpace<N>& index_space,
                                const FunctorType& functor )
 {
-    Kokkos::Profiling::pushRegion( "Cajita::grid_parallel_for" );
+    Kokkos::Profiling::pushRegion( "Cabana::Grid::grid_parallel_for" );
     Kokkos::parallel_for(
         label, createExecutionPolicy( index_space, exec_space ), functor );
     Kokkos::Profiling::popRegion();
@@ -85,7 +87,7 @@ grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
                    const IndexSpace<N>& index_space, const WorkTag& work_tag,
                    const FunctorType& functor )
 {
-    Kokkos::Profiling::pushRegion( "Cajita::grid_parallel_for" );
+    Kokkos::Profiling::pushRegion( "Cabana::Grid::grid_parallel_for" );
     Kokkos::parallel_for(
         label, createExecutionPolicy( index_space, exec_space, work_tag ),
         functor );
@@ -197,7 +199,7 @@ grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
                    const Kokkos::Array<IndexSpace<4>, NumSpace>& index_spaces,
                    const FunctorType& functor )
 {
-    Kokkos::Profiling::pushRegion( "Cajita::grid_parallel_for" );
+    Kokkos::Profiling::pushRegion( "Cabana::Grid::grid_parallel_for" );
 
     // Compute the total number of threads needed and the index space offsets
     // via inclusive scan.
@@ -281,7 +283,7 @@ grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
                    const Kokkos::Array<IndexSpace<3>, NumSpace>& index_spaces,
                    const FunctorType& functor )
 {
-    Kokkos::Profiling::pushRegion( "Cajita::grid_parallel_for" );
+    Kokkos::Profiling::pushRegion( "Cabana::Grid::grid_parallel_for" );
 
     // Compute the total number of threads needed and the index space offsets
     // via inclusive scan.
@@ -361,7 +363,7 @@ grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
                    const Kokkos::Array<IndexSpace<2>, NumSpace>& index_spaces,
                    const FunctorType& functor )
 {
-    Kokkos::Profiling::pushRegion( "Cajita::grid_parallel_for" );
+    Kokkos::Profiling::pushRegion( "Cabana::Grid::grid_parallel_for" );
 
     // Compute the total number of threads needed and the index space offsets
     // via inclusive scan.
@@ -443,7 +445,7 @@ inline void grid_parallel_reduce( const std::string& label,
                                   const FunctorType& functor,
                                   ReduceType& reducer )
 {
-    Kokkos::Profiling::pushRegion( "Cajita::grid_parallel_reduce" );
+    Kokkos::Profiling::pushRegion( "Cabana::Grid::grid_parallel_reduce" );
     Kokkos::parallel_reduce( label,
                              createExecutionPolicy( index_space, exec_space ),
                              functor, reducer );
@@ -485,7 +487,7 @@ grid_parallel_reduce( const std::string& label,
                       const IndexSpace<N>& index_space, const WorkTag& work_tag,
                       const FunctorType& functor, ReduceType& reducer )
 {
-    Kokkos::Profiling::pushRegion( "Cajita::grid_parallel_reduce" );
+    Kokkos::Profiling::pushRegion( "Cabana::Grid::grid_parallel_reduce" );
     Kokkos::parallel_reduce(
         label, createExecutionPolicy( index_space, exec_space, work_tag ),
         functor, reducer );
@@ -584,6 +586,25 @@ inline void grid_parallel_reduce(
 
 //---------------------------------------------------------------------------//
 
-} // end namespace Cajita
+} // namespace Grid
+} // namespace Cabana
 
-#endif // end CAJITA_PARALLEL_HPP
+namespace Cajita
+{
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] void
+grid_parallel_for( Args&&... args )
+{
+    return Cabana::Grid::grid_parallel_for( std::forward<Args>( args )... );
+}
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] void
+grid_parallel_reduce( Args&&... args )
+{
+    return Cabana::Grid::grid_parallel_reduce( std::forward<Args>( args )... );
+}
+
+} // namespace Cajita
+
+#endif // end CABANA_GRID_PARALLEL_HPP

@@ -13,8 +13,8 @@
   \file Cajita_SparseDimPartitioner.hpp
   \brief Multi-node sparse grid partitioner
 */
-#ifndef CAJITA_SPARSEDIMPARTITIONER_HPP
-#define CAJITA_SPARSEDIMPARTITIONER_HPP
+#ifndef CABANA_GRID_SPARSEDIMPARTITIONER_HPP
+#define CABANA_GRID_SPARSEDIMPARTITIONER_HPP
 
 #include <Cajita_Partitioner.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
@@ -28,7 +28,9 @@
 
 #include <mpi.h>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 //---------------------------------------------------------------------------//
 /*!
@@ -909,6 +911,15 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
             ( global_cells_per_dim[2] >> cell_bits_per_tile_dim ) + 1 );
     }
 };
-} // end namespace Cajita
+} // namespace Grid
+} // namespace Cabana
 
-#endif // end CAJITA_SPARSEDIMPARTITIONER_HPP
+namespace Cajita
+{
+template <class Device, unsigned long long CellPerTileDim = 4,
+          std::size_t NumSpaceDim = 3>
+using SparseDimPartitioner =
+    Cabana::Grid::SparseDimPartitioner<Device, CellPerTileDim, NumSpaceDim>;
+}
+
+#endif // end CABANA_GRID_SPARSEDIMPARTITIONER_HPP

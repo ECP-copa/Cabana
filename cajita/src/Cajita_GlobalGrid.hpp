@@ -13,8 +13,8 @@
   \file Cajita_GlobalGrid.hpp
   \brief Global grid
 */
-#ifndef CAJITA_GLOBALGRID_HPP
-#define CAJITA_GLOBALGRID_HPP
+#ifndef CABANA_GRID_GLOBALGRID_HPP
+#define CABANA_GRID_GLOBALGRID_HPP
 
 #include <Cajita_GlobalMesh.hpp>
 #include <Cajita_Partitioner.hpp>
@@ -25,7 +25,9 @@
 
 #include <mpi.h>
 
-namespace Cajita
+namespace Cabana
+{
+namespace Grid
 {
 //---------------------------------------------------------------------------//
 /*!
@@ -231,7 +233,22 @@ std::shared_ptr<GlobalGrid<SparseMesh<Scalar, NumSpaceDim>>> createGlobalGrid(
 
 //---------------------------------------------------------------------------//
 
-} // end namespace Cajita
+} // namespace Grid
+} // namespace Cabana
+
+namespace Cajita
+{
+template <class MeshType>
+using GlobalGrid [[deprecated( "Cajita is now Cabana::Grid." )]] =
+    Cabana::Grid::GlobalGrid<MeshType>;
+
+template <class... Args>
+[[deprecated( "Cajita is now Cabana::Grid." )]] auto
+createGlobalGrid( Args&&... args )
+{
+    return Cabana::Grid::createGlobalGrid( std::forward<Args>( args )... );
+}
+} // namespace Cajita
 
 //---------------------------------------------------------------------------//
 // Template implementation
@@ -241,4 +258,4 @@ std::shared_ptr<GlobalGrid<SparseMesh<Scalar, NumSpaceDim>>> createGlobalGrid(
 
 //---------------------------------------------------------------------------//
 
-#endif // end CAJITA_GLOBALGRID_HPP
+#endif // end CABANA_GRID_GLOBALGRID_HPP

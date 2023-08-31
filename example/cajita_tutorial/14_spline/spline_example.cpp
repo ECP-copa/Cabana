@@ -58,8 +58,9 @@ void splineExample()
     Cajita::DimBlockPartitioner<3> partitioner;
 
     // Create the global grid.
-    auto global_grid = Cajita::createGlobalGrid(
-        MPI_COMM_WORLD, global_mesh, { false, false, false }, partitioner );
+    std::array<bool, 3> periodic = { false, false, false };
+    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
+                                                 periodic, partitioner );
 
     // Get the local grid.
     int halo_cell_width = 1;
