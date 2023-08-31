@@ -1232,6 +1232,7 @@ createHypreSemiStructuredSolver( const std::string& solver_type,
 
 namespace Cajita
 {
+//! \cond Deprecated
 template <class Scalar, class EntityType, class MemorySpace>
 using HypreSemiStructuredSolver [[deprecated(
     "Cajita is now Cabana::Grid." )]] =
@@ -1289,7 +1290,7 @@ createHypreSemiStructuredSolver( Args&&... args )
     return Cabana::Grid::createHypreSemiStructuredSolver<Scalar, MemorySpace>(
         std::forward<Args>( args )... );
 }
-
+//! \endcond
 } // namespace Cajita
 
 #endif // end CABANA_GRID_HypreSemiStRUCTUREDSOLVER_HPP

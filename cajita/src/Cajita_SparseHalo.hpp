@@ -1320,6 +1320,7 @@ namespace Cajita
 {
 namespace Experimental
 {
+//! \cond Deprecated
 template <class MemorySpace, class DataTypes, class EntityType,
           std::size_t NumSpaceDim, unsigned long long cellBitsPerTileDim,
           class Value = int, class Key = uint64_t>
@@ -1336,7 +1337,7 @@ auto createSparseHalo( Args&&... args )
                                                         cellBitsPerTileDim>(
         std::forward<Args>( args )... );
 }
-
+//! \endcond
 } // namespace Experimental
 } // namespace Cajita
 

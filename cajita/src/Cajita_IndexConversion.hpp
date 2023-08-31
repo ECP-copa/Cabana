@@ -180,6 +180,7 @@ L2G<MeshType, EntityType> createL2G( const LocalGrid<MeshType>& local_grid,
 
 namespace Cajita
 {
+//! \cond Deprecated
 namespace IndexConversion
 {
 template <class MeshType, class EntityType>
@@ -192,7 +193,7 @@ template <class... Args>
     return Cabana::Grid::IndexConversion::createL2G(
         std::forward<Args>( args )... );
 }
-
+//! \endcond
 } // namespace IndexConversion
 } // namespace Cajita
 

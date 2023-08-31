@@ -961,6 +961,7 @@ auto createHalo( const Pattern& pattern, const int width,
 
 namespace Cajita
 {
+//! \cond Deprecated
 template <std::size_t NumSpaceDim>
 using HaloPattern [[deprecated( "Cajita is now Cabana::Grid." )]] =
     Cabana::Grid::HaloPattern<NumSpaceDim>;
@@ -1091,7 +1092,7 @@ using Max [[deprecated( "Cajita is now Cabana::Grid." )]] =
 using Replace [[deprecated( "Cajita is now Cabana::Grid." )]] =
     Cabana::Grid::ScatterReduce::Replace;
 } // namespace ScatterReduce
-
+//! \endcond
 } // namespace Cajita
 
 #endif // end CABANA_GRID_HALO_HPP

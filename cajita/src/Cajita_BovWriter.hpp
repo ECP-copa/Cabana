@@ -419,6 +419,7 @@ namespace Experimental
 {
 namespace BovWriter
 {
+//! \cond Deprecated
 template <typename T>
 using BovFormat [[deprecated( "Cajita is now Cabana::Grid." )]] =
     Cabana::Grid::Experimental::BovWriter::BovFormat<T>;
@@ -449,6 +450,7 @@ writeTimeStep( Args&&... args )
     return Cabana::Grid::Experimental::BovWriter::writeTimeStep(
         std::forward<Args>( args )... );
 }
+//! \endcond
 } // namespace BovWriter
 } // namespace Experimental
 } // namespace Cajita

@@ -591,6 +591,7 @@ inline void grid_parallel_reduce(
 
 namespace Cajita
 {
+//! \cond Deprecated
 template <class... Args>
 [[deprecated( "Cajita is now Cabana::Grid." )]] void
 grid_parallel_for( Args&&... args )
@@ -604,7 +605,7 @@ grid_parallel_reduce( Args&&... args )
 {
     return Cabana::Grid::grid_parallel_reduce( std::forward<Args>( args )... );
 }
-
+//! \endcond
 } // namespace Cajita
 
 #endif // end CABANA_GRID_PARALLEL_HPP

@@ -1124,6 +1124,7 @@ void norm2( const Array_t& array,
 
 namespace Cajita
 {
+//! \cond Deprecated
 template <class EntityType, class MeshType>
 using ArrayLayout [[deprecated( "Cajita is now Cabana::Grid." )]] =
     Cabana::Grid::ArrayLayout<EntityType, MeshType>;
@@ -1230,7 +1231,7 @@ template <class... Args>
 {
     return Cabana::Grid::ArrayOp::norm2( std::forward<Args>( args )... );
 }
-
+//! \endcond
 } // namespace ArrayOp
 } // namespace Cajita
 

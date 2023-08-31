@@ -238,6 +238,7 @@ std::shared_ptr<GlobalGrid<SparseMesh<Scalar, NumSpaceDim>>> createGlobalGrid(
 
 namespace Cajita
 {
+//! \cond Deprecated
 template <class MeshType>
 using GlobalGrid [[deprecated( "Cajita is now Cabana::Grid." )]] =
     Cabana::Grid::GlobalGrid<MeshType>;
@@ -248,6 +249,7 @@ createGlobalGrid( Args&&... args )
 {
     return Cabana::Grid::createGlobalGrid( std::forward<Args>( args )... );
 }
+//! \endcond
 } // namespace Cajita
 
 //---------------------------------------------------------------------------//

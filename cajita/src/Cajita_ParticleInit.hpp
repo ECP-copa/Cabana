@@ -614,12 +614,14 @@ void createParticles(
 
 namespace Cajita
 {
+//! \cond Deprecated
 template <class... Args>
 [[deprecated( "Cajita is now Cabana::Grid." )]] auto
 createParticles( Args&&... args )
 {
     return Cabana::Grid::createParticles( std::forward<Args>( args )... );
 }
+//! \endcond
 } // namespace Cajita
 
 #endif

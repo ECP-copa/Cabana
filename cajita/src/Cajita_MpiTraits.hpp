@@ -78,8 +78,10 @@ struct MpiTraits<double>
 
 namespace Cajita
 {
+//! \cond Deprecated
 template <class T>
 using MpiTraits [[deprecated]] = Cabana::Grid::MpiTraits<T>;
-}
+//! \endcond
+} // namespace Cajita
 
 #endif // end CABANA_GRID_MPITRAITS_HPP

@@ -373,6 +373,7 @@ bool particleGridMigrate( const LocalGridType& local_grid,
 
 namespace Cajita
 {
+//! \cond Deprecated
 template <class... Args>
 [[deprecated( "Cajita is now Cabana::Grid." )]] void
 migrateCount( Args&&... args )
@@ -399,7 +400,7 @@ particleGridMigrate( Args&&... args )
 {
     return Cabana::Grid::particleGridMigrate( std::forward<Args>( args )... );
 }
-
+//! \endcond
 } // namespace Cajita
 
 #endif // end CABANA_PARTICLEGRIDDISTRIBUTOR_HPP

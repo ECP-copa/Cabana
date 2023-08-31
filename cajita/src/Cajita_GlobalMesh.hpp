@@ -489,7 +489,7 @@ createNonUniformGlobalMesh( const std::vector<Scalar>& i_edges,
 
 namespace Cajita
 {
-
+//! \cond Deprecated
 template <class MeshType>
 using GlobalMesh [[deprecated( "Cajita is now Cabana::Grid." )]] =
     Cabana::Grid::GlobalMesh<MeshType>;
@@ -517,7 +517,7 @@ createSparseGlobalMesh( Args&&... args )
     return Cabana::Grid::createSparseGlobalMesh(
         std::forward<Args>( args )... );
 }
-
+//! \endcond
 } // namespace Cajita
 
 #endif // end CABANA_GRID_GLOBALMESH_HPP

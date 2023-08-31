@@ -486,6 +486,7 @@ class DimBlockPartitioner : public BlockPartitioner<NumSpaceDim>
 
 namespace Cajita
 {
+//! \cond Deprecated
 template <std::size_t NumSpaceDim>
 using BlockPartitioner = Cabana::Grid::BlockPartitioner<NumSpaceDim>;
 
@@ -495,7 +496,7 @@ using DimBlockPartitioner = Cabana::Grid::DimBlockPartitioner<NumSpaceDim>;
 template <std::size_t NumSpaceDim>
 using ManualBlockPartitioner =
     Cabana::Grid::ManualBlockPartitioner<NumSpaceDim>;
-
+//! \endcond
 } // namespace Cajita
 
 #endif // end CABANA_GRID_PARTITIONER_HPP

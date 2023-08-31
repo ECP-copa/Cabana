@@ -153,6 +153,7 @@ auto createParticleList( const std::string& label,
 
 namespace Cajita
 {
+//! \cond Deprecated
 template <class MemorySpace, int VectorLength, class... FieldTags>
 using ParticleList [[deprecated( "Cajita is now Cabana::Grid." )]] =
     Cabana::Grid::ParticleList<MemorySpace, VectorLength, FieldTags...>;
@@ -178,7 +179,7 @@ createParticleList( Args&&... args )
     return Cabana::Grid::createParticleList<MemorySpace>(
         std::forward<Args>( args )... );
 }
-
+//! \endcond
 } // namespace Cajita
 
 #endif // end CABANA_GRID_PARTICLELIST_HPP

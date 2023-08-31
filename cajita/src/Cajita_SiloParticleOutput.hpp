@@ -101,7 +101,7 @@ namespace Experimental
 {
 namespace SiloParticleOutput
 {
-
+//! \cond Deprecated
 template <class... Args>
 [[deprecated( "Cajita is now Cabana::Grid." )]] void
 writePartialRangeTimeStep( Args&&... args )
@@ -117,7 +117,7 @@ writeTimeStep( Args&&... args )
     Cabana::Grid::Experimental::SiloParticleOutput::writeTimeStep(
         std::forward<Args>( args )... );
 }
-
+//! \endcond
 } // namespace SiloParticleOutput
 } // namespace Experimental
 } // namespace Cajita

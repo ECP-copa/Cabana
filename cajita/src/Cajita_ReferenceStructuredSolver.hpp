@@ -988,6 +988,7 @@ createReferenceConjugateGradient(
 
 namespace Cajita
 {
+//! \cond Deprecated
 template <class Scalar, class EntityType, class MeshType, class DeviceType>
 using ReferenceStructuredSolver
     [[deprecated( "Cajita is now Cabana::Grid." )]] =
@@ -1007,7 +1008,7 @@ createReferenceConjugateGradient( Args&&... args )
     return Cabana::Grid::createReferenceConjugateGradient<Scalar, Params...>(
         std::forward<Args>( args )... );
 }
-
+//! \endcond
 } // namespace Cajita
 
 #endif // end CABANA_GRID_REFERENCESTRUCTUREDSOLVER_HPP

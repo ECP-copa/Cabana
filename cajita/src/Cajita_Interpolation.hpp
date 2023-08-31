@@ -1569,6 +1569,7 @@ createTensorDivergenceP2G( const ViewType& x,
 
 namespace Cajita
 {
+//! \cond Deprecated
 namespace G2P
 {
 template <class... Args>
@@ -1735,6 +1736,7 @@ createTensorDivergenceP2G( Args&&... args )
     return Cabana::Grid::createTensorDivergenceP2G(
         std::forward<Args>( args )... );
 }
+//! \endcond
 } // namespace Cajita
 
 #endif // end CABANA_GRID_INTERPOLATION_HPP

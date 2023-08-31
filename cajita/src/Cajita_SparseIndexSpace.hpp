@@ -1220,6 +1220,7 @@ class TileIndexSpace : public IndexSpace<N>
 
 namespace Cajita
 {
+//! \cond Deprecated
 using HashTypes [[deprecated( "Cajita is now Cabana::Grid." )]] =
     Cabana::Grid::HashTypes;
 
@@ -1299,7 +1300,7 @@ createSparseMap( Args&&... args )
 template <std::size_t N, unsigned long long cellBitsPerTileDim>
 using TileIndexSpace [[deprecated( "Cajita is now Cabana::Grid." )]] =
     Cabana::Grid::TileIndexSpace<N, cellBitsPerTileDim>;
-
+//! \endcond
 } // namespace Cajita
 
 #endif ///< !CABANA_GRID_SPARSE_INDEXSPACE_HPP

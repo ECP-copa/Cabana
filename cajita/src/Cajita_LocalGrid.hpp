@@ -618,6 +618,7 @@ createLocalGrid( const std::shared_ptr<GlobalGrid<MeshType>>& global_grid,
 
 namespace Cajita
 {
+//! \cond Deprecated
 template <class MeshType>
 using LocalGrid [[deprecated( "Cajita is now Cabana::Grid." )]] =
     Cabana::Grid::LocalGrid<MeshType>;
@@ -628,7 +629,7 @@ createLocalGrid( Args&&... args )
 {
     return Cabana::Grid::createLocalGrid( std::forward<Args>( args )... );
 }
-
+//! \endcond
 } // namespace Cajita
 
 //---------------------------------------------------------------------------//

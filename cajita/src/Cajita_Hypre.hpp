@@ -86,10 +86,12 @@ struct HypreIsCompatibleWithMemorySpace<Kokkos::HostSpace> : std::true_type
 
 namespace Cajita
 {
+//! \cond Deprecated
 template <class MemorySpace>
 using HypreIsCompatibleWithMemorySpace
     [[deprecated( "Cajita is now Cabana::Grid." )]] =
         Cabana::Grid::HypreIsCompatibleWithMemorySpace<MemorySpace>;
+//! \endcond
 } // namespace Cajita
 
 #endif // end CABANA_GRID_HYPRE_HPP

@@ -863,6 +863,7 @@ KOKKOS_INLINE_FUNCTION void evaluateSpline(
 
 namespace Cajita
 {
+//! \cond Deprecated
 template <int Order>
 using Spline [[deprecated( "Cajita is now Cabana::Grid." )]] =
     Cabana::Grid::Spline<Order>;
@@ -909,7 +910,7 @@ evaluateSpline( Args&&... args )
 {
     return Cabana::Grid::evaluateSpline( std::forward<Args>( args )... );
 }
-
+//! \endcond
 } // namespace Cajita
 
 #endif // end CABANA_GRID_SPLINES_HPP

@@ -312,6 +312,7 @@ createLoadBalancer(
 
 namespace Cajita
 {
+//! \cond Deprecated
 namespace Experimental
 {
 template <class MeshType>
@@ -325,7 +326,7 @@ createLoadBalancer( Args&&... args )
     return Cabana::Grid::Experimental::createLoadBalancer(
         std::forward<Args>( args )... );
 }
-
+//! \endcond
 } // namespace Experimental
 } // namespace Cajita
 

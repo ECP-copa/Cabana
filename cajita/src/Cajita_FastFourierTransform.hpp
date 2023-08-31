@@ -789,7 +789,7 @@ namespace Cajita
 {
 namespace Experimental
 {
-
+//! \cond Deprecated
 using FFTScaleFull [[deprecated( "Cajita is now Cabana::Grid." )]] =
     Cabana::Grid::Experimental::FFTScaleFull;
 using FFTScaleNone [[deprecated( "Cajita is now Cabana::Grid." )]] =
@@ -851,7 +851,7 @@ createHeffteFastFourierTransform( Args&&... args )
     return Cabana::Grid::Experimental::createHeffteFastFourierTransform<
         Scalar, MemorySpace>( std::forward<Args>( args )... );
 }
-
+//! \endcond
 } // namespace Experimental
 } // namespace Cajita
 

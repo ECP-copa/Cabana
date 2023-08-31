@@ -483,6 +483,7 @@ IndexSpace<N + 1> appendDimension( const IndexSpace<N>& index_space,
 
 namespace Cajita
 {
+//! \cond Deprecated
 template <long N>
 using IndexSpace [[deprecated( "Cajita is now Cabana::Grid." )]] =
     Cabana::Grid::IndexSpace<N>;
@@ -521,7 +522,7 @@ appendDimension( Args&&... args )
 {
     return Cabana::Grid::appendDimension( std::forward<Args>( args )... );
 }
-
+//! \endcond
 } // namespace Cajita
 
 #endif // end CABANA_GRID_INDEXSPACE_HPP

@@ -296,6 +296,7 @@ namespace Cajita
 {
 namespace Experimental
 {
+//! \cond Deprecated
 template <class MeshType>
 using LocalGrid [[deprecated( "Cajita is now Cabana::Grid." )]] =
     Cabana::Grid::Experimental::LocalGrid<MeshType>;
@@ -307,7 +308,7 @@ createSparseLocalGrid( Args&&... args )
     return Cabana::Grid::Experimental::createSparseLocalGrid(
         std::forward<Args>( args )... );
 }
-
+//! \endcond
 } // namespace Experimental
 } // namespace Cajita
 

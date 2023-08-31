@@ -713,6 +713,7 @@ namespace Cajita
 {
 namespace Experimental
 {
+//! \cond Deprecated
 template <class DataTypes, class EntityType, class MeshType,
           class SparseMapType>
 using SparseArrayLayout =
@@ -751,7 +752,7 @@ auto createSparseArray( const std::string label,
     return Cabana::Grid::Experimental::createSparseArray<DeviceType>( label,
                                                                       layout );
 }
-
+//! \endcond
 } // namespace Experimental
 } // end namespace Cajita
 

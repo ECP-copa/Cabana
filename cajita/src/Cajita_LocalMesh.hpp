@@ -798,6 +798,7 @@ createLocalMesh( const LocalGrid<MeshType>& local_grid )
 
 namespace Cajita
 {
+//! \cond Deprecated
 template <class Device, class MeshType>
 using LocalMesh [[deprecated( "Cajita is now Cabana::Grid." )]] =
     Cabana::Grid::LocalMesh<Device, MeshType>;
@@ -810,7 +811,7 @@ createLocalMesh( Args&&... args )
     return Cabana::Grid::createLocalMesh<Device>(
         std::forward<Args>( args )... );
 }
-
+//! \endcond
 } // namespace Cajita
 
 #endif // end CABANA_GRID_LOCALMESH_HPP
