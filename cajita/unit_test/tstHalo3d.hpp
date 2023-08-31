@@ -25,7 +25,7 @@
 #include <array>
 #include <cmath>
 
-using namespace Cajita;
+using namespace Cabana::Grid;
 
 namespace Test
 {

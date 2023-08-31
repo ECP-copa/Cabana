@@ -21,7 +21,7 @@
 
 #include <mpi.h>
 
-using namespace Cajita;
+using namespace Cabana::Grid;
 
 namespace Test
 {
@@ -146,7 +146,7 @@ void testBlockPartitioner3d()
     owned_cell_info_test_3d( partitioner );
 
     // Check automatic 2d-YZ decomposition.
-    DimBlockPartitioner<3> partitioner_2d( Cajita::Dim::I );
+    DimBlockPartitioner<3> partitioner_2d( Dim::I );
     std::array<int, 3> global_cells = { 0, 0, 0 };
     auto ranks_per_dim_2d =
         partitioner_2d.ranksPerDimension( MPI_COMM_WORLD, global_cells );
@@ -154,7 +154,7 @@ void testBlockPartitioner3d()
     owned_cell_info_test_3d( partitioner_2d );
 
     // Check automatic 1d-X decomposition.
-    DimBlockPartitioner<3> partitioner_1d( Cajita::Dim::J, Cajita::Dim::K );
+    DimBlockPartitioner<3> partitioner_1d( Dim::J, Dim::K );
     auto ranks_per_dim_1d =
         partitioner_1d.ranksPerDimension( MPI_COMM_WORLD, global_cells );
     EXPECT_EQ( ranks_per_dim_1d[1], 1 );
@@ -201,7 +201,7 @@ void testBlockPartitioner2d()
     owned_cell_info_test_2d( partitioner );
 
     // Check automatic 1d-X decomposition.
-    DimBlockPartitioner<2> partitioner_1d( Cajita::Dim::J );
+    DimBlockPartitioner<2> partitioner_1d( Dim::J );
     auto ranks_per_dim_1d =
         partitioner_1d.ranksPerDimension( MPI_COMM_WORLD, { 0, 0 } );
     EXPECT_EQ( ranks_per_dim_1d[1], 1 );

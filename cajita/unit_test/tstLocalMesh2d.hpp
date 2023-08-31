@@ -26,7 +26,7 @@
 #include <cmath>
 #include <vector>
 
-using namespace Cajita;
+using namespace Cabana::Grid;
 
 namespace Test
 {
@@ -249,8 +249,7 @@ void uniformLocalMeshTest2d( const LocalMeshType& local_mesh,
     }
 
     // Extra check for using local mesh functions with shared index space.
-    auto shared_cell_space =
-        local_grid.sharedIndexSpace( Cajita::Own(), Cajita::Cell(), 0, 1 );
+    auto shared_cell_space = local_grid.sharedIndexSpace( Own(), Cell(), 0, 1 );
     std::cout << shared_cell_space.extent( 0 ) << " "
               << shared_cell_space.extent( 1 ) << std::endl;
     {

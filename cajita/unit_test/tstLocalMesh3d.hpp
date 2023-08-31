@@ -26,7 +26,7 @@
 #include <cmath>
 #include <vector>
 
-using namespace Cajita;
+using namespace Cabana::Grid;
 
 namespace Test
 {
@@ -466,7 +466,7 @@ void uniformLocalMeshTest3d( const LocalMeshType& local_mesh,
 
     // Extra check for using local mesh functions with shared index space.
     auto shared_cell_space =
-        local_grid.sharedIndexSpace( Cajita::Own(), Cajita::Cell(), 0, 1, 0 );
+        local_grid.sharedIndexSpace( Own(), Cell(), 0, 1, 0 );
     {
         auto measure =
             createView<double, TEST_MEMSPACE>( "measure", cell_space );

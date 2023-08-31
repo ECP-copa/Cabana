@@ -25,16 +25,23 @@
 #include <numeric>
 #include <vector>
 
-using namespace Cajita;
+using Cabana::Grid::Cell;
+using Cabana::Grid::Dim;
+using Cabana::Grid::Edge;
+using Cabana::Grid::Face;
+using Cabana::Grid::Ghost;
+using Cabana::Grid::Global;
+using Cabana::Grid::Local;
+using Cabana::Grid::Node;
+using Cabana::Grid::Own;
 
 namespace Test
 {
-
 //---------------------------------------------------------------------------//
 void layoutTest()
 {
     // Let MPI compute the partitioning for this test.
-    DimBlockPartitioner<2> partitioner;
+    Cabana::Grid::DimBlockPartitioner<2> partitioner;
 
     // Create the global .
     double cell_size = 0.23;
@@ -44,18 +51,18 @@ void layoutTest()
     std::array<double, 2> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1] };
-    auto global_mesh = createUniformGlobalMesh(
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     // Create the global grid.
-    auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                         is_dim_periodic, partitioner );
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
 
     // Create an array layout on the nodes.
     int halo_width = 2;
     int dofs_per_node = 4;
-    auto node_layout =
-        createArrayLayout( global_grid, halo_width, dofs_per_node, Node() );
+    auto node_layout = Cabana::Grid::createArrayLayout( global_grid, halo_width,
+                                                        dofs_per_node, Node() );
 
     // Check the owned index_space.
     auto array_node_owned_space = node_layout->indexSpace( Own(), Local() );
@@ -117,8 +124,8 @@ void layoutTest()
 
     // Create an array layout on the cells.
     int dofs_per_cell = 4;
-    auto cell_layout =
-        createArrayLayout( global_grid, halo_width, dofs_per_cell, Cell() );
+    auto cell_layout = Cabana::Grid::createArrayLayout( global_grid, halo_width,
+                                                        dofs_per_cell, Cell() );
 
     // Check the owned index_space.
     auto array_cell_owned_space = cell_layout->indexSpace( Own(), Local() );
@@ -183,7 +190,7 @@ void layoutTest()
 void arrayTest()
 {
     // Let MPI compute the partitioning for this test.
-    DimBlockPartitioner<2> partitioner;
+    Cabana::Grid::DimBlockPartitioner<2> partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;
@@ -193,22 +200,23 @@ void arrayTest()
     std::array<double, 2> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1] };
-    auto global_mesh = createUniformGlobalMesh(
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     // Create the global grid.
-    auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                         is_dim_periodic, partitioner );
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
 
     // Create an array layout on the cells.
     int halo_width = 2;
     int dofs_per_cell = 4;
-    auto cell_layout =
-        createArrayLayout( global_grid, halo_width, dofs_per_cell, Cell() );
+    auto cell_layout = Cabana::Grid::createArrayLayout( global_grid, halo_width,
+                                                        dofs_per_cell, Cell() );
 
     // Create an array.
     std::string label( "test_array" );
-    auto array = createArray<double, TEST_MEMSPACE>( label, cell_layout );
+    auto array =
+        Cabana::Grid::createArray<double, TEST_MEMSPACE>( label, cell_layout );
 
     // Check the array.
     EXPECT_EQ( label, array->label() );
@@ -224,7 +232,7 @@ void arrayTest()
 void arrayOpTest()
 {
     // Let MPI compute the partitioning for this test.
-    DimBlockPartitioner<2> partitioner;
+    Cabana::Grid::DimBlockPartitioner<2> partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;
@@ -234,25 +242,26 @@ void arrayOpTest()
     std::array<double, 2> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1] };
-    auto global_mesh = createUniformGlobalMesh(
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     // Create the global grid.
-    auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                         is_dim_periodic, partitioner );
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
 
     // Create an array layout on the cells.
     int halo_width = 2;
     int dofs_per_cell = 4;
-    auto cell_layout =
-        createArrayLayout( global_grid, halo_width, dofs_per_cell, Cell() );
+    auto cell_layout = Cabana::Grid::createArrayLayout( global_grid, halo_width,
+                                                        dofs_per_cell, Cell() );
 
     // Create an array.
     std::string label( "test_array" );
-    auto array = createArray<double, TEST_MEMSPACE>( label, cell_layout );
+    auto array =
+        Cabana::Grid::createArray<double, TEST_MEMSPACE>( label, cell_layout );
 
     // Assign a value to the entire the array.
-    ArrayOp::assign( *array, 2.0, Ghost() );
+    Cabana::Grid::ArrayOp::assign( *array, 2.0, Ghost() );
     auto host_view = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
                                                           array->view() );
     auto ghosted_space = array->layout()->indexSpace( Ghost(), Local() );
@@ -262,7 +271,7 @@ void arrayOpTest()
                 EXPECT_DOUBLE_EQ( host_view( i, j, l ), 2.0 );
 
     // Scale the entire array with a single value.
-    ArrayOp::scale( *array, 0.5, Ghost() );
+    Cabana::Grid::ArrayOp::scale( *array, 0.5, Ghost() );
     Kokkos::deep_copy( host_view, array->view() );
     for ( long i = 0; i < ghosted_space.extent( Dim::I ); ++i )
         for ( long j = 0; j < ghosted_space.extent( Dim::J ); ++j )
@@ -271,7 +280,7 @@ void arrayOpTest()
 
     // Scale each array component by a different value.
     std::vector<double> scales = { 2.3, 1.5, 8.9, -12.1 };
-    ArrayOp::scale( *array, scales, Ghost() );
+    Cabana::Grid::ArrayOp::scale( *array, scales, Ghost() );
     Kokkos::deep_copy( host_view, array->view() );
     for ( long i = 0; i < ghosted_space.extent( Dim::I ); ++i )
         for ( long j = 0; j < ghosted_space.extent( Dim::J ); ++j )
@@ -279,9 +288,10 @@ void arrayOpTest()
                 EXPECT_DOUBLE_EQ( host_view( i, j, l ), scales[l] );
 
     // Create another array and update.
-    auto array_2 = createArray<double, TEST_MEMSPACE>( label, cell_layout );
-    ArrayOp::assign( *array_2, 0.5, Ghost() );
-    ArrayOp::update( *array, 3.0, *array_2, 2.0, Ghost() );
+    auto array_2 =
+        Cabana::Grid::createArray<double, TEST_MEMSPACE>( label, cell_layout );
+    Cabana::Grid::ArrayOp::assign( *array_2, 0.5, Ghost() );
+    Cabana::Grid::ArrayOp::update( *array, 3.0, *array_2, 2.0, Ghost() );
     Kokkos::deep_copy( host_view, array->view() );
     for ( long i = 0; i < ghosted_space.extent( Dim::I ); ++i )
         for ( long j = 0; j < ghosted_space.extent( Dim::J ); ++j )
@@ -307,7 +317,7 @@ void arrayOpTest()
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     // Compute the dot product of the two arrays.
     std::vector<double> dots( dofs_per_cell );
-    ArrayOp::dot( *array, *array_2, dots );
+    Cabana::Grid::ArrayOp::dot( *array, *array_2, dots );
     int total_num_cell = global_grid->globalNumEntity( Cell(), Dim::I ) *
                          global_grid->globalNumEntity( Cell(), Dim::J );
     for ( int n = 0; n < dofs_per_cell; ++n )
@@ -316,7 +326,7 @@ void arrayOpTest()
 
     // Compute the two-norm of the array components
     std::vector<double> norm_2( dofs_per_cell );
-    ArrayOp::norm2( *array, norm_2 );
+    Cabana::Grid::ArrayOp::norm2( *array, norm_2 );
     for ( int n = 0; n < dofs_per_cell; ++n )
         EXPECT_FLOAT_EQ( norm_2[n],
                          std::sqrt( std::pow( 3.0 * scales[n] + 1.0, 2.0 ) *
@@ -324,7 +334,7 @@ void arrayOpTest()
 
     // Compute the one-norm of the array components
     std::vector<double> norm_1( dofs_per_cell );
-    ArrayOp::norm1( *array, norm_1 );
+    Cabana::Grid::ArrayOp::norm1( *array, norm_1 );
     for ( int n = 0; n < dofs_per_cell; ++n )
         EXPECT_FLOAT_EQ( norm_1[n],
                          fabs( 3.0 * scales[n] + 1.0 ) * total_num_cell );
@@ -336,13 +346,13 @@ void arrayOpTest()
         host_view( 4, 4, n ) = large_vals[n];
     Kokkos::deep_copy( array->view(), host_view );
     std::vector<double> norm_inf( dofs_per_cell );
-    ArrayOp::normInf( *array, norm_inf );
+    Cabana::Grid::ArrayOp::normInf( *array, norm_inf );
     for ( int n = 0; n < dofs_per_cell; ++n )
         EXPECT_FLOAT_EQ( norm_inf[n], fabs( large_vals[n] ) );
 #endif
 
     // Check the copy.
-    ArrayOp::copy( *array, *array_2, Own() );
+    Cabana::Grid::ArrayOp::copy( *array, *array_2, Own() );
     Kokkos::deep_copy( host_view, array->view() );
     auto owned_space = array->layout()->indexSpace( Own(), Local() );
     for ( long i = owned_space.min( Dim::I ); i < owned_space.max( Dim::I );
@@ -353,8 +363,8 @@ void arrayOpTest()
                 EXPECT_DOUBLE_EQ( host_view( i, j, l ), 0.5 );
 
     // Now make a clone and copy.
-    auto array_3 = ArrayOp::clone( *array );
-    ArrayOp::copy( *array_3, *array, Own() );
+    auto array_3 = Cabana::Grid::ArrayOp::clone( *array );
+    Cabana::Grid::ArrayOp::copy( *array_3, *array, Own() );
     Kokkos::deep_copy( host_view, array_3->view() );
     for ( long i = owned_space.min( Dim::I ); i < owned_space.max( Dim::I );
           ++i )
@@ -364,7 +374,7 @@ void arrayOpTest()
                 EXPECT_DOUBLE_EQ( host_view( i, j, l ), 0.5 );
 
     // Test the fused clone copy.
-    auto array_4 = ArrayOp::cloneCopy( *array, Own() );
+    auto array_4 = Cabana::Grid::ArrayOp::cloneCopy( *array, Own() );
     Kokkos::deep_copy( host_view, array_4->view() );
     for ( long i = owned_space.min( Dim::I ); i < owned_space.max( Dim::I );
           ++i )
@@ -374,13 +384,14 @@ void arrayOpTest()
                 EXPECT_DOUBLE_EQ( host_view( i, j, l ), 0.5 );
 
     // Do a 3 vector update.
-    ArrayOp::assign( *array, 1.0, Ghost() );
-    ArrayOp::scale( *array, scales, Ghost() );
-    ArrayOp::assign( *array_2, 0.5, Ghost() );
-    ArrayOp::scale( *array_2, scales, Ghost() );
-    ArrayOp::assign( *array_3, 1.5, Ghost() );
-    ArrayOp::scale( *array_3, scales, Ghost() );
-    ArrayOp::update( *array, 3.0, *array_2, 2.0, *array_3, 4.0, Ghost() );
+    Cabana::Grid::ArrayOp::assign( *array, 1.0, Ghost() );
+    Cabana::Grid::ArrayOp::scale( *array, scales, Ghost() );
+    Cabana::Grid::ArrayOp::assign( *array_2, 0.5, Ghost() );
+    Cabana::Grid::ArrayOp::scale( *array_2, scales, Ghost() );
+    Cabana::Grid::ArrayOp::assign( *array_3, 1.5, Ghost() );
+    Cabana::Grid::ArrayOp::scale( *array_3, scales, Ghost() );
+    Cabana::Grid::ArrayOp::update( *array, 3.0, *array_2, 2.0, *array_3, 4.0,
+                                   Ghost() );
     Kokkos::deep_copy( host_view, array->view() );
     for ( long i = 0; i < ghosted_space.extent( Dim::I ); ++i )
         for ( long j = 0; j < ghosted_space.extent( Dim::J ); ++j )
@@ -394,7 +405,7 @@ template <class DecompositionType, class EntityType>
 void arrayBoundaryTest()
 {
     // Let MPI compute the partitioning for this test.
-    DimBlockPartitioner<2> partitioner;
+    Cabana::Grid::DimBlockPartitioner<2> partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;
@@ -404,27 +415,28 @@ void arrayBoundaryTest()
     std::array<double, 2> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1] };
-    auto global_mesh = createUniformGlobalMesh(
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     // Create the global grid.
-    auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                         is_dim_periodic, partitioner );
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
 
     // Create an array layout on the cells.
     int halo_width = 2;
     int dofs_per_cell = 4;
-    auto node_layout = createArrayLayout( global_grid, halo_width,
-                                          dofs_per_cell, EntityType() );
+    auto node_layout = Cabana::Grid::createArrayLayout(
+        global_grid, halo_width, dofs_per_cell, EntityType() );
 
     // Create an array.
     std::string label( "test_array" );
-    auto array = createArray<double, TEST_MEMSPACE>( label, node_layout );
+    auto array =
+        Cabana::Grid::createArray<double, TEST_MEMSPACE>( label, node_layout );
 
     // Assign a value to the entire the array.
     // This test is simply to ensure the boundary index space is valid for the
     // array.
-    ArrayOp::assign( *array, 2.0, Ghost() );
+    Cabana::Grid::ArrayOp::assign( *array, 2.0, Ghost() );
     auto host_view = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
                                                           array->view() );
     for ( int x = -1; x <= 1; x++ )

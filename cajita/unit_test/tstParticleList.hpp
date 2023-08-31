@@ -32,22 +32,22 @@ TEST( TEST_CATEGORY, particle_test )
     std::array<double, 3> low_corner = { -1.2, 0.1, 1.1 };
     std::array<double, 3> high_corner = { -0.3, 9.5, 2.3 };
     double cell_size = 0.05;
-    auto global_mesh =
-        Cajita::createUniformGlobalMesh( low_corner, high_corner, cell_size );
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
+        low_corner, high_corner, cell_size );
 
     // Create the global grid.
-    Cajita::DimBlockPartitioner<3> partitioner;
+    Cabana::Grid::DimBlockPartitioner<3> partitioner;
     std::array<bool, 3> is_dim_periodic = { true, true, true };
-    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                                 is_dim_periodic, partitioner );
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
 
     // Create a local mesh.
-    auto local_grid = Cajita::createLocalGrid( global_grid, 1 );
+    auto local_grid = Cabana::Grid::createLocalGrid( global_grid, 1 );
 
     Cabana::ParticleTraits<Cabana::Field::Position<3>, Foo, CommRank, Bar>
         fields;
-    auto plist =
-        Cajita::createParticleList<TEST_MEMSPACE>( "test_particles", fields );
+    auto plist = Cabana::Grid::createParticleList<TEST_MEMSPACE>(
+        "test_particles", fields );
 
     particleListTest( plist );
 

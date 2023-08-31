@@ -17,10 +17,10 @@
 #include <array>
 #include <vector>
 
-using namespace Cajita;
-
 namespace Test
 {
+
+using Cabana::Grid::Dim;
 
 //---------------------------------------------------------------------------//
 // Test uniform mesh with cubic cells.
@@ -30,8 +30,8 @@ void uniformTest3D1()
     std::array<double, 3> high_corner = { -0.3, 9.5, 1.3 };
     double cell_size = 0.05;
 
-    auto global_mesh =
-        createUniformGlobalMesh( low_corner, high_corner, cell_size );
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
+        low_corner, high_corner, cell_size );
 
     for ( int d = 0; d < 3; ++d )
         EXPECT_DOUBLE_EQ( low_corner[d], global_mesh->lowCorner( d ) );
@@ -59,8 +59,8 @@ void uniformTest3D2()
     std::array<double, 3> high_corner = { -0.3, 9.5, 1.3 };
     std::array<int, 3> num_cell = { 18, 188, 4 };
 
-    auto global_mesh =
-        createUniformGlobalMesh( low_corner, high_corner, num_cell );
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
+        low_corner, high_corner, num_cell );
 
     for ( int d = 0; d < 3; ++d )
         EXPECT_DOUBLE_EQ( low_corner[d], global_mesh->lowCorner( d ) );
@@ -89,8 +89,8 @@ void uniformTest3D3()
     std::array<double, 3> high_corner = { -0.3, 9.5, 1.3 };
     std::array<double, 3> cell_size = { 0.05, 0.05, 0.05 };
 
-    auto global_mesh =
-        createUniformGlobalMesh( low_corner, high_corner, cell_size );
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
+        low_corner, high_corner, cell_size );
 
     for ( int d = 0; d < 3; ++d )
         EXPECT_DOUBLE_EQ( low_corner[d], global_mesh->lowCorner( d ) );
@@ -118,8 +118,8 @@ void uniformTest2D1()
     std::array<double, 2> high_corner = { -0.3, 9.5 };
     double cell_size = 0.05;
 
-    auto global_mesh =
-        createUniformGlobalMesh( low_corner, high_corner, cell_size );
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
+        low_corner, high_corner, cell_size );
 
     for ( int d = 0; d < 2; ++d )
         EXPECT_DOUBLE_EQ( low_corner[d], global_mesh->lowCorner( d ) );
@@ -147,8 +147,8 @@ void uniformTest2D2()
     std::array<double, 2> high_corner = { -0.3, 9.5 };
     std::array<int, 2> num_cell = { 18, 188 };
 
-    auto global_mesh =
-        createUniformGlobalMesh( low_corner, high_corner, num_cell );
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
+        low_corner, high_corner, num_cell );
 
     for ( int d = 0; d < 2; ++d )
         EXPECT_DOUBLE_EQ( low_corner[d], global_mesh->lowCorner( d ) );
@@ -177,8 +177,8 @@ void uniformTest2D3()
     std::array<double, 2> high_corner = { -0.3, 9.5 };
     std::array<double, 2> cell_size = { 0.05, 0.05 };
 
-    auto global_mesh =
-        createUniformGlobalMesh( low_corner, high_corner, cell_size );
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
+        low_corner, high_corner, cell_size );
 
     for ( int d = 0; d < 2; ++d )
         EXPECT_DOUBLE_EQ( low_corner[d], global_mesh->lowCorner( d ) );
@@ -206,7 +206,8 @@ void nonUniformTest3d()
     std::vector<float> j_edge = { 3.3, 8.1, 9.5, 12.2 };
     std::vector<float> k_edge = { -1.1, -0.9, 0.4, 8.8, 19.3 };
 
-    auto global_mesh = createNonUniformGlobalMesh( i_edge, j_edge, k_edge );
+    auto global_mesh =
+        Cabana::Grid::createNonUniformGlobalMesh( i_edge, j_edge, k_edge );
 
     EXPECT_FLOAT_EQ( i_edge.front(), global_mesh->lowCorner( Dim::I ) );
     EXPECT_FLOAT_EQ( j_edge.front(), global_mesh->lowCorner( Dim::J ) );
@@ -250,7 +251,8 @@ void nonUniformTest2d()
     std::vector<float> i_edge = { -0.3, 0.4, 1.1 };
     std::vector<float> j_edge = { 3.3, 8.1, 9.5, 12.2 };
 
-    auto global_mesh = createNonUniformGlobalMesh( i_edge, j_edge );
+    auto global_mesh =
+        Cabana::Grid::createNonUniformGlobalMesh( i_edge, j_edge );
 
     EXPECT_FLOAT_EQ( i_edge.front(), global_mesh->lowCorner( Dim::I ) );
     EXPECT_FLOAT_EQ( j_edge.front(), global_mesh->lowCorner( Dim::J ) );

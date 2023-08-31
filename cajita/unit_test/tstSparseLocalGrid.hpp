@@ -21,8 +21,8 @@
 #include <array>
 #include <numeric>
 
-using namespace Cajita;
-using namespace Cajita::Experimental;
+using namespace Cabana::Grid;
+using namespace Cabana::Grid::Experimental;
 
 namespace Test
 {
@@ -41,7 +41,7 @@ void sparseLocalGridTest( EntityType t2 )
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
         global_low_corner[2] + cell_size * global_num_cell[2] };
-    auto global_mesh_ptr = Cajita::createSparseGlobalMesh(
+    auto global_mesh_ptr = createSparseGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     // Create and initialize sparse partitioner
@@ -66,12 +66,12 @@ void sparseLocalGridTest( EntityType t2 )
                                         rec_partitions[2] );
 
     // Create global grid
-    auto global_grid_ptr = Cajita::createGlobalGrid(
-        MPI_COMM_WORLD, global_mesh_ptr, periodic, partitioner );
+    auto global_grid_ptr = createGlobalGrid( MPI_COMM_WORLD, global_mesh_ptr,
+                                             periodic, partitioner );
 
     // Create a local grid.
     int halo_width = 3;
-    auto local_grid_ptr = Cajita::Experimental::createSparseLocalGrid(
+    auto local_grid_ptr = Experimental::createSparseLocalGrid(
         global_grid_ptr, halo_width, cell_num_per_tile_dim );
 
     // Check sizes - constructor should correct the halo_width to

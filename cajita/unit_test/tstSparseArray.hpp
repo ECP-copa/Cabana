@@ -21,8 +21,8 @@
 
 #include <mpi.h>
 
-using namespace Cajita;
-using namespace Cajita::Experimental;
+using namespace Cabana::Grid;
+using namespace Cabana::Grid::Experimental;
 
 namespace Test
 {
@@ -606,14 +606,14 @@ void full_occupy_test( EntityType entity )
 //---------------------------------------------------------------------------//
 TEST( sparse_array, 3d_sparse_array_sparse_occupy )
 {
-    sparse_array_test( 100, Cajita::Node() );
-    sparse_array_test( 20, Cajita::Cell() );
+    sparse_array_test( 100, Node() );
+    sparse_array_test( 20, Cell() );
 }
 
 TEST( sparse_array, 3d_sparse_array_full_occupy )
 {
-    full_occupy_test( Cajita::Node() );
-    full_occupy_test( Cajita::Cell() );
+    full_occupy_test( Node() );
+    full_occupy_test( Cell() );
 }
 
 //---------------------------------------------------------------------------//

@@ -31,8 +31,8 @@
 #include <unordered_map>
 #include <vector>
 
-using namespace Cajita;
-using namespace Cajita::Experimental;
+using namespace Cabana::Grid;
+using namespace Cabana::Grid::Experimental;
 
 namespace Test
 {
@@ -643,7 +643,7 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, sparse_halo_scatter_and_gather_sum )
 {
-    haloScatterAndGatherTest( Cajita::ScatterReduce::Sum(), Cajita::Node() );
+    haloScatterAndGatherTest( ScatterReduce::Sum(), Node() );
 }
 
 // TODO: test min/max

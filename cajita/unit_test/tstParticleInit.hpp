@@ -25,7 +25,7 @@
 
 #include <gtest/gtest.h>
 
-using Cajita::Dim;
+using Cabana::Grid::Dim;
 
 namespace Test
 {
@@ -62,19 +62,19 @@ void initParticleListTest( InitType init_type, int ppc,
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
         global_low_corner[2] + cell_size * global_num_cell[2] };
-    auto global_mesh = Cajita::createUniformGlobalMesh(
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     std::array<bool, 3> is_dim_periodic = { true, true, true };
-    Cajita::DimBlockPartitioner<3> partitioner;
-    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                                 is_dim_periodic, partitioner );
-    auto local_grid = Cajita::createLocalGrid( global_grid, 0 );
+    Cabana::Grid::DimBlockPartitioner<3> partitioner;
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
+    auto local_grid = Cabana::Grid::createLocalGrid( global_grid, 0 );
 
     // Make a particle list.
     auto fields = Cabana::ParticleTraits<Foo, Bar>();
-    auto particles =
-        Cajita::createParticleList<TEST_MEMSPACE>( "test_particles", fields );
+    auto particles = Cabana::Grid::createParticleList<TEST_MEMSPACE>(
+        "test_particles", fields );
     using plist_type = decltype( particles );
 
     // Particle initialization functor.
@@ -111,7 +111,7 @@ void initParticleListTest( InitType init_type, int ppc,
     int prev_particle = 0;
     for ( int m = 0; m < multiplier; ++m )
     {
-        created_particles = Cajita::createParticles(
+        created_particles = Cabana::Grid::createParticles(
             init_type, TEST_EXECSPACE(), init_func, particles, ppc, *local_grid,
             prev_particle );
         prev_particle = created_particles;
@@ -125,9 +125,9 @@ void initParticleListTest( InitType init_type, int ppc,
                    MPI_COMM_WORLD );
     int expect_num_particle =
         multiplier * totalParticlesPerCell( init_type, ppc ) *
-        ( global_grid->globalNumEntity( Cajita::Cell(), Dim::I ) - 2 ) *
-        ( global_grid->globalNumEntity( Cajita::Cell(), Dim::J ) - 2 ) *
-        ( global_grid->globalNumEntity( Cajita::Cell(), Dim::K ) - 2 );
+        ( global_grid->globalNumEntity( Cabana::Grid::Cell(), Dim::I ) - 2 ) *
+        ( global_grid->globalNumEntity( Cabana::Grid::Cell(), Dim::J ) - 2 ) *
+        ( global_grid->globalNumEntity( Cabana::Grid::Cell(), Dim::K ) - 2 );
     EXPECT_EQ( global_num_particle, expect_num_particle );
 
     // Particle volume.
@@ -166,16 +166,16 @@ void initSliceTest( InitType init_type, int ppc, const int multiplier = 1 )
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
         global_low_corner[2] + cell_size * global_num_cell[2] };
-    auto global_mesh = Cajita::createUniformGlobalMesh(
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     std::array<bool, 3> is_dim_periodic = { true, true, true };
-    Cajita::DimBlockPartitioner<3> partitioner;
-    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                                 is_dim_periodic, partitioner );
-    auto local_grid = Cajita::createLocalGrid( global_grid, 0 );
-    auto owned_cells = local_grid->indexSpace( Cajita::Own(), Cajita::Cell(),
-                                               Cajita::Local() );
+    Cabana::Grid::DimBlockPartitioner<3> partitioner;
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
+    auto local_grid = Cabana::Grid::createLocalGrid( global_grid, 0 );
+    auto owned_cells = local_grid->indexSpace(
+        Cabana::Grid::Own(), Cabana::Grid::Cell(), Cabana::Grid::Local() );
 
     int num_particle =
         owned_cells.size() * totalParticlesPerCell( init_type, ppc );
@@ -195,8 +195,8 @@ void initSliceTest( InitType init_type, int ppc, const int multiplier = 1 )
     {
         aosoa.resize( prev_particle + num_particle );
         positions = Cabana::slice<0>( aosoa );
-        Cajita::createParticles( init_type, TEST_EXECSPACE(), positions, ppc,
-                                 *local_grid, prev_particle );
+        Cabana::Grid::createParticles( init_type, TEST_EXECSPACE(), positions,
+                                       ppc, *local_grid, prev_particle );
         prev_particle += num_particle;
     }
 
@@ -206,9 +206,9 @@ void initSliceTest( InitType init_type, int ppc, const int multiplier = 1 )
                    MPI_COMM_WORLD );
     int expect_num_particle =
         multiplier * totalParticlesPerCell( init_type, ppc ) *
-        global_grid->globalNumEntity( Cajita::Cell(), Dim::I ) *
-        global_grid->globalNumEntity( Cajita::Cell(), Dim::J ) *
-        global_grid->globalNumEntity( Cajita::Cell(), Dim::K );
+        global_grid->globalNumEntity( Cabana::Grid::Cell(), Dim::I ) *
+        global_grid->globalNumEntity( Cabana::Grid::Cell(), Dim::J ) *
+        global_grid->globalNumEntity( Cabana::Grid::Cell(), Dim::K );
     EXPECT_EQ( global_num_particle, expect_num_particle );
 
     // Check that all particles are in the box.

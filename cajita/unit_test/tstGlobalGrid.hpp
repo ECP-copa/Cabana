@@ -21,16 +21,19 @@
 
 #include <array>
 
-using namespace Cajita;
+using Cabana::Grid::Cell;
+using Cabana::Grid::Dim;
+using Cabana::Grid::Edge;
+using Cabana::Grid::Face;
+using Cabana::Grid::Node;
 
 namespace Test
 {
-
 //---------------------------------------------------------------------------//
 void gridTest3d( const std::array<bool, 3>& is_dim_periodic )
 {
     // Let MPI compute the partitioning for this test.
-    DimBlockPartitioner<3> partitioner;
+    Cabana::Grid::DimBlockPartitioner<3> partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;
@@ -40,12 +43,12 @@ void gridTest3d( const std::array<bool, 3>& is_dim_periodic )
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
         global_low_corner[2] + cell_size * global_num_cell[2] };
-    auto global_mesh = createUniformGlobalMesh(
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     // Create the global grid.
-    auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                         is_dim_periodic, partitioner );
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
 
     // Check the number of entities.
     for ( int d = 0; d < 3; ++d )
@@ -258,7 +261,7 @@ void gridTest3d( const std::array<bool, 3>& is_dim_periodic )
 void gridTest2d( const std::array<bool, 2>& is_dim_periodic )
 {
     // Let MPI compute the partitioning for this test.
-    DimBlockPartitioner<2> partitioner;
+    Cabana::Grid::DimBlockPartitioner<2> partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;
@@ -267,12 +270,12 @@ void gridTest2d( const std::array<bool, 2>& is_dim_periodic )
     std::array<double, 2> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1] };
-    auto global_mesh = createUniformGlobalMesh(
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     // Create the global grid.
-    auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                         is_dim_periodic, partitioner );
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
 
     // Check the number of entities.
     for ( int d = 0; d < 2; ++d )
@@ -421,7 +424,7 @@ void sparseGridTest3d()
         global_low_corner[1] + cell_size * global_num_cell[1],
         global_low_corner[2] + cell_size * global_num_cell[2] };
 
-    auto global_mesh = createSparseGlobalMesh(
+    auto global_mesh = Cabana::Grid::createSparseGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     // Sparse paritioner
@@ -431,9 +434,10 @@ void sparseGridTest3d()
     int num_step_rebalance = 100;
     int max_optimize_iteration = 10;
 
-    SparseDimPartitioner<TEST_MEMSPACE, cell_per_tile_dim> partitioner(
-        MPI_COMM_WORLD, max_workload_coeff, workload_num, num_step_rebalance,
-        global_num_cell, max_optimize_iteration );
+    Cabana::Grid::SparseDimPartitioner<TEST_MEMSPACE, cell_per_tile_dim>
+        partitioner( MPI_COMM_WORLD, max_workload_coeff, workload_num,
+                     num_step_rebalance, global_num_cell,
+                     max_optimize_iteration );
 
     // test ranks per dim
     auto ranks_per_dim =
@@ -455,8 +459,8 @@ void sparseGridTest3d()
                                         rec_partitions[2] );
 
     // Create spares global grid
-    auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                         is_dim_periodic, partitioner );
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
 
     // Check the number of entities.
     for ( int d = 0; d < 3; ++d )

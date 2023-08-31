@@ -19,7 +19,7 @@
 
 #include <mpi.h>
 
-using namespace Cajita;
+using namespace Cabana::Grid;
 
 namespace Test
 {

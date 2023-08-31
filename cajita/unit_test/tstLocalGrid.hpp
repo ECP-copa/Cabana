@@ -22,7 +22,7 @@
 #include <array>
 #include <numeric>
 
-using namespace Cajita;
+using namespace Cabana::Grid;
 
 namespace Test
 {
@@ -3333,7 +3333,7 @@ void mutabilityTest()
     auto local_grid = createLocalGrid( global_grid, halo_width );
 
     // Test mutability of mutGlobalGrid
-    Cajita::GlobalGrid<Cajita::UniformMesh<double, 3>>& mutGlobalGrid =
+    GlobalGrid<UniformMesh<double, 3>>& mutGlobalGrid =
         local_grid->globalGrid();
     std::array<int, 3> num_cell = { 0, 0, 0 };
     mutGlobalGrid.setNumCellAndOffset( num_cell, num_cell );

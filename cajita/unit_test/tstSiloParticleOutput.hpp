@@ -42,7 +42,7 @@
 namespace Test
 {
 
-using namespace Cajita;
+using namespace Cabana::Grid;
 
 //---------------------------------------------------------------------------//
 void writeTest()
@@ -58,17 +58,16 @@ void writeTest()
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
         global_low_corner[2] + cell_size * global_num_cell[2] };
-    auto global_mesh = Cajita::createUniformGlobalMesh(
+    auto global_mesh = createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
     std::array<bool, 3> is_dim_periodic = { false, false, false };
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                          is_dim_periodic, partitioner );
 
     // Allocate particles in the center of each cell.
-    auto block = Cajita::createLocalGrid( global_grid, 0 );
-    auto local_mesh = Cajita::createLocalMesh<Kokkos::HostSpace>( *block );
-    auto owned_cell_space =
-        block->indexSpace( Cajita::Own(), Cajita::Cell(), Cajita::Local() );
+    auto block = createLocalGrid( global_grid, 0 );
+    auto local_mesh = createLocalMesh<Kokkos::HostSpace>( *block );
+    auto owned_cell_space = block->indexSpace( Own(), Cell(), Local() );
     int num_particle = owned_cell_space.size();
     using DataTypes = Cabana::MemberTypes<double[3],   // coords
                                           double[3],   // vec
@@ -96,13 +95,13 @@ void writeTest()
             for ( int k = 0; k < owned_cell_space.extent( Dim::K ); ++k, ++pid )
             {
                 coords_mirror( pid, Dim::I ) =
-                    local_mesh.lowCorner( Cajita::Own(), Dim::I ) +
+                    local_mesh.lowCorner( Own(), Dim::I ) +
                     ( i + 0.5 ) * cell_size;
                 coords_mirror( pid, Dim::J ) =
-                    local_mesh.lowCorner( Cajita::Own(), Dim::J ) +
+                    local_mesh.lowCorner( Own(), Dim::J ) +
                     ( j + 0.5 ) * cell_size;
                 coords_mirror( pid, Dim::K ) =
-                    local_mesh.lowCorner( Cajita::Own(), Dim::K ) +
+                    local_mesh.lowCorner( Own(), Dim::K ) +
                     ( k + 0.5 ) * cell_size;
 
                 ids_mirror( pid ) = i + i_off + j + j_off + k + k_off;
@@ -123,13 +122,13 @@ void writeTest()
     // Write a time step to file.
     double time = 7.64;
     double step = 892;
-    Cajita::Experimental::SiloParticleOutput::writeTimeStep(
+    Experimental::SiloParticleOutput::writeTimeStep(
         "particles", *global_grid, step, time, coords, ids, matrix, vec );
     // Write a partial range of particles.
     const double ignore_fraction = 0.1;
     std::size_t begin = num_particle * ignore_fraction;
     std::size_t end = num_particle - num_particle * ignore_fraction;
-    Cajita::Experimental::SiloParticleOutput::writePartialRangeTimeStep(
+    Experimental::SiloParticleOutput::writePartialRangeTimeStep(
         "particles", *global_grid, step, time, begin, end, coords, ids, matrix,
         vec );
 
@@ -141,7 +140,7 @@ void writeTest()
         for ( int d = 0; d < 3; ++d )
             coords_mirror( p, d ) += 1.32;
     Cabana::deep_copy( coords, coords_mirror );
-    Cajita::Experimental::SiloParticleOutput::writeTimeStep(
+    Experimental::SiloParticleOutput::writeTimeStep(
         "particles", *global_grid, step, time, coords, ids, matrix, vec );
 
     // Test edge case with no particles.
@@ -153,7 +152,7 @@ void writeTest()
     vec = Cabana::slice<1>( aosoa, "vec" );
     matrix = Cabana::slice<2>( aosoa, "matrix" );
     ids = Cabana::slice<3>( aosoa, "ids" );
-    Cajita::Experimental::SiloParticleOutput::writeTimeStep(
+    Experimental::SiloParticleOutput::writeTimeStep(
         "particles", *global_grid, step, time, coords, ids, matrix, vec );
 }
 

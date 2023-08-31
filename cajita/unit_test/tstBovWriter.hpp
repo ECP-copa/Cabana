@@ -29,7 +29,7 @@
 #include <fstream>
 #include <memory>
 
-using namespace Cajita;
+using namespace Cabana::Grid;
 
 namespace Test
 {

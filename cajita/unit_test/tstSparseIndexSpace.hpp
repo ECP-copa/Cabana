@@ -17,7 +17,7 @@
 
 #include <gtest/gtest.h>
 
-using namespace Cajita;
+using namespace Cabana::Grid;
 
 namespace Test
 {
