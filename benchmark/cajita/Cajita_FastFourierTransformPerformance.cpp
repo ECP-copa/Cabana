@@ -11,7 +11,7 @@
 
 #include "../Cabana_BenchmarkUtils.hpp"
 
-#include <Cajita.hpp>
+#include <Cabana_Grid.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Random.hpp>
@@ -25,13 +25,13 @@
 
 #include <mpi.h>
 
-using namespace Cajita;
+using namespace Cabana::Grid;
 
 //---------------------------------------------------------------------------//
 // Performance test.
 template <class Device>
 void performanceTest( std::ostream& stream,
-                      const Cajita::DimBlockPartitioner<3> partitioner,
+                      const DimBlockPartitioner<3> partitioner,
                       std::vector<double> grid_sizes_per_dim_per_rank,
                       MPI_Comm comm, const std::string& test_prefix )
 {
@@ -172,7 +172,7 @@ int main( int argc, char* argv[] )
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
 
     // Get partitioner
-    Cajita::DimBlockPartitioner<3> partitioner;
+    DimBlockPartitioner<3> partitioner;
     // Get ranks per dimension
     std::array<int, 3> ranks_per_dimension =
         partitioner.ranksPerDimension( MPI_COMM_WORLD, { 0, 0, 0 } );
@@ -186,7 +186,7 @@ int main( int argc, char* argv[] )
         file.open( filename + "_" + std::to_string( comm_size ),
                    std::fstream::out );
         file << "\n";
-        file << "Cajita FFT Performance Benchmark"
+        file << "Cabana::Grid FFT Performance Benchmark"
              << "\n";
         file << "----------------------------------------------"
              << "\n";

@@ -11,14 +11,14 @@
 
 #include "../Cabana_BenchmarkUtils.hpp"
 
-#include <Cajita.hpp>
+#include <Cabana_Grid.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Random.hpp>
 
 #include <mpi.h>
 
-using namespace Cajita;
+using namespace Cabana::Grid;
 
 // This is an example fused kernel version of p2g. It is not intended to be
 // physical, but only to compare performance.
@@ -201,7 +201,7 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
     using aosoa_type = Cabana::AoSoA<member_types, memory_space>;
 
     // Define properties that do not depend on mesh size.
-    Cajita::DimBlockPartitioner<3> partitioner;
+    DimBlockPartitioner<3> partitioner;
     int halo_width = 1;
     uint64_t seed = 1938347;
 
@@ -323,7 +323,7 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
             auto position = Cabana::slice<2>( aosoa, "position" );
             auto scalar = Cabana::slice<3>( aosoa, "scalar" );
 
-            Cajita::grid_parallel_for(
+            grid_parallel_for(
                 "particles_init", exec_space{}, *local_grid, Own(), Cell(),
                 KOKKOS_LAMBDA( const int i, const int j, const int k ) {
                     int i_own = i - owned_cells.min( Dim::I );
@@ -340,14 +340,12 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                     // Get the coordinates of the low cell node.
                     int low_node[3] = { i, j, k };
                     double low_coords[3];
-                    local_mesh.coordinates( Cajita::Node(), low_node,
-                                            low_coords );
+                    local_mesh.coordinates( Node(), low_node, low_coords );
 
                     // Get the coordinates of the high cell node.
                     int high_node[3] = { i + 1, j + 1, k + 1 };
                     double high_coords[3];
-                    local_mesh.coordinates( Cajita::Node(), high_node,
-                                            high_coords );
+                    local_mesh.coordinates( Node(), high_node, high_coords );
 
                     for ( int ip = 0; ip < num_ppc; ++ip )
                     {

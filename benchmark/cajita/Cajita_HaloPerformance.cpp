@@ -12,7 +12,7 @@
 #include "../Cabana_BenchmarkUtils.hpp"
 
 #include <Cabana_Core.hpp>
-#include <Cajita.hpp>
+#include <Cabana_Grid.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -26,11 +26,13 @@
 
 #include <mpi.h>
 
+using namespace Cabana::Grid;
+
 //---------------------------------------------------------------------------//
 // Performance test.
 template <class Device>
 void performanceTest( std::ostream& stream,
-                      const Cajita::DimBlockPartitioner<3> partitioner,
+                      const DimBlockPartitioner<3> partitioner,
                       std::vector<int> grid_sizes_per_dim_per_rank,
                       const std::string& test_prefix,
                       std::vector<int> halo_widths, MPI_Comm comm )
@@ -83,20 +85,19 @@ void performanceTest( std::ostream& stream,
                     grid_sizes_per_dim_per_rank[p] * ranks_per_dim[d];
             }
 
-            auto global_mesh = Cajita::createUniformGlobalMesh(
+            auto global_mesh = createUniformGlobalMesh(
                 global_low_corner, global_high_corner, grid_sizes_per_dim );
             auto global_grid = createGlobalGrid( comm, global_mesh,
                                                  is_dim_periodic, partitioner );
 
             // Create a cell array.
             auto layout =
-                createArrayLayout( global_grid, halo_width, 4, Cajita::Cell() );
-            auto array =
-                Cajita::createArray<double, device_type>( "array", layout );
+                createArrayLayout( global_grid, halo_width, 4, Cell() );
+            auto array = createArray<double, device_type>( "array", layout );
 
             // Assign the owned cells a value of 1 and ghosted 0.
-            Cajita::ArrayOp::assign( *array, 0.0, Cajita::Ghost() );
-            Cajita::ArrayOp::assign( *array, 1.0, Cajita::Own() );
+            ArrayOp::assign( *array, 0.0, Ghost() );
+            ArrayOp::assign( *array, 1.0, Own() );
 
             // create host mirror view
             auto array_view = array->view();
@@ -105,8 +106,8 @@ void performanceTest( std::ostream& stream,
             {
                 // create halo
                 halo_create_timer.start( pid );
-                auto halo = createHalo( Cajita::NodeHaloPattern<3>(),
-                                        halo_width, *array );
+                auto halo =
+                    createHalo( NodeHaloPattern<3>(), halo_width, *array );
                 halo_create_timer.stop( pid );
 
                 // gather
@@ -116,8 +117,7 @@ void performanceTest( std::ostream& stream,
 
                 // scatter
                 halo_scatter_timer.start( pid );
-                halo->scatter( exec_space(), Cajita::ScatterReduce::Sum(),
-                               *array );
+                halo->scatter( exec_space(), ScatterReduce::Sum(), *array );
                 halo_scatter_timer.stop( pid );
             }
             // Increment the problem id.
@@ -177,7 +177,7 @@ int main( int argc, char* argv[] )
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
 
     // Get partitioner
-    Cajita::DimBlockPartitioner<3> partitioner;
+    DimBlockPartitioner<3> partitioner;
     // Get ranks per dimension
     std::array<int, 3> ranks_per_dimension =
         partitioner.ranksPerDimension( MPI_COMM_WORLD, { 0, 0, 0 } );
@@ -190,7 +190,7 @@ int main( int argc, char* argv[] )
         file.open( filename + "_" + std::to_string( comm_size ),
                    std::fstream::out );
         file << "\n";
-        file << "Cajita Halo Performance Benchmark"
+        file << "Cabana::Grid Halo Performance Benchmark"
              << "\n";
         file << "----------------------------------------------"
              << "\n";

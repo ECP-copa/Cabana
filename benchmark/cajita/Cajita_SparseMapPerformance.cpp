@@ -12,7 +12,7 @@
 #include "../Cabana_BenchmarkUtils.hpp"
 #include "Cabana_ParticleInit.hpp"
 
-#include <Cajita_SparseIndexSpace.hpp>
+#include <Cabana_Grid.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -75,14 +75,14 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
     {
         std::array<int, 3> global_num_cell = {
             num_cells_per_dim[c], num_cells_per_dim[c], num_cells_per_dim[c] };
-        auto global_mesh = Cajita::createSparseGlobalMesh(
+        auto global_mesh = Cabana::Grid::createSparseGlobalMesh(
             global_low_corner, global_high_corner, global_num_cell );
         float cell_size = 1.0 / num_cells_per_dim[c];
 
         // create sparse map
         int pre_alloc_size = num_cells_per_dim[c] * num_cells_per_dim[c];
-        auto sis =
-            Cajita::createSparseMap<exec_space>( global_mesh, pre_alloc_size );
+        auto sis = Cabana::Grid::createSparseMap<exec_space>( global_mesh,
+                                                              pre_alloc_size );
 
         // Create insertion timers
         std::stringstream insert_time_name;

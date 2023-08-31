@@ -10,10 +10,8 @@
  ****************************************************************************/
 
 #include "../Cabana_BenchmarkUtils.hpp"
+#include "Cabana_Grid.hpp"
 #include "Cabana_ParticleInit.hpp"
-
-#include <Cajita_SparseDimPartitioner.hpp>
-#include <Cajita_SparseIndexSpace.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -142,7 +140,7 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
         int num_tiles_per_dim = num_cells_per_dim[c] >> cell_bits_per_tile_dim;
 
         // set up partitioner
-        Cajita::SparseDimPartitioner<memory_space, cell_num_per_tile_dim>
+        Cabana::Grid::SparseDimPartitioner<memory_space, cell_num_per_tile_dim>
             partitioner( comm, max_workload_coeff, max_par_num,
                          num_step_rebalance, global_num_cell,
                          max_optimize_iteration );
@@ -259,14 +257,14 @@ void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
         // init the sparse grid domain
         std::array<int, 3> global_num_cell = {
             num_cells_per_dim[c], num_cells_per_dim[c], num_cells_per_dim[c] };
-        auto global_mesh = Cajita::createSparseGlobalMesh(
+        auto global_mesh = Cabana::Grid::createSparseGlobalMesh(
             global_low_corner, global_high_corner, global_num_cell );
         int num_tiles_per_dim = num_cells_per_dim[c] >> cell_bits_per_tile_dim;
 
         // create sparse map
         int pre_alloc_size = num_cells_per_dim[c] * num_cells_per_dim[c];
-        auto sis =
-            Cajita::createSparseMap<exec_space>( global_mesh, pre_alloc_size );
+        auto sis = Cabana::Grid::createSparseMap<exec_space>( global_mesh,
+                                                              pre_alloc_size );
 
         // Generate a random set of occupied tiles
         auto tiles_host = generateRandomTileSequence( num_tiles_per_dim );
@@ -276,7 +274,7 @@ void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
         // set up partitioner
         auto total_num =
             num_tiles_per_dim * num_tiles_per_dim * num_tiles_per_dim;
-        Cajita::SparseDimPartitioner<memory_space, cell_num_per_tile_dim>
+        Cabana::Grid::SparseDimPartitioner<memory_space, cell_num_per_tile_dim>
             partitioner( comm, max_workload_coeff, total_num,
                          num_step_rebalance, global_num_cell,
                          max_optimize_iteration );
@@ -423,7 +421,7 @@ int main( int argc, char* argv[] )
     if ( 0 == comm_rank )
     {
         file << "\n";
-        file << "Cajita Sparse Partitioner Performance Benchmark"
+        file << "Cabana::Grid Sparse Partitioner Performance Benchmark"
              << "\n";
         file << "----------------------------------------------"
              << "\n";
