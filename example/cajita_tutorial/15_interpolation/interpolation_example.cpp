@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita.hpp>
+#include <Cabana_Grid.hpp>
 #include <Kokkos_Core.hpp>
 
 #include <iostream>
@@ -17,8 +17,8 @@
 /******************************************************************************
  * User-defined thread-level functors may be used instead of the built-in
  * functors provided. Here, the definition of P2GExampleFunctor directly uses
- * the thread-level interpolation interface to perform some basic Cajita::P2G::
- * interpolations.
+ * the thread-level interpolation interface to perform some basic
+ * Cabana::Grid::P2G:: interpolations.
  * *****************************************************************************/
 template <class ScalarView, class VectorView>
 struct P2GExampleFunctor
@@ -61,8 +61,8 @@ struct P2GExampleFunctor
         scalar_particle_data *= 2.0;
 
         /* Finally, call the thread-level value spline interpolations. */
-        Cajita::P2G::value( scalar_particle_data, sd, view );
-        Cajita::P2G::divergence( vector_particle_data, sd, view );
+        Cabana::Grid::P2G::value( scalar_particle_data, sd, view );
+        Cabana::Grid::P2G::divergence( vector_particle_data, sd, view );
     }
 };
 
@@ -96,11 +96,11 @@ struct G2PExampleFunctor
                                             const GridViewType& view ) const
     {
         scalar_value_type scalar_result;
-        Cajita::G2P::divergence( view, sd, scalar_result );
+        Cabana::Grid::G2P::divergence( view, sd, scalar_result );
         _x( p ) += scalar_result * 2.0;
 
         tensor_value_type tensor_result[2][2];
-        Cajita::G2P::gradient( view, sd, tensor_result );
+        Cabana::Grid::G2P::gradient( view, sd, tensor_result );
 
         /* Thread-local manipulations may be computed here. */
         for ( int i = 0; i < 2; ++i )
@@ -117,15 +117,15 @@ struct G2PExampleFunctor
 void interpolationExample()
 {
     /*
-      Cajita provides various particle-to-grid (p2g) and grid-to-particle (g2p)
-      interpolation methods, based on the rank of the interpolated field.
+      Cabana::Grid provides various particle-to-grid (p2g) and grid-to-particle
+      (g2p) interpolation methods, based on the rank of the interpolated field.
     */
-    std::cout << "Cajita Interpolation Example\n" << std::endl;
+    std::cout << "Cabana::Grid Interpolation Example\n" << std::endl;
 
     /*
-      First, we need some setup to demonstrate the use of Cajita interpolation.
-      This includes the creation of a simple uniform mesh and various fields on
-      particles and the mesh.
+      First, we need some setup to demonstrate the use of Cabana::Grid
+      interpolation. This includes the creation of a simple uniform mesh and
+      various fields on particles and the mesh.
 
       This example is all in 2D.
     */
@@ -135,23 +135,24 @@ void interpolationExample()
     std::array<double, 2> low_corner = { -1.2, 0.1 };
     std::array<double, 2> high_corner = { -0.2, 9.5 };
     double cell_size = 0.1;
-    auto global_mesh =
-        Cajita::createUniformGlobalMesh( low_corner, high_corner, cell_size );
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
+        low_corner, high_corner, cell_size );
 
     // Create the global grid.
-    Cajita::DimBlockPartitioner<2> partitioner;
+    Cabana::Grid::DimBlockPartitioner<2> partitioner;
     std::array<bool, 2> is_dim_periodic = { true, true };
-    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                                 is_dim_periodic, partitioner );
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
 
     // Create a  grid local_grid.
     int halo_width = 1;
-    auto local_grid = Cajita::createLocalGrid( global_grid, halo_width );
-    auto local_mesh = Cajita::createLocalMesh<ExecutionSpace>( *local_grid );
+    auto local_grid = Cabana::Grid::createLocalGrid( global_grid, halo_width );
+    auto local_mesh =
+        Cabana::Grid::createLocalMesh<ExecutionSpace>( *local_grid );
 
     // Create a point in the center of every cell.
-    auto cell_space = local_grid->indexSpace( Cajita::Own(), Cajita::Cell(),
-                                              Cajita::Local() );
+    auto cell_space = local_grid->indexSpace(
+        Cabana::Grid::Own(), Cabana::Grid::Cell(), Cabana::Grid::Local() );
     int num_particles = cell_space.size();
     Kokkos::View<double* [2], ExecutionSpace> particle_positions(
         Kokkos::ViewAllocateWithoutInitializing( "positions" ), num_particles );
@@ -160,34 +161,36 @@ void interpolationExample()
         KOKKOS_LAMBDA( const int i, const int j ) {
             int pi = i - halo_width;
             int pj = j - halo_width;
-            int pid = pi + cell_space.extent( Cajita::Dim::I ) * pj;
+            int pid = pi + cell_space.extent( Cabana::Grid::Dim::I ) * pj;
             int idx[2] = { i, j };
             double x[2];
-            local_mesh.coordinates( Cajita::Cell(), idx, x );
-            particle_positions( pid, Cajita::Dim::I ) = x[Cajita::Dim::I];
-            particle_positions( pid, Cajita::Dim::J ) = x[Cajita::Dim::J];
+            local_mesh.coordinates( Cabana::Grid::Cell(), idx, x );
+            particle_positions( pid, Cabana::Grid::Dim::I ) =
+                x[Cabana::Grid::Dim::I];
+            particle_positions( pid, Cabana::Grid::Dim::J ) =
+                x[Cabana::Grid::Dim::J];
         } );
 
-    // Next, we use Cajita functionality to create grid data fields.
+    // Next, we use Cabana::Grid functionality to create grid data fields.
     // Create a scalar field on the grid. See the Array tutorial example for
     // information on these functions.
     auto scalar_layout =
-        Cajita::createArrayLayout( local_grid, 1, Cajita::Node() );
-    auto scalar_grid_field = Cajita::createArray<double, ExecutionSpace>(
+        Cabana::Grid::createArrayLayout( local_grid, 1, Cabana::Grid::Node() );
+    auto scalar_grid_field = Cabana::Grid::createArray<double, ExecutionSpace>(
         "scalar_grid_field", scalar_layout );
 
     // Create a halo for scatter operations. This concept is discussed in more
     // detail in the Halo tutorial example.
-    auto scalar_halo = Cajita::createHalo( Cajita::NodeHaloPattern<2>(),
-                                           halo_width, *scalar_grid_field );
+    auto scalar_halo = Cabana::Grid::createHalo(
+        Cabana::Grid::NodeHaloPattern<2>(), halo_width, *scalar_grid_field );
 
     // Create a vector field on the grid.
     auto vector_layout =
-        Cajita::createArrayLayout( local_grid, 2, Cajita::Node() );
-    auto vector_grid_field = Cajita::createArray<double, ExecutionSpace>(
+        Cabana::Grid::createArrayLayout( local_grid, 2, Cabana::Grid::Node() );
+    auto vector_grid_field = Cabana::Grid::createArray<double, ExecutionSpace>(
         "vector_grid_field", vector_layout );
-    auto vector_halo = Cajita::createHalo( Cajita::NodeHaloPattern<2>(),
-                                           halo_width, *vector_grid_field );
+    auto vector_halo = Cabana::Grid::createHalo(
+        Cabana::Grid::NodeHaloPattern<2>(), halo_width, *vector_grid_field );
 
     // Simple Kokkos::Views may be used to represent particle data.
     // Create a scalar point field.
@@ -209,17 +212,18 @@ void interpolationExample()
      * P2G
      **************************************************************************/
     /*
-     * The Cajita::P2G namespace contains several methods for interpolating data
-     * from particles to the grid. These interpolations are inherently scatter
-     * operations for particle-based threading (a single particle maps to
-     * several grid points), which requires an underlying Kokkos::ScatterView
-     * for the data being interpolated. Of note, a thread-level interface
-     * provides methods to perform interpolations for a single particle datum to
-     * neighboring mesh entitites.
+     * The Cabana::Grid::P2G namespace contains several methods for
+     * interpolating data from particles to the grid. These interpolations are
+     * inherently scatter operations for particle-based threading (a single
+     * particle maps to several grid points), which requires an underlying
+     * Kokkos::ScatterView for the data being interpolated. Of note, a
+     * thread-level interface provides methods to perform interpolations for a
+     * single particle datum to neighboring mesh entitites.
      *
-     * Cajita also provides a convenience interface for defining field-based P2G
-     * or G2P operators, by wrapping the thread-level interpolation methods
-     * with Kokkos::parallel_for loops over all particles in Cajita::p2g():
+     * Cabana::Grid also provides a convenience interface for defining
+     * field-based P2G or G2P operators, by wrapping the thread-level
+     * interpolation methods with Kokkos::parallel_for loops over all particles
+     * in Cabana::Grid::p2g():
      *
      *  p2g( functor, particles, num_particles, SplineType, halo, grid_field )
      *
@@ -228,15 +232,16 @@ void interpolationExample()
      *  functor : A thread-level functor object that has the following
      * signature:
      * | void operator() ( &spline, p, &grid_view )
-     * |   spline : const reference to Cajita::SplineData<> object
+     * |   spline : const reference to Cabana::Grid::SplineData<> object
      * |   p : thread particle index
      * |   grid_view : const reference to a grid array ScatterView
      *
      *  particle_positions : A Kokkos::View storing particle positions.
      *  num_particles : The number of particles
-     *  SplineType : A Cajita::Spline<SplineOrder>() type
-     *  halo : A Cajita::Halo used in the final ScatterReduce from ghost regions
-     *  grid_field : A Cajita::Array on which to perform the scatter
+     *  SplineType : A Cabana::Grid::Spline<SplineOrder>() type
+     *  halo : A Cabana::Grid::Halo used in the final ScatterReduce from ghost
+     * regions grid_field : A Cabana::Grid::Array on which to perform the
+     * scatter
      */
 
     std::cout << "P2G interpolations" << std::endl;
@@ -248,7 +253,8 @@ void interpolationExample()
     Kokkos::deep_copy( tensor_particle_field, 3.5 );
 
     // Reset the grid to zero.
-    Cajita::ArrayOp::assign( *scalar_grid_field, 0.0, Cajita::Ghost() );
+    Cabana::Grid::ArrayOp::assign( *scalar_grid_field, 0.0,
+                                   Cabana::Grid::Ghost() );
     auto scalar_view = scalar_grid_field->view();
 
     // Print out a random grid point before value interpolation.
@@ -257,17 +263,18 @@ void interpolationExample()
               << scalar_view( 5, 5, 0 );
 
     /*
-      Cajita provides a basic set of P2G and G2P functors and corresponding
-      creation routines. The next four interpolations below demonstrate the use
-      of these built-in functors in combination with the Cajita::p2g(), and
-      later Cajita::g2p().
+      Cabana::Grid provides a basic set of P2G and G2P functors and
+      corresponding creation routines. The next four interpolations below
+      demonstrate the use of these built-in functors in combination with the
+      Cabana::Grid::p2g(), and later Cabana::Grid::g2p().
     */
     auto scalar_p2g =
-        Cajita::createScalarValueP2G( scalar_particle_field, -0.5 );
+        Cabana::Grid::createScalarValueP2G( scalar_particle_field, -0.5 );
 
     // Interpolate a scalar point value to the grid.
-    Cajita::p2g( scalar_p2g, particle_positions, num_particles,
-                 Cajita::Spline<1>(), *scalar_halo, *scalar_grid_field );
+    Cabana::Grid::p2g( scalar_p2g, particle_positions, num_particles,
+                       Cabana::Grid::Spline<1>(), *scalar_halo,
+                       *scalar_grid_field );
 
     // Print out the same grid point after value interpolation.
     std::cout << "\n\tafter p2g::value interpolation: "
@@ -282,16 +289,18 @@ void interpolationExample()
 
     // Interpolate a scalar point gradient value to the grid.
     auto scalar_grad_p2g =
-        Cajita::createScalarGradientP2G( scalar_particle_field, -0.5 );
-    Cajita::p2g( scalar_grad_p2g, particle_positions, num_particles,
-                 Cajita::Spline<1>(), *vector_halo, *vector_grid_field );
+        Cabana::Grid::createScalarGradientP2G( scalar_particle_field, -0.5 );
+    Cabana::Grid::p2g( scalar_grad_p2g, particle_positions, num_particles,
+                       Cabana::Grid::Spline<1>(), *vector_halo,
+                       *vector_grid_field );
 
     std::cout << "\n\tafter p2g::gradient interpolation: <";
     std::cout << vector_view( 5, 5, 0 ) << ", " << vector_view( 5, 5, 1 ) << ">"
               << "\n\n";
 
     // Reset the grid to zero and print before divergence interpolation.
-    Cajita::ArrayOp::assign( *vector_grid_field, 0.0, Cajita::Ghost() );
+    Cabana::Grid::ArrayOp::assign( *vector_grid_field, 0.0,
+                                   Cabana::Grid::Ghost() );
     std::cout << "Invididual grid point at (5, 5):\n\tbefore "
                  "p2g::divergence interpolation: <";
     std::cout << vector_view( 5, 5, 0 ) << ", " << vector_view( 5, 5, 1 )
@@ -299,16 +308,18 @@ void interpolationExample()
 
     // Interpolate a tensor point divergence value to the grid.
     auto tensor_div_p2g =
-        Cajita::createTensorDivergenceP2G( tensor_particle_field, -0.5 );
-    Cajita::p2g( tensor_div_p2g, particle_positions, num_particles,
-                 Cajita::Spline<1>(), *vector_halo, *vector_grid_field );
+        Cabana::Grid::createTensorDivergenceP2G( tensor_particle_field, -0.5 );
+    Cabana::Grid::p2g( tensor_div_p2g, particle_positions, num_particles,
+                       Cabana::Grid::Spline<1>(), *vector_halo,
+                       *vector_grid_field );
 
     std::cout << "\n\tafter p2g::divergence interpolation: <";
     std::cout << vector_view( 5, 5, 0 ) << ", " << vector_view( 5, 5, 1 ) << ">"
               << "\n\n";
 
     // Reset the grid to zero and print before vector value interpolation.
-    Cajita::ArrayOp::assign( *vector_grid_field, 0.0, Cajita::Ghost() );
+    Cabana::Grid::ArrayOp::assign( *vector_grid_field, 0.0,
+                                   Cabana::Grid::Ghost() );
     std::cout << "Invididual grid point at (5, 5, 5):\n\tbefore "
                  "p2g::value interpolation: <";
     std::cout << vector_view( 5, 5, 0 ) << ", " << vector_view( 5, 5, 1 )
@@ -316,9 +327,10 @@ void interpolationExample()
 
     // Interpolate a vector point value to the grid.
     auto vector_p2g =
-        Cajita::createVectorValueP2G( vector_particle_field, -0.5 );
-    Cajita::p2g( vector_p2g, particle_positions, num_particles,
-                 Cajita::Spline<1>(), *vector_halo, *vector_grid_field );
+        Cabana::Grid::createVectorValueP2G( vector_particle_field, -0.5 );
+    Cabana::Grid::p2g( vector_p2g, particle_positions, num_particles,
+                       Cabana::Grid::Spline<1>(), *vector_halo,
+                       *vector_grid_field );
 
     std::cout << "\n\tafter p2g::value interpolation: <";
     std::cout << vector_view( 5, 5, 0 ) << ", " << vector_view( 5, 5, 1 ) << ">"
@@ -328,33 +340,34 @@ void interpolationExample()
      * User-defined thread-level functors may be used instead of the built-in
      * functors provided. Here, the definition of P2GExampleFunctor (defined
      * above) directly uses the thread-level interpolation interface to perform
-     * basic Cajita::P2G interpolations.
+     * basic Cabana::Grid::P2G interpolations.
      *
      * The P2GExampleFunctor is initialized with both a scalar point field and a
      * vector point field.
      *
      * Although this example still passes the user-defined functor to
-     * Cajita::p2g(), more advanced usages with kernel fusion and multiple
+     * Cabana::Grid::p2g(), more advanced usages with kernel fusion and multiple
      * aggregated fields will be considered in a separate example.
      * ************************************************************************/
 
     P2GExampleFunctor<Kokkos::View<double*, ExecutionSpace>,
                       Kokkos::View<double* [2], ExecutionSpace>>
         example_p2g { scalar_particle_field, vector_particle_field };
-    Cajita::p2g( example_p2g, particle_positions, num_particles,
-                 Cajita::Spline<1>(), *scalar_halo, *scalar_grid_field );
+    Cabana::Grid::p2g( example_p2g, particle_positions, num_particles,
+                       Cabana::Grid::Spline<1>(), *scalar_halo,
+                       *scalar_grid_field );
 
     /***************************************************************************
      * G2P
      **************************************************************************/
     /*
-     * In addition to P2G, The Cajita::G2P namespace contains several methods
-     * for interpolating data from the grid to particles. These interpolations
-     * are inherently gather operations for particle-based threading (multiple
-     * grid values are gathered to a single point).
+     * In addition to P2G, The Cabana::Grid::G2P namespace contains several
+     * methods for interpolating data from the grid to particles. These
+     * interpolations are inherently gather operations for particle-based
+     * threading (multiple grid values are gathered to a single point).
      *
-     * Here we again focus on the Cajita::g2p() interface to interpolate from
-     * all grid points to particles.
+     * Here we again focus on the Cabana::Grid::g2p() interface to interpolate
+     * from all grid points to particles.
      */
 
     std::cout << "G2P interpolations" << std::endl;
@@ -368,17 +381,18 @@ void interpolationExample()
     std::cout << scalar_particle_field( 127 );
 
     /*
-      Just like the P2G examples above, Cajita also provides a basic set of G2P
-      functors and corresponding creation routines. The next four examples
-      demonstrate the use of these built-in functors in combination with
-      Cajita::g2p() to perform interpolations.
+      Just like the P2G examples above, Cabana::Grid also provides a basic set
+      of G2P functors and corresponding creation routines. The next four
+      examples demonstrate the use of these built-in functors in combination
+      with Cabana::Grid::g2p() to perform interpolations.
     */
     auto scalar_value_g2p =
-        Cajita::createScalarValueG2P( scalar_particle_field, -0.5 );
+        Cabana::Grid::createScalarValueG2P( scalar_particle_field, -0.5 );
 
     // Interpolate a scalar grid value to the particles.
-    Cajita::g2p( *scalar_grid_field, *scalar_halo, particle_positions,
-                 num_particles, Cajita::Spline<1>(), scalar_value_g2p );
+    Cabana::Grid::g2p( *scalar_grid_field, *scalar_halo, particle_positions,
+                       num_particles, Cabana::Grid::Spline<1>(),
+                       scalar_value_g2p );
 
     // Print out the same particle after value interpolation.
     std::cout << "\n\tafter g2p::value interpolation: "
@@ -392,9 +406,10 @@ void interpolationExample()
               << vector_particle_field( 127, 1 ) << ">";
 
     auto vector_value_g2p =
-        Cajita::createVectorValueG2P( vector_particle_field, -0.5 );
-    Cajita::g2p( *vector_grid_field, *vector_halo, particle_positions,
-                 num_particles, Cajita::Spline<1>(), vector_value_g2p );
+        Cabana::Grid::createVectorValueG2P( vector_particle_field, -0.5 );
+    Cabana::Grid::g2p( *vector_grid_field, *vector_halo, particle_positions,
+                       num_particles, Cabana::Grid::Spline<1>(),
+                       vector_value_g2p );
 
     std::cout << "\n\tafter g2p::value interpolation: ";
     std::cout << "<" << vector_particle_field( 127, 0 ) << ", "
@@ -409,9 +424,10 @@ void interpolationExample()
               << vector_particle_field( 127, 1 ) << ">";
 
     auto scalar_gradient_g2p =
-        Cajita::createScalarGradientG2P( vector_particle_field, -0.5 );
-    Cajita::g2p( *scalar_grid_field, *scalar_halo, particle_positions,
-                 num_particles, Cajita::Spline<1>(), scalar_gradient_g2p );
+        Cabana::Grid::createScalarGradientG2P( vector_particle_field, -0.5 );
+    Cabana::Grid::g2p( *scalar_grid_field, *scalar_halo, particle_positions,
+                       num_particles, Cabana::Grid::Spline<1>(),
+                       scalar_gradient_g2p );
 
     std::cout << "\n\tafter g2p::gradient interpolation: ";
     std::cout << "<" << vector_particle_field( 127, 0 ) << ", "
@@ -425,9 +441,10 @@ void interpolationExample()
     std::cout << scalar_particle_field( 127 );
 
     auto vector_div_g2p =
-        Cajita::createVectorDivergenceG2P( scalar_particle_field, -0.5 );
-    Cajita::g2p( *vector_grid_field, *vector_halo, particle_positions,
-                 num_particles, Cajita::Spline<1>(), vector_div_g2p );
+        Cabana::Grid::createVectorDivergenceG2P( scalar_particle_field, -0.5 );
+    Cabana::Grid::g2p( *vector_grid_field, *vector_halo, particle_positions,
+                       num_particles, Cabana::Grid::Spline<1>(),
+                       vector_div_g2p );
 
     std::cout << "\n\tafter g2p::divergence interpolation: "
               << scalar_particle_field( 127 ) << "\n\n";
@@ -441,8 +458,8 @@ void interpolationExample()
     G2PExampleFunctor<Kokkos::View<double*, ExecutionSpace>,
                       Kokkos::View<double* [2][2], ExecutionSpace>>
         example_g2p { scalar_particle_field, tensor_particle_field };
-    Cajita::g2p( *vector_grid_field, *vector_halo, particle_positions,
-                 num_particles, Cajita::Spline<1>(), example_g2p );
+    Cabana::Grid::g2p( *vector_grid_field, *vector_halo, particle_positions,
+                       num_particles, Cabana::Grid::Spline<1>(), example_g2p );
 }
 
 //---------------------------------------------------------------------------//

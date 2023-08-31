@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita.hpp>
+#include <Cabana_Grid.hpp>
 #include <Kokkos_Core.hpp>
 #include <iostream>
 #include <random>
@@ -20,22 +20,23 @@
 void fastFourierTransformHeffteExample()
 {
     /*
-      This example shows how to perform a fast Fourier transform with Cajita.
-      The current Cajita FFTs take advantage of the heFFTe library, with plans
-      to support more FFT libraries.
+      This example shows how to perform a fast Fourier transform with
+      Cabana::Grid. The current Cabana::Grid FFTs take advantage of the heFFTe
+      library, with plans to support more FFT libraries.
 
-      The basic steps for performing FFTs in Cajita are:
+      The basic steps for performing FFTs in Cabana::Grid are:
       1. Create a mesh
       2. Create the complex data vector you would like to transform.
       3. Create the FFT and set any options you would like (detailed more below)
     */
-    std::cout << "Cajita heFFTE Fast Fourier Transform Example\n" << std::endl;
+    std::cout << "Cabana::Grid heFFTE Fast Fourier Transform Example\n"
+              << std::endl;
 
     /*
        Create the global mesh.
        In this example we create a uniform 3D periodic mesh, which is not
        symmetric. Details on creating a global mesh, grid, and partitioner can
-       be found in previous Cajita examples
+       be found in previous Cabana::Grid examples
 
        Declare the device memory and execution space to use
        In this example, we use the host space for execution with the default
@@ -47,18 +48,18 @@ void fastFourierTransformHeffteExample()
     std::array<bool, 3> is_dim_periodic = { true, true, true };
     std::array<double, 3> global_low_corner = { -1.0, -2.0, -1.0 };
     std::array<double, 3> global_high_corner = { 1.0, 1.0, 0.5 };
-    auto global_mesh = Cajita::createUniformGlobalMesh(
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, cell_size );
 
     // Create the global grid.
-    Cajita::DimBlockPartitioner<3> partitioner;
-    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                                 is_dim_periodic, partitioner );
+    Cabana::Grid::DimBlockPartitioner<3> partitioner;
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
 
     // Create a local grid.
-    auto local_grid = Cajita::createLocalGrid( global_grid, 0 );
-    auto owned_space = local_grid->indexSpace( Cajita::Own(), Cajita::Cell(),
-                                               Cajita::Local() );
+    auto local_grid = Cabana::Grid::createLocalGrid( global_grid, 0 );
+    auto owned_space = local_grid->indexSpace(
+        Cabana::Grid::Own(), Cabana::Grid::Cell(), Cabana::Grid::Local() );
 
     /*
        Create a random vector of complex data on which we will perform FFTs.
@@ -70,27 +71,28 @@ void fastFourierTransformHeffteExample()
        generation, but could also be done using Kokkos::Random
     */
     auto vector_layout =
-        Cajita::createArrayLayout( local_grid, 2, Cajita::Cell() );
-    auto lhs = Cajita::createArray<double, MemorySpace>( "lhs", vector_layout );
+        Cabana::Grid::createArrayLayout( local_grid, 2, Cabana::Grid::Cell() );
+    auto lhs =
+        Cabana::Grid::createArray<double, MemorySpace>( "lhs", vector_layout );
     auto lhs_view = lhs->view();
     const uint64_t seed =
         global_grid->blockId() + ( 19383747 % ( global_grid->blockId() + 1 ) );
     std::mt19937 gen( seed );
     std::uniform_real_distribution<> dis( 0.0, 1.0 );
-    for ( int i = owned_space.min( Cajita::Dim::I );
-          i < owned_space.max( Cajita::Dim::I ); ++i )
-        for ( int j = owned_space.min( Cajita::Dim::J );
-              j < owned_space.max( Cajita::Dim::J ); ++j )
-            for ( int k = owned_space.min( Cajita::Dim::K );
-                  k < owned_space.max( Cajita::Dim::K ); ++k )
+    for ( int i = owned_space.min( Cabana::Grid::Dim::I );
+          i < owned_space.max( Cabana::Grid::Dim::I ); ++i )
+        for ( int j = owned_space.min( Cabana::Grid::Dim::J );
+              j < owned_space.max( Cabana::Grid::Dim::J ); ++j )
+            for ( int k = owned_space.min( Cabana::Grid::Dim::K );
+                  k < owned_space.max( Cabana::Grid::Dim::K ); ++k )
             {
                 lhs_view( i, j, k, 0 ) = dis( gen );
                 lhs_view( i, j, k, 1 ) = dis( gen );
             }
 
     // Copy this initial state to compare later.
-    auto lhs_init = Cajita::ArrayOp::clone( *lhs );
-    Cajita::ArrayOp::copy( *lhs_init, *lhs, Cajita::Own() );
+    auto lhs_init = Cabana::Grid::ArrayOp::clone( *lhs );
+    Cabana::Grid::ArrayOp::copy( *lhs_init, *lhs, Cabana::Grid::Own() );
     auto lhs_init_view = lhs_init->view();
 
     /*
@@ -100,7 +102,7 @@ void fastFourierTransformHeffteExample()
       These options reflect those exposed by the heFFTe API and could grow or
       changed based on additional FFT library support.
     */
-    Cajita::Experimental::FastFourierTransformParams params;
+    Cabana::Grid::Experimental::FastFourierTransformParams params;
 
     // Set communication to use all-to-all MPI communication.
     // Set this option to false for point-to-point communication
@@ -116,13 +118,13 @@ void fastFourierTransformHeffteExample()
 
     /*
       The three options set above are actually choosing the default
-      parameters for Cajita FFTs, and are set just to provide an example.
+      parameters for Cabana::Grid FFTs, and are set just to provide an example.
     */
 
     /*
        Create the FFT with the set parameters
 
-       Cajita (through heFFTe) has the following FFT backends available:
+       Cabana::Grid (through heFFTe) has the following FFT backends available:
         - FFTW   (default for host execution)
         - mkl    (optional host execution option)
         - cufft  (default with Cuda execution)
@@ -131,9 +133,10 @@ void fastFourierTransformHeffteExample()
        In this example we use the default FFT backend type based on the
        execution space and enabled heFFTe backends, but you could explicitly
        set an appropriate backend by adding an additional template parameter
-       (Cajita::Experimental::FFTBackendMKL in this case) to the constructor.
+       (Cabana::Grid::Experimental::FFTBackendMKL in this case) to the
+       constructor.
     */
-    auto fft = Cajita::Experimental::createHeffteFastFourierTransform<
+    auto fft = Cabana::Grid::Experimental::createHeffteFastFourierTransform<
         double, MemorySpace>( *vector_layout, params );
 
     /*
@@ -142,7 +145,7 @@ void fastFourierTransformHeffteExample()
 
       FFTs are often scaled, since the result of a forward and reverse
       transform in sequence gives the same data but with each value multiplied
-      by N (where N is the number of values) Cajita FFTs provide (through
+      by N (where N is the number of values) Cabana::Grid FFTs provide (through
       heFFTe) the following scaling options:
       full scaling (divide by N) -> Experimental::FFTScaleFull()
       no scaling -> Experimental::FFTScaleNone()
@@ -151,9 +154,9 @@ void fastFourierTransformHeffteExample()
     */
 
     // Perform a forward transform with full scaling
-    fft->forward( *lhs, Cajita::Experimental::FFTScaleFull() );
+    fft->forward( *lhs, Cabana::Grid::Experimental::FFTScaleFull() );
     // Perform a reverse transform with no scaling
-    fft->reverse( *lhs, Cajita::Experimental::FFTScaleNone() );
+    fft->reverse( *lhs, Cabana::Grid::Experimental::FFTScaleNone() );
 
     /*
       Print the results. Given the scaling choices, we expect the results to be
@@ -161,12 +164,12 @@ void fastFourierTransformHeffteExample()
     */
     std::cout << "Complex pairs:" << std::endl;
     lhs_view = lhs->view();
-    for ( int i = owned_space.min( Cajita::Dim::I );
-          i < owned_space.max( Cajita::Dim::I ); ++i )
-        for ( int j = owned_space.min( Cajita::Dim::J );
-              j < owned_space.max( Cajita::Dim::J ); ++j )
-            for ( int k = owned_space.min( Cajita::Dim::K );
-                  k < owned_space.max( Cajita::Dim::K ); ++k )
+    for ( int i = owned_space.min( Cabana::Grid::Dim::I );
+          i < owned_space.max( Cabana::Grid::Dim::I ); ++i )
+        for ( int j = owned_space.min( Cabana::Grid::Dim::J );
+              j < owned_space.max( Cabana::Grid::Dim::J ); ++j )
+            for ( int k = owned_space.min( Cabana::Grid::Dim::K );
+                  k < owned_space.max( Cabana::Grid::Dim::K ); ++k )
             {
                 std::cout << "index: (" << i << ", " << j << ", " << k << ") "
                           << "initial: (" << lhs_init_view( i, j, k, 0 ) << ", "

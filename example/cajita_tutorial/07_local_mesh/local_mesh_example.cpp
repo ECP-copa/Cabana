@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita.hpp>
+#include <Cabana_Grid.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -42,38 +42,39 @@ void localMeshExample()
     std::array<double, 3> low_corner = { -1.2, 0.1, 1.1 };
     std::array<double, 3> high_corner = { -0.3, 9.5, 2.3 };
     double cell_size = 0.05;
-    auto global_mesh =
-        Cajita::createUniformGlobalMesh( low_corner, high_corner, cell_size );
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
+        low_corner, high_corner, cell_size );
 
     // Here we partition only in x to simplify the example below.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
     std::array<int, 3> input_ranks_per_dim = { comm_size, 1, 1 };
-    Cajita::ManualBlockPartitioner<3> partitioner( input_ranks_per_dim );
+    Cabana::Grid::ManualBlockPartitioner<3> partitioner( input_ranks_per_dim );
 
     // Create the global grid.
     std::array<bool, 3> is_dim_periodic = { true, true, true };
-    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                                 is_dim_periodic, partitioner );
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
 
     // Get the current rank for printing output.
     int comm_rank = global_grid->blockId();
     if ( comm_rank == 0 )
     {
-        std::cout << "Cajita Local Mesh Example" << std::endl;
+        std::cout << "Cabana::Grid Local Mesh Example" << std::endl;
         std::cout << "    (intended to be run with MPI)\n" << std::endl;
     }
 
     // Create a local grid
     int halo_width = 1;
-    auto local_grid = Cajita::createLocalGrid( global_grid, halo_width );
+    auto local_grid = Cabana::Grid::createLocalGrid( global_grid, halo_width );
 
     /*
       Create the local mesh from the local grid. The device type template
       parameter defines both the Kokkos memory and execution spaces that will be
       able to access the resulting local mesh data.
     */
-    auto local_mesh = Cajita::createLocalMesh<memory_space>( *local_grid );
+    auto local_mesh =
+        Cabana::Grid::createLocalMesh<memory_space>( *local_grid );
 
     /*
       Just like the global mesh, the local mesh holds information about the
@@ -83,22 +84,22 @@ void localMeshExample()
     */
     std::cout << "Low corner local: ";
     for ( int d = 0; d < 3; ++d )
-        std::cout << local_mesh.lowCorner( Cajita::Own(), d ) << " ";
+        std::cout << local_mesh.lowCorner( Cabana::Grid::Own(), d ) << " ";
     std::cout << "\nHigh corner local: ";
     for ( int d = 0; d < 3; ++d )
-        std::cout << local_mesh.highCorner( Cajita::Own(), d ) << " ";
+        std::cout << local_mesh.highCorner( Cabana::Grid::Own(), d ) << " ";
     std::cout << "\nExtent local: ";
     for ( int d = 0; d < 3; ++d )
-        std::cout << local_mesh.extent( Cajita::Own(), d ) << " ";
+        std::cout << local_mesh.extent( Cabana::Grid::Own(), d ) << " ";
     std::cout << "\nLow corner ghost: ";
     for ( int d = 0; d < 3; ++d )
-        std::cout << local_mesh.lowCorner( Cajita::Ghost(), d ) << " ";
+        std::cout << local_mesh.lowCorner( Cabana::Grid::Ghost(), d ) << " ";
     std::cout << "\nHigh corner ghost: ";
     for ( int d = 0; d < 3; ++d )
-        std::cout << local_mesh.highCorner( Cajita::Ghost(), d ) << " ";
+        std::cout << local_mesh.highCorner( Cabana::Grid::Ghost(), d ) << " ";
     std::cout << "\nExtent ghost: ";
     for ( int d = 0; d < 3; ++d )
-        std::cout << local_mesh.extent( Cajita::Ghost(), d ) << " ";
+        std::cout << local_mesh.extent( Cabana::Grid::Ghost(), d ) << " ";
 
     /*
       Note that this information is taken directly from the global grid and mesh
@@ -120,12 +121,12 @@ void localMeshExample()
     */
     double loc[3];
     int idx[3] = { 27, 17, 15 };
-    local_mesh.coordinates( Cajita::Cell(), idx, loc );
+    local_mesh.coordinates( Cabana::Grid::Cell(), idx, loc );
     std::cout << "\nRandom cell coordinates: ";
     for ( int d = 0; d < 3; ++d )
         std::cout << loc[d] << " ";
     std::cout << "\nRandom cell measure: "
-              << local_mesh.measure( Cajita::Cell(), idx ) << std::endl;
+              << local_mesh.measure( Cabana::Grid::Cell(), idx ) << std::endl;
 }
 
 //---------------------------------------------------------------------------//

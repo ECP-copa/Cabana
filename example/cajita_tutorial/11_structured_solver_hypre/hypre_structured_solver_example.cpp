@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita.hpp>
+#include <Cabana_Grid.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -44,11 +44,11 @@ void hypreStructuredSolverExample()
         preconditioner type : none, Diagonal, Jacobi
     */
 
-    std::cout << "Cajita HYPRE Structured Solver Example\n" << std::endl;
+    std::cout << "Cabana::Grid HYPRE Structured Solver Example\n" << std::endl;
 
     /*
-      As with all Cajita examples, we start by defining everything from the
-      global mesh to the local grid.
+      As with all Cabana::Grid examples, we start by defining everything from
+      the global mesh to the local grid.
     */
     using MemorySpace = Kokkos::HostSpace;
     using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
@@ -58,33 +58,37 @@ void hypreStructuredSolverExample()
     std::array<bool, 3> is_dim_periodic = { false, false, false };
     std::array<double, 3> global_low_corner = { -1.0, -2.0, -1.0 };
     std::array<double, 3> global_high_corner = { 1.0, 1.0, 0.5 };
-    auto global_mesh = Cajita::createUniformGlobalMesh(
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, cell_size );
 
     // Create the global grid.
-    Cajita::DimBlockPartitioner<3> partitioner;
-    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                                 is_dim_periodic, partitioner );
+    Cabana::Grid::DimBlockPartitioner<3> partitioner;
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
 
     // Create a local grid.
     auto local_mesh = createLocalGrid( global_grid, 1 );
-    auto owned_space = local_mesh->indexSpace( Cajita::Own(), Cajita::Cell(),
-                                               Cajita::Local() );
+    auto owned_space = local_mesh->indexSpace(
+        Cabana::Grid::Own(), Cabana::Grid::Cell(), Cabana::Grid::Local() );
 
     /************************************************************************/
 
     // Create the RHS.
-    auto vector_layout = createArrayLayout( local_mesh, 1, Cajita::Cell() );
-    auto rhs = Cajita::createArray<double, MemorySpace>( "rhs", vector_layout );
-    Cajita::ArrayOp::assign( *rhs, 1.0, Cajita::Own() );
+    auto vector_layout =
+        Cabana::Grid::createArrayLayout( local_mesh, 1, Cabana::Grid::Cell() );
+    auto rhs =
+        Cabana::Grid::createArray<double, MemorySpace>( "rhs", vector_layout );
+    Cabana::Grid::ArrayOp::assign( *rhs, 1.0, Cabana::Grid::Own() );
 
     // Create the LHS.
-    auto lhs = Cajita::createArray<double, MemorySpace>( "lhs", vector_layout );
-    Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
+    auto lhs =
+        Cabana::Grid::createArray<double, MemorySpace>( "lhs", vector_layout );
+    Cabana::Grid::ArrayOp::assign( *lhs, 0.0, Cabana::Grid::Own() );
 
     // Create a solver.
-    auto solver = Cajita::createHypreStructuredSolver<double, MemorySpace>(
-        "PCG", *vector_layout );
+    auto solver =
+        Cabana::Grid::createHypreStructuredSolver<double, MemorySpace>(
+            "PCG", *vector_layout );
 
     // Create a 7-point 3d laplacian stencil.
     std::vector<std::array<int, 3>> stencil = {
@@ -94,8 +98,8 @@ void hypreStructuredSolverExample()
 
     // Create the matrix entries. The stencil is defined over cells.
     auto matrix_entry_layout =
-        createArrayLayout( local_mesh, 7, Cajita::Cell() );
-    auto matrix_entries = Cajita::createArray<double, MemorySpace>(
+        Cabana::Grid::createArrayLayout( local_mesh, 7, Cabana::Grid::Cell() );
+    auto matrix_entries = Cabana::Grid::createArray<double, MemorySpace>(
         "matrix_entries", matrix_entry_layout );
     auto entry_view = matrix_entries->view();
     Kokkos::parallel_for(
@@ -132,7 +136,7 @@ void hypreStructuredSolverExample()
     */
     std::string precond_type = "Jacobi";
     auto preconditioner =
-        Cajita::createHypreStructuredSolver<double, MemorySpace>(
+        Cabana::Grid::createHypreStructuredSolver<double, MemorySpace>(
             precond_type, *vector_layout, true );
     solver->setPreconditioner( preconditioner );
 
@@ -149,8 +153,8 @@ void hypreStructuredSolverExample()
     solver->setup();
 
     // Reset to the same initial condition and solve the problem again.
-    Cajita::ArrayOp::assign( *rhs, 2.0, Cajita::Own() );
-    Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
+    Cabana::Grid::ArrayOp::assign( *rhs, 2.0, Cabana::Grid::Own() );
+    Cabana::Grid::ArrayOp::assign( *lhs, 0.0, Cabana::Grid::Own() );
     solver->solve( *rhs, *lhs );
 }
 

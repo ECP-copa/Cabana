@@ -10,5 +10,5 @@
 ############################################################################
 
 add_executable(IndexSpace index_space_example.cpp)
-target_link_libraries(IndexSpace Cajita)
-add_test(NAME Cajita_tutorial_05 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:IndexSpace>)
+target_link_libraries(IndexSpace Grid)
+add_test(NAME Grid_tutorial_05 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:IndexSpace>)

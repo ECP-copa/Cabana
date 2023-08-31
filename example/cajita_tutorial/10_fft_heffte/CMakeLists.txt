@@ -10,6 +10,6 @@
 ############################################################################
 
 add_executable(HeffteFFT heffte_fast_fourier_transform_example.cpp)
-target_link_libraries(HeffteFFT Cajita)
-add_test(NAME Cajita_tutorial_10 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:HeffteFFT> ${MPIEXEC_POSTFLAGS})
-set_tests_properties(Cajita_tutorial_10 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
+target_link_libraries(HeffteFFT Grid)
+add_test(NAME Grid_tutorial_10 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:HeffteFFT> ${MPIEXEC_POSTFLAGS})
+set_tests_properties(Grid_tutorial_10 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

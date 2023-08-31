@@ -10,6 +10,6 @@
 ############################################################################
 
 add_executable(Halo halo_example.cpp)
-target_link_libraries(Halo Cajita)
-add_test(NAME Cajita_tutorial_12 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:Halo> ${MPIEXEC_POSTFLAGS})
-set_tests_properties(Cajita_tutorial_12 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
+target_link_libraries(Halo Grid)
+add_test(NAME Grid_tutorial_12 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:Halo> ${MPIEXEC_POSTFLAGS})
+set_tests_properties(Grid_tutorial_12 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

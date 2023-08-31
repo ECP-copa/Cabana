@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita.hpp>
+#include <Cabana_Grid.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -30,8 +30,8 @@ void gridHaloExample()
       uniquely-owned decomposition to the ghosted decomposition. In the
       reverse operation (the scatter), data is sent from the ghosted
       decomposition back to the uniquely-owned decomposition and collisions
-      are resolved. Grid halos in Cajita are relvatively simple because all
-      grids are logically rectilinear.
+      are resolved. Grid halos in Cabana::Grid are relvatively simple because
+      all grids are logically rectilinear.
 
       In this example we will demonstrate building a halo communication
       plan and performing both scatter and gather operations.
@@ -41,8 +41,8 @@ void gridHaloExample()
     using device_type = exec_space::device_type;
 
     // Use linear MPI partitioning to make this example simpler.
-    Cajita::DimBlockPartitioner<3> partitioner( Cajita::Dim::J,
-                                                Cajita::Dim::K );
+    Cabana::Grid::DimBlockPartitioner<3> partitioner( Cabana::Grid::Dim::J,
+                                                      Cabana::Grid::Dim::K );
 
     /*
       Boundaries are not periodic in this example, thus ranks at system
@@ -64,7 +64,7 @@ void gridHaloExample()
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
         global_low_corner[2] + cell_size * global_num_cell[2] };
-    auto global_mesh = Cajita::createUniformGlobalMesh(
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                          is_dim_periodic, partitioner );
@@ -73,7 +73,7 @@ void gridHaloExample()
     int comm_rank = global_grid->blockId();
     if ( comm_rank == 0 )
     {
-        std::cout << "Cajita Grid Halo Example" << std::endl;
+        std::cout << "Cabana::Grid Grid Halo Example" << std::endl;
         std::cout << "    (intended to be run with MPI)\n" << std::endl;
     }
 
@@ -93,18 +93,18 @@ void gridHaloExample()
 
         // Create a cell array.
         auto layout = createArrayLayout( global_grid, allocated_halo_width, 4,
-                                         Cajita::Cell() );
+                                         Cabana::Grid::Cell() );
         auto array =
-            Cajita::createArray<double, device_type>( "array", layout );
+            Cabana::Grid::createArray<double, device_type>( "array", layout );
 
         // Assign the owned cells a value of 1 and ghosted 0.
-        Cajita::ArrayOp::assign( *array, 0.0, Cajita::Ghost() );
-        Cajita::ArrayOp::assign( *array, 1.0, Cajita::Own() );
+        Cabana::Grid::ArrayOp::assign( *array, 0.0, Cabana::Grid::Ghost() );
+        Cabana::Grid::ArrayOp::assign( *array, 1.0, Cabana::Grid::Own() );
 
         // create host mirror view
         auto array_view = array->view();
-        auto ghosted_space =
-            array->layout()->indexSpace( Cajita::Ghost(), Cajita::Local() );
+        auto ghosted_space = array->layout()->indexSpace(
+            Cabana::Grid::Ghost(), Cabana::Grid::Local() );
 
         /*
            Print out cell values along a single slice of the x-axis (recalling
@@ -127,8 +127,8 @@ void gridHaloExample()
            - Node pattern communicates with 26 MPI neighbors in 3D (8 in 2D)
            - Face pattern communicates with 6 MPI neighbors in 3D (4 in 2D)
         */
-        auto halo =
-            createHalo( Cajita::NodeHaloPattern<3>(), halo_width, *array );
+        auto halo = createHalo( Cabana::Grid::NodeHaloPattern<3>(), halo_width,
+                                *array );
 
         /*
           Gather into the ghosts. This performs the grid communication from the
@@ -157,7 +157,8 @@ void gridHaloExample()
           specify different update operations: sum (used here), min, max, or
           replace the value.
         */
-        halo->scatter( exec_space(), Cajita::ScatterReduce::Sum(), *array );
+        halo->scatter( exec_space(), Cabana::Grid::ScatterReduce::Sum(),
+                       *array );
 
         /*
           Print out cell values one more time along the x-axis after the

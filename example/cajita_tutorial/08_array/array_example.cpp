@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita.hpp>
+#include <Cabana_Grid.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -42,7 +42,7 @@ void arrayExample()
     */
 
     // Let MPI compute the partitioning for this test.
-    Cajita::DimBlockPartitioner<3> partitioner;
+    Cabana::Grid::DimBlockPartitioner<3> partitioner;
 
     // Create the global mesh.
     double cell_size = 0.50;
@@ -53,18 +53,18 @@ void arrayExample()
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
         global_low_corner[2] + cell_size * global_num_cell[2] };
-    auto global_mesh = Cajita::createUniformGlobalMesh(
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     // Create the global grid.
-    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                                 is_dim_periodic, partitioner );
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
 
     // Get the current rank for printing output.
     int comm_rank = global_grid->blockId();
     if ( comm_rank == 0 )
     {
-        std::cout << "Cajita Array Example" << std::endl;
+        std::cout << "Cabana::Grid Array Example" << std::endl;
         std::cout << "    (intended to be run with MPI)\n" << std::endl;
     }
 
@@ -74,8 +74,8 @@ void arrayExample()
     */
     int halo_width = 2;
     int dofs_per_node = 4;
-    auto node_layout = Cajita::createArrayLayout(
-        global_grid, halo_width, dofs_per_node, Cajita::Node() );
+    auto node_layout = Cabana::Grid::createArrayLayout(
+        global_grid, halo_width, dofs_per_node, Cabana::Grid::Node() );
     int view_rank = node_layout->num_space_dim + 1;
 
     /*
@@ -87,7 +87,7 @@ void arrayExample()
       dimension over the field values on each entity.
     */
     auto array_node_owned_space =
-        node_layout->indexSpace( Cajita::Own(), Cajita::Local() );
+        node_layout->indexSpace( Cabana::Grid::Own(), Cabana::Grid::Local() );
     std::cout << "Array layout (Own, Local) \nMin: ";
     for ( int d = 0; d < view_rank; ++d )
         std::cout << array_node_owned_space.min( d ) << " ";
@@ -97,7 +97,7 @@ void arrayExample()
     std::cout << "\n" << std::endl;
 
     auto array_node_ghosted_space =
-        node_layout->indexSpace( Cajita::Ghost(), Cajita::Local() );
+        node_layout->indexSpace( Cabana::Grid::Ghost(), Cabana::Grid::Local() );
     std::cout << "Array layout (Ghost, Local) \nMin: ";
     for ( int d = 0; d < view_rank; ++d )
         std::cout << array_node_ghosted_space.min( d ) << " ";
@@ -107,7 +107,7 @@ void arrayExample()
     std::cout << "\n" << std::endl;
 
     auto array_node_shared_owned_space =
-        node_layout->sharedIndexSpace( Cajita::Own(), -1, 0, 1 );
+        node_layout->sharedIndexSpace( Cabana::Grid::Own(), -1, 0, 1 );
     std::cout << "Array layout (Shared, Own, -1,0,1) \nMin: ";
     for ( int d = 0; d < view_rank; ++d )
         std::cout << array_node_shared_owned_space.min( d ) << " ";
@@ -122,7 +122,8 @@ void arrayExample()
       computation.
     */
     std::string label( "example_array" );
-    auto array = Cajita::createArray<double, device_type>( label, node_layout );
+    auto array =
+        Cabana::Grid::createArray<double, device_type>( label, node_layout );
 
     auto view = array->view();
     std::cout << "Array total size: " << view.size() << std::endl;
@@ -144,10 +145,10 @@ void arrayExample()
       For each operation we print the first value in the array - each value is
       updated.
     */
-    Cajita::ArrayOp::assign( *array, 2.0, Cajita::Ghost() );
+    Cabana::Grid::ArrayOp::assign( *array, 2.0, Cabana::Grid::Ghost() );
 
     // Scale the entire array with a single value.
-    Cajita::ArrayOp::scale( *array, 0.5, Cajita::Ghost() );
+    Cabana::Grid::ArrayOp::scale( *array, 0.5, Cabana::Grid::Ghost() );
 
     /*
       Compute the dot product of the two arrays.
@@ -157,23 +158,24 @@ void arrayExample()
     */
     std::vector<double> dots( dofs_per_node );
     auto array_2 =
-        Cajita::createArray<double, device_type>( label, node_layout );
-    Cajita::ArrayOp::assign( *array_2, 0.5, Cajita::Ghost() );
-    Cajita::ArrayOp::update( *array, 3.0, *array_2, 2.0, Cajita::Ghost() );
-    Cajita::ArrayOp::dot( *array, *array_2, dots );
+        Cabana::Grid::createArray<double, device_type>( label, node_layout );
+    Cabana::Grid::ArrayOp::assign( *array_2, 0.5, Cabana::Grid::Ghost() );
+    Cabana::Grid::ArrayOp::update( *array, 3.0, *array_2, 2.0,
+                                   Cabana::Grid::Ghost() );
+    Cabana::Grid::ArrayOp::dot( *array, *array_2, dots );
     std::cout << "Array dot product: ";
     std::cout << dots[0] << std::endl;
 
     // Compute the two-norm of the array components
     std::cout << "Array two-norm: ";
     std::vector<double> norm_2( dofs_per_node );
-    Cajita::ArrayOp::norm2( *array, norm_2 );
+    Cabana::Grid::ArrayOp::norm2( *array, norm_2 );
     std::cout << norm_2[0] << std::endl;
 
     // Compute the one-norm of the array components
     std::cout << "Array one-norm: ";
     std::vector<double> norm_1( dofs_per_node );
-    Cajita::ArrayOp::norm1( *array, norm_1 );
+    Cabana::Grid::ArrayOp::norm1( *array, norm_1 );
     std::cout << norm_1[0] << std::endl;
 
     // Compute the infinity-norm of the array components
@@ -184,32 +186,33 @@ void arrayExample()
     for ( int n = 0; n < dofs_per_node; ++n )
         view( 4, 4, 4, n ) = large_vals[n];
     std::vector<double> norm_inf( dofs_per_node );
-    Cajita::ArrayOp::normInf( *array, norm_inf );
+    Cabana::Grid::ArrayOp::normInf( *array, norm_inf );
     std::cout << norm_inf[0] << std::endl;
 
     /*
       It is also possible to copy arrays with compatible index spaces.
     */
-    Cajita::ArrayOp::copy( *array, *array_2, Cajita::Own() );
+    Cabana::Grid::ArrayOp::copy( *array, *array_2, Cabana::Grid::Own() );
 
     /*
       Cloning an array makes a new, identical array to the given array with a
       new memory allocation.
     */
-    auto array_3 = Cajita::ArrayOp::clone( *array );
-    Cajita::ArrayOp::copy( *array_3, *array, Cajita::Own() );
+    auto array_3 = Cabana::Grid::ArrayOp::clone( *array );
+    Cabana::Grid::ArrayOp::copy( *array_3, *array, Cabana::Grid::Own() );
 
     /*
       A clone and copy can also be done in a single operation.
     */
-    auto array_4 = Cajita::ArrayOp::cloneCopy( *array, Cajita::Own() );
+    auto array_4 =
+        Cabana::Grid::ArrayOp::cloneCopy( *array, Cabana::Grid::Own() );
 
     /*
       It is also possible to create sub-arrays of existing arrays.
     */
-    auto subarray = Cajita::createSubarray( *array, 2, 4 );
-    auto sub_ghosted_space =
-        subarray->layout()->indexSpace( Cajita::Ghost(), Cajita::Local() );
+    auto subarray = Cabana::Grid::createSubarray( *array, 2, 4 );
+    auto sub_ghosted_space = subarray->layout()->indexSpace(
+        Cabana::Grid::Ghost(), Cabana::Grid::Local() );
     std::cout << "\nSub-array index space size: ";
     std::cout << sub_ghosted_space.size() << std::endl;
     std::cout << "Sub-array index space extents: ";

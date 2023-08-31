@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita.hpp>
+#include <Cabana_Grid.hpp>
 
 #include <cmath>
 #include <iostream>
@@ -57,8 +57,8 @@ void loadBalancerExample()
      * The LoadBalancer class generates a new GlobalGrid in order to minimize
      * differences in the local work across MPI ranks. This capability relies on
      * the optional ALL library dependency. Most is the same as in any
-     * application using Cajita without load balancing; the comments will be
-     * focused on the additions/changes due to including the load balancer.
+     * application using Cabana::Grid without load balancing; the comments will
+     * be focused on the additions/changes due to including the load balancer.
      */
 
     /*
@@ -72,7 +72,7 @@ void loadBalancerExample()
      * The partitioner, global mesh, and (initial) global grid are set up as
      * usual.
      */
-    const Cajita::DimBlockPartitioner<2> partitioner;
+    const Cabana::Grid::DimBlockPartitioner<2> partitioner;
 
     std::array<int, 2> empty_array = { 0 };
     std::array<int, 2> ranks =
@@ -83,18 +83,18 @@ void loadBalancerExample()
     std::array<double, 2> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1] };
-    auto global_mesh = Cajita::createUniformGlobalMesh(
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     std::array<bool, 2> is_dim_periodic = { false, false };
-    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                                 is_dim_periodic, partitioner );
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
 
     // Get the current rank for printing output.
     int comm_rank = global_grid->blockId();
     if ( comm_rank == 0 )
     {
-        std::cout << "Cajita Load Balancer Example" << std::endl;
+        std::cout << "Cabana::Grid Load Balancer Example" << std::endl;
         std::cout << "    (intended to be run with MPI)\n" << std::endl;
     }
 
@@ -107,7 +107,7 @@ void loadBalancerExample()
      */
     const std::array<double, 2> min_domain_size = { 3 * cell_size,
                                                     5 * cell_size };
-    auto lb = Cajita::Experimental::createLoadBalancer(
+    auto lb = Cabana::Grid::Experimental::createLoadBalancer(
         MPI_COMM_WORLD, global_grid, min_domain_size );
 
     /*

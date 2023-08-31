@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita.hpp>
+#include <Cabana_Grid.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -22,8 +22,8 @@ void gridParallelExample()
 {
     /*
       Just as the core library extends the Kokkos::parallel_for and reduce
-      concepts for the AoSoA and neighbor lists, Cajita provides capabilities
-      for parallel iteration over structured grids.
+      concepts for the AoSoA and neighbor lists, Cabana::Grid provides
+      capabilities for parallel iteration over structured grids.
 
       Most use cases will likely use the interface which use the local grids
       directly, but there are additional options for using index spaces,
@@ -32,13 +32,13 @@ void gridParallelExample()
       All data structures (global mesh/grid, local grid/mesh, and array data)
       are created first.
     */
-    std::cout << "Cajita Grid Parallel Example\n" << std::endl;
+    std::cout << "Cabana::Grid Grid Parallel Example\n" << std::endl;
 
     using exec_space = Kokkos::DefaultHostExecutionSpace;
     using device_type = exec_space::device_type;
 
     // Let MPI compute the partitioning for this example.
-    Cajita::DimBlockPartitioner<3> partitioner;
+    Cabana::Grid::DimBlockPartitioner<3> partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;
@@ -49,23 +49,24 @@ void gridParallelExample()
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
         global_low_corner[2] + cell_size * global_num_cell[2] };
-    auto global_mesh = Cajita::createUniformGlobalMesh(
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     // Create the global grid.
-    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                                 is_dim_periodic, partitioner );
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
 
     // Create an array layout on the cells.
     int halo_width = 2;
     int dofs_per_cell = 4;
-    auto cell_layout = Cajita::createArrayLayout(
-        global_grid, halo_width, dofs_per_cell, Cajita::Cell() );
+    auto cell_layout = Cabana::Grid::createArrayLayout(
+        global_grid, halo_width, dofs_per_cell, Cabana::Grid::Cell() );
     auto local_grid = cell_layout->localGrid();
 
     // Create an array.
     std::string label( "example_array" );
-    auto array = Cajita::createArray<double, device_type>( label, cell_layout );
+    auto array =
+        Cabana::Grid::createArray<double, device_type>( label, cell_layout );
     //-----------------------------------------------------------------------//
 
     /*
@@ -83,9 +84,10 @@ void gridParallelExample()
       the grid to 1.
     */
     auto array_view = array->view();
-    Cajita::grid_parallel_for(
-        "local_grid_for", exec_space(), *local_grid, Cajita::Ghost(),
-        Cajita::Cell(), KOKKOS_LAMBDA( const int i, const int j, const int k ) {
+    Cabana::Grid::grid_parallel_for(
+        "local_grid_for", exec_space(), *local_grid, Cabana::Grid::Ghost(),
+        Cabana::Grid::Cell(),
+        KOKKOS_LAMBDA( const int i, const int j, const int k ) {
             for ( int l = 0; l < 4; ++l )
                 array_view( i, j, k, l ) = 1.0;
         } );
@@ -96,9 +98,9 @@ void gridParallelExample()
       signature and the final return value.
     */
     double sum = 0.0;
-    Cajita::grid_parallel_reduce(
-        "local_grid_reduce", exec_space(), *local_grid, Cajita::Ghost(),
-        Cajita::Cell(),
+    Cabana::Grid::grid_parallel_reduce(
+        "local_grid_reduce", exec_space(), *local_grid, Cabana::Grid::Ghost(),
+        Cabana::Grid::Cell(),
         KOKKOS_LAMBDA( const int i, const int j, const int k, double& result ) {
             for ( int l = 0; l < 4; ++l )
                 result += array_view( i, j, k, l );
@@ -109,8 +111,8 @@ void gridParallelExample()
       Here, the total should match the total grid size (including ghosts) times
       the four field values for each grid point.
     */
-    auto ghost_is = local_grid->indexSpace( Cajita::Ghost(), Cajita::Cell(),
-                                            Cajita::Local() );
+    auto ghost_is = local_grid->indexSpace(
+        Cabana::Grid::Ghost(), Cabana::Grid::Cell(), Cabana::Grid::Local() );
     std::cout << "Local grid sum: " << sum << " (should be "
               << 4 * ghost_is.size() << ")\n"
               << std::endl;
@@ -121,9 +123,9 @@ void gridParallelExample()
       space instead of using the index space from within the local grid. Here we
       subtract 2 from every entity.
     */
-    auto own_is = local_grid->indexSpace( Cajita::Own(), Cajita::Cell(),
-                                          Cajita::Local() );
-    Cajita::grid_parallel_for(
+    auto own_is = local_grid->indexSpace(
+        Cabana::Grid::Own(), Cabana::Grid::Cell(), Cabana::Grid::Local() );
+    Cabana::Grid::grid_parallel_for(
         "index_space_for", exec_space(), own_is,
         KOKKOS_LAMBDA( const int i, const int j, const int k ) {
             for ( int l = 0; l < 4; ++l )
@@ -135,7 +137,7 @@ void gridParallelExample()
       index space as well.
     */
     double sum_is = 0.0;
-    Cajita::grid_parallel_reduce(
+    Cabana::Grid::grid_parallel_reduce(
         "index_space_reduce", exec_space(), own_is,
         KOKKOS_LAMBDA( const int i, const int j, const int k, double& result ) {
             for ( int l = 0; l < 4; ++l )
@@ -161,8 +163,8 @@ void gridParallelExample()
       For this kernel we divide every entity by the total number of cells.
     */
     auto own_array_is =
-        cell_layout->indexSpace( Cajita::Own(), Cajita::Local() );
-    Cajita::grid_parallel_for(
+        cell_layout->indexSpace( Cabana::Grid::Own(), Cabana::Grid::Local() );
+    Cabana::Grid::grid_parallel_for(
         "index_space_for", exec_space(), own_array_is,
         KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ) {
             array_view( i, j, k, l ) /= sum_is;
@@ -172,7 +174,7 @@ void gridParallelExample()
       Do another grid reduction to check the result.
     */
     double sum_layout_is = 0.0;
-    Cajita::grid_parallel_reduce(
+    Cabana::Grid::grid_parallel_reduce(
         "index_space_reduce", exec_space(), own_array_is,
         KOKKOS_LAMBDA( const int i, const int j, const int k, const int l,
                        double& result ) { result += array_view( i, j, k, l ); },
@@ -193,10 +195,10 @@ void gridParallelExample()
       kernel.
     */
     auto boundary_is = local_grid->boundaryIndexSpace(
-        Cajita::Own(), Cajita::Cell(), 1, 0, 0 );
-    Cajita::grid_parallel_for(
+        Cabana::Grid::Own(), Cabana::Grid::Cell(), 1, 0, 0 );
+    Cabana::Grid::grid_parallel_for(
         "multi_space_for", exec_space{},
-        Kokkos::Array<Cajita::IndexSpace<3>, 2>{ own_is, boundary_is },
+        Kokkos::Array<Cabana::Grid::IndexSpace<3>, 2>{ own_is, boundary_is },
         // The first index in the functor signature is which index space is
         // being used (from the array in the previous argument).
         KOKKOS_LAMBDA( const int s, const int i, const int j, const int k ) {
@@ -215,7 +217,7 @@ void gridParallelExample()
       Here we reduce only over each index space separately to check the value.
     */
     double sum_bound = 0.0;
-    Cajita::grid_parallel_reduce(
+    Cabana::Grid::grid_parallel_reduce(
         "boundary_space_reduce", exec_space(), own_is,
         KOKKOS_LAMBDA( const int i, const int j, const int k, double& result ) {
             for ( int l = 0; l < 4; ++l )

@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita.hpp>
+#include <Cabana_Grid.hpp>
 
 #include <iostream>
 
@@ -19,7 +19,7 @@
 void globalGridExample()
 {
     /*
-      The Cajita grid defines the indexing of the grid, separate from the
+      The Cabana::Grid grid defines the indexing of the grid, separate from the
       physical size and characteristics of the mesh. The global grid accordingly
       defines indexing throughout the entire mesh domain.
     */
@@ -31,7 +31,7 @@ void globalGridExample()
 
       First, create the partitioner, in this case 2D.
     */
-    Cajita::DimBlockPartitioner<2> partitioner;
+    Cabana::Grid::DimBlockPartitioner<2> partitioner;
 
     // And create the global mesh.
     double cell_size = 0.23;
@@ -40,7 +40,7 @@ void globalGridExample()
     std::array<double, 2> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1] };
-    auto global_mesh = Cajita::createUniformGlobalMesh(
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     /*
@@ -51,14 +51,14 @@ void globalGridExample()
     std::array<bool, 2> is_dim_periodic = { true, true };
 
     // Create the global grid.
-    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                                 is_dim_periodic, partitioner );
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, is_dim_periodic, partitioner );
 
     // Get the current rank for printing output.
     int comm_rank = global_grid->blockId();
     if ( comm_rank == 0 )
     {
-        std::cout << "Cajita Global Grid Example" << std::endl;
+        std::cout << "Cabana::Grid Global Grid Example" << std::endl;
         std::cout << "    (intended to be run with MPI)\n" << std::endl;
     }
 
@@ -72,21 +72,21 @@ void globalGridExample()
     if ( comm_rank == 0 )
     {
         std::cout << "Global global grid information:" << std::endl;
-        bool periodic_x = global_grid->isPeriodic( Cajita::Dim::I );
+        bool periodic_x = global_grid->isPeriodic( Cabana::Grid::Dim::I );
         std::cout << "Periodicity in X: " << periodic_x << std::endl;
 
-        int num_blocks_y = global_grid->dimNumBlock( Cajita::Dim::J );
+        int num_blocks_y = global_grid->dimNumBlock( Cabana::Grid::Dim::J );
         std::cout << "Number of blocks in Y: " << num_blocks_y << std::endl;
 
         int num_blocks = global_grid->totalNumBlock();
         std::cout << "Number of blocks total: " << num_blocks << std::endl;
 
-        int num_cells_x =
-            global_grid->globalNumEntity( Cajita::Cell(), Cajita::Dim::I );
+        int num_cells_x = global_grid->globalNumEntity( Cabana::Grid::Cell(),
+                                                        Cabana::Grid::Dim::I );
         std::cout << "Number of cells in X: " << num_cells_x << std::endl;
 
         int num_faces_y = global_grid->globalNumEntity(
-            Cajita::Face<Cajita::Dim::I>(), Cajita::Dim::J );
+            Cabana::Grid::Face<Cabana::Grid::Dim::I>(), Cabana::Grid::Dim::J );
         std::cout << "Number of X Faces in Y: " << num_faces_y << std::endl;
 
         std::cout << "\nPer rank global grid information:" << std::endl;
@@ -98,22 +98,22 @@ void globalGridExample()
       ("ID") within the MPI block decomposition, and the number of mesh cells
       "owned" (uniquely managed by this rank).
     */
-    bool on_lo_x = global_grid->onLowBoundary( Cajita::Dim::I );
+    bool on_lo_x = global_grid->onLowBoundary( Cabana::Grid::Dim::I );
     std::cout << "Rank-" << comm_rank << " on low X boundary: " << on_lo_x
               << std::endl;
 
-    bool on_hi_y = global_grid->onHighBoundary( Cajita::Dim::J );
+    bool on_hi_y = global_grid->onHighBoundary( Cabana::Grid::Dim::J );
     std::cout << "Rank-" << comm_rank << " on high Y boundary: " << on_hi_y
               << std::endl;
 
     bool block_id = global_grid->blockId();
     std::cout << "Rank-" << comm_rank << " block ID: " << block_id << std::endl;
 
-    bool block_id_x = global_grid->dimBlockId( Cajita::Dim::I );
+    bool block_id_x = global_grid->dimBlockId( Cabana::Grid::Dim::I );
     std::cout << "Rank-" << comm_rank << " block ID in X: " << block_id_x
               << std::endl;
 
-    int num_cells_y = global_grid->ownedNumCell( Cajita::Dim::J );
+    int num_cells_y = global_grid->ownedNumCell( Cabana::Grid::Dim::J );
     std::cout << "Rank-" << comm_rank
               << " owned mesh cells in Y: " << num_cells_y << std::endl;
 
@@ -138,7 +138,7 @@ void globalGridExample()
       Second, the offset (the index from the bottom left corner in a given
       dimension) of one block can be extracted.
     */
-    int offset_x = global_grid->globalOffset( Cajita::Dim::I );
+    int offset_x = global_grid->globalOffset( Cabana::Grid::Dim::I );
     std::cout << "Rank-" << comm_rank << " offset in X: " << offset_x
               << std::endl;
 }

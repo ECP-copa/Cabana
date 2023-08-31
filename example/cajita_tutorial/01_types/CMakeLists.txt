@@ -10,5 +10,5 @@
 ############################################################################
 
 add_executable(MeshTypes types_example.cpp)
-target_link_libraries(MeshTypes Cajita)
-add_test(NAME Cajita_tutorial_01 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:MeshTypes>)
+target_link_libraries(MeshTypes Grid)
+add_test(NAME Grid_tutorial_01 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:MeshTypes>)

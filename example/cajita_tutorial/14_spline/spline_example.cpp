@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita.hpp>
+#include <Cabana_Grid.hpp>
 #include <Kokkos_Core.hpp>
 
 #include <iostream>
@@ -18,22 +18,20 @@
 // Spline example.
 //---------------------------------------------------------------------------//
 
-using namespace Cajita;
-
 void splineExample()
 {
     /*
-      Cajita provides B-Spline related interfaces for uniform grids operations.
-      The spline orders are:
+      Cabana::Grid provides B-Spline related interfaces for uniform grids
+      operations. The spline orders are:
         0 - nearest grid point interpolation
         1 - linear
         2 - quadratic
         3 - cubic
     */
-    std::cout << "Cajita Spline Example\n" << std::endl;
+    std::cout << "Cabana::Grid Spline Example\n" << std::endl;
 
     /*
-      First, we need some setup to facilitate the use of Cajita splines.
+      First, we need some setup to facilitate the use of Cabana::Grid splines.
 
       This includes the creation of a simple uniform mesh and a single particle
       position.
@@ -51,30 +49,32 @@ void splineExample()
         global_low_corner[2] + cell_size * global_num_cell[2] };
 
     // Create the global mesh
-    auto global_mesh = Cajita::createUniformGlobalMesh(
+    auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, cell_size );
 
     // Set up a uniform partitioner
-    Cajita::DimBlockPartitioner<3> partitioner;
+    Cabana::Grid::DimBlockPartitioner<3> partitioner;
 
     // Create the global grid.
     std::array<bool, 3> periodic = { false, false, false };
-    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                                 periodic, partitioner );
+    auto global_grid = Cabana::Grid::createGlobalGrid(
+        MPI_COMM_WORLD, global_mesh, periodic, partitioner );
 
     // Get the local grid.
     int halo_cell_width = 1;
-    auto local_grid = Cajita::createLocalGrid( global_grid, halo_cell_width );
+    auto local_grid =
+        Cabana::Grid::createLocalGrid( global_grid, halo_cell_width );
 
     // Get the local mesh for this rank.
-    auto local_mesh = Cajita::createLocalMesh<ExecutionSpace>( *local_grid );
+    auto local_mesh =
+        Cabana::Grid::createLocalMesh<ExecutionSpace>( *local_grid );
 
     // Create a particle position vector.
     double xp[3] = { 0.5, 2, 1.5 };
 
     /********************************************************************/
     /*
-      There are two ways to use Cajita splines in practice.
+      There are two ways to use Cabana::Grid splines in practice.
 
       In the first, one constructs an object of type:
         SplineData<Scalar, Order, NumSpaceDim, EntityType, Tags...> where
@@ -102,13 +102,14 @@ void splineExample()
     constexpr int num_space = 3; // 3-dimensional
 
     // This spline data type will be defined on grid nodes in this example.
-    using SD = Cajita::SplineData<value_type, order, num_space, Cajita::Node>;
+    using SD = Cabana::Grid::SplineData<value_type, order, num_space,
+                                        Cabana::Grid::Node>;
 
     SD sd_n; // Default construction
     std::cout << "Spline order: " << SD::order << " (quadratic)" << std::endl;
 
     // Evaluate the spline data given a point position and the local mesh
-    Cajita::evaluateSpline( local_mesh, xp, sd_n );
+    Cabana::Grid::evaluateSpline( local_mesh, xp, sd_n );
 
     // The spline data by default contains all available SplineDataMembers,
     // whose values were all updated from the previous call to evaluateSpline()
@@ -126,14 +127,15 @@ void splineExample()
 
     // Only a subset of specific SplineDataMember tags may be used instead of
     // the full set by default:
-    using DataTags = Cajita::SplineDataMemberTypes<
-        SplinePhysicalCellSize, SplineLogicalPosition, SplinePhysicalDistance,
-        SplineWeightValues>;
+    using DataTags = Cabana::Grid::SplineDataMemberTypes<
+        Cabana::Grid::SplinePhysicalCellSize,
+        Cabana::Grid::SplineLogicalPosition,
+        Cabana::Grid::SplinePhysicalDistance, Cabana::Grid::SplineWeightValues>;
 
     // This is may be useful in reducing memory
     // spline data type
-    using SD_t =
-        SplineData<value_type, order, num_space, Cajita::Node, DataTags>;
+    using SD_t = Cabana::Grid::SplineData<value_type, order, num_space,
+                                          Cabana::Grid::Node, DataTags>;
 
     // Check members.
     static_assert( SD_t::has_physical_cell_size,
@@ -155,9 +157,9 @@ void splineExample()
       specific spline data given basic information about the local grid.
 
       This approach is useful if one needs to write their own particle-grid
-      operators. However, the built-in Cajita particle-grid operators in
-      Cajita_Interpolation.hpp does not require the use of these interfaces
-      except to construct the SplineData as above.
+      operators. However, the built-in Cabana::Grid particle-grid operators in
+      Cabana_Grid_Interpolation.hpp does not require the use of these
+      interfaces except to construct the SplineData as above.
     */
     double rdx = 1.0 / cell_size;
     double values[3]; // num_knots for a 2nd-order spline
@@ -167,9 +169,9 @@ void splineExample()
     for ( int d = 0; d < num_space; ++d )
     {
         // These interfaces are for a single dimension only.
-        x0[d] = Cajita::Spline<2>::mapToLogicalGrid( xp[d], rdx,
-                                                     global_low_corner[d] );
-        Cajita::Spline<2>::value( x0[d], values );
+        x0[d] = Cabana::Grid::Spline<2>::mapToLogicalGrid(
+            xp[d], rdx, global_low_corner[d] );
+        Cabana::Grid::Spline<2>::value( x0[d], values );
         std::cout << "  Dim " << d << ": ";
         for ( auto v : values )
         {
@@ -185,7 +187,7 @@ void splineExample()
     std::cout << "Spline offsets (static interface) (quadratic):" << std::endl;
     for ( int d = 0; d < num_space; ++d )
     {
-        Cajita::Spline<2>::offsets( offsets_quadratic );
+        Cabana::Grid::Spline<2>::offsets( offsets_quadratic );
         std::cout << "  Dim " << d << ": ";
         for ( auto o : offsets_quadratic )
         {
@@ -197,11 +199,11 @@ void splineExample()
     // For a cubic B-spline, there are 4 knots, with offsets -1, 0, 1, 2.
     // This number is available as a static constexpr member for declaring
     // arrays at compile-time.
-    int offsets_cubic[Cajita::Spline<3>::num_knot];
+    int offsets_cubic[Cabana::Grid::Spline<3>::num_knot];
     std::cout << "Spline offsets (static interface) (cubic):" << std::endl;
     for ( int d = 0; d < num_space; ++d )
     {
-        Cajita::Spline<3>::offsets( offsets_cubic );
+        Cabana::Grid::Spline<3>::offsets( offsets_cubic );
         std::cout << "  Dim " << d << ": ";
         for ( auto o : offsets_cubic )
         {
@@ -215,7 +217,7 @@ void splineExample()
     std::cout << "Spline stencil (static interface):" << std::endl;
     for ( int d = 0; d < num_space; ++d )
     {
-        Cajita::Spline<2>::stencil( x0[d], stencil );
+        Cabana::Grid::Spline<2>::stencil( x0[d], stencil );
         std::cout << "  Dim " << d << ": ";
         for ( auto si : stencil )
         {
@@ -230,7 +232,7 @@ void splineExample()
     std::cout << "Spline gradient (static interface):" << std::endl;
     for ( int d = 0; d < num_space; ++d )
     {
-        Cajita::Spline<2>::gradient( x0[d], rdx, grad );
+        Cabana::Grid::Spline<2>::gradient( x0[d], rdx, grad );
         std::cout << "  Dim " << d << ": ";
         for ( auto g : grad )
         {

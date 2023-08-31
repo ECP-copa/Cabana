@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita.hpp>
+#include <Cabana_Grid.hpp>
 
 #include <iostream>
 
@@ -19,8 +19,8 @@
 void partitionerExample()
 {
     /*
-      The Cajita partitioner splits the global mesh across the available MPI
-      ranks in a spatial decomposition scheme. Both manual and near-uniform
+      The Cabana::Grid partitioner splits the global mesh across the available
+      MPI ranks in a spatial decomposition scheme. Both manual and near-uniform
       block partitioning are available.
     */
     int comm_rank = -1;
@@ -28,19 +28,19 @@ void partitionerExample()
 
     if ( comm_rank == 0 )
     {
-        std::cout << "Cajita Partitioner Example" << std::endl;
+        std::cout << "Cabana::Grid Partitioner Example" << std::endl;
         std::cout << "    (intended to be run with MPI)\n" << std::endl;
     }
 
     /*
-      The simpler Cajita partitioner, DimBlockPartitioner sets a uniform
+      The simpler Cabana::Grid partitioner, DimBlockPartitioner sets a uniform
       decomposition internally using MPI. This partitioning is best only if the
       global mesh is a uniform cube (square) and the particles within it are
       evenly distributed. This partitioning may not produce the best results for
       an elongated domain, for example (due to the communication surface area to
       volume ratio). The DimBlockPartitioner is templated on spatial dimension.
     */
-    Cajita::DimBlockPartitioner<3> dim_block_partitioner;
+    Cabana::Grid::DimBlockPartitioner<3> dim_block_partitioner;
 
     /*
       Extract the MPI ranks per spatial dimension. The second argument, global
@@ -71,7 +71,8 @@ void partitionerExample()
     std::array<int, 2> input_ranks_per_dim = { comm_size, 1 };
 
     // Create the manual partitioner in 2D.
-    Cajita::ManualBlockPartitioner<2> manual_partitioner( input_ranks_per_dim );
+    Cabana::Grid::ManualBlockPartitioner<2> manual_partitioner(
+        input_ranks_per_dim );
 
     /*
       Extract the MPI ranks per spatial dimension. Again, the second argument,

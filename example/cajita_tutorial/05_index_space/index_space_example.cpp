@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita.hpp>
+#include <Cabana_Grid.hpp>
 
 #include <iostream>
 
@@ -21,11 +21,12 @@ void indexSpaceExample()
     /*
       Each index space represents a contiguous set of structured
       multidimensional indices which is then used to describe how to iterate
-      over Cajita grids and arrays in parallel. It is generally used to thread
-      over a local grid (discussed in the following example) and used tightly
-      coupled to the parallel operations (also discussed in a later example).
+      over Cabana::Grid grids and arrays in parallel. It is generally used to
+      thread over a local grid (discussed in the following example) and used
+      tightly coupled to the parallel operations (also discussed in a later
+      example).
     */
-    std::cout << "Cajita Index Space Example\n" << std::endl;
+    std::cout << "Cabana::Grid Index Space Example\n" << std::endl;
 
     /*
       Index spaces can be one dimensional and up to 4D, mapping to physical
@@ -35,7 +36,7 @@ void indexSpaceExample()
       In this very simple 1D case we use the size constructor to build the index
       space {0,1,2,3,4}:
     */
-    Cajita::IndexSpace<1> is1( { 5 } );
+    Cabana::Grid::IndexSpace<1> is1( { 5 } );
     std::cout << "1D index space:\nMin: ";
     std::cout << is1.min( 0 ) << " Max: " << is1.max( 0 ) << "\n" << std::endl;
 
@@ -44,14 +45,14 @@ void indexSpaceExample()
       in {5,6,7,8,9}.
     */
     std::cout << "1D index space:\nMin: ";
-    Cajita::IndexSpace<1> is1_2( { 5 }, { 10 } );
+    Cabana::Grid::IndexSpace<1> is1_2( { 5 }, { 10 } );
     std::cout << is1_2.min( 0 ) << " Max: " << is1_2.max( 0 ) << "\n"
               << std::endl;
 
     /*
       Next we create a 2D space.
     */
-    Cajita::IndexSpace<2> is2( { 4, 3 }, { 8, 9 } );
+    Cabana::Grid::IndexSpace<2> is2( { 4, 3 }, { 8, 9 } );
     std::cout << "2D index space:\nMin: ";
     for ( int d = 0; d < 2; ++d )
         std::cout << is2.min( d ) << " ";
@@ -64,7 +65,7 @@ void indexSpaceExample()
       For this 3D case, each dimension should again go from zero to one less
       than the value given (the value given is an exclusive upper bound).
     */
-    Cajita::IndexSpace<3> is3( { 5, 4, 8 } );
+    Cabana::Grid::IndexSpace<3> is3( { 5, 4, 8 } );
     std::cout << "3D index space:\nMin: ";
     for ( int d = 0; d < 3; ++d )
         std::cout << is3.min( d ) << " ";
@@ -107,7 +108,7 @@ void indexSpaceExample()
       created above, we create a 4D index space (the minimum input can be
       ommitted to start from zero).
     */
-    auto is4 = Cajita::appendDimension( is3, 3, 10 );
+    auto is4 = Cabana::Grid::appendDimension( is3, 3, 10 );
     std::cout << "\nappended 4D index space:\nExtent: ";
     for ( int d = 0; d < 4; ++d )
         std::cout << is4.extent( d ) << " ";
@@ -143,13 +144,13 @@ void indexSpaceExample()
       Similarly, index spaces can be used to create Kokkos Views and subviews of
       existing Views with sizes matching the extents of the index space.
     */
-    auto v1 = Cajita::createView<double>( "v1", is1 );
+    auto v1 = Cabana::Grid::createView<double>( "v1", is1 );
     std::cout << "\n1D View created from 1D index space\nExtent: "
               << v1.extent( 0 ) << std::endl;
     ;
 
     Kokkos::View<double**, exec_space> v2( "v2", 12, 7 );
-    auto sv1 = Cajita::createSubview( v2, is2 );
+    auto sv1 = Cabana::Grid::createSubview( v2, is2 );
     std::cout << "\n2D subview from 2D index space\nExtent: " << sv1.extent( 0 )
               << " " << sv1.extent( 1 ) << std::endl;
 }

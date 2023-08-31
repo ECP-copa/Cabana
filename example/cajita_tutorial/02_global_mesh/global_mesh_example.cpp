@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita.hpp>
+#include <Cabana_Grid.hpp>
 
 #include <iostream>
 
@@ -19,16 +19,16 @@
 void globalMeshExample()
 {
     /*
-      All meshes in Cajita are logically recitlinear: each mesh cell is either
-      cubic or rectangular (either uniform or non-uniform) and can directly
-      index it's 26 nearest neighbors (in 3D or 8 in 2D), even though they may
-      not be directly adjacent (e.g. if it is sparse).
+      All meshes in Cabana::Grid are logically recitlinear: each mesh cell is
+      either cubic or rectangular (either uniform or non-uniform) and can
+      directly index it's 26 nearest neighbors (in 3D or 8 in 2D), even though
+      they may not be directly adjacent (e.g. if it is sparse).
     */
-    std::cout << "Cajita Global Mesh Example\n" << std::endl;
+    std::cout << "Cabana::Grid Global Mesh Example\n" << std::endl;
 
     /*
-      The simplest Cajita mesh is uniform, defined by a constant cell size;
-      however, this cell size can be different per dimension.
+      The simplest Cabana::Grid mesh is uniform, defined by a constant cell
+      size; however, this cell size can be different per dimension.
     */
     double cell_size = 0.23;
     std::array<double, 3> cell_size_array = { 0.23, 0.19, 0.05 };
@@ -54,13 +54,13 @@ void globalMeshExample()
     /*
       Now create the global mesh with the low and high corners and total cells.
     */
-    auto global_mesh_num_cell = Cajita::createUniformGlobalMesh(
+    auto global_mesh_num_cell = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     /*
       Instead create the global mesh with the cell size.
     */
-    auto global_mesh_cell_size = Cajita::createUniformGlobalMesh(
+    auto global_mesh_cell_size = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, cell_size );
 
     /*
@@ -71,7 +71,7 @@ void globalMeshExample()
         global_low_corner[0] + cell_size_array[0] * global_num_cell[0],
         global_low_corner[1] + cell_size_array[1] * global_num_cell[1],
         global_low_corner[2] + cell_size_array[2] * global_num_cell[2] };
-    auto global_mesh_cell_size_array = Cajita::createUniformGlobalMesh(
+    auto global_mesh_cell_size_array = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner_2, cell_size_array );
 
     /*
@@ -81,11 +81,14 @@ void globalMeshExample()
 
       Note that the mesh is returned as a shared pointer.
     */
-    double low_x = global_mesh_cell_size_array->lowCorner( Cajita::Dim::I );
-    double high_z = global_mesh_cell_size_array->highCorner( Cajita::Dim::K );
-    double extent_y = global_mesh_cell_size_array->extent( Cajita::Dim::J );
+    double low_x =
+        global_mesh_cell_size_array->lowCorner( Cabana::Grid::Dim::I );
+    double high_z =
+        global_mesh_cell_size_array->highCorner( Cabana::Grid::Dim::K );
+    double extent_y =
+        global_mesh_cell_size_array->extent( Cabana::Grid::Dim::J );
     double cells_y =
-        global_mesh_cell_size_array->globalNumCell( Cajita::Dim::J );
+        global_mesh_cell_size_array->globalNumCell( Cabana::Grid::Dim::J );
 
     std::cout << "Mesh created with low X corner " << low_x
               << " and high Z corner " << high_z << std::endl;

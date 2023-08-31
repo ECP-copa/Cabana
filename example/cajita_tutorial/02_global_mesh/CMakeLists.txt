@@ -10,5 +10,5 @@
 ############################################################################
 
 add_executable(GlobalMesh global_mesh_example.cpp)
-target_link_libraries(GlobalMesh Cajita)
-add_test(NAME Cajita_tutorial_02 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:GlobalMesh>)
+target_link_libraries(GlobalMesh Grid)
+add_test(NAME Grid_tutorial_02 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:GlobalMesh>)
