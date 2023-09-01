@@ -10,7 +10,6 @@
  ****************************************************************************/
 
 #include <Cajita.hpp>
-#include <Cajita_LoadBalancer.hpp>
 
 #include <cmath>
 #include <iostream>
