@@ -72,8 +72,8 @@ void checkMatrix( SliceType1 write, SliceType2 read )
 //---------------------------------------------------------------------------//
 void writeReadTest()
 {
-    double low_corner = -2.8;
-    double high_corner = 1.2;
+    std::array<double, 3> low_corner = { -2.8, 1.4, -10.4 };
+    std::array<double, 3> high_corner = { 1.2, 7.5, -7.9 };
 
     // Allocate particle properties.
     int num_particle = 100;
@@ -88,8 +88,8 @@ void writeReadTest()
     auto ids = Cabana::slice<3>( aosoa, "ids" );
 
     // Create random particles.
-    Cabana::createRandomParticles( coords, num_particle, low_corner,
-                                   high_corner );
+    Cabana::createParticles( Cabana::InitRandom(), coords, num_particle,
+                             low_corner, high_corner );
 
     // Set other particle properties.
     auto aosoa_mirror =

@@ -129,9 +129,9 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
         positions[p] = position_type(
             Kokkos::ViewAllocateWithoutInitializing( "positions" ),
             problem_sizes[p] );
-        Cabana::createRandomParticles( positions[p], problem_sizes[p],
-                                       global_low_corner[0],
-                                       global_high_corner[0] );
+        Cabana::createParticles( Cabana::InitRandom(), positions[p],
+                                 problem_sizes[p], global_low_corner,
+                                 global_high_corner );
     }
 
     for ( int c = 0; c < num_cells_per_dim_size; ++c )

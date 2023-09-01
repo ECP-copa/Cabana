@@ -53,9 +53,9 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
         positions[p] = position_type(
             Kokkos::ViewAllocateWithoutInitializing( "positions" ),
             problem_sizes[p] );
-        Cabana::createRandomParticles( positions[p], problem_sizes[p],
-                                       global_low_corner[0],
-                                       global_high_corner[0] );
+        Cabana::createParticles( Cabana::InitRandom(), positions[p],
+                                 problem_sizes[p], global_low_corner,
+                                 global_high_corner );
     }
     // Number of runs in the test loops.
     int num_run = 10;

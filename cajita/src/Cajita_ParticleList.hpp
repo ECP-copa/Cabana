@@ -97,6 +97,24 @@ class ParticleList : public Cabana::ParticleList<MemorySpace, FieldTags...>
     using base::_aosoa;
 };
 
+template <class, class...>
+struct is_particle_list_impl : public std::false_type
+{
+};
+
+template <class MemorySpace, class... FieldTags>
+struct is_particle_list_impl<ParticleList<MemorySpace, FieldTags...>>
+    : public std::true_type
+{
+};
+
+//! ParticleList static type checker.
+template <class T>
+struct is_particle_list
+    : public is_particle_list_impl<typename std::remove_cv<T>::type>::type
+{
+};
+
 //---------------------------------------------------------------------------//
 /*!
   \brief ParticleList creation function.

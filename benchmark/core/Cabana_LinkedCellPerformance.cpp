@@ -55,9 +55,12 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
         // Define problem grid.
         x_min[p] = 0.0;
         x_max[p] = 1.3 * std::pow( num_p, 1.0 / 3.0 );
+        double grid_min[3] = { x_min[p], x_min[p], x_min[p] };
+        double grid_max[3] = { x_max[p], x_max[p], x_max[p] };
         aosoas[p].resize( num_p );
         auto x = Cabana::slice<0>( aosoas[p], "position" );
-        Cabana::createRandomParticles( x, x.size(), x_min[p], x_max[p] );
+        Cabana::createParticles( Cabana::InitRandom(), x, x.size(), grid_min,
+                                 grid_max );
     }
 
     // Loop over number of ratios (neighbors per particle).
