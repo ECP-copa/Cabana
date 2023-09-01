@@ -219,7 +219,7 @@ endif()
 # enable doxygen
 find_package(Doxygen)
 if(Doxygen_FOUND)
-  doxygen_add_docs(doxygen core/src cajita/src)
+  doxygen_add_docs(doxygen core/src grid/src)
 endif()
 
 ##---------------------------------------------------------------------------##
@@ -238,7 +238,7 @@ endif()
 
 if(Cabana_ENABLE_GRID)
   if(MPI_FOUND)
-    add_subdirectory(cajita)
+    add_subdirectory(grid)
   else()
     message(FATAL_ERROR "Grid subpackage requires MPI")
   endif()
@@ -274,7 +274,7 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake" "${CMAKE_CURRENT_
 ## Clang Format
 ##---------------------------------------------------------------------------##
 if(CLANG_FORMAT_FOUND)
-  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp cajita/*hpp cajita/*cpp example/*cpp example/*hpp cmake/*cpp cmake/*hpp benchmark/*cpp benchmark/*hpp)
+  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp grid/*hpp grid/*cpp example/*cpp example/*hpp cmake/*cpp cmake/*hpp benchmark/*cpp benchmark/*hpp)
   add_custom_target(cabana-format
     COMMAND ${CLANG_FORMAT_EXECUTABLE} -i -style=file ${FORMAT_SOURCES}
     DEPENDS ${FORMAT_SOURCES})
