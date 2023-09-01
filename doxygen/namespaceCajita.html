@@ -236,6 +236,13 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1is__array__layout_3_01const_01ArrayLayout_3_01EntityType_00_01MeshType_01_4_01_4.html">is_array_layout&lt; const ArrayLayout&lt; EntityType, MeshType &gt; &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1Array.html" title="Array of field data on the local mesh.">Array</a> static type checker.  <a href="structCajita_1_1is__array__layout_3_01const_01ArrayLayout_3_01EntityType_00_01MeshType_01_4_01_4.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1is__particle__list.html">is_particle_list</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1ParticleList.html" title="List of particle fields stored in AoSoA with associated Cajita mesh.">ParticleList</a> static type checker.  <a href="structCajita_1_1is__particle__list.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1is__particle__list__impl.html">is_particle_list_impl</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1is__particle__list__impl_3_01ParticleList_3_01MemorySpace_00_01FieldTags_8_8_8_01_4_01_4.html">is_particle_list_impl&lt; ParticleList&lt; MemorySpace, FieldTags... &gt; &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1isCell.html">isCell</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1isCell_3_01Cell_01_4.html">isCell&lt; Cell &gt;</a></td></tr>
@@ -797,6 +804,38 @@ template&lt;class Scalar , class MemorySpace , class ArrayLayout_t &gt; </td></t
 <tr class="memitem:adb928c073163bff90d4ca8a7d460fe18"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#adb928c073163bff90d4ca8a7d460fe18">particleGridMigrate</a> (const LocalGridType &amp;local_grid, const ParticlePositions &amp;positions, const ParticleContainer &amp;src_particles, ParticleContainer &amp;dst_particles, const int min_halo_width, const bool force_migrate=false)</td></tr>
 <tr class="memdesc:adb928c073163bff90d4ca8a7d460fe18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Migrate data from one uniquely-owned decomposition to another uniquely-owned decomposition, using the bounds and periodic boundaries of a <a class="el" href="namespaceCajita.html" title="Cajita: grid and particle-grid data structures and algorithms.">Cajita</a> grid to determine which particles should be moved. Separate AoSoA variant.  <br /></td></tr>
 <tr class="separator:adb928c073163bff90d4ca8a7d460fe18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5664f19c13806163af660f4acf5f65d8"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class InitFunctor , class ParticleListType , class LocalGridType &gt; </td></tr>
+<tr class="memitem:a5664f19c13806163af660f4acf5f65d8"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a5664f19c13806163af660f4acf5f65d8">createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">Cabana::InitRandom</a>, const ExecutionSpace &amp;exec_space, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, const int particles_per_cell, LocalGridType &amp;local_grid, const bool shrink_to_fit=true, const uint64_t seed=123456, typename std::enable_if&lt; <a class="el" href="structCajita_1_1is__particle__list.html">Cajita::is_particle_list</a>&lt; ParticleListType &gt;::value, int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a5664f19c13806163af660f4acf5f65d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a random number of particles in each cell given an initialization functor.  <br /></td></tr>
+<tr class="separator:a5664f19c13806163af660f4acf5f65d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab42cde48ac1fae37050994f35c0d53b7"><td class="memTemplParams" colspan="2">template&lt;class InitFunctor , class ParticleListType , class LocalGridType &gt; </td></tr>
+<tr class="memitem:ab42cde48ac1fae37050994f35c0d53b7"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#ab42cde48ac1fae37050994f35c0d53b7">createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">Cabana::InitRandom</a> tag, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, const int particles_per_cell, LocalGridType &amp;local_grid, const bool shrink_to_fit=true, const uint64_t seed=123456, typename std::enable_if&lt; <a class="el" href="structCajita_1_1is__particle__list.html">Cajita::is_particle_list</a>&lt; ParticleListType &gt;::value, int &gt;::type *=0)</td></tr>
+<tr class="memdesc:ab42cde48ac1fae37050994f35c0d53b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles per cell given an initialization functor.  <br /></td></tr>
+<tr class="separator:ab42cde48ac1fae37050994f35c0d53b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66af211631f0ad5aef4abea7e635a257"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class PositionType , class LocalGridType &gt; </td></tr>
+<tr class="memitem:a66af211631f0ad5aef4abea7e635a257"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a66af211631f0ad5aef4abea7e635a257">createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">Cabana::InitRandom</a>, const ExecutionSpace &amp;exec_space, PositionType &amp;positions, const int particles_per_cell, LocalGridType &amp;local_grid, const uint64_t seed=123456, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">Cabana::is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a66af211631f0ad5aef4abea7e635a257"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a random number of particles in each cell.  <br /></td></tr>
+<tr class="separator:a66af211631f0ad5aef4abea7e635a257"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e5457824e86f6034ca74844aa841668"><td class="memTemplParams" colspan="2">template&lt;class PositionType , class LocalGridType &gt; </td></tr>
+<tr class="memitem:a4e5457824e86f6034ca74844aa841668"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a4e5457824e86f6034ca74844aa841668">createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">Cabana::InitRandom</a> tag, PositionType &amp;positions, const int particles_per_cell, LocalGridType &amp;local_grid, const uint64_t seed=123456, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">Cabana::is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a4e5457824e86f6034ca74844aa841668"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a random number of particles in each cell.  <br /></td></tr>
+<tr class="separator:a4e5457824e86f6034ca74844aa841668"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5916633f62070705b0f8a8f0a75c1b6b"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class InitFunctor , class ParticleListType , class LocalGridType &gt; </td></tr>
+<tr class="memitem:a5916633f62070705b0f8a8f0a75c1b6b"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a5916633f62070705b0f8a8f0a75c1b6b">createParticles</a> (<a class="el" href="structCabana_1_1InitUniform.html">Cabana::InitUniform</a>, const ExecutionSpace &amp;exec_space, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, const int particles_per_cell_dim, LocalGridType &amp;local_grid, const bool shrink_to_fit=true, typename std::enable_if&lt; <a class="el" href="structCajita_1_1is__particle__list.html">Cajita::is_particle_list</a>&lt; ParticleListType &gt;::value, int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a5916633f62070705b0f8a8f0a75c1b6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize uniform particles per cell given an initialization functor.  <br /></td></tr>
+<tr class="separator:a5916633f62070705b0f8a8f0a75c1b6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae689c7cc18336c929bda0bb912c4bad5"><td class="memTemplParams" colspan="2">template&lt;class InitFunctor , class ParticleListType , class LocalGridType &gt; </td></tr>
+<tr class="memitem:ae689c7cc18336c929bda0bb912c4bad5"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#ae689c7cc18336c929bda0bb912c4bad5">createParticles</a> (<a class="el" href="structCabana_1_1InitUniform.html">Cabana::InitUniform</a> tag, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, const int particles_per_cell_dim, LocalGridType &amp;local_grid, const bool shrink_to_fit=true, typename std::enable_if&lt; <a class="el" href="structCajita_1_1is__particle__list.html">Cajita::is_particle_list</a>&lt; ParticleListType &gt;::value, int &gt;::type *=0)</td></tr>
+<tr class="memdesc:ae689c7cc18336c929bda0bb912c4bad5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize uniform particles per cell given an initialization functor.  <br /></td></tr>
+<tr class="separator:ae689c7cc18336c929bda0bb912c4bad5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae936ff7a0bad992a9faff2cf6e638e53"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class PositionType , class LocalGridType &gt; </td></tr>
+<tr class="memitem:ae936ff7a0bad992a9faff2cf6e638e53"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#ae936ff7a0bad992a9faff2cf6e638e53">createParticles</a> (<a class="el" href="structCabana_1_1InitUniform.html">Cabana::InitUniform</a>, const ExecutionSpace &amp;exec_space, PositionType &amp;positions, const int particles_per_cell_dim, LocalGridType &amp;local_grid, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">Cabana::is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:ae936ff7a0bad992a9faff2cf6e638e53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a uniform number of particles in each cell.  <br /></td></tr>
+<tr class="separator:ae936ff7a0bad992a9faff2cf6e638e53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca7283f8996eb19eebca2a2943881443"><td class="memTemplParams" colspan="2">template&lt;class PositionType , class LocalGridType &gt; </td></tr>
+<tr class="memitem:aca7283f8996eb19eebca2a2943881443"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#aca7283f8996eb19eebca2a2943881443">createParticles</a> (<a class="el" href="structCabana_1_1InitUniform.html">Cabana::InitUniform</a> tag, PositionType &amp;positions, const int particles_per_cell_dim, LocalGridType &amp;local_grid, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">Cabana::is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:aca7283f8996eb19eebca2a2943881443"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a uniform number of particles in each cell.  <br /></td></tr>
+<tr class="separator:aca7283f8996eb19eebca2a2943881443"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe00d64b936b78a9bdcebf8499486202"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace , class... FieldTags&gt; </td></tr>
 <tr class="memitem:abe00d64b936b78a9bdcebf8499486202"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#abe00d64b936b78a9bdcebf8499486202">createParticleList</a> (const std::string &amp;label, <a class="el" href="structCabana_1_1ParticleTraits.html">Cabana::ParticleTraits</a>&lt; FieldTags... &gt;)</td></tr>
 <tr class="memdesc:abe00d64b936b78a9bdcebf8499486202"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1ParticleList.html" title="List of particle fields stored in AoSoA with associated Cajita mesh.">ParticleList</a> creation function.  <br /></td></tr>
@@ -2289,6 +2328,594 @@ template&lt;class MemorySpace , class... FieldTags&gt; </div>
 
 <p><a class="el" href="classCajita_1_1ParticleList.html" title="List of particle fields stored in AoSoA with associated Cajita mesh.">ParticleList</a> creation function. </p>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="classCajita_1_1ParticleList.html" title="List of particle fields stored in AoSoA with associated Cajita mesh.">ParticleList</a> </dd></dl>
+
+</div>
+</div>
+<a id="ab42cde48ac1fae37050994f35c0d53b7" name="ab42cde48ac1fae37050994f35c0d53b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab42cde48ac1fae37050994f35c0d53b7">&#9670;&#160;</a></span>createParticles() <span class="overload">[1/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class InitFunctor , class ParticleListType , class LocalGridType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int Cajita::createParticles </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCabana_1_1InitRandom.html">Cabana::InitRandom</a>&#160;</td>
+          <td class="paramname"><em>tag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const InitFunctor &amp;&#160;</td>
+          <td class="paramname"><em>create_functor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ParticleListType &amp;&#160;</td>
+          <td class="paramname"><em>particle_list</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>particles_per_cell</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">LocalGridType &amp;&#160;</td>
+          <td class="paramname"><em>local_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>shrink_to_fit</em> = <code>true</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint64_t&#160;</td>
+          <td class="paramname"><em>seed</em> = <code>123456</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename std::enable_if&lt; <a class="el" href="structCajita_1_1is__particle__list.html">Cajita::is_particle_list</a>&lt; ParticleListType &gt;::value, int &gt;::type *&#160;</td>
+          <td class="paramname"> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize random particles per cell given an initialization functor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tag</td><td>Initialization type tag. </td></tr>
+    <tr><td class="paramname">create_functor</td><td>A functor which populates a particle given the logical position of a particle. This functor returns true if a particle was created and false if it was not giving the signature: <pre class="fragment">bool createFunctor( const double pid, const double px[3], const double pv,
+                    typename ParticleAoSoA::tuple_type&amp; particle );
+</pre> </td></tr>
+    <tr><td class="paramname">particle_list</td><td>The <a class="el" href="classCajita_1_1ParticleList.html" title="List of particle fields stored in AoSoA with associated Cajita mesh.">ParticleList</a> to populate. This will be filled with particles and resized to a size equal to the number of particles created. </td></tr>
+    <tr><td class="paramname">particles_per_cell</td><td>The number of particles to sample each cell with. </td></tr>
+    <tr><td class="paramname">local_grid</td><td>The <a class="el" href="classCajita_1_1LocalGrid.html" title="Local logical grid.">LocalGrid</a> over which particles will be created. </td></tr>
+    <tr><td class="paramname">shrink_to_fit</td><td>Optionally remove unused allocated space after creation. </td></tr>
+    <tr><td class="paramname">seed</td><td>Optional random seed for generating particles. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4e5457824e86f6034ca74844aa841668" name="a4e5457824e86f6034ca74844aa841668"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e5457824e86f6034ca74844aa841668">&#9670;&#160;</a></span>createParticles() <span class="overload">[2/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class PositionType , class LocalGridType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cajita::createParticles </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCabana_1_1InitRandom.html">Cabana::InitRandom</a>&#160;</td>
+          <td class="paramname"><em>tag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PositionType &amp;&#160;</td>
+          <td class="paramname"><em>positions</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>particles_per_cell</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">LocalGridType &amp;&#160;</td>
+          <td class="paramname"><em>local_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint64_t&#160;</td>
+          <td class="paramname"><em>seed</em> = <code>123456</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">Cabana::is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *&#160;</td>
+          <td class="paramname"> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize a random number of particles in each cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tag</td><td>Initialization type tag. </td></tr>
+    <tr><td class="paramname">positions</td><td>Particle positions slice. This should be already the size of the number of grid cells times particles_per_cell.s </td></tr>
+    <tr><td class="paramname">particles_per_cell</td><td>The number of particles to sample each cell with. </td></tr>
+    <tr><td class="paramname">local_grid</td><td>The <a class="el" href="classCajita_1_1LocalGrid.html" title="Local logical grid.">LocalGrid</a> over which particles will be created. </td></tr>
+    <tr><td class="paramname">seed</td><td>Optional random seed for generating particles. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5664f19c13806163af660f4acf5f65d8" name="a5664f19c13806163af660f4acf5f65d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5664f19c13806163af660f4acf5f65d8">&#9670;&#160;</a></span>createParticles() <span class="overload">[3/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ExecutionSpace , class InitFunctor , class ParticleListType , class LocalGridType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int Cajita::createParticles </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCabana_1_1InitRandom.html">Cabana::InitRandom</a>&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ExecutionSpace &amp;&#160;</td>
+          <td class="paramname"><em>exec_space</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const InitFunctor &amp;&#160;</td>
+          <td class="paramname"><em>create_functor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ParticleListType &amp;&#160;</td>
+          <td class="paramname"><em>particle_list</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>particles_per_cell</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">LocalGridType &amp;&#160;</td>
+          <td class="paramname"><em>local_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>shrink_to_fit</em> = <code>true</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint64_t&#160;</td>
+          <td class="paramname"><em>seed</em> = <code>123456</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename std::enable_if&lt; <a class="el" href="structCajita_1_1is__particle__list.html">Cajita::is_particle_list</a>&lt; ParticleListType &gt;::value, int &gt;::type *&#160;</td>
+          <td class="paramname"> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize a random number of particles in each cell given an initialization functor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">exec_space</td><td>Kokkos execution space. </td></tr>
+    <tr><td class="paramname">create_functor</td><td>A functor which populates a particle given the logical position of a particle. This functor returns true if a particle was created and false if it was not giving the signature: <pre class="fragment">bool createFunctor( const double pid, const double px[3], const double pv,
+                    typename ParticleAoSoA::tuple_type&amp; particle );
+</pre> </td></tr>
+    <tr><td class="paramname">particle_list</td><td>The <a class="el" href="classCajita_1_1ParticleList.html" title="List of particle fields stored in AoSoA with associated Cajita mesh.">ParticleList</a> to populate. This will be filled with particles and resized to a size equal to the number of particles created. </td></tr>
+    <tr><td class="paramname">particles_per_cell</td><td>The number of particles to sample each cell with. </td></tr>
+    <tr><td class="paramname">local_grid</td><td>The <a class="el" href="classCajita_1_1LocalGrid.html" title="Local logical grid.">LocalGrid</a> over which particles will be created. </td></tr>
+    <tr><td class="paramname">shrink_to_fit</td><td>Optionally remove unused allocated space after creation. </td></tr>
+    <tr><td class="paramname">seed</td><td>Optional random seed for generating particles. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a66af211631f0ad5aef4abea7e635a257" name="a66af211631f0ad5aef4abea7e635a257"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66af211631f0ad5aef4abea7e635a257">&#9670;&#160;</a></span>createParticles() <span class="overload">[4/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ExecutionSpace , class PositionType , class LocalGridType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cajita::createParticles </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCabana_1_1InitRandom.html">Cabana::InitRandom</a>&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ExecutionSpace &amp;&#160;</td>
+          <td class="paramname"><em>exec_space</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PositionType &amp;&#160;</td>
+          <td class="paramname"><em>positions</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>particles_per_cell</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">LocalGridType &amp;&#160;</td>
+          <td class="paramname"><em>local_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint64_t&#160;</td>
+          <td class="paramname"><em>seed</em> = <code>123456</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">Cabana::is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *&#160;</td>
+          <td class="paramname"> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize a random number of particles in each cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">exec_space</td><td>Kokkos execution space. </td></tr>
+    <tr><td class="paramname">positions</td><td>Particle positions slice. This should be already the size of the number of grid cells times particles_per_cell.s </td></tr>
+    <tr><td class="paramname">particles_per_cell</td><td>The number of particles to sample each cell with. </td></tr>
+    <tr><td class="paramname">local_grid</td><td>The <a class="el" href="classCajita_1_1LocalGrid.html" title="Local logical grid.">LocalGrid</a> over which particles will be created. </td></tr>
+    <tr><td class="paramname">seed</td><td>Optional random seed for generating particles. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae689c7cc18336c929bda0bb912c4bad5" name="ae689c7cc18336c929bda0bb912c4bad5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae689c7cc18336c929bda0bb912c4bad5">&#9670;&#160;</a></span>createParticles() <span class="overload">[5/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class InitFunctor , class ParticleListType , class LocalGridType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int Cajita::createParticles </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCabana_1_1InitUniform.html">Cabana::InitUniform</a>&#160;</td>
+          <td class="paramname"><em>tag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const InitFunctor &amp;&#160;</td>
+          <td class="paramname"><em>create_functor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ParticleListType &amp;&#160;</td>
+          <td class="paramname"><em>particle_list</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>particles_per_cell_dim</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">LocalGridType &amp;&#160;</td>
+          <td class="paramname"><em>local_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>shrink_to_fit</em> = <code>true</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename std::enable_if&lt; <a class="el" href="structCajita_1_1is__particle__list.html">Cajita::is_particle_list</a>&lt; ParticleListType &gt;::value, int &gt;::type *&#160;</td>
+          <td class="paramname"> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize uniform particles per cell given an initialization functor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tag</td><td>Initialization type tag. </td></tr>
+    <tr><td class="paramname">create_functor</td><td>A functor which populates a particle given the logical position of a particle. This functor returns true if a particle was created and false if it was not giving the signature: <pre class="fragment">bool createFunctor( const double pid, const double px[3], const double pv,
+                    typename ParticleAoSoA::tuple_type&amp; particle );
+</pre> </td></tr>
+    <tr><td class="paramname">particle_list</td><td>The <a class="el" href="classCajita_1_1ParticleList.html" title="List of particle fields stored in AoSoA with associated Cajita mesh.">ParticleList</a> to populate. This will be filled with particles and resized to a size equal to the number of particles created. </td></tr>
+    <tr><td class="paramname">particles_per_cell_dim</td><td>The number of particles to populate each cell dimension with. </td></tr>
+    <tr><td class="paramname">local_grid</td><td>The <a class="el" href="classCajita_1_1LocalGrid.html" title="Local logical grid.">LocalGrid</a> over which particles will be created. </td></tr>
+    <tr><td class="paramname">shrink_to_fit</td><td>Optionally remove unused allocated space after creation. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aca7283f8996eb19eebca2a2943881443" name="aca7283f8996eb19eebca2a2943881443"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca7283f8996eb19eebca2a2943881443">&#9670;&#160;</a></span>createParticles() <span class="overload">[6/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class PositionType , class LocalGridType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cajita::createParticles </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCabana_1_1InitUniform.html">Cabana::InitUniform</a>&#160;</td>
+          <td class="paramname"><em>tag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PositionType &amp;&#160;</td>
+          <td class="paramname"><em>positions</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>particles_per_cell_dim</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">LocalGridType &amp;&#160;</td>
+          <td class="paramname"><em>local_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">Cabana::is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *&#160;</td>
+          <td class="paramname"> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize a uniform number of particles in each cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tag</td><td>Initialization type tag. </td></tr>
+    <tr><td class="paramname">positions</td><td>Particle positions slice. This should be already the size of the number of grid cells times particles_per_cell.s </td></tr>
+    <tr><td class="paramname">particles_per_cell_dim</td><td>The number of particles to populate each cell dimension with. </td></tr>
+    <tr><td class="paramname">local_grid</td><td>The <a class="el" href="classCajita_1_1LocalGrid.html" title="Local logical grid.">LocalGrid</a> over which particles will be created. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5916633f62070705b0f8a8f0a75c1b6b" name="a5916633f62070705b0f8a8f0a75c1b6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5916633f62070705b0f8a8f0a75c1b6b">&#9670;&#160;</a></span>createParticles() <span class="overload">[7/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ExecutionSpace , class InitFunctor , class ParticleListType , class LocalGridType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int Cajita::createParticles </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCabana_1_1InitUniform.html">Cabana::InitUniform</a>&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ExecutionSpace &amp;&#160;</td>
+          <td class="paramname"><em>exec_space</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const InitFunctor &amp;&#160;</td>
+          <td class="paramname"><em>create_functor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ParticleListType &amp;&#160;</td>
+          <td class="paramname"><em>particle_list</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>particles_per_cell_dim</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">LocalGridType &amp;&#160;</td>
+          <td class="paramname"><em>local_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>shrink_to_fit</em> = <code>true</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename std::enable_if&lt; <a class="el" href="structCajita_1_1is__particle__list.html">Cajita::is_particle_list</a>&lt; ParticleListType &gt;::value, int &gt;::type *&#160;</td>
+          <td class="paramname"> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize uniform particles per cell given an initialization functor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">exec_space</td><td>Kokkos execution space. </td></tr>
+    <tr><td class="paramname">create_functor</td><td>A functor which populates a particle given the logical position of a particle. This functor returns true if a particle was created and false if it was not giving the signature: <pre class="fragment">bool createFunctor( const double px[3],
+                    typename ParticleAoSoA::tuple_type&amp; particle );
+</pre> </td></tr>
+    <tr><td class="paramname">particle_list</td><td>The <a class="el" href="classCajita_1_1ParticleList.html" title="List of particle fields stored in AoSoA with associated Cajita mesh.">ParticleList</a> to populate. This will be filled with particles and resized to a size equal to the number of particles created. </td></tr>
+    <tr><td class="paramname">particles_per_cell_dim</td><td>The number of particles to populate each cell dimension with. </td></tr>
+    <tr><td class="paramname">local_grid</td><td>The <a class="el" href="classCajita_1_1LocalGrid.html" title="Local logical grid.">LocalGrid</a> over which particles will be created. </td></tr>
+    <tr><td class="paramname">shrink_to_fit</td><td>Optionally remove unused allocated space after creation. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae936ff7a0bad992a9faff2cf6e638e53" name="ae936ff7a0bad992a9faff2cf6e638e53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae936ff7a0bad992a9faff2cf6e638e53">&#9670;&#160;</a></span>createParticles() <span class="overload">[8/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ExecutionSpace , class PositionType , class LocalGridType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cajita::createParticles </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCabana_1_1InitUniform.html">Cabana::InitUniform</a>&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ExecutionSpace &amp;&#160;</td>
+          <td class="paramname"><em>exec_space</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PositionType &amp;&#160;</td>
+          <td class="paramname"><em>positions</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>particles_per_cell_dim</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">LocalGridType &amp;&#160;</td>
+          <td class="paramname"><em>local_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">Cabana::is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *&#160;</td>
+          <td class="paramname"> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize a uniform number of particles in each cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">exec_space</td><td>Kokkos execution space. </td></tr>
+    <tr><td class="paramname">positions</td><td>Particle positions slice. This should be already the size of the number of grid cells times particles_per_cell.s </td></tr>
+    <tr><td class="paramname">particles_per_cell_dim</td><td>The number of particles to populate each cell dimension with. </td></tr>
+    <tr><td class="paramname">local_grid</td><td>The <a class="el" href="classCajita_1_1LocalGrid.html" title="Local logical grid.">LocalGrid</a> over which particles will be created. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

@@ -1,8 +1,9 @@
 <map id="cajita/src/Cajita_LocalMesh.hpp" name="cajita/src/Cajita_LocalMesh.hpp">
-<area shape="rect" id="node1" title="Local mesh." alt="" coords="137,5,349,31"/>
-<area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="163,255,304,280"/>
-<area shape="rect" id="node3" href="$Cajita__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="271,174,500,199"/>
-<area shape="rect" id="node4" href="$Cajita__ParticleGridDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="100,79,265,119"/>
-<area shape="rect" id="node6" href="$Cajita__Splines_8hpp.html" title="Spline functions." alt="" coords="341,86,531,111"/>
-<area shape="rect" id="node5" href="$Cajita__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="31,167,196,207"/>
+<area shape="rect" id="node1" title="Local mesh." alt="" coords="273,5,485,31"/>
+<area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="289,262,431,287"/>
+<area shape="rect" id="node3" href="$Cajita__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="245,174,475,199"/>
+<area shape="rect" id="node4" href="$Cajita__ParticleGridDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="109,79,275,119"/>
+<area shape="rect" id="node7" href="$Cajita__Splines_8hpp.html" title="Spline functions." alt="" coords="350,86,541,111"/>
+<area shape="rect" id="node5" href="$Cajita__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="5,167,171,207"/>
+<area shape="rect" id="node6" href="$Cajita__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="5,255,171,295"/>
 </map>

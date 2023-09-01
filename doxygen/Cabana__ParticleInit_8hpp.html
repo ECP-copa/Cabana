@@ -74,6 +74,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">Cabana_ParticleInit.hpp File Reference</div></div>
@@ -82,7 +83,10 @@ $(function() {
 
 <p>Particle creation utilities.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;Kokkos_Random.hpp&gt;</code><br />
+<div class="textblock"><code>#include &lt;Kokkos_Core.hpp&gt;</code><br />
+<code>#include &lt;Kokkos_Random.hpp&gt;</code><br />
+<code>#include &lt;<a class="el" href="Cabana__ParticleList_8hpp_source.html">Cabana_ParticleList.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="Cabana__Slice_8hpp_source.html">Cabana_Slice.hpp</a>&gt;</code><br />
 <code>#include &lt;random&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -90,10 +94,27 @@ Include dependency graph for Cabana_ParticleInit.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="Cabana__ParticleInit_8hpp__incl.png" border="0" usemap="#acore_2src_2Cabana__ParticleInit_8hpp" alt=""/></div>
 <map name="acore_2src_2Cabana__ParticleInit_8hpp" id="acore_2src_2Cabana__ParticleInit_8hpp">
-<area shape="rect" title="Particle creation utilities." alt="" coords="129,5,302,45"/>
-<area shape="rect" title=" " alt="" coords="5,93,156,119"/>
-<area shape="rect" title=" " alt="" coords="180,93,251,119"/>
-<area shape="rect" title=" " alt="" coords="275,93,361,119"/>
+<area shape="rect" title="Particle creation utilities." alt="" coords="1172,5,1345,45"/>
+<area shape="rect" title=" " alt="" coords="233,460,362,485"/>
+<area shape="rect" title=" " alt="" coords="1475,93,1626,119"/>
+<area shape="rect" href="Cabana__ParticleList_8hpp.html" title="Application&#45;level particle storage and single particle access." alt="" coords="997,93,1165,119"/>
+<area shape="rect" title=" " alt="" coords="769,460,855,485"/>
+<area shape="rect" href="Cabana__Slice_8hpp.html" title="Slice a single particle property from an AoSoA." alt="" coords="212,240,340,265"/>
+<area shape="rect" title=" " alt="" coords="1650,93,1721,119"/>
+<area shape="rect" href="Cabana__AoSoA_8hpp.html" title="Array&#45;of&#45;Struct&#45;of&#45;Arrays particle data structure." alt="" coords="679,167,822,192"/>
+<area shape="rect" href="Cabana__MemberTypes_8hpp.html" title="AoSoA tuple member types." alt="" coords="1107,387,1298,412"/>
+<area shape="rect" title=" " alt="" coords="93,313,152,339"/>
+<area shape="rect" href="Cabana__SoA_8hpp.html" title="Struct&#45;of&#45;Arrays for building AoSoA." alt="" coords="940,313,1065,339"/>
+<area shape="rect" href="Cabana__Tuple_8hpp.html" title="Tuple of single particle information to build AoSoA." alt="" coords="925,240,1059,265"/>
+<area shape="rect" href="Cabana__Fields_8hpp.html" title="Particle field types and common field examples." alt="" coords="1013,167,1149,192"/>
+<area shape="rect" title=" " alt="" coords="1173,167,1248,192"/>
+<area shape="rect" title=" " alt="" coords="1172,460,1233,485"/>
+<area shape="rect" href="Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="571,313,709,339"/>
+<area shape="rect" href="Cabana__Index_8hpp.html" title="AoSoA indexing." alt="" coords="329,313,495,339"/>
+<area shape="rect" href="Cabana__PerformanceTraits_8hpp.html" title="Default settings for execution spaces." alt="" coords="365,240,611,265"/>
+<area shape="rect" title=" " alt="" coords="789,240,849,265"/>
+<area shape="rect" href="Cabana__TypeTraits_8hpp_source.html" title=" " alt="" coords="200,387,395,412"/>
+<area shape="rect" title=" " alt="" coords="976,387,1032,412"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -103,11 +124,21 @@ This graph shows which files directly or indirectly include this file:</div>
 <map name="acore_2src_2Cabana__ParticleInit_8hppdep" id="acore_2src_2Cabana__ParticleInit_8hppdep">
 <area shape="rect" title="Particle creation utilities." alt="" coords="11,5,184,45"/>
 <area shape="rect" href="Cabana__Core_8hpp_source.html" title=" " alt="" coords="5,93,189,119"/>
+<area shape="rect" href="Cajita__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="15,167,180,207"/>
 </map>
 </div>
 </div>
 <p><a href="Cabana__ParticleInit_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1InitUniform.html">Cabana::InitUniform</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uniform particle initialization type tag.  <a href="structCabana_1_1InitUniform.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1InitRandom.html">Cabana::InitRandom</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Random particle initialization type tag.  <a href="structCabana_1_1InitRandom.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespaceCabana"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceCabana.html">Cabana</a></td></tr>
@@ -116,20 +147,51 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ace85c21cdc66c52ead3d7dcf3d168ee8"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class PositionType &gt; </td></tr>
-<tr class="memitem:ace85c21cdc66c52ead3d7dcf3d168ee8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ace85c21cdc66c52ead3d7dcf3d168ee8">Cabana::createRandomParticlesMinDistance</a> (ExecutionSpace, PositionType &amp;positions, const std::size_t num_particles, const double box_min, const double box_max, const double min_dist)</td></tr>
-<tr class="separator:ace85c21cdc66c52ead3d7dcf3d168ee8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f0ca04a76c59609d5f9985bc5f0f87d"><td class="memTemplParams" colspan="2">template&lt;class PositionType &gt; </td></tr>
-<tr class="memitem:a9f0ca04a76c59609d5f9985bc5f0f87d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a9f0ca04a76c59609d5f9985bc5f0f87d">Cabana::createRandomParticlesMinDistance</a> (PositionType &amp;positions, const std::size_t num_particles, const double box_min, const double box_max, const double min_dist)</td></tr>
-<tr class="separator:a9f0ca04a76c59609d5f9985bc5f0f87d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89fde813f3720b5946f711274368cd1a"><td class="memTemplParams" colspan="2"><a id="a89fde813f3720b5946f711274368cd1a" name="a89fde813f3720b5946f711274368cd1a"></a>
+<tr class="memitem:afd47c2b676d6596f92183e6c07dcfbc8"><td class="memTemplParams" colspan="2"><a id="afd47c2b676d6596f92183e6c07dcfbc8" name="afd47c2b676d6596f92183e6c07dcfbc8"></a>
+template&lt;class ArrayType &gt; </td></tr>
+<tr class="memitem:afd47c2b676d6596f92183e6c07dcfbc8"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Cabana::Impl::copyArray</b> (ArrayType corner)</td></tr>
+<tr class="memdesc:afd47c2b676d6596f92183e6c07dcfbc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy array (std, c-array) into Kokkos::Array for potential device use. <br /></td></tr>
+<tr class="separator:afd47c2b676d6596f92183e6c07dcfbc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad794c151564efb20210f881c55106bf4"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class InitFunctor , class ParticleListType , class ArrayType &gt; </td></tr>
+<tr class="memitem:ad794c151564efb20210f881c55106bf4"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ad794c151564efb20210f881c55106bf4">Cabana::createParticles</a> (InitRandom, ExecutionSpace exec_space, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, const std::size_t num_particles, const ArrayType box_min, const ArrayType box_max, const bool shrink_to_fit=true, const uint64_t seed=342343901, typename std::enable_if&lt; is_particle_list&lt; ParticleListType &gt;::value, int &gt;::type *=0)</td></tr>
+<tr class="memdesc:ad794c151564efb20210f881c55106bf4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles given an initialization functor.  <br /></td></tr>
+<tr class="separator:ad794c151564efb20210f881c55106bf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac59ea5286e302536f0057e350d9fcb89"><td class="memTemplParams" colspan="2">template&lt;class InitFunctor , class ParticleListType , class ArrayType &gt; </td></tr>
+<tr class="memitem:ac59ea5286e302536f0057e350d9fcb89"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ac59ea5286e302536f0057e350d9fcb89">Cabana::createParticles</a> (InitRandom tag, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, const std::size_t num_particles, const ArrayType box_min, const ArrayType box_max, const bool shrink_to_fit=true, const uint64_t seed=342343901)</td></tr>
+<tr class="memdesc:ac59ea5286e302536f0057e350d9fcb89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles given an initialization functor.  <br /></td></tr>
+<tr class="separator:ac59ea5286e302536f0057e350d9fcb89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a889ad7d16814edc3f624b753029be7a1"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class PositionType , class ArrayType &gt; </td></tr>
+<tr class="memitem:a889ad7d16814edc3f624b753029be7a1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a889ad7d16814edc3f624b753029be7a1">Cabana::createParticles</a> (InitRandom, ExecutionSpace exec_space, PositionType &amp;positions, const std::size_t num_particles, const ArrayType box_min, const ArrayType box_max, const uint64_t seed=342343901, typename std::enable_if&lt;(is_slice&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a889ad7d16814edc3f624b753029be7a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles.  <br /></td></tr>
+<tr class="separator:a889ad7d16814edc3f624b753029be7a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1279cb871683233c3736cbf15d65ceda"><td class="memTemplParams" colspan="2">template&lt;class PositionType , class ArrayType &gt; </td></tr>
+<tr class="memitem:a1279cb871683233c3736cbf15d65ceda"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a1279cb871683233c3736cbf15d65ceda">Cabana::createParticles</a> (InitRandom tag, PositionType &amp;positions, const std::size_t num_particles, const ArrayType box_min, const ArrayType box_max, const uint64_t seed=342343901, typename std::enable_if&lt;(is_slice&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a1279cb871683233c3736cbf15d65ceda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles.  <br /></td></tr>
+<tr class="separator:a1279cb871683233c3736cbf15d65ceda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c28984688c3da4922a55dbafee6c55b"><td class="memTemplParams" colspan="2"><a id="a1c28984688c3da4922a55dbafee6c55b" name="a1c28984688c3da4922a55dbafee6c55b"></a>
 template&lt;class ExecutionSpace , class PositionType &gt; </td></tr>
-<tr class="memitem:a89fde813f3720b5946f711274368cd1a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Cabana::createRandomParticles</b> (ExecutionSpace, PositionType &amp;positions, const std::size_t num_particles, const double box_min, const double box_max)</td></tr>
-<tr class="memdesc:a89fde813f3720b5946f711274368cd1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate random particles. Kokkos device version. <br /></td></tr>
-<tr class="separator:a89fde813f3720b5946f711274368cd1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c28984688c3da4922a55dbafee6c55b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Cabana::createRandomParticles</b> (ExecutionSpace exec_space, PositionType &amp;positions, const std::size_t num_particles, const double box_min, const double box_max)</td></tr>
+<tr class="memdesc:a1c28984688c3da4922a55dbafee6c55b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate random particles. <br /></td></tr>
+<tr class="separator:a1c28984688c3da4922a55dbafee6c55b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab460bf0f1b72014755b0bd79426b9df8"><td class="memTemplParams" colspan="2">template&lt;class PositionType &gt; </td></tr>
 <tr class="memitem:ab460bf0f1b72014755b0bd79426b9df8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ab460bf0f1b72014755b0bd79426b9df8">Cabana::createRandomParticles</a> (PositionType &amp;positions, const std::size_t num_particles, const double box_min, const double box_max)</td></tr>
 <tr class="separator:ab460bf0f1b72014755b0bd79426b9df8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0418a1d86cca2ba508511c49acbb33ec"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class InitFunctor , class ParticleListType , class PositionTag , class ArrayType &gt; </td></tr>
+<tr class="memitem:a0418a1d86cca2ba508511c49acbb33ec"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a0418a1d86cca2ba508511c49acbb33ec">Cabana::createParticles</a> (InitRandom tag, ExecutionSpace exec_space, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, PositionTag position_tag, const std::size_t num_particles, const double min_dist, const ArrayType box_min, const ArrayType box_max, const bool shrink_to_fit=true, const uint64_t seed=342343901, typename std::enable_if&lt; is_particle_list&lt; ParticleListType &gt;::value, int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a0418a1d86cca2ba508511c49acbb33ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles with minimum separation.  <br /></td></tr>
+<tr class="separator:a0418a1d86cca2ba508511c49acbb33ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb91a35e6b080da2d8916f28bb4f7e3d"><td class="memTemplParams" colspan="2">template&lt;class InitFunctor , class ParticleListType , class PositionTag , class ArrayType &gt; </td></tr>
+<tr class="memitem:aeb91a35e6b080da2d8916f28bb4f7e3d"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#aeb91a35e6b080da2d8916f28bb4f7e3d">Cabana::createParticles</a> (InitRandom tag, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, PositionTag position_tag, const std::size_t num_particles, const double min_dist, const ArrayType box_min, const ArrayType box_max, const bool shrink_to_fit=true, const uint64_t seed=342343901)</td></tr>
+<tr class="memdesc:aeb91a35e6b080da2d8916f28bb4f7e3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles with minimum separation.  <br /></td></tr>
+<tr class="separator:aeb91a35e6b080da2d8916f28bb4f7e3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f0ca04a76c59609d5f9985bc5f0f87d"><td class="memTemplParams" colspan="2">template&lt;class PositionType &gt; </td></tr>
+<tr class="memitem:a9f0ca04a76c59609d5f9985bc5f0f87d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a9f0ca04a76c59609d5f9985bc5f0f87d">Cabana::createRandomParticlesMinDistance</a> (PositionType &amp;positions, const std::size_t num_particles, const double box_min, const double box_max, const double min_dist)</td></tr>
+<tr class="memdesc:a9f0ca04a76c59609d5f9985bc5f0f87d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate random particles with minimum distance between neighbors.  <br /></td></tr>
+<tr class="separator:a9f0ca04a76c59609d5f9985bc5f0f87d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb9bf6af7ca442f63d15778373064c34"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class PositionType &gt; </td></tr>
+<tr class="memitem:abb9bf6af7ca442f63d15778373064c34"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#abb9bf6af7ca442f63d15778373064c34">Cabana::createRandomParticlesMinDistance</a> (ExecutionSpace exec_space, PositionType &amp;positions, const std::size_t num_particles, const double box_min, const double box_max, const double min_dist)</td></tr>
+<tr class="memdesc:abb9bf6af7ca442f63d15778373064c34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate random particles with minimum distance between neighbors.  <br /></td></tr>
+<tr class="separator:abb9bf6af7ca442f63d15778373064c34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Particle creation utilities. </p>

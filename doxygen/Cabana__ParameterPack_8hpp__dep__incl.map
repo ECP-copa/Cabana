@@ -1,10 +1,11 @@
 <map id="core/src/Cabana_ParameterPack.hpp" name="core/src/Cabana_ParameterPack.hpp">
-<area shape="rect" id="node1" title="Pack variadic template parameters for device capture." alt="" coords="377,5,571,45"/>
-<area shape="rect" id="node2" href="$Cajita__Halo_8hpp.html" title="Multi&#45;node grid scatter/gather." alt="" coords="285,93,460,119"/>
-<area shape="rect" id="node8" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="485,93,669,119"/>
+<area shape="rect" id="node1" title="Pack variadic template parameters for device capture." alt="" coords="492,5,685,45"/>
+<area shape="rect" id="node2" href="$Cajita__Halo_8hpp.html" title="Multi&#45;node grid scatter/gather." alt="" coords="400,93,575,119"/>
+<area shape="rect" id="node8" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="747,93,931,119"/>
 <area shape="rect" id="node3" href="$Cajita_8hpp_source.html" title=" " alt="" coords="302,255,443,280"/>
 <area shape="rect" id="node4" href="$Cajita__BovWriter_8hpp.html" title="Brick of values (BOV) grid output." alt="" coords="26,174,234,199"/>
 <area shape="rect" id="node5" href="$Cajita__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="258,174,487,199"/>
 <area shape="rect" id="node6" href="$Cajita__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="512,167,695,207"/>
 <area shape="rect" id="node7" href="$Cajita__SparseHalo_8hpp_source.html" title=" " alt="" coords="719,167,880,207"/>
+<area shape="rect" id="node9" href="$Cajita__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="905,167,1070,207"/>
 </map>
