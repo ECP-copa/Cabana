@@ -60,4 +60,8 @@
 #include <Cajita_SiloParticleOutput.hpp>
 #endif
 
+#ifdef Cabana_ENABLE_ALL
+#include <Cajita_LoadBalancer.hpp>
+#endif
+
 #endif // end CAJITA_HPP
