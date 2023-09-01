@@ -134,7 +134,11 @@ $(function() {
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__SiloParticleOutput_8hpp.html">Cajita_SiloParticleOutput.hpp</a>&gt;</span></div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="preprocessor">#endif </span><span class="comment">// end CAJITA_HPP</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="preprocessor">#ifdef Cabana_ENABLE_ALL</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="preprocessor">#include &lt;<a class="code" href="Cajita__LoadBalancer_8hpp.html">Cajita_LoadBalancer.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="preprocessor">#endif </span><span class="comment">// end CAJITA_HPP</span></div>
 <div class="ttc" id="aCajita__Array_8hpp_html"><div class="ttname"><a href="Cajita__Array_8hpp.html">Cajita_Array.hpp</a></div><div class="ttdoc">Grid field arrays.</div></div>
 <div class="ttc" id="aCajita__BovWriter_8hpp_html"><div class="ttname"><a href="Cajita__BovWriter_8hpp.html">Cajita_BovWriter.hpp</a></div><div class="ttdoc">Brick of values (BOV) grid output.</div></div>
 <div class="ttc" id="aCajita__FastFourierTransform_8hpp_html"><div class="ttname"><a href="Cajita__FastFourierTransform_8hpp.html">Cajita_FastFourierTransform.hpp</a></div><div class="ttdoc">Fast Fourier transforms.</div></div>
@@ -147,6 +151,7 @@ $(function() {
 <div class="ttc" id="aCajita__IndexConversion_8hpp_html"><div class="ttname"><a href="Cajita__IndexConversion_8hpp.html">Cajita_IndexConversion.hpp</a></div><div class="ttdoc">Local to global index conversion.</div></div>
 <div class="ttc" id="aCajita__IndexSpace_8hpp_html"><div class="ttname"><a href="Cajita__IndexSpace_8hpp.html">Cajita_IndexSpace.hpp</a></div><div class="ttdoc">Logical grid indexing.</div></div>
 <div class="ttc" id="aCajita__Interpolation_8hpp_html"><div class="ttname"><a href="Cajita__Interpolation_8hpp.html">Cajita_Interpolation.hpp</a></div><div class="ttdoc">Particle to grid and grid to particle interpolation.</div></div>
+<div class="ttc" id="aCajita__LoadBalancer_8hpp_html"><div class="ttname"><a href="Cajita__LoadBalancer_8hpp.html">Cajita_LoadBalancer.hpp</a></div><div class="ttdoc">Load Balancer.</div></div>
 <div class="ttc" id="aCajita__LocalGrid_8hpp_html"><div class="ttname"><a href="Cajita__LocalGrid_8hpp.html">Cajita_LocalGrid.hpp</a></div><div class="ttdoc">Local grid.</div></div>
 <div class="ttc" id="aCajita__LocalMesh_8hpp_html"><div class="ttname"><a href="Cajita__LocalMesh_8hpp.html">Cajita_LocalMesh.hpp</a></div><div class="ttdoc">Local mesh.</div></div>
 <div class="ttc" id="aCajita__ManualPartitioner_8hpp_html"><div class="ttname"><a href="Cajita__ManualPartitioner_8hpp.html">Cajita_ManualPartitioner.hpp</a></div><div class="ttdoc">Manual multi-node grid partitioner.</div></div>
