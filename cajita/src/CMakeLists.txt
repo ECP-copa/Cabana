@@ -9,64 +9,64 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-configure_file(Cajita_Config.hpp.in Cajita_Config.hpp)
+configure_file(Cabana_Grid_Config.hpp.in Cabana_Grid_Config.hpp)
 
 set(HEADERS_PUBLIC
   Cabana_Grid.hpp
-  Cajita.hpp  # FIXME: remove in next release
-  Cajita_Array.hpp
-  Cajita_BovWriter.hpp
-  Cajita_GlobalGrid.hpp
-  Cajita_GlobalGrid_impl.hpp
-  Cajita_GlobalMesh.hpp
-  Cajita_Halo.hpp
-  Cajita_IndexConversion.hpp
-  Cajita_IndexSpace.hpp
-  Cajita_Interpolation.hpp
-  Cajita_LocalGrid.hpp
-  Cajita_LocalGrid_impl.hpp
-  Cajita_LocalMesh.hpp
-  Cajita_ManualPartitioner.hpp
-  Cajita_MpiTraits.hpp
-  Cajita_Parallel.hpp
-  Cajita_ParticleGridDistributor.hpp
-  Cajita_ParticleList.hpp
-  Cajita_ParticleInit.hpp
-  Cajita_Partitioner.hpp
-  Cajita_ReferenceStructuredSolver.hpp
-  Cajita_SparseArray.hpp
-  Cajita_SparseDimPartitioner.hpp
-  Cajita_SparseHalo.hpp
-  Cajita_SparseIndexSpace.hpp
-  Cajita_SparseLocalGrid.hpp
-  Cajita_SparseLocalGrid_impl.hpp
-  Cajita_Splines.hpp
-  Cajita_Types.hpp
-  Cajita_UniformDimPartitioner.hpp
+  Cajita.hpp # FIXME: remove in next release
+  Cabana_Grid_Array.hpp
+  Cabana_Grid_BovWriter.hpp
+  Cabana_Grid_GlobalGrid.hpp
+  Cabana_Grid_GlobalGrid_impl.hpp
+  Cabana_Grid_GlobalMesh.hpp
+  Cabana_Grid_Halo.hpp
+  Cabana_Grid_IndexConversion.hpp
+  Cabana_Grid_IndexSpace.hpp
+  Cabana_Grid_Interpolation.hpp
+  Cabana_Grid_LocalGrid.hpp
+  Cabana_Grid_LocalGrid_impl.hpp
+  Cabana_Grid_LocalMesh.hpp
+  Cabana_Grid_ManualPartitioner.hpp
+  Cabana_Grid_MpiTraits.hpp
+  Cabana_Grid_Parallel.hpp
+  Cabana_Grid_ParticleGridDistributor.hpp
+  Cabana_Grid_ParticleInit.hpp
+  Cabana_Grid_ParticleList.hpp
+  Cabana_Grid_Partitioner.hpp
+  Cabana_Grid_ReferenceStructuredSolver.hpp
+  Cabana_Grid_SparseArray.hpp
+  Cabana_Grid_SparseDimPartitioner.hpp
+  Cabana_Grid_SparseHalo.hpp
+  Cabana_Grid_SparseIndexSpace.hpp
+  Cabana_Grid_SparseLocalGrid.hpp
+  Cabana_Grid_SparseLocalGrid_impl.hpp
+  Cabana_Grid_Splines.hpp
+  Cabana_Grid_Types.hpp
+  Cabana_Grid_UniformDimPartitioner.hpp
   )
 
 if(Cabana_ENABLE_HYPRE)
   list(APPEND HEADERS_PUBLIC
-    Cajita_Hypre.hpp
-    Cajita_HypreStructuredSolver.hpp
-    Cajita_HypreSemiStructuredSolver.hpp
+    Cabana_Grid_Hypre.hpp
+    Cabana_Grid_HypreStructuredSolver.hpp
+    Cabana_Grid_HypreSemiStructuredSolver.hpp
     )
 endif()
 
 if(Cabana_ENABLE_HEFFTE)
   list(APPEND HEADERS_PUBLIC
-    Cajita_FastFourierTransform.hpp
+    Cabana_Grid_FastFourierTransform.hpp
     )
 endif()
 
 if(Cabana_ENABLE_ALL)
   list(APPEND HEADERS_PUBLIC
-    Cajita_LoadBalancer.hpp
+    Cabana_Grid_LoadBalancer.hpp
     )
 endif()
 
 if(Cabana_ENABLE_SILO)
-  list(APPEND HEADERS_PUBLIC Cajita_SiloParticleOutput.hpp)
+  list(APPEND HEADERS_PUBLIC Cabana_Grid_SiloParticleOutput.hpp)
 endif()
 
 add_library(Cajita INTERFACE)
@@ -116,4 +116,4 @@ install(EXPORT GridTargets
 install(FILES ${HEADERS_PUBLIC}
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Cajita_Config.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Cabana_Grid_Config.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

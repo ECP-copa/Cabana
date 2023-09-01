@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita_IndexSpace.hpp>
-#include <Cajita_SparseIndexSpace.hpp>
+#include <Cabana_Grid_IndexSpace.hpp>
+#include <Cabana_Grid_SparseIndexSpace.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <map>

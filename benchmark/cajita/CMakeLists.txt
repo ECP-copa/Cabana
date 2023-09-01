@@ -10,35 +10,35 @@
 ############################################################################
 
 if(NOT Kokkos_ENABLE_SYCL) #FIXME_SYCL
-  add_executable(SparseMapPerformance Cajita_SparseMapPerformance.cpp)
-  target_link_libraries(SparseMapPerformance Cajita)
+  add_executable(SparseMapPerformance Cabana_Grid_SparseMapPerformance.cpp)
+  target_link_libraries(SparseMapPerformance Grid)
 
-  add_executable(SparsePartitionerPerformance Cajita_SparsePartitionerPerformance.cpp)
-  target_link_libraries(SparsePartitionerPerformance Cajita)
+  add_executable(SparsePartitionerPerformance Cabana_Grid_SparsePartitionerPerformance.cpp)
+  target_link_libraries(SparsePartitionerPerformance Grid)
 endif()
 
-add_executable(HaloPerformance Cajita_HaloPerformance.cpp)
-target_link_libraries(HaloPerformance Cajita)
+add_executable(HaloPerformance Cabana_Grid_HaloPerformance.cpp)
+target_link_libraries(HaloPerformance Grid)
 
-add_executable(InterpolationPerformance Cajita_InterpolationPerformance.cpp)
-target_link_libraries(InterpolationPerformance Cajita)
+add_executable(InterpolationPerformance Cabana_Grid_InterpolationPerformance.cpp)
+target_link_libraries(InterpolationPerformance Grid)
 
 if(Cabana_ENABLE_HEFFTE)
-  add_executable(FastFourierTransformPerformance Cajita_FastFourierTransformPerformance.cpp)
-  target_link_libraries(FastFourierTransformPerformance Cajita)
+  add_executable(FastFourierTransformPerformance Cabana_Grid_FastFourierTransformPerformance.cpp)
+  target_link_libraries(FastFourierTransformPerformance Grid)
 endif()
 
 if(Cabana_ENABLE_TESTING)
   if(NOT Kokkos_ENABLE_SYCL) #FIXME_SYCL
-    add_test(NAME Cajita_SparseMapPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:SparseMapPerformance> sparsemap_output.txt)
-    add_test(NAME Cajita_SparsePartitionerPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:SparsePartitionerPerformance> sparsepartitioner_output.txt)
+    add_test(NAME Cabana_Grid_SparseMapPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:SparseMapPerformance> sparsemap_output.txt)
+    add_test(NAME Cabana_Grid_SparsePartitionerPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:SparsePartitionerPerformance> sparsepartitioner_output.txt)
   endif()
 
-  add_test(NAME Cajita_HaloPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:HaloPerformance> halo_output.txt)
+  add_test(NAME Cabana_Grid_HaloPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:HaloPerformance> halo_output.txt)
 
-  add_test(NAME Cajita_InterpolationPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:InterpolationPerformance> interpolation_output.txt)
+  add_test(NAME Cabana_Grid_InterpolationPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:InterpolationPerformance> interpolation_output.txt)
 
   if (Cabana_ENABLE_HEFFTE)
-    add_test(NAME Cajita_FastFourierTransformPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:FastFourierTransformPerformance> fastfouriertransform_output.txt)
+    add_test(NAME Cabana_Grid_FastFourierTransformPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:FastFourierTransformPerformance> fastfouriertransform_output.txt)
   endif()
 endif()

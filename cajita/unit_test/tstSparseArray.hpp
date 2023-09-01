@@ -9,9 +9,9 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita_SparseArray.hpp>
-#include <Cajita_SparseDimPartitioner.hpp>
-#include <Cajita_SparseLocalGrid.hpp>
+#include <Cabana_Grid_SparseArray.hpp>
+#include <Cabana_Grid_SparseDimPartitioner.hpp>
+#include <Cabana_Grid_SparseLocalGrid.hpp>
 
 #include <Cabana_DeepCopy.hpp>
 

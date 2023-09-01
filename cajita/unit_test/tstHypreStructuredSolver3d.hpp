@@ -9,13 +9,13 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita_Array.hpp>
-#include <Cajita_GlobalGrid.hpp>
-#include <Cajita_GlobalMesh.hpp>
-#include <Cajita_HypreStructuredSolver.hpp>
-#include <Cajita_Partitioner.hpp>
-#include <Cajita_ReferenceStructuredSolver.hpp>
-#include <Cajita_Types.hpp>
+#include <Cabana_Grid_Array.hpp>
+#include <Cabana_Grid_GlobalGrid.hpp>
+#include <Cabana_Grid_GlobalMesh.hpp>
+#include <Cabana_Grid_HypreStructuredSolver.hpp>
+#include <Cabana_Grid_Partitioner.hpp>
+#include <Cabana_Grid_ReferenceStructuredSolver.hpp>
+#include <Cabana_Grid_Types.hpp>
 
 #include <Kokkos_Core.hpp>
 

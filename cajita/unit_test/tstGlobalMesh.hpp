@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita_GlobalMesh.hpp>
-#include <Cajita_Types.hpp>
+#include <Cabana_Grid_GlobalMesh.hpp>
+#include <Cabana_Grid_Types.hpp>
 
 #include <gtest/gtest.h>
 

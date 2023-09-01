@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita_Splines.hpp>
+#include <Cabana_Grid_Splines.hpp>
 
 #include <vector>
 

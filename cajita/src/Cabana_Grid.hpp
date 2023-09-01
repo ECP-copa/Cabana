@@ -16,49 +16,49 @@
 #ifndef CABANA_GRID_HPP
 #define CABANA_GRID_HPP
 
-#include <Cajita_Config.hpp>
+#include <Cabana_Grid_Config.hpp>
 
-#include <Cajita_Array.hpp>
-#include <Cajita_BovWriter.hpp>
-#include <Cajita_GlobalGrid.hpp>
-#include <Cajita_GlobalMesh.hpp>
-#include <Cajita_Halo.hpp>
-#include <Cajita_IndexConversion.hpp>
-#include <Cajita_IndexSpace.hpp>
-#include <Cajita_Interpolation.hpp>
-#include <Cajita_LocalGrid.hpp>
-#include <Cajita_LocalMesh.hpp>
-#include <Cajita_ManualPartitioner.hpp>
-#include <Cajita_MpiTraits.hpp>
-#include <Cajita_Parallel.hpp>
-#include <Cajita_ParticleGridDistributor.hpp>
-#include <Cajita_ParticleInit.hpp>
-#include <Cajita_ParticleList.hpp>
-#include <Cajita_Partitioner.hpp>
-#include <Cajita_ReferenceStructuredSolver.hpp>
+#include <Cabana_Grid_Array.hpp>
+#include <Cabana_Grid_BovWriter.hpp>
+#include <Cabana_Grid_GlobalGrid.hpp>
+#include <Cabana_Grid_GlobalMesh.hpp>
+#include <Cabana_Grid_Halo.hpp>
+#include <Cabana_Grid_IndexConversion.hpp>
+#include <Cabana_Grid_IndexSpace.hpp>
+#include <Cabana_Grid_Interpolation.hpp>
+#include <Cabana_Grid_LocalGrid.hpp>
+#include <Cabana_Grid_LocalMesh.hpp>
+#include <Cabana_Grid_ManualPartitioner.hpp>
+#include <Cabana_Grid_MpiTraits.hpp>
+#include <Cabana_Grid_Parallel.hpp>
+#include <Cabana_Grid_ParticleGridDistributor.hpp>
+#include <Cabana_Grid_ParticleInit.hpp>
+#include <Cabana_Grid_ParticleList.hpp>
+#include <Cabana_Grid_Partitioner.hpp>
+#include <Cabana_Grid_ReferenceStructuredSolver.hpp>
 #ifndef KOKKOS_ENABLE_SYCL // FIXME_SYCL
-#include <Cajita_SparseArray.hpp>
-#include <Cajita_SparseDimPartitioner.hpp>
-#include <Cajita_SparseHalo.hpp>
-#include <Cajita_SparseIndexSpace.hpp>
-#include <Cajita_SparseLocalGrid.hpp>
+#include <Cabana_Grid_SparseArray.hpp>
+#include <Cabana_Grid_SparseDimPartitioner.hpp>
+#include <Cabana_Grid_SparseHalo.hpp>
+#include <Cabana_Grid_SparseIndexSpace.hpp>
+#include <Cabana_Grid_SparseLocalGrid.hpp>
 #endif
-#include <Cajita_Splines.hpp>
-#include <Cajita_Types.hpp>
-#include <Cajita_UniformDimPartitioner.hpp>
+#include <Cabana_Grid_Splines.hpp>
+#include <Cabana_Grid_Types.hpp>
+#include <Cabana_Grid_UniformDimPartitioner.hpp>
 
 #ifdef Cabana_ENABLE_HYPRE
-#include <Cajita_Hypre.hpp>
-#include <Cajita_HypreSemiStructuredSolver.hpp>
-#include <Cajita_HypreStructuredSolver.hpp>
+#include <Cabana_Grid_Hypre.hpp>
+#include <Cabana_Grid_HypreSemiStructuredSolver.hpp>
+#include <Cabana_Grid_HypreStructuredSolver.hpp>
 #endif
 
 #ifdef Cabana_ENABLE_HEFFTE
-#include <Cajita_FastFourierTransform.hpp>
+#include <Cabana_Grid_FastFourierTransform.hpp>
 #endif
 
 #ifdef Cabana_ENABLE_SILO
-#include <Cajita_SiloParticleOutput.hpp>
+#include <Cabana_Grid_SiloParticleOutput.hpp>
 #endif
 
 #ifdef Cabana_ENABLE_ALL

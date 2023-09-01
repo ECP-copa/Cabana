@@ -12,10 +12,10 @@
 #include <Kokkos_Core.hpp>
 
 #include <Cabana_Fields.hpp>
-#include <Cajita_GlobalGrid.hpp>
-#include <Cajita_GlobalMesh.hpp>
-#include <Cajita_ParticleList.hpp>
-#include <Cajita_Partitioner.hpp>
+#include <Cabana_Grid_GlobalGrid.hpp>
+#include <Cabana_Grid_GlobalMesh.hpp>
+#include <Cabana_Grid_ParticleList.hpp>
+#include <Cabana_Grid_Partitioner.hpp>
 
 #include <../../core/unit_test/particle_list_unit_test.hpp>
 
