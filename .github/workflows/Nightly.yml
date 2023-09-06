@@ -20,7 +20,7 @@ jobs:
       image: ghcr.io/ecp-copa/ci-containers/${{ matrix.distro }}
     steps:
       - name: Checkout kokkos
-        uses: actions/checkout@v2.2.0
+        uses: actions/checkout@v3
         with:
           repository: kokkos/kokkos
           ref: develop
@@ -32,7 +32,7 @@ jobs:
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout arborx
-        uses: actions/checkout@v2.2.0
+        uses: actions/checkout@v3
         with:
           repository: arborx/ArborX
           ref: master
@@ -44,7 +44,7 @@ jobs:
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout Cabana
-        uses: actions/checkout@v2.2.0
+        uses: actions/checkout@v3
       - name: Build Cabana
         run: |
           cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/Cabana -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx" -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON -DCabana_REQUIRE_${{ matrix.backend }}=ON -DVALGRIND_EXECUTABLE=False -DCMAKE_DISABLE_FIND_PACKAGE_HDF5=ON ${{ github.event.inputs.cmake_args }}
