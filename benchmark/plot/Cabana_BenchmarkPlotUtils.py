@@ -304,14 +304,17 @@ def getData(filelist):
 
     return AllData(filelist)
 
-# Return separate data for the first two files only.
-def getSeparateData(filelist):
+# Return separate data for the first and last N files.
+def getSeparateData(filelist, split_index = -1):
     if len(filelist) < 2:
         exit("Separate data requires at least two files.")
-    split_index = 1
-    for f, fname in enumerate(filelist):
-        if fname.split("_")[:-1] != filelist[0].split("_")[:-1]:
-            split_index = f
+    if len(filelist) % 2 != 0:
+        exit("Cannot compare odd number of files.")
+    # By default (without manual user input) search for a change in file names.
+    if split_index == -1:
+        for f, fname in enumerate(filelist):
+            if fname.split("_")[:-1] != filelist[0].split("_")[:-1]:
+                split_index = f
     data1 = getData(filelist[:split_index])
     data2 = getData(filelist[split_index:])
     return data1, data2
