@@ -344,12 +344,11 @@ def getLegend(data: AllData, cpu_name, gpu_name, backend_label):
     if backend_label:
         backends = data.getAllBackends()
         for backend in data.getAllBackends():
-            # FIXME: backwards compatibility
             if "_host" in backend and "host_host" not in backend:
                 legend.append(Line2D([0], [0], color="k", lw=2, linestyle= "-.", label=cpu_name+" CPU"))
-            elif "host" in backend or "serial" in backend or "openmp" in backend:
+            elif "host" in backend:
                 legend.append(Line2D([0], [0], color="k", lw=2, linestyle= "--", label=cpu_name+" CPU"))
-            elif "device" in backend or "cuda" in backend or "hip" in backend:
+            elif "device" in backend:
                 legend.append(Line2D([0], [0], color="k", lw=2, linestyle="-", label=gpu_name+" GPU"))
 
     colors = getColors(data)
@@ -362,10 +361,9 @@ def getLegend(data: AllData, cpu_name, gpu_name, backend_label):
 def plotResults(ax, x, y, backend, color):
     linewidth = 2
     dash = "-"
-    # FIXME: backwards compatibility
     if "_host" in backend and "host_host" not in backend:
         dash = "-."
-    elif "host" in backend or "serial" in backend or "openmp" in backend:
+    elif "host" in backend:
         dash = "--"
 
     ax.plot(x, y, color=color, lw=linewidth, marker='o', linestyle=dash)
