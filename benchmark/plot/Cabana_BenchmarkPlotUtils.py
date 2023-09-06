@@ -271,7 +271,6 @@ class AllDataInterpolation(AllData):
         return DataPointInterpolation(descr, line)
 
 # All performance results for a single set of parameters.
-# FIXME: this may need to be sorted for plotting.
 class AllSizesSingleResult:
     def __init__(self, all_data: AllData, descr: ManualDataDescription):
         self.times = np.array([])
@@ -280,6 +279,9 @@ class AllSizesSingleResult:
             if self._compareAll(d.description, descr):
                 self.sizes = np.append(self.sizes, d.size)
                 self.times = np.append(self.times, d.ave)
+        indices = np.argsort(self.sizes)
+        self.sizes = self.sizes[indices]
+        self.times = self.times[indices]
 
     def _compareAll(self, data_description, check):
         if data_description.backend == check.backend and data_description.category == check.category and data_description.type == check.type and data_description.params == check.params:
