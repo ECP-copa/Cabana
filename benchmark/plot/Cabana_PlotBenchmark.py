@@ -91,10 +91,10 @@ if __name__ == "__main__":
     data = getData(filelist)
 
     speedup = plotAll(ax1, data)
-    #speedup = plotCompareHostDevice(ax1, data, "serial")
+    #speedup = plotCompareHostDevice(ax1, data)
 
     #data, data_f2 = getSeparateData(filelist)
-    #speedup = plotCompareFiles(ax1, data, data_f2, ["cuda_host", "cudauvm_cudauvm", "hip_host"])
+    #speedup = plotCompareFiles(ax1, data, data_f2)
     ###
 
     createPlot(fig1, ax1, data,
