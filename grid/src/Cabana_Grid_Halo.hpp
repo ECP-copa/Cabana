@@ -1014,12 +1014,13 @@ struct LayoutAdapter
   buffers may be allocated. This means a halo constructed via this method is
   only compatible with arrays that have the same scalar and memory space.
 */
-template <class Scalar, class MemorySpace, class EntityType, class MeshType,
-          class Pattern>
-[[deprecated]] auto createHalo( const ArrayLayout<EntityType, MeshType>& layout,
+template <class Scalar, class MemorySpace,
+          template <class, class> class LayoutType, class EntityType,
+          class MeshType, class Pattern>
+[[deprecated]] auto createHalo( const LayoutType<EntityType, MeshType>& layout,
                                 const Pattern& pattern, const int width = -1 )
 {
-    LayoutAdapter<Scalar, MemorySpace, ArrayLayout<EntityType, MeshType>>
+    LayoutAdapter<Scalar, MemorySpace, LayoutType<EntityType, MeshType>>
         adapter{ layout };
     return createHalo( pattern, width, adapter );
 }
@@ -1036,16 +1037,18 @@ template <class Scalar, class MemorySpace, class EntityType, class MeshType,
   method is only compatible with arrays that have the same scalar and device
   type as the input array.
 */
-template <class Scalar, class EntityType, class MeshType, class Pattern,
-          class... Params>
+template <class Scalar,
+          template <class, class, class, class...> class ArrayType,
+          class EntityType, class MeshType, class Pattern, class... Params>
 [[deprecated]] auto
-createHalo( const Array<Scalar, EntityType, MeshType, Params...>& array,
+createHalo( const ArrayType<Scalar, EntityType, MeshType, Params...>& array,
             const Pattern& pattern, const int width = -1 )
 {
-    LayoutAdapter<
-        Scalar,
-        typename Array<Scalar, EntityType, MeshType, Params...>::memory_space,
-        typename Array<Scalar, EntityType, MeshType, Params...>::array_layout>
+    LayoutAdapter<Scalar,
+                  typename ArrayType<Scalar, EntityType, MeshType,
+                                     Params...>::memory_space,
+                  typename ArrayType<Scalar, EntityType, MeshType,
+                                     Params...>::array_layout>
         adapter{ *array.layout() };
     return createHalo( pattern, width, adapter );
 }
