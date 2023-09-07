@@ -80,7 +80,7 @@ add_library(Grid ALIAS Cajita)
 add_library(Cabana::Grid ALIAS Cajita)
 
 target_link_libraries(Cajita INTERFACE
-  Cabana::cabanacore
+  Cabana::Core
   Kokkos::kokkos
   MPI::MPI_CXX
   )

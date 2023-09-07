@@ -10,22 +10,22 @@
 ############################################################################
 
 add_executable(BinSortPerformance Cabana_BinSortPerformance.cpp)
-target_link_libraries(BinSortPerformance cabanacore)
+target_link_libraries(BinSortPerformance Core)
 
 add_executable(NeighborVerletPerformance Cabana_NeighborVerletPerformance.cpp)
-target_link_libraries(NeighborVerletPerformance cabanacore)
+target_link_libraries(NeighborVerletPerformance Core)
 
 if(Cabana_ENABLE_ARBORX)
 add_executable(NeighborArborXPerformance Cabana_NeighborArborXPerformance.cpp)
-target_link_libraries(NeighborArborXPerformance cabanacore)
+target_link_libraries(NeighborArborXPerformance Core)
 endif()
 
 add_executable(LinkedCellPerformance Cabana_LinkedCellPerformance.cpp)
-target_link_libraries(LinkedCellPerformance cabanacore)
+target_link_libraries(LinkedCellPerformance Core)
 
 if(Cabana_ENABLE_MPI)
 add_executable(CommPerformance Cabana_CommPerformance.cpp)
-target_link_libraries(CommPerformance cabanacore)
+target_link_libraries(CommPerformance Core)
 endif()
 
 if(Cabana_ENABLE_TESTING)

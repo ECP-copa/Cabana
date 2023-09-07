@@ -24,6 +24,7 @@ endif()
 set(Cabana_ENABLE_GRID @Cabana_ENABLE_GRID@)
 set(Cabana_ENABLE_CAJITA @Cabana_ENABLE_CAJITA@) # FIXME: remove in next release
 include("${CMAKE_CURRENT_LIST_DIR}/Cabana_Targets.cmake")
+add_library(Cabana::Core ALIAS Cabana::cabanacore) # FIXME: remove in next release
 if(Cabana_ENABLE_GRID)
   include("${CMAKE_CURRENT_LIST_DIR}/CabanaGrid_Targets.cmake")
   add_library(Cabana::Grid ALIAS Cabana::Cajita) # FIXME: remove in next release

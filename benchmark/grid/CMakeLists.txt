@@ -30,15 +30,15 @@ endif()
 
 if(Cabana_ENABLE_TESTING)
   if(NOT Kokkos_ENABLE_SYCL) #FIXME_SYCL
-    add_test(NAME Cabana_Grid_SparseMapPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:SparseMapPerformance> sparsemap_output.txt)
-    add_test(NAME Cabana_Grid_SparsePartitionerPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:SparsePartitionerPerformance> sparsepartitioner_output.txt)
+    add_test(NAME Cabana_Grid_Performance_SparseMap COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:SparseMapPerformance> sparsemap_output.txt)
+    add_test(NAME Cabana_Grid_Performance_SparsePartitioner COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:SparsePartitionerPerformance> sparsepartitioner_output.txt)
   endif()
 
-  add_test(NAME Cabana_Grid_HaloPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:HaloPerformance> halo_output.txt)
+  add_test(NAME Cabana_Grid_Performance_Halo COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:HaloPerformance> halo_output.txt)
 
-  add_test(NAME Cabana_Grid_InterpolationPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:InterpolationPerformance> interpolation_output.txt)
+  add_test(NAME Cabana_Grid_Performance_Interpolation COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:InterpolationPerformance> interpolation_output.txt)
 
   if (Cabana_ENABLE_HEFFTE)
-    add_test(NAME Cabana_Grid_FastFourierTransformPerformance COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:FastFourierTransformPerformance> fastfouriertransform_output.txt)
+    add_test(NAME Cabana_Grid_Performance_FastFourierTransform COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:FastFourierTransformPerformance> fastfouriertransform_output.txt)
   endif()
 endif()

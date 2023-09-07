@@ -64,6 +64,13 @@ set(HEADERS_IMPL
   )
 
 add_library(cabanacore INTERFACE)
+add_library(Core ALIAS cabanacore)
+add_library(Cabana::Core ALIAS cabanacore)
+### FIXME: remove cabanacore in next release.
+add_library(Cabana::cabanacore ALIAS cabanacore)
+if(CMAKE_VERSION VERSION_GREATER 3.17)
+  set_property(TARGET cabanacore PROPERTY DEPRECATION "NOTE: cabanacore subpackage is now Core. Link to Cabana::Core. Cabana::cabanacore will be removed in a future release.")
+endif()
 
 # Require minimum of C++17
 set_target_properties(cabanacore PROPERTIES INTERFACE_COMPILE_FEATURES cxx_std_17)
@@ -111,5 +118,3 @@ install(FILES ${HEADERS_IMPL} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/impl/)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CabanaCore_config.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 include(CMakePackageConfigHelpers)
-
-add_library(Cabana::cabanacore ALIAS cabanacore)
