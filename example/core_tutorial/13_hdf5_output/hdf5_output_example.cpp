@@ -50,14 +50,13 @@ void hdf5_output()
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
     using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
-    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
       Create the AoSoA.
     */
     int num_particles = 9;
-    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "A",
-                                                              num_particles );
+    Cabana::AoSoA<DataTypes, MemorySpace, VectorLength> aosoa( "A",
+                                                               num_particles );
 
     /*
       Get the particle ids, coordinates, velocity, radius

@@ -42,12 +42,12 @@ void uniformLocalMeshTest3d( const LocalMeshType& local_mesh,
     const auto& global_grid = local_grid.globalGrid();
 
     // Check the low and high corners.
-    Kokkos::View<double[3], TEST_DEVICE> own_lc( "own_lc" );
-    Kokkos::View<double[3], TEST_DEVICE> own_hc( "own_hc" );
-    Kokkos::View<double[3], TEST_DEVICE> own_ext( "own_extent" );
-    Kokkos::View<double[3], TEST_DEVICE> ghost_lc( "ghost_lc" );
-    Kokkos::View<double[3], TEST_DEVICE> ghost_hc( "ghost_hc" );
-    Kokkos::View<double[3], TEST_DEVICE> ghost_ext( "ghost_extent" );
+    Kokkos::View<double[3], TEST_MEMSPACE> own_lc( "own_lc" );
+    Kokkos::View<double[3], TEST_MEMSPACE> own_hc( "own_hc" );
+    Kokkos::View<double[3], TEST_MEMSPACE> own_ext( "own_extent" );
+    Kokkos::View<double[3], TEST_MEMSPACE> ghost_lc( "ghost_lc" );
+    Kokkos::View<double[3], TEST_MEMSPACE> ghost_hc( "ghost_hc" );
+    Kokkos::View<double[3], TEST_MEMSPACE> ghost_ext( "ghost_extent" );
 
     Kokkos::parallel_for(
         "get_corners", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, 3 ),
@@ -109,10 +109,11 @@ void uniformLocalMeshTest3d( const LocalMeshType& local_mesh,
     // Check the cell locations and measures.
     auto cell_space = local_grid.indexSpace( Ghost(), Cell(), Local() );
     {
-        auto measure = createView<double, TEST_DEVICE>( "measure", cell_space );
-        auto loc_x = createView<double, TEST_DEVICE>( "loc_x", cell_space );
-        auto loc_y = createView<double, TEST_DEVICE>( "loc_y", cell_space );
-        auto loc_z = createView<double, TEST_DEVICE>( "loc_z", cell_space );
+        auto measure =
+            createView<double, TEST_MEMSPACE>( "measure", cell_space );
+        auto loc_x = createView<double, TEST_MEMSPACE>( "loc_x", cell_space );
+        auto loc_y = createView<double, TEST_MEMSPACE>( "loc_y", cell_space );
+        auto loc_z = createView<double, TEST_MEMSPACE>( "loc_z", cell_space );
         Kokkos::parallel_for(
             "get_cell_coord",
             createExecutionPolicy( cell_space, TEST_EXECSPACE() ),
@@ -154,10 +155,11 @@ void uniformLocalMeshTest3d( const LocalMeshType& local_mesh,
     // Check the node locations and measures.
     auto node_space = local_grid.indexSpace( Ghost(), Node(), Local() );
     {
-        auto measure = createView<double, TEST_DEVICE>( "measure", node_space );
-        auto loc_x = createView<double, TEST_DEVICE>( "loc_x", node_space );
-        auto loc_y = createView<double, TEST_DEVICE>( "loc_y", node_space );
-        auto loc_z = createView<double, TEST_DEVICE>( "loc_z", node_space );
+        auto measure =
+            createView<double, TEST_MEMSPACE>( "measure", node_space );
+        auto loc_x = createView<double, TEST_MEMSPACE>( "loc_x", node_space );
+        auto loc_y = createView<double, TEST_MEMSPACE>( "loc_y", node_space );
+        auto loc_z = createView<double, TEST_MEMSPACE>( "loc_z", node_space );
         Kokkos::parallel_for(
             "get_node_coord",
             createExecutionPolicy( node_space, TEST_EXECSPACE() ),
@@ -197,10 +199,10 @@ void uniformLocalMeshTest3d( const LocalMeshType& local_mesh,
         local_grid.indexSpace( Ghost(), Face<Dim::I>(), Local() );
     {
         auto measure =
-            createView<double, TEST_DEVICE>( "measure", face_i_space );
-        auto loc_x = createView<double, TEST_DEVICE>( "loc_x", face_i_space );
-        auto loc_y = createView<double, TEST_DEVICE>( "loc_y", face_i_space );
-        auto loc_z = createView<double, TEST_DEVICE>( "loc_z", face_i_space );
+            createView<double, TEST_MEMSPACE>( "measure", face_i_space );
+        auto loc_x = createView<double, TEST_MEMSPACE>( "loc_x", face_i_space );
+        auto loc_y = createView<double, TEST_MEMSPACE>( "loc_y", face_i_space );
+        auto loc_z = createView<double, TEST_MEMSPACE>( "loc_z", face_i_space );
         Kokkos::parallel_for(
             "get_face_i_coord",
             createExecutionPolicy( face_i_space, TEST_EXECSPACE() ),
@@ -243,10 +245,10 @@ void uniformLocalMeshTest3d( const LocalMeshType& local_mesh,
         local_grid.indexSpace( Ghost(), Face<Dim::J>(), Local() );
     {
         auto measure =
-            createView<double, TEST_DEVICE>( "measure", face_j_space );
-        auto loc_x = createView<double, TEST_DEVICE>( "loc_x", face_j_space );
-        auto loc_y = createView<double, TEST_DEVICE>( "loc_y", face_j_space );
-        auto loc_z = createView<double, TEST_DEVICE>( "loc_z", face_j_space );
+            createView<double, TEST_MEMSPACE>( "measure", face_j_space );
+        auto loc_x = createView<double, TEST_MEMSPACE>( "loc_x", face_j_space );
+        auto loc_y = createView<double, TEST_MEMSPACE>( "loc_y", face_j_space );
+        auto loc_z = createView<double, TEST_MEMSPACE>( "loc_z", face_j_space );
         Kokkos::parallel_for(
             "get_face_j_coord",
             createExecutionPolicy( face_j_space, TEST_EXECSPACE() ),
@@ -289,10 +291,10 @@ void uniformLocalMeshTest3d( const LocalMeshType& local_mesh,
         local_grid.indexSpace( Ghost(), Face<Dim::K>(), Local() );
     {
         auto measure =
-            createView<double, TEST_DEVICE>( "measure", face_k_space );
-        auto loc_x = createView<double, TEST_DEVICE>( "loc_x", face_k_space );
-        auto loc_y = createView<double, TEST_DEVICE>( "loc_y", face_k_space );
-        auto loc_z = createView<double, TEST_DEVICE>( "loc_z", face_k_space );
+            createView<double, TEST_MEMSPACE>( "measure", face_k_space );
+        auto loc_x = createView<double, TEST_MEMSPACE>( "loc_x", face_k_space );
+        auto loc_y = createView<double, TEST_MEMSPACE>( "loc_y", face_k_space );
+        auto loc_z = createView<double, TEST_MEMSPACE>( "loc_z", face_k_space );
         Kokkos::parallel_for(
             "get_face_k_coord",
             createExecutionPolicy( face_k_space, TEST_EXECSPACE() ),
@@ -335,10 +337,10 @@ void uniformLocalMeshTest3d( const LocalMeshType& local_mesh,
         local_grid.indexSpace( Ghost(), Edge<Dim::I>(), Local() );
     {
         auto measure =
-            createView<double, TEST_DEVICE>( "measure", edge_i_space );
-        auto loc_x = createView<double, TEST_DEVICE>( "loc_x", edge_i_space );
-        auto loc_y = createView<double, TEST_DEVICE>( "loc_y", edge_i_space );
-        auto loc_z = createView<double, TEST_DEVICE>( "loc_z", edge_i_space );
+            createView<double, TEST_MEMSPACE>( "measure", edge_i_space );
+        auto loc_x = createView<double, TEST_MEMSPACE>( "loc_x", edge_i_space );
+        auto loc_y = createView<double, TEST_MEMSPACE>( "loc_y", edge_i_space );
+        auto loc_z = createView<double, TEST_MEMSPACE>( "loc_z", edge_i_space );
         Kokkos::parallel_for(
             "get_edge_i_coord",
             createExecutionPolicy( edge_i_space, TEST_EXECSPACE() ),
@@ -379,10 +381,10 @@ void uniformLocalMeshTest3d( const LocalMeshType& local_mesh,
         local_grid.indexSpace( Ghost(), Edge<Dim::J>(), Local() );
     {
         auto measure =
-            createView<double, TEST_DEVICE>( "measure", edge_j_space );
-        auto loc_x = createView<double, TEST_DEVICE>( "loc_x", edge_j_space );
-        auto loc_y = createView<double, TEST_DEVICE>( "loc_y", edge_j_space );
-        auto loc_z = createView<double, TEST_DEVICE>( "loc_z", edge_j_space );
+            createView<double, TEST_MEMSPACE>( "measure", edge_j_space );
+        auto loc_x = createView<double, TEST_MEMSPACE>( "loc_x", edge_j_space );
+        auto loc_y = createView<double, TEST_MEMSPACE>( "loc_y", edge_j_space );
+        auto loc_z = createView<double, TEST_MEMSPACE>( "loc_z", edge_j_space );
         Kokkos::parallel_for(
             "get_edge_j_coord",
             createExecutionPolicy( edge_j_space, TEST_EXECSPACE() ),
@@ -423,10 +425,10 @@ void uniformLocalMeshTest3d( const LocalMeshType& local_mesh,
         local_grid.indexSpace( Ghost(), Edge<Dim::K>(), Local() );
     {
         auto measure =
-            createView<double, TEST_DEVICE>( "measure", edge_k_space );
-        auto loc_x = createView<double, TEST_DEVICE>( "loc_x", edge_k_space );
-        auto loc_y = createView<double, TEST_DEVICE>( "loc_y", edge_k_space );
-        auto loc_z = createView<double, TEST_DEVICE>( "loc_z", edge_k_space );
+            createView<double, TEST_MEMSPACE>( "measure", edge_k_space );
+        auto loc_x = createView<double, TEST_MEMSPACE>( "loc_x", edge_k_space );
+        auto loc_y = createView<double, TEST_MEMSPACE>( "loc_y", edge_k_space );
+        auto loc_z = createView<double, TEST_MEMSPACE>( "loc_z", edge_k_space );
         Kokkos::parallel_for(
             "get_edge_k_coord",
             createExecutionPolicy( edge_k_space, TEST_EXECSPACE() ),
@@ -466,10 +468,11 @@ void uniformLocalMeshTest3d( const LocalMeshType& local_mesh,
     auto shared_cell_space =
         local_grid.sharedIndexSpace( Cajita::Own(), Cajita::Cell(), 0, 1, 0 );
     {
-        auto measure = createView<double, TEST_DEVICE>( "measure", cell_space );
-        auto loc_x = createView<double, TEST_DEVICE>( "loc_x", cell_space );
-        auto loc_y = createView<double, TEST_DEVICE>( "loc_y", cell_space );
-        auto loc_z = createView<double, TEST_DEVICE>( "loc_z", cell_space );
+        auto measure =
+            createView<double, TEST_MEMSPACE>( "measure", cell_space );
+        auto loc_x = createView<double, TEST_MEMSPACE>( "loc_x", cell_space );
+        auto loc_y = createView<double, TEST_MEMSPACE>( "loc_y", cell_space );
+        auto loc_z = createView<double, TEST_MEMSPACE>( "loc_z", cell_space );
         Kokkos::parallel_for(
             "get_cell_coord",
             createExecutionPolicy( shared_cell_space, TEST_EXECSPACE() ),
@@ -533,7 +536,7 @@ void uniformTest3d( const std::array<int, 3>& ranks_per_dim,
     auto local_grid = createLocalGrid( global_grid, halo_width );
 
     // Create the local mesh.
-    auto local_mesh = createLocalMesh<TEST_DEVICE>( *local_grid );
+    auto local_mesh = createLocalMesh<TEST_MEMSPACE>( *local_grid );
 
     // Test the local mesh.
     uniformLocalMeshTest3d( local_mesh, *local_grid, low_corner, cell_size,
@@ -565,7 +568,7 @@ void nonUniformTest3d( const std::array<int, 3>& ranks_per_dim,
     auto local_grid = createLocalGrid( global_grid, halo_width );
 
     // Create the local mesh.
-    auto local_mesh = createLocalMesh<TEST_DEVICE>( *local_grid );
+    auto local_mesh = createLocalMesh<TEST_MEMSPACE>( *local_grid );
 
     // Test the local mesh.
     uniformLocalMeshTest3d( local_mesh, *local_grid, low_corner, cell_size,
@@ -612,7 +615,7 @@ void irregularTest3d( const std::array<int, 3>& ranks_per_dim )
     auto local_grid = createLocalGrid( global_grid, halo_width );
 
     // Create the local mesh.
-    auto local_mesh = createLocalMesh<TEST_DEVICE>( *local_grid );
+    auto local_mesh = createLocalMesh<TEST_MEMSPACE>( *local_grid );
 
     // Get index spaces
     auto ghost_cell_local_space =
@@ -623,10 +626,10 @@ void irregularTest3d( const std::array<int, 3>& ranks_per_dim )
         local_grid->indexSpace( Own(), Cell(), Local() );
 
     // Check the low and high corners.
-    Kokkos::View<double[3], TEST_DEVICE> own_lc( "own_lc" );
-    Kokkos::View<double[3], TEST_DEVICE> own_hc( "own_hc" );
-    Kokkos::View<double[3], TEST_DEVICE> ghost_lc( "ghost_lc" );
-    Kokkos::View<double[3], TEST_DEVICE> ghost_hc( "ghost_hc" );
+    Kokkos::View<double[3], TEST_MEMSPACE> own_lc( "own_lc" );
+    Kokkos::View<double[3], TEST_MEMSPACE> own_hc( "own_hc" );
+    Kokkos::View<double[3], TEST_MEMSPACE> ghost_lc( "ghost_lc" );
+    Kokkos::View<double[3], TEST_MEMSPACE> ghost_hc( "ghost_hc" );
 
     Kokkos::parallel_for(
         "get_corners", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, 3 ),
@@ -681,13 +684,13 @@ void irregularTest3d( const std::array<int, 3>& ranks_per_dim )
                              own_cell_local_space.min( Dim::K ) ) );
 
     // Check the cell locations and measures.
-    auto cell_measure = createView<double, TEST_DEVICE>(
+    auto cell_measure = createView<double, TEST_MEMSPACE>(
         "cell_measures", ghost_cell_local_space );
-    auto cell_location_x = createView<double, TEST_DEVICE>(
+    auto cell_location_x = createView<double, TEST_MEMSPACE>(
         "cell_locations_x", ghost_cell_local_space );
-    auto cell_location_y = createView<double, TEST_DEVICE>(
+    auto cell_location_y = createView<double, TEST_MEMSPACE>(
         "cell_locations_y", ghost_cell_local_space );
-    auto cell_location_z = createView<double, TEST_DEVICE>(
+    auto cell_location_z = createView<double, TEST_MEMSPACE>(
         "cell_locations_z", ghost_cell_local_space );
     Kokkos::parallel_for(
         "get_cell_data",

@@ -33,6 +33,7 @@
 #include <Cabana_Sort.hpp>
 #include <Cabana_Tuple.hpp>
 #include <Cabana_Types.hpp>
+#include <Cabana_Utils.hpp>
 #include <Cabana_VerletList.hpp>
 #include <Cabana_Version.hpp>
 

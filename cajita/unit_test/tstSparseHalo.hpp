@@ -418,7 +418,7 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
         size_cell_per_dim * size_cell_per_dim * size_cell_per_dim;
     int num_step_rebalance = 200;
     int max_optimize_iteration = 10;
-    SparseDimPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
+    SparseDimPartitioner<TEST_MEMSPACE, cell_per_tile_dim> partitioner(
         MPI_COMM_WORLD, max_workload_coeff, workload_num, num_step_rebalance,
         global_num_cell, max_optimize_iteration );
 
@@ -461,10 +461,10 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
     using DataTypes = Cabana::MemberTypes<double[3], float>;
     auto sparse_layout =
         createSparseArrayLayout<DataTypes>( local_grid, sparse_map, entity );
-    auto sparse_array = createSparseArray<TEST_DEVICE>(
+    auto sparse_array = createSparseArray<TEST_MEMSPACE>(
         std::string( "test_sparse_grid" ), *sparse_layout );
 
-    auto halo = createSparseHalo<TEST_DEVICE, cell_bits_per_tile_dim>(
+    auto halo = createSparseHalo<TEST_MEMSPACE, cell_bits_per_tile_dim>(
         NodeHaloPattern<3>(), sparse_array );
 
     // sample valid halos on rank 0 and broadcast to other ranks
@@ -525,7 +525,7 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
     /// every valid ghosted halo would have value 0.1x
     /// no other grids will be registered
 
-    Kokkos::View<int* [3], TEST_DEVICE> info(
+    Kokkos::View<int* [3], TEST_MEMSPACE> info(
         Kokkos::ViewAllocateWithoutInitializing( "tile_cell_info" ),
         sparse_array->size() );
     {

@@ -34,14 +34,12 @@ void atomicSliceExample()
     using DataTypes = Cabana::MemberTypes<double>;
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::OpenMP;
-    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA. Just put a single value to demonstrate the atomic.
     */
     int num_tuple = 1;
-    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "X", num_tuple );
+    Cabana::AoSoA<DataTypes, MemorySpace, VectorLength> aosoa( "X", num_tuple );
 
     /*
       Create a slice over the single value and assign it to zero.

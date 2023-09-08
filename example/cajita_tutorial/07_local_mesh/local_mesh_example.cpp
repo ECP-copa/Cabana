@@ -32,8 +32,8 @@ void localMeshExample()
       local mesh, including ghost information.
     */
 
-    using exec_space = Kokkos::DefaultHostExecutionSpace;
-    using device_type = exec_space::device_type;
+    using execution_space = Kokkos::DefaultHostExecutionSpace;
+    using memory_space = execution_space::memory_space;
 
     /*
       As with the previous examples, we first create the global mesh and grid,
@@ -73,7 +73,7 @@ void localMeshExample()
       parameter defines both the Kokkos memory and execution spaces that will be
       able to access the resulting local mesh data.
     */
-    auto local_mesh = Cajita::createLocalMesh<device_type>( *local_grid );
+    auto local_mesh = Cajita::createLocalMesh<memory_space>( *local_grid );
 
     /*
       Just like the global mesh, the local mesh holds information about the

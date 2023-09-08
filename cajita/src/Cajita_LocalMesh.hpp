@@ -19,19 +19,21 @@
 #include <Cajita_LocalGrid.hpp>
 #include <Cajita_Types.hpp>
 
+#include <Cabana_Utils.hpp>
+
 #include <Kokkos_Core.hpp>
 
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
 // Forward decalaration of local mesh.
-template <class Device, class MeshType>
+template <class MemorySpace, class MeshType>
 class LocalMesh;
 
 //---------------------------------------------------------------------------//
 //! Local mesh partial specialization for uniform mesh.
-template <class Scalar, class Device, std::size_t NumSpaceDim>
-class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
+template <class Scalar, class MemorySpace, std::size_t NumSpaceDim>
+class LocalMesh<MemorySpace, UniformMesh<Scalar, NumSpaceDim>>
 {
   public:
     //! Mesh type.
@@ -43,12 +45,17 @@ class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
     //! Spatial dimension.
     static constexpr std::size_t num_space_dim = NumSpaceDim;
 
-    //! Kokkos device type.
-    using device_type = Device;
-    //! Kokkos memory space.
-    using memory_space = typename Device::memory_space;
-    //! Kokkos execution space.
-    using execution_space = typename Device::execution_space;
+    // FIXME: extracting the self type for backwards compatibility with previous
+    // template on DeviceType. Should simply be MemorySpace after next release.
+    //! Memory space.
+    using memory_space = typename MemorySpace::memory_space;
+    // FIXME: replace warning with memory space assert after next release.
+    static_assert( Cabana::Impl::warn( Kokkos::is_device<MemorySpace>() ) );
+
+    //! Default device type.
+    using device_type [[deprecated]] = typename memory_space::device_type;
+    //! Default execution space.
+    using execution_space = typename memory_space::execution_space;
 
     //! Default constructor.
     LocalMesh() = default;
@@ -291,8 +298,8 @@ class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
 
 //---------------------------------------------------------------------------//
 //! Global mesh partial specialization for non-uniform mesh.
-template <class Scalar, class Device, std::size_t NumSpaceDim>
-class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
+template <class Scalar, class MemorySpace, std::size_t NumSpaceDim>
+class LocalMesh<MemorySpace, NonUniformMesh<Scalar, NumSpaceDim>>
 {
   public:
     //! Mesh type.
@@ -304,12 +311,17 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
     //! Spatial dimension.
     static constexpr std::size_t num_space_dim = NumSpaceDim;
 
-    //! Device type.
-    using device_type = Device;
-    //! Kokkos memory space.
-    using memory_space = typename Device::memory_space;
-    //! Kokkos execution space.
-    using execution_space = typename Device::execution_space;
+    // FIXME: extracting the self type for backwards compatibility with previous
+    // template on DeviceType. Should simply be MemorySpace after next release.
+    //! Memory space.
+    using memory_space = typename MemorySpace::memory_space;
+    // FIXME: replace warning with memory space assert after next release.
+    static_assert( Cabana::Impl::warn( Kokkos::is_device<MemorySpace>() ) );
+
+    //! Default device type.
+    using device_type [[deprecated]] = typename memory_space::device_type;
+    //! Default execution space.
+    using execution_space = typename memory_space::execution_space;
 
     //! Constructor.
     LocalMesh(
@@ -411,7 +423,7 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
             const auto& global_edge = global_mesh.nonUniformEdge( d );
             int nedge = ghosted_nodes_local.extent( d );
             int nedge_global = global_edge.size();
-            _local_edges[d] = Kokkos::View<Scalar*, Device>(
+            _local_edges[d] = Kokkos::View<Scalar*, MemorySpace>(
                 Kokkos::ViewAllocateWithoutInitializing( "local_edges" ),
                 nedge );
 
@@ -758,7 +770,8 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
     Kokkos::Array<Scalar, num_space_dim> _own_high_corner;
     Kokkos::Array<Scalar, num_space_dim> _ghost_low_corner;
     Kokkos::Array<Scalar, num_space_dim> _ghost_high_corner;
-    Kokkos::Array<Kokkos::View<Scalar*, Device>, num_space_dim> _local_edges;
+    Kokkos::Array<Kokkos::View<Scalar*, MemorySpace>, num_space_dim>
+        _local_edges;
     Kokkos::Array<bool, num_space_dim> _periodic;
     Kokkos::Array<bool, num_space_dim> _boundary_lo;
     Kokkos::Array<bool, num_space_dim> _boundary_hi;
@@ -769,11 +782,11 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
   \brief Creation function for local mesh.
   \return Shared pointer to a LocalMesh.
 */
-template <class Device, class MeshType>
-LocalMesh<Device, MeshType>
+template <class MemorySpace, class MeshType>
+LocalMesh<MemorySpace, MeshType>
 createLocalMesh( const LocalGrid<MeshType>& local_grid )
 {
-    return LocalMesh<Device, MeshType>( local_grid );
+    return LocalMesh<MemorySpace, MeshType>( local_grid );
 }
 
 //---------------------------------------------------------------------------//

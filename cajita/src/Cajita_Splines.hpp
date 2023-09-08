@@ -791,10 +791,10 @@ setSplineData( SplinePhysicalDistance,
 
 //---------------------------------------------------------------------------//
 //! Evaluate spline data at a point in a uniform mesh.
-template <typename Scalar, int Order, std::size_t NumSpaceDim, class Device,
-          class EntityType, class DataTags>
+template <typename Scalar, int Order, std::size_t NumSpaceDim,
+          class MemorySpace, class EntityType, class DataTags>
 KOKKOS_INLINE_FUNCTION void evaluateSpline(
-    const LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>& local_mesh,
+    const LocalMesh<MemorySpace, UniformMesh<Scalar, NumSpaceDim>>& local_mesh,
     const Scalar p[NumSpaceDim],
     SplineData<Scalar, Order, NumSpaceDim, EntityType, DataTags>& data )
 {

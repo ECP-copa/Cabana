@@ -42,15 +42,13 @@ void sortingExample()
     */
     const int VectorLength = 4;
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
-    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 5;
-    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "my_aosoa",
-                                                              num_tuple );
+    Cabana::AoSoA<DataTypes, MemorySpace, VectorLength> aosoa( "my_aosoa",
+                                                               num_tuple );
 
     /*
       Fill the AoSoA with data. The integer member of the AoSoA will be

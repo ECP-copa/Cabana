@@ -431,7 +431,7 @@ void sparseGridTest3d()
     int num_step_rebalance = 100;
     int max_optimize_iteration = 10;
 
-    SparseDimPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
+    SparseDimPartitioner<TEST_MEMSPACE, cell_per_tile_dim> partitioner(
         MPI_COMM_WORLD, max_workload_coeff, workload_num, num_step_rebalance,
         global_num_cell, max_optimize_iteration );
 

@@ -19,6 +19,8 @@
 #include <Cajita_Array.hpp>
 #include <Cajita_Types.hpp>
 
+#include <Cabana_Utils.hpp>
+
 #include <Kokkos_Core.hpp>
 
 #include <heffte_fft3d.h>
@@ -75,7 +77,7 @@ struct is_matching_array : public std::false_type
     static_assert( std::is_same<ArrayMesh, Mesh>::value,
                    "Array mesh type mush match FFT mesh type." );
     static_assert( std::is_same<ArrayMemorySpace, MemorySpace>::value,
-                   "Array device type must match FFT device type." );
+                   "Array memory space must match FFT memory space." );
 };
 
 //! Matching Array static type checker.
@@ -153,10 +155,14 @@ class FastFourierTransform
     using mesh_type = MeshType;
     //! Scalar value type.
     using value_type = Scalar;
+
     // FIXME: extracting the self type for backwards compatibility with previous
     // template on DeviceType. Should simply be MemorySpace after next release.
     //! Kokkos memory space.
     using memory_space = typename MemorySpace::memory_space;
+    // FIXME: replace warning with memory space assert after next release.
+    static_assert( Cabana::Impl::warn( Kokkos::is_device<MemorySpace>() ) );
+
     //! Kokkos execution space.
     using execution_space = typename memory_space::execution_space;
     //! Kokkos execution space.
@@ -479,10 +485,14 @@ class HeffteFastFourierTransform
   public:
     //! Scalar value type.
     using value_type = Scalar;
+
     // FIXME: extracting the self type for backwards compatibility with previous
     // template on DeviceType. Should simply be MemorySpace after next release.
     //! Kokkos memory space.
     using memory_space = typename MemorySpace::memory_space;
+    // FIXME: replace warning with memory space assert after next release.
+    static_assert( Cabana::Impl::warn( Kokkos::is_device<MemorySpace>() ) );
+
     //! Kokkos execution space.
     using execution_space = ExecSpace;
     //! Kokkos execution space.
@@ -550,10 +560,10 @@ class HeffteFastFourierTransform
             throw std::logic_error( "Expected FFT allocation size smaller "
                                     "than local grid size" );
 
-        _fft_work = Kokkos::View<Scalar*, MemorySpace>(
+        _fft_work = Kokkos::View<Scalar*, memory_space>(
             Kokkos::ViewAllocateWithoutInitializing( "fft_work" ),
             2 * fftsize );
-        _workspace = Kokkos::View<Scalar* [2], MemorySpace>(
+        _workspace = Kokkos::View<Scalar* [2], memory_space>(
             Kokkos::ViewAllocateWithoutInitializing( "workspace" ),
             4 * fftsize );
     }
@@ -593,7 +603,7 @@ class HeffteFastFourierTransform
         auto own_space =
             x.layout()->localGrid()->indexSpace( Own(), EntityType(), Local() );
         auto local_view_space = appendDimension( own_space, 2 );
-        auto local_view = createView<Scalar, Kokkos::LayoutRight, MemorySpace>(
+        auto local_view = createView<Scalar, Kokkos::LayoutRight, memory_space>(
             local_view_space, _fft_work.data() );
 
         // TODO: pull this out to template function

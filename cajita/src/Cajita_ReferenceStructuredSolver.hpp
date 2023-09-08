@@ -40,22 +40,24 @@ namespace Cajita
 {
 //---------------------------------------------------------------------------//
 //! Reference preconditioned structured solver interface.
-template <class Scalar, class EntityType, class MeshType, class DeviceType>
+template <class Scalar, class EntityType, class MeshType, class MemorySpace>
 class ReferenceStructuredSolver
 {
   public:
     //! Entity type.
     using entity_type = EntityType;
-    //! Kokkos device type.
-    using device_type = DeviceType;
-    //! Kokkos memory space.
-    using memory_space = typename device_type::memory_space;
-    //! Kokkos execution space.
-    using execution_space = typename device_type::execution_space;
     //! Scalar value type.
     using value_type = Scalar;
+    // FIXME: extracting the self type for backwards compatibility with previous
+    // template on DeviceType. Should simply be MemorySpace after next release.
+    //! Memory space.
+    using memory_space = typename MemorySpace::memory_space;
+    //! Default device type.
+    using device_type [[deprecated]] = typename memory_space::device_type;
+    //! Default execution space.
+    using execution_space = typename memory_space::execution_space;
     //! Array type.
-    using Array_t = Array<Scalar, EntityType, MeshType, DeviceType>;
+    using Array_t = Array<Scalar, EntityType, MeshType, MemorySpace>;
     //! SubArray type.
     using subarray_type = typename Array_t::subarray_type;
     //! Spatial dimension.
@@ -138,24 +140,26 @@ class ReferenceStructuredSolver
 
 //---------------------------------------------------------------------------//
 //! Reference structured preconditioned block conjugate gradient implementation.
-template <class Scalar, class EntityType, class MeshType, class DeviceType>
+template <class Scalar, class EntityType, class MeshType, class MemorySpace>
 class ReferenceConjugateGradient
-    : public ReferenceStructuredSolver<Scalar, EntityType, MeshType, DeviceType>
+    : public ReferenceStructuredSolver<Scalar, EntityType, MeshType,
+                                       MemorySpace>
 {
   public:
     //! Base type.
     using base_type =
-        ReferenceStructuredSolver<Scalar, EntityType, MeshType, DeviceType>;
+        ReferenceStructuredSolver<Scalar, EntityType, MeshType, MemorySpace>;
+    //! Memory space.
+    using memory_space = typename base_type::memory_space;
+    //! Default device type.
+    using device_type [[deprecated]] = typename memory_space::device_type;
+    //! Default execution space.
+    using execution_space = typename base_type::execution_space;
+
     //! Entity type.
     using entity_type = typename base_type::entity_type;
-    //! Kokkos device type.
-    using device_type = typename base_type::device_type;
     //! Scalar value type.
     using value_type = typename base_type::value_type;
-    //! Kokkos execution space.
-    using execution_space = typename base_type::execution_space;
-    //! Kokkos memory space.
-    using memory_space = typename base_type::memory_space;
     //! Array type.
     using Array_t = typename base_type::Array_t;
     //! SubArray type.
@@ -192,7 +196,7 @@ class ReferenceConjugateGradient
         auto vector_layout =
             createArrayLayout( layout.localGrid(), 6, EntityType() );
         _vectors =
-            createArray<Scalar, DeviceType>( "cg_vectors", vector_layout );
+            createArray<Scalar, MemorySpace>( "cg_vectors", vector_layout );
         _A_halo_vectors = createSubarray( *_vectors, 0, 2 );
         _M_halo_vectors = createSubarray( *_vectors, 2, 4 );
     }
@@ -880,7 +884,7 @@ class ReferenceConjugateGradient
     void
     setStencil( const std::vector<std::array<int, num_space_dim>>& stencil,
                 const bool is_symmetric,
-                Kokkos::View<int* [num_space_dim], DeviceType>& device_stencil,
+                Kokkos::View<int* [num_space_dim], MemorySpace>& device_stencil,
                 std::shared_ptr<Halo<memory_space>>& halo,
                 std::shared_ptr<Array_t>& matrix,
                 std::shared_ptr<subarray_type>& halo_matrix )
@@ -894,7 +898,7 @@ class ReferenceConjugateGradient
         auto local_grid = _vectors->layout()->localGrid();
 
         // Copy stencil to the device.
-        device_stencil = Kokkos::View<int* [num_space_dim], DeviceType>(
+        device_stencil = Kokkos::View<int* [num_space_dim], MemorySpace>(
             Kokkos::ViewAllocateWithoutInitializing( "stencil" ),
             stencil.size() );
         auto stencil_mirror =
@@ -930,7 +934,7 @@ class ReferenceConjugateGradient
             createArrayLayout( local_grid, stencil.size(), EntityType() );
 
         // Allocate the matrix.
-        matrix = createArray<Scalar, DeviceType>( "matrix", matrix_layout );
+        matrix = createArray<Scalar, MemorySpace>( "matrix", matrix_layout );
 
         // Build the halo.
         HaloPattern<num_space_dim> pattern;
@@ -945,8 +949,8 @@ class ReferenceConjugateGradient
     int _num_iter;
     Scalar _residual_norm;
     int _diag_entry;
-    Kokkos::View<int* [num_space_dim], DeviceType> _A_stencil;
-    Kokkos::View<int* [num_space_dim], DeviceType> _M_stencil;
+    Kokkos::View<int* [num_space_dim], MemorySpace> _A_stencil;
+    Kokkos::View<int* [num_space_dim], MemorySpace> _M_stencil;
     std::shared_ptr<Halo<memory_space>> _A_halo;
     std::shared_ptr<Halo<memory_space>> _M_halo;
     std::shared_ptr<Array_t> _A;
@@ -964,14 +968,14 @@ class ReferenceConjugateGradient
   conjugate gradient.
   \return Shared pointer to a ReferenceConjugateGradient.
 */
-template <class Scalar, class DeviceType, class EntityType, class MeshType>
+template <class Scalar, class MemorySpace, class EntityType, class MeshType>
 std::shared_ptr<
-    ReferenceConjugateGradient<Scalar, EntityType, MeshType, DeviceType>>
+    ReferenceConjugateGradient<Scalar, EntityType, MeshType, MemorySpace>>
 createReferenceConjugateGradient(
     const ArrayLayout<EntityType, MeshType>& layout )
 {
     return std::make_shared<
-        ReferenceConjugateGradient<Scalar, EntityType, MeshType, DeviceType>>(
+        ReferenceConjugateGradient<Scalar, EntityType, MeshType, MemorySpace>>(
         layout );
 }
 

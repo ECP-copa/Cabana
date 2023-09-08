@@ -33,8 +33,8 @@ namespace Cabana
 /*!
   \brief A communication plan for scattering and gathering of ghosted data.
 
-  \tparam DeviceType Device type for which the data for this class will be
-  allocated and where parallel execution occurs.
+  \tparam MemorySpace Kokkos memory space in which data for this class will be
+  allocated.
 
   The halo allows for scatter and gather operations between locally-owned and
   ghosted data. All data in the Halo (e.g. export and import data) is from the
@@ -54,8 +54,8 @@ namespace Cabana
   ghost from is the unique owner of that data. Import is used in the context
   of the forward communication plan (the gather).
 */
-template <class DeviceType>
-class Halo : public CommunicationPlan<DeviceType>
+template <class MemorySpace>
+class Halo : public CommunicationPlan<MemorySpace>
 {
   public:
     /*!
@@ -103,7 +103,7 @@ class Halo : public CommunicationPlan<DeviceType>
           const IdViewType& element_export_ids,
           const RankViewType& element_export_ranks,
           const std::vector<int>& neighbor_ranks )
-        : CommunicationPlan<DeviceType>( comm )
+        : CommunicationPlan<MemorySpace>( comm )
         , _num_local( num_local )
     {
         if ( element_export_ids.size() != element_export_ranks.size() )
@@ -152,7 +152,7 @@ class Halo : public CommunicationPlan<DeviceType>
     Halo( MPI_Comm comm, const std::size_t num_local,
           const IdViewType& element_export_ids,
           const RankViewType& element_export_ranks )
-        : CommunicationPlan<DeviceType>( comm )
+        : CommunicationPlan<MemorySpace>( comm )
         , _num_local( num_local )
     {
         if ( element_export_ids.size() != element_export_ranks.size() )
@@ -190,8 +190,8 @@ struct is_halo_impl : public std::false_type
 {
 };
 
-template <typename DeviceType>
-struct is_halo_impl<Halo<DeviceType>> : public std::true_type
+template <typename MemorySpace>
+struct is_halo_impl<Halo<MemorySpace>> : public std::true_type
 {
 };
 //! \endcond
@@ -283,7 +283,8 @@ class Gather<HaloType, AoSoAType,
     /*!
       \brief Perform the gather operation.
     */
-    void apply() override
+    template <class ExecutionSpace>
+    void apply( ExecutionSpace )
     {
         Kokkos::Profiling::pushRegion( "Cabana::gather" );
 
@@ -299,8 +300,9 @@ class Gather<HaloType, AoSoAType,
         {
             send_buffer( i ) = aosoa.getTuple( steering( i ) );
         };
-        Kokkos::parallel_for( "Cabana::gather::gather_send_buffer",
-                              _send_policy, gather_send_buffer_func );
+        Kokkos::RangePolicy<ExecutionSpace> send_policy( 0, _send_size );
+        Kokkos::parallel_for( "Cabana::gather::gather_send_buffer", send_policy,
+                              gather_send_buffer_func );
         Kokkos::fence();
 
         // The halo has it's own communication space so choose any mpi tag.
@@ -353,8 +355,9 @@ class Gather<HaloType, AoSoAType,
             std::size_t ghost_idx = i + num_local;
             aosoa.setTuple( ghost_idx, recv_buffer( i ) );
         };
+        Kokkos::RangePolicy<ExecutionSpace> recv_policy( 0, _recv_size );
         Kokkos::parallel_for( "Cabana::gather::extract_recv_buffer",
-                              _recv_policy, extract_recv_buffer_func );
+                              recv_policy, extract_recv_buffer_func );
         Kokkos::fence();
 
         // Barrier before completing to ensure synchronization.
@@ -362,6 +365,8 @@ class Gather<HaloType, AoSoAType,
 
         Kokkos::Profiling::popRegion();
     }
+
+    void apply() override { apply( execution_space{} ); }
 
     /*!
       \brief Reserve new buffers as needed and update the halo and AoSoA data.
@@ -396,8 +401,8 @@ class Gather<HaloType, AoSoAType,
 
   private:
     plan_type _halo = base_type::_comm_plan;
-    using base_type::_recv_policy;
-    using base_type::_send_policy;
+    using base_type::_recv_size;
+    using base_type::_send_size;
 };
 
 /*!
@@ -459,7 +464,8 @@ class Gather<HaloType, SliceType,
     /*!
       \brief Perform the gather operation.
     */
-    void apply() override
+    template <class ExecutionSpace>
+    void apply( ExecutionSpace )
     {
         Kokkos::Profiling::pushRegion( "Cabana::gather" );
 
@@ -487,8 +493,9 @@ class Gather<HaloType, SliceType,
                 send_buffer( i, n ) =
                     slice_data[slice_offset + n * SliceType::vector_length];
         };
-        Kokkos::parallel_for( "Cabana::gather::gather_send_buffer",
-                              _send_policy, gather_send_buffer_func );
+        Kokkos::RangePolicy<ExecutionSpace> send_policy( 0, _send_size );
+        Kokkos::parallel_for( "Cabana::gather::gather_send_buffer", send_policy,
+                              gather_send_buffer_func );
         Kokkos::fence();
 
         // The halo has it's own communication space so choose any mpi tag.
@@ -548,8 +555,9 @@ class Gather<HaloType, SliceType,
                 slice_data[slice_offset + SliceType::vector_length * n] =
                     recv_buffer( i, n );
         };
+        Kokkos::RangePolicy<ExecutionSpace> recv_policy( 0, _recv_size );
         Kokkos::parallel_for( "Cabana::gather::extract_recv_buffer",
-                              _recv_policy, extract_recv_buffer_func );
+                              recv_policy, extract_recv_buffer_func );
         Kokkos::fence();
 
         // Barrier before completing to ensure synchronization.
@@ -557,6 +565,8 @@ class Gather<HaloType, SliceType,
 
         Kokkos::Profiling::popRegion();
     }
+
+    void apply() override { apply( execution_space{} ); }
 
     /*!
       \brief Reserve new buffers as needed and update the halo and slice data.
@@ -591,8 +601,8 @@ class Gather<HaloType, SliceType,
 
   private:
     plan_type _halo = base_type::_comm_plan;
-    using base_type::_recv_policy;
-    using base_type::_send_policy;
+    using base_type::_recv_size;
+    using base_type::_send_size;
 };
 
 //---------------------------------------------------------------------------//
@@ -704,7 +714,8 @@ class Scatter
     /*!
       \brief Perform the scatter operation.
     */
-    void apply() override
+    template <class ExecutionSpace>
+    void apply( ExecutionSpace )
     {
         Kokkos::Profiling::pushRegion( "Cabana::scatter" );
 
@@ -734,8 +745,9 @@ class Scatter
                 send_buffer( i, n ) =
                     slice_data( slice_offset + SliceType::vector_length * n );
         };
+        Kokkos::RangePolicy<ExecutionSpace> send_policy( 0, _send_size );
         Kokkos::parallel_for( "Cabana::scatter::extract_send_buffer",
-                              _send_policy, extract_send_buffer_func );
+                              send_policy, extract_send_buffer_func );
         Kokkos::fence();
 
         // The halo has it's own communication space so choose any mpi tag.
@@ -797,14 +809,17 @@ class Scatter
                     &slice_data( slice_offset + SliceType::vector_length * n ),
                     recv_buffer( i, n ) );
         };
+        Kokkos::RangePolicy<ExecutionSpace> recv_policy( 0, _recv_size );
         Kokkos::parallel_for( "Cabana::scatter::scatter_recv_buffer",
-                              _recv_policy, scatter_recv_buffer_func );
+                              recv_policy, scatter_recv_buffer_func );
         Kokkos::fence();
 
         // Barrier before completing to ensure synchronization.
         MPI_Barrier( _halo.comm() );
         Kokkos::Profiling::popRegion();
     }
+
+    void apply() override { apply( execution_space{} ); }
 
     /*!
       \brief Reserve new buffers as needed and update the halo and slice data.
@@ -840,8 +855,8 @@ class Scatter
 
   private:
     plan_type _halo = base_type::_comm_plan;
-    using base_type::_recv_policy;
-    using base_type::_send_policy;
+    using base_type::_recv_size;
+    using base_type::_send_size;
 };
 
 /*!

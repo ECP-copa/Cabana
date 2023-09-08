@@ -210,7 +210,7 @@ void arrayTest()
 
     // Create an array.
     std::string label( "test_array" );
-    auto array = createArray<double, TEST_DEVICE>( label, cell_layout );
+    auto array = createArray<double, TEST_MEMSPACE>( label, cell_layout );
 
     // Check the array.
     EXPECT_EQ( label, array->label() );
@@ -252,7 +252,7 @@ void arrayOpTest()
 
     // Create an array.
     std::string label( "test_array" );
-    auto array = createArray<double, TEST_DEVICE>( label, cell_layout );
+    auto array = createArray<double, TEST_MEMSPACE>( label, cell_layout );
 
     // Assign a value to the entire the array.
     ArrayOp::assign( *array, 2.0, Ghost() );
@@ -285,7 +285,7 @@ void arrayOpTest()
                     EXPECT_DOUBLE_EQ( host_view( i, j, k, l ), scales[l] );
 
     // Create another array and update.
-    auto array_2 = createArray<double, TEST_DEVICE>( label, cell_layout );
+    auto array_2 = createArray<double, TEST_MEMSPACE>( label, cell_layout );
     ArrayOp::assign( *array_2, 0.5, Ghost() );
     ArrayOp::update( *array, 3.0, *array_2, 2.0, Ghost() );
     Kokkos::deep_copy( host_view, array->view() );
@@ -440,7 +440,7 @@ void arrayBoundaryTest()
 
     // Create an array.
     std::string label( "test_array" );
-    auto array = createArray<double, TEST_DEVICE>( label, node_layout );
+    auto array = createArray<double, TEST_MEMSPACE>( label, node_layout );
 
     // Assign a value to the entire the array.
     // This test is simply to ensure the boundary index space is valid for the

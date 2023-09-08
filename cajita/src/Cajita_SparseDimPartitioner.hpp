@@ -18,6 +18,9 @@
 
 #include <Cajita_Partitioner.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
+
+#include <Cabana_Utils.hpp>
+
 #include <Kokkos_Core.hpp>
 
 #include <array>
@@ -30,11 +33,11 @@ namespace Cajita
 //---------------------------------------------------------------------------//
 /*!
   Sparse mesh block partitioner. (Current Version: Support 3D only)
-  \tparam Device Kokkos device type.
+  \tparam MemorySpace Kokkos memory space.
   \tparam CellPerTileDim Cells per tile per dimension.
   \tparam NumSpaceDim Dimemsion (The current version support 3D only)
 */
-template <typename Device, unsigned long long CellPerTileDim = 4,
+template <typename MemorySpace, unsigned long long CellPerTileDim = 4,
           std::size_t NumSpaceDim = 3>
 class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
 {
@@ -42,12 +45,17 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
     //! dimension
     static constexpr std::size_t num_space_dim = NumSpaceDim;
 
-    //! Kokkos device type.
-    using device_type = Device;
-    //! Kokkos memory space.
-    using memory_space = typename Device::memory_space;
-    //! Kokkos execution space.
-    using execution_space = typename Device::execution_space;
+    // FIXME: extracting the self type for backwards compatibility with previous
+    // template on DeviceType. Should simply be MemorySpace after next release.
+    //! Memory space.
+    using memory_space = typename MemorySpace::memory_space;
+    // FIXME: replace warning with memory space assert after next release.
+    static_assert( Cabana::Impl::warn( Kokkos::is_device<MemorySpace>() ) );
+
+    //! Default device type.
+    using device_type [[deprecated]] = typename memory_space::device_type;
+    //! Default execution space.
+    using execution_space = typename memory_space::execution_space;
 
     //! Workload device view.
     using workload_view = Kokkos::View<int***, memory_space>;

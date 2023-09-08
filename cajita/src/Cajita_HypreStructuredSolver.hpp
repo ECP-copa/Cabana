@@ -230,7 +230,7 @@ class HypreStructuredSolver
             "Array entity type mush match solver entity type" );
         static_assert(
             std::is_same<typename Array_t::memory_space, MemorySpace>::value,
-            "Array device type and solver device type are different." );
+            "Array memory space and solver memory space are different." );
 
         static_assert(
             std::is_same<typename Array_t::value_type, value_type>::value,
@@ -363,7 +363,7 @@ class HypreStructuredSolver
             "Array entity type mush match solver entity type" );
         static_assert(
             std::is_same<typename Array_t::memory_space, MemorySpace>::value,
-            "Array device type and solver device type are different." );
+            "Array memory space and solver memory space are different." );
 
         static_assert(
             std::is_same<typename Array_t::value_type, value_type>::value,

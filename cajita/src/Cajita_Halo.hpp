@@ -987,17 +987,16 @@ struct LayoutAdapter
   \param pattern The pattern to build the halo from.
   \param width Must be less than or equal to the width of the array
   halo. Defaults to the width of the array halo.
-  \note The scalar type and device type must be specified so the proper
+  \note The scalar type and memory space must be specified so the proper
   buffers may be allocated. This means a halo constructed via this method is
-  only compatible with arrays that have the same scalar and device type.
+  only compatible with arrays that have the same scalar and memory space.
 */
-template <class Scalar, class Device, class EntityType, class MeshType,
+template <class Scalar, class MemorySpace, class EntityType, class MeshType,
           class Pattern>
 [[deprecated]] auto createHalo( const ArrayLayout<EntityType, MeshType>& layout,
                                 const Pattern& pattern, const int width = -1 )
 {
-    LayoutAdapter<Scalar, typename Device::memory_space,
-                  ArrayLayout<EntityType, MeshType>>
+    LayoutAdapter<Scalar, MemorySpace, ArrayLayout<EntityType, MeshType>>
         adapter{ layout };
     return createHalo( pattern, width, adapter );
 }
@@ -1009,7 +1008,7 @@ template <class Scalar, class Device, class EntityType, class MeshType,
   \param pattern The pattern to build the halo from.
   \param width Must be less than or equal to the width of the array
   halo. Defaults to the width of the array halo.
-  \note The scalar type and device type are specified via the input arrays so
+  \note The scalar type and memory space are specified via the input arrays so
   the proper buffers may be allocated. This means a halo constructed via this
   method is only compatible with arrays that have the same scalar and device
   type as the input array.

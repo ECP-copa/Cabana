@@ -175,9 +175,10 @@ reorderView( TargetView& target, const SourceView& source,
   \param gather_array Gather the array before writing to make parallel
   consistent.
 */
-template <class Array_t>
-void writeTimeStep( const int time_step_index, const double time,
-                    const Array_t& array, const bool gather_array = true )
+template <class ExecutionSpace, class Array_t>
+void writeTimeStep( ExecutionSpace, const int time_step_index,
+                    const double time, const Array_t& array,
+                    const bool gather_array = true )
 {
     static_assert( isUniformMesh<typename Array_t::mesh_type>::value,
                    "ViSIT BOV writer can only be used with uniform mesh" );
@@ -185,8 +186,7 @@ void writeTimeStep( const int time_step_index, const double time,
     // Types
     using entity_type = typename Array_t::entity_type;
     using value_type = typename Array_t::value_type;
-    using device_type = typename Array_t::device_type;
-    using execution_space = typename device_type::execution_space;
+    using memory_space = typename Array_t::memory_space;
     const std::size_t num_space_dim = Array_t::num_space_dim;
 
     // Get the global grid.
@@ -244,7 +244,7 @@ void writeTimeStep( const int time_step_index, const double time,
             {
                 auto halo =
                     createHalo( NodeHaloPattern<num_space_dim>(), 0, array );
-                halo->gather( execution_space(), array );
+                halo->gather( ExecutionSpace(), array );
                 break;
             }
         }
@@ -272,9 +272,9 @@ void writeTimeStep( const int time_step_index, const double time,
     }
     reorder_space_size.back() = owned_extents.back();
     IndexSpace<num_space_dim + 1> reorder_space( reorder_space_size );
-    auto owned_view = createView<value_type, Kokkos::LayoutRight, device_type>(
+    auto owned_view = createView<value_type, Kokkos::LayoutRight, memory_space>(
         array.label(), reorder_space );
-    reorderView( owned_view, owned_subview, reorder_space, execution_space() );
+    reorderView( owned_view, owned_subview, reorder_space, ExecutionSpace() );
 
     // Compose a data file name prefix.
     std::stringstream file_name;
@@ -382,6 +382,26 @@ void writeTimeStep( const int time_step_index, const double time,
         // Close the header.
         header.close();
     }
+}
+
+/*!
+  \brief Write a grid array to a VisIt BOV.
+
+  This version writes a single output and does not use bricklets. We will do
+  this in the future to improve parallel visualization.
+
+  \param time_step_index The index of the time step we are writing.
+  \param time The current time
+  \param array The array to write
+  \param gather_array Gather the array before writing to make parallel
+  consistent.
+*/
+template <class Array_t>
+void writeTimeStep( const int time_step_index, const double time,
+                    const Array_t& array, const bool gather_array = true )
+{
+    using exec_space = typename Array_t::execution_space;
+    writeTimeStep( exec_space{}, time_step_index, time, array, gather_array );
 }
 
 //---------------------------------------------------------------------------//

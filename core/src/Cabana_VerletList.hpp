@@ -234,8 +234,8 @@ struct VerletListBuilder
     std::size_t pid_begin, pid_end;
 
     // Binning Data.
-    BinningData<device> bin_data_1d;
-    LinkedCellList<device> linked_cell_list;
+    BinningData<memory_space> bin_data_1d;
+    LinkedCellList<memory_space> linked_cell_list;
 
     // Cell stencil.
     LinkedCellStencil<PositionValueType> cell_stencil;
@@ -280,8 +280,8 @@ struct VerletListBuilder
         // treated as candidates for neighbors.
         double grid_size = cell_size_ratio * neighborhood_radius;
         PositionValueType grid_delta[3] = { grid_size, grid_size, grid_size };
-        linked_cell_list =
-            LinkedCellList<device>( position, grid_delta, grid_min, grid_max );
+        linked_cell_list = LinkedCellList<memory_space>( position, grid_delta,
+                                                         grid_min, grid_max );
         bin_data_1d = linked_cell_list.binningData();
 
         // We will use the square of the distance for neighbor determination.

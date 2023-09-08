@@ -17,6 +17,7 @@
 #define CABANA_COMMUNICATIONPLAN_HPP
 
 #include <CabanaCore_config.hpp>
+#include <Cabana_Utils.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_ScatterView.hpp>
@@ -88,22 +89,22 @@ struct CountSendsAndCreateSteeringAlgorithm
 
 //---------------------------------------------------------------------------//
 // Count sends and generate the steering vector. Atomic version.
-template <class ExportRankView>
-auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
+template <class ExecutionSpace, class ExportRankView>
+auto countSendsAndCreateSteering( ExecutionSpace,
+                                  const ExportRankView element_export_ranks,
                                   const int comm_size,
                                   CountSendsAndCreateSteeringAtomic )
-    -> std::pair<Kokkos::View<int*, typename ExportRankView::device_type>,
+    -> std::pair<Kokkos::View<int*, typename ExportRankView::memory_space>,
                  Kokkos::View<typename ExportRankView::size_type*,
-                              typename ExportRankView::device_type>>
+                              typename ExportRankView::memory_space>>
 {
-    using device_type = typename ExportRankView::device_type;
-    using execution_space = typename ExportRankView::execution_space;
+    using memory_space = typename ExportRankView::memory_space;
     using size_type = typename ExportRankView::size_type;
 
     // Create views.
-    Kokkos::View<int*, device_type> neighbor_counts( "neighbor_counts",
-                                                     comm_size );
-    Kokkos::View<size_type*, device_type> neighbor_ids(
+    Kokkos::View<int*, memory_space> neighbor_counts( "neighbor_counts",
+                                                      comm_size );
+    Kokkos::View<size_type*, memory_space> neighbor_ids(
         Kokkos::ViewAllocateWithoutInitializing( "neighbor_ids" ),
         element_export_ranks.size() );
 
@@ -114,7 +115,7 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
     if ( comm_size <= 64 )
     {
         constexpr int team_size = 256;
-        Kokkos::TeamPolicy<execution_space> team_policy(
+        Kokkos::TeamPolicy<ExecutionSpace> team_policy(
             ( element_export_ranks.size() + team_size - 1 ) / team_size,
             team_size );
         team_policy = team_policy.set_scratch_size(
@@ -124,7 +125,7 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
             "Cabana::CommunicationPlan::countSendsAndCreateSteeringShared",
             team_policy,
             KOKKOS_LAMBDA(
-                const typename Kokkos::TeamPolicy<execution_space>::member_type&
+                const typename Kokkos::TeamPolicy<ExecutionSpace>::member_type&
                     team ) {
                 // NOTE: `get_shmem` returns shared memory pointers *aligned to
                 // 8 bytes*, so if `comm_size` is odd we can get erroneously
@@ -205,8 +206,8 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
 
         Kokkos::parallel_for(
             "Cabana::CommunicationPlan::countSendsAndCreateSteering",
-            Kokkos::RangePolicy<execution_space>( 0,
-                                                  element_export_ranks.size() ),
+            Kokkos::RangePolicy<ExecutionSpace>( 0,
+                                                 element_export_ranks.size() ),
             KOKKOS_LAMBDA( const size_type i ) {
                 if ( element_export_ranks( i ) >= 0 )
                     neighbor_ids( i ) = Kokkos::atomic_fetch_add(
@@ -218,41 +219,42 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
     // Return the counts and ids.
     return std::make_pair( neighbor_counts, neighbor_ids );
 }
+
 //---------------------------------------------------------------------------//
 // Count sends and generate the steering vector. Duplicated version.
-template <class ExportRankView>
-auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
+template <class ExecutionSpace, class ExportRankView>
+auto countSendsAndCreateSteering( ExecutionSpace,
+                                  const ExportRankView element_export_ranks,
                                   const int comm_size,
                                   CountSendsAndCreateSteeringDuplicated )
-    -> std::pair<Kokkos::View<int*, typename ExportRankView::device_type>,
+    -> std::pair<Kokkos::View<int*, typename ExportRankView::memory_space>,
                  Kokkos::View<typename ExportRankView::size_type*,
-                              typename ExportRankView::device_type>>
+                              typename ExportRankView::memory_space>>
 {
-    using device_type = typename ExportRankView::device_type;
-    using execution_space = typename ExportRankView::execution_space;
+    using memory_space = typename ExportRankView::memory_space;
     using size_type = typename ExportRankView::size_type;
 
     // Create a unique thread token.
     Kokkos::Experimental::UniqueToken<
-        execution_space, Kokkos::Experimental::UniqueTokenScope::Global>
+        ExecutionSpace, Kokkos::Experimental::UniqueTokenScope::Global>
         unique_token;
 
     // Create views.
-    Kokkos::View<int*, device_type> neighbor_counts(
+    Kokkos::View<int*, memory_space> neighbor_counts(
         Kokkos::ViewAllocateWithoutInitializing( "neighbor_counts" ),
         comm_size );
-    Kokkos::View<size_type*, device_type> neighbor_ids(
+    Kokkos::View<size_type*, memory_space> neighbor_ids(
         Kokkos::ViewAllocateWithoutInitializing( "neighbor_ids" ),
         element_export_ranks.size() );
-    Kokkos::View<int**, device_type> neighbor_counts_dup(
+    Kokkos::View<int**, memory_space> neighbor_counts_dup(
         "neighbor_counts", unique_token.size(), comm_size );
-    Kokkos::View<size_type**, device_type> neighbor_ids_dup(
+    Kokkos::View<size_type**, memory_space> neighbor_ids_dup(
         "neighbor_ids", unique_token.size(), element_export_ranks.size() );
 
     // Compute initial duplicated sends and steering.
     Kokkos::parallel_for(
         "Cabana::CommunicationPlan::intialCount",
-        Kokkos::RangePolicy<execution_space>( 0, element_export_ranks.size() ),
+        Kokkos::RangePolicy<ExecutionSpace>( 0, element_export_ranks.size() ),
         KOKKOS_LAMBDA( const size_type i ) {
             if ( element_export_ranks( i ) >= 0 )
             {
@@ -278,7 +280,7 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
 
     // Team policy
     using team_policy =
-        Kokkos::TeamPolicy<execution_space, Kokkos::Schedule<Kokkos::Dynamic>>;
+        Kokkos::TeamPolicy<ExecutionSpace, Kokkos::Schedule<Kokkos::Dynamic>>;
     using index_type = typename team_policy::index_type;
 
     // Compute the send counts for each neighbor rank by reducing across
@@ -414,21 +416,28 @@ inline std::vector<int> getUniqueTopology( MPI_Comm comm,
   means is that neighbor 0 is the local rank and the data for that rank that
   is being exported will appear first in the steering vector.
 */
-template <class DeviceType>
+template <class MemorySpace>
 class CommunicationPlan
 {
   public:
-    //! Device type.
-    using device_type = DeviceType;
-
+    // FIXME: extracting the self type for backwards compatibility with previous
+    // template on DeviceType. Should simply be MemorySpace after next release.
     //! Memory space.
-    using memory_space = typename device_type::memory_space;
+    using memory_space = typename MemorySpace::memory_space;
+    // FIXME: replace warning with memory space assert after next release.
+    static_assert( Impl::warn( Kokkos::is_device<MemorySpace>() ) );
 
-    //! Execution space.
-    using execution_space = typename device_type::execution_space;
+    //! Default device type.
+    using device_type [[deprecated]] = typename memory_space::device_type;
 
+    //! Default execution space.
+    using execution_space = typename memory_space::execution_space;
+
+    // FIXME: extracting the self type for backwards compatibility with previous
+    // template on DeviceType. Should simply be memory_space::size_type after
+    // next release.
     //! Size type.
-    using size_type = typename memory_space::size_type;
+    using size_type = typename memory_space::memory_space::size_type;
 
     /*!
       \brief Constructor.
@@ -537,7 +546,7 @@ class CommunicationPlan
       (i.e. all elements going to neighbor with local id 0 first, then all
       elements going to neighbor with local id 1, etc.).
     */
-    Kokkos::View<std::size_t*, device_type> getExportSteering() const
+    Kokkos::View<std::size_t*, memory_space> getExportSteering() const
     {
         return _export_steering;
     }
@@ -553,6 +562,8 @@ class CommunicationPlan
       this case you already know the topology of the point-to-point
       communication but not how much data to send to and receive from the
       neighbors.
+
+      \param exec_space Kokkos execution space.
 
       \param element_export_ranks The destination rank in the target
       decomposition of each locally owned element in the source
@@ -581,11 +592,14 @@ class CommunicationPlan
       this rank, just use this rank as the export destination and the data
       will be efficiently migrated.
     */
-    template <class ViewType>
-    Kokkos::View<size_type*, device_type>
-    createFromExportsAndTopology( const ViewType& element_export_ranks,
+    template <class ExecutionSpace, class ViewType>
+    Kokkos::View<size_type*, memory_space>
+    createFromExportsAndTopology( ExecutionSpace exec_space,
+                                  const ViewType& element_export_ranks,
                                   const std::vector<int>& neighbor_ranks )
     {
+        static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
+
         // Store the number of export elements.
         _num_export_element = element_export_ranks.size();
 
@@ -612,9 +626,9 @@ class CommunicationPlan
         // Count the number of sends this rank will do to other ranks. Keep
         // track of which slot we get in our neighbor's send buffer.
         auto counts_and_ids = Impl::countSendsAndCreateSteering(
-            element_export_ranks, comm_size,
+            exec_space, element_export_ranks, comm_size,
             typename Impl::CountSendsAndCreateSteeringAlgorithm<
-                execution_space>::type() );
+                ExecutionSpace>::type() );
 
         // Copy the counts to the host.
         auto neighbor_counts_host = Kokkos::create_mirror_view_and_copy(
@@ -664,10 +678,57 @@ class CommunicationPlan
     }
 
     /*!
+      \brief Neighbor and export rank creator. Use this when you already know
+      which ranks neighbor each other (i.e. every rank already knows who they
+      will be sending and receiving from) as it will be more efficient. In
+      this case you already know the topology of the point-to-point
+      communication but not how much data to send to and receive from the
+      neighbors.
+
+      \param element_export_ranks The destination rank in the target
+      decomposition of each locally owned element in the source
+      decomposition. Each element will have one unique destination to which it
+      will be exported. This export rank may be any one of the listed neighbor
+      ranks which can include the calling rank. An export rank of -1 will
+      signal that this element is *not* to be exported and will be ignored in
+      the data migration. The input is expected to be a Kokkos view or Cabana
+      slice in the same memory space as the communication plan.
+
+      \param neighbor_ranks List of ranks this rank will send to and receive
+      from. This list can include the calling rank. This is effectively a
+      description of the topology of the point-to-point communication
+      plan. Only the unique elements in this list are used.
+
+      \return The location of each export element in the send buffer for its
+      given neighbor.
+
+      \note Calling this function completely updates the state of this object
+      and invalidates the previous state.
+
+      \note For elements that you do not wish to export, use an export rank of
+      -1 to signal that this element is *not* to be exported and will be
+      ignored in the data migration. In other words, this element will be
+      *completely* removed in the new decomposition. If the data is staying on
+      this rank, just use this rank as the export destination and the data
+      will be efficiently migrated.
+    */
+    template <class ViewType>
+    Kokkos::View<size_type*, memory_space>
+    createFromExportsAndTopology( const ViewType& element_export_ranks,
+                                  const std::vector<int>& neighbor_ranks )
+    {
+        // Use the default execution space.
+        return createFromExportsAndTopology(
+            execution_space{}, element_export_ranks, neighbor_ranks );
+    }
+
+    /*!
       \brief Export rank creator. Use this when you don't know who you will
       receiving from - only who you are sending to. This is less efficient
       than if we already knew who our neighbors were because we have to
       determine the topology of the point-to-point communication first.
+
+      \param exec_space Kokkos execution space.
 
       \param element_export_ranks The destination rank in the target
       decomposition of each locally owned element in the source
@@ -691,10 +752,13 @@ class CommunicationPlan
       this rank, just use this rank as the export destination and the data
       will be efficiently migrated.
     */
-    template <class ViewType>
-    Kokkos::View<size_type*, device_type>
-    createFromExportsOnly( const ViewType& element_export_ranks )
+    template <class ExecutionSpace, class ViewType>
+    Kokkos::View<size_type*, memory_space>
+    createFromExportsOnly( ExecutionSpace exec_space,
+                           const ViewType& element_export_ranks )
     {
+        static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
+
         // Store the number of export elements.
         _num_export_element = element_export_ranks.size();
 
@@ -713,9 +777,9 @@ class CommunicationPlan
         // Count the number of sends this rank will do to other ranks. Keep
         // track of which slot we get in our neighbor's send buffer.
         auto counts_and_ids = Impl::countSendsAndCreateSteering(
-            element_export_ranks, comm_size,
+            exec_space, element_export_ranks, comm_size,
             typename Impl::CountSendsAndCreateSteeringAlgorithm<
-                execution_space>::type() );
+                ExecutionSpace>::type() );
 
         // Copy the counts to the host.
         auto neighbor_counts_host = Kokkos::create_mirror_view_and_copy(
@@ -826,6 +890,42 @@ class CommunicationPlan
     }
 
     /*!
+      \brief Export rank creator. Use this when you don't know who you will
+      receiving from - only who you are sending to. This is less efficient
+      than if we already knew who our neighbors were because we have to
+      determine the topology of the point-to-point communication first.
+
+      \param element_export_ranks The destination rank in the target
+      decomposition of each locally owned element in the source
+      decomposition. Each element will have one unique destination to which it
+      will be exported. This export rank may any one of the listed neighbor
+      ranks which can include the calling rank. An export rank of -1 will
+      signal that this element is *not* to be exported and will be ignored in
+      the data migration. The input is expected to be a Kokkos view or Cabana
+      slice in the same memory space as the communication plan.
+
+      \return The location of each export element in the send buffer for its
+      given neighbor.
+
+      \note Calling this function completely updates the state of this object
+      and invalidates the previous state.
+
+      \note For elements that you do not wish to export, use an export rank of
+      -1 to signal that this element is *not* to be exported and will be
+      ignored in the data migration. In other words, this element will be
+      *completely* removed in the new decomposition. If the data is staying on
+      this rank, just use this rank as the export destination and the data
+      will be efficiently migrated.
+    */
+    template <class ViewType>
+    Kokkos::View<size_type*, memory_space>
+    createFromExportsOnly( const ViewType& element_export_ranks )
+    {
+        // Use the default execution space.
+        return createFromExportsOnly( execution_space{}, element_export_ranks );
+    }
+
+    /*!
       \brief Create the export steering vector.
 
       Creates an array describing which export element ids are moved to which
@@ -878,11 +978,15 @@ class CommunicationPlan
 
     //! \cond Impl
     // Create the export steering vector.
-    template <class PackViewType, class RankViewType, class IdViewType>
-    void createSteering( const bool use_iota, const PackViewType& neighbor_ids,
+    template <class ExecutionSpace, class PackViewType, class RankViewType,
+              class IdViewType>
+    void createSteering( ExecutionSpace, const bool use_iota,
+                         const PackViewType& neighbor_ids,
                          const RankViewType& element_export_ranks,
                          const IdViewType& element_export_ids )
     {
+        static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
+
         if ( !use_iota &&
              ( element_export_ids.size() != element_export_ranks.size() ) )
             throw std::runtime_error( "Export ids and ranks different sizes!" );
@@ -915,7 +1019,7 @@ class CommunicationPlan
         auto steer_vec = _export_steering;
         Kokkos::parallel_for(
             "Cabana::createSteering",
-            Kokkos::RangePolicy<execution_space>( 0, _num_export_element ),
+            Kokkos::RangePolicy<ExecutionSpace>( 0, _num_export_element ),
             KOKKOS_LAMBDA( const int i ) {
                 if ( element_export_ranks( i ) >= 0 )
                     steer_vec( rank_offsets( element_export_ranks( i ) ) +
@@ -923,6 +1027,16 @@ class CommunicationPlan
                         ( use_iota ) ? i : element_export_ids( i );
             } );
         Kokkos::fence();
+    }
+
+    template <class PackViewType, class RankViewType, class IdViewType>
+    void createSteering( const bool use_iota, const PackViewType& neighbor_ids,
+                         const RankViewType& element_export_ranks,
+                         const IdViewType& element_export_ids )
+    {
+        // Use the default execution space.
+        createSteering( execution_space{}, use_iota, neighbor_ids,
+                        element_export_ranks, element_export_ids );
     }
     //! \endcond
 
@@ -934,7 +1048,7 @@ class CommunicationPlan
     std::vector<std::size_t> _num_export;
     std::vector<std::size_t> _num_import;
     std::size_t _num_export_element;
-    Kokkos::View<std::size_t*, device_type> _export_steering;
+    Kokkos::View<std::size_t*, memory_space> _export_steering;
 };
 
 //---------------------------------------------------------------------------//
@@ -1141,6 +1255,10 @@ class CommunicationData
     //! Perform the communication (migrate, gather, scatter).
     virtual void apply() = 0;
 
+    //! Perform the communication (migrate, gather, scatter).
+    template <class ExecutionSpace>
+    void apply( ExecutionSpace );
+
     //! \cond Impl
     void reserveImpl( const CommPlanType& comm_plan,
                       const particle_data_type particles,
@@ -1175,29 +1293,15 @@ class CommunicationData
 
         _send_size = total_send;
         _recv_size = total_recv;
-
-        // Update policies with new sizes.
-        updateRangePolicy();
     }
     //! \endcond
 
   protected:
-    //! Update range policy based on new communication plan.
-    void updateRangePolicy()
-    {
-        _send_policy = policy_type( 0, _send_size );
-        _recv_policy = policy_type( 0, _recv_size );
-    }
-
     //! Get the total number of components in the slice.
     auto getSliceComponents() { return _comm_data._num_comp; };
 
     //! Communication plan.
     plan_type _comm_plan;
-    //! Send range policy.
-    policy_type _send_policy;
-    //! Receive range policy.
-    policy_type _recv_policy;
     //! Communication plan.
     comm_data_type _comm_data;
     //! Overallocation factor.

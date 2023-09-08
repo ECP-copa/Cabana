@@ -17,6 +17,7 @@
 #define CABANA_SLICE_HPP
 
 #include <Cabana_Types.hpp>
+#include <Cabana_Utils.hpp>
 #include <impl/Cabana_Index.hpp>
 #include <impl/Cabana_TypeTraits.hpp>
 
@@ -495,7 +496,7 @@ struct KokkosViewWrapper
   multidimensional member.
 */
 //---------------------------------------------------------------------------//
-template <typename DataType, typename DeviceType, typename MemoryAccessType,
+template <typename DataType, typename MemorySpace, typename MemoryAccessType,
           int VectorLength, int Stride>
 class Slice
 {
@@ -506,16 +507,19 @@ class Slice
 
     //! Slice type.
     using slice_type =
-        Slice<DataType, DeviceType, MemoryAccessType, VectorLength, Stride>;
+        Slice<DataType, MemorySpace, MemoryAccessType, VectorLength, Stride>;
 
-    //! Device type
-    using device_type = DeviceType;
-
+    // FIXME: extracting the self type for backwards compatibility with previous
+    // template on DeviceType. Should simply be MemorySpace after next release.
     //! Memory space.
-    using memory_space = typename device_type::memory_space;
+    using memory_space = typename MemorySpace::memory_space;
+    // FIXME: replace warning with memory space assert after next release.
+    static_assert( Impl::warn( Kokkos::is_device<MemorySpace>() ) );
 
-    //! Execution space.
-    using execution_space = typename device_type::execution_space;
+    //! Default device type.
+    using device_type [[deprecated]] = typename memory_space::device_type;
+    //! Default execution space.
+    using execution_space = typename memory_space::execution_space;
 
     static_assert( is_memory_access_tag<MemoryAccessType>::value,
                    "Slice memory access type must be a Cabana access type" );
@@ -528,7 +532,7 @@ class Slice
     //! SoA stride.
     static constexpr int soa_stride = Stride;
 
-    //! Size type.
+    //! Memory space size type.
     using size_type = typename memory_space::size_type;
 
     //! Index type.
@@ -547,7 +551,7 @@ class Slice
     //! Kokkos view type.
     using kokkos_view =
         Kokkos::View<typename view_wrapper::data_type,
-                     typename view_wrapper::cabana_layout, DeviceType,
+                     typename view_wrapper::cabana_layout, MemorySpace,
                      typename MemoryAccessType::kokkos_memory_traits>;
 
     //! View reference type alias.
@@ -561,20 +565,20 @@ class Slice
 
     //! Default memory access slice type.
     using default_access_slice =
-        Slice<DataType, DeviceType, DefaultAccessMemory, VectorLength, Stride>;
+        Slice<DataType, MemorySpace, DefaultAccessMemory, VectorLength, Stride>;
     //! Atomic memory access slice type.
     using atomic_access_slice =
-        Slice<DataType, DeviceType, AtomicAccessMemory, VectorLength, Stride>;
+        Slice<DataType, MemorySpace, AtomicAccessMemory, VectorLength, Stride>;
     //! Random memory access slice type.
     using random_access_slice =
-        Slice<DataType, DeviceType, RandomAccessMemory, VectorLength, Stride>;
+        Slice<DataType, MemorySpace, RandomAccessMemory, VectorLength, Stride>;
 
     // Declare slices of different memory access types to be friends.
-    friend class Slice<DataType, DeviceType, DefaultAccessMemory, VectorLength,
+    friend class Slice<DataType, MemorySpace, DefaultAccessMemory, VectorLength,
                        Stride>;
-    friend class Slice<DataType, DeviceType, AtomicAccessMemory, VectorLength,
+    friend class Slice<DataType, MemorySpace, AtomicAccessMemory, VectorLength,
                        Stride>;
-    friend class Slice<DataType, DeviceType, RandomAccessMemory, VectorLength,
+    friend class Slice<DataType, MemorySpace, RandomAccessMemory, VectorLength,
                        Stride>;
 
     // Equivalent Kokkos view rank. This rank assumes that the struct and
@@ -619,7 +623,7 @@ class Slice
       space.
     */
     template <class MAT>
-    Slice( const Slice<DataType, DeviceType, MAT, VectorLength, Stride>& rhs )
+    Slice( const Slice<DataType, MemorySpace, MAT, VectorLength, Stride>& rhs )
         : _view( rhs._view )
         , _size( rhs._size )
     {
@@ -637,7 +641,7 @@ class Slice
      */
     template <class MAT>
     Slice& operator=(
-        const Slice<DataType, DeviceType, MAT, VectorLength, Stride>& rhs )
+        const Slice<DataType, MemorySpace, MAT, VectorLength, Stride>& rhs )
     {
         _view = rhs._view;
         _size = rhs._size;
@@ -842,10 +846,10 @@ struct is_slice_impl : public std::false_type
 
 // True only if the type is a member slice *AND* the member slice is templated
 // on an AoSoA type.
-template <typename DataType, typename DeviceType, typename MemoryAccessType,
+template <typename DataType, typename MemorySpace, typename MemoryAccessType,
           int VectorLength, int Stride>
 struct is_slice_impl<
-    Slice<DataType, DeviceType, MemoryAccessType, VectorLength, Stride>>
+    Slice<DataType, MemorySpace, MemoryAccessType, VectorLength, Stride>>
     : public std::true_type
 {
 };

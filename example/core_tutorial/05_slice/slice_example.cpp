@@ -65,8 +65,6 @@ void sliceExample()
       `Kokkos::HostSpace`.
     */
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
-    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA. We define how many tuples the aosoa will
@@ -75,8 +73,8 @@ void sliceExample()
        full (although its memory will still be allocated).
     */
     int num_tuple = 5;
-    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "my_aosoa",
-                                                              num_tuple );
+    Cabana::AoSoA<DataTypes, MemorySpace, VectorLength> aosoa( "my_aosoa",
+                                                               num_tuple );
 
     /*
       Create a slice over each tuple member in the AoSoA. An integer template

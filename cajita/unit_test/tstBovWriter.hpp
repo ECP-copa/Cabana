@@ -68,7 +68,7 @@ void writeTest3d()
         // Create a scalar cell field and fill it with data.
         auto cell_layout = createArrayLayout( global_grid, 0, 1, Cell() );
         auto cell_field =
-            createArray<double, TEST_DEVICE>( "cell_field_3d", cell_layout );
+            createArray<double, TEST_MEMSPACE>( "cell_field_3d", cell_layout );
         auto cell_data = cell_field->view();
 
         // FIXME_SYCL (remove ifdef when newest Kokkos is required)
@@ -94,7 +94,7 @@ void writeTest3d()
         // Create a vector node field and fill it with data.
         auto node_layout = createArrayLayout( global_grid, 0, 3, Node() );
         auto node_field =
-            createArray<double, TEST_DEVICE>( "node_field_3d", node_layout );
+            createArray<double, TEST_MEMSPACE>( "node_field_3d", node_layout );
         auto node_data = node_field->view();
         Kokkos::parallel_for(
             "fill_node_field",
@@ -233,7 +233,7 @@ void writeTest2d()
         // Create a scalar cell field and fill it with data.
         auto cell_layout = createArrayLayout( global_grid, 0, 1, Cell() );
         auto cell_field =
-            createArray<double, TEST_DEVICE>( "cell_field_2d", cell_layout );
+            createArray<double, TEST_MEMSPACE>( "cell_field_2d", cell_layout );
         auto cell_data = cell_field->view();
 
         // FIXME_SYCL (remove ifdef when newest Kokkos is required)
@@ -256,7 +256,7 @@ void writeTest2d()
         // Create a vector node field and fill it with data.
         auto node_layout = createArrayLayout( global_grid, 0, 2, Node() );
         auto node_field =
-            createArray<double, TEST_DEVICE>( "node_field_2d", node_layout );
+            createArray<double, TEST_MEMSPACE>( "node_field_2d", node_layout );
         auto node_data = node_field->view();
         Kokkos::parallel_for(
             "fill_node_field",

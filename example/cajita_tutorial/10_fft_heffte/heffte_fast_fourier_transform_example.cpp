@@ -42,8 +42,6 @@ void fastFourierTransformHeffteExample()
        host execution space.
     */
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
-    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     double cell_size = 0.5;
     std::array<bool, 3> is_dim_periodic = { true, true, true };
@@ -73,7 +71,7 @@ void fastFourierTransformHeffteExample()
     */
     auto vector_layout =
         Cajita::createArrayLayout( local_grid, 2, Cajita::Cell() );
-    auto lhs = Cajita::createArray<double, DeviceType>( "lhs", vector_layout );
+    auto lhs = Cajita::createArray<double, MemorySpace>( "lhs", vector_layout );
     auto lhs_view = lhs->view();
     const uint64_t seed =
         global_grid->blockId() + ( 19383747 % ( global_grid->blockId() + 1 ) );
@@ -136,7 +134,7 @@ void fastFourierTransformHeffteExample()
        (Cajita::Experimental::FFTBackendMKL in this case) to the constructor.
     */
     auto fft = Cajita::Experimental::createHeffteFastFourierTransform<
-        double, DeviceType>( *vector_layout, params );
+        double, MemorySpace>( *vector_layout, params );
 
     /*
       Now forward or reverse transforms can be performed via

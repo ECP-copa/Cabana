@@ -60,7 +60,7 @@ void testConversion3d( const std::array<bool, 3>& is_dim_periodic )
     // Create an array for global node indices.
     auto array_layout = createArrayLayout( local_grid, 3, EntityType() );
     auto global_index_array =
-        createArray<int, TEST_DEVICE>( "global_indices", array_layout );
+        createArray<int, TEST_MEMSPACE>( "global_indices", array_layout );
     auto index_view = global_index_array->view();
 
     // Fill the owned array with global indices.
@@ -91,7 +91,7 @@ void testConversion3d( const std::array<bool, 3>& is_dim_periodic )
     // Do a loop over ghosted local indices and fill with the index
     // conversion.
     auto global_l2g_array =
-        createArray<int, TEST_DEVICE>( "global_indices", array_layout );
+        createArray<int, TEST_MEMSPACE>( "global_indices", array_layout );
     auto l2g_view = global_l2g_array->view();
     auto ghost_local_space =
         local_grid->indexSpace( Ghost(), EntityType(), Local() );
@@ -159,7 +159,7 @@ void testConversion2d( const std::array<bool, 2>& is_dim_periodic )
     // Create an array for global node indices.
     auto array_layout = createArrayLayout( local_grid, 2, EntityType() );
     auto global_index_array =
-        createArray<int, TEST_DEVICE>( "global_indices", array_layout );
+        createArray<int, TEST_MEMSPACE>( "global_indices", array_layout );
     auto index_view = global_index_array->view();
 
     // Fill the owned array with global indices.
@@ -187,7 +187,7 @@ void testConversion2d( const std::array<bool, 2>& is_dim_periodic )
     // Do a loop over ghosted local indices and fill with the index
     // conversion.
     auto global_l2g_array =
-        createArray<int, TEST_DEVICE>( "global_indices", array_layout );
+        createArray<int, TEST_MEMSPACE>( "global_indices", array_layout );
     auto l2g_view = global_l2g_array->view();
     auto ghost_local_space =
         local_grid->indexSpace( Ghost(), EntityType(), Local() );
