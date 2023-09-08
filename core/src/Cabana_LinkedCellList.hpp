@@ -57,9 +57,9 @@ class LinkedCellList
     /*!
       \brief Slice constructor
 
-      \tparam SliceType Slice type for positions.
+      \tparam PositionType Type for positions.
 
-      \param positions Slice of positions.
+      \param positions Particle positions.
 
       \param grid_delta Grid sizes in each cardinal direction.
 
@@ -67,18 +67,20 @@ class LinkedCellList
 
       \param grid_max Grid maximum value in each direction.
     */
-    template <class SliceType>
+    template <class PositionType>
     LinkedCellList(
-        SliceType positions, const typename SliceType::value_type grid_delta[3],
-        const typename SliceType::value_type grid_min[3],
-        const typename SliceType::value_type grid_max[3],
-        typename std::enable_if<( is_slice<SliceType>::value ), int>::type* =
-            0 )
+        PositionType positions,
+        const typename PositionType::value_type grid_delta[3],
+        const typename PositionType::value_type grid_min[3],
+        const typename PositionType::value_type grid_max[3],
+        typename std::enable_if<( is_slice<PositionType>::value ||
+                                  Kokkos::is_view<PositionType>::value ),
+                                int>::type* = 0 )
         : _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
                  grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
                  grid_delta[2] )
     {
-        std::size_t np = positions.size();
+        std::size_t np = size( positions );
         allocate( totalBins(), np );
         build( positions, 0, np );
     }
@@ -86,9 +88,9 @@ class LinkedCellList
     /*!
       \brief Slice range constructor
 
-      \tparam SliceType Slice type for positions.
+      \tparam PositionType Type for positions.
 
-      \param positions Slice of positions.
+      \param positions Particle positions.
 
       \param begin The beginning index of the AoSoA range to sort.
 
@@ -100,14 +102,15 @@ class LinkedCellList
 
       \param grid_max Grid maximum value in each direction.
     */
-    template <class SliceType>
+    template <class PositionType>
     LinkedCellList(
-        SliceType positions, const std::size_t begin, const std::size_t end,
-        const typename SliceType::value_type grid_delta[3],
-        const typename SliceType::value_type grid_min[3],
-        const typename SliceType::value_type grid_max[3],
-        typename std::enable_if<( is_slice<SliceType>::value ), int>::type* =
-            0 )
+        PositionType positions, const std::size_t begin, const std::size_t end,
+        const typename PositionType::value_type grid_delta[3],
+        const typename PositionType::value_type grid_min[3],
+        const typename PositionType::value_type grid_max[3],
+        typename std::enable_if<( is_slice<PositionType>::value ||
+                                  Kokkos::is_view<PositionType>::value ),
+                                int>::type* = 0 )
         : _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
                  grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
                  grid_delta[2] )
@@ -222,22 +225,22 @@ class LinkedCellList
     /*!
       \brief Build the linked cell list with a subset of particles.
 
-      \tparam SliceType Slice type for positions.
+      \tparam PositionType Type for positions.
 
-      \param positions Slice of positions.
+      \param positions Particle positions.
 
-      \param begin The beginning index of the slice range to sort.
+      \param begin The beginning index of the positions range to sort.
 
-      \param end The end index of the slice range to sort.
+      \param end The end index of the positions range to sort.
     */
-    template <class SliceType>
-    void build( SliceType positions, const std::size_t begin,
+    template <class PositionType>
+    void build( PositionType positions, const std::size_t begin,
                 const std::size_t end )
     {
         Kokkos::Profiling::pushRegion( "Cabana::LinkedCellList::build" );
 
         assert( end >= begin );
-        assert( end <= positions.size() );
+        assert( end <= size( positions ) );
 
         // Resize the binning data. Note that the permutation vector spans
         // only the length of begin-end;
@@ -316,14 +319,14 @@ class LinkedCellList
     /*!
       \brief Build the linked cell list with all particles.
 
-      \tparam SliceType Slice type for positions.
+      \tparam PositionType Type for positions.
 
-      \param positions Slice of positions.
+      \param positions Particle positions.
     */
-    template <class SliceType>
-    void build( SliceType positions )
+    template <class PositionType>
+    void build( PositionType positions )
     {
-        build( positions, 0, positions.size() );
+        build( positions, 0, size( positions ) );
     }
 
   private:
@@ -371,46 +374,26 @@ struct is_linked_cell_list
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Given a linked cell list permute an AoSoA.
+  \brief Given a linked cell list permute positions.
 
   \tparam LinkedCellListType The linked cell list type.
 
-  \tparam AoSoA_t The AoSoA type.
+  \tparam PositionType Positions type (AoSoA or Slice or Kokkos::View).
 
-  \param linked_cell_list The linked cell list to permute the AoSoA with.
+  \param linked_cell_list The linked cell list to permute the positions with.
 
-  \param aosoa The AoSoA to permute.
+  \param positions Positions to permute.
  */
-template <class LinkedCellListType, class AoSoA_t>
+template <class LinkedCellListType, class PositionType>
 void permute(
-    const LinkedCellListType& linked_cell_list, AoSoA_t& aosoa,
+    const LinkedCellListType& linked_cell_list, PositionType& positions,
     typename std::enable_if<( is_linked_cell_list<LinkedCellListType>::value &&
-                              is_aosoa<AoSoA_t>::value ),
+                              ( is_aosoa<PositionType>::value ||
+                                is_slice<PositionType>::value ||
+                                Kokkos::is_view<PositionType>::value ) ),
                             int>::type* = 0 )
 {
-    permute( linked_cell_list.binningData(), aosoa );
-}
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Given a linked cell list permute a slice.
-
-  \tparam LinkedCellListType The linked cell list type.
-
-  \tparam SliceType The slice type.
-
-  \param linked_cell_list The linked cell list to permute the slice with.
-
-  \param slice The slice to permute.
- */
-template <class LinkedCellListType, class SliceType>
-void permute(
-    const LinkedCellListType& linked_cell_list, SliceType& slice,
-    typename std::enable_if<( is_linked_cell_list<LinkedCellListType>::value &&
-                              is_slice<SliceType>::value ),
-                            int>::type* = 0 )
-{
-    permute( linked_cell_list.binningData(), slice );
+    permute( linked_cell_list.binningData(), positions );
 }
 
 //---------------------------------------------------------------------------//
