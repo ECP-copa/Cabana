@@ -309,11 +309,11 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh.html">LocalMesh</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html">LocalMesh&lt; Device, NonUniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> mesh partial specialization for non-uniform mesh.  <a href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01MemorySpace_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html">LocalMesh&lt; MemorySpace, NonUniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> mesh partial specialization for non-uniform mesh.  <a href="classCajita_1_1LocalMesh_3_01MemorySpace_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html">LocalMesh&lt; Device, UniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Local.html" title="Local index tag.">Local</a> mesh partial specialization for uniform mesh.  <a href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01MemorySpace_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html">LocalMesh&lt; MemorySpace, UniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Local.html" title="Local index tag.">Local</a> mesh partial specialization for uniform mesh.  <a href="classCajita_1_1LocalMesh_3_01MemorySpace_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ManualBlockPartitioner.html">ManualBlockPartitioner</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Manual block partitioner.  <a href="classCajita_1_1ManualBlockPartitioner.html#details">More...</a><br /></td></tr>
@@ -503,10 +503,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a4a66aaed41884fd04d9d7b1ab464e5cd"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, Params... &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a4a66aaed41884fd04d9d7b1ab464e5cd">createArray</a> (const std::string &amp;label, const std::shared_ptr&lt; <a class="el" href="classCajita_1_1ArrayLayout.html">ArrayLayout</a>&lt; EntityType, MeshType &gt; &gt; &amp;layout)</td></tr>
 <tr class="memdesc:a4a66aaed41884fd04d9d7b1ab464e5cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array with the given array layout. Views are constructed over the ghosted index space of the layout.  <br /></td></tr>
 <tr class="separator:a4a66aaed41884fd04d9d7b1ab464e5cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a280df70828ebfcaec7b8b5f79cfec5a4"><td class="memTemplParams" colspan="2">template&lt;class Scalar , class EntityType , class MeshType , class... Params&gt; </td></tr>
-<tr class="memitem:a280df70828ebfcaec7b8b5f79cfec5a4"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, typename <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, Params... &gt;::subview_layout, typename <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, Params... &gt;::device_type, typename <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, Params... &gt;::subview_memory_traits &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a280df70828ebfcaec7b8b5f79cfec5a4">createSubarray</a> (const <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, Params... &gt; &amp;array, const int dof_min, const int dof_max)</td></tr>
-<tr class="memdesc:a280df70828ebfcaec7b8b5f79cfec5a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a subarray of the given array over the given range of degrees of freedom.  <br /></td></tr>
-<tr class="separator:a280df70828ebfcaec7b8b5f79cfec5a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a966e2b4b433fdf383c0809965cdaaac9"><td class="memTemplParams" colspan="2">template&lt;class Scalar , class EntityType , class MeshType , class... Params&gt; </td></tr>
+<tr class="memitem:a966e2b4b433fdf383c0809965cdaaac9"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, typename <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, Params... &gt;::subview_layout, typename <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, Params... &gt;::memory_space, typename <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, Params... &gt;::subview_memory_traits &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a966e2b4b433fdf383c0809965cdaaac9">createSubarray</a> (const <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, Params... &gt; &amp;array, const int dof_min, const int dof_max)</td></tr>
+<tr class="memdesc:a966e2b4b433fdf383c0809965cdaaac9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a subarray of the given array over the given range of degrees of freedom.  <br /></td></tr>
+<tr class="separator:a966e2b4b433fdf383c0809965cdaaac9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4e950c1c2bb6e812a513515c342940e"><td class="memTemplParams" colspan="2">template&lt;class MeshType &gt; </td></tr>
 <tr class="memitem:aa4e950c1c2bb6e812a513515c342940e"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1GlobalGrid.html">GlobalGrid</a>&lt; MeshType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#aa4e950c1c2bb6e812a513515c342940e">createGlobalGrid</a> (MPI_Comm comm, const std::shared_ptr&lt; <a class="el" href="classCajita_1_1GlobalMesh.html">GlobalMesh</a>&lt; MeshType &gt; &gt; &amp;global_mesh, const std::array&lt; bool, MeshType::num_space_dim &gt; &amp;periodic, const <a class="el" href="classCajita_1_1BlockPartitioner.html">BlockPartitioner</a>&lt; MeshType::num_space_dim &gt; &amp;partitioner)</td></tr>
 <tr class="memdesc:aa4e950c1c2bb6e812a513515c342940e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a global grid.  <br /></td></tr>
@@ -551,7 +551,7 @@ Functions</h2></td></tr>
 <tr class="memitem:a047ee0472b03e9ef8798fc34f110c28d"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a047ee0472b03e9ef8798fc34f110c28d">createHalo</a> (const Pattern &amp;pattern, const int width, const ArrayTypes &amp;... arrays)</td></tr>
 <tr class="memdesc:a047ee0472b03e9ef8798fc34f110c28d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1Halo.html">Halo</a> creation function.  <br /></td></tr>
 <tr class="separator:a047ee0472b03e9ef8798fc34f110c28d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb8e3f33f12e80ce359f1d4840ee641c"><td class="memTemplParams" colspan="2">template&lt;class Scalar , class Device , class EntityType , class MeshType , class Pattern &gt; </td></tr>
+<tr class="memitem:abb8e3f33f12e80ce359f1d4840ee641c"><td class="memTemplParams" colspan="2">template&lt;class Scalar , class MemorySpace , class EntityType , class MeshType , class Pattern &gt; </td></tr>
 <tr class="memitem:abb8e3f33f12e80ce359f1d4840ee641c"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#abb8e3f33f12e80ce359f1d4840ee641c">createHalo</a> (const <a class="el" href="classCajita_1_1ArrayLayout.html">ArrayLayout</a>&lt; EntityType, MeshType &gt; &amp;layout, const Pattern &amp;pattern, const int width=-1)</td></tr>
 <tr class="memdesc:abb8e3f33f12e80ce359f1d4840ee641c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a halo with a layout.  <br /></td></tr>
 <tr class="separator:abb8e3f33f12e80ce359f1d4840ee641c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -680,10 +680,14 @@ template&lt;class Scalar , class MemorySpace , class ArrayLayout_t &gt; </td></t
 <tr class="memitem:ae72bb9627157c6ffd385b4ae8b831d20"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; N+1 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#ae72bb9627157c6ffd385b4ae8b831d20">appendDimension</a> (const <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; N &gt; &amp;index_space, const long min, const long max)</td></tr>
 <tr class="memdesc:ae72bb9627157c6ffd385b4ae8b831d20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given an N-dimensional index space append an additional dimension with the given range.  <br /></td></tr>
 <tr class="separator:ae72bb9627157c6ffd385b4ae8b831d20"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46994b4aad6692cf5cdd9fff08c578d0"><td class="memTemplParams" colspan="2">template&lt;class PointEvalFunctor , class PointCoordinates , class ArrayScalar , class MeshScalar , class EntityType , int SplineOrder, std::size_t NumSpaceDim, class DeviceType , class... ArrayParams&gt; </td></tr>
-<tr class="memitem:a46994b4aad6692cf5cdd9fff08c578d0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a46994b4aad6692cf5cdd9fff08c578d0">g2p</a> (const <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; ArrayScalar, EntityType, <a class="el" href="structCajita_1_1UniformMesh.html">UniformMesh</a>&lt; MeshScalar, NumSpaceDim &gt;, ArrayParams... &gt; &amp;array, const <a class="el" href="classCajita_1_1Halo.html">Halo</a>&lt; DeviceType &gt; &amp;halo, const PointCoordinates &amp;points, const std::size_t num_point, <a class="el" href="structCajita_1_1Spline.html">Spline</a>&lt; SplineOrder &gt;, const PointEvalFunctor &amp;functor)</td></tr>
-<tr class="memdesc:a46994b4aad6692cf5cdd9fff08c578d0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> Grid-to-Point interpolation.  <br /></td></tr>
-<tr class="separator:a46994b4aad6692cf5cdd9fff08c578d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9d19f2ef5451251a976755c2d564bd9"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class PointEvalFunctor , class PointCoordinates , class ArrayScalar , class MeshScalar , class EntityType , int SplineOrder, std::size_t NumSpaceDim, class MemorySpace , class... ArrayParams&gt; </td></tr>
+<tr class="memitem:ad9d19f2ef5451251a976755c2d564bd9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#ad9d19f2ef5451251a976755c2d564bd9">g2p</a> (ExecutionSpace, const <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; ArrayScalar, EntityType, <a class="el" href="structCajita_1_1UniformMesh.html">UniformMesh</a>&lt; MeshScalar, NumSpaceDim &gt;, ArrayParams... &gt; &amp;array, const <a class="el" href="classCajita_1_1Halo.html">Halo</a>&lt; MemorySpace &gt; &amp;halo, const PointCoordinates &amp;points, const std::size_t num_point, <a class="el" href="structCajita_1_1Spline.html">Spline</a>&lt; SplineOrder &gt;, const PointEvalFunctor &amp;functor)</td></tr>
+<tr class="memdesc:ad9d19f2ef5451251a976755c2d564bd9"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> Grid-to-Point interpolation.  <br /></td></tr>
+<tr class="separator:ad9d19f2ef5451251a976755c2d564bd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29734b06e0d3e134136763ccfe527119"><td class="memTemplParams" colspan="2">template&lt;class PointEvalFunctor , class PointCoordinates , class ArrayScalar , class MeshScalar , class EntityType , int SplineOrder, std::size_t NumSpaceDim, class MemorySpace , class... ArrayParams&gt; </td></tr>
+<tr class="memitem:a29734b06e0d3e134136763ccfe527119"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a29734b06e0d3e134136763ccfe527119">g2p</a> (const <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; ArrayScalar, EntityType, <a class="el" href="structCajita_1_1UniformMesh.html">UniformMesh</a>&lt; MeshScalar, NumSpaceDim &gt;, ArrayParams... &gt; &amp;array, const <a class="el" href="classCajita_1_1Halo.html">Halo</a>&lt; MemorySpace &gt; &amp;halo, const PointCoordinates &amp;points, const std::size_t num_point, <a class="el" href="structCajita_1_1Spline.html">Spline</a>&lt; SplineOrder &gt;, const PointEvalFunctor &amp;functor)</td></tr>
+<tr class="memdesc:a29734b06e0d3e134136763ccfe527119"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> Grid-to-Point interpolation.  <br /></td></tr>
+<tr class="separator:a29734b06e0d3e134136763ccfe527119"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af216844047716b9ed30e193350c0ac87"><td class="memTemplParams" colspan="2">template&lt;class ViewType &gt; </td></tr>
 <tr class="memitem:af216844047716b9ed30e193350c0ac87"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structCajita_1_1ScalarValueG2P.html">ScalarValueG2P</a>&lt; ViewType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#af216844047716b9ed30e193350c0ac87">createScalarValueG2P</a> (const ViewType &amp;x, const typename ViewType::value_type &amp;multiplier)</td></tr>
 <tr class="memdesc:af216844047716b9ed30e193350c0ac87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for grid-to-point with scalar value.  <br /></td></tr>
@@ -704,10 +708,14 @@ template&lt;class Scalar , class MemorySpace , class ArrayLayout_t &gt; </td></t
 <tr class="memitem:a03d90eb25c79d9ff881e21aecee1a203"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structCajita_1_1VectorDivergenceG2P.html">VectorDivergenceG2P</a>&lt; ViewType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a03d90eb25c79d9ff881e21aecee1a203">createVectorDivergenceG2P</a> (const ViewType &amp;x, const typename ViewType::value_type &amp;multiplier)</td></tr>
 <tr class="memdesc:a03d90eb25c79d9ff881e21aecee1a203"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for grid-to-point with vector divergence.  <br /></td></tr>
 <tr class="separator:a03d90eb25c79d9ff881e21aecee1a203"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af35c1fd6167a736a6a78cf742c2d6251"><td class="memTemplParams" colspan="2">template&lt;class PointEvalFunctor , class PointCoordinates , class ArrayScalar , class MeshScalar , std::size_t NumSpaceDim, class EntityType , int SplineOrder, class DeviceType , class... ArrayParams&gt; </td></tr>
-<tr class="memitem:af35c1fd6167a736a6a78cf742c2d6251"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#af35c1fd6167a736a6a78cf742c2d6251">p2g</a> (const PointEvalFunctor &amp;functor, const PointCoordinates &amp;points, const std::size_t num_point, <a class="el" href="structCajita_1_1Spline.html">Spline</a>&lt; SplineOrder &gt;, const <a class="el" href="classCajita_1_1Halo.html">Halo</a>&lt; DeviceType &gt; &amp;halo, <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; ArrayScalar, EntityType, <a class="el" href="structCajita_1_1UniformMesh.html">UniformMesh</a>&lt; MeshScalar, NumSpaceDim &gt;, ArrayParams... &gt; &amp;array)</td></tr>
-<tr class="memdesc:af35c1fd6167a736a6a78cf742c2d6251"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> Point-to-Grid interpolation.  <br /></td></tr>
-<tr class="separator:af35c1fd6167a736a6a78cf742c2d6251"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a463fdf70de28bb1d20f9c12944101692"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class PointEvalFunctor , class PointCoordinates , class ArrayScalar , class MeshScalar , std::size_t NumSpaceDim, class EntityType , int SplineOrder, class MemorySpace , class... ArrayParams&gt; </td></tr>
+<tr class="memitem:a463fdf70de28bb1d20f9c12944101692"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a463fdf70de28bb1d20f9c12944101692">p2g</a> (ExecutionSpace, const PointEvalFunctor &amp;functor, const PointCoordinates &amp;points, const std::size_t num_point, <a class="el" href="structCajita_1_1Spline.html">Spline</a>&lt; SplineOrder &gt;, const <a class="el" href="classCajita_1_1Halo.html">Halo</a>&lt; MemorySpace &gt; &amp;halo, <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; ArrayScalar, EntityType, <a class="el" href="structCajita_1_1UniformMesh.html">UniformMesh</a>&lt; MeshScalar, NumSpaceDim &gt;, ArrayParams... &gt; &amp;array)</td></tr>
+<tr class="memdesc:a463fdf70de28bb1d20f9c12944101692"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> Point-to-Grid interpolation.  <br /></td></tr>
+<tr class="separator:a463fdf70de28bb1d20f9c12944101692"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e7718a376faa4470d8c6684946c8387"><td class="memTemplParams" colspan="2">template&lt;class PointEvalFunctor , class PointCoordinates , class ArrayScalar , class MeshScalar , std::size_t NumSpaceDim, class EntityType , int SplineOrder, class MemorySpace , class... ArrayParams&gt; </td></tr>
+<tr class="memitem:a8e7718a376faa4470d8c6684946c8387"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a8e7718a376faa4470d8c6684946c8387">p2g</a> (const PointEvalFunctor &amp;functor, const PointCoordinates &amp;points, const std::size_t num_point, <a class="el" href="structCajita_1_1Spline.html">Spline</a>&lt; SplineOrder &gt;, const <a class="el" href="classCajita_1_1Halo.html">Halo</a>&lt; MemorySpace &gt; &amp;halo, <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; ArrayScalar, EntityType, <a class="el" href="structCajita_1_1UniformMesh.html">UniformMesh</a>&lt; MeshScalar, NumSpaceDim &gt;, ArrayParams... &gt; &amp;array)</td></tr>
+<tr class="memdesc:a8e7718a376faa4470d8c6684946c8387"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> Point-to-Grid interpolation.  <br /></td></tr>
+<tr class="separator:a8e7718a376faa4470d8c6684946c8387"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff6673ee759e0056d8080f12b178e612"><td class="memTemplParams" colspan="2">template&lt;class ViewType &gt; </td></tr>
 <tr class="memitem:aff6673ee759e0056d8080f12b178e612"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structCajita_1_1ScalarValueP2G.html">ScalarValueP2G</a>&lt; ViewType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#aff6673ee759e0056d8080f12b178e612">createScalarValueP2G</a> (const ViewType &amp;x, const typename ViewType::value_type &amp;multiplier)</td></tr>
 <tr class="memdesc:aff6673ee759e0056d8080f12b178e612"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for point-to-grid with scalar value.  <br /></td></tr>
@@ -732,10 +740,10 @@ template&lt;class Scalar , class MemorySpace , class ArrayLayout_t &gt; </td></t
 <tr class="memitem:a3f523da3312248cc6caa4ca35b79b66b"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1LocalGrid.html">LocalGrid</a>&lt; MeshType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a3f523da3312248cc6caa4ca35b79b66b">createLocalGrid</a> (const std::shared_ptr&lt; <a class="el" href="classCajita_1_1GlobalGrid.html">GlobalGrid</a>&lt; MeshType &gt; &gt; &amp;global_grid, const int halo_cell_width)</td></tr>
 <tr class="memdesc:a3f523da3312248cc6caa4ca35b79b66b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a local grid.  <br /></td></tr>
 <tr class="separator:a3f523da3312248cc6caa4ca35b79b66b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3cd9eece8c55384406eee47f683f6c83"><td class="memTemplParams" colspan="2">template&lt;class Device , class MeshType &gt; </td></tr>
-<tr class="memitem:a3cd9eece8c55384406eee47f683f6c83"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCajita_1_1LocalMesh.html">LocalMesh</a>&lt; Device, MeshType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a3cd9eece8c55384406eee47f683f6c83">createLocalMesh</a> (const <a class="el" href="classCajita_1_1LocalGrid.html">LocalGrid</a>&lt; MeshType &gt; &amp;local_grid)</td></tr>
-<tr class="memdesc:a3cd9eece8c55384406eee47f683f6c83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for local mesh.  <br /></td></tr>
-<tr class="separator:a3cd9eece8c55384406eee47f683f6c83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5176bf2393c60ac5fc930c521ac2809c"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace , class MeshType &gt; </td></tr>
+<tr class="memitem:a5176bf2393c60ac5fc930c521ac2809c"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCajita_1_1LocalMesh.html">LocalMesh</a>&lt; MemorySpace, MeshType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a5176bf2393c60ac5fc930c521ac2809c">createLocalMesh</a> (const <a class="el" href="classCajita_1_1LocalGrid.html">LocalGrid</a>&lt; MeshType &gt; &amp;local_grid)</td></tr>
+<tr class="memdesc:a5176bf2393c60ac5fc930c521ac2809c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for local mesh.  <br /></td></tr>
+<tr class="separator:a5176bf2393c60ac5fc930c521ac2809c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c57f5f0f71a9195f375410205a2df20"><td class="memTemplParams" colspan="2">template&lt;class FunctorType , class ExecutionSpace , long N&gt; </td></tr>
 <tr class="memitem:a1c57f5f0f71a9195f375410205a2df20"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a1c57f5f0f71a9195f375410205a2df20">grid_parallel_for</a> (const std::string &amp;label, const ExecutionSpace &amp;exec_space, const <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; N &gt; &amp;index_space, const FunctorType &amp;functor)</td></tr>
 <tr class="memdesc:a1c57f5f0f71a9195f375410205a2df20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute a functor in parallel with a multidimensional execution policy specified by the given index space.  <br /></td></tr>
@@ -792,10 +800,10 @@ template&lt;class Scalar , class MemorySpace , class ArrayLayout_t &gt; </td></t
 <tr class="memitem:a583a9ee0c0e31310b730fa3ca3819721"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a583a9ee0c0e31310b730fa3ca3819721">migrateCount</a> (const LocalGridType &amp;local_grid, const PositionSliceType &amp;positions, const int minimum_halo_width)</td></tr>
 <tr class="memdesc:a583a9ee0c0e31310b730fa3ca3819721"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check for the number of particles that must be communicated.  <br /></td></tr>
 <tr class="separator:a583a9ee0c0e31310b730fa3ca3819721"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3280037caf1e1a2e138f7792b635fe02"><td class="memTemplParams" colspan="2">template&lt;class LocalGridType , class PositionSliceType &gt; </td></tr>
-<tr class="memitem:a3280037caf1e1a2e138f7792b635fe02"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1Distributor.html">Cabana::Distributor</a>&lt; typename PositionSliceType::device_type &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a3280037caf1e1a2e138f7792b635fe02">createParticleGridDistributor</a> (const LocalGridType &amp;local_grid, PositionSliceType &amp;positions)</td></tr>
-<tr class="memdesc:a3280037caf1e1a2e138f7792b635fe02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine which data should be migrated from one uniquely-owned decomposition to another uniquely-owned decomposition, using bounds of a <a class="el" href="namespaceCajita.html" title="Cajita: grid and particle-grid data structures and algorithms.">Cajita</a> grid and taking periodic boundaries into account.  <br /></td></tr>
-<tr class="separator:a3280037caf1e1a2e138f7792b635fe02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2557f422723e7377c0b4228da4c6c02"><td class="memTemplParams" colspan="2">template&lt;class LocalGridType , class PositionSliceType &gt; </td></tr>
+<tr class="memitem:ac2557f422723e7377c0b4228da4c6c02"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1Distributor.html">Cabana::Distributor</a>&lt; typename PositionSliceType::memory_space &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#ac2557f422723e7377c0b4228da4c6c02">createParticleGridDistributor</a> (const LocalGridType &amp;local_grid, PositionSliceType &amp;positions)</td></tr>
+<tr class="memdesc:ac2557f422723e7377c0b4228da4c6c02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine which data should be migrated from one uniquely-owned decomposition to another uniquely-owned decomposition, using bounds of a <a class="el" href="namespaceCajita.html" title="Cajita: grid and particle-grid data structures and algorithms.">Cajita</a> grid and taking periodic boundaries into account.  <br /></td></tr>
+<tr class="separator:ac2557f422723e7377c0b4228da4c6c02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4371257b756699167df4544e4f2de13"><td class="memTemplParams" colspan="2">template&lt;class LocalGridType , class ParticlePositions , class ParticleContainer &gt; </td></tr>
 <tr class="memitem:af4371257b756699167df4544e4f2de13"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#af4371257b756699167df4544e4f2de13">particleGridMigrate</a> (const LocalGridType &amp;local_grid, const ParticlePositions &amp;positions, ParticleContainer &amp;particles, const int min_halo_width, const bool force_migrate=false)</td></tr>
 <tr class="memdesc:af4371257b756699167df4544e4f2de13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Migrate data from one uniquely-owned decomposition to another uniquely-owned decomposition, using the bounds and periodic boundaries of a <a class="el" href="namespaceCajita.html" title="Cajita: grid and particle-grid data structures and algorithms.">Cajita</a> grid to determine which particles should be moved. In-place variant.  <br /></td></tr>
@@ -840,10 +848,10 @@ template&lt;class Scalar , class MemorySpace , class ArrayLayout_t &gt; </td></t
 <tr class="memitem:abe00d64b936b78a9bdcebf8499486202"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#abe00d64b936b78a9bdcebf8499486202">createParticleList</a> (const std::string &amp;label, <a class="el" href="structCabana_1_1ParticleTraits.html">Cabana::ParticleTraits</a>&lt; FieldTags... &gt;)</td></tr>
 <tr class="memdesc:abe00d64b936b78a9bdcebf8499486202"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1ParticleList.html" title="List of particle fields stored in AoSoA with associated Cajita mesh.">ParticleList</a> creation function.  <br /></td></tr>
 <tr class="separator:abe00d64b936b78a9bdcebf8499486202"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8f7cf2114e1c7925f12e8d902170cf6"><td class="memTemplParams" colspan="2">template&lt;class Scalar , class DeviceType , class EntityType , class MeshType &gt; </td></tr>
-<tr class="memitem:aa8f7cf2114e1c7925f12e8d902170cf6"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html">ReferenceConjugateGradient</a>&lt; Scalar, EntityType, MeshType, DeviceType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#aa8f7cf2114e1c7925f12e8d902170cf6">createReferenceConjugateGradient</a> (const <a class="el" href="classCajita_1_1ArrayLayout.html">ArrayLayout</a>&lt; EntityType, MeshType &gt; &amp;layout)</td></tr>
-<tr class="memdesc:aa8f7cf2114e1c7925f12e8d902170cf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for reference structured preconditioned block conjugate gradient.  <br /></td></tr>
-<tr class="separator:aa8f7cf2114e1c7925f12e8d902170cf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb6f0025c053a6112442f5be3d7375b1"><td class="memTemplParams" colspan="2">template&lt;class Scalar , class MemorySpace , class EntityType , class MeshType &gt; </td></tr>
+<tr class="memitem:afb6f0025c053a6112442f5be3d7375b1"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html">ReferenceConjugateGradient</a>&lt; Scalar, EntityType, MeshType, MemorySpace &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#afb6f0025c053a6112442f5be3d7375b1">createReferenceConjugateGradient</a> (const <a class="el" href="classCajita_1_1ArrayLayout.html">ArrayLayout</a>&lt; EntityType, MeshType &gt; &amp;layout)</td></tr>
+<tr class="memdesc:afb6f0025c053a6112442f5be3d7375b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for reference structured preconditioned block conjugate gradient.  <br /></td></tr>
+<tr class="separator:afb6f0025c053a6112442f5be3d7375b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d031b487f27e16a7b6bcc0c3e74c38d"><td class="memTemplParams" colspan="2">template&lt;typename Integer &gt; </td></tr>
 <tr class="memitem:a3d031b487f27e16a7b6bcc0c3e74c38d"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION constexpr Integer&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a3d031b487f27e16a7b6bcc0c3e74c38d">bitLength</a> (Integer input_int) noexcept</td></tr>
 <tr class="memdesc:a3d031b487f27e16a7b6bcc0c3e74c38d"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Host/Device) Compute the least bit number/length needed to represent the given input integer  <br /></td></tr>
@@ -920,11 +928,11 @@ template&lt;typename Scalar , int Order, std::size_t NumSpaceDim, class EntityTy
 <tr class="memitem:a39f778bd88235d08fff4108e3fa76a70"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt;!<a class="el" href="structCajita_1_1SplineData.html">SplineData</a>&lt; Scalar, Order, NumSpaceDim, EntityType, DataTags &gt;::has_physical_distance &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>setSplineData</b> (<a class="el" href="structCajita_1_1SplinePhysicalDistance.html">SplinePhysicalDistance</a>, <a class="el" href="structCajita_1_1SplineData.html">SplineData</a>&lt; Scalar, Order, NumSpaceDim, EntityType, DataTags &gt; &amp;, const Scalar[NumSpaceDim], const Scalar[NumSpaceDim], const Scalar[NumSpaceDim])</td></tr>
 <tr class="memdesc:a39f778bd88235d08fff4108e3fa76a70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Physical distance spline data template helper. <br /></td></tr>
 <tr class="separator:a39f778bd88235d08fff4108e3fa76a70"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3aca17347421716f18266e4b4bfbbc5e"><td class="memTemplParams" colspan="2"><a id="a3aca17347421716f18266e4b4bfbbc5e" name="a3aca17347421716f18266e4b4bfbbc5e"></a>
-template&lt;typename Scalar , int Order, std::size_t NumSpaceDim, class Device , class EntityType , class DataTags &gt; </td></tr>
-<tr class="memitem:a3aca17347421716f18266e4b4bfbbc5e"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>evaluateSpline</b> (const <a class="el" href="classCajita_1_1LocalMesh.html">LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1UniformMesh.html">UniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt; &amp;local_mesh, const Scalar p[NumSpaceDim], <a class="el" href="structCajita_1_1SplineData.html">SplineData</a>&lt; Scalar, Order, NumSpaceDim, EntityType, DataTags &gt; &amp;data)</td></tr>
-<tr class="memdesc:a3aca17347421716f18266e4b4bfbbc5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluate spline data at a point in a uniform mesh. <br /></td></tr>
-<tr class="separator:a3aca17347421716f18266e4b4bfbbc5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24112fb41b1a433bc94d8be2c00751c5"><td class="memTemplParams" colspan="2"><a id="a24112fb41b1a433bc94d8be2c00751c5" name="a24112fb41b1a433bc94d8be2c00751c5"></a>
+template&lt;typename Scalar , int Order, std::size_t NumSpaceDim, class MemorySpace , class EntityType , class DataTags &gt; </td></tr>
+<tr class="memitem:a24112fb41b1a433bc94d8be2c00751c5"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>evaluateSpline</b> (const <a class="el" href="classCajita_1_1LocalMesh.html">LocalMesh</a>&lt; MemorySpace, <a class="el" href="structCajita_1_1UniformMesh.html">UniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt; &amp;local_mesh, const Scalar p[NumSpaceDim], <a class="el" href="structCajita_1_1SplineData.html">SplineData</a>&lt; Scalar, Order, NumSpaceDim, EntityType, DataTags &gt; &amp;data)</td></tr>
+<tr class="memdesc:a24112fb41b1a433bc94d8be2c00751c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluate spline data at a point in a uniform mesh. <br /></td></tr>
+<tr class="separator:a24112fb41b1a433bc94d8be2c00751c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="namespaceCajita.html" title="Cajita: grid and particle-grid data structures and algorithms.">Cajita</a>: grid and particle-grid data structures and algorithms. </p>
@@ -1683,7 +1691,7 @@ template&lt;class Scalar , class EntityType , class MeshType , class Pattern , c
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>The scalar type and device type are specified via the input arrays so the proper buffers may be allocated. This means a halo constructed via this method is only compatible with arrays that have the same scalar and device type as the input array. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The scalar type and memory space are specified via the input arrays so the proper buffers may be allocated. This means a halo constructed via this method is only compatible with arrays that have the same scalar and device type as the input array. </dd></dl>
 
 </div>
 </div>
@@ -1693,7 +1701,7 @@ template&lt;class Scalar , class EntityType , class MeshType , class Pattern , c
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Scalar , class Device , class EntityType , class MeshType , class Pattern &gt; </div>
+template&lt;class Scalar , class MemorySpace , class EntityType , class MeshType , class Pattern &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">auto Cajita::createHalo </td>
@@ -1730,7 +1738,7 @@ template&lt;class Scalar , class Device , class EntityType , class MeshType , cl
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>The scalar type and device type must be specified so the proper buffers may be allocated. This means a halo constructed via this method is only compatible with arrays that have the same scalar and device type. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The scalar type and memory space must be specified so the proper buffers may be allocated. This means a halo constructed via this method is only compatible with arrays that have the same scalar and memory space. </dd></dl>
 
 </div>
 </div>
@@ -2138,16 +2146,16 @@ template&lt;class MeshType &gt; </div>
 
 </div>
 </div>
-<a id="a3cd9eece8c55384406eee47f683f6c83" name="a3cd9eece8c55384406eee47f683f6c83"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3cd9eece8c55384406eee47f683f6c83">&#9670;&#160;</a></span>createLocalMesh()</h2>
+<a id="a5176bf2393c60ac5fc930c521ac2809c" name="a5176bf2393c60ac5fc930c521ac2809c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5176bf2393c60ac5fc930c521ac2809c">&#9670;&#160;</a></span>createLocalMesh()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Device , class MeshType &gt; </div>
+template&lt;class MemorySpace , class MeshType &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCajita_1_1LocalMesh.html">LocalMesh</a>&lt; Device, MeshType &gt; Cajita::createLocalMesh </td>
+          <td class="memname"><a class="el" href="classCajita_1_1LocalMesh.html">LocalMesh</a>&lt; MemorySpace, MeshType &gt; Cajita::createLocalMesh </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classCajita_1_1LocalGrid.html">LocalGrid</a>&lt; MeshType &gt; &amp;&#160;</td>
           <td class="paramname"><em>local_grid</em></td><td>)</td>
@@ -2251,8 +2259,8 @@ template&lt;class Scalar &gt; </div>
 
 </div>
 </div>
-<a id="a3280037caf1e1a2e138f7792b635fe02" name="a3280037caf1e1a2e138f7792b635fe02"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3280037caf1e1a2e138f7792b635fe02">&#9670;&#160;</a></span>createParticleGridDistributor()</h2>
+<a id="ac2557f422723e7377c0b4228da4c6c02" name="ac2557f422723e7377c0b4228da4c6c02"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2557f422723e7377c0b4228da4c6c02">&#9670;&#160;</a></span>createParticleGridDistributor()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2260,7 +2268,7 @@ template&lt;class Scalar &gt; </div>
 template&lt;class LocalGridType , class PositionSliceType &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1Distributor.html">Cabana::Distributor</a>&lt; typename PositionSliceType::device_type &gt; Cajita::createParticleGridDistributor </td>
+          <td class="memname"><a class="el" href="classCabana_1_1Distributor.html">Cabana::Distributor</a>&lt; typename PositionSliceType::memory_space &gt; Cajita::createParticleGridDistributor </td>
           <td>(</td>
           <td class="paramtype">const LocalGridType &amp;&#160;</td>
           <td class="paramname"><em>local_grid</em>, </td>
@@ -2919,16 +2927,16 @@ template&lt;class ExecutionSpace , class PositionType , class LocalGridType &gt;
 
 </div>
 </div>
-<a id="aa8f7cf2114e1c7925f12e8d902170cf6" name="aa8f7cf2114e1c7925f12e8d902170cf6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa8f7cf2114e1c7925f12e8d902170cf6">&#9670;&#160;</a></span>createReferenceConjugateGradient()</h2>
+<a id="afb6f0025c053a6112442f5be3d7375b1" name="afb6f0025c053a6112442f5be3d7375b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb6f0025c053a6112442f5be3d7375b1">&#9670;&#160;</a></span>createReferenceConjugateGradient()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Scalar , class DeviceType , class EntityType , class MeshType &gt; </div>
+template&lt;class Scalar , class MemorySpace , class EntityType , class MeshType &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html">ReferenceConjugateGradient</a>&lt; Scalar, EntityType, MeshType, DeviceType &gt; &gt; Cajita::createReferenceConjugateGradient </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html">ReferenceConjugateGradient</a>&lt; Scalar, EntityType, MeshType, MemorySpace &gt; &gt; Cajita::createReferenceConjugateGradient </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classCajita_1_1ArrayLayout.html">ArrayLayout</a>&lt; EntityType, MeshType &gt; &amp;&#160;</td>
           <td class="paramname"><em>layout</em></td><td>)</td>
@@ -3266,8 +3274,8 @@ template&lt;typename MemorySpace , class Scalar , unsigned long long CellPerTile
 
 </div>
 </div>
-<a id="a280df70828ebfcaec7b8b5f79cfec5a4" name="a280df70828ebfcaec7b8b5f79cfec5a4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a280df70828ebfcaec7b8b5f79cfec5a4">&#9670;&#160;</a></span>createSubarray()</h2>
+<a id="a966e2b4b433fdf383c0809965cdaaac9" name="a966e2b4b433fdf383c0809965cdaaac9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a966e2b4b433fdf383c0809965cdaaac9">&#9670;&#160;</a></span>createSubarray()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3275,7 +3283,7 @@ template&lt;typename MemorySpace , class Scalar , unsigned long long CellPerTile
 template&lt;class Scalar , class EntityType , class MeshType , class... Params&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, typename <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, Params... &gt;::subview_layout, typename <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, Params... &gt;::device_type, typename <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, Params... &gt;::subview_memory_traits &gt; &gt; Cajita::createSubarray </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, typename <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, Params... &gt;::subview_layout, typename <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, Params... &gt;::memory_space, typename <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, Params... &gt;::subview_memory_traits &gt; &gt; Cajita::createSubarray </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, Params... &gt; &amp;&#160;</td>
           <td class="paramname"><em>array</em>, </td>
@@ -4088,13 +4096,13 @@ template&lt;class Scalar , class... Params&gt; </div>
 
 </div>
 </div>
-<a id="a46994b4aad6692cf5cdd9fff08c578d0" name="a46994b4aad6692cf5cdd9fff08c578d0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a46994b4aad6692cf5cdd9fff08c578d0">&#9670;&#160;</a></span>g2p()</h2>
+<a id="a29734b06e0d3e134136763ccfe527119" name="a29734b06e0d3e134136763ccfe527119"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29734b06e0d3e134136763ccfe527119">&#9670;&#160;</a></span>g2p() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class PointEvalFunctor , class PointCoordinates , class ArrayScalar , class MeshScalar , class EntityType , int SplineOrder, std::size_t NumSpaceDim, class DeviceType , class... ArrayParams&gt; </div>
+template&lt;class PointEvalFunctor , class PointCoordinates , class ArrayScalar , class MeshScalar , class EntityType , int SplineOrder, std::size_t NumSpaceDim, class MemorySpace , class... ArrayParams&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void Cajita::g2p </td>
@@ -4105,7 +4113,7 @@ template&lt;class PointEvalFunctor , class PointCoordinates , class ArrayScalar 
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classCajita_1_1Halo.html">Halo</a>&lt; DeviceType &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classCajita_1_1Halo.html">Halo</a>&lt; MemorySpace &gt; &amp;&#160;</td>
           <td class="paramname"><em>halo</em>, </td>
         </tr>
         <tr>
@@ -4143,24 +4151,112 @@ template&lt;class PointEvalFunctor , class PointCoordinates , class ArrayScalar 
 <p><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> Grid-to-Point interpolation. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">PointEvalFunctor</td><td>Functor type used to evaluate the interpolated data for a given point at a given entity.</td></tr>
-    <tr><td class="paramname">PointCoordinates</td><td>Container type with view traits containing the point coordinates. Will be indexed as (point,dim).</td></tr>
-    <tr><td class="paramname">ArrayScalar</td><td>The scalar type used for the interpolated data.</td></tr>
-    <tr><td class="paramname">MeshScalar</td><td>The scalar type used for the geometry/interpolation data.</td></tr>
-    <tr><td class="paramname">NumSpaceDim</td><td>The spatial dimension of the mesh.</td></tr>
-    <tr><td class="paramname">EntityType</td><td>The entitytype to which the points will interpolate.</td></tr>
-    <tr><td class="paramname">SplineOrder</td><td>The order of spline interpolation to use.</td></tr>
-    <tr><td class="paramname">DeviceType</td><td>The device type to use for interplation</td></tr>
+    <tr><td class="paramname">PointEvalFunctor</td><td>Functor type used to evaluate the interpolated data for a given point at a given entity. </td></tr>
+    <tr><td class="paramname">PointCoordinates</td><td>Container type with view traits containing the point coordinates. Will be indexed as (point,dim). </td></tr>
+    <tr><td class="paramname">ArrayScalar</td><td>The scalar type used for the interpolated data. </td></tr>
+    <tr><td class="paramname">MeshScalar</td><td>The scalar type used for the geometry/interpolation data. </td></tr>
+    <tr><td class="paramname">NumSpaceDim</td><td>The spatial dimension of the mesh. </td></tr>
+    <tr><td class="paramname">EntityType</td><td>The entitytype to which the points will interpolate. </td></tr>
+    <tr><td class="paramname">SplineOrder</td><td>The order of spline interpolation to use. </td></tr>
+    <tr><td class="paramname">MemorySpace</td><td>The memory space to use for interplation </td></tr>
     <tr><td class="paramname">ArrayParams</td><td>Parameters for the array type.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">array</td><td>The grid array from which the point data will be interpolated.</td></tr>
-    <tr><td class="paramname">halo</td><td>The halo associated with the grid array. This hallo will be used to gather the array data before interpolation.</td></tr>
-    <tr><td class="paramname">points</td><td>The points over which to perform the interpolation. Will be indexed as (point,dim). The subset of indices in each point's interpolation stencil must be contained within the local grid that will be used for the interpolation</td></tr>
-    <tr><td class="paramname">num_point</td><td>The number of points. This is the size of the first dimension of points.</td></tr>
+    <tr><td class="paramname">array</td><td>The grid array from which the point data will be interpolated. </td></tr>
+    <tr><td class="paramname">halo</td><td>The halo associated with the grid array. This hallo will be used to gather the array data before interpolation. </td></tr>
+    <tr><td class="paramname">points</td><td>The points over which to perform the interpolation. Will be indexed as (point,dim). The subset of indices in each point's interpolation stencil must be contained within the local grid that will be used for the interpolation </td></tr>
+    <tr><td class="paramname">num_point</td><td>The number of points. This is the size of the first dimension of points. </td></tr>
+    <tr><td class="paramname">functor</td><td>A functor that interpolates from a given entity to a given point.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="structCajita_1_1Spline.html" title="B-Spline interface for uniform grids.">Spline</a> of SplineOrder passed for interpolation. </dd></dl>
+
+</div>
+</div>
+<a id="ad9d19f2ef5451251a976755c2d564bd9" name="ad9d19f2ef5451251a976755c2d564bd9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9d19f2ef5451251a976755c2d564bd9">&#9670;&#160;</a></span>g2p() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ExecutionSpace , class PointEvalFunctor , class PointCoordinates , class ArrayScalar , class MeshScalar , class EntityType , int SplineOrder, std::size_t NumSpaceDim, class MemorySpace , class... ArrayParams&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cajita::g2p </td>
+          <td>(</td>
+          <td class="paramtype">ExecutionSpace&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; ArrayScalar, EntityType, <a class="el" href="structCajita_1_1UniformMesh.html">UniformMesh</a>&lt; MeshScalar, NumSpaceDim &gt;, ArrayParams... &gt; &amp;&#160;</td>
+          <td class="paramname"><em>array</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classCajita_1_1Halo.html">Halo</a>&lt; MemorySpace &gt; &amp;&#160;</td>
+          <td class="paramname"><em>halo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const PointCoordinates &amp;&#160;</td>
+          <td class="paramname"><em>points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>num_point</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Spline.html">Spline</a>&lt; SplineOrder &gt;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const PointEvalFunctor &amp;&#160;</td>
+          <td class="paramname"><em>functor</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> Grid-to-Point interpolation. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ExecutionSpace</td><td>Kokkos execution space. </td></tr>
+    <tr><td class="paramname">PointEvalFunctor</td><td>Functor type used to evaluate the interpolated data for a given point at a given entity. </td></tr>
+    <tr><td class="paramname">PointCoordinates</td><td>Container type with view traits containing the point coordinates. Will be indexed as (point,dim). </td></tr>
+    <tr><td class="paramname">ArrayScalar</td><td>The scalar type used for the interpolated data. </td></tr>
+    <tr><td class="paramname">MeshScalar</td><td>The scalar type used for the geometry/interpolation data. </td></tr>
+    <tr><td class="paramname">NumSpaceDim</td><td>The spatial dimension of the mesh. </td></tr>
+    <tr><td class="paramname">EntityType</td><td>The entitytype to which the points will interpolate. </td></tr>
+    <tr><td class="paramname">SplineOrder</td><td>The order of spline interpolation to use. </td></tr>
+    <tr><td class="paramname">MemorySpace</td><td>The memory space to use for interplation </td></tr>
+    <tr><td class="paramname">ArrayParams</td><td>Parameters for the array type.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">array</td><td>The grid array from which the point data will be interpolated. </td></tr>
+    <tr><td class="paramname">halo</td><td>The halo associated with the grid array. This hallo will be used to gather the array data before interpolation. </td></tr>
+    <tr><td class="paramname">points</td><td>The points over which to perform the interpolation. Will be indexed as (point,dim). The subset of indices in each point's interpolation stencil must be contained within the local grid that will be used for the interpolation </td></tr>
+    <tr><td class="paramname">num_point</td><td>The number of points. This is the size of the first dimension of points. </td></tr>
     <tr><td class="paramname">functor</td><td>A functor that interpolates from a given entity to a given point.</td></tr>
   </table>
   </dd>
@@ -5159,13 +5255,13 @@ template&lt;class LocalGridType , class PositionSliceType &gt; </div>
 
 </div>
 </div>
-<a id="af35c1fd6167a736a6a78cf742c2d6251" name="af35c1fd6167a736a6a78cf742c2d6251"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af35c1fd6167a736a6a78cf742c2d6251">&#9670;&#160;</a></span>p2g()</h2>
+<a id="a8e7718a376faa4470d8c6684946c8387" name="a8e7718a376faa4470d8c6684946c8387"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e7718a376faa4470d8c6684946c8387">&#9670;&#160;</a></span>p2g() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class PointEvalFunctor , class PointCoordinates , class ArrayScalar , class MeshScalar , std::size_t NumSpaceDim, class EntityType , int SplineOrder, class DeviceType , class... ArrayParams&gt; </div>
+template&lt;class PointEvalFunctor , class PointCoordinates , class ArrayScalar , class MeshScalar , std::size_t NumSpaceDim, class EntityType , int SplineOrder, class MemorySpace , class... ArrayParams&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void Cajita::p2g </td>
@@ -5194,7 +5290,7 @@ template&lt;class PointEvalFunctor , class PointCoordinates , class ArrayScalar 
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classCajita_1_1Halo.html">Halo</a>&lt; DeviceType &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classCajita_1_1Halo.html">Halo</a>&lt; MemorySpace &gt; &amp;&#160;</td>
           <td class="paramname"><em>halo</em>, </td>
         </tr>
         <tr>
@@ -5214,24 +5310,112 @@ template&lt;class PointEvalFunctor , class PointCoordinates , class ArrayScalar 
 <p><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> Point-to-Grid interpolation. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">PointEvalFunctor</td><td>Functor type used to evaluate the interpolated data for a given point at a given entity.</td></tr>
-    <tr><td class="paramname">PointCoordinates</td><td>Container type with view traits containing the point coordinates. Will be indexed as (point,dim).</td></tr>
-    <tr><td class="paramname">ArrayScalar</td><td>The scalar type used for the interpolated data.</td></tr>
-    <tr><td class="paramname">MeshScalar</td><td>The scalar type used for the geometry/interpolation data.</td></tr>
-    <tr><td class="paramname">NumSpaceDim</td><td>The spatial dimension of the mesh.</td></tr>
-    <tr><td class="paramname">EntityType</td><td>The entitytype to which the points will interpolate.</td></tr>
-    <tr><td class="paramname">SplineOrder</td><td>The order of spline interpolation to use.</td></tr>
-    <tr><td class="paramname">DeviceType</td><td>The device type to use for interplation</td></tr>
+    <tr><td class="paramname">PointEvalFunctor</td><td>Functor type used to evaluate the interpolated data for a given point at a given entity. </td></tr>
+    <tr><td class="paramname">PointCoordinates</td><td>Container type with view traits containing the point coordinates. Will be indexed as (point,dim). </td></tr>
+    <tr><td class="paramname">ArrayScalar</td><td>The scalar type used for the interpolated data. </td></tr>
+    <tr><td class="paramname">MeshScalar</td><td>The scalar type used for the geometry/interpolation data. </td></tr>
+    <tr><td class="paramname">NumSpaceDim</td><td>The spatial dimension of the mesh. </td></tr>
+    <tr><td class="paramname">EntityType</td><td>The entitytype to which the points will interpolate. </td></tr>
+    <tr><td class="paramname">SplineOrder</td><td>The order of spline interpolation to use. </td></tr>
+    <tr><td class="paramname">MemorySpace</td><td>The memory space to use for interplation </td></tr>
     <tr><td class="paramname">ArrayParams</td><td>Parameters for the array type.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">functor</td><td>A functor that interpolates from a given point to a given entity.</td></tr>
-    <tr><td class="paramname">points</td><td>The points over which to perform the interpolation. Will be indexed as (point,dim). The subset of indices in each point's interpolation stencil must be contained within the local grid that will be used for the interpolation</td></tr>
-    <tr><td class="paramname">num_point</td><td>The number of points. This is the size of the first dimension of points.</td></tr>
-    <tr><td class="paramname">halo</td><td>The halo associated with the grid array. This hallo will be used to scatter the interpolated data.</td></tr>
+    <tr><td class="paramname">functor</td><td>A functor that interpolates from a given point to a given entity. </td></tr>
+    <tr><td class="paramname">points</td><td>The points over which to perform the interpolation. Will be indexed as (point,dim). The subset of indices in each point's interpolation stencil must be contained within the local grid that will be used for the interpolation </td></tr>
+    <tr><td class="paramname">num_point</td><td>The number of points. This is the size of the first dimension of points. </td></tr>
+    <tr><td class="paramname">halo</td><td>The halo associated with the grid array. This hallo will be used to scatter the interpolated data. </td></tr>
+    <tr><td class="paramname">array</td><td>The grid array to which the point data will be interpolated.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="structCajita_1_1Spline.html" title="B-Spline interface for uniform grids.">Spline</a> of SplineOrder passed for interpolation. </dd></dl>
+
+</div>
+</div>
+<a id="a463fdf70de28bb1d20f9c12944101692" name="a463fdf70de28bb1d20f9c12944101692"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a463fdf70de28bb1d20f9c12944101692">&#9670;&#160;</a></span>p2g() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ExecutionSpace , class PointEvalFunctor , class PointCoordinates , class ArrayScalar , class MeshScalar , std::size_t NumSpaceDim, class EntityType , int SplineOrder, class MemorySpace , class... ArrayParams&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cajita::p2g </td>
+          <td>(</td>
+          <td class="paramtype">ExecutionSpace&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const PointEvalFunctor &amp;&#160;</td>
+          <td class="paramname"><em>functor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const PointCoordinates &amp;&#160;</td>
+          <td class="paramname"><em>points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>num_point</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Spline.html">Spline</a>&lt; SplineOrder &gt;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classCajita_1_1Halo.html">Halo</a>&lt; MemorySpace &gt; &amp;&#160;</td>
+          <td class="paramname"><em>halo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classCajita_1_1Array.html">Array</a>&lt; ArrayScalar, EntityType, <a class="el" href="structCajita_1_1UniformMesh.html">UniformMesh</a>&lt; MeshScalar, NumSpaceDim &gt;, ArrayParams... &gt; &amp;&#160;</td>
+          <td class="paramname"><em>array</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> Point-to-Grid interpolation. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ExecutionSpace</td><td>Kokkos execution space. </td></tr>
+    <tr><td class="paramname">PointEvalFunctor</td><td>Functor type used to evaluate the interpolated data for a given point at a given entity. </td></tr>
+    <tr><td class="paramname">PointCoordinates</td><td>Container type with view traits containing the point coordinates. Will be indexed as (point,dim). </td></tr>
+    <tr><td class="paramname">ArrayScalar</td><td>The scalar type used for the interpolated data. </td></tr>
+    <tr><td class="paramname">MeshScalar</td><td>The scalar type used for the geometry/interpolation data. </td></tr>
+    <tr><td class="paramname">NumSpaceDim</td><td>The spatial dimension of the mesh. </td></tr>
+    <tr><td class="paramname">EntityType</td><td>The entitytype to which the points will interpolate. </td></tr>
+    <tr><td class="paramname">SplineOrder</td><td>The order of spline interpolation to use. </td></tr>
+    <tr><td class="paramname">MemorySpace</td><td>The memory space to use for interplation </td></tr>
+    <tr><td class="paramname">ArrayParams</td><td>Parameters for the array type.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">functor</td><td>A functor that interpolates from a given point to a given entity. </td></tr>
+    <tr><td class="paramname">points</td><td>The points over which to perform the interpolation. Will be indexed as (point,dim). The subset of indices in each point's interpolation stencil must be contained within the local grid that will be used for the interpolation </td></tr>
+    <tr><td class="paramname">num_point</td><td>The number of points. This is the size of the first dimension of points. </td></tr>
+    <tr><td class="paramname">halo</td><td>The halo associated with the grid array. This hallo will be used to scatter the interpolated data. </td></tr>
     <tr><td class="paramname">array</td><td>The grid array to which the point data will be interpolated.</td></tr>
   </table>
   </dd>

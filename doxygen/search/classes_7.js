@@ -1,7 +1,7 @@
 var searchData=
 [
   ['halfneighbortag_0',['HalfNeighborTag',['../classCabana_1_1HalfNeighborTag.html',1,'Cabana']]],
-  ['halo_1',['Halo',['../classCabana_1_1Halo.html',1,'Cabana::Halo&lt; DeviceType &gt;'],['../classCajita_1_1Halo.html',1,'Cajita::Halo&lt; MemorySpace &gt;']]],
+  ['halo_1',['Halo',['../classCabana_1_1Halo.html',1,'Cabana::Halo&lt; MemorySpace &gt;'],['../classCajita_1_1Halo.html',1,'Cajita::Halo&lt; MemorySpace &gt;']]],
   ['halopattern_2',['HaloPattern',['../classCajita_1_1HaloPattern.html',1,'Cajita']]],
   ['halopattern_3c_202_20_3e_3',['HaloPattern&lt; 2 &gt;',['../classCajita_1_1HaloPattern.html',1,'Cajita']]],
   ['halopattern_3c_203_20_3e_4',['HaloPattern&lt; 3 &gt;',['../classCajita_1_1HaloPattern.html',1,'Cajita']]],

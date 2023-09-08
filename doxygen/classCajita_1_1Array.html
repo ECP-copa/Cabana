@@ -109,18 +109,18 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>array_layout</b> = <
 using&#160;</td><td class="memItemRight" valign="bottom"><b>view_type</b> = std::conditional_t&lt; 3==<a class="el" href="classCajita_1_1Array.html#a6e7be5b436c903bce896a2340ae76594">num_space_dim</a>, Kokkos::View&lt; <a class="el" href="classCajita_1_1Array.html#ad7d6f52655515dc066dec9ca9c007dc0">value_type</a> ****, Params... &gt;, std::conditional_t&lt; 2==<a class="el" href="classCajita_1_1Array.html#a6e7be5b436c903bce896a2340ae76594">num_space_dim</a>, Kokkos::View&lt; <a class="el" href="classCajita_1_1Array.html#ad7d6f52655515dc066dec9ca9c007dc0">value_type</a> ***, Params... &gt;, void &gt; &gt;</td></tr>
 <tr class="memdesc:a73d46b6b87ce132cf9ea774392747df5"><td class="mdescLeft">&#160;</td><td class="mdescRight">View type. <br /></td></tr>
 <tr class="separator:a73d46b6b87ce132cf9ea774392747df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b404fa22bf11da2c2a18ba804fea218"><td class="memItemLeft" align="right" valign="top"><a id="a3b404fa22bf11da2c2a18ba804fea218" name="a3b404fa22bf11da2c2a18ba804fea218"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = typename view_type::device_type</td></tr>
-<tr class="memdesc:a3b404fa22bf11da2c2a18ba804fea218"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device type. <br /></td></tr>
-<tr class="separator:a3b404fa22bf11da2c2a18ba804fea218"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a275f927e9e9e2e416cba5e95141de685"><td class="memItemLeft" align="right" valign="top"><a id="a275f927e9e9e2e416cba5e95141de685" name="a275f927e9e9e2e416cba5e95141de685"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename view_type::memory_space</td></tr>
 <tr class="memdesc:a275f927e9e9e2e416cba5e95141de685"><td class="mdescLeft">&#160;</td><td class="mdescRight">Memory space. <br /></td></tr>
 <tr class="separator:a275f927e9e9e2e416cba5e95141de685"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2dca9cbbcc19e7965d605764a64d496f"><td class="memItemLeft" align="right" valign="top"><a id="a2dca9cbbcc19e7965d605764a64d496f" name="a2dca9cbbcc19e7965d605764a64d496f"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename view_type::execution_space</td></tr>
-<tr class="memdesc:a2dca9cbbcc19e7965d605764a64d496f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execution space. <br /></td></tr>
-<tr class="separator:a2dca9cbbcc19e7965d605764a64d496f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77ddb4a800b799d87d6248561f60c0db"><td class="memItemLeft" align="right" valign="top"><a id="a77ddb4a800b799d87d6248561f60c0db" name="a77ddb4a800b799d87d6248561f60c0db"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = typename memory_space::device_type</td></tr>
+<tr class="memdesc:a77ddb4a800b799d87d6248561f60c0db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default device type. <br /></td></tr>
+<tr class="separator:a77ddb4a800b799d87d6248561f60c0db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09e81a5cf9638cc5a5a9759d8aa3037c"><td class="memItemLeft" align="right" valign="top"><a id="a09e81a5cf9638cc5a5a9759d8aa3037c" name="a09e81a5cf9638cc5a5a9759d8aa3037c"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename memory_space::execution_space</td></tr>
+<tr class="memdesc:a09e81a5cf9638cc5a5a9759d8aa3037c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default execution space. <br /></td></tr>
+<tr class="separator:a09e81a5cf9638cc5a5a9759d8aa3037c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc4f73d0d9183ee1e9cea66b6da7ba49"><td class="memItemLeft" align="right" valign="top"><a id="abc4f73d0d9183ee1e9cea66b6da7ba49" name="abc4f73d0d9183ee1e9cea66b6da7ba49"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>subview_type</b> = decltype(<a class="el" href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">createSubview</a>(_data, _layout-&gt;indexSpace(<a class="el" href="structCajita_1_1Ghost.html">Ghost</a>(), <a class="el" href="structCajita_1_1Local.html">Local</a>())))</td></tr>
 <tr class="memdesc:abc4f73d0d9183ee1e9cea66b6da7ba49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subview type. <br /></td></tr>
@@ -133,10 +133,10 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>subview_layout</b> =
 using&#160;</td><td class="memItemRight" valign="bottom"><b>subview_memory_traits</b> = typename subview_type::memory_traits</td></tr>
 <tr class="memdesc:a936a63906dca7ea345abe36a9c597a27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subview memory traits. <br /></td></tr>
 <tr class="separator:a936a63906dca7ea345abe36a9c597a27"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4048251df71f238e1f74719ca68372e"><td class="memItemLeft" align="right" valign="top"><a id="ad4048251df71f238e1f74719ca68372e" name="ad4048251df71f238e1f74719ca68372e"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>subarray_type</b> = <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, <a class="el" href="classCajita_1_1Array.html#aa951a1ede8ef9375b1ed1d0013a5bcb8">subview_layout</a>, <a class="el" href="classCajita_1_1Array.html#a3b404fa22bf11da2c2a18ba804fea218">device_type</a>, <a class="el" href="classCajita_1_1Array.html#a936a63906dca7ea345abe36a9c597a27">subview_memory_traits</a> &gt;</td></tr>
-<tr class="memdesc:ad4048251df71f238e1f74719ca68372e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subarray type. <br /></td></tr>
-<tr class="separator:ad4048251df71f238e1f74719ca68372e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac913c5ec1bacf0f503f50d93bdc98fbf"><td class="memItemLeft" align="right" valign="top"><a id="ac913c5ec1bacf0f503f50d93bdc98fbf" name="ac913c5ec1bacf0f503f50d93bdc98fbf"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>subarray_type</b> = <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, <a class="el" href="classCajita_1_1Array.html#aa951a1ede8ef9375b1ed1d0013a5bcb8">subview_layout</a>, <a class="el" href="classCajita_1_1Array.html#a275f927e9e9e2e416cba5e95141de685">memory_space</a>, <a class="el" href="classCajita_1_1Array.html#a936a63906dca7ea345abe36a9c597a27">subview_memory_traits</a> &gt;</td></tr>
+<tr class="memdesc:ac913c5ec1bacf0f503f50d93bdc98fbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subarray type. <br /></td></tr>
+<tr class="separator:ac913c5ec1bacf0f503f50d93bdc98fbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>

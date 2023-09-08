@@ -11,6 +11,6 @@ var searchData=
   ['localgrid_8',['LocalGrid',['../classCajita_1_1Experimental_1_1LocalGrid.html',1,'Cajita::Experimental::LocalGrid&lt; MeshType &gt;'],['../classCajita_1_1LocalGrid.html',1,'Cajita::LocalGrid&lt; MeshType &gt;']]],
   ['localgrid_3c_20sparsemesh_3c_20scalar_2c_20numspacedim_20_3e_20_3e_9',['LocalGrid&lt; SparseMesh&lt; Scalar, NumSpaceDim &gt; &gt;',['../classCajita_1_1Experimental_1_1LocalGrid_3_01SparseMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html',1,'Cajita::Experimental']]],
   ['localmesh_10',['LocalMesh',['../classCajita_1_1LocalMesh.html',1,'Cajita']]],
-  ['localmesh_3c_20device_2c_20nonuniformmesh_3c_20scalar_2c_20numspacedim_20_3e_20_3e_11',['LocalMesh&lt; Device, NonUniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;',['../classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html',1,'Cajita']]],
-  ['localmesh_3c_20device_2c_20uniformmesh_3c_20scalar_2c_20numspacedim_20_3e_20_3e_12',['LocalMesh&lt; Device, UniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;',['../classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html',1,'Cajita']]]
+  ['localmesh_3c_20memoryspace_2c_20nonuniformmesh_3c_20scalar_2c_20numspacedim_20_3e_20_3e_11',['LocalMesh&lt; MemorySpace, NonUniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;',['../classCajita_1_1LocalMesh_3_01MemorySpace_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html',1,'Cajita']]],
+  ['localmesh_3c_20memoryspace_2c_20uniformmesh_3c_20scalar_2c_20numspacedim_20_3e_20_3e_12',['LocalMesh&lt; MemorySpace, UniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;',['../classCajita_1_1LocalMesh_3_01MemorySpace_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html',1,'Cajita']]]
 ];

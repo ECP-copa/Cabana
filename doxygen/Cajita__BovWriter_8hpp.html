@@ -187,6 +187,10 @@ template&lt;class TargetView , class SourceView , class Indices , class ExecSpac
 <tr class="memitem:a3c475ac17ed441afbba4ddf520c872c0"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 3==TargetView::rank, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Cajita::Experimental::BovWriter::reorderView</b> (TargetView &amp;target, const SourceView &amp;source, const Indices &amp;index_space, const ExecSpace &amp;exec_space)</td></tr>
 <tr class="memdesc:a3c475ac17ed441afbba4ddf520c872c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reorder a view to the required ordering for I/O. <br /></td></tr>
 <tr class="separator:a3c475ac17ed441afbba4ddf520c872c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae596ae41fe081274f57e6d083bc72b93"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class Array_t &gt; </td></tr>
+<tr class="memitem:ae596ae41fe081274f57e6d083bc72b93"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Cajita__BovWriter_8hpp.html#ae596ae41fe081274f57e6d083bc72b93">Cajita::Experimental::BovWriter::writeTimeStep</a> (ExecutionSpace, const int time_step_index, const double time, const Array_t &amp;array, const bool gather_array=true)</td></tr>
+<tr class="memdesc:ae596ae41fe081274f57e6d083bc72b93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a grid array to a VisIt BOV.  <br /></td></tr>
+<tr class="separator:ae596ae41fe081274f57e6d083bc72b93"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a59672de7709e0befe51829f98da316dd"><td class="memTemplParams" colspan="2">template&lt;class Array_t &gt; </td></tr>
 <tr class="memitem:a59672de7709e0befe51829f98da316dd"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Cajita__BovWriter_8hpp.html#a59672de7709e0befe51829f98da316dd">Cajita::Experimental::BovWriter::writeTimeStep</a> (const int time_step_index, const double time, const Array_t &amp;array, const bool gather_array=true)</td></tr>
 <tr class="memdesc:a59672de7709e0befe51829f98da316dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a grid array to a VisIt BOV.  <br /></td></tr>
@@ -196,7 +200,7 @@ template&lt;class TargetView , class SourceView , class Indices , class ExecSpac
 <div class="textblock"><p>Brick of values (BOV) grid output. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a59672de7709e0befe51829f98da316dd" name="a59672de7709e0befe51829f98da316dd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a59672de7709e0befe51829f98da316dd">&#9670;&#160;</a></span>writeTimeStep()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a59672de7709e0befe51829f98da316dd">&#9670;&#160;</a></span>writeTimeStep() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -206,6 +210,66 @@ template&lt;class Array_t &gt; </div>
         <tr>
           <td class="memname">void Cajita::Experimental::BovWriter::writeTimeStep </td>
           <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>time_step_index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>time</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Array_t &amp;&#160;</td>
+          <td class="paramname"><em>array</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>gather_array</em> = <code>true</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Write a grid array to a VisIt BOV. </p>
+<p>This version writes a single output and does not use bricklets. We will do this in the future to improve parallel visualization.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">time_step_index</td><td>The index of the time step we are writing. </td></tr>
+    <tr><td class="paramname">time</td><td>The current time </td></tr>
+    <tr><td class="paramname">array</td><td>The array to write </td></tr>
+    <tr><td class="paramname">gather_array</td><td>Gather the array before writing to make parallel consistent. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae596ae41fe081274f57e6d083bc72b93" name="ae596ae41fe081274f57e6d083bc72b93"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae596ae41fe081274f57e6d083bc72b93">&#9670;&#160;</a></span>writeTimeStep() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ExecutionSpace , class Array_t &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cajita::Experimental::BovWriter::writeTimeStep </td>
+          <td>(</td>
+          <td class="paramtype">ExecutionSpace&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>time_step_index</em>, </td>
         </tr>

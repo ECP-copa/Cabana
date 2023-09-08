@@ -7,7 +7,7 @@ var searchData=
   ['keyminmax_4',['keyMinMax',['../Cabana__Sort_8hpp.html#aef9be11013c4188e68ddc69505bc793c',1,'Cabana::Impl']]],
   ['keyvalue_5',['KeyValue',['../classCajita_1_1Experimental_1_1SparseHalo.html#a1b271a7a80451129e2198025d64921d5',1,'Cajita::Experimental::SparseHalo']]],
   ['kokkos_5fmemory_5ftraits_6',['kokkos_memory_traits',['../structCabana_1_1DefaultAccessMemory.html#a073271b58939601ceb7800c92bfcc29f',1,'Cabana::DefaultAccessMemory::kokkos_memory_traits()'],['../structCabana_1_1RandomAccessMemory.html#a97999de225e8d2a178f5cf936b124ea8',1,'Cabana::RandomAccessMemory::kokkos_memory_traits()'],['../structCabana_1_1AtomicAccessMemory.html#a5900606c4022248d570980974532038e',1,'Cabana::AtomicAccessMemory::kokkos_memory_traits()']]],
-  ['kokkos_5fview_7',['kokkos_view',['../classCabana_1_1Slice.html#a238cf73305ab909dc0737a0d2548a26c',1,'Cabana::Slice']]],
-  ['kokkosbinsort_8',['kokkosBinSort',['../Cabana__Sort_8hpp.html#a7d7a9a9755164c09f710e6f02e06cbe8',1,'Cabana::Impl']]],
-  ['kokkosbinsort1d_9',['kokkosBinSort1d',['../Cabana__Sort_8hpp.html#a6a993fb100afe80a9cef8c10f0a7685c',1,'Cabana::Impl']]]
+  ['kokkos_5fview_7',['kokkos_view',['../classCabana_1_1Slice.html#a9a2e7722fa69758cac9f2a2953021092',1,'Cabana::Slice']]],
+  ['kokkosbinsort_8',['kokkosBinSort',['../Cabana__Sort_8hpp.html#a87314a9f2f994ce75fafb81395312528',1,'Cabana::Impl']]],
+  ['kokkosbinsort1d_9',['kokkosBinSort1d',['../Cabana__Sort_8hpp.html#abc306dfbc0234a62bb4b0f7a3764fab8',1,'Cabana::Impl']]]
 ];

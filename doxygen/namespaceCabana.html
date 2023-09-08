@@ -146,8 +146,8 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> static type checker.  <a href="structCabana_1_1is__aosoa.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1is__binning__data_3_01const_01BinningData_3_01DeviceType_01_4_01_4.html">is_binning_data&lt; const BinningData&lt; DeviceType &gt; &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1BinningData.html" title="Data describing the bin sizes and offsets resulting from a binning operation.">BinningData</a> static type checker.  <a href="structCabana_1_1is__binning__data_3_01const_01BinningData_3_01DeviceType_01_4_01_4.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1is__binning__data_3_01const_01BinningData_3_01MemorySpace_01_4_01_4.html">is_binning_data&lt; const BinningData&lt; MemorySpace &gt; &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1BinningData.html" title="Data describing the bin sizes and offsets resulting from a binning operation.">BinningData</a> static type checker.  <a href="structCabana_1_1is__binning__data_3_01const_01BinningData_3_01MemorySpace_01_4_01_4.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1is__distributor.html">is_distributor</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1Distributor.html" title="A communication plan for migrating data from one uniquely-owned decomposition to another uniquely own...">Distributor</a> static type checker.  <a href="structCabana_1_1is__distributor.html#details">More...</a><br /></td></tr>
@@ -349,14 +349,26 @@ Functions</h2></td></tr>
 <tr class="memitem:a0fe269dbc215b08357a0f68d108a6e67"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a0fe269dbc215b08357a0f68d108a6e67">create_mirror_view_and_copy</a> (DstMemorySpace, <a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; SrcMemorySpace, FieldTags... &gt; plist_src, typename std::enable_if&lt; !std::is_same&lt; SrcMemorySpace, DstMemorySpace &gt;::value &gt;::type *=0)</td></tr>
 <tr class="memdesc:a0fe269dbc215b08357a0f68d108a6e67"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a mirror of the given <a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> in the given memory space.  <br /></td></tr>
 <tr class="separator:a0fe269dbc215b08357a0f68d108a6e67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a83e23020e924fb010e2f5c20dbcc76"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class Distributor_t , class AoSoA_t &gt; </td></tr>
+<tr class="memitem:a7a83e23020e924fb010e2f5c20dbcc76"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a7a83e23020e924fb010e2f5c20dbcc76">migrate</a> (ExecutionSpace exec_space, const Distributor_t &amp;distributor, const AoSoA_t &amp;src, AoSoA_t &amp;dst, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__distributor.html">is_distributor</a>&lt; Distributor_t &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; AoSoA_t &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a7a83e23020e924fb010e2f5c20dbcc76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously migrate data between two different decompositions using the distributor forward communication plan. Multiple <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> version.  <br /></td></tr>
+<tr class="separator:a7a83e23020e924fb010e2f5c20dbcc76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb10ac278624d871f6079c4e24ccb219"><td class="memTemplParams" colspan="2">template&lt;class Distributor_t , class AoSoA_t &gt; </td></tr>
 <tr class="memitem:adb10ac278624d871f6079c4e24ccb219"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#adb10ac278624d871f6079c4e24ccb219">migrate</a> (const Distributor_t &amp;distributor, const AoSoA_t &amp;src, AoSoA_t &amp;dst, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__distributor.html">is_distributor</a>&lt; Distributor_t &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; AoSoA_t &gt;::value), int &gt;::type *=0)</td></tr>
 <tr class="memdesc:adb10ac278624d871f6079c4e24ccb219"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously migrate data between two different decompositions using the distributor forward communication plan. Multiple <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> version.  <br /></td></tr>
 <tr class="separator:adb10ac278624d871f6079c4e24ccb219"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b49b38dd2be95b2b905698d063a0736"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class Distributor_t , class AoSoA_t &gt; </td></tr>
+<tr class="memitem:a4b49b38dd2be95b2b905698d063a0736"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a4b49b38dd2be95b2b905698d063a0736">migrate</a> (ExecutionSpace exec_space, const Distributor_t &amp;distributor, AoSoA_t &amp;aosoa, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__distributor.html">is_distributor</a>&lt; Distributor_t &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; AoSoA_t &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a4b49b38dd2be95b2b905698d063a0736"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously migrate data between two different decompositions using the distributor forward communication plan. Single <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> version that will resize in-place. Note that resizing does not necessarily allocate more memory. The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> memory will only increase if not enough has already been reserved/allocated for the needed number of elements.  <br /></td></tr>
+<tr class="separator:a4b49b38dd2be95b2b905698d063a0736"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9cb44110c8a6215d2ca62406e8aed35"><td class="memTemplParams" colspan="2">template&lt;class Distributor_t , class AoSoA_t &gt; </td></tr>
 <tr class="memitem:ab9cb44110c8a6215d2ca62406e8aed35"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ab9cb44110c8a6215d2ca62406e8aed35">migrate</a> (const Distributor_t &amp;distributor, AoSoA_t &amp;aosoa, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__distributor.html">is_distributor</a>&lt; Distributor_t &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; AoSoA_t &gt;::value), int &gt;::type *=0)</td></tr>
 <tr class="memdesc:ab9cb44110c8a6215d2ca62406e8aed35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously migrate data between two different decompositions using the distributor forward communication plan. Single <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> version that will resize in-place. Note that resizing does not necessarily allocate more memory. The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> memory will only increase if not enough has already been reserved/allocated for the needed number of elements.  <br /></td></tr>
 <tr class="separator:ab9cb44110c8a6215d2ca62406e8aed35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34db3aa66674d749b54de31d8c2590e9"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class Distributor_t , class Slice_t &gt; </td></tr>
+<tr class="memitem:a34db3aa66674d749b54de31d8c2590e9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a34db3aa66674d749b54de31d8c2590e9">migrate</a> (ExecutionSpace, const Distributor_t &amp;distributor, const Slice_t &amp;src, Slice_t &amp;dst, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__distributor.html">is_distributor</a>&lt; Distributor_t &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; Slice_t &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a34db3aa66674d749b54de31d8c2590e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously migrate data between two different decompositions using the distributor forward communication plan. <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> version. The user can do this in-place with the same slice but they will need to manage the resizing themselves as we can't resize slices.  <br /></td></tr>
+<tr class="separator:a34db3aa66674d749b54de31d8c2590e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82063f55f2d0c3d17d11ba6642fb7353"><td class="memTemplParams" colspan="2">template&lt;class Distributor_t , class Slice_t &gt; </td></tr>
 <tr class="memitem:a82063f55f2d0c3d17d11ba6642fb7353"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a82063f55f2d0c3d17d11ba6642fb7353">migrate</a> (const Distributor_t &amp;distributor, const Slice_t &amp;src, Slice_t &amp;dst, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__distributor.html">is_distributor</a>&lt; Distributor_t &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; Slice_t &gt;::value), int &gt;::type *=0)</td></tr>
 <tr class="memdesc:a82063f55f2d0c3d17d11ba6642fb7353"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously migrate data between two different decompositions using the distributor forward communication plan. <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> version. The user can do this in-place with the same slice but they will need to manage the resizing themselves as we can't resize slices.  <br /></td></tr>
@@ -618,59 +630,59 @@ template&lt;std::size_t M, class SoA_t &gt; </td></tr>
 <tr class="memitem:a881c500026c8556353cc7a4130f18204"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt; <a class="el" href="structCabana_1_1is__soa.html">is_soa</a>&lt; SoA_t &gt;::value, typenameSoA_t::templatemember_const_reference_type&lt; M &gt; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const SoA_t &amp;soa, const std::size_t a, const std::size_t d0, const std::size_t d1, const std::size_t d2)</td></tr>
 <tr class="memdesc:a881c500026c8556353cc7a4130f18204"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get Rank-3 const. <br /></td></tr>
 <tr class="separator:a881c500026c8556353cc7a4130f18204"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3763367c9ee3175947ffce56aef282ba"><td class="memTemplParams" colspan="2">template&lt;class KeyViewType , class Comparator , class DeviceType  = typename KeyViewType::device_type&gt; </td></tr>
-<tr class="memitem:a3763367c9ee3175947ffce56aef282ba"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a3763367c9ee3175947ffce56aef282ba">sortByKeyWithComparator</a> (KeyViewType keys, Comparator comp, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:a3763367c9ee3175947ffce56aef282ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sort an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> over a subset of its range using a general comparator over the given Kokkos View of keys.  <br /></td></tr>
-<tr class="separator:a3763367c9ee3175947ffce56aef282ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97f805a73f64b982000c64aad915ef5d"><td class="memTemplParams" colspan="2">template&lt;class KeyViewType , class Comparator , class DeviceType  = typename KeyViewType::device_type&gt; </td></tr>
-<tr class="memitem:a97f805a73f64b982000c64aad915ef5d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a97f805a73f64b982000c64aad915ef5d">sortByKeyWithComparator</a> (KeyViewType keys, Comparator comp, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:a97f805a73f64b982000c64aad915ef5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sort an entire <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> using a general comparator over the given Kokkos View of keys.  <br /></td></tr>
-<tr class="separator:a97f805a73f64b982000c64aad915ef5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3ba3d5f8eaf653bf7870d6fb2af9e28"><td class="memTemplParams" colspan="2">template&lt;class KeyViewType , class Comparator , class DeviceType  = typename KeyViewType::device_type&gt; </td></tr>
-<tr class="memitem:aa3ba3d5f8eaf653bf7870d6fb2af9e28"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#aa3ba3d5f8eaf653bf7870d6fb2af9e28">binByKeyWithComparator</a> (KeyViewType keys, Comparator comp, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:aa3ba3d5f8eaf653bf7870d6fb2af9e28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> over a subset of its range using a general comparator over the given Kokkos View of keys.  <br /></td></tr>
-<tr class="separator:aa3ba3d5f8eaf653bf7870d6fb2af9e28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aefc5d265a9a93c34646cf78f99363d11"><td class="memTemplParams" colspan="2">template&lt;class KeyViewType , class Comparator , class DeviceType  = typename KeyViewType::device_type&gt; </td></tr>
-<tr class="memitem:aefc5d265a9a93c34646cf78f99363d11"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#aefc5d265a9a93c34646cf78f99363d11">binByKeyWithComparator</a> (KeyViewType keys, Comparator comp, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:aefc5d265a9a93c34646cf78f99363d11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin an entire <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> using a general comparator over the given Kokkos View of keys.  <br /></td></tr>
-<tr class="separator:aefc5d265a9a93c34646cf78f99363d11"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1cc9ab0c591f2667153e2bd87ded274c"><td class="memTemplParams" colspan="2">template&lt;class KeyViewType , class DeviceType  = typename KeyViewType::device_type&gt; </td></tr>
-<tr class="memitem:a1cc9ab0c591f2667153e2bd87ded274c"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a1cc9ab0c591f2667153e2bd87ded274c">sortByKey</a> (KeyViewType keys, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:a1cc9ab0c591f2667153e2bd87ded274c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sort an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> over a subset of its range based on the associated key values.  <br /></td></tr>
-<tr class="separator:a1cc9ab0c591f2667153e2bd87ded274c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5845f234655864df02d9de7afcfd039"><td class="memTemplParams" colspan="2">template&lt;class KeyViewType , class DeviceType  = typename KeyViewType::device_type&gt; </td></tr>
-<tr class="memitem:ae5845f234655864df02d9de7afcfd039"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ae5845f234655864df02d9de7afcfd039">sortByKey</a> (KeyViewType keys, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:ae5845f234655864df02d9de7afcfd039"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sort an entire <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> based on the associated key values.  <br /></td></tr>
-<tr class="separator:ae5845f234655864df02d9de7afcfd039"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5b00341d07b24a466ab86afb76b3ae6"><td class="memTemplParams" colspan="2">template&lt;class KeyViewType , class DeviceType  = typename KeyViewType::device_type&gt; </td></tr>
-<tr class="memitem:ac5b00341d07b24a466ab86afb76b3ae6"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ac5b00341d07b24a466ab86afb76b3ae6">binByKey</a> (KeyViewType keys, const int nbin, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:ac5b00341d07b24a466ab86afb76b3ae6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> over a subset of its range based on the associated key values and number of bins. The bins are evenly divided over the range of key values.  <br /></td></tr>
-<tr class="separator:ac5b00341d07b24a466ab86afb76b3ae6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03aa81e9a03bf68e876e234cce770b12"><td class="memTemplParams" colspan="2">template&lt;class KeyViewType , class DeviceType  = typename KeyViewType::device_type&gt; </td></tr>
-<tr class="memitem:a03aa81e9a03bf68e876e234cce770b12"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a03aa81e9a03bf68e876e234cce770b12">binByKey</a> (KeyViewType keys, const int nbin, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:a03aa81e9a03bf68e876e234cce770b12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin an entire <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> based on the associated key values and number of bins. The bins are evenly divided over the range of key values.  <br /></td></tr>
-<tr class="separator:a03aa81e9a03bf68e876e234cce770b12"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a14be80766a8a3ea32c49eb7c8ab23f"><td class="memTemplParams" colspan="2">template&lt;class SliceType , class DeviceType  = typename SliceType::device_type&gt; </td></tr>
-<tr class="memitem:a6a14be80766a8a3ea32c49eb7c8ab23f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a6a14be80766a8a3ea32c49eb7c8ab23f">sortByKey</a> (SliceType <a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:a6a14be80766a8a3ea32c49eb7c8ab23f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sort an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> over a subset of its range based on the associated slice of keys.  <br /></td></tr>
-<tr class="separator:a6a14be80766a8a3ea32c49eb7c8ab23f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7944e21c2dd1801db1cb508dc8324c04"><td class="memTemplParams" colspan="2">template&lt;class SliceType , class DeviceType  = typename SliceType::device_type&gt; </td></tr>
-<tr class="memitem:a7944e21c2dd1801db1cb508dc8324c04"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a7944e21c2dd1801db1cb508dc8324c04">sortByKey</a> (SliceType <a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:a7944e21c2dd1801db1cb508dc8324c04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sort an entire <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> based on the associated slice of keys.  <br /></td></tr>
-<tr class="separator:a7944e21c2dd1801db1cb508dc8324c04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c7d4b823513630e328cf4918b81c081"><td class="memTemplParams" colspan="2">template&lt;class SliceType , class DeviceType  = typename SliceType::device_type&gt; </td></tr>
-<tr class="memitem:a3c7d4b823513630e328cf4918b81c081"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a3c7d4b823513630e328cf4918b81c081">binByKey</a> (SliceType <a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const int nbin, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:a3c7d4b823513630e328cf4918b81c081"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> over a subset of its range based on the associated slice of keys.  <br /></td></tr>
-<tr class="separator:a3c7d4b823513630e328cf4918b81c081"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13d6500037fcab803f036c507dbb1c3f"><td class="memTemplParams" colspan="2">template&lt;class SliceType , class DeviceType  = typename SliceType::device_type&gt; </td></tr>
-<tr class="memitem:a13d6500037fcab803f036c507dbb1c3f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a13d6500037fcab803f036c507dbb1c3f">binByKey</a> (SliceType <a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const int nbin, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:a13d6500037fcab803f036c507dbb1c3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin an entire <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> based on the associated slice of keys.  <br /></td></tr>
-<tr class="separator:a13d6500037fcab803f036c507dbb1c3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a824f296314f00ca8e121e6a26e2846db"><td class="memTemplParams" colspan="2">template&lt;class BinningDataType , class AoSoA_t , class DeviceType  = typename BinningDataType::device_type&gt; </td></tr>
+<tr class="memitem:ac7a029626fb67b12cf279b7f3c620159"><td class="memTemplParams" colspan="2">template&lt;class KeyViewType , class Comparator , class ExecutionSpace  = typename KeyViewType::execution_space&gt; </td></tr>
+<tr class="memitem:ac7a029626fb67b12cf279b7f3c620159"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ac7a029626fb67b12cf279b7f3c620159">sortByKeyWithComparator</a> (KeyViewType keys, Comparator comp, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:ac7a029626fb67b12cf279b7f3c620159"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sort an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> over a subset of its range using a general comparator over the given Kokkos View of keys.  <br /></td></tr>
+<tr class="separator:ac7a029626fb67b12cf279b7f3c620159"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8376dcbdaa0c3dad87fe19203cf1755"><td class="memTemplParams" colspan="2">template&lt;class KeyViewType , class Comparator , class ExecutionSpace  = typename KeyViewType::execution_space&gt; </td></tr>
+<tr class="memitem:ac8376dcbdaa0c3dad87fe19203cf1755"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ac8376dcbdaa0c3dad87fe19203cf1755">sortByKeyWithComparator</a> (KeyViewType keys, Comparator comp, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:ac8376dcbdaa0c3dad87fe19203cf1755"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sort an entire <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> using a general comparator over the given Kokkos View of keys.  <br /></td></tr>
+<tr class="separator:ac8376dcbdaa0c3dad87fe19203cf1755"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc22b2013d39364f39f91677a589cb8f"><td class="memTemplParams" colspan="2">template&lt;class KeyViewType , class Comparator , class ExecutionSpace  = typename KeyViewType::execution_space&gt; </td></tr>
+<tr class="memitem:adc22b2013d39364f39f91677a589cb8f"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#adc22b2013d39364f39f91677a589cb8f">binByKeyWithComparator</a> (KeyViewType keys, Comparator comp, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:adc22b2013d39364f39f91677a589cb8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> over a subset of its range using a general comparator over the given Kokkos View of keys.  <br /></td></tr>
+<tr class="separator:adc22b2013d39364f39f91677a589cb8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70e404c2997ca696faff2f84caf97691"><td class="memTemplParams" colspan="2">template&lt;class KeyViewType , class Comparator , class ExecutionSpace  = typename KeyViewType::execution_space&gt; </td></tr>
+<tr class="memitem:a70e404c2997ca696faff2f84caf97691"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a70e404c2997ca696faff2f84caf97691">binByKeyWithComparator</a> (KeyViewType keys, Comparator comp, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a70e404c2997ca696faff2f84caf97691"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin an entire <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> using a general comparator over the given Kokkos View of keys.  <br /></td></tr>
+<tr class="separator:a70e404c2997ca696faff2f84caf97691"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c64ff984d2da99d6ff20d89a8ae9899"><td class="memTemplParams" colspan="2">template&lt;class KeyViewType , class ExecutionSpace  = typename KeyViewType::execution_space&gt; </td></tr>
+<tr class="memitem:a5c64ff984d2da99d6ff20d89a8ae9899"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a5c64ff984d2da99d6ff20d89a8ae9899">sortByKey</a> (KeyViewType keys, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a5c64ff984d2da99d6ff20d89a8ae9899"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sort an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> over a subset of its range based on the associated key values.  <br /></td></tr>
+<tr class="separator:a5c64ff984d2da99d6ff20d89a8ae9899"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73cfa6540c7adf84fb5d3546950c46e6"><td class="memTemplParams" colspan="2">template&lt;class KeyViewType , class ExecutionSpace  = typename KeyViewType::execution_space&gt; </td></tr>
+<tr class="memitem:a73cfa6540c7adf84fb5d3546950c46e6"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a73cfa6540c7adf84fb5d3546950c46e6">sortByKey</a> (KeyViewType keys, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a73cfa6540c7adf84fb5d3546950c46e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sort an entire <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> based on the associated key values.  <br /></td></tr>
+<tr class="separator:a73cfa6540c7adf84fb5d3546950c46e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07d805b955e236c9c87c50f76c4dde7c"><td class="memTemplParams" colspan="2">template&lt;class KeyViewType , class ExecutionSpace  = typename KeyViewType::execution_space&gt; </td></tr>
+<tr class="memitem:a07d805b955e236c9c87c50f76c4dde7c"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a07d805b955e236c9c87c50f76c4dde7c">binByKey</a> (KeyViewType keys, const int nbin, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a07d805b955e236c9c87c50f76c4dde7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> over a subset of its range based on the associated key values and number of bins. The bins are evenly divided over the range of key values.  <br /></td></tr>
+<tr class="separator:a07d805b955e236c9c87c50f76c4dde7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefadc00186eb5240413c19ffcc11556b"><td class="memTemplParams" colspan="2">template&lt;class KeyViewType , class ExecutionSpace  = typename KeyViewType::execution_space&gt; </td></tr>
+<tr class="memitem:aefadc00186eb5240413c19ffcc11556b"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#aefadc00186eb5240413c19ffcc11556b">binByKey</a> (KeyViewType keys, const int nbin, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:aefadc00186eb5240413c19ffcc11556b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin an entire <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> based on the associated key values and number of bins. The bins are evenly divided over the range of key values.  <br /></td></tr>
+<tr class="separator:aefadc00186eb5240413c19ffcc11556b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2577949b8aa884de4873f31efa54401b"><td class="memTemplParams" colspan="2">template&lt;class SliceType , class ExecutionSpace  = typename SliceType::execution_space&gt; </td></tr>
+<tr class="memitem:a2577949b8aa884de4873f31efa54401b"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a2577949b8aa884de4873f31efa54401b">sortByKey</a> (SliceType <a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a2577949b8aa884de4873f31efa54401b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sort an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> over a subset of its range based on the associated slice of keys.  <br /></td></tr>
+<tr class="separator:a2577949b8aa884de4873f31efa54401b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a360b0f9c15911bfac904d240e7f369d7"><td class="memTemplParams" colspan="2">template&lt;class SliceType , class ExecutionSpace  = typename SliceType::execution_space&gt; </td></tr>
+<tr class="memitem:a360b0f9c15911bfac904d240e7f369d7"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a360b0f9c15911bfac904d240e7f369d7">sortByKey</a> (SliceType <a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a360b0f9c15911bfac904d240e7f369d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sort an entire <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> based on the associated slice of keys.  <br /></td></tr>
+<tr class="separator:a360b0f9c15911bfac904d240e7f369d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0bb53c51408767f5539610cab2fae20f"><td class="memTemplParams" colspan="2">template&lt;class SliceType , class ExecutionSpace  = typename SliceType::execution_space&gt; </td></tr>
+<tr class="memitem:a0bb53c51408767f5539610cab2fae20f"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a0bb53c51408767f5539610cab2fae20f">binByKey</a> (SliceType <a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const int nbin, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a0bb53c51408767f5539610cab2fae20f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> over a subset of its range based on the associated slice of keys.  <br /></td></tr>
+<tr class="separator:a0bb53c51408767f5539610cab2fae20f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1893b963c55a3dc6612d27999acc71b0"><td class="memTemplParams" colspan="2">template&lt;class SliceType , class ExecutionSpace  = typename SliceType::execution_space&gt; </td></tr>
+<tr class="memitem:a1893b963c55a3dc6612d27999acc71b0"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a1893b963c55a3dc6612d27999acc71b0">binByKey</a> (SliceType <a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const int nbin, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a1893b963c55a3dc6612d27999acc71b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin an entire <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> based on the associated slice of keys.  <br /></td></tr>
+<tr class="separator:a1893b963c55a3dc6612d27999acc71b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a824f296314f00ca8e121e6a26e2846db"><td class="memTemplParams" colspan="2">template&lt;class BinningDataType , class AoSoA_t , class ExecutionSpace  = typename BinningDataType::execution_space&gt; </td></tr>
 <tr class="memitem:a824f296314f00ca8e121e6a26e2846db"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a824f296314f00ca8e121e6a26e2846db">permute</a> (const BinningDataType &amp;binning_data, AoSoA_t &amp;aosoa, typename std::enable_if&lt;(is_binning_data&lt; BinningDataType &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; AoSoA_t &gt;::value), int &gt;::type *=0)</td></tr>
 <tr class="memdesc:a824f296314f00ca8e121e6a26e2846db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given binning data permute an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.  <br /></td></tr>
 <tr class="separator:a824f296314f00ca8e121e6a26e2846db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab44a65c22331c71ed7cee721a41c54fc"><td class="memTemplParams" colspan="2">template&lt;class BinningDataType , class SliceType , class DeviceType  = typename BinningDataType::device_type&gt; </td></tr>
+<tr class="memitem:ab44a65c22331c71ed7cee721a41c54fc"><td class="memTemplParams" colspan="2">template&lt;class BinningDataType , class SliceType , class ExecutionSpace  = typename BinningDataType::execution_space&gt; </td></tr>
 <tr class="memitem:ab44a65c22331c71ed7cee721a41c54fc"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ab44a65c22331c71ed7cee721a41c54fc">permute</a> (const BinningDataType &amp;binning_data, SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, typename std::enable_if&lt;(is_binning_data&lt; BinningDataType &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
 <tr class="memdesc:ab44a65c22331c71ed7cee721a41c54fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given binning data permute a slice.  <br /></td></tr>
 <tr class="separator:ab44a65c22331c71ed7cee721a41c54fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -726,16 +738,16 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>git_commit_has
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Core: particle data structures and algorithms. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="ac5b00341d07b24a466ab86afb76b3ae6" name="ac5b00341d07b24a466ab86afb76b3ae6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac5b00341d07b24a466ab86afb76b3ae6">&#9670;&#160;</a></span>binByKey() <span class="overload">[1/4]</span></h2>
+<a id="a07d805b955e236c9c87c50f76c4dde7c" name="a07d805b955e236c9c87c50f76c4dde7c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07d805b955e236c9c87c50f76c4dde7c">&#9670;&#160;</a></span>binByKey() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class KeyViewType , class DeviceType  = typename KeyViewType::device_type&gt; </div>
+template&lt;class KeyViewType , class ExecutionSpace  = typename KeyViewType::execution_space&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt; Cabana::binByKey </td>
+          <td class="memname">auto Cabana::binByKey </td>
           <td>(</td>
           <td class="paramtype">KeyViewType&#160;</td>
           <td class="paramname"><em>keys</em>, </td>
@@ -792,16 +804,16 @@ template&lt;class KeyViewType , class DeviceType  = typename KeyViewType::device
 
 </div>
 </div>
-<a id="a03aa81e9a03bf68e876e234cce770b12" name="a03aa81e9a03bf68e876e234cce770b12"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a03aa81e9a03bf68e876e234cce770b12">&#9670;&#160;</a></span>binByKey() <span class="overload">[2/4]</span></h2>
+<a id="aefadc00186eb5240413c19ffcc11556b" name="aefadc00186eb5240413c19ffcc11556b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aefadc00186eb5240413c19ffcc11556b">&#9670;&#160;</a></span>binByKey() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class KeyViewType , class DeviceType  = typename KeyViewType::device_type&gt; </div>
+template&lt;class KeyViewType , class ExecutionSpace  = typename KeyViewType::execution_space&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt; Cabana::binByKey </td>
+          <td class="memname">auto Cabana::binByKey </td>
           <td>(</td>
           <td class="paramtype">KeyViewType&#160;</td>
           <td class="paramname"><em>keys</em>, </td>
@@ -844,16 +856,16 @@ template&lt;class KeyViewType , class DeviceType  = typename KeyViewType::device
 
 </div>
 </div>
-<a id="a3c7d4b823513630e328cf4918b81c081" name="a3c7d4b823513630e328cf4918b81c081"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c7d4b823513630e328cf4918b81c081">&#9670;&#160;</a></span>binByKey() <span class="overload">[3/4]</span></h2>
+<a id="a0bb53c51408767f5539610cab2fae20f" name="a0bb53c51408767f5539610cab2fae20f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0bb53c51408767f5539610cab2fae20f">&#9670;&#160;</a></span>binByKey() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class SliceType , class DeviceType  = typename SliceType::device_type&gt; </div>
+template&lt;class SliceType , class ExecutionSpace  = typename SliceType::execution_space&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt; Cabana::binByKey </td>
+          <td class="memname">auto Cabana::binByKey </td>
           <td>(</td>
           <td class="paramtype">SliceType&#160;</td>
           <td class="paramname"><em>slice</em>, </td>
@@ -910,16 +922,16 @@ template&lt;class SliceType , class DeviceType  = typename SliceType::device_typ
 
 </div>
 </div>
-<a id="a13d6500037fcab803f036c507dbb1c3f" name="a13d6500037fcab803f036c507dbb1c3f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a13d6500037fcab803f036c507dbb1c3f">&#9670;&#160;</a></span>binByKey() <span class="overload">[4/4]</span></h2>
+<a id="a1893b963c55a3dc6612d27999acc71b0" name="a1893b963c55a3dc6612d27999acc71b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1893b963c55a3dc6612d27999acc71b0">&#9670;&#160;</a></span>binByKey() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class SliceType , class DeviceType  = typename SliceType::device_type&gt; </div>
+template&lt;class SliceType , class ExecutionSpace  = typename SliceType::execution_space&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt; Cabana::binByKey </td>
+          <td class="memname">auto Cabana::binByKey </td>
           <td>(</td>
           <td class="paramtype">SliceType&#160;</td>
           <td class="paramname"><em>slice</em>, </td>
@@ -962,16 +974,16 @@ template&lt;class SliceType , class DeviceType  = typename SliceType::device_typ
 
 </div>
 </div>
-<a id="aa3ba3d5f8eaf653bf7870d6fb2af9e28" name="aa3ba3d5f8eaf653bf7870d6fb2af9e28"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa3ba3d5f8eaf653bf7870d6fb2af9e28">&#9670;&#160;</a></span>binByKeyWithComparator() <span class="overload">[1/2]</span></h2>
+<a id="adc22b2013d39364f39f91677a589cb8f" name="adc22b2013d39364f39f91677a589cb8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc22b2013d39364f39f91677a589cb8f">&#9670;&#160;</a></span>binByKeyWithComparator() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class KeyViewType , class Comparator , class DeviceType  = typename KeyViewType::device_type&gt; </div>
+template&lt;class KeyViewType , class Comparator , class ExecutionSpace  = typename KeyViewType::execution_space&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt; Cabana::binByKeyWithComparator </td>
+          <td class="memname">auto Cabana::binByKeyWithComparator </td>
           <td>(</td>
           <td class="paramtype">KeyViewType&#160;</td>
           <td class="paramname"><em>keys</em>, </td>
@@ -1029,16 +1041,16 @@ template&lt;class KeyViewType , class Comparator , class DeviceType  = typename 
 
 </div>
 </div>
-<a id="aefc5d265a9a93c34646cf78f99363d11" name="aefc5d265a9a93c34646cf78f99363d11"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aefc5d265a9a93c34646cf78f99363d11">&#9670;&#160;</a></span>binByKeyWithComparator() <span class="overload">[2/2]</span></h2>
+<a id="a70e404c2997ca696faff2f84caf97691" name="a70e404c2997ca696faff2f84caf97691"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70e404c2997ca696faff2f84caf97691">&#9670;&#160;</a></span>binByKeyWithComparator() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class KeyViewType , class Comparator , class DeviceType  = typename KeyViewType::device_type&gt; </div>
+template&lt;class KeyViewType , class Comparator , class ExecutionSpace  = typename KeyViewType::execution_space&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt; Cabana::binByKeyWithComparator </td>
+          <td class="memname">auto Cabana::binByKeyWithComparator </td>
           <td>(</td>
           <td class="paramtype">KeyViewType&#160;</td>
           <td class="paramname"><em>keys</em>, </td>
@@ -2778,7 +2790,7 @@ template&lt;class <a class="el" href="classCabana_1_1Halo.html">Halo</a> , class
 </div>
 </div>
 <a id="ab9cb44110c8a6215d2ca62406e8aed35" name="ab9cb44110c8a6215d2ca62406e8aed35"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab9cb44110c8a6215d2ca62406e8aed35">&#9670;&#160;</a></span>migrate() <span class="overload">[1/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9cb44110c8a6215d2ca62406e8aed35">&#9670;&#160;</a></span>migrate() <span class="overload">[1/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2815,14 +2827,14 @@ template&lt;class Distributor_t , class AoSoA_t &gt; </div>
 <p>Migrate moves all data to a new distribution that is uniquely owned - each element will only have a single destination rank.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Distributor_t</td><td><a class="el" href="classCabana_1_1Distributor.html" title="A communication plan for migrating data from one uniquely-owned decomposition to another uniquely own...">Distributor</a> type - must be a distributor.</td></tr>
+    <tr><td class="paramname">Distributor_t</td><td><a class="el" href="classCabana_1_1Distributor.html" title="A communication plan for migrating data from one uniquely-owned decomposition to another uniquely own...">Distributor</a> type - must be a distributor. </td></tr>
     <tr><td class="paramname">AoSoA_t</td><td><a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> type - must be an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">distributor</td><td>The distributor to use for the migration.</td></tr>
+    <tr><td class="paramname">distributor</td><td>The distributor to use for the migration. </td></tr>
     <tr><td class="paramname">aosoa</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> containing the data to be migrated. Upon input, must have the same number of elements as the inputs used to construct the destributor. At output, it will be the same size as th enumber of import elements on this rank provided by the distributor. Before using this function, consider reserving enough memory in the data structure so reallocating is not necessary. </td></tr>
   </table>
   </dd>
@@ -2831,7 +2843,7 @@ template&lt;class Distributor_t , class AoSoA_t &gt; </div>
 </div>
 </div>
 <a id="adb10ac278624d871f6079c4e24ccb219" name="adb10ac278624d871f6079c4e24ccb219"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adb10ac278624d871f6079c4e24ccb219">&#9670;&#160;</a></span>migrate() <span class="overload">[2/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#adb10ac278624d871f6079c4e24ccb219">&#9670;&#160;</a></span>migrate() <span class="overload">[2/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2874,15 +2886,15 @@ template&lt;class Distributor_t , class AoSoA_t &gt; </div>
 <p>Migrate moves all data to a new distribution that is uniquely owned - each element will only have a single destination rank.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Distributor_t</td><td><a class="el" href="classCabana_1_1Distributor.html" title="A communication plan for migrating data from one uniquely-owned decomposition to another uniquely own...">Distributor</a> type - must be a distributor.</td></tr>
+    <tr><td class="paramname">Distributor_t</td><td><a class="el" href="classCabana_1_1Distributor.html" title="A communication plan for migrating data from one uniquely-owned decomposition to another uniquely own...">Distributor</a> type - must be a distributor. </td></tr>
     <tr><td class="paramname">AoSoA_t</td><td><a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> type - must be an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">distributor</td><td>The distributor to use for the migration.</td></tr>
-    <tr><td class="paramname">src</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> containing the data to be migrated. Must have the same number of elements as the inputs used to construct the distributor.</td></tr>
+    <tr><td class="paramname">distributor</td><td>The distributor to use for the migration. </td></tr>
+    <tr><td class="paramname">src</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> containing the data to be migrated. Must have the same number of elements as the inputs used to construct the distributor. </td></tr>
     <tr><td class="paramname">dst</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> to which the migrated data will be written. Must be the same size as the number of imports given by the distributor on this rank. Call totalNumImport() on the distributor to get this size value. </td></tr>
   </table>
   </dd>
@@ -2891,7 +2903,7 @@ template&lt;class Distributor_t , class AoSoA_t &gt; </div>
 </div>
 </div>
 <a id="a82063f55f2d0c3d17d11ba6642fb7353" name="a82063f55f2d0c3d17d11ba6642fb7353"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a82063f55f2d0c3d17d11ba6642fb7353">&#9670;&#160;</a></span>migrate() <span class="overload">[3/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a82063f55f2d0c3d17d11ba6642fb7353">&#9670;&#160;</a></span>migrate() <span class="overload">[3/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2934,15 +2946,211 @@ template&lt;class Distributor_t , class Slice_t &gt; </div>
 <p>Migrate moves all data to a new distribution that is uniquely owned - each element will only have a single destination rank.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Distributor_t</td><td><a class="el" href="classCabana_1_1Distributor.html" title="A communication plan for migrating data from one uniquely-owned decomposition to another uniquely own...">Distributor</a> type - must be a distributor.</td></tr>
+    <tr><td class="paramname">Distributor_t</td><td><a class="el" href="classCabana_1_1Distributor.html" title="A communication plan for migrating data from one uniquely-owned decomposition to another uniquely own...">Distributor</a> type - must be a distributor. </td></tr>
     <tr><td class="paramname">Slice_t</td><td><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> type - must be an <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a>.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">distributor</td><td>The distributor to use for the migration.</td></tr>
-    <tr><td class="paramname">src</td><td>The slice containing the data to be migrated. Must have the same number of elements as the inputs used to construct the destributor.</td></tr>
+    <tr><td class="paramname">distributor</td><td>The distributor to use for the migration. </td></tr>
+    <tr><td class="paramname">src</td><td>The slice containing the data to be migrated. Must have the same number of elements as the inputs used to construct the destributor. </td></tr>
+    <tr><td class="paramname">dst</td><td>The slice to which the migrated data will be written. Must be the same size as the number of imports given by the distributor on this rank. Call totalNumImport() on the distributor to get this size value. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4b49b38dd2be95b2b905698d063a0736" name="a4b49b38dd2be95b2b905698d063a0736"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b49b38dd2be95b2b905698d063a0736">&#9670;&#160;</a></span>migrate() <span class="overload">[4/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ExecutionSpace , class Distributor_t , class AoSoA_t &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cabana::migrate </td>
+          <td>(</td>
+          <td class="paramtype">ExecutionSpace&#160;</td>
+          <td class="paramname"><em>exec_space</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Distributor_t &amp;&#160;</td>
+          <td class="paramname"><em>distributor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">AoSoA_t &amp;&#160;</td>
+          <td class="paramname"><em>aosoa</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__distributor.html">is_distributor</a>&lt; Distributor_t &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; AoSoA_t &gt;::value), int &gt;::type *&#160;</td>
+          <td class="paramname"> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Synchronously migrate data between two different decompositions using the distributor forward communication plan. Single <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> version that will resize in-place. Note that resizing does not necessarily allocate more memory. The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> memory will only increase if not enough has already been reserved/allocated for the needed number of elements. </p>
+<p>Migrate moves all data to a new distribution that is uniquely owned - each element will only have a single destination rank.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ExecutionSpace</td><td>Kokkos execution space. </td></tr>
+    <tr><td class="paramname">Distributor_t</td><td><a class="el" href="classCabana_1_1Distributor.html" title="A communication plan for migrating data from one uniquely-owned decomposition to another uniquely own...">Distributor</a> type - must be a distributor. </td></tr>
+    <tr><td class="paramname">AoSoA_t</td><td><a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> type - must be an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">exec_space</td><td>Kokkos execution space. </td></tr>
+    <tr><td class="paramname">distributor</td><td>The distributor to use for the migration. </td></tr>
+    <tr><td class="paramname">aosoa</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> containing the data to be migrated. Upon input, must have the same number of elements as the inputs used to construct the destributor. At output, it will be the same size as th enumber of import elements on this rank provided by the distributor. Before using this function, consider reserving enough memory in the data structure so reallocating is not necessary. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a7a83e23020e924fb010e2f5c20dbcc76" name="a7a83e23020e924fb010e2f5c20dbcc76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a83e23020e924fb010e2f5c20dbcc76">&#9670;&#160;</a></span>migrate() <span class="overload">[5/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ExecutionSpace , class Distributor_t , class AoSoA_t &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cabana::migrate </td>
+          <td>(</td>
+          <td class="paramtype">ExecutionSpace&#160;</td>
+          <td class="paramname"><em>exec_space</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Distributor_t &amp;&#160;</td>
+          <td class="paramname"><em>distributor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const AoSoA_t &amp;&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">AoSoA_t &amp;&#160;</td>
+          <td class="paramname"><em>dst</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__distributor.html">is_distributor</a>&lt; Distributor_t &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; AoSoA_t &gt;::value), int &gt;::type *&#160;</td>
+          <td class="paramname"> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Synchronously migrate data between two different decompositions using the distributor forward communication plan. Multiple <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> version. </p>
+<p>Migrate moves all data to a new distribution that is uniquely owned - each element will only have a single destination rank.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ExecutionSpace</td><td>Kokkos execution space. </td></tr>
+    <tr><td class="paramname">Distributor_t</td><td><a class="el" href="classCabana_1_1Distributor.html" title="A communication plan for migrating data from one uniquely-owned decomposition to another uniquely own...">Distributor</a> type - must be a distributor. </td></tr>
+    <tr><td class="paramname">AoSoA_t</td><td><a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> type - must be an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">exec_space</td><td>Kokkos execution space. </td></tr>
+    <tr><td class="paramname">distributor</td><td>The distributor to use for the migration. </td></tr>
+    <tr><td class="paramname">src</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> containing the data to be migrated. Must have the same number of elements as the inputs used to construct the distributor. </td></tr>
+    <tr><td class="paramname">dst</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> to which the migrated data will be written. Must be the same size as the number of imports given by the distributor on this rank. Call totalNumImport() on the distributor to get this size value. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a34db3aa66674d749b54de31d8c2590e9" name="a34db3aa66674d749b54de31d8c2590e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34db3aa66674d749b54de31d8c2590e9">&#9670;&#160;</a></span>migrate() <span class="overload">[6/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ExecutionSpace , class Distributor_t , class Slice_t &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cabana::migrate </td>
+          <td>(</td>
+          <td class="paramtype">ExecutionSpace&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Distributor_t &amp;&#160;</td>
+          <td class="paramname"><em>distributor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Slice_t &amp;&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Slice_t &amp;&#160;</td>
+          <td class="paramname"><em>dst</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__distributor.html">is_distributor</a>&lt; Distributor_t &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; Slice_t &gt;::value), int &gt;::type *&#160;</td>
+          <td class="paramname"> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Synchronously migrate data between two different decompositions using the distributor forward communication plan. <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> version. The user can do this in-place with the same slice but they will need to manage the resizing themselves as we can't resize slices. </p>
+<p>Migrate moves all data to a new distribution that is uniquely owned - each element will only have a single destination rank.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">ExecutionSpace</td><td>Kokkos execution space. </td></tr>
+    <tr><td class="paramname">Distributor_t</td><td><a class="el" href="classCabana_1_1Distributor.html" title="A communication plan for migrating data from one uniquely-owned decomposition to another uniquely own...">Distributor</a> type - must be a distributor. </td></tr>
+    <tr><td class="paramname">Slice_t</td><td><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> type - must be an <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">distributor</td><td>The distributor to use for the migration. </td></tr>
+    <tr><td class="paramname">src</td><td>The slice containing the data to be migrated. Must have the same number of elements as the inputs used to construct the destributor. </td></tr>
     <tr><td class="paramname">dst</td><td>The slice to which the migrated data will be written. Must be the same size as the number of imports given by the distributor on this rank. Call totalNumImport() on the distributor to get this size value. </td></tr>
   </table>
   </dd>
@@ -3840,7 +4048,7 @@ template&lt;class FunctorType , class NeighborListType , class ReduceType , clas
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class BinningDataType , class AoSoA_t , class DeviceType  = typename BinningDataType::device_type&gt; </div>
+template&lt;class BinningDataType , class AoSoA_t , class ExecutionSpace  = typename BinningDataType::execution_space&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void Cabana::permute </td>
@@ -3892,7 +4100,7 @@ template&lt;class BinningDataType , class AoSoA_t , class DeviceType  = typename
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class BinningDataType , class SliceType , class DeviceType  = typename BinningDataType::device_type&gt; </div>
+template&lt;class BinningDataType , class SliceType , class ExecutionSpace  = typename BinningDataType::execution_space&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void Cabana::permute </td>
@@ -4205,16 +4413,16 @@ template&lt;std::size_t M, class AoSoA_t &gt; </div>
 
 </div>
 </div>
-<a id="a1cc9ab0c591f2667153e2bd87ded274c" name="a1cc9ab0c591f2667153e2bd87ded274c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1cc9ab0c591f2667153e2bd87ded274c">&#9670;&#160;</a></span>sortByKey() <span class="overload">[1/4]</span></h2>
+<a id="a5c64ff984d2da99d6ff20d89a8ae9899" name="a5c64ff984d2da99d6ff20d89a8ae9899"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c64ff984d2da99d6ff20d89a8ae9899">&#9670;&#160;</a></span>sortByKey() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class KeyViewType , class DeviceType  = typename KeyViewType::device_type&gt; </div>
+template&lt;class KeyViewType , class ExecutionSpace  = typename KeyViewType::execution_space&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt; Cabana::sortByKey </td>
+          <td class="memname">auto Cabana::sortByKey </td>
           <td>(</td>
           <td class="paramtype">KeyViewType&#160;</td>
           <td class="paramname"><em>keys</em>, </td>
@@ -4264,16 +4472,16 @@ template&lt;class KeyViewType , class DeviceType  = typename KeyViewType::device
 
 </div>
 </div>
-<a id="ae5845f234655864df02d9de7afcfd039" name="ae5845f234655864df02d9de7afcfd039"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae5845f234655864df02d9de7afcfd039">&#9670;&#160;</a></span>sortByKey() <span class="overload">[2/4]</span></h2>
+<a id="a73cfa6540c7adf84fb5d3546950c46e6" name="a73cfa6540c7adf84fb5d3546950c46e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73cfa6540c7adf84fb5d3546950c46e6">&#9670;&#160;</a></span>sortByKey() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class KeyViewType , class DeviceType  = typename KeyViewType::device_type&gt; </div>
+template&lt;class KeyViewType , class ExecutionSpace  = typename KeyViewType::execution_space&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt; Cabana::sortByKey </td>
+          <td class="memname">auto Cabana::sortByKey </td>
           <td>(</td>
           <td class="paramtype">KeyViewType&#160;</td>
           <td class="paramname"><em>keys</em>, </td>
@@ -4309,16 +4517,16 @@ template&lt;class KeyViewType , class DeviceType  = typename KeyViewType::device
 
 </div>
 </div>
-<a id="a6a14be80766a8a3ea32c49eb7c8ab23f" name="a6a14be80766a8a3ea32c49eb7c8ab23f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6a14be80766a8a3ea32c49eb7c8ab23f">&#9670;&#160;</a></span>sortByKey() <span class="overload">[3/4]</span></h2>
+<a id="a2577949b8aa884de4873f31efa54401b" name="a2577949b8aa884de4873f31efa54401b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2577949b8aa884de4873f31efa54401b">&#9670;&#160;</a></span>sortByKey() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class SliceType , class DeviceType  = typename SliceType::device_type&gt; </div>
+template&lt;class SliceType , class ExecutionSpace  = typename SliceType::execution_space&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt; Cabana::sortByKey </td>
+          <td class="memname">auto Cabana::sortByKey </td>
           <td>(</td>
           <td class="paramtype">SliceType&#160;</td>
           <td class="paramname"><em>slice</em>, </td>
@@ -4368,16 +4576,16 @@ template&lt;class SliceType , class DeviceType  = typename SliceType::device_typ
 
 </div>
 </div>
-<a id="a7944e21c2dd1801db1cb508dc8324c04" name="a7944e21c2dd1801db1cb508dc8324c04"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7944e21c2dd1801db1cb508dc8324c04">&#9670;&#160;</a></span>sortByKey() <span class="overload">[4/4]</span></h2>
+<a id="a360b0f9c15911bfac904d240e7f369d7" name="a360b0f9c15911bfac904d240e7f369d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a360b0f9c15911bfac904d240e7f369d7">&#9670;&#160;</a></span>sortByKey() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class SliceType , class DeviceType  = typename SliceType::device_type&gt; </div>
+template&lt;class SliceType , class ExecutionSpace  = typename SliceType::execution_space&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt; Cabana::sortByKey </td>
+          <td class="memname">auto Cabana::sortByKey </td>
           <td>(</td>
           <td class="paramtype">SliceType&#160;</td>
           <td class="paramname"><em>slice</em>, </td>
@@ -4413,16 +4621,16 @@ template&lt;class SliceType , class DeviceType  = typename SliceType::device_typ
 
 </div>
 </div>
-<a id="a3763367c9ee3175947ffce56aef282ba" name="a3763367c9ee3175947ffce56aef282ba"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3763367c9ee3175947ffce56aef282ba">&#9670;&#160;</a></span>sortByKeyWithComparator() <span class="overload">[1/2]</span></h2>
+<a id="ac7a029626fb67b12cf279b7f3c620159" name="ac7a029626fb67b12cf279b7f3c620159"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac7a029626fb67b12cf279b7f3c620159">&#9670;&#160;</a></span>sortByKeyWithComparator() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class KeyViewType , class Comparator , class DeviceType  = typename KeyViewType::device_type&gt; </div>
+template&lt;class KeyViewType , class Comparator , class ExecutionSpace  = typename KeyViewType::execution_space&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt; Cabana::sortByKeyWithComparator </td>
+          <td class="memname">auto Cabana::sortByKeyWithComparator </td>
           <td>(</td>
           <td class="paramtype">KeyViewType&#160;</td>
           <td class="paramname"><em>keys</em>, </td>
@@ -4480,16 +4688,16 @@ template&lt;class KeyViewType , class Comparator , class DeviceType  = typename 
 
 </div>
 </div>
-<a id="a97f805a73f64b982000c64aad915ef5d" name="a97f805a73f64b982000c64aad915ef5d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a97f805a73f64b982000c64aad915ef5d">&#9670;&#160;</a></span>sortByKeyWithComparator() <span class="overload">[2/2]</span></h2>
+<a id="ac8376dcbdaa0c3dad87fe19203cf1755" name="ac8376dcbdaa0c3dad87fe19203cf1755"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8376dcbdaa0c3dad87fe19203cf1755">&#9670;&#160;</a></span>sortByKeyWithComparator() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class KeyViewType , class Comparator , class DeviceType  = typename KeyViewType::device_type&gt; </div>
+template&lt;class KeyViewType , class Comparator , class ExecutionSpace  = typename KeyViewType::execution_space&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt; Cabana::sortByKeyWithComparator </td>
+          <td class="memname">auto Cabana::sortByKeyWithComparator </td>
           <td>(</td>
           <td class="paramtype">KeyViewType&#160;</td>
           <td class="paramname"><em>keys</em>, </td>

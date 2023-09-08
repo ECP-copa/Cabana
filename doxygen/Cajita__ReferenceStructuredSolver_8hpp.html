@@ -150,13 +150,13 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ReferenceStructuredSolver.html">Cajita::ReferenceStructuredSolver&lt; Scalar, EntityType, MeshType, DeviceType &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ReferenceStructuredSolver.html">Cajita::ReferenceStructuredSolver&lt; Scalar, EntityType, MeshType, MemorySpace &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reference preconditioned structured solver interface.  <a href="classCajita_1_1ReferenceStructuredSolver.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ReferenceConjugateGradient.html">Cajita::ReferenceConjugateGradient&lt; Scalar, EntityType, MeshType, DeviceType &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ReferenceConjugateGradient.html">Cajita::ReferenceConjugateGradient&lt; Scalar, EntityType, MeshType, MemorySpace &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reference structured preconditioned block conjugate gradient implementation.  <a href="classCajita_1_1ReferenceConjugateGradient.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1ReferenceConjugateGradient_1_1LayoutContainer.html">Cajita::ReferenceConjugateGradient&lt; Scalar, EntityType, MeshType, DeviceType &gt;::LayoutContainer&lt; ScalarT, MemorySpaceT, ArrayLayoutT &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1ReferenceConjugateGradient_1_1LayoutContainer.html">Cajita::ReferenceConjugateGradient&lt; Scalar, EntityType, MeshType, MemorySpace &gt;::LayoutContainer&lt; ScalarT, MemorySpaceT, ArrayLayoutT &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array-like container to hold layout and data information.  <a href="structCajita_1_1ReferenceConjugateGradient_1_1LayoutContainer.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -168,10 +168,10 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aa8f7cf2114e1c7925f12e8d902170cf6"><td class="memTemplParams" colspan="2">template&lt;class Scalar , class DeviceType , class EntityType , class MeshType &gt; </td></tr>
-<tr class="memitem:aa8f7cf2114e1c7925f12e8d902170cf6"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; ReferenceConjugateGradient&lt; Scalar, EntityType, MeshType, DeviceType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#aa8f7cf2114e1c7925f12e8d902170cf6">Cajita::createReferenceConjugateGradient</a> (const ArrayLayout&lt; EntityType, MeshType &gt; &amp;layout)</td></tr>
-<tr class="memdesc:aa8f7cf2114e1c7925f12e8d902170cf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for reference structured preconditioned block conjugate gradient.  <br /></td></tr>
-<tr class="separator:aa8f7cf2114e1c7925f12e8d902170cf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb6f0025c053a6112442f5be3d7375b1"><td class="memTemplParams" colspan="2">template&lt;class Scalar , class MemorySpace , class EntityType , class MeshType &gt; </td></tr>
+<tr class="memitem:afb6f0025c053a6112442f5be3d7375b1"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; ReferenceConjugateGradient&lt; Scalar, EntityType, MeshType, MemorySpace &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#afb6f0025c053a6112442f5be3d7375b1">Cajita::createReferenceConjugateGradient</a> (const ArrayLayout&lt; EntityType, MeshType &gt; &amp;layout)</td></tr>
+<tr class="memdesc:afb6f0025c053a6112442f5be3d7375b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for reference structured preconditioned block conjugate gradient.  <br /></td></tr>
+<tr class="separator:afb6f0025c053a6112442f5be3d7375b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Reference structured solver. </p>

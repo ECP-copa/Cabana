@@ -1145,18 +1145,18 @@ $(function() {
 <div class="line"><a id="l01286" name="l01286"></a><span class="lineno"> 1286</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a id="l01287" name="l01287"></a><span class="lineno"> 1287</span><span class="comment">// Sparse halo creation.</span></div>
 <div class="line"><a id="l01288" name="l01288"></a><span class="lineno"> 1288</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l01294" name="l01294"></a><span class="lineno"> 1294</span><span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>DeviceType, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> cellBitsPerTileDim,</div>
+<div class="line"><a id="l01294" name="l01294"></a><span class="lineno"> 1294</span><span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>MemorySpace, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> cellBitsPerTileDim,</div>
 <div class="line"><a id="l01295" name="l01295"></a><span class="lineno"> 1295</span>          <span class="keyword">class </span>DataTypes, <span class="keyword">class </span>EntityType, <span class="keyword">class </span>MeshType,</div>
 <div class="line"><a id="l01296" name="l01296"></a><span class="lineno"> 1296</span>          <span class="keyword">class </span>SparseMapType, <span class="keyword">class </span>Pattern, <span class="keyword">typename</span> Value = int,</div>
 <div class="line"><a id="l01297" name="l01297"></a><span class="lineno"> 1297</span>          <span class="keyword">typename</span> Key = uint64_t&gt;</div>
 <div class="line"><a id="l01298" name="l01298"></a><span class="lineno"> 1298</span><span class="keyword">auto</span> createSparseHalo(</div>
 <div class="line"><a id="l01299" name="l01299"></a><span class="lineno"> 1299</span>    <span class="keyword">const</span> Pattern&amp; pattern,</div>
-<div class="line"><a id="l01300" name="l01300"></a><span class="lineno"> 1300</span>    <span class="keyword">const</span> std::shared_ptr&lt;</div>
-<div class="line"><a id="l01301" name="l01301"></a><span class="lineno"> 1301</span>        SparseArray&lt;DataTypes, DeviceType, EntityType, MeshType, SparseMapType&gt;&gt;</div>
+<div class="line"><a id="l01300" name="l01300"></a><span class="lineno"> 1300</span>    <span class="keyword">const</span> std::shared_ptr&lt;SparseArray&lt;DataTypes, MemorySpace, EntityType,</div>
+<div class="line"><a id="l01301" name="l01301"></a><span class="lineno"> 1301</span>                                      MeshType, SparseMapType&gt;&gt;</div>
 <div class="line"><a id="l01302" name="l01302"></a><span class="lineno"> 1302</span>        array )</div>
 <div class="line"><a id="l01303" name="l01303"></a><span class="lineno"> 1303</span>{</div>
-<div class="line"><a id="l01304" name="l01304"></a><span class="lineno"> 1304</span>    <span class="keyword">using </span>array_type =</div>
-<div class="line"><a id="l01305" name="l01305"></a><span class="lineno"> 1305</span>        SparseArray&lt;DataTypes, DeviceType, EntityType, MeshType, SparseMapType&gt;;</div>
+<div class="line"><a id="l01304" name="l01304"></a><span class="lineno"> 1304</span>    <span class="keyword">using </span>array_type = SparseArray&lt;DataTypes, MemorySpace, EntityType, MeshType,</div>
+<div class="line"><a id="l01305" name="l01305"></a><span class="lineno"> 1305</span>                                   SparseMapType&gt;;</div>
 <div class="line"><a id="l01306" name="l01306"></a><span class="lineno"> 1306</span>    <span class="keyword">using </span>memory_space = <span class="keyword">typename</span> array_type::memory_space;</div>
 <div class="line"><a id="l01307" name="l01307"></a><span class="lineno"> 1307</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> std::size_t num_space_dim = array_type::num_space_dim;</div>
 <div class="line"><a id="l01308" name="l01308"></a><span class="lineno"> 1308</span>    <span class="keywordflow">return</span> std::make_shared&lt;</div>

@@ -1,14 +1,14 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
 <area shape="rect" id="node1" title=" " alt="" coords="5,1529,116,1555"/>
 <area shape="rect" id="node2" href="$structCabana_1_1is__accessible__from_3_01MemorySpace_00_01ExecutionSpace_00_01std_1_1enable__if_96534d0f81e01b006272bb63cf2f3dd3.html" title=" " alt="" coords="193,5,443,89"/>
-<area shape="rect" id="node3" href="$structCabana_1_1is__binning__data_3_01const_01BinningData_3_01DeviceType_01_4_01_4.html" title="BinningData static type checker." alt="" coords="229,113,407,168"/>
+<area shape="rect" id="node3" href="$structCabana_1_1is__binning__data_3_01const_01BinningData_3_01MemorySpace_01_4_01_4.html" title="BinningData static type checker." alt="" coords="229,113,407,168"/>
 <area shape="rect" id="node4" href="$structCabana_1_1is__memory__access__tag_3_01AtomicAccessMemory_01_4.html" title=" " alt="" coords="215,193,421,233"/>
 <area shape="rect" id="node5" href="$structCabana_1_1is__memory__access__tag_3_01DefaultAccessMemory_01_4.html" title="Memory access type checker." alt="" coords="213,257,423,297"/>
 <area shape="rect" id="node6" href="$structCabana_1_1is__memory__access__tag_3_01RandomAccessMemory_01_4.html" title=" " alt="" coords="211,321,425,361"/>
 <area shape="rect" id="node7" href="$structCabana_1_1is__particle__list__impl_3_01ParticleList_3_01MemorySpace_00_01FieldTags_8_8_8_01_4_01_4.html" title=" " alt="" coords="209,385,427,440"/>
 <area shape="rect" id="node8" href="$structCajita_1_1Experimental_1_1is__matching__array_3_01ArrayEntity_00_01ArrayMesh_00_01ArrayMem3571c6b6cd60b8f760b44f9c854553fd.html" title="Matching Array static type checker." alt="" coords="164,464,472,636"/>
-<area shape="rect" id="node9" href="$structCajita_1_1Experimental_1_1is__sparse__array_3_01SparseArray_3_01DataTypes_00_01DeviceType_8ed2dc44752639ee25a311674e5a495f.html" title="Sparse array static type checker." alt="" coords="192,661,444,730"/>
-<area shape="rect" id="node10" href="$structCajita_1_1Experimental_1_1is__sparse__array_3_01const_01SparseArray_3_01DataTypes_00_01Devde29cb38e4666746b29f0251e96519ab.html" title="Sparse array static type checker." alt="" coords="209,755,427,839"/>
+<area shape="rect" id="node9" href="$structCajita_1_1Experimental_1_1is__sparse__array_3_01SparseArray_3_01DataTypes_00_01MemorySpaceaa76667681ec3a3cbe67a0fa9507fdeb.html" title="Sparse array static type checker." alt="" coords="183,661,453,730"/>
+<area shape="rect" id="node10" href="$structCajita_1_1Experimental_1_1is__sparse__array_3_01const_01SparseArray_3_01DataTypes_00_01Mem5f09f4a82e57a46a16de42b5cbf8a09c.html" title="Sparse array static type checker." alt="" coords="209,755,427,839"/>
 <area shape="rect" id="node11" href="$structCajita_1_1Experimental_1_1is__sparse__array__layout_3_01SparseArrayLayout_3_01DataTypes_004d915aff7e34bf4fdf4c0c32082f80bc.html" title="Sparse array layout static type checker." alt="" coords="173,863,463,933"/>
 <area shape="rect" id="node12" href="$structCajita_1_1Experimental_1_1is__sparse__array__layout_3_01const_01SparseArrayLayout_3_01Data6f32765c04bd4905115bc93e800f329c.html" title="Sparse array layout static type checker." alt="" coords="195,957,441,1041"/>
 <area shape="rect" id="node13" href="$structCajita_1_1HypreIsCompatibleWithMemorySpace_3_01Kokkos_1_1HostSpace_01_4.html" title="Hypre device compatibility check &#45; host memory." alt="" coords="221,1065,415,1120"/>

@@ -1,4 +1,4 @@
-<map id="Cabana::Halo&lt; DeviceType &gt;" name="Cabana::Halo&lt; DeviceType &gt;">
-<area shape="rect" id="node1" title="A communication plan for scattering and gathering of ghosted data." alt="" coords="6,93,202,119"/>
-<area shape="rect" id="node2" href="$classCabana_1_1CommunicationPlan.html" title="Communication plan base class." alt="" coords="5,5,203,45"/>
+<map id="Cabana::Halo&lt; MemorySpace &gt;" name="Cabana::Halo&lt; MemorySpace &gt;">
+<area shape="rect" id="node1" title="A communication plan for scattering and gathering of ghosted data." alt="" coords="5,93,220,119"/>
+<area shape="rect" id="node2" href="$classCabana_1_1CommunicationPlan.html" title="Communication plan base class." alt="" coords="14,5,211,45"/>
 </map>

@@ -87,6 +87,7 @@ $(function() {
 <code>#include &lt;<a class="el" href="Cajita__SparseLocalGrid_8hpp_source.html">Cajita_SparseLocalGrid.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="Cajita__Types_8hpp_source.html">Cajita_Types.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="Cabana__AoSoA_8hpp_source.html">Cabana_AoSoA.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="Cabana__Utils_8hpp_source.html">Cabana_Utils.hpp</a>&gt;</code><br />
 <code>#include &lt;Kokkos_Core.hpp&gt;</code><br />
 <code>#include &lt;cmath&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
@@ -98,39 +99,40 @@ Include dependency graph for Cajita_SparseArray.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="Cajita__SparseArray_8hpp__incl.png" border="0" usemap="#acajita_2src_2Cajita__SparseArray_8hpp" alt=""/></div>
 <map name="acajita_2src_2Cajita__SparseArray_8hpp" id="acajita_2src_2Cajita__SparseArray_8hpp">
-<area shape="rect" title="Sparse grid fields arrays using AoSoA." alt="" coords="1234,5,1395,45"/>
-<area shape="rect" href="Cajita__SparseIndexSpace_8hpp.html" title="Sparse grid mapping." alt="" coords="596,174,799,199"/>
-<area shape="rect" href="Cajita__Types_8hpp.html" title="Grid type tags." alt="" coords="1740,328,1865,353"/>
-<area shape="rect" title=" " alt="" coords="2545,401,2631,427"/>
-<area shape="rect" title=" " alt="" coords="1421,328,1481,353"/>
-<area shape="rect" title=" " alt="" coords="528,328,603,353"/>
-<area shape="rect" title=" " alt="" coords="75,328,138,353"/>
-<area shape="rect" title=" " alt="" coords="2026,401,2155,427"/>
-<area shape="rect" href="Cajita__SparseLocalGrid_8hpp.html" title="Sparse Local grid and related implementations." alt="" coords="975,93,1164,119"/>
-<area shape="rect" title=" " alt="" coords="1513,328,1570,353"/>
-<area shape="rect" href="Cabana__AoSoA_8hpp.html" title="Array&#45;of&#45;Struct&#45;of&#45;Arrays particle data structure." alt="" coords="2370,93,2513,119"/>
-<area shape="rect" href="Cajita__GlobalMesh_8hpp.html" title="Global mesh." alt="" coords="616,255,779,280"/>
-<area shape="rect" title=" " alt="" coords="973,328,1027,353"/>
-<area shape="rect" href="Cajita__IndexSpace_8hpp.html" title="Logical grid indexing." alt="" coords="803,255,963,280"/>
-<area shape="rect" title=" " alt="" coords="1657,328,1716,353"/>
-<area shape="rect" title=" " alt="" coords="245,255,440,280"/>
-<area shape="rect" title=" " alt="" coords="1217,328,1271,353"/>
-<area shape="rect" title=" " alt="" coords="1088,328,1171,353"/>
-<area shape="rect" title=" " alt="" coords="1307,328,1389,353"/>
-<area shape="rect" href="Cajita__GlobalGrid_8hpp.html" title="Global grid." alt="" coords="1063,174,1217,199"/>
-<area shape="rect" href="Cajita__SparseLocalGrid__impl_8hpp_source.html" title=" " alt="" coords="1818,167,1979,207"/>
-<area shape="rect" href="Cajita__Partitioner_8hpp.html" title="Multi&#45;node grid partitioner." alt="" coords="1089,255,1242,280"/>
-<area shape="rect" href="Cajita__GlobalGrid__impl_8hpp_source.html" title=" " alt="" coords="1267,255,1453,280"/>
-<area shape="rect" href="Cabana__MemberTypes_8hpp.html" title="AoSoA tuple member types." alt="" coords="3035,328,3226,353"/>
-<area shape="rect" title=" " alt="" coords="3100,401,3161,427"/>
-<area shape="rect" href="Cabana__Slice_8hpp.html" title="Slice a single particle property from an AoSoA." alt="" coords="2377,174,2505,199"/>
-<area shape="rect" href="Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="2086,255,2223,280"/>
-<area shape="rect" href="Cabana__Index_8hpp.html" title="AoSoA indexing." alt="" coords="2358,255,2525,280"/>
-<area shape="rect" href="Cabana__SoA_8hpp.html" title="Struct&#45;of&#45;Arrays for building AoSoA." alt="" coords="2752,255,2877,280"/>
-<area shape="rect" href="Cabana__Tuple_8hpp.html" title="Tuple of single particle information to build AoSoA." alt="" coords="2873,174,3007,199"/>
-<area shape="rect" href="Cabana__PerformanceTraits_8hpp.html" title="Default settings for execution spaces." alt="" coords="2055,174,2302,199"/>
-<area shape="rect" href="Cabana__TypeTraits_8hpp_source.html" title=" " alt="" coords="2280,328,2475,353"/>
-<area shape="rect" title=" " alt="" coords="2803,328,2859,353"/>
+<area shape="rect" title="Sparse grid fields arrays using AoSoA." alt="" coords="1509,5,1671,45"/>
+<area shape="rect" href="Cajita__SparseIndexSpace_8hpp.html" title="Sparse grid mapping." alt="" coords="1303,174,1506,199"/>
+<area shape="rect" href="Cajita__Types_8hpp.html" title="Grid type tags." alt="" coords="93,328,218,353"/>
+<area shape="rect" title=" " alt="" coords="2063,401,2149,427"/>
+<area shape="rect" title=" " alt="" coords="1499,328,1559,353"/>
+<area shape="rect" title=" " alt="" coords="1287,328,1362,353"/>
+<area shape="rect" title=" " alt="" coords="5,328,68,353"/>
+<area shape="rect" title=" " alt="" coords="2437,401,2567,427"/>
+<area shape="rect" href="Cajita__SparseLocalGrid_8hpp.html" title="Sparse Local grid and related implementations." alt="" coords="597,93,786,119"/>
+<area shape="rect" title=" " alt="" coords="243,328,300,353"/>
+<area shape="rect" href="Cabana__AoSoA_8hpp.html" title="Array&#45;of&#45;Struct&#45;of&#45;Arrays particle data structure." alt="" coords="2341,93,2484,119"/>
+<area shape="rect" href="Cabana__Utils_8hpp.html" title="Cabana utilities." alt="" coords="3149,255,3277,280"/>
+<area shape="rect" href="Cajita__GlobalMesh_8hpp.html" title="Global mesh." alt="" coords="625,255,787,280"/>
+<area shape="rect" title=" " alt="" coords="535,328,589,353"/>
+<area shape="rect" href="Cajita__IndexSpace_8hpp.html" title="Logical grid indexing." alt="" coords="1123,255,1283,280"/>
+<area shape="rect" title=" " alt="" coords="1849,328,1907,353"/>
+<area shape="rect" title=" " alt="" coords="1307,255,1502,280"/>
+<area shape="rect" title=" " alt="" coords="801,328,856,353"/>
+<area shape="rect" title=" " alt="" coords="366,328,449,353"/>
+<area shape="rect" title=" " alt="" coords="903,328,986,353"/>
+<area shape="rect" href="Cajita__GlobalGrid_8hpp.html" title="Global grid." alt="" coords="345,174,499,199"/>
+<area shape="rect" href="Cajita__SparseLocalGrid__impl_8hpp_source.html" title=" " alt="" coords="765,167,927,207"/>
+<area shape="rect" href="Cajita__Partitioner_8hpp.html" title="Multi&#45;node grid partitioner." alt="" coords="295,255,448,280"/>
+<area shape="rect" href="Cajita__GlobalGrid__impl_8hpp_source.html" title=" " alt="" coords="811,255,998,280"/>
+<area shape="rect" href="Cabana__MemberTypes_8hpp.html" title="AoSoA tuple member types." alt="" coords="2692,328,2883,353"/>
+<area shape="rect" title=" " alt="" coords="3122,401,3183,427"/>
+<area shape="rect" href="Cabana__Slice_8hpp.html" title="Slice a single particle property from an AoSoA." alt="" coords="2399,174,2527,199"/>
+<area shape="rect" href="Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="1983,255,2120,280"/>
+<area shape="rect" href="Cabana__Index_8hpp.html" title="AoSoA indexing." alt="" coords="2247,255,2413,280"/>
+<area shape="rect" href="Cabana__SoA_8hpp.html" title="Struct&#45;of&#45;Arrays for building AoSoA." alt="" coords="2898,255,3023,280"/>
+<area shape="rect" href="Cabana__Tuple_8hpp.html" title="Tuple of single particle information to build AoSoA." alt="" coords="2760,174,2895,199"/>
+<area shape="rect" href="Cabana__PerformanceTraits_8hpp.html" title="Default settings for execution spaces." alt="" coords="2077,174,2324,199"/>
+<area shape="rect" href="Cabana__TypeTraits_8hpp_source.html" title=" " alt="" coords="2219,328,2414,353"/>
+<area shape="rect" title=" " alt="" coords="3059,328,3115,353"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -160,17 +162,17 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1Experimental_1_1is__sparse__array__layout_3_01const_01SparseArrayLayout_3_01Data6f32765c04bd4905115bc93e800f329c.html">Cajita::Experimental::is_sparse_array_layout&lt; const SparseArrayLayout&lt; DataTypes, EntityType, MeshType, SparseMapType &gt; &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sparse array layout static type checker.  <a href="structCajita_1_1Experimental_1_1is__sparse__array__layout_3_01const_01SparseArrayLayout_3_01Data6f32765c04bd4905115bc93e800f329c.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1SparseArray.html">Cajita::Experimental::SparseArray&lt; DataTypes, DeviceType, EntityType, MeshType, SparseMapType &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1SparseArray.html">Cajita::Experimental::SparseArray&lt; DataTypes, MemorySpace, EntityType, MeshType, SparseMapType &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sparse array of field data on the local sparse mesh; <a class="el" href="classCajita_1_1Array.html" title="Array of field data on the local mesh.">Array</a> data is stored in AoSoA manner, with each tile being the SoA element.  <a href="classCajita_1_1Experimental_1_1SparseArray.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1Experimental_1_1is__sparse__array.html">Cajita::Experimental::is_sparse_array&lt; class &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sparse array static type checker.  <a href="structCajita_1_1Experimental_1_1is__sparse__array.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1Experimental_1_1is__sparse__array_3_01SparseArray_3_01DataTypes_00_01DeviceType_8ed2dc44752639ee25a311674e5a495f.html">Cajita::Experimental::is_sparse_array&lt; SparseArray&lt; DataTypes, DeviceType, EntityType, MeshType, SparseMapType &gt; &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sparse array static type checker.  <a href="structCajita_1_1Experimental_1_1is__sparse__array_3_01SparseArray_3_01DataTypes_00_01DeviceType_8ed2dc44752639ee25a311674e5a495f.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1Experimental_1_1is__sparse__array_3_01SparseArray_3_01DataTypes_00_01MemorySpaceaa76667681ec3a3cbe67a0fa9507fdeb.html">Cajita::Experimental::is_sparse_array&lt; SparseArray&lt; DataTypes, MemorySpace, EntityType, MeshType, SparseMapType &gt; &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sparse array static type checker.  <a href="structCajita_1_1Experimental_1_1is__sparse__array_3_01SparseArray_3_01DataTypes_00_01MemorySpaceaa76667681ec3a3cbe67a0fa9507fdeb.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1Experimental_1_1is__sparse__array_3_01const_01SparseArray_3_01DataTypes_00_01Devde29cb38e4666746b29f0251e96519ab.html">Cajita::Experimental::is_sparse_array&lt; const SparseArray&lt; DataTypes, DeviceType, EntityType, MeshType, SparseMapType &gt; &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sparse array static type checker.  <a href="structCajita_1_1Experimental_1_1is__sparse__array_3_01const_01SparseArray_3_01DataTypes_00_01Devde29cb38e4666746b29f0251e96519ab.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1Experimental_1_1is__sparse__array_3_01const_01SparseArray_3_01DataTypes_00_01Mem5f09f4a82e57a46a16de42b5cbf8a09c.html">Cajita::Experimental::is_sparse_array&lt; const SparseArray&lt; DataTypes, MemorySpace, EntityType, MeshType, SparseMapType &gt; &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sparse array static type checker.  <a href="structCajita_1_1Experimental_1_1is__sparse__array_3_01const_01SparseArray_3_01DataTypes_00_01Mem5f09f4a82e57a46a16de42b5cbf8a09c.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -185,7 +187,7 @@ Functions</h2></td></tr>
 <tr class="memitem:a5c779cd17097026c7cf79ad9ef398377"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Cajita__SparseArray_8hpp.html#a5c779cd17097026c7cf79ad9ef398377">Cajita::Experimental::createSparseArrayLayout</a> (const std::shared_ptr&lt; LocalGrid&lt; MeshType &gt; &gt; &amp;local_grid, SparseMapType &amp;sparse_map, EntityType, const float over_allocation=1.01f)</td></tr>
 <tr class="memdesc:a5c779cd17097026c7cf79ad9ef398377"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create sparse array layout over the entities of a sparse local grid.  <br /></td></tr>
 <tr class="separator:a5c779cd17097026c7cf79ad9ef398377"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8233b25fa8397ab7eee8feedaf2350c9"><td class="memTemplParams" colspan="2">template&lt;class DeviceType , class DataTypes , class EntityType , class MeshType , class SparseMapType &gt; </td></tr>
+<tr class="memitem:a8233b25fa8397ab7eee8feedaf2350c9"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace , class DataTypes , class EntityType , class MeshType , class SparseMapType &gt; </td></tr>
 <tr class="memitem:a8233b25fa8397ab7eee8feedaf2350c9"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Cajita__SparseArray_8hpp.html#a8233b25fa8397ab7eee8feedaf2350c9">Cajita::Experimental::createSparseArray</a> (const std::string label, SparseArrayLayout&lt; DataTypes, EntityType, MeshType, SparseMapType &gt; &amp;layout)</td></tr>
 <tr class="memdesc:a8233b25fa8397ab7eee8feedaf2350c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create sparse array based on the sparse array layout.  <br /></td></tr>
 <tr class="separator:a8233b25fa8397ab7eee8feedaf2350c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -199,7 +201,7 @@ Functions</h2></td></tr>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DeviceType , class DataTypes , class EntityType , class MeshType , class SparseMapType &gt; </div>
+template&lt;class MemorySpace , class DataTypes , class EntityType , class MeshType , class SparseMapType &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">auto Cajita::Experimental::createSparseArray </td>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Cabana: Cabana::Slice&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt; Class Template Reference</title>
+<title>Cabana: Cabana::Slice&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -79,7 +79,7 @@ $(function() {
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="classCabana_1_1Slice-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">Cabana::Slice&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt; Class Template Reference</div></div>
+  <div class="headertitle"><div class="title">Cabana::Slice&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -93,219 +93,219 @@ Public Types</h2></td></tr>
 <tr class="memitem:a7dc0ca8d6326f3a0426399fd652894b5"><td class="memItemLeft" align="right" valign="top"><a id="a7dc0ca8d6326f3a0426399fd652894b5" name="a7dc0ca8d6326f3a0426399fd652894b5"></a>enum &#160;</td><td class="memItemRight" valign="bottom">{ <b>rank</b> = std::rank&lt;DataType&gt;::value + 1
  }</td></tr>
 <tr class="separator:a7dc0ca8d6326f3a0426399fd652894b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af0f3072c02e772ae03cc58999f19f79a"><td class="memItemLeft" align="right" valign="top"><a id="af0f3072c02e772ae03cc58999f19f79a" name="af0f3072c02e772ae03cc58999f19f79a"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>slice_type</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;</td></tr>
-<tr class="memdesc:af0f3072c02e772ae03cc58999f19f79a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> type. <br /></td></tr>
-<tr class="separator:af0f3072c02e772ae03cc58999f19f79a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef942d13c84f29c4e688db6e5d76aab0"><td class="memItemLeft" align="right" valign="top"><a id="aef942d13c84f29c4e688db6e5d76aab0" name="aef942d13c84f29c4e688db6e5d76aab0"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = DeviceType</td></tr>
-<tr class="memdesc:aef942d13c84f29c4e688db6e5d76aab0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device type. <br /></td></tr>
-<tr class="separator:aef942d13c84f29c4e688db6e5d76aab0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a027766e4cedb7305b75cad6e81db35ae"><td class="memItemLeft" align="right" valign="top"><a id="a027766e4cedb7305b75cad6e81db35ae" name="a027766e4cedb7305b75cad6e81db35ae"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename device_type::memory_space</td></tr>
-<tr class="memdesc:a027766e4cedb7305b75cad6e81db35ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Memory space. <br /></td></tr>
-<tr class="separator:a027766e4cedb7305b75cad6e81db35ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90c1a45192b4f15ccef6afa048850ddc"><td class="memItemLeft" align="right" valign="top"><a id="a90c1a45192b4f15ccef6afa048850ddc" name="a90c1a45192b4f15ccef6afa048850ddc"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename device_type::execution_space</td></tr>
-<tr class="memdesc:a90c1a45192b4f15ccef6afa048850ddc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execution space. <br /></td></tr>
-<tr class="separator:a90c1a45192b4f15ccef6afa048850ddc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae16abdd6c6cc0627798eb472e54d7865"><td class="memItemLeft" align="right" valign="top"><a id="ae16abdd6c6cc0627798eb472e54d7865" name="ae16abdd6c6cc0627798eb472e54d7865"></a>
+<tr class="memitem:a6442c69c8fe50f766f1c6bc44c42052d"><td class="memItemLeft" align="right" valign="top"><a id="a6442c69c8fe50f766f1c6bc44c42052d" name="a6442c69c8fe50f766f1c6bc44c42052d"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>slice_type</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt;</td></tr>
+<tr class="memdesc:a6442c69c8fe50f766f1c6bc44c42052d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> type. <br /></td></tr>
+<tr class="separator:a6442c69c8fe50f766f1c6bc44c42052d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ea4589bc76c28fe5e087e436b3a4fb1"><td class="memItemLeft" align="right" valign="top"><a id="a9ea4589bc76c28fe5e087e436b3a4fb1" name="a9ea4589bc76c28fe5e087e436b3a4fb1"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename MemorySpace::memory_space</td></tr>
+<tr class="memdesc:a9ea4589bc76c28fe5e087e436b3a4fb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Memory space. <br /></td></tr>
+<tr class="separator:a9ea4589bc76c28fe5e087e436b3a4fb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acaaac4302fd11f0b90133ed86ced12c7"><td class="memItemLeft" align="right" valign="top"><a id="acaaac4302fd11f0b90133ed86ced12c7" name="acaaac4302fd11f0b90133ed86ced12c7"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = typename memory_space::device_type</td></tr>
+<tr class="memdesc:acaaac4302fd11f0b90133ed86ced12c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default device type. <br /></td></tr>
+<tr class="separator:acaaac4302fd11f0b90133ed86ced12c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd939747b3f274bb9bd9782be33c2135"><td class="memItemLeft" align="right" valign="top"><a id="abd939747b3f274bb9bd9782be33c2135" name="abd939747b3f274bb9bd9782be33c2135"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename memory_space::execution_space</td></tr>
+<tr class="memdesc:abd939747b3f274bb9bd9782be33c2135"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default execution space. <br /></td></tr>
+<tr class="separator:abd939747b3f274bb9bd9782be33c2135"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab71f872167d5fd5f2b2195af1cf79994"><td class="memItemLeft" align="right" valign="top"><a id="ab71f872167d5fd5f2b2195af1cf79994" name="ab71f872167d5fd5f2b2195af1cf79994"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_access_type</b> = MemoryAccessType</td></tr>
-<tr class="memdesc:ae16abdd6c6cc0627798eb472e54d7865"><td class="mdescLeft">&#160;</td><td class="mdescRight">Memory access type. <br /></td></tr>
-<tr class="separator:ae16abdd6c6cc0627798eb472e54d7865"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac87d3ba5ed6dad451662223b85f545ea"><td class="memItemLeft" align="right" valign="top"><a id="ac87d3ba5ed6dad451662223b85f545ea" name="ac87d3ba5ed6dad451662223b85f545ea"></a>
+<tr class="memdesc:ab71f872167d5fd5f2b2195af1cf79994"><td class="mdescLeft">&#160;</td><td class="mdescRight">Memory access type. <br /></td></tr>
+<tr class="separator:ab71f872167d5fd5f2b2195af1cf79994"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a996e7d51bbbd05d7ae71dfdbd4f29104"><td class="memItemLeft" align="right" valign="top"><a id="a996e7d51bbbd05d7ae71dfdbd4f29104" name="a996e7d51bbbd05d7ae71dfdbd4f29104"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>size_type</b> = typename memory_space::size_type</td></tr>
-<tr class="memdesc:ac87d3ba5ed6dad451662223b85f545ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size type. <br /></td></tr>
-<tr class="separator:ac87d3ba5ed6dad451662223b85f545ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9359d67bf65799d2bbe593cb9b3aa09"><td class="memItemLeft" align="right" valign="top"><a id="ac9359d67bf65799d2bbe593cb9b3aa09" name="ac9359d67bf65799d2bbe593cb9b3aa09"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>index_type</b> = <a class="el" href="classCabana_1_1Impl_1_1Index.html">Impl::Index</a>&lt; <a class="el" href="classCabana_1_1Slice.html#a6baf143997463bd6431e02e7b98f9e5e">vector_length</a> &gt;</td></tr>
-<tr class="memdesc:ac9359d67bf65799d2bbe593cb9b3aa09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index type. <br /></td></tr>
-<tr class="separator:ac9359d67bf65799d2bbe593cb9b3aa09"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3abd3f2a4c436ebc82656dbf87ca561"><td class="memItemLeft" align="right" valign="top"><a id="af3abd3f2a4c436ebc82656dbf87ca561" name="af3abd3f2a4c436ebc82656dbf87ca561"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>view_wrapper</b> = Impl::KokkosViewWrapper&lt; DataType, <a class="el" href="classCabana_1_1Slice.html#a6baf143997463bd6431e02e7b98f9e5e">vector_length</a>, <a class="el" href="classCabana_1_1Slice.html#a3fabc7c2af477767305716d957dcf235">soa_stride</a> &gt;</td></tr>
-<tr class="memdesc:af3abd3f2a4c436ebc82656dbf87ca561"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos view wrapper. <br /></td></tr>
-<tr class="separator:af3abd3f2a4c436ebc82656dbf87ca561"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a238cf73305ab909dc0737a0d2548a26c"><td class="memItemLeft" align="right" valign="top"><a id="a238cf73305ab909dc0737a0d2548a26c" name="a238cf73305ab909dc0737a0d2548a26c"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>kokkos_view</b> = Kokkos::View&lt; typename view_wrapper::data_type, typename view_wrapper::cabana_layout, DeviceType, typename MemoryAccessType::kokkos_memory_traits &gt;</td></tr>
-<tr class="memdesc:a238cf73305ab909dc0737a0d2548a26c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos view type. <br /></td></tr>
-<tr class="separator:a238cf73305ab909dc0737a0d2548a26c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a889acbd8e5feb213e163c762057ff401"><td class="memItemLeft" align="right" valign="top"><a id="a889acbd8e5feb213e163c762057ff401" name="a889acbd8e5feb213e163c762057ff401"></a>
+<tr class="memdesc:a996e7d51bbbd05d7ae71dfdbd4f29104"><td class="mdescLeft">&#160;</td><td class="mdescRight">Memory space size type. <br /></td></tr>
+<tr class="separator:a996e7d51bbbd05d7ae71dfdbd4f29104"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6bc54e263f3269fa9a762d8394b3266e"><td class="memItemLeft" align="right" valign="top"><a id="a6bc54e263f3269fa9a762d8394b3266e" name="a6bc54e263f3269fa9a762d8394b3266e"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>index_type</b> = <a class="el" href="classCabana_1_1Impl_1_1Index.html">Impl::Index</a>&lt; <a class="el" href="classCabana_1_1Slice.html#a82222fd500c0dd01958e5ad632679d8b">vector_length</a> &gt;</td></tr>
+<tr class="memdesc:a6bc54e263f3269fa9a762d8394b3266e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index type. <br /></td></tr>
+<tr class="separator:a6bc54e263f3269fa9a762d8394b3266e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e20f25943331011f5f46e01e2b27ebb"><td class="memItemLeft" align="right" valign="top"><a id="a6e20f25943331011f5f46e01e2b27ebb" name="a6e20f25943331011f5f46e01e2b27ebb"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>view_wrapper</b> = Impl::KokkosViewWrapper&lt; DataType, <a class="el" href="classCabana_1_1Slice.html#a82222fd500c0dd01958e5ad632679d8b">vector_length</a>, <a class="el" href="classCabana_1_1Slice.html#a90a7f3bb15187115ee088531e4b657ee">soa_stride</a> &gt;</td></tr>
+<tr class="memdesc:a6e20f25943331011f5f46e01e2b27ebb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos view wrapper. <br /></td></tr>
+<tr class="separator:a6e20f25943331011f5f46e01e2b27ebb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a2e7722fa69758cac9f2a2953021092"><td class="memItemLeft" align="right" valign="top"><a id="a9a2e7722fa69758cac9f2a2953021092" name="a9a2e7722fa69758cac9f2a2953021092"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>kokkos_view</b> = Kokkos::View&lt; typename view_wrapper::data_type, typename view_wrapper::cabana_layout, MemorySpace, typename MemoryAccessType::kokkos_memory_traits &gt;</td></tr>
+<tr class="memdesc:a9a2e7722fa69758cac9f2a2953021092"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos view type. <br /></td></tr>
+<tr class="separator:a9a2e7722fa69758cac9f2a2953021092"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a839c710da6c931de28d6c0eb773bc37d"><td class="memItemLeft" align="right" valign="top"><a id="a839c710da6c931de28d6c0eb773bc37d" name="a839c710da6c931de28d6c0eb773bc37d"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>reference_type</b> = typename kokkos_view::reference_type</td></tr>
-<tr class="memdesc:a889acbd8e5feb213e163c762057ff401"><td class="mdescLeft">&#160;</td><td class="mdescRight">View reference type alias. <br /></td></tr>
-<tr class="separator:a889acbd8e5feb213e163c762057ff401"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b7a6b680e7c66ec94e2acd6c3eba251"><td class="memItemLeft" align="right" valign="top"><a id="a3b7a6b680e7c66ec94e2acd6c3eba251" name="a3b7a6b680e7c66ec94e2acd6c3eba251"></a>
+<tr class="memdesc:a839c710da6c931de28d6c0eb773bc37d"><td class="mdescLeft">&#160;</td><td class="mdescRight">View reference type alias. <br /></td></tr>
+<tr class="separator:a839c710da6c931de28d6c0eb773bc37d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c0835a0b6b89996309d4c798a1bdb4b"><td class="memItemLeft" align="right" valign="top"><a id="a3c0835a0b6b89996309d4c798a1bdb4b" name="a3c0835a0b6b89996309d4c798a1bdb4b"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>value_type</b> = typename kokkos_view::value_type</td></tr>
-<tr class="memdesc:a3b7a6b680e7c66ec94e2acd6c3eba251"><td class="mdescLeft">&#160;</td><td class="mdescRight">View value type alias. <br /></td></tr>
-<tr class="separator:a3b7a6b680e7c66ec94e2acd6c3eba251"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c9d92c165481cc23048244992bd0eb0"><td class="memItemLeft" align="right" valign="top"><a id="a5c9d92c165481cc23048244992bd0eb0" name="a5c9d92c165481cc23048244992bd0eb0"></a>
+<tr class="memdesc:a3c0835a0b6b89996309d4c798a1bdb4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">View value type alias. <br /></td></tr>
+<tr class="separator:a3c0835a0b6b89996309d4c798a1bdb4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36f2a9948f6429b54c36d67052ecc3e0"><td class="memItemLeft" align="right" valign="top"><a id="a36f2a9948f6429b54c36d67052ecc3e0" name="a36f2a9948f6429b54c36d67052ecc3e0"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>pointer_type</b> = typename kokkos_view::pointer_type</td></tr>
-<tr class="memdesc:a5c9d92c165481cc23048244992bd0eb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">View pointer type alias. <br /></td></tr>
-<tr class="separator:a5c9d92c165481cc23048244992bd0eb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af13aee8b4f316b789528d8cfb2254d22"><td class="memItemLeft" align="right" valign="top"><a id="af13aee8b4f316b789528d8cfb2254d22" name="af13aee8b4f316b789528d8cfb2254d22"></a>
+<tr class="memdesc:a36f2a9948f6429b54c36d67052ecc3e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">View pointer type alias. <br /></td></tr>
+<tr class="separator:a36f2a9948f6429b54c36d67052ecc3e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e1b817b0857f0fcd4e25a4bb5c727ed"><td class="memItemLeft" align="right" valign="top"><a id="a1e1b817b0857f0fcd4e25a4bb5c727ed" name="a1e1b817b0857f0fcd4e25a4bb5c727ed"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>view_layout</b> = typename kokkos_view::array_layout</td></tr>
-<tr class="memdesc:af13aee8b4f316b789528d8cfb2254d22"><td class="mdescLeft">&#160;</td><td class="mdescRight">View array layout type alias. <br /></td></tr>
-<tr class="separator:af13aee8b4f316b789528d8cfb2254d22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa2b6e1d49a9c3ab9b8ead4e8bd526e06"><td class="memItemLeft" align="right" valign="top"><a id="aa2b6e1d49a9c3ab9b8ead4e8bd526e06" name="aa2b6e1d49a9c3ab9b8ead4e8bd526e06"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>default_access_slice</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, DeviceType, <a class="el" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>, VectorLength, Stride &gt;</td></tr>
-<tr class="memdesc:aa2b6e1d49a9c3ab9b8ead4e8bd526e06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default memory access slice type. <br /></td></tr>
-<tr class="separator:aa2b6e1d49a9c3ab9b8ead4e8bd526e06"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8373336422b4edf6d253d064c22541d9"><td class="memItemLeft" align="right" valign="top"><a id="a8373336422b4edf6d253d064c22541d9" name="a8373336422b4edf6d253d064c22541d9"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>atomic_access_slice</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, DeviceType, <a class="el" href="structCabana_1_1AtomicAccessMemory.html">AtomicAccessMemory</a>, VectorLength, Stride &gt;</td></tr>
-<tr class="memdesc:a8373336422b4edf6d253d064c22541d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomic memory access slice type. <br /></td></tr>
-<tr class="separator:a8373336422b4edf6d253d064c22541d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ceec95532b42f90d6ca1487a349e7ea"><td class="memItemLeft" align="right" valign="top"><a id="a3ceec95532b42f90d6ca1487a349e7ea" name="a3ceec95532b42f90d6ca1487a349e7ea"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>random_access_slice</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, DeviceType, <a class="el" href="structCabana_1_1RandomAccessMemory.html">RandomAccessMemory</a>, VectorLength, Stride &gt;</td></tr>
-<tr class="memdesc:a3ceec95532b42f90d6ca1487a349e7ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Random memory access slice type. <br /></td></tr>
-<tr class="separator:a3ceec95532b42f90d6ca1487a349e7ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:a1e1b817b0857f0fcd4e25a4bb5c727ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">View array layout type alias. <br /></td></tr>
+<tr class="separator:a1e1b817b0857f0fcd4e25a4bb5c727ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2635426b5f321b88ff12cd6c62b768e0"><td class="memItemLeft" align="right" valign="top"><a id="a2635426b5f321b88ff12cd6c62b768e0" name="a2635426b5f321b88ff12cd6c62b768e0"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>default_access_slice</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, MemorySpace, <a class="el" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>, VectorLength, Stride &gt;</td></tr>
+<tr class="memdesc:a2635426b5f321b88ff12cd6c62b768e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default memory access slice type. <br /></td></tr>
+<tr class="separator:a2635426b5f321b88ff12cd6c62b768e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d01d86e29b6675690660207e880da0c"><td class="memItemLeft" align="right" valign="top"><a id="a3d01d86e29b6675690660207e880da0c" name="a3d01d86e29b6675690660207e880da0c"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>atomic_access_slice</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, MemorySpace, <a class="el" href="structCabana_1_1AtomicAccessMemory.html">AtomicAccessMemory</a>, VectorLength, Stride &gt;</td></tr>
+<tr class="memdesc:a3d01d86e29b6675690660207e880da0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomic memory access slice type. <br /></td></tr>
+<tr class="separator:a3d01d86e29b6675690660207e880da0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad156e2d274cdf85c890099100e855304"><td class="memItemLeft" align="right" valign="top"><a id="ad156e2d274cdf85c890099100e855304" name="ad156e2d274cdf85c890099100e855304"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>random_access_slice</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, MemorySpace, <a class="el" href="structCabana_1_1RandomAccessMemory.html">RandomAccessMemory</a>, VectorLength, Stride &gt;</td></tr>
+<tr class="memdesc:ad156e2d274cdf85c890099100e855304"><td class="mdescLeft">&#160;</td><td class="mdescRight">Random memory access slice type. <br /></td></tr>
+<tr class="separator:ad156e2d274cdf85c890099100e855304"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a93a0064084e2b05c030e63ecc688734b"><td class="memItemLeft" align="right" valign="top"><a id="a93a0064084e2b05c030e63ecc688734b" name="a93a0064084e2b05c030e63ecc688734b"></a>
+<tr class="memitem:aa46631eaaf3b9253e5506961ca4a343c"><td class="memItemLeft" align="right" valign="top"><a id="aa46631eaaf3b9253e5506961ca4a343c" name="aa46631eaaf3b9253e5506961ca4a343c"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Slice</b> ()</td></tr>
-<tr class="memdesc:a93a0064084e2b05c030e63ecc688734b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
-<tr class="separator:a93a0064084e2b05c030e63ecc688734b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62c584101d666f3dfc5c6722df8e9f2e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a62c584101d666f3dfc5c6722df8e9f2e">Slice</a> (const <a class="el" href="classCabana_1_1Slice.html#a5c9d92c165481cc23048244992bd0eb0">pointer_type</a> <a class="el" href="classCabana_1_1Slice.html#a7d1d9203682dd4a3156b3ff04868702c">data</a>, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> <a class="el" href="classCabana_1_1Slice.html#a56916eee341b8184856f125ef5db0c93">size</a>, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> num_soa, const std::string &amp;<a class="el" href="classCabana_1_1Slice.html#af22a113cd1d1795e45fe2288d16ed85d">label</a>=&quot;&quot;)</td></tr>
-<tr class="memdesc:a62c584101d666f3dfc5c6722df8e9f2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
-<tr class="separator:a62c584101d666f3dfc5c6722df8e9f2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae615b44282c747d966f9503f5f49fb57"><td class="memTemplParams" colspan="2">template&lt;class MAT &gt; </td></tr>
-<tr class="memitem:ae615b44282c747d966f9503f5f49fb57"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#ae615b44282c747d966f9503f5f49fb57">Slice</a> (const <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, DeviceType, MAT, VectorLength, Stride &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:ae615b44282c747d966f9503f5f49fb57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shallow copy constructor for different memory spaces for assigning new memory access traits to the view.  <br /></td></tr>
-<tr class="separator:ae615b44282c747d966f9503f5f49fb57"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec5df0fbad3aca417989c6b8e6bdf6d5"><td class="memTemplParams" colspan="2">template&lt;class MAT &gt; </td></tr>
-<tr class="memitem:aec5df0fbad3aca417989c6b8e6bdf6d5"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1Slice.html">Slice</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#aec5df0fbad3aca417989c6b8e6bdf6d5">operator=</a> (const <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, DeviceType, MAT, VectorLength, Stride &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:aec5df0fbad3aca417989c6b8e6bdf6d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assignement operator for different memory spaces for assigning new memory access traits to the view.  <br /></td></tr>
-<tr class="separator:aec5df0fbad3aca417989c6b8e6bdf6d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af22a113cd1d1795e45fe2288d16ed85d"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#af22a113cd1d1795e45fe2288d16ed85d">label</a> () const</td></tr>
-<tr class="memdesc:af22a113cd1d1795e45fe2288d16ed85d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the data structure label.  <br /></td></tr>
-<tr class="separator:af22a113cd1d1795e45fe2288d16ed85d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56916eee341b8184856f125ef5db0c93"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a56916eee341b8184856f125ef5db0c93">size</a> () const</td></tr>
-<tr class="memdesc:a56916eee341b8184856f125ef5db0c93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the total number tuples in the slice.  <br /></td></tr>
-<tr class="separator:a56916eee341b8184856f125ef5db0c93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a699e25583765b089d44d36ace7d564cc"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a699e25583765b089d44d36ace7d564cc">numSoA</a> () const</td></tr>
-<tr class="memdesc:a699e25583765b089d44d36ace7d564cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of structs-of-arrays in the container.  <br /></td></tr>
-<tr class="separator:a699e25583765b089d44d36ace7d564cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a55134d94030171d4d1b9f79d12443ab4"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a55134d94030171d4d1b9f79d12443ab4">arraySize</a> (const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> s) const</td></tr>
-<tr class="memdesc:a55134d94030171d4d1b9f79d12443ab4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the size of the data array at a given struct member index.  <br /></td></tr>
-<tr class="separator:a55134d94030171d4d1b9f79d12443ab4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adbcd58365fb483682928fc84ee702b93"><td class="memTemplParams" colspan="2"><a id="adbcd58365fb483682928fc84ee702b93" name="adbcd58365fb483682928fc84ee702b93"></a>
+<tr class="memdesc:aa46631eaaf3b9253e5506961ca4a343c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
+<tr class="separator:aa46631eaaf3b9253e5506961ca4a343c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79fa65dbd7dd4326eedeadb8ad58e2ea"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a79fa65dbd7dd4326eedeadb8ad58e2ea">Slice</a> (const <a class="el" href="classCabana_1_1Slice.html#a36f2a9948f6429b54c36d67052ecc3e0">pointer_type</a> <a class="el" href="classCabana_1_1Slice.html#a24f16dc95555ab72a8f9c83735fa53a0">data</a>, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> <a class="el" href="classCabana_1_1Slice.html#a2bf30d80ecdbb18568537496de43d7f7">size</a>, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> num_soa, const std::string &amp;<a class="el" href="classCabana_1_1Slice.html#a4f559e8799b7117ecedac30c1d0ca50b">label</a>=&quot;&quot;)</td></tr>
+<tr class="memdesc:a79fa65dbd7dd4326eedeadb8ad58e2ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
+<tr class="separator:a79fa65dbd7dd4326eedeadb8ad58e2ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4ba6e051d086ef9160ce925b91d6432"><td class="memTemplParams" colspan="2">template&lt;class MAT &gt; </td></tr>
+<tr class="memitem:aa4ba6e051d086ef9160ce925b91d6432"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#aa4ba6e051d086ef9160ce925b91d6432">Slice</a> (const <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, MemorySpace, MAT, VectorLength, Stride &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:aa4ba6e051d086ef9160ce925b91d6432"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shallow copy constructor for different memory spaces for assigning new memory access traits to the view.  <br /></td></tr>
+<tr class="separator:aa4ba6e051d086ef9160ce925b91d6432"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a455775df421444af768b8b2acf765f93"><td class="memTemplParams" colspan="2">template&lt;class MAT &gt; </td></tr>
+<tr class="memitem:a455775df421444af768b8b2acf765f93"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1Slice.html">Slice</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a455775df421444af768b8b2acf765f93">operator=</a> (const <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, MemorySpace, MAT, VectorLength, Stride &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a455775df421444af768b8b2acf765f93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assignement operator for different memory spaces for assigning new memory access traits to the view.  <br /></td></tr>
+<tr class="separator:a455775df421444af768b8b2acf765f93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f559e8799b7117ecedac30c1d0ca50b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a4f559e8799b7117ecedac30c1d0ca50b">label</a> () const</td></tr>
+<tr class="memdesc:a4f559e8799b7117ecedac30c1d0ca50b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the data structure label.  <br /></td></tr>
+<tr class="separator:a4f559e8799b7117ecedac30c1d0ca50b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bf30d80ecdbb18568537496de43d7f7"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a2bf30d80ecdbb18568537496de43d7f7">size</a> () const</td></tr>
+<tr class="memdesc:a2bf30d80ecdbb18568537496de43d7f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the total number tuples in the slice.  <br /></td></tr>
+<tr class="separator:a2bf30d80ecdbb18568537496de43d7f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0332fd831686fa6923f4917ba3b9c5b"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#ad0332fd831686fa6923f4917ba3b9c5b">numSoA</a> () const</td></tr>
+<tr class="memdesc:ad0332fd831686fa6923f4917ba3b9c5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of structs-of-arrays in the container.  <br /></td></tr>
+<tr class="separator:ad0332fd831686fa6923f4917ba3b9c5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e4953e5021d61ad842cd70b7754cadb"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a7e4953e5021d61ad842cd70b7754cadb">arraySize</a> (const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> s) const</td></tr>
+<tr class="memdesc:a7e4953e5021d61ad842cd70b7754cadb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the size of the data array at a given struct member index.  <br /></td></tr>
+<tr class="separator:a7e4953e5021d61ad842cd70b7754cadb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51e8e1d1430c17e9777394f0797cab9c"><td class="memTemplParams" colspan="2"><a id="a51e8e1d1430c17e9777394f0797cab9c" name="a51e8e1d1430c17e9777394f0797cab9c"></a>
 template&lt;typename U  = DataType&gt; </td></tr>
-<tr class="memitem:adbcd58365fb483682928fc84ee702b93"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;(0==std::rank&lt; U &gt;::value &amp;&amp;std::is_same&lt; U, DataType &gt;::value), <a class="el" href="classCabana_1_1Slice.html#a889acbd8e5feb213e163c762057ff401">reference_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>access</b> (const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> s, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> a) const</td></tr>
-<tr class="memdesc:adbcd58365fb483682928fc84ee702b93"><td class="mdescLeft">&#160;</td><td class="mdescRight">2d access for Rank 0 <br /></td></tr>
-<tr class="separator:adbcd58365fb483682928fc84ee702b93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e8809c240ec3735198c8b8fcc1652d3"><td class="memTemplParams" colspan="2"><a id="a9e8809c240ec3735198c8b8fcc1652d3" name="a9e8809c240ec3735198c8b8fcc1652d3"></a>
+<tr class="memitem:a51e8e1d1430c17e9777394f0797cab9c"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;(0==std::rank&lt; U &gt;::value &amp;&amp;std::is_same&lt; U, DataType &gt;::value), <a class="el" href="classCabana_1_1Slice.html#a839c710da6c931de28d6c0eb773bc37d">reference_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>access</b> (const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> s, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> a) const</td></tr>
+<tr class="memdesc:a51e8e1d1430c17e9777394f0797cab9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">2d access for Rank 0 <br /></td></tr>
+<tr class="separator:a51e8e1d1430c17e9777394f0797cab9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ac045e32b77140b9388050351f1d413"><td class="memTemplParams" colspan="2"><a id="a8ac045e32b77140b9388050351f1d413" name="a8ac045e32b77140b9388050351f1d413"></a>
 template&lt;typename U  = DataType&gt; </td></tr>
-<tr class="memitem:a9e8809c240ec3735198c8b8fcc1652d3"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;(1==std::rank&lt; U &gt;::value &amp;&amp;std::is_same&lt; U, DataType &gt;::value), <a class="el" href="classCabana_1_1Slice.html#a889acbd8e5feb213e163c762057ff401">reference_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>access</b> (const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> s, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> a, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> d0) const</td></tr>
-<tr class="memdesc:a9e8809c240ec3735198c8b8fcc1652d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">2d access for Rank 1 <br /></td></tr>
-<tr class="separator:a9e8809c240ec3735198c8b8fcc1652d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9cbfe7193e90f28fb64485266b8be7ac"><td class="memTemplParams" colspan="2"><a id="a9cbfe7193e90f28fb64485266b8be7ac" name="a9cbfe7193e90f28fb64485266b8be7ac"></a>
+<tr class="memitem:a8ac045e32b77140b9388050351f1d413"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;(1==std::rank&lt; U &gt;::value &amp;&amp;std::is_same&lt; U, DataType &gt;::value), <a class="el" href="classCabana_1_1Slice.html#a839c710da6c931de28d6c0eb773bc37d">reference_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>access</b> (const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> s, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> a, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> d0) const</td></tr>
+<tr class="memdesc:a8ac045e32b77140b9388050351f1d413"><td class="mdescLeft">&#160;</td><td class="mdescRight">2d access for Rank 1 <br /></td></tr>
+<tr class="separator:a8ac045e32b77140b9388050351f1d413"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaebd043353d75e3f28eba097f3c677f6"><td class="memTemplParams" colspan="2"><a id="aaebd043353d75e3f28eba097f3c677f6" name="aaebd043353d75e3f28eba097f3c677f6"></a>
 template&lt;typename U  = DataType&gt; </td></tr>
-<tr class="memitem:a9cbfe7193e90f28fb64485266b8be7ac"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;(2==std::rank&lt; U &gt;::value &amp;&amp;std::is_same&lt; U, DataType &gt;::value), <a class="el" href="classCabana_1_1Slice.html#a889acbd8e5feb213e163c762057ff401">reference_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>access</b> (const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> s, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> a, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> d0, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> d1) const</td></tr>
-<tr class="memdesc:a9cbfe7193e90f28fb64485266b8be7ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">2d access for Rank 2 <br /></td></tr>
-<tr class="separator:a9cbfe7193e90f28fb64485266b8be7ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64148bcca6a65eb33f176667cbc02de1"><td class="memTemplParams" colspan="2"><a id="a64148bcca6a65eb33f176667cbc02de1" name="a64148bcca6a65eb33f176667cbc02de1"></a>
+<tr class="memitem:aaebd043353d75e3f28eba097f3c677f6"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;(2==std::rank&lt; U &gt;::value &amp;&amp;std::is_same&lt; U, DataType &gt;::value), <a class="el" href="classCabana_1_1Slice.html#a839c710da6c931de28d6c0eb773bc37d">reference_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>access</b> (const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> s, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> a, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> d0, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> d1) const</td></tr>
+<tr class="memdesc:aaebd043353d75e3f28eba097f3c677f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">2d access for Rank 2 <br /></td></tr>
+<tr class="separator:aaebd043353d75e3f28eba097f3c677f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00a86ee83936898e8621a214bcc8d371"><td class="memTemplParams" colspan="2"><a id="a00a86ee83936898e8621a214bcc8d371" name="a00a86ee83936898e8621a214bcc8d371"></a>
 template&lt;typename U  = DataType&gt; </td></tr>
-<tr class="memitem:a64148bcca6a65eb33f176667cbc02de1"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;(3==std::rank&lt; U &gt;::value &amp;&amp;std::is_same&lt; U, DataType &gt;::value), <a class="el" href="classCabana_1_1Slice.html#a889acbd8e5feb213e163c762057ff401">reference_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>access</b> (const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> s, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> a, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> d0, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> d1, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> d2) const</td></tr>
-<tr class="memdesc:a64148bcca6a65eb33f176667cbc02de1"><td class="mdescLeft">&#160;</td><td class="mdescRight">2d access for Rank 3 <br /></td></tr>
-<tr class="separator:a64148bcca6a65eb33f176667cbc02de1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10927e9ceb09cac56520d7123a449dbf"><td class="memTemplParams" colspan="2"><a id="a10927e9ceb09cac56520d7123a449dbf" name="a10927e9ceb09cac56520d7123a449dbf"></a>
+<tr class="memitem:a00a86ee83936898e8621a214bcc8d371"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;(3==std::rank&lt; U &gt;::value &amp;&amp;std::is_same&lt; U, DataType &gt;::value), <a class="el" href="classCabana_1_1Slice.html#a839c710da6c931de28d6c0eb773bc37d">reference_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>access</b> (const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> s, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> a, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> d0, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> d1, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> d2) const</td></tr>
+<tr class="memdesc:a00a86ee83936898e8621a214bcc8d371"><td class="mdescLeft">&#160;</td><td class="mdescRight">2d access for Rank 3 <br /></td></tr>
+<tr class="separator:a00a86ee83936898e8621a214bcc8d371"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c54aa037434be6de93efc0a8b0183bf"><td class="memTemplParams" colspan="2"><a id="a9c54aa037434be6de93efc0a8b0183bf" name="a9c54aa037434be6de93efc0a8b0183bf"></a>
 template&lt;typename U  = DataType&gt; </td></tr>
-<tr class="memitem:a10927e9ceb09cac56520d7123a449dbf"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;(0==std::rank&lt; U &gt;::value &amp;&amp;std::is_same&lt; U, DataType &gt;::value), <a class="el" href="classCabana_1_1Slice.html#a889acbd8e5feb213e163c762057ff401">reference_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator()</b> (const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> i) const</td></tr>
-<tr class="memdesc:a10927e9ceb09cac56520d7123a449dbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">1d access for Rank 0 <br /></td></tr>
-<tr class="separator:a10927e9ceb09cac56520d7123a449dbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4caf5495b02154548828e96f9b11ff5e"><td class="memTemplParams" colspan="2"><a id="a4caf5495b02154548828e96f9b11ff5e" name="a4caf5495b02154548828e96f9b11ff5e"></a>
+<tr class="memitem:a9c54aa037434be6de93efc0a8b0183bf"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;(0==std::rank&lt; U &gt;::value &amp;&amp;std::is_same&lt; U, DataType &gt;::value), <a class="el" href="classCabana_1_1Slice.html#a839c710da6c931de28d6c0eb773bc37d">reference_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator()</b> (const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> i) const</td></tr>
+<tr class="memdesc:a9c54aa037434be6de93efc0a8b0183bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">1d access for Rank 0 <br /></td></tr>
+<tr class="separator:a9c54aa037434be6de93efc0a8b0183bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae5c56194b43ffd1e827ba5d30ce2870e"><td class="memTemplParams" colspan="2"><a id="ae5c56194b43ffd1e827ba5d30ce2870e" name="ae5c56194b43ffd1e827ba5d30ce2870e"></a>
 template&lt;typename U  = DataType&gt; </td></tr>
-<tr class="memitem:a4caf5495b02154548828e96f9b11ff5e"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;(1==std::rank&lt; U &gt;::value &amp;&amp;std::is_same&lt; U, DataType &gt;::value), <a class="el" href="classCabana_1_1Slice.html#a889acbd8e5feb213e163c762057ff401">reference_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator()</b> (const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> i, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> d0) const</td></tr>
-<tr class="memdesc:a4caf5495b02154548828e96f9b11ff5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">1d access for Rank 1 <br /></td></tr>
-<tr class="separator:a4caf5495b02154548828e96f9b11ff5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac14c6a87066bfbf1a43c23deb0e51532"><td class="memTemplParams" colspan="2"><a id="ac14c6a87066bfbf1a43c23deb0e51532" name="ac14c6a87066bfbf1a43c23deb0e51532"></a>
+<tr class="memitem:ae5c56194b43ffd1e827ba5d30ce2870e"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;(1==std::rank&lt; U &gt;::value &amp;&amp;std::is_same&lt; U, DataType &gt;::value), <a class="el" href="classCabana_1_1Slice.html#a839c710da6c931de28d6c0eb773bc37d">reference_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator()</b> (const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> i, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> d0) const</td></tr>
+<tr class="memdesc:ae5c56194b43ffd1e827ba5d30ce2870e"><td class="mdescLeft">&#160;</td><td class="mdescRight">1d access for Rank 1 <br /></td></tr>
+<tr class="separator:ae5c56194b43ffd1e827ba5d30ce2870e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65fd1bd8471ae76156ec1271ea79c63d"><td class="memTemplParams" colspan="2"><a id="a65fd1bd8471ae76156ec1271ea79c63d" name="a65fd1bd8471ae76156ec1271ea79c63d"></a>
 template&lt;typename U  = DataType&gt; </td></tr>
-<tr class="memitem:ac14c6a87066bfbf1a43c23deb0e51532"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;(2==std::rank&lt; U &gt;::value &amp;&amp;std::is_same&lt; U, DataType &gt;::value), <a class="el" href="classCabana_1_1Slice.html#a889acbd8e5feb213e163c762057ff401">reference_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator()</b> (const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> i, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> d0, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> d1) const</td></tr>
-<tr class="memdesc:ac14c6a87066bfbf1a43c23deb0e51532"><td class="mdescLeft">&#160;</td><td class="mdescRight">1d access for Rank 2 <br /></td></tr>
-<tr class="separator:ac14c6a87066bfbf1a43c23deb0e51532"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c919486e1ab4fe0e92a7b2261cd81d0"><td class="memTemplParams" colspan="2"><a id="a6c919486e1ab4fe0e92a7b2261cd81d0" name="a6c919486e1ab4fe0e92a7b2261cd81d0"></a>
+<tr class="memitem:a65fd1bd8471ae76156ec1271ea79c63d"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;(2==std::rank&lt; U &gt;::value &amp;&amp;std::is_same&lt; U, DataType &gt;::value), <a class="el" href="classCabana_1_1Slice.html#a839c710da6c931de28d6c0eb773bc37d">reference_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator()</b> (const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> i, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> d0, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> d1) const</td></tr>
+<tr class="memdesc:a65fd1bd8471ae76156ec1271ea79c63d"><td class="mdescLeft">&#160;</td><td class="mdescRight">1d access for Rank 2 <br /></td></tr>
+<tr class="separator:a65fd1bd8471ae76156ec1271ea79c63d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99c4993a6674d37663d03596eb4edc09"><td class="memTemplParams" colspan="2"><a id="a99c4993a6674d37663d03596eb4edc09" name="a99c4993a6674d37663d03596eb4edc09"></a>
 template&lt;typename U  = DataType&gt; </td></tr>
-<tr class="memitem:a6c919486e1ab4fe0e92a7b2261cd81d0"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;(3==std::rank&lt; U &gt;::value &amp;&amp;std::is_same&lt; U, DataType &gt;::value), <a class="el" href="classCabana_1_1Slice.html#a889acbd8e5feb213e163c762057ff401">reference_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator()</b> (const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> i, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> d0, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> d1, const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> d2) const</td></tr>
-<tr class="memdesc:a6c919486e1ab4fe0e92a7b2261cd81d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">1d access for Rank 3 <br /></td></tr>
-<tr class="separator:a6c919486e1ab4fe0e92a7b2261cd81d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d1d9203682dd4a3156b3ff04868702c"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#a5c9d92c165481cc23048244992bd0eb0">pointer_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a7d1d9203682dd4a3156b3ff04868702c">data</a> () const</td></tr>
-<tr class="memdesc:a7d1d9203682dd4a3156b3ff04868702c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a raw pointer to the data for this member.  <br /></td></tr>
-<tr class="separator:a7d1d9203682dd4a3156b3ff04868702c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa6e2a826d8b85fd5037d317373aa5f1"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION constexpr <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#aaa6e2a826d8b85fd5037d317373aa5f1">viewRank</a> () const</td></tr>
-<tr class="memdesc:aaa6e2a826d8b85fd5037d317373aa5f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the rank of the raw data for this slice. This includes the struct dimension, array dimension, and all tuple slice dimensions.  <br /></td></tr>
-<tr class="separator:aaa6e2a826d8b85fd5037d317373aa5f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5af1df12099d43c179f356816c2f1f15"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a5af1df12099d43c179f356816c2f1f15">extent</a> (const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> d) const</td></tr>
-<tr class="memdesc:a5af1df12099d43c179f356816c2f1f15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the extent of a given raw slice data dimension. This includes the struct dimension, array dimension, and all tuple slice dimensions.  <br /></td></tr>
-<tr class="separator:a5af1df12099d43c179f356816c2f1f15"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e622bc6e130f088adbf054e6bbca7ea"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a4e622bc6e130f088adbf054e6bbca7ea">stride</a> (const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> d) const</td></tr>
-<tr class="memdesc:a4e622bc6e130f088adbf054e6bbca7ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stride of a given raw slice dimension. This includes the struct dimension, array dimension, and all tuple slice dimensions.  <br /></td></tr>
-<tr class="separator:a4e622bc6e130f088adbf054e6bbca7ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acbc023e3e2e2c8b470aad6819341f53b"><td class="memItemLeft" align="right" valign="top"><a id="acbc023e3e2e2c8b470aad6819341f53b" name="acbc023e3e2e2c8b470aad6819341f53b"></a>
-KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#a238cf73305ab909dc0737a0d2548a26c">kokkos_view</a>&#160;</td><td class="memItemRight" valign="bottom"><b>view</b> () const</td></tr>
-<tr class="memdesc:acbc023e3e2e2c8b470aad6819341f53b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the underlying Kokkos View managing the slice data. <br /></td></tr>
-<tr class="separator:acbc023e3e2e2c8b470aad6819341f53b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99c4993a6674d37663d03596eb4edc09"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;(3==std::rank&lt; U &gt;::value &amp;&amp;std::is_same&lt; U, DataType &gt;::value), <a class="el" href="classCabana_1_1Slice.html#a839c710da6c931de28d6c0eb773bc37d">reference_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator()</b> (const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> i, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> d0, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> d1, const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> d2) const</td></tr>
+<tr class="memdesc:a99c4993a6674d37663d03596eb4edc09"><td class="mdescLeft">&#160;</td><td class="mdescRight">1d access for Rank 3 <br /></td></tr>
+<tr class="separator:a99c4993a6674d37663d03596eb4edc09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24f16dc95555ab72a8f9c83735fa53a0"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#a36f2a9948f6429b54c36d67052ecc3e0">pointer_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a24f16dc95555ab72a8f9c83735fa53a0">data</a> () const</td></tr>
+<tr class="memdesc:a24f16dc95555ab72a8f9c83735fa53a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a raw pointer to the data for this member.  <br /></td></tr>
+<tr class="separator:a24f16dc95555ab72a8f9c83735fa53a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a846fd8d115a63490eec8addf64aed5c8"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION constexpr <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a846fd8d115a63490eec8addf64aed5c8">viewRank</a> () const</td></tr>
+<tr class="memdesc:a846fd8d115a63490eec8addf64aed5c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the rank of the raw data for this slice. This includes the struct dimension, array dimension, and all tuple slice dimensions.  <br /></td></tr>
+<tr class="separator:a846fd8d115a63490eec8addf64aed5c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab969137bcb5735009fcee16a71c35dea"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#ab969137bcb5735009fcee16a71c35dea">extent</a> (const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> d) const</td></tr>
+<tr class="memdesc:ab969137bcb5735009fcee16a71c35dea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the extent of a given raw slice data dimension. This includes the struct dimension, array dimension, and all tuple slice dimensions.  <br /></td></tr>
+<tr class="separator:ab969137bcb5735009fcee16a71c35dea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f4f2d3dfa37e9bbc1ddcc551c5d911a"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a6f4f2d3dfa37e9bbc1ddcc551c5d911a">stride</a> (const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> d) const</td></tr>
+<tr class="memdesc:a6f4f2d3dfa37e9bbc1ddcc551c5d911a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stride of a given raw slice dimension. This includes the struct dimension, array dimension, and all tuple slice dimensions.  <br /></td></tr>
+<tr class="separator:a6f4f2d3dfa37e9bbc1ddcc551c5d911a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca7f58c38d61fd7a9a8b7465cafa7680"><td class="memItemLeft" align="right" valign="top"><a id="aca7f58c38d61fd7a9a8b7465cafa7680" name="aca7f58c38d61fd7a9a8b7465cafa7680"></a>
+KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#a9a2e7722fa69758cac9f2a2953021092">kokkos_view</a>&#160;</td><td class="memItemRight" valign="bottom"><b>view</b> () const</td></tr>
+<tr class="memdesc:aca7f58c38d61fd7a9a8b7465cafa7680"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the underlying Kokkos View managing the slice data. <br /></td></tr>
+<tr class="separator:aca7f58c38d61fd7a9a8b7465cafa7680"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a6baf143997463bd6431e02e7b98f9e5e"><td class="memItemLeft" align="right" valign="top"><a id="a6baf143997463bd6431e02e7b98f9e5e" name="a6baf143997463bd6431e02e7b98f9e5e"></a>
+<tr class="memitem:a82222fd500c0dd01958e5ad632679d8b"><td class="memItemLeft" align="right" valign="top"><a id="a82222fd500c0dd01958e5ad632679d8b" name="a82222fd500c0dd01958e5ad632679d8b"></a>
 static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>vector_length</b> = VectorLength</td></tr>
-<tr class="memdesc:a6baf143997463bd6431e02e7b98f9e5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vector length. <br /></td></tr>
-<tr class="separator:a6baf143997463bd6431e02e7b98f9e5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3fabc7c2af477767305716d957dcf235"><td class="memItemLeft" align="right" valign="top"><a id="a3fabc7c2af477767305716d957dcf235" name="a3fabc7c2af477767305716d957dcf235"></a>
+<tr class="memdesc:a82222fd500c0dd01958e5ad632679d8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vector length. <br /></td></tr>
+<tr class="separator:a82222fd500c0dd01958e5ad632679d8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90a7f3bb15187115ee088531e4b657ee"><td class="memItemLeft" align="right" valign="top"><a id="a90a7f3bb15187115ee088531e4b657ee" name="a90a7f3bb15187115ee088531e4b657ee"></a>
 static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>soa_stride</b> = Stride</td></tr>
-<tr class="memdesc:a3fabc7c2af477767305716d957dcf235"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1SoA.html">SoA</a> stride. <br /></td></tr>
-<tr class="separator:a3fabc7c2af477767305716d957dcf235"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a778fb8ccc9978c161dd971bbc95e59ab"><td class="memItemLeft" align="right" valign="top"><a id="a778fb8ccc9978c161dd971bbc95e59ab" name="a778fb8ccc9978c161dd971bbc95e59ab"></a>
+<tr class="memdesc:a90a7f3bb15187115ee088531e4b657ee"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1SoA.html">SoA</a> stride. <br /></td></tr>
+<tr class="separator:a90a7f3bb15187115ee088531e4b657ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a722bc30079b09fd8f2a74df281d786a8"><td class="memItemLeft" align="right" valign="top"><a id="a722bc30079b09fd8f2a74df281d786a8" name="a722bc30079b09fd8f2a74df281d786a8"></a>
 static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>max_supported_rank</b> = 3</td></tr>
-<tr class="memdesc:a778fb8ccc9978c161dd971bbc95e59ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum supported rank. <br /></td></tr>
-<tr class="separator:a778fb8ccc9978c161dd971bbc95e59ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca939d5d5b5d8f818bd294f8bad051ad"><td class="memItemLeft" align="right" valign="top"><a id="aca939d5d5b5d8f818bd294f8bad051ad" name="aca939d5d5b5d8f818bd294f8bad051ad"></a>
+<tr class="memdesc:a722bc30079b09fd8f2a74df281d786a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum supported rank. <br /></td></tr>
+<tr class="separator:a722bc30079b09fd8f2a74df281d786a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea07faf3d09786a2d9fdf3b7dcda7511"><td class="memItemLeft" align="right" valign="top"><a id="aea07faf3d09786a2d9fdf3b7dcda7511" name="aea07faf3d09786a2d9fdf3b7dcda7511"></a>
 static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>max_label_length</b> = 128</td></tr>
-<tr class="memdesc:aca939d5d5b5d8f818bd294f8bad051ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum label length. <br /></td></tr>
-<tr class="separator:aca939d5d5b5d8f818bd294f8bad051ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:aea07faf3d09786a2d9fdf3b7dcda7511"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum label length. <br /></td></tr>
+<tr class="separator:aea07faf3d09786a2d9fdf3b7dcda7511"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:a8afe4cec77fdc9bbcc418b1691fb1f74"><td class="memItemLeft" align="right" valign="top"><a id="a8afe4cec77fdc9bbcc418b1691fb1f74" name="a8afe4cec77fdc9bbcc418b1691fb1f74"></a>
-class&#160;</td><td class="memItemRight" valign="bottom"><b>Slice&lt; DataType, DeviceType, DefaultAccessMemory, VectorLength, Stride &gt;</b></td></tr>
-<tr class="separator:a8afe4cec77fdc9bbcc418b1691fb1f74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae0f0b511a708bfebc900401282a4ae5e"><td class="memItemLeft" align="right" valign="top"><a id="ae0f0b511a708bfebc900401282a4ae5e" name="ae0f0b511a708bfebc900401282a4ae5e"></a>
-class&#160;</td><td class="memItemRight" valign="bottom"><b>Slice&lt; DataType, DeviceType, AtomicAccessMemory, VectorLength, Stride &gt;</b></td></tr>
-<tr class="separator:ae0f0b511a708bfebc900401282a4ae5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31e363e128c3f6377f1f35d9239a4f5f"><td class="memItemLeft" align="right" valign="top"><a id="a31e363e128c3f6377f1f35d9239a4f5f" name="a31e363e128c3f6377f1f35d9239a4f5f"></a>
-class&#160;</td><td class="memItemRight" valign="bottom"><b>Slice&lt; DataType, DeviceType, RandomAccessMemory, VectorLength, Stride &gt;</b></td></tr>
-<tr class="separator:a31e363e128c3f6377f1f35d9239a4f5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ceca9e083600e1b124ea446681d1152"><td class="memItemLeft" align="right" valign="top"><a id="a2ceca9e083600e1b124ea446681d1152" name="a2ceca9e083600e1b124ea446681d1152"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>Slice&lt; DataType, MemorySpace, DefaultAccessMemory, VectorLength, Stride &gt;</b></td></tr>
+<tr class="separator:a2ceca9e083600e1b124ea446681d1152"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2390752b940819a95a62817d8b4aba1d"><td class="memItemLeft" align="right" valign="top"><a id="a2390752b940819a95a62817d8b4aba1d" name="a2390752b940819a95a62817d8b4aba1d"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>Slice&lt; DataType, MemorySpace, AtomicAccessMemory, VectorLength, Stride &gt;</b></td></tr>
+<tr class="separator:a2390752b940819a95a62817d8b4aba1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a656258afbd3ac225e19704304583708c"><td class="memItemLeft" align="right" valign="top"><a id="a656258afbd3ac225e19704304583708c" name="a656258afbd3ac225e19704304583708c"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>Slice&lt; DataType, MemorySpace, RandomAccessMemory, VectorLength, Stride &gt;</b></td></tr>
+<tr class="separator:a656258afbd3ac225e19704304583708c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;typename DataType, typename DeviceType, typename MemoryAccessType, int VectorLength, int Stride&gt;<br />
-class Cabana::Slice&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;</div><p>A slice of an array-of-structs-of-arrays with data access to a single multidimensional member. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, int Stride&gt;<br />
+class Cabana::Slice&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt;</div><p>A slice of an array-of-structs-of-arrays with data access to a single multidimensional member. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a62c584101d666f3dfc5c6722df8e9f2e" name="a62c584101d666f3dfc5c6722df8e9f2e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a62c584101d666f3dfc5c6722df8e9f2e">&#9670;&#160;</a></span>Slice() <span class="overload">[1/2]</span></h2>
+<a id="a79fa65dbd7dd4326eedeadb8ad58e2ea" name="a79fa65dbd7dd4326eedeadb8ad58e2ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79fa65dbd7dd4326eedeadb8ad58e2ea">&#9670;&#160;</a></span>Slice() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType , typename DeviceType , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
+template&lt;typename DataType , typename MemorySpace , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;::Slice </td>
+          <td class="memname"><a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt;::Slice </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html#a5c9d92c165481cc23048244992bd0eb0">pointer_type</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html#a36f2a9948f6429b54c36d67052ecc3e0">pointer_type</a>&#160;</td>
           <td class="paramname"><em>data</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a>&#160;</td>
           <td class="paramname"><em>size</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a>&#160;</td>
           <td class="paramname"><em>num_soa</em>, </td>
         </tr>
         <tr>
@@ -340,13 +340,13 @@ template&lt;typename DataType , typename DeviceType , typename MemoryAccessType 
 
 </div>
 </div>
-<a id="ae615b44282c747d966f9503f5f49fb57" name="ae615b44282c747d966f9503f5f49fb57"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae615b44282c747d966f9503f5f49fb57">&#9670;&#160;</a></span>Slice() <span class="overload">[2/2]</span></h2>
+<a id="aa4ba6e051d086ef9160ce925b91d6432" name="aa4ba6e051d086ef9160ce925b91d6432"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4ba6e051d086ef9160ce925b91d6432">&#9670;&#160;</a></span>Slice() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType , typename DeviceType , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
+template&lt;typename DataType , typename MemorySpace , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
 <div class="memtemplate">
 template&lt;class MAT &gt; </div>
 <table class="mlabels">
@@ -354,9 +354,9 @@ template&lt;class MAT &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;::Slice </td>
+          <td class="memname"><a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt;::Slice </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, DeviceType, MAT, VectorLength, Stride &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, MemorySpace, MAT, VectorLength, Stride &gt; &amp;&#160;</td>
           <td class="paramname"><em>rhs</em></td><td>)</td>
           <td></td>
         </tr>
@@ -385,21 +385,21 @@ template&lt;class MAT &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a55134d94030171d4d1b9f79d12443ab4" name="a55134d94030171d4d1b9f79d12443ab4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a55134d94030171d4d1b9f79d12443ab4">&#9670;&#160;</a></span>arraySize()</h2>
+<a id="a7e4953e5021d61ad842cd70b7754cadb" name="a7e4953e5021d61ad842cd70b7754cadb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e4953e5021d61ad842cd70b7754cadb">&#9670;&#160;</a></span>arraySize()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType , typename DeviceType , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
+template&lt;typename DataType , typename MemorySpace , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;::arraySize </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt;::arraySize </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a>&#160;</td>
           <td class="paramname"><em>s</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -422,19 +422,19 @@ template&lt;typename DataType , typename DeviceType , typename MemoryAccessType 
 
 </div>
 </div>
-<a id="a7d1d9203682dd4a3156b3ff04868702c" name="a7d1d9203682dd4a3156b3ff04868702c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7d1d9203682dd4a3156b3ff04868702c">&#9670;&#160;</a></span>data()</h2>
+<a id="a24f16dc95555ab72a8f9c83735fa53a0" name="a24f16dc95555ab72a8f9c83735fa53a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24f16dc95555ab72a8f9c83735fa53a0">&#9670;&#160;</a></span>data()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType , typename DeviceType , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
+template&lt;typename DataType , typename MemorySpace , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#a5c9d92c165481cc23048244992bd0eb0">pointer_type</a> <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;::data </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#a36f2a9948f6429b54c36d67052ecc3e0">pointer_type</a> <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt;::data </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -452,21 +452,21 @@ template&lt;typename DataType , typename DeviceType , typename MemoryAccessType 
 
 </div>
 </div>
-<a id="a5af1df12099d43c179f356816c2f1f15" name="a5af1df12099d43c179f356816c2f1f15"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5af1df12099d43c179f356816c2f1f15">&#9670;&#160;</a></span>extent()</h2>
+<a id="ab969137bcb5735009fcee16a71c35dea" name="ab969137bcb5735009fcee16a71c35dea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab969137bcb5735009fcee16a71c35dea">&#9670;&#160;</a></span>extent()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType , typename DeviceType , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
+template&lt;typename DataType , typename MemorySpace , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;::extent </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt;::extent </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a>&#160;</td>
           <td class="paramname"><em>d</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -489,19 +489,19 @@ template&lt;typename DataType , typename DeviceType , typename MemoryAccessType 
 
 </div>
 </div>
-<a id="af22a113cd1d1795e45fe2288d16ed85d" name="af22a113cd1d1795e45fe2288d16ed85d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af22a113cd1d1795e45fe2288d16ed85d">&#9670;&#160;</a></span>label()</h2>
+<a id="a4f559e8799b7117ecedac30c1d0ca50b" name="a4f559e8799b7117ecedac30c1d0ca50b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4f559e8799b7117ecedac30c1d0ca50b">&#9670;&#160;</a></span>label()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType , typename DeviceType , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
+template&lt;typename DataType , typename MemorySpace , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::string <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;::label </td>
+          <td class="memname">std::string <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt;::label </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -519,19 +519,19 @@ template&lt;typename DataType , typename DeviceType , typename MemoryAccessType 
 
 </div>
 </div>
-<a id="a699e25583765b089d44d36ace7d564cc" name="a699e25583765b089d44d36ace7d564cc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a699e25583765b089d44d36ace7d564cc">&#9670;&#160;</a></span>numSoA()</h2>
+<a id="ad0332fd831686fa6923f4917ba3b9c5b" name="ad0332fd831686fa6923f4917ba3b9c5b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad0332fd831686fa6923f4917ba3b9c5b">&#9670;&#160;</a></span>numSoA()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType , typename DeviceType , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
+template&lt;typename DataType , typename MemorySpace , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;::numSoA </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt;::numSoA </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -549,13 +549,13 @@ template&lt;typename DataType , typename DeviceType , typename MemoryAccessType 
 
 </div>
 </div>
-<a id="aec5df0fbad3aca417989c6b8e6bdf6d5" name="aec5df0fbad3aca417989c6b8e6bdf6d5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aec5df0fbad3aca417989c6b8e6bdf6d5">&#9670;&#160;</a></span>operator=()</h2>
+<a id="a455775df421444af768b8b2acf765f93" name="a455775df421444af768b8b2acf765f93"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a455775df421444af768b8b2acf765f93">&#9670;&#160;</a></span>operator=()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType , typename DeviceType , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
+template&lt;typename DataType , typename MemorySpace , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
 <div class="memtemplate">
 template&lt;class MAT &gt; </div>
 <table class="mlabels">
@@ -563,9 +563,9 @@ template&lt;class MAT &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1Slice.html">Slice</a> &amp; <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;::operator= </td>
+          <td class="memname"><a class="el" href="classCabana_1_1Slice.html">Slice</a> &amp; <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt;::operator= </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, DeviceType, MAT, VectorLength, Stride &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, MemorySpace, MAT, VectorLength, Stride &gt; &amp;&#160;</td>
           <td class="paramname"><em>rhs</em></td><td>)</td>
           <td></td>
         </tr>
@@ -594,19 +594,19 @@ template&lt;class MAT &gt; </div>
 
 </div>
 </div>
-<a id="a56916eee341b8184856f125ef5db0c93" name="a56916eee341b8184856f125ef5db0c93"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56916eee341b8184856f125ef5db0c93">&#9670;&#160;</a></span>size()</h2>
+<a id="a2bf30d80ecdbb18568537496de43d7f7" name="a2bf30d80ecdbb18568537496de43d7f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2bf30d80ecdbb18568537496de43d7f7">&#9670;&#160;</a></span>size()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType , typename DeviceType , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
+template&lt;typename DataType , typename MemorySpace , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;::size </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt;::size </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -624,21 +624,21 @@ template&lt;typename DataType , typename DeviceType , typename MemoryAccessType 
 
 </div>
 </div>
-<a id="a4e622bc6e130f088adbf054e6bbca7ea" name="a4e622bc6e130f088adbf054e6bbca7ea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e622bc6e130f088adbf054e6bbca7ea">&#9670;&#160;</a></span>stride()</h2>
+<a id="a6f4f2d3dfa37e9bbc1ddcc551c5d911a" name="a6f4f2d3dfa37e9bbc1ddcc551c5d911a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f4f2d3dfa37e9bbc1ddcc551c5d911a">&#9670;&#160;</a></span>stride()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType , typename DeviceType , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
+template&lt;typename DataType , typename MemorySpace , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;::stride </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt;::stride </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a>&#160;</td>
           <td class="paramname"><em>d</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -661,19 +661,19 @@ template&lt;typename DataType , typename DeviceType , typename MemoryAccessType 
 
 </div>
 </div>
-<a id="aaa6e2a826d8b85fd5037d317373aa5f1" name="aaa6e2a826d8b85fd5037d317373aa5f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa6e2a826d8b85fd5037d317373aa5f1">&#9670;&#160;</a></span>viewRank()</h2>
+<a id="a846fd8d115a63490eec8addf64aed5c8" name="a846fd8d115a63490eec8addf64aed5c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a846fd8d115a63490eec8addf64aed5c8">&#9670;&#160;</a></span>viewRank()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType , typename DeviceType , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
+template&lt;typename DataType , typename MemorySpace , typename MemoryAccessType , int VectorLength, int Stride&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION constexpr <a class="el" href="classCabana_1_1Slice.html#ac87d3ba5ed6dad451662223b85f545ea">size_type</a> <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;::viewRank </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION constexpr <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">size_type</a> <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt;::viewRank </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>

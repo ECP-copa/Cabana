@@ -176,8 +176,13 @@ auto&#160;</td><td class="memItemRight" valign="bottom"><b>totalSend</b> ()</td>
 auto&#160;</td><td class="memItemRight" valign="bottom"><b>totalReceive</b> ()</td></tr>
 <tr class="memdesc:a35b59614a7038414b79e207114746aba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total gather receive size for this rank. <br /></td></tr>
 <tr class="separator:a35b59614a7038414b79e207114746aba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d2ee6cbb4316376ecd38065d1f98edb"><td class="memTemplParams" colspan="2"><a id="a2d2ee6cbb4316376ecd38065d1f98edb" name="a2d2ee6cbb4316376ecd38065d1f98edb"></a>
+template&lt;class ExecutionSpace &gt; </td></tr>
+<tr class="memitem:a2d2ee6cbb4316376ecd38065d1f98edb"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>apply</b> (ExecutionSpace)</td></tr>
+<tr class="memdesc:a2d2ee6cbb4316376ecd38065d1f98edb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform the gather operation. <br /></td></tr>
+<tr class="separator:a2d2ee6cbb4316376ecd38065d1f98edb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3254165a123f9393f11fbf37e25c4831"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Gather_3_01HaloType_00_01SliceType_00_01typename_01std_1_1enable__if_3_01is__slica420051aad1e71fccbd290130c9a8cef.html#a3254165a123f9393f11fbf37e25c4831">apply</a> () override</td></tr>
-<tr class="memdesc:a3254165a123f9393f11fbf37e25c4831"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform the gather operation.  <br /></td></tr>
+<tr class="memdesc:a3254165a123f9393f11fbf37e25c4831"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform the communication (migrate, gather, scatter).  <br /></td></tr>
 <tr class="separator:a3254165a123f9393f11fbf37e25c4831"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86491fb6de8e7fc11d9a6d24a506212a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Gather_3_01HaloType_00_01SliceType_00_01typename_01std_1_1enable__if_3_01is__slica420051aad1e71fccbd290130c9a8cef.html#a86491fb6de8e7fc11d9a6d24a506212a">reserve</a> (const HaloType &amp;halo, const SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const double overallocation)</td></tr>
 <tr class="memdesc:a86491fb6de8e7fc11d9a6d24a506212a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserve new buffers as needed and update the halo and slice data.  <br /></td></tr>
@@ -224,14 +229,14 @@ auto&#160;</td><td class="memItemRight" valign="bottom"><b>receiveCapacity</b> (
 <tr class="memitem:ad236a0ed2e0c2e8b96013146dc61e23d inherit pub_methods_classCabana_1_1CommunicationData"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationData.html#ad236a0ed2e0c2e8b96013146dc61e23d">apply</a> ()=0</td></tr>
 <tr class="memdesc:ad236a0ed2e0c2e8b96013146dc61e23d inherit pub_methods_classCabana_1_1CommunicationData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform the communication (migrate, gather, scatter).  <br /></td></tr>
 <tr class="separator:ad236a0ed2e0c2e8b96013146dc61e23d inherit pub_methods_classCabana_1_1CommunicationData"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31191a18cf577f3ef3496ad9aae0151c inherit pub_methods_classCabana_1_1CommunicationData"><td class="memItemLeft" align="right" valign="top"><a id="a31191a18cf577f3ef3496ad9aae0151c" name="a31191a18cf577f3ef3496ad9aae0151c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>apply</b> (ExecutionSpace)</td></tr>
+<tr class="memdesc:a31191a18cf577f3ef3496ad9aae0151c inherit pub_methods_classCabana_1_1CommunicationData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform the communication (migrate, gather, scatter). <br /></td></tr>
+<tr class="separator:a31191a18cf577f3ef3496ad9aae0151c inherit pub_methods_classCabana_1_1CommunicationData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_classCabana_1_1CommunicationData"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classCabana_1_1CommunicationData')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classCabana_1_1CommunicationData.html">Cabana::CommunicationData&lt; HaloType, CommunicationDataSlice&lt; SliceType &gt; &gt;</a></td></tr>
-<tr class="memitem:a4ea2687a704221791886e95e273059ca inherit pro_methods_classCabana_1_1CommunicationData"><td class="memItemLeft" align="right" valign="top"><a id="a4ea2687a704221791886e95e273059ca" name="a4ea2687a704221791886e95e273059ca"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>updateRangePolicy</b> ()</td></tr>
-<tr class="memdesc:a4ea2687a704221791886e95e273059ca inherit pro_methods_classCabana_1_1CommunicationData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update range policy based on new communication plan. <br /></td></tr>
-<tr class="separator:a4ea2687a704221791886e95e273059ca inherit pro_methods_classCabana_1_1CommunicationData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7d2067cc523fb7de5e39b6f175d14182 inherit pro_methods_classCabana_1_1CommunicationData"><td class="memItemLeft" align="right" valign="top"><a id="a7d2067cc523fb7de5e39b6f175d14182" name="a7d2067cc523fb7de5e39b6f175d14182"></a>
 auto&#160;</td><td class="memItemRight" valign="bottom"><b>getSliceComponents</b> ()</td></tr>
 <tr class="memdesc:a7d2067cc523fb7de5e39b6f175d14182 inherit pro_methods_classCabana_1_1CommunicationData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the total number of components in the slice. <br /></td></tr>
@@ -241,14 +246,6 @@ auto&#160;</td><td class="memItemRight" valign="bottom"><b>getSliceComponents</b
 <a class="el" href="classCabana_1_1CommunicationData.html#a9fa3688a97eaec19f6fad023dd25e0b3">plan_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_comm_plan</b></td></tr>
 <tr class="memdesc:a2284de72f6ee2df4a65d3ffac138704b inherit pro_attribs_classCabana_1_1CommunicationData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Communication plan. <br /></td></tr>
 <tr class="separator:a2284de72f6ee2df4a65d3ffac138704b inherit pro_attribs_classCabana_1_1CommunicationData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a090a8bcd305c1aeeafd77a3caf55d6fe inherit pro_attribs_classCabana_1_1CommunicationData"><td class="memItemLeft" align="right" valign="top"><a id="a090a8bcd305c1aeeafd77a3caf55d6fe" name="a090a8bcd305c1aeeafd77a3caf55d6fe"></a>
-<a class="el" href="classCabana_1_1CommunicationData.html#a5044c6a9ccab54e54c68cfe927820f2a">policy_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_send_policy</b></td></tr>
-<tr class="memdesc:a090a8bcd305c1aeeafd77a3caf55d6fe inherit pro_attribs_classCabana_1_1CommunicationData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send range policy. <br /></td></tr>
-<tr class="separator:a090a8bcd305c1aeeafd77a3caf55d6fe inherit pro_attribs_classCabana_1_1CommunicationData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a536a4d316ef2e4bb9341bb5157a75bed inherit pro_attribs_classCabana_1_1CommunicationData"><td class="memItemLeft" align="right" valign="top"><a id="a536a4d316ef2e4bb9341bb5157a75bed" name="a536a4d316ef2e4bb9341bb5157a75bed"></a>
-<a class="el" href="classCabana_1_1CommunicationData.html#a5044c6a9ccab54e54c68cfe927820f2a">policy_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_recv_policy</b></td></tr>
-<tr class="memdesc:a536a4d316ef2e4bb9341bb5157a75bed inherit pro_attribs_classCabana_1_1CommunicationData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive range policy. <br /></td></tr>
-<tr class="separator:a536a4d316ef2e4bb9341bb5157a75bed inherit pro_attribs_classCabana_1_1CommunicationData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3abbc9f6fd5aa2a95aa552bbb5cc619f inherit pro_attribs_classCabana_1_1CommunicationData"><td class="memItemLeft" align="right" valign="top"><a id="a3abbc9f6fd5aa2a95aa552bbb5cc619f" name="a3abbc9f6fd5aa2a95aa552bbb5cc619f"></a>
 <a class="el" href="classCabana_1_1CommunicationData.html#a4e1875e5a6bd23add142ec32a35051a8">comm_data_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_comm_data</b></td></tr>
 <tr class="memdesc:a3abbc9f6fd5aa2a95aa552bbb5cc619f inherit pro_attribs_classCabana_1_1CommunicationData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Communication plan. <br /></td></tr>
@@ -349,7 +346,7 @@ template&lt;class HaloType , class SliceType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Perform the gather operation. </p>
+<p>Perform the communication (migrate, gather, scatter). </p>
 
 <p>Implements <a class="el" href="classCabana_1_1CommunicationData.html#ad236a0ed2e0c2e8b96013146dc61e23d">Cabana::CommunicationData&lt; HaloType, CommunicationDataSlice&lt; SliceType &gt; &gt;</a>.</p>
 

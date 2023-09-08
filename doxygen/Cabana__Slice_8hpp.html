@@ -84,6 +84,7 @@ $(function() {
 <p>Slice a single particle property from an AoSoA.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;<a class="el" href="Cabana__Types_8hpp_source.html">Cabana_Types.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="Cabana__Utils_8hpp_source.html">Cabana_Utils.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="Cabana__Index_8hpp_source.html">impl/Cabana_Index.hpp</a>&gt;</code><br />
 <code>#include &lt;impl/Cabana_TypeTraits.hpp&gt;</code><br />
 <code>#include &lt;Kokkos_Core.hpp&gt;</code><br />
@@ -95,14 +96,15 @@ Include dependency graph for Cabana_Slice.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="Cabana__Slice_8hpp__incl.png" border="0" usemap="#acore_2src_2Cabana__Slice_8hpp" alt=""/></div>
 <map name="acore_2src_2Cabana__Slice_8hpp" id="acore_2src_2Cabana__Slice_8hpp">
-<area shape="rect" title="Slice a single particle property from an AoSoA." alt="" coords="309,5,492,31"/>
-<area shape="rect" href="Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="26,152,164,177"/>
-<area shape="rect" title=" " alt="" coords="140,225,269,251"/>
-<area shape="rect" title=" " alt="" coords="322,225,409,251"/>
-<area shape="rect" href="Cabana__Index_8hpp.html" title="AoSoA indexing." alt="" coords="317,79,484,104"/>
-<area shape="rect" href="Cabana__TypeTraits_8hpp_source.html" title=" " alt="" coords="188,152,383,177"/>
-<area shape="rect" title=" " alt="" coords="559,79,620,104"/>
-<area shape="rect" title=" " alt="" coords="644,79,703,104"/>
+<area shape="rect" title="Slice a single particle property from an AoSoA." alt="" coords="339,5,522,31"/>
+<area shape="rect" href="Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="23,152,160,177"/>
+<area shape="rect" title=" " alt="" coords="87,225,216,251"/>
+<area shape="rect" title=" " alt="" coords="252,225,339,251"/>
+<area shape="rect" href="Cabana__Utils_8hpp.html" title="Cabana utilities." alt="" coords="534,79,662,104"/>
+<area shape="rect" href="Cabana__Index_8hpp.html" title="AoSoA indexing." alt="" coords="183,79,350,104"/>
+<area shape="rect" href="Cabana__TypeTraits_8hpp_source.html" title=" " alt="" coords="286,152,481,177"/>
+<area shape="rect" title=" " alt="" coords="686,79,748,104"/>
+<area shape="rect" title=" " alt="" coords="772,79,830,104"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -140,7 +142,7 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKokkos_1_1LayoutCabanaSlice.html">Kokkos::LayoutCabanaSlice&lt; SOASTRIDE, VLEN, DIM0, DIM1, DIM2, DIM3, DIM4, DIM5 &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceCabana.html" title="Core: particle data structures and algorithms.">Cabana</a> Slice layout.  <a href="structKokkos_1_1LayoutCabanaSlice.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html">Cabana::Slice&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html">Cabana::Slice&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.  <a href="classCabana_1_1Slice.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1is__slice.html">Cabana::is_slice&lt; T &gt;</a></td></tr>

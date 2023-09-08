@@ -13,6 +13,6 @@ var searchData=
   ['vectorvaluep2g_10',['VectorValueP2G',['../structCajita_1_1VectorValueP2G.html#aca3694248c51d421bff2ccc5c6417342',1,'Cajita::VectorValueP2G']]],
   ['verletlist_11',['VerletList',['../classCabana_1_1VerletList.html#ae2f8350cf0c3cefef9a4c3fd0cc31eb9',1,'Cabana::VerletList::VerletList(PositionSlice x, const std::size_t begin, const std::size_t end, const typename PositionSlice::value_type neighborhood_radius, const typename PositionSlice::value_type cell_size_ratio, const typename PositionSlice::value_type grid_min[3], const typename PositionSlice::value_type grid_max[3], const std::size_t max_neigh=0, typename std::enable_if&lt;(is_slice&lt; PositionSlice &gt;::value), int &gt;::type *=0)'],['../classCabana_1_1VerletList.html#a992a936a7289b867e413b941b273e085',1,'Cabana::VerletList::VerletList()']]],
   ['version_12',['version',['../namespaceCabana.html#a94f45805f16a42f9f6f048d2e88cd940',1,'Cabana']]],
-  ['view_13',['view',['../classCajita_1_1Array.html#a3a891184b75173bd18a60d6a6c1ceff4',1,'Cajita::Array::view()'],['../classCabana_1_1Slice.html#acbc023e3e2e2c8b470aad6819341f53b',1,'Cabana::Slice::view() const']]],
-  ['viewrank_14',['viewRank',['../classCabana_1_1Slice.html#aaa6e2a826d8b85fd5037d317373aa5f1',1,'Cabana::Slice']]]
+  ['view_13',['view',['../classCajita_1_1Array.html#a3a891184b75173bd18a60d6a6c1ceff4',1,'Cajita::Array::view()'],['../classCabana_1_1Slice.html#aca7f58c38d61fd7a9a8b7465cafa7680',1,'Cabana::Slice::view() const']]],
+  ['viewrank_14',['viewRank',['../classCabana_1_1Slice.html#a846fd8d115a63490eec8addf64aed5c8',1,'Cabana::Slice']]]
 ];
