@@ -52,7 +52,8 @@ class LocalMesh<MemorySpace, UniformMesh<Scalar, NumSpaceDim>>
     //! Memory space.
     using memory_space = typename MemorySpace::memory_space;
     // FIXME: replace warning with memory space assert after next release.
-    static_assert( Cabana::Impl::warn( Kokkos::is_device<MemorySpace>() ) );
+    static_assert(
+        Cabana::Impl::deprecated( Kokkos::is_device<MemorySpace>() ) );
 
     //! Default device type.
     using device_type [[deprecated]] = typename memory_space::device_type;
@@ -318,7 +319,8 @@ class LocalMesh<MemorySpace, NonUniformMesh<Scalar, NumSpaceDim>>
     //! Memory space.
     using memory_space = typename MemorySpace::memory_space;
     // FIXME: replace warning with memory space assert after next release.
-    static_assert( Cabana::Impl::warn( Kokkos::is_device<MemorySpace>() ) );
+    static_assert(
+        Cabana::Impl::deprecated( Kokkos::is_device<MemorySpace>() ) );
 
     //! Default device type.
     using device_type [[deprecated]] = typename memory_space::device_type;

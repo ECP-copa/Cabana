@@ -163,7 +163,8 @@ class FastFourierTransform
     //! Kokkos memory space.
     using memory_space = typename MemorySpace::memory_space;
     // FIXME: replace warning with memory space assert after next release.
-    static_assert( Cabana::Impl::warn( Kokkos::is_device<MemorySpace>() ) );
+    static_assert(
+        Cabana::Impl::deprecated( Kokkos::is_device<MemorySpace>() ) );
 
     //! Kokkos execution space.
     using execution_space = typename memory_space::execution_space;
@@ -493,7 +494,8 @@ class HeffteFastFourierTransform
     //! Kokkos memory space.
     using memory_space = typename MemorySpace::memory_space;
     // FIXME: replace warning with memory space assert after next release.
-    static_assert( Cabana::Impl::warn( Kokkos::is_device<MemorySpace>() ) );
+    static_assert(
+        Cabana::Impl::deprecated( Kokkos::is_device<MemorySpace>() ) );
 
     //! Kokkos execution space.
     using execution_space = ExecSpace;
