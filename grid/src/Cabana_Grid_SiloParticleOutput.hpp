@@ -21,6 +21,7 @@
 
 #include <Cabana_SiloParticleOutput.hpp>
 #include <Cabana_Slice.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 
@@ -103,16 +104,14 @@ namespace SiloParticleOutput
 {
 //! \cond Deprecated
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] void
-writePartialRangeTimeStep( Args&&... args )
+CAJITA_DEPRECATED void writePartialRangeTimeStep( Args&&... args )
 {
     Cabana::Grid::Experimental::SiloParticleOutput::writePartialRangeTimeStep(
         std::forward<Args>( args )... );
 }
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] void
-writeTimeStep( Args&&... args )
+CAJITA_DEPRECATED void writeTimeStep( Args&&... args )
 {
     Cabana::Grid::Experimental::SiloParticleOutput::writeTimeStep(
         std::forward<Args>( args )... );

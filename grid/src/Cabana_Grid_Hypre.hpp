@@ -16,6 +16,8 @@
 #ifndef CABANA_GRID_HYPRE_HPP
 #define CABANA_GRID_HYPRE_HPP
 
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
+
 #include <HYPRE_config.h>
 #include <HYPRE_struct_ls.h>
 #include <HYPRE_struct_mv.h>
@@ -88,9 +90,8 @@ namespace Cajita
 {
 //! \cond Deprecated
 template <class MemorySpace>
-using HypreIsCompatibleWithMemorySpace
-    [[deprecated( "Cajita is now Cabana::Grid." )]] =
-        Cabana::Grid::HypreIsCompatibleWithMemorySpace<MemorySpace>;
+using HypreIsCompatibleWithMemorySpace CAJITA_DEPRECATED =
+    Cabana::Grid::HypreIsCompatibleWithMemorySpace<MemorySpace>;
 //! \endcond
 } // namespace Cajita
 

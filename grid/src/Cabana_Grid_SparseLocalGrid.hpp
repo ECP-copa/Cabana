@@ -20,6 +20,7 @@
 #include <Cabana_Grid_IndexSpace.hpp>
 #include <Cabana_Grid_SparseIndexSpace.hpp>
 #include <Cabana_Grid_Types.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <array>
 #include <vector>
@@ -298,12 +299,11 @@ namespace Experimental
 {
 //! \cond Deprecated
 template <class MeshType>
-using LocalGrid [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using LocalGrid CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::LocalGrid<MeshType>;
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createSparseLocalGrid( Args&&... args )
+CAJITA_DEPRECATED auto createSparseLocalGrid( Args&&... args )
 {
     return Cabana::Grid::Experimental::createSparseLocalGrid(
         std::forward<Args>( args )... );

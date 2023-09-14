@@ -16,6 +16,8 @@
 #ifndef CABANA_UTILS_HPP
 #define CABANA_UTILS_HPP
 
+#include <Cabana_Core_Config.hpp>
+
 #include <type_traits>
 
 namespace Cabana
@@ -34,6 +36,16 @@ deprecated( std::true_type )
 {
     return true;
 }
+
+// Custom warning for switch from Cajita to Grid.
+#ifdef Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS
+#define CAJITA_DEPRECATED
+#else
+#define CAJITA_DEPRECATED                                                      \
+    [[deprecated( "Cajita is now Cabana::Grid. The Cajita namespace will be "  \
+                  "removed in a future release." )]]
+#endif
+
 //! \endcond
 
 } // namespace Impl

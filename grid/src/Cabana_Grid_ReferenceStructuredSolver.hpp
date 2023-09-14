@@ -24,6 +24,7 @@
 #include <Cabana_Grid_MpiTraits.hpp>
 #include <Cabana_Grid_Parallel.hpp>
 #include <Cabana_Grid_Types.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 
@@ -990,20 +991,17 @@ namespace Cajita
 {
 //! \cond Deprecated
 template <class Scalar, class EntityType, class MeshType, class DeviceType>
-using ReferenceStructuredSolver
-    [[deprecated( "Cajita is now Cabana::Grid." )]] =
-        Cabana::Grid::ReferenceStructuredSolver<Scalar, EntityType, MeshType,
-                                                DeviceType>;
+using ReferenceStructuredSolver CAJITA_DEPRECATED =
+    Cabana::Grid::ReferenceStructuredSolver<Scalar, EntityType, MeshType,
+                                            DeviceType>;
 
 template <class Scalar, class EntityType, class MeshType, class DeviceType>
-using ReferenceConjugateGradient
-    [[deprecated( "Cajita is now Cabana::Grid." )]] =
-        Cabana::Grid::ReferenceConjugateGradient<Scalar, EntityType, MeshType,
-                                                 DeviceType>;
+using ReferenceConjugateGradient CAJITA_DEPRECATED =
+    Cabana::Grid::ReferenceConjugateGradient<Scalar, EntityType, MeshType,
+                                             DeviceType>;
 
 template <class Scalar, class... Params, class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createReferenceConjugateGradient( Args&&... args )
+CAJITA_DEPRECATED auto createReferenceConjugateGradient( Args&&... args )
 {
     return Cabana::Grid::createReferenceConjugateGradient<Scalar, Params...>(
         std::forward<Args>( args )... );

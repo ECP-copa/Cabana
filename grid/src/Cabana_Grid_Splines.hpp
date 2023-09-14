@@ -18,6 +18,7 @@
 
 #include <Cabana_Grid_LocalMesh.hpp>
 #include <Cabana_Grid_Types.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 
@@ -865,48 +866,43 @@ namespace Cajita
 {
 //! \cond Deprecated
 template <int Order>
-using Spline [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::Spline<Order>;
+using Spline CAJITA_DEPRECATED = Cabana::Grid::Spline<Order>;
 
-using SplinePhysicalCellSize [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using SplinePhysicalCellSize CAJITA_DEPRECATED =
     Cabana::Grid::SplinePhysicalCellSize;
-using SplineLogicalPosition [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using SplineLogicalPosition CAJITA_DEPRECATED =
     Cabana::Grid::SplineLogicalPosition;
-using SplinePhysicalDistance [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using SplinePhysicalDistance CAJITA_DEPRECATED =
     Cabana::Grid::SplinePhysicalDistance;
-using SplineWeightValues [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::SplineWeightValues;
-using SplineWeightPhysicalGradients
-    [[deprecated( "Cajita is now Cabana::Grid." )]] =
-        Cabana::Grid::SplineWeightPhysicalGradients;
+using SplineWeightValues CAJITA_DEPRECATED = Cabana::Grid::SplineWeightValues;
+using SplineWeightPhysicalGradients CAJITA_DEPRECATED =
+    Cabana::Grid::SplineWeightPhysicalGradients;
 
 template <class... DataTags>
-using SplineDataMemberTypes [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using SplineDataMemberTypes CAJITA_DEPRECATED =
     Cabana::Grid::SplineDataMemberTypes<DataTags...>;
 
 template <class T, class SplineDataMemberTypes_t>
-using has_spline_tag [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using has_spline_tag CAJITA_DEPRECATED =
     Cabana::Grid::has_spline_tag<T, SplineDataMemberTypes_t>;
 
 template <class Scalar, int Order, std::size_t NumSpaceDim, class Tag>
-using SplineDataMember [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using SplineDataMember CAJITA_DEPRECATED =
     Cabana::Grid::SplineDataMember<Scalar, Order, NumSpaceDim, Tag>;
 
 template <class Scalar, int Order, std::size_t NumSpaceDim, class EntityType,
           class Tags = void>
-using SplineData [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using SplineData CAJITA_DEPRECATED =
     Cabana::Grid::SplineData<Scalar, Order, NumSpaceDim, EntityType, Tags>;
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] void KOKKOS_INLINE_FUNCTION
-setSplineData( Args&&... args )
+CAJITA_DEPRECATED void KOKKOS_INLINE_FUNCTION setSplineData( Args&&... args )
 {
     return Cabana::Grid::setSplineData( std::forward<Args>( args )... );
 }
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] void KOKKOS_INLINE_FUNCTION
-evaluateSpline( Args&&... args )
+CAJITA_DEPRECATED void KOKKOS_INLINE_FUNCTION evaluateSpline( Args&&... args )
 {
     return Cabana::Grid::evaluateSpline( std::forward<Args>( args )... );
 }

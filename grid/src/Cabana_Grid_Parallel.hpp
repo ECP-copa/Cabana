@@ -18,6 +18,7 @@
 
 #include <Cabana_Grid_IndexSpace.hpp>
 #include <Cabana_Grid_LocalGrid.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <string>
 
@@ -593,15 +594,13 @@ namespace Cajita
 {
 //! \cond Deprecated
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] void
-grid_parallel_for( Args&&... args )
+CAJITA_DEPRECATED void grid_parallel_for( Args&&... args )
 {
     return Cabana::Grid::grid_parallel_for( std::forward<Args>( args )... );
 }
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] void
-grid_parallel_reduce( Args&&... args )
+CAJITA_DEPRECATED void grid_parallel_reduce( Args&&... args )
 {
     return Cabana::Grid::grid_parallel_reduce( std::forward<Args>( args )... );
 }

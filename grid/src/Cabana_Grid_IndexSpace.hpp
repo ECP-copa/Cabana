@@ -16,6 +16,8 @@
 #ifndef CABANA_GRID_INDEXSPACE_HPP
 #define CABANA_GRID_INDEXSPACE_HPP
 
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
+
 #include <Kokkos_Core.hpp>
 
 #include <algorithm>
@@ -485,40 +487,35 @@ namespace Cajita
 {
 //! \cond Deprecated
 template <long N>
-using IndexSpace [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::IndexSpace<N>;
+using IndexSpace CAJITA_DEPRECATED = Cabana::Grid::IndexSpace<N>;
 
 template <typename... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createExecutionPolicy( Args&&... args )
+CAJITA_DEPRECATED auto createExecutionPolicy( Args&&... args )
 {
     return Cabana::Grid::createExecutionPolicy( std::forward<Args>( args )... );
 }
 
 template <typename... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createView( Args&&... args )
+CAJITA_DEPRECATED auto createView( Args&&... args )
 {
     return Cabana::Grid::createView( std::forward<Args>( args )... );
 }
 
 template <class Scalar, class... Params>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createView( const std::string& label, const IndexSpace<1>& index_space )
+CAJITA_DEPRECATED auto createView( const std::string& label,
+                                   const IndexSpace<1>& index_space )
 {
     return Cabana::Grid::createView<Scalar, Params...>( label, index_space );
 }
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createSubview( Args&&... args )
+CAJITA_DEPRECATED auto createSubview( Args&&... args )
 {
     return Cabana::Grid::createSubview( std::forward<Args>( args )... );
 }
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-appendDimension( Args&&... args )
+CAJITA_DEPRECATED auto appendDimension( Args&&... args )
 {
     return Cabana::Grid::appendDimension( std::forward<Args>( args )... );
 }

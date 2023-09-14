@@ -21,7 +21,7 @@
 #include <Cabana_Grid_Types.hpp>
 
 #include <Cabana_AoSoA.hpp>
-#include <Cabana_Utils.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 
@@ -717,13 +717,13 @@ namespace Experimental
 //! \cond Deprecated
 template <class DataTypes, class EntityType, class MeshType,
           class SparseMapType>
-using SparseArrayLayout =
+using SparseArrayLayout CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::SparseArrayLayout<DataTypes, EntityType,
                                                   MeshType, SparseMapType>;
 
 template <class DataTypes, class EntityType, class MeshType,
           class SparseMapType>
-auto createSparseArrayLayout(
+CAJITA_DEPRECATED auto createSparseArrayLayout(
     const std::string label,
     SparseArrayLayout<DataTypes, EntityType, MeshType, SparseMapType>& layout )
 {
@@ -731,24 +731,25 @@ auto createSparseArrayLayout(
 }
 
 template <class T>
-using is_sparse_array_layout [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using is_sparse_array_layout CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::is_sparse_array_layout<T>;
 
 template <class DataTypes, class DeviceType, class EntityType, class MeshType,
           class SparseMapType>
-using SparseArray =
+using SparseArray CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::SparseArray<DataTypes, DeviceType, EntityType,
                                             MeshType, SparseMapType>;
 
 template <class T>
-using is_sparse_array [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using is_sparse_array CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::is_sparse_array<T>;
 
 template <class DeviceType, class DataTypes, class EntityType, class MeshType,
           class SparseMapType>
-auto createSparseArray( const std::string label,
-                        SparseArray<DataTypes, DeviceType, EntityType, MeshType,
-                                    SparseMapType>& layout )
+CAJITA_DEPRECATED auto
+createSparseArray( const std::string label,
+                   SparseArray<DataTypes, DeviceType, EntityType, MeshType,
+                               SparseMapType>& layout )
 {
     return Cabana::Grid::Experimental::createSparseArray<DeviceType>( label,
                                                                       layout );

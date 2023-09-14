@@ -22,6 +22,7 @@
 #include <Cabana_Grid_IndexSpace.hpp>
 #include <Cabana_Grid_LocalGrid.hpp>
 #include <Cabana_Grid_Types.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <HYPRE_config.h>
 #include <HYPRE_sstruct_ls.h>
@@ -1234,58 +1235,52 @@ namespace Cajita
 {
 //! \cond Deprecated
 template <class Scalar, class EntityType, class MemorySpace>
-using HypreSemiStructuredSolver [[deprecated(
-    "Cajita is now Cabana::Grid." )]] =
+using HypreSemiStructuredSolver CAJITA_DEPRECATED =
     Cabana::Grid::HypreSemiStructuredSolver<Scalar, EntityType, MemorySpace>;
 
 template <class Scalar, class EntityType, class MemorySpace>
-using HypreSemiStructPCG [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using HypreSemiStructPCG CAJITA_DEPRECATED =
     Cabana::Grid::HypreSemiStructPCG<Scalar, EntityType, MemorySpace>;
 
 template <class Scalar, class EntityType, class MemorySpace>
-using HypreSemiStructGMRES [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using HypreSemiStructGMRES CAJITA_DEPRECATED =
     Cabana::Grid::HypreSemiStructGMRES<Scalar, EntityType, MemorySpace>;
 
 template <class Scalar, class EntityType, class MemorySpace>
-using HypreSemiStructBiCGSTAB [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using HypreSemiStructBiCGSTAB CAJITA_DEPRECATED =
     Cabana::Grid::HypreSemiStructBiCGSTAB<Scalar, EntityType, MemorySpace>;
 
 template <class Scalar, class EntityType, class MemorySpace>
-using HypreSemiStructDiagonal [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using HypreSemiStructDiagonal CAJITA_DEPRECATED =
     Cabana::Grid::HypreSemiStructDiagonal<Scalar, EntityType, MemorySpace>;
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createHypreSemiStructPCG( Args&&... args )
+CAJITA_DEPRECATED auto createHypreSemiStructPCG( Args&&... args )
 {
     return Cabana::Grid::createHypreSemiStructPCG(
         std::forward<Args>( args )... );
 }
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createHypreSemiStructGMRES( Args&&... args )
+CAJITA_DEPRECATED auto createHypreSemiStructGMRES( Args&&... args )
 {
     return Cabana::Grid::createHypreSemiStructGMRES(
         std::forward<Args>( args )... );
 }
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createHypreSemiStructBiCGSTAB( Args&&... args )
+CAJITA_DEPRECATED auto createHypreSemiStructBiCGSTAB( Args&&... args )
 {
     return Cabana::Grid::createHypreSemiStructBiCGSTAB(
         std::forward<Args>( args )... );
 }
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createHypreSemiStructDiagonal( Args&&... args )
+CAJITA_DEPRECATED auto createHypreSemiStructDiagonal( Args&&... args )
 {
     return Cabana::Grid::createHypreSemiStructDiagonal(
         std::forward<Args>( args )... );
 }
 
 template <class Scalar, class MemorySpace, class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createHypreSemiStructuredSolver( Args&&... args )
+CAJITA_DEPRECATED auto createHypreSemiStructuredSolver( Args&&... args )
 {
     return Cabana::Grid::createHypreSemiStructuredSolver<Scalar, MemorySpace>(
         std::forward<Args>( args )... );

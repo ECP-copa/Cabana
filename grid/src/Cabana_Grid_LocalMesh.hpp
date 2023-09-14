@@ -19,7 +19,7 @@
 #include <Cabana_Grid_LocalGrid.hpp>
 #include <Cabana_Grid_Types.hpp>
 
-#include <Cabana_Utils.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 
@@ -802,13 +802,11 @@ namespace Cajita
 {
 //! \cond Deprecated
 template <class Device, class MeshType>
-using LocalMesh [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::LocalMesh<Device, MeshType>;
+using LocalMesh CAJITA_DEPRECATED = Cabana::Grid::LocalMesh<Device, MeshType>;
 
 // Device cannot be deduced.
 template <class Device, class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createLocalMesh( Args&&... args )
+CAJITA_DEPRECATED auto createLocalMesh( Args&&... args )
 {
     return Cabana::Grid::createLocalMesh<Device>(
         std::forward<Args>( args )... );

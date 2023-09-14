@@ -18,6 +18,7 @@
 
 #include <Cabana_Grid_IndexSpace.hpp>
 #include <Cabana_Grid_Types.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 
@@ -184,11 +185,11 @@ namespace Cajita
 namespace IndexConversion
 {
 template <class MeshType, class EntityType>
-using L2G [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using L2G CAJITA_DEPRECATED =
     Cabana::Grid::IndexConversion::L2G<EntityType, MeshType>;
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto createL2G( Args&&... args )
+CAJITA_DEPRECATED auto createL2G( Args&&... args )
 {
     return Cabana::Grid::IndexConversion::createL2G(
         std::forward<Args>( args )... );

@@ -18,6 +18,7 @@
 
 #include <Cabana_Grid_GlobalGrid.hpp>
 #include <Cabana_Grid_Types.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 
@@ -316,12 +317,11 @@ namespace Cajita
 namespace Experimental
 {
 template <class MeshType>
-using LoadBalancer [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using LoadBalancer CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::LoadBalancer<MeshType>;
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createLoadBalancer( Args&&... args )
+CAJITA_DEPRECATED auto createLoadBalancer( Args&&... args )
 {
     return Cabana::Grid::Experimental::createLoadBalancer(
         std::forward<Args>( args )... );

@@ -19,7 +19,7 @@
 #include <Cabana_Grid_Array.hpp>
 #include <Cabana_Grid_Types.hpp>
 
-#include <Cabana_Utils.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 
@@ -792,63 +792,57 @@ namespace Cajita
 namespace Experimental
 {
 //! \cond Deprecated
-using FFTScaleFull [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::Experimental::FFTScaleFull;
-using FFTScaleNone [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::Experimental::FFTScaleNone;
-using FFTScaleSymmetric [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using FFTScaleFull CAJITA_DEPRECATED = Cabana::Grid::Experimental::FFTScaleFull;
+using FFTScaleNone CAJITA_DEPRECATED = Cabana::Grid::Experimental::FFTScaleNone;
+using FFTScaleSymmetric CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::FFTScaleSymmetric;
-using FFTBackendFFTW [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using FFTBackendFFTW CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::FFTBackendFFTW;
-using FFTBackendMKL [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using FFTBackendMKL CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::FFTBackendMKL;
 namespace Impl
 {
-using FFTBackendDefault [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using FFTBackendDefault CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::Impl::FFTBackendDefault;
 }
 
 template <class ArrayEntity, class ArrayMesh, class ArrayDevice,
           class ArrayScalar, class Entity, class Mesh, class Device,
           class Scalar, typename SFINAE = void>
-using is_matching_array [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using is_matching_array CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::is_matching_array<
         ArrayEntity, ArrayMesh, ArrayDevice, ArrayScalar, Entity, Mesh, Device,
         Scalar, SFINAE>;
 
 template <class EntityType, class MeshType, class Scalar, class DeviceType,
           class Derived>
-using FastFourierTransform [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using FastFourierTransform CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::FastFourierTransform<
         EntityType, MeshType, Scalar, DeviceType, Derived>;
 
-using FastFourierTransformParams
-    [[deprecated( "Cajita is now Cabana::Grid." )]] =
-        Cabana::Grid::Experimental::FastFourierTransformParams;
+using FastFourierTransformParams CAJITA_DEPRECATED =
+    Cabana::Grid::Experimental::FastFourierTransformParams;
 
 template <class EntityType, class MeshType, class Scalar, class DeviceType,
           class Derived>
-using FastFourierTransform [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using FastFourierTransform CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::FastFourierTransform<
         EntityType, MeshType, Scalar, DeviceType, Derived>;
 
 template <class EntityType, class MeshType, class Scalar, class MemorySpace,
           class ExecSpace, class BackendType>
-using HeffteFastFourierTransform
-    [[deprecated( "Cajita is now Cabana::Grid." )]] =
-        Cabana::Grid::Experimental::HeffteFastFourierTransform<
-            EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType>;
+using HeffteFastFourierTransform CAJITA_DEPRECATED =
+    Cabana::Grid::Experimental::HeffteFastFourierTransform<
+        EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType>;
 
 template <class Scalar, class MemorySpace, class BackendType, class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createHeffteFastFourierTransform( Args&&... args )
+CAJITA_DEPRECATED auto createHeffteFastFourierTransform( Args&&... args )
 {
     return Cabana::Grid::Experimental::createHeffteFastFourierTransform<
         Scalar, MemorySpace, BackendType>( std::forward<Args>( args )... );
 }
 template <class Scalar, class MemorySpace, class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createHeffteFastFourierTransform( Args&&... args )
+CAJITA_DEPRECATED auto createHeffteFastFourierTransform( Args&&... args )
 {
     return Cabana::Grid::Experimental::createHeffteFastFourierTransform<
         Scalar, MemorySpace>( std::forward<Args>( args )... );

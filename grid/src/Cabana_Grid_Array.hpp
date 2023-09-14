@@ -20,6 +20,7 @@
 #include <Cabana_Grid_LocalGrid.hpp>
 #include <Cabana_Grid_MpiTraits.hpp>
 #include <Cabana_Grid_Types.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 
@@ -1126,39 +1127,34 @@ namespace Cajita
 {
 //! \cond Deprecated
 template <class EntityType, class MeshType>
-using ArrayLayout [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using ArrayLayout CAJITA_DEPRECATED =
     Cabana::Grid::ArrayLayout<EntityType, MeshType>;
 
 template <class T>
-using is_array_layout [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::is_array_layout<T>;
+using is_array_layout CAJITA_DEPRECATED = Cabana::Grid::is_array_layout<T>;
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createArrayLayout( Args&&... args )
+CAJITA_DEPRECATED auto createArrayLayout( Args&&... args )
 {
     return Cabana::Grid::createArrayLayout( std::forward<Args>( args )... );
 }
 
 template <class Scalar, class EntityType, class MeshType, class... Params>
-using Array [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using Array CAJITA_DEPRECATED =
     Cabana::Grid::Array<Scalar, EntityType, MeshType, Params...>;
 
 template <class T>
-using is_array [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::is_array<T>;
+using is_array CAJITA_DEPRECATED = Cabana::Grid::is_array<T>;
 
 template <class Scalar, class... Params, class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createArray( Args&&... args )
+CAJITA_DEPRECATED auto createArray( Args&&... args )
 {
     return Cabana::Grid::createArray<Scalar, Params...>(
         std::forward<Args>( args )... );
 }
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createSubarray( Args&&... args )
+CAJITA_DEPRECATED auto createSubarray( Args&&... args )
 {
     return Cabana::Grid::createSubarray( std::forward<Args>( args )... );
 }
@@ -1166,68 +1162,68 @@ createSubarray( Args&&... args )
 namespace ArrayOp
 {
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto clone( Args&&... args )
+CAJITA_DEPRECATED auto clone( Args&&... args )
 {
     return Cabana::Grid::ArrayOp::clone( std::forward<Args>( args )... );
 }
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto assign( Args&&... args )
+CAJITA_DEPRECATED auto assign( Args&&... args )
 {
     return Cabana::Grid::ArrayOp::assign( std::forward<Args>( args )... );
 }
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] void scale( Args&&... args )
+CAJITA_DEPRECATED void scale( Args&&... args )
 {
     return Cabana::Grid::ArrayOp::scale( std::forward<Args>( args )... );
 }
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] void copy( Args&&... args )
+CAJITA_DEPRECATED void copy( Args&&... args )
 {
     return Cabana::Grid::ArrayOp::copy( std::forward<Args>( args )... );
 }
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto cloneCopy( Args&&... args )
+CAJITA_DEPRECATED auto cloneCopy( Args&&... args )
 {
     return Cabana::Grid::ArrayOp::cloneCopy( std::forward<Args>( args )... );
 }
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] void update( Args&&... args )
+CAJITA_DEPRECATED void update( Args&&... args )
 {
     return Cabana::Grid::ArrayOp::update( std::forward<Args>( args )... );
 }
 
 template <class ViewType, std::size_t NumSpaceDim>
-using DotFunctor [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using DotFunctor CAJITA_DEPRECATED =
     Cabana::Grid::ArrayOp::DotFunctor<ViewType, NumSpaceDim>;
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] void dot( Args&&... args )
+CAJITA_DEPRECATED void dot( Args&&... args )
 {
     return Cabana::Grid::ArrayOp::dot( std::forward<Args>( args )... );
 }
 
 template <class ViewType, std::size_t NumSpaceDim>
-using NormInfFunctor [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using NormInfFunctor CAJITA_DEPRECATED =
     Cabana::Grid::ArrayOp::NormInfFunctor<ViewType, NumSpaceDim>;
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] void normInf( Args&&... args )
+CAJITA_DEPRECATED void normInf( Args&&... args )
 {
     return Cabana::Grid::ArrayOp::normInf( std::forward<Args>( args )... );
 }
 
 template <class ViewType, std::size_t NumSpaceDim>
-using Norm1Functor [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using Norm1Functor CAJITA_DEPRECATED =
     Cabana::Grid::ArrayOp::Norm1Functor<ViewType, NumSpaceDim>;
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] void norm1( Args&&... args )
+CAJITA_DEPRECATED void norm1( Args&&... args )
 {
     return Cabana::Grid::ArrayOp::norm1( std::forward<Args>( args )... );
 }
 
 template <class ViewType, std::size_t NumSpaceDim>
-using Norm2Functor [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using Norm2Functor CAJITA_DEPRECATED =
     Cabana::Grid::ArrayOp::Norm2Functor<ViewType, NumSpaceDim>;
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] void norm2( Args&&... args )
+CAJITA_DEPRECATED void norm2( Args&&... args )
 {
     return Cabana::Grid::ArrayOp::norm2( std::forward<Args>( args )... );
 }

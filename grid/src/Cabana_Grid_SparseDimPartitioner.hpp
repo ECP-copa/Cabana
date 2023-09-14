@@ -18,7 +18,7 @@
 
 #include <Cabana_Grid_Partitioner.hpp>
 #include <Cabana_Grid_SparseIndexSpace.hpp>
-#include <Cabana_Utils.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 
@@ -919,7 +919,7 @@ namespace Cajita
 //! \cond Deprecated
 template <class Device, unsigned long long CellPerTileDim = 4,
           std::size_t NumSpaceDim = 3>
-using SparseDimPartitioner =
+using SparseDimPartitioner CAJITA_DEPRECATED =
     Cabana::Grid::SparseDimPartitioner<Device, CellPerTileDim, NumSpaceDim>;
 //! \endcond
 } // namespace Cajita

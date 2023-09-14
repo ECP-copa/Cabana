@@ -15,6 +15,7 @@
 #include <Cabana_MemberTypes.hpp>
 #include <Cabana_SoA.hpp>
 #include <Cabana_Tuple.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Cabana_Grid_Halo.hpp> // to get the pattern and tags defined here
 #include <Cabana_Grid_SparseArray.hpp>
@@ -1324,14 +1325,14 @@ namespace Experimental
 template <class MemorySpace, class DataTypes, class EntityType,
           std::size_t NumSpaceDim, unsigned long long cellBitsPerTileDim,
           class Value = int, class Key = uint64_t>
-using SparseHalo =
+using SparseHalo CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::SparseHalo<MemorySpace, DataTypes, EntityType,
                                            NumSpaceDim, cellBitsPerTileDim,
                                            Value, Key>;
 
 template <class DeviceType, unsigned long long cellBitsPerTileDim,
           class... Args>
-auto createSparseHalo( Args&&... args )
+CAJITA_DEPRECATED auto createSparseHalo( Args&&... args )
 {
     return Cabana::Grid::Experimental::createSparseHalo<DeviceType,
                                                         cellBitsPerTileDim>(

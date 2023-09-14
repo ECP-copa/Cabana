@@ -20,6 +20,7 @@
 #include <Cabana_Grid_IndexSpace.hpp>
 
 #include <Cabana_ParameterPack.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 
@@ -963,21 +964,19 @@ namespace Cajita
 {
 //! \cond Deprecated
 template <std::size_t NumSpaceDim>
-using HaloPattern [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::HaloPattern<NumSpaceDim>;
+using HaloPattern CAJITA_DEPRECATED = Cabana::Grid::HaloPattern<NumSpaceDim>;
 template <std::size_t NumSpaceDim>
-using NodeHaloPattern [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using NodeHaloPattern CAJITA_DEPRECATED =
     Cabana::Grid::NodeHaloPattern<NumSpaceDim>;
 template <std::size_t NumSpaceDim>
-using FaceHaloPattern [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using FaceHaloPattern CAJITA_DEPRECATED =
     Cabana::Grid::FaceHaloPattern<NumSpaceDim>;
 
 template <class MemorySpace>
-using Halo [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::Halo<MemorySpace>;
+using Halo CAJITA_DEPRECATED = Cabana::Grid::Halo<MemorySpace>;
 
 template <class ArrayT, class... Types>
-using ArrayPackMemorySpace [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using ArrayPackMemorySpace CAJITA_DEPRECATED =
     Cabana::Grid::ArrayPackMemorySpace<ArrayT, Types...>;
 
 //---------------------------------------------------------------------------//
@@ -1055,13 +1054,12 @@ createHalo( const ArrayType<Scalar, EntityType, MeshType, Params...>& array,
 //---------------------------------------------------------------------------//
 
 template <std::size_t NumSpaceDim>
-using HaloPattern [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::HaloPattern<NumSpaceDim>;
+using HaloPattern CAJITA_DEPRECATED = Cabana::Grid::HaloPattern<NumSpaceDim>;
 template <std::size_t NumSpaceDim>
-using NodeHaloPattern [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using NodeHaloPattern CAJITA_DEPRECATED =
     Cabana::Grid::NodeHaloPattern<NumSpaceDim>;
 template <std::size_t NumSpaceDim>
-using FaceHaloPattern [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using FaceHaloPattern CAJITA_DEPRECATED =
     Cabana::Grid::FaceHaloPattern<NumSpaceDim>;
 
 //! Full 3d halo with all 26 adjacent blocks. Backwards compatibility wrapper.
@@ -1070,30 +1068,24 @@ class [[deprecated]] FullHaloPattern : public NodeHaloPattern<3>
 };
 
 template <class MemorySpace>
-using Halo [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::Halo<MemorySpace>;
+using Halo CAJITA_DEPRECATED = Cabana::Grid::Halo<MemorySpace>;
 
 template <class ArrayT, class... Types>
-using ArrayPackMemorySpace [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using ArrayPackMemorySpace CAJITA_DEPRECATED =
     Cabana::Grid::ArrayPackMemorySpace<ArrayT, Types...>;
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createHalo( Args&&... args )
+CAJITA_DEPRECATED auto createHalo( Args&&... args )
 {
     return Cabana::Grid::createHalo( std::forward<Args>( args )... );
 }
 
 namespace ScatterReduce
 {
-using Sum [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::ScatterReduce::Sum;
-using Min [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::ScatterReduce::Min;
-using Max [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::ScatterReduce::Max;
-using Replace [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::ScatterReduce::Replace;
+using Sum CAJITA_DEPRECATED = Cabana::Grid::ScatterReduce::Sum;
+using Min CAJITA_DEPRECATED = Cabana::Grid::ScatterReduce::Min;
+using Max CAJITA_DEPRECATED = Cabana::Grid::ScatterReduce::Max;
+using Replace CAJITA_DEPRECATED = Cabana::Grid::ScatterReduce::Replace;
 } // namespace ScatterReduce
 //! \endcond
 } // namespace Cajita

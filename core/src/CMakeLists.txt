@@ -69,7 +69,9 @@ add_library(Cabana::Core ALIAS cabanacore)
 ### FIXME: remove cabanacore in next release.
 add_library(Cabana::cabanacore ALIAS cabanacore)
 if(CMAKE_VERSION VERSION_GREATER 3.17)
-  set_property(TARGET cabanacore PROPERTY DEPRECATION "NOTE: cabanacore subpackage is now Core. Link to Cabana::Core. Cabana::cabanacore will be removed in a future release.")
+  if(NOT Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS)
+    set_property(TARGET cabanacore PROPERTY DEPRECATION "NOTE: cabanacore subpackage is now Core. Link to Cabana::Core. Cabana::cabanacore will be removed in a future release.")
+  endif()
 endif()
 
 # Require minimum of C++17

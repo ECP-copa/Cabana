@@ -18,6 +18,7 @@
 
 #include <Cabana_DeepCopy.hpp>
 #include <Cabana_Distributor.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Cabana_Grid_GlobalGrid.hpp>
 #include <Cabana_Grid_GlobalMesh.hpp>
@@ -375,28 +376,24 @@ namespace Cajita
 {
 //! \cond Deprecated
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] void
-migrateCount( Args&&... args )
+CAJITA_DEPRECATED void migrateCount( Args&&... args )
 {
     return Cabana::Grid::migrateCount( std::forward<Args>( args )... );
 }
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-getTopology( Args&&... args )
+CAJITA_DEPRECATED auto getTopology( Args&&... args )
 {
     return Cabana::Grid::getTopology( std::forward<Args>( args )... );
 }
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createParticleGridDistributor( Args&&... args )
+CAJITA_DEPRECATED auto createParticleGridDistributor( Args&&... args )
 {
     return Cabana::Grid::createParticleGridDistributor(
         std::forward<Args>( args )... );
 }
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-particleGridMigrate( Args&&... args )
+CAJITA_DEPRECATED auto particleGridMigrate( Args&&... args )
 {
     return Cabana::Grid::particleGridMigrate( std::forward<Args>( args )... );
 }

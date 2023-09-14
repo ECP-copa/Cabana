@@ -21,6 +21,7 @@
 #include <Cabana_Grid_LocalMesh.hpp>
 #include <Cabana_Grid_Splines.hpp>
 #include <Cabana_Grid_Types.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_ScatterView.hpp>
@@ -1573,20 +1574,17 @@ namespace Cajita
 namespace G2P
 {
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] KOKKOS_INLINE_FUNCTION void
-value( Args&&... args )
+CAJITA_DEPRECATED KOKKOS_INLINE_FUNCTION void value( Args&&... args )
 {
     return Cabana::Grid::G2P::value( std::forward<Args>( args )... );
 }
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] KOKKOS_INLINE_FUNCTION void
-gradient( Args&&... args )
+CAJITA_DEPRECATED KOKKOS_INLINE_FUNCTION void gradient( Args&&... args )
 {
     return Cabana::Grid::G2P::gradient( std::forward<Args>( args )... );
 }
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] KOKKOS_INLINE_FUNCTION void
-divergence( Args&&... args )
+CAJITA_DEPRECATED KOKKOS_INLINE_FUNCTION void divergence( Args&&... args )
 {
     return Cabana::Grid::G2P::divergence( std::forward<Args>( args )... );
 }
@@ -1596,142 +1594,124 @@ namespace P2G
 {
 
 template <class T>
-using is_scatter_view [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::P2G::is_scatter_view<T>;
+using is_scatter_view CAJITA_DEPRECATED = Cabana::Grid::P2G::is_scatter_view<T>;
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] KOKKOS_INLINE_FUNCTION void
-value( Args&&... args )
+CAJITA_DEPRECATED KOKKOS_INLINE_FUNCTION void value( Args&&... args )
 {
     return Cabana::Grid::P2G::value( std::forward<Args>( args )... );
 }
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] KOKKOS_INLINE_FUNCTION void
-gradient( Args&&... args )
+CAJITA_DEPRECATED KOKKOS_INLINE_FUNCTION void gradient( Args&&... args )
 {
     return Cabana::Grid::P2G::gradient( std::forward<Args>( args )... );
 }
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] KOKKOS_INLINE_FUNCTION void
-divergence( Args&&... args )
+CAJITA_DEPRECATED KOKKOS_INLINE_FUNCTION void divergence( Args&&... args )
 {
     return Cabana::Grid::P2G::divergence( std::forward<Args>( args )... );
 }
 } // namespace P2G
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] void g2p( Args&&... args )
+CAJITA_DEPRECATED void g2p( Args&&... args )
 {
     Cabana::Grid::g2p( std::forward<Args>( args )... );
 }
 
 template <class ViewType>
-using ScalarValueG2P [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::ScalarValueG2P<ViewType>;
+using ScalarValueG2P CAJITA_DEPRECATED = Cabana::Grid::ScalarValueG2P<ViewType>;
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createScalarValueG2P( Args&&... args )
+CAJITA_DEPRECATED auto createScalarValueG2P( Args&&... args )
 {
     return Cabana::Grid::createScalarValueG2P( std::forward<Args>( args )... );
 }
 
 template <class ViewType>
-using VectorValueG2P [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::VectorValueG2P<ViewType>;
+using VectorValueG2P CAJITA_DEPRECATED = Cabana::Grid::VectorValueG2P<ViewType>;
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createVectorValueG2P( Args&&... args )
+CAJITA_DEPRECATED auto createVectorValueG2P( Args&&... args )
 {
     return Cabana::Grid::createVectorValueG2P( std::forward<Args>( args )... );
 }
 
 template <class ViewType>
-using ScalarGradientG2P [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using ScalarGradientG2P CAJITA_DEPRECATED =
     Cabana::Grid::ScalarGradientG2P<ViewType>;
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createScalarGradientG2P( Args&&... args )
+CAJITA_DEPRECATED auto createScalarGradientG2P( Args&&... args )
 {
     return Cabana::Grid::createScalarGradientG2P(
         std::forward<Args>( args )... );
 }
 
 template <class ViewType>
-using VectorGradientG2P [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using VectorGradientG2P CAJITA_DEPRECATED =
     Cabana::Grid::VectorGradientG2P<ViewType>;
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createVectorGradientG2P( Args&&... args )
+CAJITA_DEPRECATED auto createVectorGradientG2P( Args&&... args )
 {
     return Cabana::Grid::createVectorGradientG2P(
         std::forward<Args>( args )... );
 }
 
 template <class ViewType>
-using VectorDivergenceG2P [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using VectorDivergenceG2P CAJITA_DEPRECATED =
     Cabana::Grid::VectorDivergenceG2P<ViewType>;
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createVectorDivergenceG2P( Args&&... args )
+CAJITA_DEPRECATED auto createVectorDivergenceG2P( Args&&... args )
 {
     return Cabana::Grid::createVectorDivergenceG2P(
         std::forward<Args>( args )... );
 }
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] void p2g( Args&&... args )
+CAJITA_DEPRECATED void p2g( Args&&... args )
 {
     return Cabana::Grid::p2g( std::forward<Args>( args )... );
 }
 
 template <class ViewType>
-using ScalarValueP2G [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::ScalarValueP2G<ViewType>;
+using ScalarValueP2G CAJITA_DEPRECATED = Cabana::Grid::ScalarValueP2G<ViewType>;
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createScalarValueP2G( Args&&... args )
+CAJITA_DEPRECATED auto createScalarValueP2G( Args&&... args )
 {
     return Cabana::Grid::createScalarValueP2G( std::forward<Args>( args )... );
 }
 
 template <class ViewType>
-using VectorValueP2G [[deprecated( "Cajita is now Cabana::Grid." )]] =
-    Cabana::Grid::VectorValueP2G<ViewType>;
+using VectorValueP2G CAJITA_DEPRECATED = Cabana::Grid::VectorValueP2G<ViewType>;
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createVectorValueP2G( Args&&... args )
+CAJITA_DEPRECATED auto createVectorValueP2G( Args&&... args )
 {
     return Cabana::Grid::createVectorValueP2G( std::forward<Args>( args )... );
 }
 
 template <class ViewType>
-using ScalarGradientP2G [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using ScalarGradientP2G CAJITA_DEPRECATED =
     Cabana::Grid::ScalarGradientP2G<ViewType>;
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createScalarGradientP2G( Args&&... args )
+CAJITA_DEPRECATED auto createScalarGradientP2G( Args&&... args )
 {
     return Cabana::Grid::createScalarGradientP2G(
         std::forward<Args>( args )... );
 }
 
 template <class ViewType>
-using VectorDivergenceP2G [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using VectorDivergenceP2G CAJITA_DEPRECATED =
     Cabana::Grid::VectorDivergenceP2G<ViewType>;
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createVectorDivergenceP2G( Args&&... args )
+CAJITA_DEPRECATED auto createVectorDivergenceP2G( Args&&... args )
 {
     return Cabana::Grid::createVectorDivergenceP2G(
         std::forward<Args>( args )... );
 }
 
 template <class ViewType>
-using TensorDivergenceP2G [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using TensorDivergenceP2G CAJITA_DEPRECATED =
     Cabana::Grid::TensorDivergenceP2G<ViewType>;
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-createTensorDivergenceP2G( Args&&... args )
+CAJITA_DEPRECATED auto createTensorDivergenceP2G( Args&&... args )
 {
     return Cabana::Grid::createTensorDivergenceP2G(
         std::forward<Args>( args )... );

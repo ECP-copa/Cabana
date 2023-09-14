@@ -21,6 +21,7 @@
 #include <Cabana_Grid_IndexSpace.hpp>
 #include <Cabana_Grid_MpiTraits.hpp>
 #include <Cabana_Grid_Types.hpp>
+#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 
@@ -421,31 +422,28 @@ namespace BovWriter
 {
 //! \cond Deprecated
 template <typename T>
-using BovFormat [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using BovFormat CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::BovWriter::BovFormat<T>;
 template <typename T>
-using BovCentering [[deprecated( "Cajita is now Cabana::Grid." )]] =
+using BovCentering CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::BovWriter::BovCentering<T>;
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] void
-createSubarray( Args&&... args )
+CAJITA_DEPRECATED void createSubarray( Args&&... args )
 {
     return Cabana::Grid::Experimental::BovWriter::createSubarray(
         std::forward<Args>( args )... );
 }
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-reorderView( Args&&... args )
+CAJITA_DEPRECATED auto reorderView( Args&&... args )
 {
     return Cabana::Grid::Experimental::BovWriter::reorderView(
         std::forward<Args>( args )... );
 }
 
 template <class... Args>
-[[deprecated( "Cajita is now Cabana::Grid." )]] auto
-writeTimeStep( Args&&... args )
+CAJITA_DEPRECATED auto writeTimeStep( Args&&... args )
 {
     return Cabana::Grid::Experimental::BovWriter::writeTimeStep(
         std::forward<Args>( args )... );
