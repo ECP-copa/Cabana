@@ -16,7 +16,6 @@
 #ifndef CABANA_COMMUNICATIONPLAN_HPP
 #define CABANA_COMMUNICATIONPLAN_HPP
 
-#include <CabanaCore_config.hpp>
 #include <Cabana_Utils.hpp>
 
 #include <Kokkos_Core.hpp>

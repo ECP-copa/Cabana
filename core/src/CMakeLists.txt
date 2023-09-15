@@ -9,7 +9,7 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-configure_file(CabanaCore_config.hpp.cmakein CabanaCore_config.hpp)
+configure_file(Cabana_Core_Config.hpp.cmakein Cabana_Core_Config.hpp)
 
 set(HEADERS_PUBLIC
   Cabana_AoSoA.hpp
@@ -115,6 +115,6 @@ install(FILES ${HEADERS_PUBLIC} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 install(FILES ${HEADERS_IMPL} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/impl/)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CabanaCore_config.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Cabana_Core_Config.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 include(CMakePackageConfigHelpers)
