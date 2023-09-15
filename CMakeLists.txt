@@ -78,7 +78,7 @@ Cabana_add_dependency( PACKAGE ArborX )
 Cabana_add_dependency( PACKAGE ALL )
 
 # find Clang Format
-find_package( CLANG_FORMAT 10 )
+find_package( CLANG_FORMAT 14 )
 
 # find hypre
 Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.1 )
