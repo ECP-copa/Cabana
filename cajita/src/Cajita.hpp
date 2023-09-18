@@ -32,6 +32,7 @@
 #include <Cajita_MpiTraits.hpp>
 #include <Cajita_Parallel.hpp>
 #include <Cajita_ParticleGridDistributor.hpp>
+#include <Cajita_ParticleInit.hpp>
 #include <Cajita_ParticleList.hpp>
 #include <Cajita_Partitioner.hpp>
 #include <Cajita_ReferenceStructuredSolver.hpp>
