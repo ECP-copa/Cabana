@@ -30,6 +30,7 @@ set(HEADERS_PUBLIC
   Cajita_Parallel.hpp
   Cajita_ParticleGridDistributor.hpp
   Cajita_ParticleList.hpp
+  Cajita_ParticleInit.hpp
   Cajita_Partitioner.hpp
   Cajita_ReferenceStructuredSolver.hpp
   Cajita_SparseArray.hpp
