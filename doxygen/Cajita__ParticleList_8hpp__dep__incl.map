@@ -1,5 +1,5 @@
 <map id="cajita/src/Cajita_ParticleList.hpp" name="cajita/src/Cajita_ParticleList.hpp">
-<area shape="rect" id="node1" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="81,5,247,45"/>
-<area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="5,101,147,126"/>
-<area shape="rect" id="node3" href="$Cajita__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="171,93,336,133"/>
+<area shape="rect" id="node1" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="5,5,171,45"/>
+<area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="17,181,159,207"/>
+<area shape="rect" id="node3" href="$Cajita__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="65,93,231,133"/>
 </map>
