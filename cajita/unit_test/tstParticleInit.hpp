@@ -51,7 +51,8 @@ struct Bar : public Cabana::Field::Scalar<double>
 
 //---------------------------------------------------------------------------//
 template <class InitType>
-void initParticleListTest( InitType init_type, int ppc )
+void initParticleListTest( InitType init_type, int ppc,
+                           const int multiplier = 1 )
 {
     // Global bounding box.
     double cell_size = 0.23;
@@ -105,8 +106,10 @@ void initParticleListTest( InitType init_type, int ppc )
         }
     };
 
-    // Initialize particles.
-    int num_p = Cajita::createParticles( init_type, TEST_EXECSPACE(), init_func,
+    // Initialize particles (potentially multiple times).
+    int num_p = 0;
+    for ( int m = 0; m < multiplier; ++m )
+        num_p = Cajita::createParticles( init_type, TEST_EXECSPACE(), init_func,
                                          particles, ppc, *local_grid );
 
     // Check that we made particles.
@@ -117,7 +120,7 @@ void initParticleListTest( InitType init_type, int ppc )
     MPI_Allreduce( MPI_IN_PLACE, &global_num_particle, 1, MPI_INT, MPI_SUM,
                    MPI_COMM_WORLD );
     int expect_num_particle =
-        totalParticlesPerCell( init_type, ppc ) *
+        multiplier * totalParticlesPerCell( init_type, ppc ) *
         ( global_grid->globalNumEntity( Cajita::Cell(), Dim::I ) - 2 ) *
         ( global_grid->globalNumEntity( Cajita::Cell(), Dim::J ) - 2 ) *
         ( global_grid->globalNumEntity( Cajita::Cell(), Dim::K ) - 2 );
@@ -226,6 +229,15 @@ TEST( TEST_CATEGORY, uniform_init_test )
     initSliceTest( Cabana::InitUniform(), 3 );
 }
 
+TEST( TEST_CATEGORY, multiple_random_init_test )
+{
+    initParticleListTest( Cabana::InitRandom(), 17, 3 );
+}
+
+TEST( TEST_CATEGORY, multiple_uniform_init_test )
+{
+    initParticleListTest( Cabana::InitUniform(), 3, 5 );
+}
 //---------------------------------------------------------------------------//
 
 } // end namespace Test

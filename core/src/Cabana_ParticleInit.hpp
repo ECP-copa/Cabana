@@ -100,12 +100,14 @@ int createParticles(
     using RandomType = Kokkos::Random_XorShift64<ExecutionSpace>;
     PoolType pool( seed );
 
-    // Creation count.
-    auto count = Kokkos::View<int*, memory_space>( "particle_count", 1 );
-
     // Resize the aosoa prior to lambda capture.
     auto& aosoa = particle_list.aosoa();
-    aosoa.resize( num_particles );
+    int previous_num_particles = aosoa.size();
+    aosoa.resize( previous_num_particles + num_particles );
+
+    // Creation count.
+    auto count = Kokkos::View<int*, memory_space>( "particle_count", 1 );
+    Kokkos::deep_copy( count, previous_num_particles );
 
     // Copy corners to device accessible arrays.
     auto kokkos_min = Impl::copyArray( box_min );
@@ -134,8 +136,8 @@ int createParticles(
         }
     };
 
-    Kokkos::RangePolicy<ExecutionSpace> exec_policy( exec_space, 0,
-                                                     num_particles );
+    Kokkos::RangePolicy<ExecutionSpace> exec_policy(
+        exec_space, 0, previous_num_particles + num_particles );
     Kokkos::parallel_for( exec_policy, random_coord_op );
     Kokkos::fence();
 

@@ -95,10 +95,12 @@ int createParticles(
     // Allocate enough space for the case the particles consume the entire
     // local grid.
     int num_particles = particles_per_cell * owned_cells.size();
-    aosoa.resize( num_particles );
+    int previous_num_particles = aosoa.size();
+    aosoa.resize( previous_num_particles + num_particles );
 
     // Creation count.
     auto count = Kokkos::View<int*, memory_space>( "particle_count", 1 );
+    Kokkos::deep_copy( count, previous_num_particles );
 
     // Initialize particles.
     Cajita::grid_parallel_for(
@@ -355,10 +357,12 @@ int createParticles(
     int particles_per_cell = particles_per_cell_dim * particles_per_cell_dim *
                              particles_per_cell_dim;
     int num_particles = particles_per_cell * owned_cells.size();
-    aosoa.resize( num_particles );
+    int previous_num_particles = aosoa.size();
+    aosoa.resize( previous_num_particles + num_particles );
 
     // Creation count.
     auto count = Kokkos::View<int*, memory_space>( "particle_count", 1 );
+    Kokkos::deep_copy( count, previous_num_particles );
 
     // Initialize particles.
     Cajita::grid_parallel_for(
