@@ -44,8 +44,10 @@ TEST( TEST_CATEGORY, particle_test )
     // Create a local mesh.
     auto local_grid = Cajita::createLocalGrid( global_grid, 1 );
 
-    auto plist = Cajita::ParticleList<TEST_MEMSPACE, Cabana::Field::Position<3>,
-                                      Foo, CommRank, Bar>( "test_particles" );
+    Cabana::ParticleTraits<Cabana::Field::Position<3>, Foo, CommRank, Bar>
+        fields;
+    auto plist =
+        Cajita::createParticleList<TEST_MEMSPACE>( "test_particles", fields );
 
     particleListTest( plist );
 

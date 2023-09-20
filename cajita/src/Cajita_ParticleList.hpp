@@ -33,14 +33,15 @@ namespace Cajita
 
 //---------------------------------------------------------------------------//
 //! List of particle fields stored in AoSoA with associated Cajita mesh.
-template <class MemorySpace, class... FieldTags>
-class ParticleList : public Cabana::ParticleList<MemorySpace, FieldTags...>
+template <class MemorySpace, int VectorLength, class... FieldTags>
+class ParticleList
+    : public Cabana::ParticleList<MemorySpace, VectorLength, FieldTags...>
 {
   public:
     //! Kokkos memory space.
     using memory_space = MemorySpace;
     //! Base Cabana particle list type.
-    using base = Cabana::ParticleList<memory_space, FieldTags...>;
+    using base = Cabana::ParticleList<memory_space, VectorLength, FieldTags...>;
 
     //! Particle AoSoA member types.
     using traits = typename base::traits;
@@ -97,13 +98,14 @@ class ParticleList : public Cabana::ParticleList<MemorySpace, FieldTags...>
     using base::_aosoa;
 };
 
-template <class, class...>
+template <class>
 struct is_particle_list_impl : public std::false_type
 {
 };
 
-template <class MemorySpace, class... FieldTags>
-struct is_particle_list_impl<ParticleList<MemorySpace, FieldTags...>>
+template <class MemorySpace, int VectorLength, class... FieldTags>
+struct is_particle_list_impl<
+    ParticleList<MemorySpace, VectorLength, FieldTags...>>
     : public std::true_type
 {
 };
@@ -120,11 +122,26 @@ struct is_particle_list
   \brief ParticleList creation function.
   \return ParticleList
 */
+template <class MemorySpace, int VectorLength, class... FieldTags>
+auto createParticleList( const std::string& label,
+                         Cabana::ParticleTraits<FieldTags...> )
+{
+    return ParticleList<MemorySpace, VectorLength, FieldTags...>( label );
+}
+
+/*!
+  \brief ParticleList creation function with default vector length.
+  \return ParticleList
+*/
 template <class MemorySpace, class... FieldTags>
 auto createParticleList( const std::string& label,
                          Cabana::ParticleTraits<FieldTags...> )
 {
-    return ParticleList<MemorySpace, FieldTags...>( label );
+    return ParticleList<
+        MemorySpace,
+        Cabana::Impl::PerformanceTraits<
+            typename MemorySpace::execution_space>::vector_length,
+        FieldTags...>( label );
 }
 
 //---------------------------------------------------------------------------//

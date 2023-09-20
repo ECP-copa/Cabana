@@ -100,10 +100,10 @@ void testRandomCreationParticleListMinDistance( const int multiplier = 1 )
 {
     int num_particle = 200;
     int prev_particle = 0;
-    using plist_type =
-        Cabana::ParticleList<TEST_MEMSPACE, Cabana::Field::Position<3>, Foo,
-                             Bar>;
-    plist_type particle_list( "random_particles" );
+    Cabana::ParticleTraits<Cabana::Field::Position<3>, Foo, Bar> fields;
+    auto particle_list =
+        Cabana::createParticleList<TEST_MEMSPACE>( "random_particles", fields );
+    using plist_type = decltype( particle_list );
 
     double min_dist = 0.47;
     Kokkos::Array<double, 3> box_min = { -9.5, -4.7, 0.5 };
@@ -147,10 +147,10 @@ void testRandomCreationParticleList( const int multiplier = 1 )
 {
     int num_particle = 200;
     int prev_particle = 0;
-    using plist_type =
-        Cabana::ParticleList<TEST_MEMSPACE, Cabana::Field::Position<3>, Foo,
-                             Bar>;
-    plist_type particle_list( "random_particles" );
+    Cabana::ParticleTraits<Cabana::Field::Position<3>, Foo, Bar> fields;
+    auto particle_list =
+        Cabana::createParticleList<TEST_MEMSPACE>( "random_particles", fields );
+    using plist_type = decltype( particle_list );
 
     Kokkos::Array<double, 3> box_min = { -9.5, -4.7, 0.5 };
     Kokkos::Array<double, 3> box_max = { 7.6, -1.5, 5.5 };

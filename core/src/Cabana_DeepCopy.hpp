@@ -239,9 +239,11 @@ deep_copy( DstAoSoA& dst, const SrcAoSoA& src,
   \param dst The destination for the copied data.
   \param src The source of the copied data.
 s*/
-template <class DstMemorySpace, class SrcMemorySpace, class... FieldTags>
-inline void deep_copy( ParticleList<DstMemorySpace, FieldTags...>& dst,
-                       const ParticleList<SrcMemorySpace, FieldTags...>& src )
+template <class DstMemorySpace, class SrcMemorySpace, int VectorLength,
+          class... FieldTags>
+inline void
+deep_copy( ParticleList<DstMemorySpace, VectorLength, FieldTags...>& dst,
+           const ParticleList<SrcMemorySpace, VectorLength, FieldTags...>& src )
 {
     // Copy particle data to new memory space.
     auto aosoa_src = src.aosoa();
@@ -410,9 +412,11 @@ inline void deep_copy( Slice_t& slice,
   memory space is different from that of the input AoSoA. If they are the
   same, the original ParticleList is returned.
  */
-template <class DstMemorySpace, class SrcMemorySpace, class... FieldTags>
+template <class DstMemorySpace, class SrcMemorySpace, int VectorLength,
+          class... FieldTags>
 auto create_mirror_view_and_copy(
-    DstMemorySpace, ParticleList<SrcMemorySpace, FieldTags...> plist_src,
+    DstMemorySpace,
+    ParticleList<SrcMemorySpace, VectorLength, FieldTags...> plist_src,
     typename std::enable_if<
         std::is_same<SrcMemorySpace, DstMemorySpace>::value>::type* = 0 )
 {
@@ -426,9 +430,11 @@ auto create_mirror_view_and_copy(
   memory space is different from that of the input AoSoA. If they are the
   same, the original ParticleList is returned.
  */
-template <class DstMemorySpace, class SrcMemorySpace, class... FieldTags>
+template <class DstMemorySpace, class SrcMemorySpace, int VectorLength,
+          class... FieldTags>
 auto create_mirror_view_and_copy(
-    DstMemorySpace, ParticleList<SrcMemorySpace, FieldTags...> plist_src,
+    DstMemorySpace,
+    ParticleList<SrcMemorySpace, VectorLength, FieldTags...> plist_src,
     typename std::enable_if<
         !std::is_same<SrcMemorySpace, DstMemorySpace>::value>::type* = 0 )
 {
@@ -436,16 +442,18 @@ auto create_mirror_view_and_copy(
     auto aosoa_src = plist_src.aosoa();
 
     // Create an AoSoA in the new memory space.
-    using src_plist_type = ParticleList<SrcMemorySpace, FieldTags...>;
+    using src_plist_type =
+        ParticleList<SrcMemorySpace, VectorLength, FieldTags...>;
     using member_types = typename src_plist_type::member_types;
-    AoSoA<member_types, DstMemorySpace> aosoa_dst( aosoa_src.label(),
-                                                   aosoa_src.size() );
+    AoSoA<member_types, DstMemorySpace, VectorLength> aosoa_dst(
+        aosoa_src.label(), aosoa_src.size() );
 
     // Copy data to new AoAoA.
     deep_copy( aosoa_dst, aosoa_src );
 
     // Create new list with the copied data.
-    return ParticleList<DstMemorySpace, FieldTags...>( aosoa_dst );
+    return ParticleList<DstMemorySpace, VectorLength, FieldTags...>(
+        aosoa_dst );
 }
 
 } // end namespace Cabana
