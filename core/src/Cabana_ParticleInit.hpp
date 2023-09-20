@@ -78,6 +78,8 @@ struct InitRandom
   device accessible if on device.
   \param box_max Upper corner of volume to create particles within. Must be
   device accessible if on device.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
   \param shrink_to_fit Optionally remove unused allocated space after creation.
   \param seed Optional random seed for generating particles.
 
@@ -89,6 +91,7 @@ int createParticles(
     InitRandom, ExecutionSpace exec_space, const InitFunctor& create_functor,
     ParticleListType& particle_list, const std::size_t num_particles,
     const ArrayType box_min, const ArrayType box_max,
+    const std::size_t previous_num_particles = 0,
     const bool shrink_to_fit = true, const uint64_t seed = 342343901,
     typename std::enable_if<is_particle_list<ParticleListType>::value,
                             int>::type* = 0 )
@@ -102,7 +105,6 @@ int createParticles(
 
     // Resize the aosoa prior to lambda capture.
     auto& aosoa = particle_list.aosoa();
-    int previous_num_particles = aosoa.size();
     aosoa.resize( previous_num_particles + num_particles );
 
     // Creation count.
@@ -137,7 +139,8 @@ int createParticles(
     };
 
     Kokkos::RangePolicy<ExecutionSpace> exec_policy(
-        exec_space, 0, previous_num_particles + num_particles );
+        exec_space, previous_num_particles,
+        previous_num_particles + num_particles );
     Kokkos::parallel_for( exec_policy, random_coord_op );
     Kokkos::fence();
 
@@ -167,6 +170,8 @@ int createParticles(
   device accessible if on device.
   \param box_max Upper corner of volume to create particles within. Must be
   device accessible if on device.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
   \param shrink_to_fit Optionally remove unused allocated space after creation.
   \param seed Optional random seed for generating particles.
 
@@ -176,13 +181,15 @@ template <class InitFunctor, class ParticleListType, class ArrayType>
 int createParticles( InitRandom tag, const InitFunctor& create_functor,
                      ParticleListType& particle_list,
                      const std::size_t num_particles, const ArrayType box_min,
-                     const ArrayType box_max, const bool shrink_to_fit = true,
+                     const ArrayType box_max,
+                     const std::size_t previous_num_particles = 0,
+                     const bool shrink_to_fit = true,
                      const uint64_t seed = 342343901 )
 {
     using exec_space = typename ParticleListType::memory_space::execution_space;
     return createParticles( tag, exec_space{}, create_functor, particle_list,
-                            num_particles, box_min, box_max, shrink_to_fit,
-                            seed );
+                            num_particles, box_min, box_max,
+                            previous_num_particles, shrink_to_fit, seed );
 }
 
 /*!
@@ -195,19 +202,22 @@ int createParticles( InitRandom tag, const InitFunctor& create_functor,
   device accessible if on device.
   \param box_max Upper corner of volume to create particles within. Must be
   device accessible if on device.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
   \param seed Optional random seed for generating particles.
 */
 template <class ExecutionSpace, class PositionType, class ArrayType>
 void createParticles(
     InitRandom, ExecutionSpace exec_space, PositionType& positions,
     const std::size_t num_particles, const ArrayType box_min,
-    const ArrayType box_max, const uint64_t seed = 342343901,
+    const ArrayType box_max, const std::size_t previous_num_particles = 0,
+    const uint64_t seed = 342343901,
     typename std::enable_if<( is_slice<PositionType>::value ||
                               Kokkos::is_view<PositionType>::value ),
                             int>::type* = 0 )
 {
     // Ensure correct space for the particles (View or Slice).
-    checkSize( positions, num_particles );
+    checkSize( positions, num_particles + previous_num_particles );
 
     // Copy corners to device accessible arrays.
     auto kokkos_min = Impl::copyArray( box_min );
@@ -225,8 +235,9 @@ void createParticles(
         pool.free_state( gen );
     };
 
-    Kokkos::RangePolicy<ExecutionSpace> exec_policy( exec_space, 0,
-                                                     num_particles );
+    Kokkos::RangePolicy<ExecutionSpace> exec_policy(
+        exec_space, previous_num_particles,
+        previous_num_particles + num_particles );
     Kokkos::parallel_for( exec_policy, random_coord_op );
     Kokkos::fence();
 }
@@ -241,12 +252,15 @@ void createParticles(
   device accessible if on device.
   \param box_max Upper corner of volume to create particles within. Must be
   device accessible if on device.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
   \param seed Optional random seed for generating particles.
 */
 template <class PositionType, class ArrayType>
 void createParticles(
     InitRandom tag, PositionType& positions, const std::size_t num_particles,
     const ArrayType box_min, const ArrayType box_max,
+    const std::size_t previous_num_particles = 0,
     const uint64_t seed = 342343901,
     typename std::enable_if<( is_slice<PositionType>::value ||
                               Kokkos::is_view<PositionType>::value ),
@@ -254,7 +268,7 @@ void createParticles(
 {
     using exec_space = typename PositionType::execution_space;
     createParticles( tag, exec_space{}, positions, num_particles, box_min,
-                     box_max, seed );
+                     box_max, previous_num_particles, seed );
 }
 
 //! Generate random particles.
@@ -309,6 +323,8 @@ createRandomParticles( PositionType& positions, const std::size_t num_particles,
   \param box_max Upper corner of volume to create particles within. Must be
   device accessible if on device.
   \param shrink_to_fit Optionally remove unused allocated space after creation.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
   \param seed Optional random seed for generating particles.
 
   \return Number of particles created.
@@ -322,6 +338,7 @@ int createParticles(
     const InitFunctor& create_functor, ParticleListType& particle_list,
     PositionTag position_tag, const std::size_t num_particles,
     const double min_dist, const ArrayType box_min, const ArrayType box_max,
+    const std::size_t previous_num_particles = 0,
     const bool shrink_to_fit = true, const uint64_t seed = 342343901,
     typename std::enable_if<is_particle_list<ParticleListType>::value,
                             int>::type* = 0 )
@@ -330,7 +347,7 @@ int createParticles(
 
     // Resize the aosoa prior to lambda capture.
     auto& aosoa = particle_list.aosoa();
-    aosoa.resize( num_particles );
+    aosoa.resize( previous_num_particles + num_particles );
 
     auto positions = particle_list.slice( position_tag );
 
@@ -357,8 +374,8 @@ int createParticles(
 
     // Pass the functor to the general case.
     return createParticles( tag, exec_space, min_distance_op, particle_list,
-                            num_particles, box_min, box_max, shrink_to_fit,
-                            seed );
+                            num_particles, box_min, box_max,
+                            previous_num_particles, shrink_to_fit, seed );
 }
 
 /*!
@@ -382,6 +399,8 @@ int createParticles(
   \param box_max Upper corner of volume to create particles within. Must be
   device accessible if on device.
   \param shrink_to_fit Optionally remove unused allocated space after creation.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
   \param seed Optional random seed for generating particles.
 
   \return Number of particles created.
@@ -394,13 +413,15 @@ int createParticles( InitRandom tag, const InitFunctor& create_functor,
                      ParticleListType& particle_list, PositionTag position_tag,
                      const std::size_t num_particles, const double min_dist,
                      const ArrayType box_min, const ArrayType box_max,
+                     const std::size_t previous_num_particles = 0,
                      const bool shrink_to_fit = true,
                      const uint64_t seed = 342343901 )
 {
     using exec_space = typename ParticleListType::memory_space::execution_space;
     return createParticles( tag, exec_space{}, create_functor, particle_list,
                             position_tag, num_particles, min_dist, box_min,
-                            box_max, shrink_to_fit, seed );
+                            box_max, previous_num_particles, shrink_to_fit,
+                            seed );
 }
 
 /*!
