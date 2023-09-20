@@ -74,10 +74,8 @@ struct InitRandom
   \param particle_list The ParticleList to populate. This will be filled with
   particles and resized to a size equal to the number of particles created.
   \param num_particles The number of particles to create.
-  \param box_min Lower corner of volume to create particles within. Must be
-  device accessible if on device.
-  \param box_max Upper corner of volume to create particles within. Must be
-  device accessible if on device.
+  \param box_min Array specifying lower corner to create particles within.
+  \param box_max Array specifying upper corner to create particles within.
   \param previous_num_particles Optionally specify how many particles are
   already in the container (and should be unchanged).
   \param shrink_to_fit Optionally remove unused allocated space after creation.
@@ -166,10 +164,8 @@ int createParticles(
   \param particle_list The ParticleList to populate. This will be filled with
   particles and resized to a size equal to the number of particles created.
   \param num_particles The number of particles to create.
-  \param box_min Lower corner of volume to create particles within. Must be
-  device accessible if on device.
-  \param box_max Upper corner of volume to create particles within. Must be
-  device accessible if on device.
+  \param box_min Array specifying lower corner to create particles within.
+  \param box_max Array specifying upper corner to create particles within.
   \param previous_num_particles Optionally specify how many particles are
   already in the container (and should be unchanged).
   \param shrink_to_fit Optionally remove unused allocated space after creation.
@@ -198,10 +194,8 @@ int createParticles( InitRandom tag, const InitFunctor& create_functor,
   \param exec_space Kokkos execution space.
   \param positions Particle positions slice.
   \param num_particles The number of particles to create.
-  \param box_min Lower corner of volume to create particles within. Must be
-  device accessible if on device.
-  \param box_max Upper corner of volume to create particles within. Must be
-  device accessible if on device.
+  \param box_min Array specifying lower corner to create particles within.
+  \param box_max Array specifying upper corner to create particles within.
   \param previous_num_particles Optionally specify how many particles are
   already in the container (and should be unchanged).
   \param seed Optional random seed for generating particles.
@@ -248,10 +242,8 @@ void createParticles(
   \param tag Initialization type tag.
   \param positions Particle positions slice.
   \param num_particles The number of particles to create.
-  \param box_min Lower corner of volume to create particles within. Must be
-  device accessible if on device.
-  \param box_max Upper corner of volume to create particles within. Must be
-  device accessible if on device.
+  \param box_min Array specifying lower corner to create particles within.
+  \param box_max Array specifying upper corner to create particles within.
   \param previous_num_particles Optionally specify how many particles are
   already in the container (and should be unchanged).
   \param seed Optional random seed for generating particles.
@@ -318,10 +310,8 @@ createRandomParticles( PositionType& positions, const std::size_t num_particles,
   \param num_particles The number of particles to create.
   \param min_dist Minimum separation distance between particles. Potential
   particles created within this distance of an existing particle are rejected.
-  \param box_min Lower corner of volume to create particles within. Must be
-  device accessible if on device.
-  \param box_max Upper corner of volume to create particles within. Must be
-  device accessible if on device.
+  \param box_min Array specifying lower corner to create particles within.
+  \param box_max Array specifying upper corner to create particles within.
   \param shrink_to_fit Optionally remove unused allocated space after creation.
   \param previous_num_particles Optionally specify how many particles are
   already in the container (and should be unchanged).
@@ -394,10 +384,8 @@ int createParticles(
   \param num_particles The number of particles to create.
   \param min_dist Minimum separation distance between particles. Potential
   particles created within this distance of an existing particle are rejected.
-  \param box_min Lower corner of volume to create particles within. Must be
-  device accessible if on device.
-  \param box_max Upper corner of volume to create particles within. Must be
-  device accessible if on device.
+  \param box_min Array specifying lower corner to create particles within.
+  \param box_max Array specifying upper corner to create particles within.
   \param shrink_to_fit Optionally remove unused allocated space after creation.
   \param previous_num_particles Optionally specify how many particles are
   already in the container (and should be unchanged).
