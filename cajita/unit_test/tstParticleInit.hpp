@@ -51,11 +51,12 @@ struct Bar : public Cabana::Field::Scalar<double>
 
 //---------------------------------------------------------------------------//
 template <class InitType>
-void initParticleListTest( InitType init_type, int ppc )
+void initParticleListTest( InitType init_type, int ppc,
+                           const int multiplier = 1 )
 {
     // Global bounding box.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = { 43, 32, 39 };
+    std::array<int, 3> global_num_cell = { 17, 10, 23 };
     std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
@@ -105,19 +106,25 @@ void initParticleListTest( InitType init_type, int ppc )
         }
     };
 
-    // Initialize particles.
-    int num_p = Cajita::createParticles( init_type, TEST_EXECSPACE(), init_func,
-                                         particles, ppc, *local_grid );
-
+    // Initialize particles (potentially multiple times).
+    int created_particles = 0;
+    int prev_particle = 0;
+    for ( int m = 0; m < multiplier; ++m )
+    {
+        created_particles = Cajita::createParticles(
+            init_type, TEST_EXECSPACE(), init_func, particles, ppc, *local_grid,
+            prev_particle );
+        prev_particle = created_particles;
+    }
     // Check that we made particles.
-    EXPECT_TRUE( num_p > 0 );
+    EXPECT_TRUE( created_particles > 0 );
 
     // Compute the global number of particles.
     int global_num_particle = particles.size();
     MPI_Allreduce( MPI_IN_PLACE, &global_num_particle, 1, MPI_INT, MPI_SUM,
                    MPI_COMM_WORLD );
     int expect_num_particle =
-        totalParticlesPerCell( init_type, ppc ) *
+        multiplier * totalParticlesPerCell( init_type, ppc ) *
         ( global_grid->globalNumEntity( Cajita::Cell(), Dim::I ) - 2 ) *
         ( global_grid->globalNumEntity( Cajita::Cell(), Dim::J ) - 2 ) *
         ( global_grid->globalNumEntity( Cajita::Cell(), Dim::K ) - 2 );
@@ -132,7 +139,7 @@ void initParticleListTest( InitType init_type, int ppc )
     // Check that all particles are in the box and got initialized correctly.
     auto host_particles =
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), particles );
-    for ( int p = 0; p < num_p; ++p )
+    for ( int p = 0; p < created_particles; ++p )
     {
         auto particle = host_particles.getParticle( p );
 
@@ -149,11 +156,11 @@ void initParticleListTest( InitType init_type, int ppc )
 
 //---------------------------------------------------------------------------//
 template <class InitType>
-void initSliceTest( InitType init_type, int ppc )
+void initSliceTest( InitType init_type, int ppc, const int multiplier = 1 )
 {
     // Global bounding box.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = { 43, 32, 39 };
+    std::array<int, 3> global_num_cell = { 21, 19, 7 };
     std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
@@ -182,16 +189,23 @@ void initSliceTest( InitType init_type, int ppc )
         global_low_corner[Dim::J], global_high_corner[Dim::J],
         global_low_corner[Dim::K], global_high_corner[Dim::K] };
 
-    // Initialize all particles.
-    Cajita::createParticles( init_type, TEST_EXECSPACE(), positions, ppc,
-                             *local_grid );
+    // Initialize all particles (potentially multiple times).
+    int prev_particle = 0;
+    for ( int m = 0; m < multiplier; ++m )
+    {
+        aosoa.resize( prev_particle + num_particle );
+        positions = Cabana::slice<0>( aosoa );
+        Cajita::createParticles( init_type, TEST_EXECSPACE(), positions, ppc,
+                                 *local_grid, prev_particle );
+        prev_particle += num_particle;
+    }
 
     // Check that we created all particles.
     int global_num_particle = positions.size();
     MPI_Allreduce( MPI_IN_PLACE, &global_num_particle, 1, MPI_INT, MPI_SUM,
                    MPI_COMM_WORLD );
     int expect_num_particle =
-        totalParticlesPerCell( init_type, ppc ) *
+        multiplier * totalParticlesPerCell( init_type, ppc ) *
         global_grid->globalNumEntity( Cajita::Cell(), Dim::I ) *
         global_grid->globalNumEntity( Cajita::Cell(), Dim::J ) *
         global_grid->globalNumEntity( Cajita::Cell(), Dim::K );
@@ -217,15 +231,26 @@ void initSliceTest( InitType init_type, int ppc )
 TEST( TEST_CATEGORY, random_init_test )
 {
     initParticleListTest( Cabana::InitRandom(), 17 );
-    initSliceTest( Cabana::InitRandom(), 17 );
+    initSliceTest( Cabana::InitRandom(), 12 );
 }
 
 TEST( TEST_CATEGORY, uniform_init_test )
 {
     initParticleListTest( Cabana::InitUniform(), 3 );
-    initSliceTest( Cabana::InitUniform(), 3 );
+    initSliceTest( Cabana::InitUniform(), 2 );
 }
 
+TEST( TEST_CATEGORY, multiple_random_init_test )
+{
+    initParticleListTest( Cabana::InitRandom(), 5, 4 );
+    initSliceTest( Cabana::InitRandom(), 9, 3 );
+}
+
+TEST( TEST_CATEGORY, multiple_uniform_init_test )
+{
+    initParticleListTest( Cabana::InitUniform(), 2, 5 );
+    initSliceTest( Cabana::InitRandom(), 2, 3 );
+}
 //---------------------------------------------------------------------------//
 
 } // end namespace Test

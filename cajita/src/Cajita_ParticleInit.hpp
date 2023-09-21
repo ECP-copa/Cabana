@@ -56,6 +56,8 @@ namespace Cajita
   particles and resized to a size equal to the number of particles created.
   \param particles_per_cell The number of particles to sample each cell with.
   \param local_grid The LocalGrid over which particles will be created.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
   \param shrink_to_fit Optionally remove unused allocated space after creation.
   \param seed Optional random seed for generating particles.
 */
@@ -65,6 +67,7 @@ int createParticles(
     Cabana::InitRandom, const ExecutionSpace& exec_space,
     const InitFunctor& create_functor, ParticleListType& particle_list,
     const int particles_per_cell, LocalGridType& local_grid,
+    const std::size_t previous_num_particles = 0,
     const bool shrink_to_fit = true, const uint64_t seed = 123456,
     typename std::enable_if<Cajita::is_particle_list<ParticleListType>::value,
                             int>::type* = 0 )
@@ -95,10 +98,11 @@ int createParticles(
     // Allocate enough space for the case the particles consume the entire
     // local grid.
     int num_particles = particles_per_cell * owned_cells.size();
-    aosoa.resize( num_particles );
+    aosoa.resize( previous_num_particles + num_particles );
 
-    // Creation count.
+    // Creation count (start from previous).
     auto count = Kokkos::View<int*, memory_space>( "particle_count", 1 );
+    Kokkos::deep_copy( count, previous_num_particles );
 
     // Initialize particles.
     Cajita::grid_parallel_for(
@@ -136,7 +140,8 @@ int createParticles(
             for ( int p = 0; p < particles_per_cell; ++p )
             {
                 // Local particle id.
-                int pid = cell_id * particles_per_cell + p;
+                int pid =
+                    previous_num_particles + cell_id * particles_per_cell + p;
 
                 // Select a random point in the cell for the particle
                 // location. These coordinates are logical.
@@ -182,6 +187,8 @@ int createParticles(
   particles and resized to a size equal to the number of particles created.
   \param particles_per_cell The number of particles to sample each cell with.
   \param local_grid The LocalGrid over which particles will be created.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
   \param shrink_to_fit Optionally remove unused allocated space after creation.
   \param seed Optional random seed for generating particles.
 */
@@ -189,15 +196,15 @@ template <class InitFunctor, class ParticleListType, class LocalGridType>
 int createParticles(
     Cabana::InitRandom tag, const InitFunctor& create_functor,
     ParticleListType& particle_list, const int particles_per_cell,
-    LocalGridType& local_grid, const bool shrink_to_fit = true,
-    const uint64_t seed = 123456,
+    LocalGridType& local_grid, const std::size_t previous_num_particles = 0,
+    const bool shrink_to_fit = true, const uint64_t seed = 123456,
     typename std::enable_if<Cajita::is_particle_list<ParticleListType>::value,
                             int>::type* = 0 )
 {
     using exec_space = typename ParticleListType::memory_space::execution_space;
     return createParticles( tag, exec_space{}, create_functor, particle_list,
-                            particles_per_cell, local_grid, shrink_to_fit,
-                            seed );
+                            particles_per_cell, local_grid,
+                            previous_num_particles, shrink_to_fit, seed );
 }
 
 //---------------------------------------------------------------------------//
@@ -209,13 +216,16 @@ int createParticles(
   the number of grid cells times particles_per_cell.s
   \param particles_per_cell The number of particles to sample each cell with.
   \param local_grid The LocalGrid over which particles will be created.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
   \param seed Optional random seed for generating particles.
 */
 template <class ExecutionSpace, class PositionType, class LocalGridType>
 void createParticles(
     Cabana::InitRandom, const ExecutionSpace& exec_space,
     PositionType& positions, const int particles_per_cell,
-    LocalGridType& local_grid, const uint64_t seed = 123456,
+    LocalGridType& local_grid, const std::size_t previous_num_particles = 0,
+    const uint64_t seed = 123456,
     typename std::enable_if<( Cabana::is_slice<PositionType>::value ||
                               Kokkos::is_view<PositionType>::value ),
                             int>::type* = 0 )
@@ -238,8 +248,9 @@ void createParticles(
     pool.init( local_seed, owned_cells.size() );
 
     // Ensure correct space for the particles.
-    assert( positions.size() == static_cast<std::size_t>(
-                                    particles_per_cell * owned_cells.size() ) );
+    assert( positions.size() == static_cast<std::size_t>( particles_per_cell *
+                                                          owned_cells.size() ) +
+                                    previous_num_particles );
 
     // Initialize particles.
     Cajita::grid_parallel_for(
@@ -270,7 +281,8 @@ void createParticles(
             for ( int p = 0; p < particles_per_cell; ++p )
             {
                 // Local particle id.
-                int pid = cell_id * particles_per_cell + p;
+                int pid =
+                    previous_num_particles + cell_id * particles_per_cell + p;
 
                 // Select a random point in the cell for the particle
                 // location. These coordinates are logical.
@@ -292,20 +304,22 @@ void createParticles(
   the number of grid cells times particles_per_cell.s
   \param particles_per_cell The number of particles to sample each cell with.
   \param local_grid The LocalGrid over which particles will be created.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
   \param seed Optional random seed for generating particles.
 */
 template <class PositionType, class LocalGridType>
 void createParticles(
     Cabana::InitRandom tag, PositionType& positions,
     const int particles_per_cell, LocalGridType& local_grid,
-    const uint64_t seed = 123456,
+    const std::size_t previous_num_particles = 0, const uint64_t seed = 123456,
     typename std::enable_if<( Cabana::is_slice<PositionType>::value ||
                               Kokkos::is_view<PositionType>::value ),
                             int>::type* = 0 )
 {
     using exec_space = typename PositionType::execution_space;
     createParticles( tag, exec_space{}, positions, particles_per_cell,
-                     local_grid, seed );
+                     local_grid, previous_num_particles, seed );
 }
 
 //---------------------------------------------------------------------------//
@@ -326,6 +340,8 @@ void createParticles(
   \param particles_per_cell_dim The number of particles to populate each cell
   dimension with.
   \param local_grid The LocalGrid over which particles will be created.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
   \param shrink_to_fit Optionally remove unused allocated space after creation.
 */
 template <class ExecutionSpace, class InitFunctor, class ParticleListType,
@@ -334,6 +350,7 @@ int createParticles(
     Cabana::InitUniform, const ExecutionSpace& exec_space,
     const InitFunctor& create_functor, ParticleListType& particle_list,
     const int particles_per_cell_dim, LocalGridType& local_grid,
+    const std::size_t previous_num_particles = 0,
     const bool shrink_to_fit = true,
     typename std::enable_if<Cajita::is_particle_list<ParticleListType>::value,
                             int>::type* = 0 )
@@ -355,10 +372,11 @@ int createParticles(
     int particles_per_cell = particles_per_cell_dim * particles_per_cell_dim *
                              particles_per_cell_dim;
     int num_particles = particles_per_cell * owned_cells.size();
-    aosoa.resize( num_particles );
+    aosoa.resize( previous_num_particles + num_particles );
 
-    // Creation count.
+    // Creation count (start from previous).
     auto count = Kokkos::View<int*, memory_space>( "particle_count", 1 );
+    Kokkos::deep_copy( count, previous_num_particles );
 
     // Initialize particles.
     Cajita::grid_parallel_for(
@@ -403,7 +421,8 @@ int createParticles(
                     for ( int kp = 0; kp < particles_per_cell_dim; ++kp )
                     {
                         // Local particle id.
-                        int pid = cell_id * particles_per_cell + ip +
+                        int pid = previous_num_particles +
+                                  cell_id * particles_per_cell + ip +
                                   particles_per_cell_dim *
                                       ( jp + particles_per_cell_dim * kp );
 
@@ -455,19 +474,23 @@ int createParticles(
   \param particles_per_cell_dim The number of particles to populate each cell
   dimension with.
   \param local_grid The LocalGrid over which particles will be created.
-  \param shrink_to_fit Optionally remove unused allocated space after creation.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
+   \param shrink_to_fit Optionally remove unused allocated space after creation.
 */
 template <class InitFunctor, class ParticleListType, class LocalGridType>
 int createParticles(
     Cabana::InitUniform tag, const InitFunctor& create_functor,
     ParticleListType& particle_list, const int particles_per_cell_dim,
-    LocalGridType& local_grid, const bool shrink_to_fit = true,
+    LocalGridType& local_grid, const std::size_t previous_num_particles = 0,
+    const bool shrink_to_fit = true,
     typename std::enable_if<Cajita::is_particle_list<ParticleListType>::value,
                             int>::type* = 0 )
 {
     using exec_space = typename ParticleListType::memory_space::execution_space;
     return createParticles( tag, exec_space{}, create_functor, particle_list,
-                            particles_per_cell_dim, local_grid, shrink_to_fit );
+                            particles_per_cell_dim, local_grid,
+                            previous_num_particles, shrink_to_fit );
 }
 
 //---------------------------------------------------------------------------//
@@ -480,12 +503,14 @@ int createParticles(
   \param particles_per_cell_dim The number of particles to populate each cell
   dimension with.
   \param local_grid The LocalGrid over which particles will be created.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
 */
 template <class ExecutionSpace, class PositionType, class LocalGridType>
 void createParticles(
     Cabana::InitUniform, const ExecutionSpace& exec_space,
     PositionType& positions, const int particles_per_cell_dim,
-    LocalGridType& local_grid,
+    LocalGridType& local_grid, const std::size_t previous_num_particles = 0,
     typename std::enable_if<( Cabana::is_slice<PositionType>::value ||
                               Kokkos::is_view<PositionType>::value ),
                             int>::type* = 0 )
@@ -501,8 +526,9 @@ void createParticles(
                              particles_per_cell_dim;
 
     // Ensure correct space for the particles.
-    assert( positions.size() == static_cast<std::size_t>(
-                                    particles_per_cell * owned_cells.size() ) );
+    assert( positions.size() == static_cast<std::size_t>( particles_per_cell *
+                                                          owned_cells.size() ) +
+                                    previous_num_particles );
 
     // Initialize particles.
     Cajita::grid_parallel_for(
@@ -540,7 +566,8 @@ void createParticles(
                     for ( int kp = 0; kp < particles_per_cell_dim; ++kp )
                     {
                         // Local particle id.
-                        int pid = cell_id * particles_per_cell + ip +
+                        int pid = previous_num_particles +
+                                  cell_id * particles_per_cell + ip +
                                   particles_per_cell_dim *
                                       ( jp + particles_per_cell_dim * kp );
 
@@ -568,18 +595,21 @@ void createParticles(
   \param particles_per_cell_dim The number of particles to populate each cell
   dimension with.
   \param local_grid The LocalGrid over which particles will be created.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
 */
 template <class PositionType, class LocalGridType>
 void createParticles(
     Cabana::InitUniform tag, PositionType& positions,
     const int particles_per_cell_dim, LocalGridType& local_grid,
+    const std::size_t previous_num_particles = 0,
     typename std::enable_if<( Cabana::is_slice<PositionType>::value ||
                               Kokkos::is_view<PositionType>::value ),
                             int>::type* = 0 )
 {
     using exec_space = typename PositionType::execution_space;
     createParticles( tag, exec_space{}, positions, particles_per_cell_dim,
-                     local_grid );
+                     local_grid, previous_num_particles );
 }
 } // namespace Cajita
 

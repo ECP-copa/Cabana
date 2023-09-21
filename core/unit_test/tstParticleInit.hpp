@@ -68,27 +68,38 @@ void checkRandomDistances( const int min_distance,
         }
 }
 
-void testRandomCreationSlice()
+void testRandomCreationSlice( const int multiplier = 1 )
 {
     int num_particle = 200;
+    int prev_particle = 0;
     Cabana::AoSoA<Cabana::MemberTypes<double[3]>, TEST_MEMSPACE> aosoa(
         "random", num_particle );
     auto positions = Cabana::slice<0>( aosoa );
 
     Kokkos::Array<double, 3> box_min = { -9.5, -4.7, 0.5 };
     Kokkos::Array<double, 3> box_max = { 7.6, -1.5, 5.5 };
-    Cabana::createParticles( Cabana::InitRandom(), positions, positions.size(),
-                             box_min, box_max );
+
+    for ( int m = 0; m < multiplier; ++m )
+    {
+        aosoa.resize( prev_particle + num_particle );
+        positions = Cabana::slice<0>( aosoa );
+        Cabana::createParticles( Cabana::InitRandom(), positions, num_particle,
+                                 box_min, box_max, prev_particle );
+        prev_particle += num_particle;
+    }
+
     auto host_aosoa =
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
     auto host_positions = Cabana::slice<0>( host_aosoa );
 
-    checkRandomParticles( num_particle, box_min, box_max, host_positions );
+    checkRandomParticles( multiplier * num_particle, box_min, box_max,
+                          host_positions );
 }
 
-void testRandomCreationParticleListMinDistance()
+void testRandomCreationParticleListMinDistance( const int multiplier = 1 )
 {
     int num_particle = 200;
+    int prev_particle = 0;
     using plist_type =
         Cabana::ParticleList<TEST_MEMSPACE, Cabana::Field::Position<3>, Foo,
                              Bar>;
@@ -108,9 +119,16 @@ void testRandomCreationParticleListMinDistance()
 
         return true;
     };
-    Cabana::createParticles( Cabana::InitRandom(), init_func, particle_list,
-                             Cabana::Field::Position<3>(), num_particle,
-                             min_dist, box_min, box_max );
+
+    int created_particles = 0;
+    for ( int m = 0; m < multiplier; ++m )
+    {
+        created_particles = Cabana::createParticles(
+            Cabana::InitRandom(), init_func, particle_list,
+            Cabana::Field::Position<3>(), num_particle, min_dist, box_min,
+            box_max, prev_particle );
+        prev_particle = created_particles;
+    }
 
     auto host_particle_list = Cabana::create_mirror_view_and_copy(
         Kokkos::HostSpace(), particle_list );
@@ -119,16 +137,16 @@ void testRandomCreationParticleListMinDistance()
 
     // All particles may not have been created in this case (some skipped by the
     // minimum distance criterion).
-    EXPECT_LE( host_positions.size(), num_particle );
+    EXPECT_LE( created_particles, multiplier * num_particle );
     EXPECT_GE( host_positions.size(), 0 );
-    checkRandomParticles( host_particle_list.size(), box_min, box_max,
-                          host_positions );
+    checkRandomParticles( created_particles, box_min, box_max, host_positions );
     checkRandomDistances( min_dist, host_positions );
 }
 
-void testRandomCreationParticleList()
+void testRandomCreationParticleList( const int multiplier = 1 )
 {
     int num_particle = 200;
+    int prev_particle = 0;
     using plist_type =
         Cabana::ParticleList<TEST_MEMSPACE, Cabana::Field::Position<3>, Foo,
                              Bar>;
@@ -146,17 +164,23 @@ void testRandomCreationParticleList()
 
         return true;
     };
-    auto created =
-        Cabana::createParticles( Cabana::InitRandom(), init_func, particle_list,
-                                 num_particle, box_min, box_max );
-    EXPECT_EQ( num_particle, created );
+    int created_particles = 0;
+    for ( int m = 0; m < multiplier; ++m )
+    {
+        created_particles = Cabana::createParticles(
+            Cabana::InitRandom(), init_func, particle_list, num_particle,
+            box_min, box_max, prev_particle );
+        prev_particle = created_particles;
+    }
+    EXPECT_EQ( multiplier * num_particle, created_particles );
 
     auto host_particle_list = Cabana::create_mirror_view_and_copy(
         Kokkos::HostSpace(), particle_list );
     auto host_positions =
         host_particle_list.slice( Cabana::Field::Position<3>() );
 
-    checkRandomParticles( num_particle, box_min, box_max, host_positions );
+    checkRandomParticles( multiplier * num_particle, box_min, box_max,
+                          host_positions );
 }
 
 TEST( TEST_CATEGORY, random_particle_creation_slice_test )
@@ -168,5 +192,13 @@ TEST( TEST_CATEGORY, random_particle_creation_particlelist_test )
     testRandomCreationParticleListMinDistance();
     testRandomCreationParticleList();
 }
-
+TEST( TEST_CATEGORY, multiple_random_particle_creation_slice_test )
+{
+    testRandomCreationSlice( 3 );
+}
+TEST( TEST_CATEGORY, multiple_random_particle_creation_particlelist_test )
+{
+    testRandomCreationParticleListMinDistance( 3 );
+    testRandomCreationParticleList( 3 );
+}
 } // namespace Test
