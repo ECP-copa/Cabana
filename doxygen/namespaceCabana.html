@@ -476,22 +476,22 @@ template&lt;typename... Types&gt; </td></tr>
 <tr class="memitem:a6eaaf4e113887600b1f87d8ca86cb787"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structCabana_1_1ParameterPack.html">ParameterPack</a>&lt; Types... &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>makeParameterPack</b> (const Types &amp;... ts)</td></tr>
 <tr class="memdesc:a6eaaf4e113887600b1f87d8ca86cb787"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a parameter pack. <br /></td></tr>
 <tr class="separator:a6eaaf4e113887600b1f87d8ca86cb787"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad794c151564efb20210f881c55106bf4"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class InitFunctor , class ParticleListType , class ArrayType &gt; </td></tr>
-<tr class="memitem:ad794c151564efb20210f881c55106bf4"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ad794c151564efb20210f881c55106bf4">createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a>, ExecutionSpace exec_space, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, const std::size_t num_particles, const ArrayType box_min, const ArrayType box_max, const bool shrink_to_fit=true, const uint64_t seed=342343901, typename std::enable_if&lt; <a class="el" href="structCabana_1_1is__particle__list.html">is_particle_list</a>&lt; ParticleListType &gt;::value, int &gt;::type *=0)</td></tr>
-<tr class="memdesc:ad794c151564efb20210f881c55106bf4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles given an initialization functor.  <br /></td></tr>
-<tr class="separator:ad794c151564efb20210f881c55106bf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac59ea5286e302536f0057e350d9fcb89"><td class="memTemplParams" colspan="2">template&lt;class InitFunctor , class ParticleListType , class ArrayType &gt; </td></tr>
-<tr class="memitem:ac59ea5286e302536f0057e350d9fcb89"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ac59ea5286e302536f0057e350d9fcb89">createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, const std::size_t num_particles, const ArrayType box_min, const ArrayType box_max, const bool shrink_to_fit=true, const uint64_t seed=342343901)</td></tr>
-<tr class="memdesc:ac59ea5286e302536f0057e350d9fcb89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles given an initialization functor.  <br /></td></tr>
-<tr class="separator:ac59ea5286e302536f0057e350d9fcb89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a889ad7d16814edc3f624b753029be7a1"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class PositionType , class ArrayType &gt; </td></tr>
-<tr class="memitem:a889ad7d16814edc3f624b753029be7a1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a889ad7d16814edc3f624b753029be7a1">createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a>, ExecutionSpace exec_space, PositionType &amp;positions, const std::size_t num_particles, const ArrayType box_min, const ArrayType box_max, const uint64_t seed=342343901, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:a889ad7d16814edc3f624b753029be7a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles.  <br /></td></tr>
-<tr class="separator:a889ad7d16814edc3f624b753029be7a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1279cb871683233c3736cbf15d65ceda"><td class="memTemplParams" colspan="2">template&lt;class PositionType , class ArrayType &gt; </td></tr>
-<tr class="memitem:a1279cb871683233c3736cbf15d65ceda"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a1279cb871683233c3736cbf15d65ceda">createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, PositionType &amp;positions, const std::size_t num_particles, const ArrayType box_min, const ArrayType box_max, const uint64_t seed=342343901, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:a1279cb871683233c3736cbf15d65ceda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles.  <br /></td></tr>
-<tr class="separator:a1279cb871683233c3736cbf15d65ceda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a9c418e8de2a8cc415fca572a44f4ae"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class InitFunctor , class ParticleListType , class ArrayType &gt; </td></tr>
+<tr class="memitem:a6a9c418e8de2a8cc415fca572a44f4ae"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a6a9c418e8de2a8cc415fca572a44f4ae">createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a>, ExecutionSpace exec_space, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, const std::size_t num_particles, const ArrayType box_min, const ArrayType box_max, const std::size_t previous_num_particles=0, const bool shrink_to_fit=true, const uint64_t seed=342343901, typename std::enable_if&lt; <a class="el" href="structCabana_1_1is__particle__list.html">is_particle_list</a>&lt; ParticleListType &gt;::value, int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a6a9c418e8de2a8cc415fca572a44f4ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles given an initialization functor.  <br /></td></tr>
+<tr class="separator:a6a9c418e8de2a8cc415fca572a44f4ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24ec5c5bb6dac97cbc833cfafb4dd037"><td class="memTemplParams" colspan="2">template&lt;class InitFunctor , class ParticleListType , class ArrayType &gt; </td></tr>
+<tr class="memitem:a24ec5c5bb6dac97cbc833cfafb4dd037"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a24ec5c5bb6dac97cbc833cfafb4dd037">createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, const std::size_t num_particles, const ArrayType box_min, const ArrayType box_max, const std::size_t previous_num_particles=0, const bool shrink_to_fit=true, const uint64_t seed=342343901)</td></tr>
+<tr class="memdesc:a24ec5c5bb6dac97cbc833cfafb4dd037"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles given an initialization functor.  <br /></td></tr>
+<tr class="separator:a24ec5c5bb6dac97cbc833cfafb4dd037"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae5974645edaa6d0ab40737c15b26026d"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class PositionType , class ArrayType &gt; </td></tr>
+<tr class="memitem:ae5974645edaa6d0ab40737c15b26026d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ae5974645edaa6d0ab40737c15b26026d">createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a>, ExecutionSpace exec_space, PositionType &amp;positions, const std::size_t num_particles, const ArrayType box_min, const ArrayType box_max, const std::size_t previous_num_particles=0, const uint64_t seed=342343901, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:ae5974645edaa6d0ab40737c15b26026d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles.  <br /></td></tr>
+<tr class="separator:ae5974645edaa6d0ab40737c15b26026d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af769ed0be27ed435e3c26b52711b8826"><td class="memTemplParams" colspan="2">template&lt;class PositionType , class ArrayType &gt; </td></tr>
+<tr class="memitem:af769ed0be27ed435e3c26b52711b8826"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#af769ed0be27ed435e3c26b52711b8826">createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, PositionType &amp;positions, const std::size_t num_particles, const ArrayType box_min, const ArrayType box_max, const std::size_t previous_num_particles=0, const uint64_t seed=342343901, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:af769ed0be27ed435e3c26b52711b8826"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles.  <br /></td></tr>
+<tr class="separator:af769ed0be27ed435e3c26b52711b8826"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c28984688c3da4922a55dbafee6c55b"><td class="memTemplParams" colspan="2"><a id="a1c28984688c3da4922a55dbafee6c55b" name="a1c28984688c3da4922a55dbafee6c55b"></a>
 template&lt;class ExecutionSpace , class PositionType &gt; </td></tr>
 <tr class="memitem:a1c28984688c3da4922a55dbafee6c55b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>createRandomParticles</b> (ExecutionSpace exec_space, PositionType &amp;positions, const std::size_t num_particles, const double box_min, const double box_max)</td></tr>
@@ -500,14 +500,14 @@ template&lt;class ExecutionSpace , class PositionType &gt; </td></tr>
 <tr class="memitem:ab460bf0f1b72014755b0bd79426b9df8"><td class="memTemplParams" colspan="2">template&lt;class PositionType &gt; </td></tr>
 <tr class="memitem:ab460bf0f1b72014755b0bd79426b9df8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ab460bf0f1b72014755b0bd79426b9df8">createRandomParticles</a> (PositionType &amp;positions, const std::size_t num_particles, const double box_min, const double box_max)</td></tr>
 <tr class="separator:ab460bf0f1b72014755b0bd79426b9df8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0418a1d86cca2ba508511c49acbb33ec"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class InitFunctor , class ParticleListType , class PositionTag , class ArrayType &gt; </td></tr>
-<tr class="memitem:a0418a1d86cca2ba508511c49acbb33ec"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a0418a1d86cca2ba508511c49acbb33ec">createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, ExecutionSpace exec_space, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, PositionTag position_tag, const std::size_t num_particles, const double min_dist, const ArrayType box_min, const ArrayType box_max, const bool shrink_to_fit=true, const uint64_t seed=342343901, typename std::enable_if&lt; <a class="el" href="structCabana_1_1is__particle__list.html">is_particle_list</a>&lt; ParticleListType &gt;::value, int &gt;::type *=0)</td></tr>
-<tr class="memdesc:a0418a1d86cca2ba508511c49acbb33ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles with minimum separation.  <br /></td></tr>
-<tr class="separator:a0418a1d86cca2ba508511c49acbb33ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb91a35e6b080da2d8916f28bb4f7e3d"><td class="memTemplParams" colspan="2">template&lt;class InitFunctor , class ParticleListType , class PositionTag , class ArrayType &gt; </td></tr>
-<tr class="memitem:aeb91a35e6b080da2d8916f28bb4f7e3d"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#aeb91a35e6b080da2d8916f28bb4f7e3d">createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, PositionTag position_tag, const std::size_t num_particles, const double min_dist, const ArrayType box_min, const ArrayType box_max, const bool shrink_to_fit=true, const uint64_t seed=342343901)</td></tr>
-<tr class="memdesc:aeb91a35e6b080da2d8916f28bb4f7e3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles with minimum separation.  <br /></td></tr>
-<tr class="separator:aeb91a35e6b080da2d8916f28bb4f7e3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0c4bf4f3365c05b7e56452d0dd7b0ff"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class InitFunctor , class ParticleListType , class PositionTag , class ArrayType &gt; </td></tr>
+<tr class="memitem:ac0c4bf4f3365c05b7e56452d0dd7b0ff"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ac0c4bf4f3365c05b7e56452d0dd7b0ff">createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, ExecutionSpace exec_space, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, PositionTag position_tag, const std::size_t num_particles, const double min_dist, const ArrayType box_min, const ArrayType box_max, const std::size_t previous_num_particles=0, const bool shrink_to_fit=true, const uint64_t seed=342343901, typename std::enable_if&lt; <a class="el" href="structCabana_1_1is__particle__list.html">is_particle_list</a>&lt; ParticleListType &gt;::value, int &gt;::type *=0)</td></tr>
+<tr class="memdesc:ac0c4bf4f3365c05b7e56452d0dd7b0ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles with minimum separation.  <br /></td></tr>
+<tr class="separator:ac0c4bf4f3365c05b7e56452d0dd7b0ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a370d939addeb7bb7dc2600f6d793f053"><td class="memTemplParams" colspan="2">template&lt;class InitFunctor , class ParticleListType , class PositionTag , class ArrayType &gt; </td></tr>
+<tr class="memitem:a370d939addeb7bb7dc2600f6d793f053"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a370d939addeb7bb7dc2600f6d793f053">createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, PositionTag position_tag, const std::size_t num_particles, const double min_dist, const ArrayType box_min, const ArrayType box_max, const std::size_t previous_num_particles=0, const bool shrink_to_fit=true, const uint64_t seed=342343901)</td></tr>
+<tr class="memdesc:a370d939addeb7bb7dc2600f6d793f053"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles with minimum separation.  <br /></td></tr>
+<tr class="separator:a370d939addeb7bb7dc2600f6d793f053"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f0ca04a76c59609d5f9985bc5f0f87d"><td class="memTemplParams" colspan="2">template&lt;class PositionType &gt; </td></tr>
 <tr class="memitem:a9f0ca04a76c59609d5f9985bc5f0f87d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a9f0ca04a76c59609d5f9985bc5f0f87d">createRandomParticlesMinDistance</a> (PositionType &amp;positions, const std::size_t num_particles, const double box_min, const double box_max, const double min_dist)</td></tr>
 <tr class="memdesc:a9f0ca04a76c59609d5f9985bc5f0f87d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate random particles with minimum distance between neighbors.  <br /></td></tr>
@@ -1491,8 +1491,8 @@ template&lt;class MemorySpace , class... FieldTags&gt; </div>
 
 </div>
 </div>
-<a id="ac59ea5286e302536f0057e350d9fcb89" name="ac59ea5286e302536f0057e350d9fcb89"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac59ea5286e302536f0057e350d9fcb89">&#9670;&#160;</a></span>createParticles() <span class="overload">[1/6]</span></h2>
+<a id="a24ec5c5bb6dac97cbc833cfafb4dd037" name="a24ec5c5bb6dac97cbc833cfafb4dd037"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24ec5c5bb6dac97cbc833cfafb4dd037">&#9670;&#160;</a></span>createParticles() <span class="overload">[1/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1538,6 +1538,12 @@ template&lt;class InitFunctor , class ParticleListType , class ArrayType &gt; </
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>previous_num_particles</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const bool&#160;</td>
           <td class="paramname"><em>shrink_to_fit</em> = <code>true</code>, </td>
         </tr>
@@ -1564,8 +1570,9 @@ template&lt;class InitFunctor , class ParticleListType , class ArrayType &gt; </
 </pre> </td></tr>
     <tr><td class="paramname">particle_list</td><td>The <a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> to populate. This will be filled with particles and resized to a size equal to the number of particles created. </td></tr>
     <tr><td class="paramname">num_particles</td><td>The number of particles to create. </td></tr>
-    <tr><td class="paramname">box_min</td><td>Lower corner of volume to create particles within. Must be device accessible if on device. </td></tr>
-    <tr><td class="paramname">box_max</td><td>Upper corner of volume to create particles within. Must be device accessible if on device. </td></tr>
+    <tr><td class="paramname">box_min</td><td>Array specifying lower corner to create particles within. </td></tr>
+    <tr><td class="paramname">box_max</td><td>Array specifying upper corner to create particles within. </td></tr>
+    <tr><td class="paramname">previous_num_particles</td><td>Optionally specify how many particles are already in the container (and should be unchanged). </td></tr>
     <tr><td class="paramname">shrink_to_fit</td><td>Optionally remove unused allocated space after creation. </td></tr>
     <tr><td class="paramname">seed</td><td>Optional random seed for generating particles.</td></tr>
   </table>
@@ -1575,8 +1582,8 @@ template&lt;class InitFunctor , class ParticleListType , class ArrayType &gt; </
 
 </div>
 </div>
-<a id="aeb91a35e6b080da2d8916f28bb4f7e3d" name="aeb91a35e6b080da2d8916f28bb4f7e3d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeb91a35e6b080da2d8916f28bb4f7e3d">&#9670;&#160;</a></span>createParticles() <span class="overload">[2/6]</span></h2>
+<a id="a370d939addeb7bb7dc2600f6d793f053" name="a370d939addeb7bb7dc2600f6d793f053"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a370d939addeb7bb7dc2600f6d793f053">&#9670;&#160;</a></span>createParticles() <span class="overload">[2/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1634,6 +1641,12 @@ template&lt;class InitFunctor , class ParticleListType , class PositionTag , cla
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>previous_num_particles</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const bool&#160;</td>
           <td class="paramname"><em>shrink_to_fit</em> = <code>true</code>, </td>
         </tr>
@@ -1662,9 +1675,10 @@ template&lt;class InitFunctor , class ParticleListType , class PositionTag , cla
     <tr><td class="paramname">position_tag</td><td>Position particle list type tag. </td></tr>
     <tr><td class="paramname">num_particles</td><td>The number of particles to create. </td></tr>
     <tr><td class="paramname">min_dist</td><td>Minimum separation distance between particles. Potential particles created within this distance of an existing particle are rejected. </td></tr>
-    <tr><td class="paramname">box_min</td><td>Lower corner of volume to create particles within. Must be device accessible if on device. </td></tr>
-    <tr><td class="paramname">box_max</td><td>Upper corner of volume to create particles within. Must be device accessible if on device. </td></tr>
+    <tr><td class="paramname">box_min</td><td>Array specifying lower corner to create particles within. </td></tr>
+    <tr><td class="paramname">box_max</td><td>Array specifying upper corner to create particles within. </td></tr>
     <tr><td class="paramname">shrink_to_fit</td><td>Optionally remove unused allocated space after creation. </td></tr>
+    <tr><td class="paramname">previous_num_particles</td><td>Optionally specify how many particles are already in the container (and should be unchanged). </td></tr>
     <tr><td class="paramname">seed</td><td>Optional random seed for generating particles.</td></tr>
   </table>
   </dd>
@@ -1674,8 +1688,8 @@ template&lt;class InitFunctor , class ParticleListType , class PositionTag , cla
 
 </div>
 </div>
-<a id="a0418a1d86cca2ba508511c49acbb33ec" name="a0418a1d86cca2ba508511c49acbb33ec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0418a1d86cca2ba508511c49acbb33ec">&#9670;&#160;</a></span>createParticles() <span class="overload">[3/6]</span></h2>
+<a id="ac0c4bf4f3365c05b7e56452d0dd7b0ff" name="ac0c4bf4f3365c05b7e56452d0dd7b0ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac0c4bf4f3365c05b7e56452d0dd7b0ff">&#9670;&#160;</a></span>createParticles() <span class="overload">[3/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1739,6 +1753,12 @@ template&lt;class ExecutionSpace , class InitFunctor , class ParticleListType , 
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>previous_num_particles</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const bool&#160;</td>
           <td class="paramname"><em>shrink_to_fit</em> = <code>true</code>, </td>
         </tr>
@@ -1774,9 +1794,10 @@ template&lt;class ExecutionSpace , class InitFunctor , class ParticleListType , 
     <tr><td class="paramname">position_tag</td><td>Position particle list type tag. </td></tr>
     <tr><td class="paramname">num_particles</td><td>The number of particles to create. </td></tr>
     <tr><td class="paramname">min_dist</td><td>Minimum separation distance between particles. Potential particles created within this distance of an existing particle are rejected. </td></tr>
-    <tr><td class="paramname">box_min</td><td>Lower corner of volume to create particles within. Must be device accessible if on device. </td></tr>
-    <tr><td class="paramname">box_max</td><td>Upper corner of volume to create particles within. Must be device accessible if on device. </td></tr>
+    <tr><td class="paramname">box_min</td><td>Array specifying lower corner to create particles within. </td></tr>
+    <tr><td class="paramname">box_max</td><td>Array specifying upper corner to create particles within. </td></tr>
     <tr><td class="paramname">shrink_to_fit</td><td>Optionally remove unused allocated space after creation. </td></tr>
+    <tr><td class="paramname">previous_num_particles</td><td>Optionally specify how many particles are already in the container (and should be unchanged). </td></tr>
     <tr><td class="paramname">seed</td><td>Optional random seed for generating particles.</td></tr>
   </table>
   </dd>
@@ -1786,8 +1807,8 @@ template&lt;class ExecutionSpace , class InitFunctor , class ParticleListType , 
 
 </div>
 </div>
-<a id="a1279cb871683233c3736cbf15d65ceda" name="a1279cb871683233c3736cbf15d65ceda"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1279cb871683233c3736cbf15d65ceda">&#9670;&#160;</a></span>createParticles() <span class="overload">[4/6]</span></h2>
+<a id="af769ed0be27ed435e3c26b52711b8826" name="af769ed0be27ed435e3c26b52711b8826"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af769ed0be27ed435e3c26b52711b8826">&#9670;&#160;</a></span>createParticles() <span class="overload">[4/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1827,6 +1848,12 @@ template&lt;class PositionType , class ArrayType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>previous_num_particles</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const uint64_t&#160;</td>
           <td class="paramname"><em>seed</em> = <code>342343901</code>, </td>
         </tr>
@@ -1850,8 +1877,9 @@ template&lt;class PositionType , class ArrayType &gt; </div>
     <tr><td class="paramname">tag</td><td>Initialization type tag. </td></tr>
     <tr><td class="paramname">positions</td><td><a class="el" href="structCabana_1_1Particle.html" title="Single particle copy. Wraps a tuple copy of a particle.">Particle</a> positions slice. </td></tr>
     <tr><td class="paramname">num_particles</td><td>The number of particles to create. </td></tr>
-    <tr><td class="paramname">box_min</td><td>Lower corner of volume to create particles within. Must be device accessible if on device. </td></tr>
-    <tr><td class="paramname">box_max</td><td>Upper corner of volume to create particles within. Must be device accessible if on device. </td></tr>
+    <tr><td class="paramname">box_min</td><td>Array specifying lower corner to create particles within. </td></tr>
+    <tr><td class="paramname">box_max</td><td>Array specifying upper corner to create particles within. </td></tr>
+    <tr><td class="paramname">previous_num_particles</td><td>Optionally specify how many particles are already in the container (and should be unchanged). </td></tr>
     <tr><td class="paramname">seed</td><td>Optional random seed for generating particles. </td></tr>
   </table>
   </dd>
@@ -1859,8 +1887,8 @@ template&lt;class PositionType , class ArrayType &gt; </div>
 
 </div>
 </div>
-<a id="ad794c151564efb20210f881c55106bf4" name="ad794c151564efb20210f881c55106bf4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad794c151564efb20210f881c55106bf4">&#9670;&#160;</a></span>createParticles() <span class="overload">[5/6]</span></h2>
+<a id="a6a9c418e8de2a8cc415fca572a44f4ae" name="a6a9c418e8de2a8cc415fca572a44f4ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a9c418e8de2a8cc415fca572a44f4ae">&#9670;&#160;</a></span>createParticles() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1912,6 +1940,12 @@ template&lt;class ExecutionSpace , class InitFunctor , class ParticleListType , 
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>previous_num_particles</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const bool&#160;</td>
           <td class="paramname"><em>shrink_to_fit</em> = <code>true</code>, </td>
         </tr>
@@ -1944,8 +1978,9 @@ template&lt;class ExecutionSpace , class InitFunctor , class ParticleListType , 
 </pre> </td></tr>
     <tr><td class="paramname">particle_list</td><td>The <a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> to populate. This will be filled with particles and resized to a size equal to the number of particles created. </td></tr>
     <tr><td class="paramname">num_particles</td><td>The number of particles to create. </td></tr>
-    <tr><td class="paramname">box_min</td><td>Lower corner of volume to create particles within. Must be device accessible if on device. </td></tr>
-    <tr><td class="paramname">box_max</td><td>Upper corner of volume to create particles within. Must be device accessible if on device. </td></tr>
+    <tr><td class="paramname">box_min</td><td>Array specifying lower corner to create particles within. </td></tr>
+    <tr><td class="paramname">box_max</td><td>Array specifying upper corner to create particles within. </td></tr>
+    <tr><td class="paramname">previous_num_particles</td><td>Optionally specify how many particles are already in the container (and should be unchanged). </td></tr>
     <tr><td class="paramname">shrink_to_fit</td><td>Optionally remove unused allocated space after creation. </td></tr>
     <tr><td class="paramname">seed</td><td>Optional random seed for generating particles.</td></tr>
   </table>
@@ -1955,8 +1990,8 @@ template&lt;class ExecutionSpace , class InitFunctor , class ParticleListType , 
 
 </div>
 </div>
-<a id="a889ad7d16814edc3f624b753029be7a1" name="a889ad7d16814edc3f624b753029be7a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a889ad7d16814edc3f624b753029be7a1">&#9670;&#160;</a></span>createParticles() <span class="overload">[6/6]</span></h2>
+<a id="ae5974645edaa6d0ab40737c15b26026d" name="ae5974645edaa6d0ab40737c15b26026d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae5974645edaa6d0ab40737c15b26026d">&#9670;&#160;</a></span>createParticles() <span class="overload">[6/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2002,6 +2037,12 @@ template&lt;class ExecutionSpace , class PositionType , class ArrayType &gt; </d
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>previous_num_particles</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const uint64_t&#160;</td>
           <td class="paramname"><em>seed</em> = <code>342343901</code>, </td>
         </tr>
@@ -2025,8 +2066,9 @@ template&lt;class ExecutionSpace , class PositionType , class ArrayType &gt; </d
     <tr><td class="paramname">exec_space</td><td>Kokkos execution space. </td></tr>
     <tr><td class="paramname">positions</td><td><a class="el" href="structCabana_1_1Particle.html" title="Single particle copy. Wraps a tuple copy of a particle.">Particle</a> positions slice. </td></tr>
     <tr><td class="paramname">num_particles</td><td>The number of particles to create. </td></tr>
-    <tr><td class="paramname">box_min</td><td>Lower corner of volume to create particles within. Must be device accessible if on device. </td></tr>
-    <tr><td class="paramname">box_max</td><td>Upper corner of volume to create particles within. Must be device accessible if on device. </td></tr>
+    <tr><td class="paramname">box_min</td><td>Array specifying lower corner to create particles within. </td></tr>
+    <tr><td class="paramname">box_max</td><td>Array specifying upper corner to create particles within. </td></tr>
+    <tr><td class="paramname">previous_num_particles</td><td>Optionally specify how many particles are already in the container (and should be unchanged). </td></tr>
     <tr><td class="paramname">seed</td><td>Optional random seed for generating particles. </td></tr>
   </table>
   </dd>
