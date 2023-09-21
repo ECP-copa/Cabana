@@ -10,7 +10,7 @@
 ############################################################################
 
 add_executable(HDF5Output hdf5_output_example.cpp)
-target_link_libraries(HDF5Output cabanacore)
+target_link_libraries(HDF5Output Core)
 add_test(NAME Core_tutorial_13 COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG}
   ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:HDF5Output> ${MPIEXEC_POSTFLAGS})
 set_tests_properties(Core_tutorial_13 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

@@ -16,7 +16,6 @@
 #ifndef CABANA_COMMUNICATIONPLAN_HPP
 #define CABANA_COMMUNICATIONPLAN_HPP
 
-#include <CabanaCore_config.hpp>
 #include <Cabana_Utils.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -425,7 +424,7 @@ class CommunicationPlan
     //! Memory space.
     using memory_space = typename MemorySpace::memory_space;
     // FIXME: replace warning with memory space assert after next release.
-    static_assert( Impl::warn( Kokkos::is_device<MemorySpace>() ) );
+    static_assert( Impl::deprecated( Kokkos::is_device<MemorySpace>() ) );
 
     //! Default device type.
     using device_type [[deprecated]] = typename memory_space::device_type;

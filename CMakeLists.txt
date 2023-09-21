@@ -219,7 +219,7 @@ endif()
 # enable doxygen
 find_package(Doxygen)
 if(Doxygen_FOUND)
-  doxygen_add_docs(doxygen core/src cajita/src)
+  doxygen_add_docs(doxygen core/src grid/src)
 endif()
 
 ##---------------------------------------------------------------------------##
@@ -228,12 +228,22 @@ endif()
 
 add_subdirectory(core)
 
-option(Cabana_ENABLE_CAJITA "Build Cajita (grid and particle-grid)" ${Cabana_ENABLE_MPI})
-if(Cabana_ENABLE_CAJITA)
+option(Cabana_ENABLE_GRID "Build grid and particle-grid capabilities" ${Cabana_ENABLE_MPI})
+### FIXME: remove in next release.
+option(Cabana_ENABLE_CAJITA "Build grid and particle-grid capabilities" OFF)
+option(Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS "Do not warn about Cajita deprecation." OFF)
+if (Cabana_ENABLE_CAJITA)
+  if (NOT Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS)
+    message(DEPRECATION "Option Cabana_ENABLE_CAJITA is deprecated, replaced by Cabana_ENABLE_GRID")
+  endif()
+  set(Cabana_ENABLE_GRID ON)
+endif()
+
+if(Cabana_ENABLE_GRID)
   if(MPI_FOUND)
-    add_subdirectory(cajita)
+    add_subdirectory(grid)
   else()
-    message(FATAL_ERROR "Cajita requires MPI")
+    message(FATAL_ERROR "Grid subpackage requires MPI")
   endif()
 endif()
 
@@ -267,7 +277,7 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake" "${CMAKE_CURRENT_
 ## Clang Format
 ##---------------------------------------------------------------------------##
 if(CLANG_FORMAT_FOUND)
-  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp cajita/*hpp cajita/*cpp example/*cpp example/*hpp cmake/*cpp cmake/*hpp benchmark/*cpp benchmark/*hpp)
+  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp grid/*hpp grid/*cpp example/*cpp example/*hpp cmake/*cpp cmake/*hpp benchmark/*cpp benchmark/*hpp)
   add_custom_target(cabana-format
     COMMAND ${CLANG_FORMAT_EXECUTABLE} -i -style=file ${FORMAT_SOURCES}
     DEPENDS ${FORMAT_SOURCES})

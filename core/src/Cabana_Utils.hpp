@@ -16,6 +16,10 @@
 #ifndef CABANA_UTILS_HPP
 #define CABANA_UTILS_HPP
 
+#include <Cabana_Core_Config.hpp>
+
+#include <type_traits>
+
 namespace Cabana
 {
 namespace Impl
@@ -23,14 +27,25 @@ namespace Impl
 //! \cond Impl
 
 // Custom warning for switch from device_type to memory_space.
-constexpr bool warn( std::false_type ) { return true; }
+constexpr bool deprecated( std::false_type ) { return true; }
 
-[[deprecated( "Template parameter should be converted from device type to "
-              "memory space." )]] constexpr bool
-warn( std::true_type )
+[[deprecated(
+    "Template parameter should be converted from Kokkos device type to "
+    "Kokkos memory space." )]] constexpr bool
+deprecated( std::true_type )
 {
     return true;
 }
+
+// Custom warning for switch from Cajita to Grid.
+#ifdef Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS
+#define CAJITA_DEPRECATED
+#else
+#define CAJITA_DEPRECATED                                                      \
+    [[deprecated( "Cajita is now Cabana::Grid. The Cajita namespace will be "  \
+                  "removed in a future release." )]]
+#endif
+
 //! \endcond
 
 } // namespace Impl

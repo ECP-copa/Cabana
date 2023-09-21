@@ -11,6 +11,6 @@
 
 add_subdirectory(core)
 
-if(Cabana_ENABLE_CAJITA)
-  add_subdirectory(cajita)
+if(Cabana_ENABLE_GRID)
+  add_subdirectory(grid)
 endif()

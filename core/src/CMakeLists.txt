@@ -9,7 +9,7 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-configure_file(CabanaCore_config.hpp.cmakein CabanaCore_config.hpp)
+configure_file(Cabana_Core_Config.hpp.cmakein Cabana_Core_Config.hpp)
 
 set(HEADERS_PUBLIC
   Cabana_AoSoA.hpp
@@ -64,6 +64,15 @@ set(HEADERS_IMPL
   )
 
 add_library(cabanacore INTERFACE)
+add_library(Core ALIAS cabanacore)
+add_library(Cabana::Core ALIAS cabanacore)
+### FIXME: remove cabanacore in next release.
+add_library(Cabana::cabanacore ALIAS cabanacore)
+if(CMAKE_VERSION VERSION_GREATER 3.17)
+  if(NOT Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS)
+    set_property(TARGET cabanacore PROPERTY DEPRECATION "NOTE: cabanacore subpackage is now Core. Link to Cabana::Core. Cabana::cabanacore will be removed in a future release.")
+  endif()
+endif()
 
 # Require minimum of C++17
 set_target_properties(cabanacore PROPERTIES INTERFACE_COMPILE_FEATURES cxx_std_17)
@@ -108,8 +117,6 @@ install(FILES ${HEADERS_PUBLIC} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 install(FILES ${HEADERS_IMPL} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/impl/)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CabanaCore_config.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Cabana_Core_Config.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 include(CMakePackageConfigHelpers)
-
-add_library(Cabana::cabanacore ALIAS cabanacore)

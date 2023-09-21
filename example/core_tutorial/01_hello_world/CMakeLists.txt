@@ -13,10 +13,10 @@
 # a standalone CMakeLists.txt for testing of the Target export
 cmake_minimum_required(VERSION 3.16)
 project(Cabana_HelloWorld)
-if(NOT TARGET Cabana::cabanacore)
+if(NOT TARGET Cabana::Core)
   find_package(Cabana)
 endif()
 
 add_executable(HelloWorld hello_world.cpp)
-target_link_libraries(HelloWorld Cabana::cabanacore)
+target_link_libraries(HelloWorld Cabana::Core)
 add_test(NAME Core_tutorial_01 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:HelloWorld>)

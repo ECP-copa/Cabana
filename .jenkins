@@ -126,7 +126,7 @@ pipeline {
                             .. && \
                             make -j8 && \
                             # Exclude current failing tests (core MPI and partial Cajita)
-                            ctest --output-on-failure -E "Cabana.*MPI|Cabana_Performance_Comm|Cajita_IndexConversion|Cajita_Halo|Cajita_ParticleGridDistributor|Cajita_Interpolation|Cajita_BovWriter|valgrind"
+                            ctest --output-on-failure -E "Cabana.*MPI|Cabana_Performance_Comm|Grid_IndexConversion|Grid_Halo|Grid_ParticleGridDistributor|Grid_Interpolation|Grid_BovWriter|valgrind"
                         '''
                     }
                     post {

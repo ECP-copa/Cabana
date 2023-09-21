@@ -77,7 +77,7 @@ foreach(_test 01_cpp_simple 02_kokkos_simple_view 03_Cabana_peakflops)
     CABANA_PERFORMANCE_ITERATIONS=${Cabana_PERFORMANCE_ITERATIONS}
     CABANA_PERFORMANCE_SEED=${Cabana_PERFORMANCE_SEED}
     )
-  target_link_libraries(${test} cabanacore ${gtest_target})
+  target_link_libraries(${test} Core ${gtest_target})
   target_compile_options(${test} PRIVATE "-fopenmp")
   add_test(NAME ${test} COMMAND ${test})
   set_tests_properties(${test} PROPERTIES LABELS "PERFORMANCE" )

@@ -16,7 +16,7 @@
 #ifndef CABANA_VERSION_HPP
 #define CABANA_VERSION_HPP
 
-#include <CabanaCore_config.hpp>
+#include <Cabana_Core_Config.hpp>
 
 #include <string>
 

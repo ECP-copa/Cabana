@@ -10,5 +10,5 @@
 ############################################################################
 
   add_executable(SimdParallelFor simd_parallel_for_example.cpp)
-  target_link_libraries(SimdParallelFor cabanacore)
+  target_link_libraries(SimdParallelFor Core)
   add_test(NAME Core_tutorial_10_simd COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:SimdParallelFor>)
