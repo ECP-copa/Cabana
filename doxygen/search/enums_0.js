@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['hashtypes_0',['HashTypes',['../namespaceCajita.html#a2ec822f40e278e94dbe22325c2b4c824',1,'Cajita']]]
+  ['hashtypes_0',['HashTypes',['../Cabana__Grid__SparseIndexSpace_8hpp.html#ae8d025b453cfd55aa537eebc54a7992f',1,'Cabana::Grid']]]
 ];

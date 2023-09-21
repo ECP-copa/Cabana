@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['values_0',['Values',['../structCajita_1_1Dim.html#aa7f353f85b88b20e88e9bf5a8d333f7f',1,'Cajita::Dim']]]
+  ['values_0',['Values',['../structCabana_1_1Grid_1_1Dim.html#a87cd1314e6ae0c626993cb91f56998f8',1,'Cabana::Grid::Dim']]]
 ];

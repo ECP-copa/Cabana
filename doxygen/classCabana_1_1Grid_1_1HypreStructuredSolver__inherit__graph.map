@@ -1,0 +1,10 @@
+<map id="Cabana::Grid::HypreStructuredSolver&lt; Scalar, EntityType, MemorySpace &gt;" name="Cabana::Grid::HypreStructuredSolver&lt; Scalar, EntityType, MemorySpace &gt;">
+<area shape="rect" id="node1" title="Hypre structured solver interface for scalar fields." alt="" coords="5,241,220,296"/>
+<area shape="rect" id="node2" href="$classCabana_1_1Grid_1_1HypreStructBiCGSTAB.html" title="BiCGSTAB solver." alt="" coords="268,5,471,60"/>
+<area shape="rect" id="node3" href="$classCabana_1_1Grid_1_1HypreStructDiagonal.html" title="Diagonal preconditioner." alt="" coords="271,84,467,139"/>
+<area shape="rect" id="node4" href="$classCabana_1_1Grid_1_1HypreStructGMRES.html" title="GMRES solver." alt="" coords="276,163,463,217"/>
+<area shape="rect" id="node5" href="$classCabana_1_1Grid_1_1HypreStructJacobi.html" title="Jacobi solver." alt="" coords="277,241,462,296"/>
+<area shape="rect" id="node6" href="$classCabana_1_1Grid_1_1HypreStructPCG.html" title="PCG solver." alt="" coords="277,320,462,375"/>
+<area shape="rect" id="node7" href="$classCabana_1_1Grid_1_1HypreStructPFMG.html" title="PFMG solver." alt="" coords="277,399,462,453"/>
+<area shape="rect" id="node8" href="$classCabana_1_1Grid_1_1HypreStructSMG.html" title="SMG solver." alt="" coords="277,477,462,532"/>
+</map>

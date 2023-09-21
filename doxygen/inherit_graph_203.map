@@ -1,40 +1,21 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" title=" " alt="" coords="5,1544,116,1569"/>
-<area shape="rect" id="node2" href="$structCabana_1_1is__accessible__from_3_01MemorySpace_00_01ExecutionSpace_00_01std_1_1enable__if_96534d0f81e01b006272bb63cf2f3dd3.html" title=" " alt="" coords="193,5,443,89"/>
-<area shape="rect" id="node3" href="$structCabana_1_1is__binning__data_3_01const_01BinningData_3_01MemorySpace_01_4_01_4.html" title="BinningData static type checker." alt="" coords="229,113,407,168"/>
-<area shape="rect" id="node4" href="$structCabana_1_1is__memory__access__tag_3_01AtomicAccessMemory_01_4.html" title=" " alt="" coords="215,193,421,233"/>
-<area shape="rect" id="node5" href="$structCabana_1_1is__memory__access__tag_3_01DefaultAccessMemory_01_4.html" title="Memory access type checker." alt="" coords="213,257,423,297"/>
-<area shape="rect" id="node6" href="$structCabana_1_1is__memory__access__tag_3_01RandomAccessMemory_01_4.html" title=" " alt="" coords="211,321,425,361"/>
-<area shape="rect" id="node7" href="$structCabana_1_1is__particle__list__impl_3_01ParticleList_3_01MemorySpace_00_01VectorLength_00_01FieldTags_8_8_8_01_4_01_4.html" title=" " alt="" coords="209,385,427,454"/>
-<area shape="rect" id="node8" href="$structCajita_1_1Experimental_1_1is__matching__array_3_01ArrayEntity_00_01ArrayMesh_00_01ArrayMem3571c6b6cd60b8f760b44f9c854553fd.html" title="Matching Array static type checker." alt="" coords="164,479,472,651"/>
-<area shape="rect" id="node9" href="$structCajita_1_1Experimental_1_1is__sparse__array_3_01SparseArray_3_01DataTypes_00_01MemorySpaceaa76667681ec3a3cbe67a0fa9507fdeb.html" title="Sparse array static type checker." alt="" coords="183,675,453,745"/>
-<area shape="rect" id="node10" href="$structCajita_1_1Experimental_1_1is__sparse__array_3_01const_01SparseArray_3_01DataTypes_00_01Mem5f09f4a82e57a46a16de42b5cbf8a09c.html" title="Sparse array static type checker." alt="" coords="209,769,427,853"/>
-<area shape="rect" id="node11" href="$structCajita_1_1Experimental_1_1is__sparse__array__layout_3_01SparseArrayLayout_3_01DataTypes_004d915aff7e34bf4fdf4c0c32082f80bc.html" title="Sparse array layout static type checker." alt="" coords="173,878,463,947"/>
-<area shape="rect" id="node12" href="$structCajita_1_1Experimental_1_1is__sparse__array__layout_3_01const_01SparseArrayLayout_3_01Data6f32765c04bd4905115bc93e800f329c.html" title="Sparse array layout static type checker." alt="" coords="195,972,441,1056"/>
-<area shape="rect" id="node13" href="$structCajita_1_1HypreIsCompatibleWithMemorySpace_3_01Kokkos_1_1HostSpace_01_4.html" title="Hypre device compatibility check &#45; host memory." alt="" coords="221,1080,415,1135"/>
-<area shape="rect" id="node14" href="$structCajita_1_1isCell_3_01Cell_01_4.html" title=" " alt="" coords="249,1159,387,1184"/>
-<area shape="rect" id="node15" href="$structCajita_1_1isCell_3_01const_01Cell_01_4.html" title=" " alt="" coords="249,1209,387,1249"/>
-<area shape="rect" id="node16" href="$structCajita_1_1isEdge_3_01Edge_3_01Dir_01_4_01_4.html" title=" " alt="" coords="245,1273,391,1313"/>
-<area shape="rect" id="node17" href="$structCajita_1_1isEdge_3_01const_01Edge_3_01Dir_01_4_01_4.html" title=" " alt="" coords="245,1337,391,1377"/>
-<area shape="rect" id="node18" href="$structCajita_1_1isFace_3_01Face_3_01Dir_01_4_01_4.html" title=" " alt="" coords="249,1401,387,1441"/>
-<area shape="rect" id="node19" href="$structCajita_1_1isFace_3_01const_01Face_3_01Dir_01_4_01_4.html" title=" " alt="" coords="246,1465,390,1505"/>
-<area shape="rect" id="node20" href="$structCajita_1_1isMeshType_3_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html" title=" " alt="" coords="221,1529,415,1584"/>
-<area shape="rect" id="node21" href="$structCajita_1_1isMeshType_3_01SparseMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html" title=" " alt="" coords="239,1608,397,1663"/>
-<area shape="rect" id="node22" href="$structCajita_1_1isMeshType_3_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html" title=" " alt="" coords="235,1687,401,1741"/>
-<area shape="rect" id="node23" href="$structCajita_1_1isMeshType_3_01const_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html" title=" " alt="" coords="225,1765,411,1820"/>
-<area shape="rect" id="node24" href="$structCajita_1_1isMeshType_3_01const_01SparseMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html" title=" " alt="" coords="229,1844,407,1899"/>
-<area shape="rect" id="node25" href="$structCajita_1_1isMeshType_3_01const_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html" title=" " alt="" coords="225,1923,411,1977"/>
-<area shape="rect" id="node26" href="$structCajita_1_1isNode_3_01Node_01_4.html" title=" " alt="" coords="237,2001,399,2027"/>
-<area shape="rect" id="node27" href="$structCajita_1_1isNode_3_01const_01Node_01_4.html" title=" " alt="" coords="243,2051,393,2091"/>
-<area shape="rect" id="node28" href="$structCajita_1_1isNonUniformMesh_3_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html" title=" " alt="" coords="221,2116,415,2171"/>
-<area shape="rect" id="node29" href="$structCajita_1_1isNonUniformMesh_3_01const_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html" title=" " alt="" coords="225,2195,411,2249"/>
-<area shape="rect" id="node30" href="$structCajita_1_1isSparseMesh_3_01SparseMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html" title=" " alt="" coords="239,2273,397,2328"/>
-<area shape="rect" id="node31" href="$structCajita_1_1isSparseMesh_3_01const_01SparseMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html" title=" " alt="" coords="221,2352,415,2407"/>
-<area shape="rect" id="node32" href="$structCajita_1_1isUniformMesh_3_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html" title=" " alt="" coords="235,2431,401,2485"/>
-<area shape="rect" id="node33" href="$structCajita_1_1isUniformMesh_3_01const_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html" title=" " alt="" coords="229,2509,407,2564"/>
-<area shape="rect" id="node34" href="$structCajita_1_1is__array_3_01Array_3_01Scalar_00_01EntityType_00_01MeshType_00_01Params_8_8_8_01_4_01_4.html" title=" " alt="" coords="231,2588,405,2643"/>
-<area shape="rect" id="node35" href="$structCajita_1_1is__array_3_01const_01Array_3_01Scalar_00_01EntityType_00_01MeshType_00_01Params_8_8_8_01_4_01_4.html" title=" " alt="" coords="229,2667,407,2721"/>
-<area shape="rect" id="node36" href="$structCajita_1_1is__array__layout_3_01ArrayLayout_3_01EntityType_00_01MeshType_01_4_01_4.html" title="Array static type checker." alt="" coords="223,2745,413,2800"/>
-<area shape="rect" id="node37" href="$structCajita_1_1is__array__layout_3_01const_01ArrayLayout_3_01EntityType_00_01MeshType_01_4_01_4.html" title="Array static type checker." alt="" coords="205,2824,431,2879"/>
-<area shape="rect" id="node38" href="$structCajita_1_1is__particle__list__impl_3_01ParticleList_3_01MemorySpace_00_01VectorLength_00_01FieldTags_8_8_8_01_4_01_4.html" title=" " alt="" coords="209,2903,427,2973"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,549,117,575"/>
+<area shape="rect" id="node2" href="$structCabana_1_1Grid_1_1Experimental_1_1is__matching__array.html" title="Matching Array static type checker." alt="" coords="165,5,440,89"/>
+<area shape="rect" id="node3" href="$structCabana_1_1Grid_1_1Experimental_1_1is__sparse__array.html" title="Sparse array static type checker." alt="" coords="207,114,399,154"/>
+<area shape="rect" id="node4" href="$structCabana_1_1Grid_1_1Experimental_1_1is__sparse__array__layout.html" title="Sparse array layout static type checker." alt="" coords="207,179,399,233"/>
+<area shape="rect" id="node5" href="$structCabana_1_1Grid_1_1HypreIsCompatibleWithMemorySpace.html" title="Hypre device compatibility check." alt="" coords="177,258,428,298"/>
+<area shape="rect" id="node6" href="$structCabana_1_1Grid_1_1isCell.html" title=" " alt="" coords="217,323,388,348"/>
+<area shape="rect" id="node7" href="$structCabana_1_1Grid_1_1isEdge.html" title=" " alt="" coords="213,372,392,397"/>
+<area shape="rect" id="node8" href="$structCabana_1_1Grid_1_1isFace.html" title=" " alt="" coords="215,421,391,447"/>
+<area shape="rect" id="node9" href="$structCabana_1_1Grid_1_1isMeshType.html" title=" " alt="" coords="197,471,409,496"/>
+<area shape="rect" id="node10" href="$structCabana_1_1Grid_1_1isNode.html" title=" " alt="" coords="211,520,394,545"/>
+<area shape="rect" id="node11" href="$structCabana_1_1Grid_1_1isNonUniformMesh.html" title=" " alt="" coords="204,570,401,610"/>
+<area shape="rect" id="node12" href="$structCabana_1_1Grid_1_1isSparseMesh.html" title=" " alt="" coords="191,635,415,660"/>
+<area shape="rect" id="node13" href="$structCabana_1_1Grid_1_1isUniformMesh.html" title=" " alt="" coords="185,684,420,709"/>
+<area shape="rect" id="node14" href="$structCabana_1_1Grid_1_1is__array.html" title=" " alt="" coords="224,734,381,774"/>
+<area shape="rect" id="node15" href="$structCabana_1_1Grid_1_1is__array__layout.html" title="Array static type checker." alt="" coords="224,798,381,838"/>
+<area shape="rect" id="node16" href="$structCabana_1_1Grid_1_1is__particle__list__impl.html" title=" " alt="" coords="217,862,388,902"/>
+<area shape="rect" id="node17" href="$structCabana_1_1is__accessible__from.html" title=" " alt="" coords="190,927,415,981"/>
+<area shape="rect" id="node18" href="$structCabana_1_1is__memory__access__tag.html" title="Memory access type checker." alt="" coords="209,1006,397,1046"/>
+<area shape="rect" id="node19" href="$structCabana_1_1is__particle__list__impl.html" title=" " alt="" coords="235,1070,371,1110"/>
 </map>

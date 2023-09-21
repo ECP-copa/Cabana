@@ -1,8 +1,6 @@
 <map id="core/src/Cabana_Sort.hpp" name="core/src/Cabana_Sort.hpp">
 <area shape="rect" id="node1" title="Sorting and binning built on Kokkos BinSort." alt="" coords="23,5,204,31"/>
 <area shape="rect" id="node2" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="5,240,189,265"/>
-<area shape="rect" id="node5" href="$Cabana__LinkedCellList_8hpp.html" title="Linked cell list binning and sorting." alt="" coords="85,79,275,119"/>
-<area shape="rect" id="node3" href="$Cajita__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="15,313,180,353"/>
-<area shape="rect" id="node4" href="$Cajita_8hpp_source.html" title=" " alt="" coords="27,401,168,427"/>
-<area shape="rect" id="node6" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="135,167,350,192"/>
+<area shape="rect" id="node3" href="$Cabana__LinkedCellList_8hpp.html" title="Linked cell list binning and sorting." alt="" coords="85,79,275,119"/>
+<area shape="rect" id="node4" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="135,167,350,192"/>
 </map>

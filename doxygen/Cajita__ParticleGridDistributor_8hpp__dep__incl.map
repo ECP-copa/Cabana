@@ -1,6 +1,0 @@
-<map id="cajita/src/Cajita_ParticleGridDistributor.hpp" name="cajita/src/Cajita_ParticleGridDistributor.hpp">
-<area shape="rect" id="node1" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="5,5,171,45"/>
-<area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="8,269,149,295"/>
-<area shape="rect" id="node3" href="$Cajita__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="65,93,231,133"/>
-<area shape="rect" id="node4" href="$Cajita__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="116,181,281,221"/>
-</map>

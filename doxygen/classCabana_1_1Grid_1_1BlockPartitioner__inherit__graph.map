@@ -1,0 +1,6 @@
+<map id="Cabana::Grid::BlockPartitioner&lt; NumSpaceDim &gt;" name="Cabana::Grid::BlockPartitioner&lt; NumSpaceDim &gt;">
+<area shape="rect" id="node1" title="Block partitioner base class." alt="" coords="5,69,216,109"/>
+<area shape="rect" id="node2" href="$classCabana_1_1Grid_1_1DimBlockPartitioner.html" title="Dimension&#45;only partitioner." alt="" coords="269,5,503,45"/>
+<area shape="rect" id="node3" href="$classCabana_1_1Grid_1_1ManualBlockPartitioner.html" title="Manual block partitioner." alt="" coords="285,69,487,109"/>
+<area shape="rect" id="node4" href="$classCabana_1_1Grid_1_1SparseDimPartitioner.html" title=" " alt="" coords="264,134,508,189"/>
+</map>

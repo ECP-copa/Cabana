@@ -1,7 +1,8 @@
 <map id="core/src/Cabana_Distributor.hpp" name="core/src/Cabana_Distributor.hpp">
 <area shape="rect" id="node1" title="Multi&#45;node particle redistribution." alt="" coords="5,5,225,31"/>
-<area shape="rect" id="node2" href="$Cajita__ParticleGridDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="33,79,198,119"/>
-<area shape="rect" id="node3" href="$Cajita_8hpp_source.html" title=" " alt="" coords="35,343,177,368"/>
-<area shape="rect" id="node4" href="$Cajita__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="93,167,258,207"/>
-<area shape="rect" id="node5" href="$Cajita__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="143,255,309,295"/>
+<area shape="rect" id="node2" href="$Cabana__Grid__ParticleGridDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="18,79,213,119"/>
+<area shape="rect" id="node3" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="20,343,200,368"/>
+<area shape="rect" id="node5" href="$Cabana__Grid__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="97,167,249,207"/>
+<area shape="rect" id="node4" href="$Cajita_8hpp_source.html" title=" " alt="" coords="43,416,177,441"/>
+<area shape="rect" id="node6" href="$Cabana__Grid__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="147,255,299,295"/>
 </map>

@@ -5,8 +5,8 @@ var searchData=
   ['aosoa_2',['AoSoA',['../classCabana_1_1AoSoA.html',1,'Cabana']]],
   ['aosoa_3c_20member_5ftypes_2c_20memory_5fspace_2c_20vector_5flength_20_3e_3',['AoSoA&lt; member_types, memory_space, vector_length &gt;',['../classCabana_1_1AoSoA.html',1,'Cabana']]],
   ['aosoa_3c_20member_5ftypes_2c_20memory_5fspace_2c_20vectorlength_20_3e_4',['AoSoA&lt; member_types, memory_space, VectorLength &gt;',['../classCabana_1_1AoSoA.html',1,'Cabana']]],
-  ['array_5',['Array',['../classCajita_1_1Array.html',1,'Cajita']]],
-  ['arraylayout_6',['ArrayLayout',['../classCajita_1_1ArrayLayout.html',1,'Cajita']]],
-  ['arraypackmemoryspace_7',['ArrayPackMemorySpace',['../structCajita_1_1ArrayPackMemorySpace.html',1,'Cajita']]],
+  ['array_5',['Array',['../classCabana_1_1Grid_1_1Array.html',1,'Cabana::Grid']]],
+  ['arraylayout_6',['ArrayLayout',['../classCabana_1_1Grid_1_1ArrayLayout.html',1,'Cabana::Grid']]],
+  ['arraypackmemoryspace_7',['ArrayPackMemorySpace',['../structCabana_1_1Grid_1_1ArrayPackMemorySpace.html',1,'Cabana::Grid']]],
   ['atomicaccessmemory_8',['AtomicAccessMemory',['../structCabana_1_1AtomicAccessMemory.html',1,'Cabana']]]
 ];

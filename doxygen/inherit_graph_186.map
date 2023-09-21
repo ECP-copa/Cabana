@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structCajita_1_1VectorValueP2G.html" title="Point&#45;to&#45;grid vector value functor." alt="" coords="5,5,169,45"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,5,152,31"/>
+<area shape="rect" id="node2" href="$classCajita_1_1UniformDimPartitioner.html" title="Backwards compatibility wrapper for 3D DimBlockPartitioner." alt="" coords="200,5,407,31"/>
 </map>

@@ -1,0 +1,4 @@
+<map id="Cabana::Grid::HypreStructBiCGSTAB&lt; Scalar, EntityType, MemorySpace &gt;" name="Cabana::Grid::HypreStructBiCGSTAB&lt; Scalar, EntityType, MemorySpace &gt;">
+<area shape="rect" id="node1" title="BiCGSTAB solver." alt="" coords="11,108,214,163"/>
+<area shape="rect" id="node2" href="$classCabana_1_1Grid_1_1HypreStructuredSolver.html" title="Hypre structured solver interface for scalar fields." alt="" coords="5,5,220,60"/>
+</map>

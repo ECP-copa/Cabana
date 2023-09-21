@@ -1,5 +1,4 @@
 <map id="Cajita::UniformDimPartitioner" name="Cajita::UniformDimPartitioner">
-<area shape="rect" id="node1" title="Backwards compatibility wrapper for 3D DimBlockPartitioner." alt="" coords="11,167,218,192"/>
-<area shape="rect" id="node2" href="$classCajita_1_1DimBlockPartitioner.html" title=" " alt="" coords="5,93,224,119"/>
-<area shape="rect" id="node3" href="$classCajita_1_1BlockPartitioner.html" title="Block partitioner base class." alt="" coords="33,5,196,45"/>
+<area shape="rect" id="node1" title="Backwards compatibility wrapper for 3D DimBlockPartitioner." alt="" coords="5,79,212,104"/>
+<area shape="rect" id="node2" title=" " alt="" coords="20,5,197,31"/>
 </map>

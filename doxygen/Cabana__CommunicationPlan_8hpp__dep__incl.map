@@ -1,9 +1,10 @@
 <map id="core/src/Cabana_CommunicationPlan.hpp" name="core/src/Cabana_CommunicationPlan.hpp">
 <area shape="rect" id="node1" title="Multi&#45;node communication patterns." alt="" coords="116,5,339,45"/>
 <area shape="rect" id="node2" href="$Cabana__Distributor_8hpp.html" title="Multi&#45;node particle redistribution." alt="" coords="5,93,225,119"/>
-<area shape="rect" id="node7" href="$Cabana__Halo_8hpp.html" title="Multi&#45;node particle scatter/gather." alt="" coords="249,93,432,119"/>
-<area shape="rect" id="node3" href="$Cajita__ParticleGridDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="33,167,198,207"/>
-<area shape="rect" id="node4" href="$Cajita_8hpp_source.html" title=" " alt="" coords="35,431,177,456"/>
-<area shape="rect" id="node5" href="$Cajita__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="93,255,258,295"/>
-<area shape="rect" id="node6" href="$Cajita__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="143,343,309,383"/>
+<area shape="rect" id="node8" href="$Cabana__Halo_8hpp.html" title="Multi&#45;node particle scatter/gather." alt="" coords="249,93,432,119"/>
+<area shape="rect" id="node3" href="$Cabana__Grid__ParticleGridDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="18,167,213,207"/>
+<area shape="rect" id="node4" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="20,431,200,456"/>
+<area shape="rect" id="node6" href="$Cabana__Grid__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="97,255,249,295"/>
+<area shape="rect" id="node5" href="$Cajita_8hpp_source.html" title=" " alt="" coords="43,504,177,529"/>
+<area shape="rect" id="node7" href="$Cabana__Grid__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="147,343,299,383"/>
 </map>

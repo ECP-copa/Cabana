@@ -1,6 +1,0 @@
-<map id="cajita/src/Cajita_Parallel.hpp" name="cajita/src/Cajita_Parallel.hpp">
-<area shape="rect" id="node1" title="Logical grid extension of Kokkos parallel iteration." alt="" coords="11,5,202,31"/>
-<area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="36,167,177,192"/>
-<area shape="rect" id="node3" href="$Cajita__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="24,79,189,119"/>
-<area shape="rect" id="node4" href="$Cajita__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="214,79,396,119"/>
-</map>

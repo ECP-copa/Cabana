@@ -1,0 +1,4 @@
+<map id="Cabana::Grid::ReferenceConjugateGradient&lt; Scalar, EntityType, MeshType, MemorySpace &gt;" name="Cabana::Grid::ReferenceConjugateGradient&lt; Scalar, EntityType, MeshType, MemorySpace &gt;">
+<area shape="rect" id="node1" title="Reference structured preconditioned block conjugate gradient implementation." alt="" coords="293,5,531,60"/>
+<area shape="rect" id="node2" href="$classCabana_1_1Grid_1_1ReferenceStructuredSolver.html" title="Reference preconditioned structured solver interface." alt="" coords="5,5,245,60"/>
+</map>
