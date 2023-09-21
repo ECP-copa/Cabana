@@ -94,7 +94,7 @@ find_package( CLANG_FORMAT 10 )
 # find hypre
 if(Kokkos_ENABLE_HIP)
   # FIXME: remove when hypre supports HIP CMake builds
-  pkg_check_modules(PC_HYPRE hypre IMPORTED_TARGET)
+  pkg_check_modules(PC_HYPRE hypre REQUIRED IMPORTED_TARGET)
   add_library(HYPRE::HYPRE ALIAS PkgConfig::PC_HYPRE)
 else()
   Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.1 )
