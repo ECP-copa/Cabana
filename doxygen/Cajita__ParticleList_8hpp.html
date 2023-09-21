@@ -157,12 +157,12 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ParticleList.html">Cajita::ParticleList&lt; MemorySpace, FieldTags &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ParticleList.html">Cajita::ParticleList&lt; MemorySpace, VectorLength, FieldTags &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of particle fields stored in AoSoA with associated <a class="el" href="namespaceCajita.html" title="Cajita: grid and particle-grid data structures and algorithms.">Cajita</a> mesh.  <a href="classCajita_1_1ParticleList.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1is__particle__list__impl.html">Cajita::is_particle_list_impl&lt; class,... &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1is__particle__list__impl.html">Cajita::is_particle_list_impl&lt; class &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1is__particle__list__impl_3_01ParticleList_3_01MemorySpace_00_01FieldTags_8_8_8_01_4_01_4.html">Cajita::is_particle_list_impl&lt; ParticleList&lt; MemorySpace, FieldTags... &gt; &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1is__particle__list__impl_3_01ParticleList_3_01MemorySpace_00_01VectorLength_00_01FieldTags_8_8_8_01_4_01_4.html">Cajita::is_particle_list_impl&lt; ParticleList&lt; MemorySpace, VectorLength, FieldTags... &gt; &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1is__particle__list.html">Cajita::is_particle_list&lt; T &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1ParticleList.html" title="List of particle fields stored in AoSoA with associated Cajita mesh.">ParticleList</a> static type checker.  <a href="structCajita_1_1is__particle__list.html#details">More...</a><br /></td></tr>
@@ -176,9 +176,13 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a2652cf1d4220b39db11ea2435ef8ca35"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace , int VectorLength, class... FieldTags&gt; </td></tr>
+<tr class="memitem:a2652cf1d4220b39db11ea2435ef8ca35"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a2652cf1d4220b39db11ea2435ef8ca35">Cajita::createParticleList</a> (const std::string &amp;label, <a class="el" href="structCabana_1_1ParticleTraits.html">Cabana::ParticleTraits</a>&lt; FieldTags... &gt;)</td></tr>
+<tr class="memdesc:a2652cf1d4220b39db11ea2435ef8ca35"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1ParticleList.html" title="List of particle fields stored in AoSoA with associated Cajita mesh.">ParticleList</a> creation function.  <br /></td></tr>
+<tr class="separator:a2652cf1d4220b39db11ea2435ef8ca35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe00d64b936b78a9bdcebf8499486202"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace , class... FieldTags&gt; </td></tr>
 <tr class="memitem:abe00d64b936b78a9bdcebf8499486202"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#abe00d64b936b78a9bdcebf8499486202">Cajita::createParticleList</a> (const std::string &amp;label, <a class="el" href="structCabana_1_1ParticleTraits.html">Cabana::ParticleTraits</a>&lt; FieldTags... &gt;)</td></tr>
-<tr class="memdesc:abe00d64b936b78a9bdcebf8499486202"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1ParticleList.html" title="List of particle fields stored in AoSoA with associated Cajita mesh.">ParticleList</a> creation function.  <br /></td></tr>
+<tr class="memdesc:abe00d64b936b78a9bdcebf8499486202"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1ParticleList.html" title="List of particle fields stored in AoSoA with associated Cajita mesh.">ParticleList</a> creation function with default vector length.  <br /></td></tr>
 <tr class="separator:abe00d64b936b78a9bdcebf8499486202"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>

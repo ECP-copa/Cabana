@@ -1,4 +1,4 @@
-<map id="Cabana::ParticleList&lt; MemorySpace, FieldTags &gt;" name="Cabana::ParticleList&lt; MemorySpace, FieldTags &gt;">
-<area shape="rect" id="node1" title="List of particle fields stored in AoSoA." alt="" coords="5,108,201,148"/>
-<area shape="rect" id="node2" href="$classCabana_1_1AoSoA.html" title=" " alt="" coords="13,5,194,45"/>
+<map id="Cabana::ParticleList&lt; MemorySpace, VectorLength, FieldTags &gt;" name="Cabana::ParticleList&lt; MemorySpace, VectorLength, FieldTags &gt;">
+<area shape="rect" id="node1" title="List of particle fields stored in AoSoA." alt="" coords="5,123,224,177"/>
+<area shape="rect" id="node2" href="$classCabana_1_1AoSoA.html" title=" " alt="" coords="24,5,205,60"/>
 </map>

@@ -1,4 +1,4 @@
-<map id="Cajita::ParticleList&lt; MemorySpace, FieldTags &gt;" name="Cajita::ParticleList&lt; MemorySpace, FieldTags &gt;">
-<area shape="rect" id="node1" title="List of particle fields stored in AoSoA with associated Cajita mesh." alt="" coords="11,93,207,133"/>
-<area shape="rect" id="node2" href="$classCabana_1_1ParticleList.html" title=" " alt="" coords="5,5,213,45"/>
+<map id="Cajita::ParticleList&lt; MemorySpace, VectorLength, FieldTags &gt;" name="Cajita::ParticleList&lt; MemorySpace, VectorLength, FieldTags &gt;">
+<area shape="rect" id="node1" title="List of particle fields stored in AoSoA with associated Cajita mesh." alt="" coords="5,108,224,163"/>
+<area shape="rect" id="node2" href="$classCabana_1_1ParticleList.html" title=" " alt="" coords="5,5,224,60"/>
 </map>

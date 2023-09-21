@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Cabana: Cabana::ParticleList&lt; MemorySpace, FieldTags &gt; Class Template Reference</title>
+<title>Cabana: Cabana::ParticleList&lt; MemorySpace, VectorLength, FieldTags &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -78,7 +78,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classCabana_1_1ParticleList-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">Cabana::ParticleList&lt; MemorySpace, FieldTags &gt; Class Template Reference</div></div>
+  <div class="headertitle"><div class="title">Cabana::ParticleList&lt; MemorySpace, VectorLength, FieldTags &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -87,120 +87,120 @@ $(function() {
 
 <p><code>#include &lt;<a class="el" href="Cabana__ParticleList_8hpp_source.html">Cabana_ParticleList.hpp</a>&gt;</code></p>
 <div class="dynheader">
-Collaboration diagram for Cabana::ParticleList&lt; MemorySpace, FieldTags &gt;:</div>
+Collaboration diagram for Cabana::ParticleList&lt; MemorySpace, VectorLength, FieldTags &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classCabana_1_1ParticleList__coll__graph.png" border="0" usemap="#aCabana_1_1ParticleList_3_01MemorySpace_00_01FieldTags_01_4_coll__map" alt="Collaboration graph"/></div>
-<map name="aCabana_1_1ParticleList_3_01MemorySpace_00_01FieldTags_01_4_coll__map" id="aCabana_1_1ParticleList_3_01MemorySpace_00_01FieldTags_01_4_coll__map">
-<area shape="rect" title="List of particle fields stored in AoSoA." alt="" coords="5,108,201,148"/>
-<area shape="rect" href="classCabana_1_1AoSoA.html" title=" " alt="" coords="13,5,194,45"/>
+<div class="center"><img src="classCabana_1_1ParticleList__coll__graph.png" border="0" usemap="#aCabana_1_1ParticleList_3_01MemorySpace_00_01VectorLength_00_01FieldTags_01_4_coll__map" alt="Collaboration graph"/></div>
+<map name="aCabana_1_1ParticleList_3_01MemorySpace_00_01VectorLength_00_01FieldTags_01_4_coll__map" id="aCabana_1_1ParticleList_3_01MemorySpace_00_01VectorLength_00_01FieldTags_01_4_coll__map">
+<area shape="rect" title="List of particle fields stored in AoSoA." alt="" coords="5,123,224,177"/>
+<area shape="rect" href="classCabana_1_1AoSoA.html" title=" " alt="" coords="24,5,205,60"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a674831837ee6e75da09a1f1479c120f5"><td class="memItemLeft" align="right" valign="top"><a id="a674831837ee6e75da09a1f1479c120f5" name="a674831837ee6e75da09a1f1479c120f5"></a>
+<tr class="memitem:aa40d70ba0334000ffdbf7fdc359891c6"><td class="memItemLeft" align="right" valign="top"><a id="aa40d70ba0334000ffdbf7fdc359891c6" name="aa40d70ba0334000ffdbf7fdc359891c6"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
-<tr class="memdesc:a674831837ee6e75da09a1f1479c120f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
-<tr class="separator:a674831837ee6e75da09a1f1479c120f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb38f435f6643ae94eedb10ebec9b2aa"><td class="memItemLeft" align="right" valign="top"><a id="abb38f435f6643ae94eedb10ebec9b2aa" name="abb38f435f6643ae94eedb10ebec9b2aa"></a>
+<tr class="memdesc:aa40d70ba0334000ffdbf7fdc359891c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
+<tr class="separator:aa40d70ba0334000ffdbf7fdc359891c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8938f7f2c4d5c206aedacd4dd485808a"><td class="memItemLeft" align="right" valign="top"><a id="a8938f7f2c4d5c206aedacd4dd485808a" name="a8938f7f2c4d5c206aedacd4dd485808a"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>traits</b> = <a class="el" href="structCabana_1_1ParticleTraits.html">ParticleTraits</a>&lt; FieldTags... &gt;</td></tr>
-<tr class="memdesc:abb38f435f6643ae94eedb10ebec9b2aa"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> member field types. <br /></td></tr>
-<tr class="separator:abb38f435f6643ae94eedb10ebec9b2aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9c26f2cf07017cd0a972694a5f3dfb4f"><td class="memItemLeft" align="right" valign="top"><a id="a9c26f2cf07017cd0a972694a5f3dfb4f" name="a9c26f2cf07017cd0a972694a5f3dfb4f"></a>
+<tr class="memdesc:a8938f7f2c4d5c206aedacd4dd485808a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> member field types. <br /></td></tr>
+<tr class="separator:a8938f7f2c4d5c206aedacd4dd485808a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac714c906b77ea4b4b5aba4cc2d7ade28"><td class="memItemLeft" align="right" valign="top"><a id="ac714c906b77ea4b4b5aba4cc2d7ade28" name="ac714c906b77ea4b4b5aba4cc2d7ade28"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>member_types</b> = typename <a class="el" href="structCabana_1_1ParticleTraits.html#a29a76d765bed10c4ba4980a9e354df3d">traits::member_types</a></td></tr>
-<tr class="memdesc:a9c26f2cf07017cd0a972694a5f3dfb4f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> member types. <br /></td></tr>
-<tr class="separator:a9c26f2cf07017cd0a972694a5f3dfb4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c4142183b6ea28106598e3641e0bb91"><td class="memItemLeft" align="right" valign="top"><a id="a6c4142183b6ea28106598e3641e0bb91" name="a6c4142183b6ea28106598e3641e0bb91"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>aosoa_type</b> = <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="classCabana_1_1ParticleList.html#a9c26f2cf07017cd0a972694a5f3dfb4f">member_types</a>, <a class="el" href="classCabana_1_1ParticleList.html#a674831837ee6e75da09a1f1479c120f5">memory_space</a> &gt;</td></tr>
-<tr class="memdesc:a6c4142183b6ea28106598e3641e0bb91"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> type. <br /></td></tr>
-<tr class="separator:a6c4142183b6ea28106598e3641e0bb91"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae867cee397865236c4b69b64185bd74a"><td class="memItemLeft" align="right" valign="top"><a id="ae867cee397865236c4b69b64185bd74a" name="ae867cee397865236c4b69b64185bd74a"></a>
+<tr class="memdesc:ac714c906b77ea4b4b5aba4cc2d7ade28"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> member types. <br /></td></tr>
+<tr class="separator:ac714c906b77ea4b4b5aba4cc2d7ade28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9fa53dc7cf1ae87c626d902e5f04ab0"><td class="memItemLeft" align="right" valign="top"><a id="ae9fa53dc7cf1ae87c626d902e5f04ab0" name="ae9fa53dc7cf1ae87c626d902e5f04ab0"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>aosoa_type</b> = <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="classCabana_1_1ParticleList.html#ac714c906b77ea4b4b5aba4cc2d7ade28">member_types</a>, <a class="el" href="classCabana_1_1ParticleList.html#aa40d70ba0334000ffdbf7fdc359891c6">memory_space</a>, VectorLength &gt;</td></tr>
+<tr class="memdesc:ae9fa53dc7cf1ae87c626d902e5f04ab0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> type. <br /></td></tr>
+<tr class="separator:ae9fa53dc7cf1ae87c626d902e5f04ab0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d39abc48250dab4b3067576dc8269d4"><td class="memItemLeft" align="right" valign="top"><a id="a8d39abc48250dab4b3067576dc8269d4" name="a8d39abc48250dab4b3067576dc8269d4"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>tuple_type</b> = typename <a class="el" href="classCabana_1_1AoSoA.html#a15ce2a5a691546b64e8e2dcfbd5b077c">aosoa_type::tuple_type</a></td></tr>
-<tr class="memdesc:ae867cee397865236c4b69b64185bd74a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Particle.html" title="Single particle copy. Wraps a tuple copy of a particle.">Particle</a> tuple type. <br /></td></tr>
-<tr class="separator:ae867cee397865236c4b69b64185bd74a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b5b5fe3661a321bfa5a995bc8edce1e"><td class="memTemplParams" colspan="2">template&lt;std::size_t M&gt; </td></tr>
-<tr class="memitem:a2b5b5fe3661a321bfa5a995bc8edce1e"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1ParticleList.html#a2b5b5fe3661a321bfa5a995bc8edce1e">slice_type</a> = typename aosoa_type::template member_slice_type&lt; M &gt;</td></tr>
-<tr class="memdesc:a2b5b5fe3661a321bfa5a995bc8edce1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Single field slice type.  <br /></td></tr>
-<tr class="separator:a2b5b5fe3661a321bfa5a995bc8edce1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1c94c19ea3b680f3b42ede6b81441b6"><td class="memItemLeft" align="right" valign="top"><a id="ac1c94c19ea3b680f3b42ede6b81441b6" name="ac1c94c19ea3b680f3b42ede6b81441b6"></a>
+<tr class="memdesc:a8d39abc48250dab4b3067576dc8269d4"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Particle.html" title="Single particle copy. Wraps a tuple copy of a particle.">Particle</a> tuple type. <br /></td></tr>
+<tr class="separator:a8d39abc48250dab4b3067576dc8269d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c6ab136b3b53517930a5edfa6612ed0"><td class="memTemplParams" colspan="2">template&lt;std::size_t M&gt; </td></tr>
+<tr class="memitem:a3c6ab136b3b53517930a5edfa6612ed0"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1ParticleList.html#a3c6ab136b3b53517930a5edfa6612ed0">slice_type</a> = typename aosoa_type::template member_slice_type&lt; M &gt;</td></tr>
+<tr class="memdesc:a3c6ab136b3b53517930a5edfa6612ed0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Single field slice type.  <br /></td></tr>
+<tr class="separator:a3c6ab136b3b53517930a5edfa6612ed0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a304847fabe5b20a759c1ac82e8e19dfe"><td class="memItemLeft" align="right" valign="top"><a id="a304847fabe5b20a759c1ac82e8e19dfe" name="a304847fabe5b20a759c1ac82e8e19dfe"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>particle_type</b> = <a class="el" href="structCabana_1_1Particle.html">Particle</a>&lt; FieldTags... &gt;</td></tr>
-<tr class="memdesc:ac1c94c19ea3b680f3b42ede6b81441b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Single particle type. <br /></td></tr>
-<tr class="separator:ac1c94c19ea3b680f3b42ede6b81441b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7aefe1d64d50942f87a2355cc47a451d"><td class="memItemLeft" align="right" valign="top"><a id="a7aefe1d64d50942f87a2355cc47a451d" name="a7aefe1d64d50942f87a2355cc47a451d"></a>
+<tr class="memdesc:a304847fabe5b20a759c1ac82e8e19dfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Single particle type. <br /></td></tr>
+<tr class="separator:a304847fabe5b20a759c1ac82e8e19dfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2dff0feb234bdc9c8fb8abcfdc050892"><td class="memItemLeft" align="right" valign="top"><a id="a2dff0feb234bdc9c8fb8abcfdc050892" name="a2dff0feb234bdc9c8fb8abcfdc050892"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>particle_view_type</b> = <a class="el" href="structCabana_1_1ParticleView.html">ParticleView</a>&lt; <a class="el" href="classCabana_1_1AoSoA.html#a38f8b6f55e138b578eaea1d8420bf232">aosoa_type::vector_length</a>, FieldTags... &gt;</td></tr>
-<tr class="memdesc:a7aefe1d64d50942f87a2355cc47a451d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Single <a class="el" href="structCabana_1_1SoA.html">SoA</a> type. <br /></td></tr>
-<tr class="separator:a7aefe1d64d50942f87a2355cc47a451d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:a2dff0feb234bdc9c8fb8abcfdc050892"><td class="mdescLeft">&#160;</td><td class="mdescRight">Single <a class="el" href="structCabana_1_1SoA.html">SoA</a> type. <br /></td></tr>
+<tr class="separator:a2dff0feb234bdc9c8fb8abcfdc050892"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a03915d800117b76d03dc035b0e505ec0"><td class="memItemLeft" align="right" valign="top"><a id="a03915d800117b76d03dc035b0e505ec0" name="a03915d800117b76d03dc035b0e505ec0"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ParticleList</b> (const std::string &amp;<a class="el" href="classCabana_1_1ParticleList.html#aca4de3aa0c2fe7fb656c2f1b88722ab9">label</a>)</td></tr>
-<tr class="memdesc:a03915d800117b76d03dc035b0e505ec0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
-<tr class="separator:a03915d800117b76d03dc035b0e505ec0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad20504b23fd2be3c3c5d412691591e79"><td class="memItemLeft" align="right" valign="top"><a id="ad20504b23fd2be3c3c5d412691591e79" name="ad20504b23fd2be3c3c5d412691591e79"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ParticleList</b> (const <a class="el" href="classCabana_1_1ParticleList.html#a6c4142183b6ea28106598e3641e0bb91">aosoa_type</a> &amp;<a class="el" href="classCabana_1_1ParticleList.html#a3935e38167a2122bab39c0aad329737c">aosoa</a>)</td></tr>
-<tr class="memdesc:ad20504b23fd2be3c3c5d412691591e79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor from existing <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. <br /></td></tr>
-<tr class="separator:ad20504b23fd2be3c3c5d412691591e79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a106d62350b7360e8a399b48694449326"><td class="memItemLeft" align="right" valign="top"><a id="a106d62350b7360e8a399b48694449326" name="a106d62350b7360e8a399b48694449326"></a>
+<tr class="memitem:a0e7b1785a8e1980d3c97d2a1847169c4"><td class="memItemLeft" align="right" valign="top"><a id="a0e7b1785a8e1980d3c97d2a1847169c4" name="a0e7b1785a8e1980d3c97d2a1847169c4"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>ParticleList</b> (const std::string &amp;<a class="el" href="classCabana_1_1ParticleList.html#a69849a3ec5e622d3235c6bdf8f7afde2">label</a>)</td></tr>
+<tr class="memdesc:a0e7b1785a8e1980d3c97d2a1847169c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
+<tr class="separator:a0e7b1785a8e1980d3c97d2a1847169c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63bf74b4a29b9f333cc62af41e03e135"><td class="memItemLeft" align="right" valign="top"><a id="a63bf74b4a29b9f333cc62af41e03e135" name="a63bf74b4a29b9f333cc62af41e03e135"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>ParticleList</b> (const <a class="el" href="classCabana_1_1ParticleList.html#ae9fa53dc7cf1ae87c626d902e5f04ab0">aosoa_type</a> &amp;<a class="el" href="classCabana_1_1ParticleList.html#a763a62e6b0a4d5b6b7202b255a7e4d37">aosoa</a>)</td></tr>
+<tr class="memdesc:a63bf74b4a29b9f333cc62af41e03e135"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor from existing <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. <br /></td></tr>
+<tr class="separator:a63bf74b4a29b9f333cc62af41e03e135"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a746d5bd4308bc841d9a114fc80c415eb"><td class="memItemLeft" align="right" valign="top"><a id="a746d5bd4308bc841d9a114fc80c415eb" name="a746d5bd4308bc841d9a114fc80c415eb"></a>
 std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const</td></tr>
-<tr class="memdesc:a106d62350b7360e8a399b48694449326"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of particles in the list. <br /></td></tr>
-<tr class="separator:a106d62350b7360e8a399b48694449326"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3935e38167a2122bab39c0aad329737c"><td class="memItemLeft" align="right" valign="top"><a id="a3935e38167a2122bab39c0aad329737c" name="a3935e38167a2122bab39c0aad329737c"></a>
-<a class="el" href="classCabana_1_1ParticleList.html#a6c4142183b6ea28106598e3641e0bb91">aosoa_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>aosoa</b> ()</td></tr>
-<tr class="memdesc:a3935e38167a2122bab39c0aad329737c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. <br /></td></tr>
-<tr class="separator:a3935e38167a2122bab39c0aad329737c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0738a0618067855fb371979f12524e8f"><td class="memItemLeft" align="right" valign="top"><a id="a0738a0618067855fb371979f12524e8f" name="a0738a0618067855fb371979f12524e8f"></a>
-const <a class="el" href="classCabana_1_1ParticleList.html#a6c4142183b6ea28106598e3641e0bb91">aosoa_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>aosoa</b> () const</td></tr>
-<tr class="memdesc:a0738a0618067855fb371979f12524e8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> (const). <br /></td></tr>
-<tr class="separator:a0738a0618067855fb371979f12524e8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19fefdf8a402a29749b1ff06edb268af"><td class="memTemplParams" colspan="2"><a id="a19fefdf8a402a29749b1ff06edb268af" name="a19fefdf8a402a29749b1ff06edb268af"></a>
+<tr class="memdesc:a746d5bd4308bc841d9a114fc80c415eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of particles in the list. <br /></td></tr>
+<tr class="separator:a746d5bd4308bc841d9a114fc80c415eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a763a62e6b0a4d5b6b7202b255a7e4d37"><td class="memItemLeft" align="right" valign="top"><a id="a763a62e6b0a4d5b6b7202b255a7e4d37" name="a763a62e6b0a4d5b6b7202b255a7e4d37"></a>
+<a class="el" href="classCabana_1_1ParticleList.html#ae9fa53dc7cf1ae87c626d902e5f04ab0">aosoa_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>aosoa</b> ()</td></tr>
+<tr class="memdesc:a763a62e6b0a4d5b6b7202b255a7e4d37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. <br /></td></tr>
+<tr class="separator:a763a62e6b0a4d5b6b7202b255a7e4d37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c3f0d60ca105b981ab78ce2ea822edd"><td class="memItemLeft" align="right" valign="top"><a id="a5c3f0d60ca105b981ab78ce2ea822edd" name="a5c3f0d60ca105b981ab78ce2ea822edd"></a>
+const <a class="el" href="classCabana_1_1ParticleList.html#ae9fa53dc7cf1ae87c626d902e5f04ab0">aosoa_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>aosoa</b> () const</td></tr>
+<tr class="memdesc:a5c3f0d60ca105b981ab78ce2ea822edd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> (const). <br /></td></tr>
+<tr class="separator:a5c3f0d60ca105b981ab78ce2ea822edd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75263c71527a92e55f061d1dc49b9c73"><td class="memTemplParams" colspan="2"><a id="a75263c71527a92e55f061d1dc49b9c73" name="a75263c71527a92e55f061d1dc49b9c73"></a>
 template&lt;class IndexType &gt; </td></tr>
-<tr class="memitem:a19fefdf8a402a29749b1ff06edb268af"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getParticle</b> (IndexType p) const</td></tr>
-<tr class="memdesc:a19fefdf8a402a29749b1ff06edb268af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a single particle. <br /></td></tr>
-<tr class="separator:a19fefdf8a402a29749b1ff06edb268af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1fcb806bd9149e268d0a4d90b8ba5f30"><td class="memTemplParams" colspan="2"><a id="a1fcb806bd9149e268d0a4d90b8ba5f30" name="a1fcb806bd9149e268d0a4d90b8ba5f30"></a>
+<tr class="memitem:a75263c71527a92e55f061d1dc49b9c73"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getParticle</b> (IndexType p) const</td></tr>
+<tr class="memdesc:a75263c71527a92e55f061d1dc49b9c73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a single particle. <br /></td></tr>
+<tr class="separator:a75263c71527a92e55f061d1dc49b9c73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9bd09b57412974d0210148b667965f12"><td class="memTemplParams" colspan="2"><a id="a9bd09b57412974d0210148b667965f12" name="a9bd09b57412974d0210148b667965f12"></a>
 template&lt;class ParticleType , class IndexType &gt; </td></tr>
-<tr class="memitem:a1fcb806bd9149e268d0a4d90b8ba5f30"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>setParticle</b> (ParticleType particle, IndexType p) const</td></tr>
-<tr class="memdesc:a1fcb806bd9149e268d0a4d90b8ba5f30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a single particle. <br /></td></tr>
-<tr class="separator:a1fcb806bd9149e268d0a4d90b8ba5f30"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e3a1db5a0843e140b6eae481da4e95c"><td class="memTemplParams" colspan="2"><a id="a3e3a1db5a0843e140b6eae481da4e95c" name="a3e3a1db5a0843e140b6eae481da4e95c"></a>
+<tr class="memitem:a9bd09b57412974d0210148b667965f12"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>setParticle</b> (ParticleType particle, IndexType p) const</td></tr>
+<tr class="memdesc:a9bd09b57412974d0210148b667965f12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a single particle. <br /></td></tr>
+<tr class="separator:a9bd09b57412974d0210148b667965f12"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77149358c173ccd5436ca887c83919fc"><td class="memTemplParams" colspan="2"><a id="a77149358c173ccd5436ca887c83919fc" name="a77149358c173ccd5436ca887c83919fc"></a>
 template&lt;class IndexType &gt; </td></tr>
-<tr class="memitem:a3e3a1db5a0843e140b6eae481da4e95c"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getParticleView</b> (IndexType p) const</td></tr>
-<tr class="memdesc:a3e3a1db5a0843e140b6eae481da4e95c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a single particle with the struct+array indexing. <br /></td></tr>
-<tr class="separator:a3e3a1db5a0843e140b6eae481da4e95c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca4de3aa0c2fe7fb656c2f1b88722ab9"><td class="memItemLeft" align="right" valign="top"><a id="aca4de3aa0c2fe7fb656c2f1b88722ab9" name="aca4de3aa0c2fe7fb656c2f1b88722ab9"></a>
+<tr class="memitem:a77149358c173ccd5436ca887c83919fc"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getParticleView</b> (IndexType p) const</td></tr>
+<tr class="memdesc:a77149358c173ccd5436ca887c83919fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a single particle with the struct+array indexing. <br /></td></tr>
+<tr class="separator:a77149358c173ccd5436ca887c83919fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69849a3ec5e622d3235c6bdf8f7afde2"><td class="memItemLeft" align="right" valign="top"><a id="a69849a3ec5e622d3235c6bdf8f7afde2" name="a69849a3ec5e622d3235c6bdf8f7afde2"></a>
 const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>label</b> () const</td></tr>
-<tr class="memdesc:aca4de3aa0c2fe7fb656c2f1b88722ab9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> label. <br /></td></tr>
-<tr class="separator:aca4de3aa0c2fe7fb656c2f1b88722ab9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4dd72a1abcc3d53d7cda73f82d42cc58"><td class="memTemplParams" colspan="2"><a id="a4dd72a1abcc3d53d7cda73f82d42cc58" name="a4dd72a1abcc3d53d7cda73f82d42cc58"></a>
+<tr class="memdesc:a69849a3ec5e622d3235c6bdf8f7afde2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> label. <br /></td></tr>
+<tr class="separator:a69849a3ec5e622d3235c6bdf8f7afde2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8dd28b1ddcfba54c099084671293514"><td class="memTemplParams" colspan="2"><a id="ae8dd28b1ddcfba54c099084671293514" name="ae8dd28b1ddcfba54c099084671293514"></a>
 template&lt;class FieldTag &gt; </td></tr>
-<tr class="memitem:a4dd72a1abcc3d53d7cda73f82d42cc58"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1ParticleList.html#a2b5b5fe3661a321bfa5a995bc8edce1e">slice_type</a>&lt; <a class="el" href="structCabana_1_1TypeIndexer.html">TypeIndexer</a>&lt; FieldTag, FieldTags... &gt;::index &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>slice</b> (FieldTag) const</td></tr>
-<tr class="memdesc:a4dd72a1abcc3d53d7cda73f82d42cc58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a slice of a given field. <br /></td></tr>
-<tr class="separator:a4dd72a1abcc3d53d7cda73f82d42cc58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8dd28b1ddcfba54c099084671293514"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1ParticleList.html#a3c6ab136b3b53517930a5edfa6612ed0">slice_type</a>&lt; <a class="el" href="structCabana_1_1TypeIndexer.html">TypeIndexer</a>&lt; FieldTag, FieldTags... &gt;::index &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>slice</b> (FieldTag) const</td></tr>
+<tr class="memdesc:ae8dd28b1ddcfba54c099084671293514"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a slice of a given field. <br /></td></tr>
+<tr class="separator:ae8dd28b1ddcfba54c099084671293514"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:adb92da2d65bde1a342b3c7e2ed045018"><td class="memItemLeft" align="right" valign="top"><a id="adb92da2d65bde1a342b3c7e2ed045018" name="adb92da2d65bde1a342b3c7e2ed045018"></a>
-<a class="el" href="classCabana_1_1ParticleList.html#a6c4142183b6ea28106598e3641e0bb91">aosoa_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_aosoa</b></td></tr>
-<tr class="memdesc:adb92da2d65bde1a342b3c7e2ed045018"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Particle.html" title="Single particle copy. Wraps a tuple copy of a particle.">Particle</a> <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. <br /></td></tr>
-<tr class="separator:adb92da2d65bde1a342b3c7e2ed045018"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5accebd2601dd0ba0a089691900708bf"><td class="memItemLeft" align="right" valign="top"><a id="a5accebd2601dd0ba0a089691900708bf" name="a5accebd2601dd0ba0a089691900708bf"></a>
+<a class="el" href="classCabana_1_1ParticleList.html#ae9fa53dc7cf1ae87c626d902e5f04ab0">aosoa_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_aosoa</b></td></tr>
+<tr class="memdesc:a5accebd2601dd0ba0a089691900708bf"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Particle.html" title="Single particle copy. Wraps a tuple copy of a particle.">Particle</a> <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. <br /></td></tr>
+<tr class="separator:a5accebd2601dd0ba0a089691900708bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;class MemorySpace, class... FieldTags&gt;<br />
-class Cabana::ParticleList&lt; MemorySpace, FieldTags &gt;</div><p>List of particle fields stored in <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;class MemorySpace, int VectorLength, class... FieldTags&gt;<br />
+class Cabana::ParticleList&lt; MemorySpace, VectorLength, FieldTags &gt;</div><p>List of particle fields stored in <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a2b5b5fe3661a321bfa5a995bc8edce1e" name="a2b5b5fe3661a321bfa5a995bc8edce1e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2b5b5fe3661a321bfa5a995bc8edce1e">&#9670;&#160;</a></span>slice_type</h2>
+<a id="a3c6ab136b3b53517930a5edfa6612ed0" name="a3c6ab136b3b53517930a5edfa6612ed0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c6ab136b3b53517930a5edfa6612ed0">&#9670;&#160;</a></span>slice_type</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace , class... FieldTags&gt; </div>
+template&lt;class MemorySpace , int VectorLength, class... FieldTags&gt; </div>
 <div class="memtemplate">
 template&lt;std::size_t M&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classCabana_1_1ParticleList.html">Cabana::ParticleList</a>&lt; MemorySpace, FieldTags &gt;::slice_type =  typename aosoa_type::template member_slice_type&lt;M&gt;</td>
+          <td class="memname">using <a class="el" href="classCabana_1_1ParticleList.html">Cabana::ParticleList</a>&lt; MemorySpace, VectorLength, FieldTags &gt;::slice_type =  typename aosoa_type::template member_slice_type&lt;M&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">

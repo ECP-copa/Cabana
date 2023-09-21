@@ -1,7 +1,7 @@
 var searchData=
 [
   ['_5fa_0',['_a',['../structCajita_1_1ArrayOp_1_1DotFunctor.html#ac9b5cd6abb785baadbfef5e88d4ce937',1,'Cajita::ArrayOp::DotFunctor']]],
-  ['_5faosoa_1',['_aosoa',['../classCabana_1_1ParticleList.html#adb92da2d65bde1a342b3c7e2ed045018',1,'Cabana::ParticleList::_aosoa()'],['../classCajita_1_1ParticleList.html#adb92da2d65bde1a342b3c7e2ed045018',1,'Cajita::ParticleList::_aosoa()']]],
+  ['_5faosoa_1',['_aosoa',['../classCabana_1_1ParticleList.html#a5accebd2601dd0ba0a089691900708bf',1,'Cabana::ParticleList::_aosoa()'],['../classCajita_1_1ParticleList.html#a5accebd2601dd0ba0a089691900708bf',1,'Cajita::ParticleList::_aosoa()']]],
   ['_5fb_2',['_b',['../structCajita_1_1ArrayOp_1_1DotFunctor.html#acebcc029d389c316503021d3476e2cee',1,'Cajita::ArrayOp::DotFunctor']]],
   ['_5fcomm_5fdata_3',['_comm_data',['../classCabana_1_1CommunicationData.html#a3abbc9f6fd5aa2a95aa552bbb5cc619f',1,'Cabana::CommunicationData']]],
   ['_5fcomm_5fplan_4',['_comm_plan',['../classCabana_1_1CommunicationData.html#a2284de72f6ee2df4a65d3ffac138704b',1,'Cabana::CommunicationData']]],
