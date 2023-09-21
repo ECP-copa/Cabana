@@ -174,7 +174,7 @@ get( ParticleView<VectorLength, FieldTags...>& particle, FieldTag,
 
 //---------------------------------------------------------------------------//
 //! List of particle fields stored in AoSoA.
-template <class MemorySpace, class... FieldTags>
+template <class MemorySpace, int VectorLength, class... FieldTags>
 class ParticleList
 {
   public:
@@ -185,7 +185,7 @@ class ParticleList
     //! AoSoA member types.
     using member_types = typename traits::member_types;
     //! AoSoA type.
-    using aosoa_type = Cabana::AoSoA<member_types, memory_space>;
+    using aosoa_type = Cabana::AoSoA<member_types, memory_space, VectorLength>;
     //! Particle tuple type.
     using tuple_type = typename aosoa_type::tuple_type;
     /*!
@@ -261,13 +261,14 @@ class ParticleList
     aosoa_type _aosoa;
 };
 
-template <class, class...>
+template <class>
 struct is_particle_list_impl : public std::false_type
 {
 };
 
-template <class MemorySpace, class... FieldTags>
-struct is_particle_list_impl<ParticleList<MemorySpace, FieldTags...>>
+template <class MemorySpace, int VectorLength, class... FieldTags>
+struct is_particle_list_impl<
+    ParticleList<MemorySpace, VectorLength, FieldTags...>>
     : public std::true_type
 {
 };
@@ -278,16 +279,32 @@ struct is_particle_list
     : public is_particle_list_impl<typename std::remove_cv<T>::type>::type
 {
 };
+
 //---------------------------------------------------------------------------//
 /*!
   \brief ParticleList creation function.
+  \return ParticleList
+*/
+template <class MemorySpace, int VectorLength, class... FieldTags>
+auto createParticleList( const std::string& label,
+                         ParticleTraits<FieldTags...> )
+{
+    return ParticleList<MemorySpace, VectorLength, FieldTags...>( label );
+}
+
+/*!
+  \brief ParticleList creation function with default vector length.
   \return ParticleList
 */
 template <class MemorySpace, class... FieldTags>
 auto createParticleList( const std::string& label,
                          ParticleTraits<FieldTags...> )
 {
-    return ParticleList<MemorySpace, FieldTags...>( label );
+    return ParticleList<
+        MemorySpace,
+        Impl::PerformanceTraits<
+            typename MemorySpace::execution_space>::vector_length,
+        FieldTags...>( label );
 }
 
 //---------------------------------------------------------------------------//
