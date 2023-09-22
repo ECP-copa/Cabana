@@ -108,6 +108,19 @@ jobs:
             -DHeffte_ENABLE_ROCM=ON
           cmake --build build --parallel 2
           cmake --install build
+      - name: Checkout hypre
+        uses: actions/checkout@v3
+        with:
+          repository: hypre-space/hypre
+          ref: master
+          path: hypre
+      - name: Build hypre
+        working-directory: hypre/src
+        run: |
+          PATH=$PATH:/spack/bin
+          [[ ${{ matrix.cmake_build_type }} == Debug ]] && hypre_cmake_opts+=( --enable-debug )
+          ./configure --prefix=$HOME/hypre --disable-fortran --with-MPI --with-MPI-include=$(spack location -i mpich)/include --with-hip --without-sycl --with-gpu-arch=gfx908 ${hypre_cmake_opts[@]}
+          make -j2 install
       - name: Checkout ALL
         run: |
           git clone --depth 1 --branch v0.9.2 https://gitlab.jsc.fz-juelich.de/SLMS/loadbalancing ALL
@@ -133,6 +146,7 @@ jobs:
             -DCabana_ENABLE_PERFORMANCE_TESTING=ON \
             -DCabana_PERFORMANCE_EXPECTED_FLOPS=0 \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
+            -DCabana_REQUIRE_HYPRE=ON \
             -DCMAKE_DISABLE_FIND_PACKAGE_HDF5=ON \
             -DGPU_TARGETS="gfx908"
           cmake --build build --parallel 2 --verbose
