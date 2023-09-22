@@ -30,6 +30,8 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                       std::vector<int> problem_sizes,
                       std::vector<double> cutoff_ratios )
 {
+    using memory_space = typename Device::memory_space;
+
     // Declare problem sizes.
     int num_problem_size = problem_sizes.size();
     std::vector<double> x_min( num_problem_size );
@@ -44,7 +46,7 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
 
     // Define the aosoa.
     using member_types = Cabana::MemberTypes<double[3]>;
-    using aosoa_type = Cabana::AoSoA<member_types, Device>;
+    using aosoa_type = Cabana::AoSoA<member_types, memory_space>;
     std::vector<aosoa_type> aosoas( num_problem_size );
 
     // Create aosoas.
@@ -96,7 +98,7 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
             double sort_delta[3] = { cutoff, cutoff, cutoff };
             double grid_min[3] = { x_min[p], x_min[p], x_min[p] };
             double grid_max[3] = { x_max[p], x_max[p], x_max[p] };
-            Cabana::LinkedCellList<Device> linked_cell_list(
+            Cabana::LinkedCellList<memory_space> linked_cell_list(
                 x, sort_delta, grid_min, grid_max );
 
             // Run tests and time the ensemble

@@ -44,21 +44,10 @@ set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA HIP SYCL OPENMPTARGET)
 # check user required kokkos device types
 foreach(_device ${CABANA_SUPPORTED_DEVICES})
   option(Cabana_REQUIRE_${_device} "Build Cabana with required Kokkos ${device} support" OFF)
-  if( Cabana_REQUIRE_${_device} AND NOT _device STREQUAL THREADS)
+  if(Cabana_REQUIRE_${_device})
     kokkos_check( DEVICES ${_device} )
   endif()
 endforeach()
-# Threads workaround can go when we require a minimum Kokkos version of 3.6
-if(Cabana_REQUIRE_PTHREAD)
-  message(DEPRECATION "Cabana_REQUIRE_PTHREAD is deprecated, use Cabana_REQUIRE_THREADS instead!")
-endif()
-if(Cabana_REQUIRE_PTHREAD OR Cabana_REQUIRE_THREADS)
-  kokkos_check(DEVICES PTHREAD RETURN_VALUE KOKKOS_CHECK_PTHREAD_RETURN_VALUE)
-  kokkos_check(DEVICES THREADS RETURN_VALUE KOKKOS_CHECK_THREADS_RETURN_VALUE)
-  if(NOT KOKKOS_CHECK_PTHREAD_RETURN_VALUE AND NOT KOKKOS_CHECK_THREADS_RETURN_VALUE)
-    message(FATAL_ERROR "Kokkos does not provide the Threads backend requested")
-  endif()
-endif()
 
 # ensure that we can use lambdas
 if(Kokkos_ENABLE_CUDA)
@@ -89,7 +78,7 @@ Cabana_add_dependency( PACKAGE ArborX )
 Cabana_add_dependency( PACKAGE ALL )
 
 # find Clang Format
-find_package( CLANG_FORMAT 10 )
+find_package( CLANG_FORMAT 14 )
 
 # find hypre
 if(Kokkos_ENABLE_HIP)
@@ -236,7 +225,7 @@ endif()
 # enable doxygen
 find_package(Doxygen)
 if(Doxygen_FOUND)
-  doxygen_add_docs(doxygen core/src cajita/src)
+  doxygen_add_docs(doxygen core/src grid/src)
 endif()
 
 ##---------------------------------------------------------------------------##
@@ -245,12 +234,22 @@ endif()
 
 add_subdirectory(core)
 
-option(Cabana_ENABLE_CAJITA "Build Cajita (grid and particle-grid)" ${Cabana_ENABLE_MPI})
-if(Cabana_ENABLE_CAJITA)
+option(Cabana_ENABLE_GRID "Build grid and particle-grid capabilities" ${Cabana_ENABLE_MPI})
+### FIXME: remove in next release.
+option(Cabana_ENABLE_CAJITA "Build grid and particle-grid capabilities" OFF)
+option(Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS "Do not warn about Cajita deprecation." OFF)
+if (Cabana_ENABLE_CAJITA)
+  if (NOT Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS)
+    message(DEPRECATION "Option Cabana_ENABLE_CAJITA is deprecated, replaced by Cabana_ENABLE_GRID")
+  endif()
+  set(Cabana_ENABLE_GRID ON)
+endif()
+
+if(Cabana_ENABLE_GRID)
   if(MPI_FOUND)
-    add_subdirectory(cajita)
+    add_subdirectory(grid)
   else()
-    message(FATAL_ERROR "Cajita requires MPI")
+    message(FATAL_ERROR "Grid subpackage requires MPI")
   endif()
 endif()
 
@@ -284,7 +283,7 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake" "${CMAKE_CURRENT_
 ## Clang Format
 ##---------------------------------------------------------------------------##
 if(CLANG_FORMAT_FOUND)
-  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp cajita/*hpp cajita/*cpp example/*cpp example/*hpp cmake/*cpp cmake/*hpp benchmark/*cpp benchmark/*hpp)
+  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp grid/*hpp grid/*cpp example/*cpp example/*hpp cmake/*cpp cmake/*hpp benchmark/*cpp benchmark/*hpp)
   add_custom_target(cabana-format
     COMMAND ${CLANG_FORMAT_EXECUTABLE} -i -style=file ${FORMAT_SOURCES}
     DEPENDS ${FORMAT_SOURCES})

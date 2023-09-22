@@ -234,6 +234,7 @@ struct NeighborDiscriminatorCallback2D_SecondPass
 //! \endcond
 } // namespace Impl
 
+//---------------------------------------------------------------------------//
 //! 1d ArborX neighbor list storage layout.
 template <typename MemorySpace, typename Tag>
 struct CrsGraph
@@ -253,12 +254,87 @@ struct CrsGraph
   \brief Neighbor list implementation using ArborX for particles within the
   interaction distance with a 1D compressed layout for particles and neighbors.
 
+  \tparam ExecutionSpace Kokkos execution space.
   \tparam Slice The position slice type.
-  \tparam DeviceType The device type to use for building and storing the
-  neighbor list.
   \tparam AlgorithmTag Tag indicating whether to build a full or half neighbor
   list.
 
+  \param space Kokkos execution space.
+  \param coordinate_slice The slice containing the particle positions.
+  \param first The beginning particle index to compute neighbors for.
+  \param last The end particle index to compute neighbors for.
+  \param radius The radius of the neighborhood. Particles within this radius are
+  considered neighbors.
+  \param buffer_size Optional guess for maximum number of neighbors.
+
+  Neighbor list implementation most appropriate for highly varying particle
+  densities.
+*/
+template <typename ExecutionSpace, typename Slice, typename Tag>
+auto makeNeighborList( ExecutionSpace space, Tag, Slice const& coordinate_slice,
+                       typename Slice::size_type first,
+                       typename Slice::size_type last,
+                       typename Slice::value_type radius, int buffer_size = 0 )
+{
+    assert( buffer_size >= 0 );
+    assert( last >= first );
+    assert( last <= coordinate_slice.size() );
+
+    using memory_space = typename Slice::memory_space;
+
+    ArborX::BVH<memory_space> bvh( space, coordinate_slice );
+
+    Kokkos::View<int*, memory_space> indices(
+        Kokkos::view_alloc( "indices", Kokkos::WithoutInitializing ), 0 );
+    Kokkos::View<int*, memory_space> offset(
+        Kokkos::view_alloc( "offset", Kokkos::WithoutInitializing ), 0 );
+    bvh.query(
+        space, Impl::makePredicates( coordinate_slice, first, last, radius ),
+        Impl::NeighborDiscriminatorCallback<Tag>{}, indices, offset,
+        ArborX::Experimental::TraversalPolicy().setBufferSize( buffer_size ) );
+
+    return CrsGraph<memory_space, Tag>{
+        std::move( indices ), std::move( offset ), first, bvh.size() };
+}
+
+/*!
+  \brief Neighbor list implementation using ArborX for particles within the
+  interaction distance with a 1D compressed layout for particles and neighbors.
+
+  \tparam Slice The position slice type.
+  \tparam Tag Tag indicating whether to build a full or half neighbor list.
+
+  \param tag Tag indicating whether to build a full or half neighbor list.
+  \param coordinate_slice The slice containing the particle positions.
+  \param first The beginning particle index to compute neighbors for.
+  \param last The end particle index to compute neighbors for.
+  \param radius The radius of the neighborhood. Particles within this radius are
+  considered neighbors.
+  \param buffer_size Optional guess for maximum number of neighbors.
+
+  Neighbor list implementation most appropriate for highly varying particle
+  densities.
+*/
+template <typename Slice, typename Tag>
+auto makeNeighborList( Tag tag, Slice const& coordinate_slice,
+                       typename Slice::size_type first,
+                       typename Slice::size_type last,
+                       typename Slice::value_type radius, int buffer_size = 0 )
+{
+    typename Slice::execution_space space{};
+    return makeNeighborList( space, tag, coordinate_slice, first, last, radius,
+                             buffer_size );
+}
+
+/*!
+  \brief Neighbor list implementation using ArborX for particles within the
+  interaction distance with a 1D compressed layout for particles and neighbors.
+
+  \tparam DeviceType Kokkos device type.
+  \tparam Slice The position slice type.
+  \tparam Tag Tag indicating whether to build a full or half neighbor list.
+
+  \param tag Tag indicating whether to build a full or half neighbor list.
   \param coordinate_slice The slice containing the particle positions.
   \param first The beginning particle index to compute neighbors for.
   \param last The end particle index to compute neighbors for.
@@ -270,34 +346,18 @@ struct CrsGraph
   densities.
 */
 template <typename DeviceType, typename Slice, typename Tag>
-auto makeNeighborList( Tag, Slice const& coordinate_slice,
-                       typename Slice::size_type first,
-                       typename Slice::size_type last,
-                       typename Slice::value_type radius, int buffer_size = 0 )
+[[deprecated]] auto makeNeighborList( Tag tag, Slice const& coordinate_slice,
+                                      typename Slice::size_type first,
+                                      typename Slice::size_type last,
+                                      typename Slice::value_type radius,
+                                      int buffer_size = 0 )
 {
-    assert( buffer_size >= 0 );
-    assert( last >= first );
-    assert( last <= coordinate_slice.size() );
-
-    using MemorySpace = typename DeviceType::memory_space;
-    using ExecutionSpace = typename DeviceType::execution_space;
-    ExecutionSpace space{};
-
-    ArborX::BVH<MemorySpace> bvh( space, coordinate_slice );
-
-    Kokkos::View<int*, DeviceType> indices(
-        Kokkos::view_alloc( "indices", Kokkos::WithoutInitializing ), 0 );
-    Kokkos::View<int*, DeviceType> offset(
-        Kokkos::view_alloc( "offset", Kokkos::WithoutInitializing ), 0 );
-    bvh.query(
-        space, Impl::makePredicates( coordinate_slice, first, last, radius ),
-        Impl::NeighborDiscriminatorCallback<Tag>{}, indices, offset,
-        ArborX::Experimental::TraversalPolicy().setBufferSize( buffer_size ) );
-
-    return CrsGraph<MemorySpace, Tag>{ std::move( indices ),
-                                       std::move( offset ), first, bvh.size() };
+    using exec_space = typename DeviceType::execution_space;
+    return makeNeighborList( exec_space{}, tag, coordinate_slice, first, last,
+                             radius, buffer_size );
 }
 
+//---------------------------------------------------------------------------//
 //! 2d ArborX neighbor list storage layout.
 template <typename MemorySpace, typename Tag>
 struct Dense
@@ -317,12 +377,11 @@ struct Dense
   \brief Neighbor list implementation using ArborX for particles within the
   interaction distance with a 2D layout for particles and neighbors.
 
+  \tparam ExecutionSpace Kokkos execution space.
   \tparam Slice The position slice type.
-  \tparam DeviceType The device type to use for building and storing the
-  neighbor list.
-  \tparam AlgorithmTag Tag indicating whether to build a full or half neighbor
-  list.
+  \tparam Tag Tag indicating whether to build a full or half neighbor list.
 
+  \param space Kokkos execution space.
   \param coordinate_slice The slice containing the particle positions.
   \param first The beginning particle index to compute neighbors for.
   \param last The end particle index to compute neighbors for.
@@ -334,8 +393,9 @@ struct Dense
   Neighbor list implementation most appropriate for highly varying particle
   densities.
 */
-template <typename DeviceType, typename Slice, typename Tag>
-auto make2DNeighborList( Tag, Slice const& coordinate_slice,
+template <typename ExecutionSpace, typename Slice, typename Tag>
+auto make2DNeighborList( ExecutionSpace space, Tag,
+                         Slice const& coordinate_slice,
                          typename Slice::size_type first,
                          typename Slice::size_type last,
                          typename Slice::value_type radius,
@@ -345,11 +405,9 @@ auto make2DNeighborList( Tag, Slice const& coordinate_slice,
     assert( last >= first );
     assert( last <= coordinate_slice.size() );
 
-    using MemorySpace = typename DeviceType::memory_space;
-    using ExecutionSpace = typename DeviceType::execution_space;
-    ExecutionSpace space{};
+    using memory_space = typename Slice::memory_space;
 
-    ArborX::BVH<MemorySpace> bvh( space, coordinate_slice );
+    ArborX::BVH<memory_space> bvh( space, coordinate_slice );
 
     auto const predicates =
         Impl::makePredicates( coordinate_slice, first, last, radius );
@@ -358,11 +416,11 @@ auto make2DNeighborList( Tag, Slice const& coordinate_slice,
         ArborX::AccessTraits<decltype( predicates ),
                              ArborX::PredicatesTag>::size( predicates );
 
-    Kokkos::View<int**, DeviceType> neighbors;
-    Kokkos::View<int*, DeviceType> counts( "counts", n_queries );
+    Kokkos::View<int**, memory_space> neighbors;
+    Kokkos::View<int*, memory_space> counts( "counts", n_queries );
     if ( buffer_size > 0 )
     {
-        neighbors = Kokkos::View<int**, DeviceType>(
+        neighbors = Kokkos::View<int**, memory_space>(
             Kokkos::view_alloc( "neighbors", Kokkos::WithoutInitializing ),
             n_queries, buffer_size );
         bvh.query(
@@ -386,10 +444,10 @@ auto make2DNeighborList( Tag, Slice const& coordinate_slice,
         // NOTE If buffer_size is 0, neighbors is default constructed.  This is
         // fine with the current design/implementation of NeighborList access
         // traits.
-        return Dense<MemorySpace, Tag>{ counts, neighbors, first, bvh.size() };
+        return Dense<memory_space, Tag>{ counts, neighbors, first, bvh.size() };
     }
 
-    neighbors = Kokkos::View<int**, DeviceType>(
+    neighbors = Kokkos::View<int**, memory_space>(
         Kokkos::view_alloc( "neighbors", Kokkos::WithoutInitializing ),
         n_queries, max_neighbors ); // realloc storage for neighbors
     Kokkos::deep_copy( counts, 0 ); // reset counts to zero
@@ -398,7 +456,70 @@ auto make2DNeighborList( Tag, Slice const& coordinate_slice,
                    decltype( counts ), decltype( neighbors ), Tag>{
                    counts, neighbors } );
 
-    return Dense<MemorySpace, Tag>{ counts, neighbors, first, bvh.size() };
+    return Dense<memory_space, Tag>{ counts, neighbors, first, bvh.size() };
+}
+
+/*!
+  \brief Neighbor list implementation using ArborX for particles within the
+  interaction distance with a 2D layout for particles and neighbors.
+
+  \tparam Slice The position slice type.
+  \tparam Tag Tag indicating whether to build a full or half neighbor list.
+
+  \param tag Tag indicating whether to build a full or half neighbor list.
+  \param coordinate_slice The slice containing the particle positions.
+  \param first The beginning particle index to compute neighbors for.
+  \param last The end particle index to compute neighbors for.
+  \param radius The radius of the neighborhood. Particles within this radius are
+  considered neighbors.
+  \param buffer_size Optional guess for maximum number of neighbors per
+  particle.
+
+  Neighbor list implementation most appropriate for highly varying particle
+  densities.
+*/
+template <typename Slice, typename Tag>
+auto make2DNeighborList( Tag tag, Slice const& coordinate_slice,
+                         typename Slice::size_type first,
+                         typename Slice::size_type last,
+                         typename Slice::value_type radius,
+                         int buffer_size = 0 )
+{
+    using exec_space = typename Slice::execution_space;
+    return make2DNeighborList( exec_space{}, tag, coordinate_slice, first, last,
+                               radius, buffer_size );
+}
+
+/*!
+  \brief Neighbor list implementation using ArborX for particles within the
+  interaction distance with a 2D layout for particles and neighbors.
+
+  \tparam DeviceType Kokkos device type.
+  \tparam Slice The position slice type.
+  \tparam Tag Tag indicating whether to build a full or half neighbor list.
+
+  \param tag Tag indicating whether to build a full or half neighbor list.
+  \param coordinate_slice The slice containing the particle positions.
+  \param first The beginning particle index to compute neighbors for.
+  \param last The end particle index to compute neighbors for.
+  \param radius The radius of the neighborhood. Particles within this radius are
+  considered neighbors.
+  \param buffer_size Optional guess for maximum number of neighbors per
+  particle.
+
+  Neighbor list implementation most appropriate for highly varying particle
+  densities.
+*/
+template <typename DeviceType, typename Slice, typename Tag>
+[[deprecated]] auto make2DNeighborList( Tag tag, Slice const& coordinate_slice,
+                                        typename Slice::size_type first,
+                                        typename Slice::size_type last,
+                                        typename Slice::value_type radius,
+                                        int buffer_size = 0 )
+{
+    using exec_space = typename DeviceType::execution_space;
+    return make2DNeighborList( exec_space{}, tag, coordinate_slice, first, last,
+                               radius, buffer_size );
 }
 
 } // namespace Experimental

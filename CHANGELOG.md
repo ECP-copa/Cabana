@@ -1,9 +1,38 @@
 # Change Log
 
-## (dev)
+## 0.6.0
 
-- Updated minimum Kokkos dependency to version 3.7
-- Updated heFFTe version from 2.1 to 2.3
+**New Features**
+ - C++17 required
+- `Gather`/`Scatter` for persistent particle communication buffers added
+- Grid-based particle generation, in addition to generalization of random particle generation
+- `ParticleList` with field type tags and thread-level particle interfaces added
+- Semi-structured hypre interface for multi-variate systems
+- New interface to modify an existing Verlet neighbor list
+- New benchmarks for grid halo and particle-grid interpolation
+
+**Bug Fixes and Improvements**
+- Breaking change: replace `Slice::{R->r}ank` and `Slice::{rank->viewRank}()`
+- Fixed boundary index space bug for `Node`, `Face`, and `Edge` entities causing out of bounds indexing
+- Added SYCL support for heFFTe
+- Removed use of Kokkos deprecated features: `View::Rank` and `parallel_reduce()` on raw pointers
+- Run benchmarks and examples with default or default host backends
+- Added Kokkos profiling regions
+- Added python utilities to plot benchmark results
+
+**Deprecated features**
+- Deprecated Cajita in favor of Cabana::Grid
+- Deprecated Kokkos `DeviceType` class templates in favor of Kokkos `MemorySpace`
+- Deprecated Grid `Halo` and `Partitioner` compatibility wrappers
+
+**Minimum dependency version updates**
+ - Kokkos minimum 3.7 (previously 3.2)
+ - Optional dependency heFFTe minimum 2.3 (previously 2.1)
+ - Optional dependency googletest minimum 1.10 (previous internal download removed)
+
+**Experimental Features (subject to change in future releases)**
+- Distributed particle output with HDF5 library interface
+- Expanded sparse grid capabilities: index spaces, local grid, array, and halo
 
 ## 0.5.0
 

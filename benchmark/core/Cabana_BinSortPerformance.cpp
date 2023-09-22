@@ -31,11 +31,13 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                       std::vector<int> problem_sizes,
                       std::vector<int> num_bins )
 {
+    using memory_space = typename Device::memory_space;
+
     // Declare problem sizes.
     int num_problem_size = problem_sizes.size();
 
     // Generate a random set of keys
-    Kokkos::View<unsigned long*, Device> keys(
+    Kokkos::View<unsigned long*, memory_space> keys(
         Kokkos::ViewAllocateWithoutInitializing( "keys" ),
         problem_sizes.back() );
     Kokkos::View<unsigned long*, Kokkos::HostSpace> host_keys(
@@ -54,7 +56,7 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
 
     // Define the aosoa.
     using member_types = Cabana::MemberTypes<double[3], double[3], double, int>;
-    using aosoa_type = Cabana::AoSoA<member_types, Device>;
+    using aosoa_type = Cabana::AoSoA<member_types, memory_space>;
 
     // Create aosoas.
     std::vector<aosoa_type> aosoas( num_problem_size );

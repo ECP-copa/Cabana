@@ -18,6 +18,7 @@
 
 #include <Cabana_Slice.hpp>
 #include <Cabana_Sort.hpp>
+#include <Cabana_Utils.hpp>
 #include <impl/Cabana_CartesianGrid.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -32,22 +33,30 @@ namespace Cabana
   \brief Data describing the bin sizes and offsets resulting from a binning
   operation on a 3d regular Cartesian grid.
 */
-template <class DeviceType>
+template <class MemorySpace>
 class LinkedCellList
 {
   public:
-    //! Kokkos device_type.
-    using device_type = DeviceType;
-    //! Kokkos memory space.
-    using memory_space = typename device_type::memory_space;
-    //! Kokkos execution space.
-    using execution_space = typename device_type::execution_space;
+    // FIXME: add static_assert that this is a valid MemorySpace.
+
+    // FIXME: extracting the self type for backwards compatibility with previous
+    // template on DeviceType. Should simply be MemorySpace after next release.
+    //! Memory space.
+    using memory_space = typename MemorySpace::memory_space;
+    // FIXME: replace warning with memory space assert after next release.
+    static_assert( Impl::deprecated( Kokkos::is_device<MemorySpace>() ) );
+
+    //! Default device type.
+    using device_type [[deprecated]] = typename memory_space::device_type;
+    //! Default execution space.
+    using execution_space = typename memory_space::execution_space;
     //! Memory space size type.
     using size_type = typename memory_space::size_type;
+
     //! Binning view type.
-    using CountView = Kokkos::View<int*, device_type>;
+    using CountView = Kokkos::View<int*, memory_space>;
     //! Offset view type.
-    using OffsetView = Kokkos::View<size_type*, device_type>;
+    using OffsetView = Kokkos::View<size_type*, memory_space>;
 
     /*!
       \brief Default constructor.
@@ -217,25 +226,25 @@ class LinkedCellList
       \brief Get the 1d bin data.
       \return The 1d bin data.
     */
-    BinningData<DeviceType> binningData() const { return _bin_data; }
+    BinningData<MemorySpace> binningData() const { return _bin_data; }
 
     /*!
       \brief Build the linked cell list with a subset of particles.
 
+      \tparam ExecutionSpace Kokkos execution space.
       \tparam SliceType Slice type for positions.
 
       \param positions Slice of positions.
-
       \param begin The beginning index of the slice range to sort.
-
       \param end The end index of the slice range to sort.
     */
-    template <class SliceType>
-    void build( SliceType positions, const std::size_t begin,
+    template <class ExecutionSpace, class SliceType>
+    void build( ExecutionSpace, SliceType positions, const std::size_t begin,
                 const std::size_t end )
     {
         Kokkos::Profiling::pushRegion( "Cabana::LinkedCellList::build" );
 
+        static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
         assert( end >= begin );
         assert( end <= positions.size() );
 
@@ -260,7 +269,7 @@ class LinkedCellList
         auto permutes = _permutes;
 
         // Count.
-        Kokkos::RangePolicy<execution_space> particle_range( begin, end );
+        Kokkos::RangePolicy<ExecutionSpace> particle_range( begin, end );
         Kokkos::deep_copy( _counts, 0 );
         auto counts_sv = Kokkos::Experimental::create_scatter_view( _counts );
         auto cell_count = KOKKOS_LAMBDA( const std::size_t p )
@@ -277,7 +286,7 @@ class LinkedCellList
         Kokkos::Experimental::contribute( _counts, counts_sv );
 
         // Compute offsets.
-        Kokkos::RangePolicy<execution_space> cell_range( 0, ncell );
+        Kokkos::RangePolicy<ExecutionSpace> cell_range( 0, ncell );
         auto offset_scan = KOKKOS_LAMBDA( const std::size_t c, int& update,
                                           const bool final_pass )
         {
@@ -307,10 +316,27 @@ class LinkedCellList
         Kokkos::fence();
 
         // Create the binning data.
-        _bin_data =
-            BinningData<DeviceType>( begin, end, _counts, _offsets, _permutes );
+        _bin_data = BinningData<MemorySpace>( begin, end, _counts, _offsets,
+                                              _permutes );
 
         Kokkos::Profiling::popRegion();
+    }
+
+    /*!
+      \brief Build the linked cell list with a subset of particles.
+
+      \tparam SliceType Slice type for positions.
+
+      \param positions Slice of positions.
+      \param begin The beginning index of the slice range to sort.
+      \param end The end index of the slice range to sort.
+    */
+    template <class SliceType>
+    void build( SliceType positions, const std::size_t begin,
+                const std::size_t end )
+    {
+        // Use the default execution space.
+        build( execution_space{}, positions, begin, end );
     }
 
     /*!
@@ -327,7 +353,7 @@ class LinkedCellList
     }
 
   private:
-    BinningData<DeviceType> _bin_data;
+    BinningData<MemorySpace> _bin_data;
     Impl::CartesianGrid<double> _grid;
 
     CountView _counts;
@@ -355,8 +381,8 @@ struct is_linked_cell_list_impl : public std::false_type
 {
 };
 
-template <typename DeviceType>
-struct is_linked_cell_list_impl<LinkedCellList<DeviceType>>
+template <typename MemorySpace>
+struct is_linked_cell_list_impl<LinkedCellList<MemorySpace>>
     : public std::true_type
 {
 };

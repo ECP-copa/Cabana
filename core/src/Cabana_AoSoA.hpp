@@ -21,6 +21,7 @@
 #include <Cabana_SoA.hpp>
 #include <Cabana_Tuple.hpp>
 #include <Cabana_Types.hpp>
+#include <Cabana_Utils.hpp>
 #include <impl/Cabana_Index.hpp>
 #include <impl/Cabana_PerformanceTraits.hpp>
 
@@ -35,7 +36,7 @@ namespace Cabana
 {
 //---------------------------------------------------------------------------//
 // AoSoA forward declaration.
-template <class DataTypes, class DeviceType, int VectorLength,
+template <class DataTypes, class MemorySpace, int VectorLength,
           class MemoryTraits>
 class AoSoA;
 
@@ -46,9 +47,9 @@ struct is_aosoa_impl : public std::false_type
 {
 };
 
-template <class DataTypes, class DeviceType, int VectorLength,
+template <class DataTypes, class MemorySpace, int VectorLength,
           class MemoryTraits>
-struct is_aosoa_impl<AoSoA<DataTypes, DeviceType, VectorLength, MemoryTraits>>
+struct is_aosoa_impl<AoSoA<DataTypes, MemorySpace, VectorLength, MemoryTraits>>
     : public std::true_type
 {
 };
@@ -103,24 +104,25 @@ slice( const AoSoA_t& aosoa, const std::string& slice_label = "" )
   of the same type together to achieve the smallest possible memory footprint
   based on compiler-generated padding.
 
-  \tparam DeviceType (required) The device type.
+  \tparam MemorySpace (required) The Kokkos memory space.
 
   \tparam VectorLength (optional) The vector length within the structs of
   the AoSoA. If not specified, this defaults to the preferred layout for the
-  <tt>DeviceType</tt>.
+  <tt>MemorySpace</tt>.
 
   \tparam MemoryTraits (optional) Memory traits for the AoSoA data. Can be
   used to indicate managed memory, unmanaged memory, etc.
  */
-template <class DataTypes, class DeviceType,
+template <class DataTypes, class MemorySpace,
           int VectorLength = Impl::PerformanceTraits<
-              typename DeviceType::execution_space>::vector_length,
+              typename MemorySpace::execution_space>::vector_length,
           class MemoryTraits = Kokkos::MemoryManaged>
 class AoSoA
 {
   public:
     //! AoSoA type.
-    using aosoa_type = AoSoA<DataTypes, DeviceType, VectorLength, MemoryTraits>;
+    using aosoa_type =
+        AoSoA<DataTypes, MemorySpace, VectorLength, MemoryTraits>;
 
     //! Host mirror type.
     using host_mirror_type = AoSoA<DataTypes, Kokkos::HostSpace, VectorLength>;
@@ -132,14 +134,17 @@ class AoSoA
     //! Member data types.
     using member_types = DataTypes;
 
-    //! Device type.
-    using device_type = DeviceType;
-
+    // FIXME: extracting the self type for backwards compatibility with previous
+    // template on DeviceType. Should simply be MemorySpace after next release.
     //! Memory space.
-    using memory_space = typename device_type::memory_space;
+    using memory_space = typename MemorySpace::memory_space;
+    // FIXME: replace warning with memory space assert after next release.
+    static_assert( Impl::deprecated( Kokkos::is_device<MemorySpace>() ) );
 
-    //! Execution space.
-    using execution_space = typename device_type::execution_space;
+    //! Default device type.
+    using device_type [[deprecated]] = typename memory_space::device_type;
+    //! Default execution space.
+    using execution_space = typename memory_space::execution_space;
 
     static_assert( Impl::IsVectorLengthValid<VectorLength>::value,
                    "Vector length must be valid" );
@@ -156,7 +161,7 @@ class AoSoA
     using soa_type = SoA<member_types, vector_length>;
 
     //! Managed data view.
-    using soa_view = Kokkos::View<soa_type*, device_type, memory_traits>;
+    using soa_view = Kokkos::View<soa_type*, memory_space, memory_traits>;
 
     //! Number of member types.
     static constexpr std::size_t number_of_members = member_types::size;
@@ -189,7 +194,7 @@ class AoSoA
     //! Member slice type at a given member index M.
     template <std::size_t M>
     using member_slice_type =
-        Slice<member_data_type<M>, device_type, DefaultAccessMemory,
+        Slice<member_data_type<M>, memory_space, DefaultAccessMemory,
               vector_length,
               sizeof( soa_type ) / sizeof( member_value_type<M> )>;
 

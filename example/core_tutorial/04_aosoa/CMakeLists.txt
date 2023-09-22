@@ -10,5 +10,5 @@
 ############################################################################
 
   add_executable(ArrayOfStructsOfArrays aosoa_example.cpp)
-  target_link_libraries(ArrayOfStructsOfArrays cabanacore)
+  target_link_libraries(ArrayOfStructsOfArrays Core)
   add_test(NAME Core_tutorial_04 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:ArrayOfStructsOfArrays>)

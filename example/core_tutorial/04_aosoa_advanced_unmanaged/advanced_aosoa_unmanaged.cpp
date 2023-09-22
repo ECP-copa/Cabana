@@ -68,9 +68,8 @@ void unmanagedAoAoAExample()
     Data* local_data = new Data[num_tuple];
 
     // This is equivalent to a Cabana AoSoA of:
-    // using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
-    // using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
-    // Cabana::AoSoA<DataTypes,DeviceType,VectorLength> aosoa( "my_aosoa",
+    // using MemorySpace = Kokkos::HostSpace;
+    // Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( "my_aosoa",
     // num_tuple );
 
     /*

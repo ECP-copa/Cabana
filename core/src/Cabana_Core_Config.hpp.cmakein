@@ -1,0 +1,34 @@
+/****************************************************************************
+ * Copyright (c) 2018-2023 by the Cabana authors                            *
+ * All rights reserved.                                                     *
+ *                                                                          *
+ * This file is part of the Cabana library. Cabana is distributed under a   *
+ * BSD 3-clause license. For the licensing terms see the LICENSE file in    *
+ * the top-level directory.                                                 *
+ *                                                                          *
+ * SPDX-License-Identifier: BSD-3-Clause                                    *
+ ****************************************************************************/
+
+#ifndef CABANA_CORE_CONFIG_HPP
+#define CABANA_CORE_CONFIG_HPP
+
+#define Cabana_VERSION_STRING "@PROJECT_VERSION@"
+
+#define Cabana_GIT_COMMIT_HASH "@Cabana_GIT_COMMIT_HASH@"
+
+#cmakedefine Cabana_ENABLE_GRID
+
+#cmakedefine Cabana_ENABLE_CAJITA // FIXME: remove in the next release.
+#cmakedefine Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS // FIXME: remove in the next release.
+
+#cmakedefine Cabana_ENABLE_MPI
+
+#cmakedefine Cabana_ENABLE_ARBORX
+
+#cmakedefine Cabana_ENABLE_ALL
+
+#cmakedefine Cabana_ENABLE_SILO
+
+#cmakedefine Cabana_ENABLE_HDF5
+
+#endif // CABANA_CORE_CONFIG_HPP

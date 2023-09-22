@@ -53,14 +53,13 @@ void simdParallelForExample()
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
     using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
-    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     const int num_tuple = 100;
-    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "my_aosoa",
-                                                              num_tuple );
+    Cabana::AoSoA<DataTypes, MemorySpace, VectorLength> aosoa( "my_aosoa",
+                                                               num_tuple );
 
     /*
       Create slices and assign some data. One might consider using a parallel

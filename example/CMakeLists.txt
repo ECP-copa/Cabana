@@ -11,6 +11,6 @@
 
 add_subdirectory(core_tutorial)
 
-if(Cabana_ENABLE_CAJITA)
-  add_subdirectory(cajita_tutorial)
+if(Cabana_ENABLE_GRID)
+  add_subdirectory(grid_tutorial)
 endif()

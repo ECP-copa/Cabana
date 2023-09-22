@@ -78,7 +78,7 @@ macro(Cabana_add_tests)
         "#include <Test${_device}_Category.hpp>\n"
         "#include <tst${_test}.hpp>\n"
       )
-      if(${CABANA_UNIT_TEST_PACKAGE} STREQUAL cabanacore)
+      if(${CABANA_UNIT_TEST_PACKAGE} STREQUAL Core)
         if(CABANA_UNIT_TEST_MPI)
           set(_target Cabana_${_test}_MPI_test_${_device})
         else()

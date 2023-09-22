@@ -10,5 +10,5 @@
 ############################################################################
 
   add_executable(Tuple tuple_example.cpp)
-  target_link_libraries(Tuple cabanacore)
+  target_link_libraries(Tuple Core)
   add_test(NAME Core_tutorial_02 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:Tuple>)

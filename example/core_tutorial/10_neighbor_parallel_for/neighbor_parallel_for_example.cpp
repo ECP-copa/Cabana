@@ -56,14 +56,13 @@ void neighborParallelForExample()
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
     using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
-    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     const int num_tuple = 81;
-    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "my_aosoa",
-                                                              num_tuple );
+    Cabana::AoSoA<DataTypes, MemorySpace, VectorLength> aosoa( "my_aosoa",
+                                                               num_tuple );
 
     /*
       Define the Cartesian grid and particle positions within it - this matches

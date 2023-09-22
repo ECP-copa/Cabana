@@ -34,8 +34,8 @@ namespace Cabana
   \brief A communication plan for migrating data from one uniquely-owned
   decomposition to another uniquely owned decomposition.
 
-  \tparam DeviceType Device type for which the data for this class will be
-  allocated and where parallel compuations will be executed.
+  \tparam MemorySpace Kokkos memory space in which data for this class will be
+  allocated.
 
   The Distributor allows data to be migrated to an entirely new
   decomposition. Only uniquely-owned decompositions are handled (i.e. each
@@ -57,8 +57,8 @@ namespace Cabana
   user must allocate their own destination data structure.
 
 */
-template <class DeviceType>
-class Distributor : public CommunicationPlan<DeviceType>
+template <class MemorySpace>
+class Distributor : public CommunicationPlan<MemorySpace>
 {
   public:
     /*!
@@ -98,7 +98,7 @@ class Distributor : public CommunicationPlan<DeviceType>
     template <class ViewType>
     Distributor( MPI_Comm comm, const ViewType& element_export_ranks,
                  const std::vector<int>& neighbor_ranks )
-        : CommunicationPlan<DeviceType>( comm )
+        : CommunicationPlan<MemorySpace>( comm )
     {
         auto neighbor_ids = this->createFromExportsAndTopology(
             element_export_ranks, neighbor_ranks );
@@ -134,7 +134,7 @@ class Distributor : public CommunicationPlan<DeviceType>
     */
     template <class ViewType>
     Distributor( MPI_Comm comm, const ViewType& element_export_ranks )
-        : CommunicationPlan<DeviceType>( comm )
+        : CommunicationPlan<MemorySpace>( comm )
     {
         auto neighbor_ids = this->createFromExportsOnly( element_export_ranks );
         this->createExportSteering( neighbor_ids, element_export_ranks );
@@ -148,8 +148,8 @@ struct is_distributor_impl : public std::false_type
 {
 };
 
-template <typename DeviceType>
-struct is_distributor_impl<Distributor<DeviceType>> : public std::true_type
+template <typename MemorySpace>
+struct is_distributor_impl<Distributor<MemorySpace>> : public std::true_type
 {
 };
 //! \endcond
@@ -168,14 +168,19 @@ namespace Impl
 //---------------------------------------------------------------------------//
 // Synchronously move data between a source and destination AoSoA by executing
 // the forward communication plan.
-template <class Distributor_t, class AoSoA_t>
+template <class ExecutionSpace, class Distributor_t, class AoSoA_t>
 void distributeData(
-    const Distributor_t& distributor, const AoSoA_t& src, AoSoA_t& dst,
+    ExecutionSpace, const Distributor_t& distributor, const AoSoA_t& src,
+    AoSoA_t& dst,
     typename std::enable_if<( is_distributor<Distributor_t>::value &&
                               is_aosoa<AoSoA_t>::value ),
                             int>::type* = 0 )
 {
     Kokkos::Profiling::pushRegion( "Cabana::migrate" );
+
+    static_assert( is_accessible_from<typename Distributor_t::memory_space,
+                                      ExecutionSpace>{},
+                   "" );
 
     // Get the MPI rank we are currently on.
     int my_rank = -1;
@@ -223,8 +228,8 @@ void distributeData(
         else
             send_buffer( i - num_stay ) = tpl;
     };
-    Kokkos::RangePolicy<typename Distributor_t::execution_space>
-        build_send_buffer_policy( 0, distributor.totalNumExport() );
+    Kokkos::RangePolicy<ExecutionSpace> build_send_buffer_policy(
+        0, distributor.totalNumExport() );
     Kokkos::parallel_for( "Cabana::Impl::distributeData::build_send_buffer",
                           build_send_buffer_policy, build_send_buffer_func );
     Kokkos::fence();
@@ -290,8 +295,8 @@ void distributeData(
     {
         dst.setTuple( i, recv_buffer( i ) );
     };
-    Kokkos::RangePolicy<typename Distributor_t::execution_space>
-        extract_recv_buffer_policy( 0, distributor.totalNumImport() );
+    Kokkos::RangePolicy<ExecutionSpace> extract_recv_buffer_policy(
+        0, distributor.totalNumImport() );
     Kokkos::parallel_for( "Cabana::Impl::distributeData::extract_recv_buffer",
                           extract_recv_buffer_policy,
                           extract_recv_buffer_func );
@@ -314,22 +319,21 @@ void distributeData(
   Migrate moves all data to a new distribution that is uniquely owned - each
   element will only have a single destination rank.
 
+  \tparam ExecutionSpace Kokkos execution space.
   \tparam Distributor_t Distributor type - must be a distributor.
-
   \tparam AoSoA_t AoSoA type - must be an AoSoA.
 
+  \param exec_space Kokkos execution space.
   \param distributor The distributor to use for the migration.
-
   \param src The AoSoA containing the data to be migrated. Must have the same
   number of elements as the inputs used to construct the distributor.
-
   \param dst The AoSoA to which the migrated data will be written. Must be the
   same size as the number of imports given by the distributor on this
   rank. Call totalNumImport() on the distributor to get this size value.
 */
-template <class Distributor_t, class AoSoA_t>
-void migrate( const Distributor_t& distributor, const AoSoA_t& src,
-              AoSoA_t& dst,
+template <class ExecutionSpace, class Distributor_t, class AoSoA_t>
+void migrate( ExecutionSpace exec_space, const Distributor_t& distributor,
+              const AoSoA_t& src, AoSoA_t& dst,
               typename std::enable_if<( is_distributor<Distributor_t>::value &&
                                         is_aosoa<AoSoA_t>::value ),
                                       int>::type* = 0 )
@@ -342,7 +346,34 @@ void migrate( const Distributor_t& distributor, const AoSoA_t& src,
             "Destination is the wrong size for migration!" );
 
     // Move the data.
-    Impl::distributeData( distributor, src, dst );
+    Impl::distributeData( exec_space, distributor, src, dst );
+}
+
+/*!
+  \brief Synchronously migrate data between two different decompositions using
+  the distributor forward communication plan. Multiple AoSoA version.
+
+  Migrate moves all data to a new distribution that is uniquely owned - each
+  element will only have a single destination rank.
+
+  \tparam Distributor_t Distributor type - must be a distributor.
+  \tparam AoSoA_t AoSoA type - must be an AoSoA.
+
+  \param distributor The distributor to use for the migration.
+  \param src The AoSoA containing the data to be migrated. Must have the same
+  number of elements as the inputs used to construct the distributor.
+  \param dst The AoSoA to which the migrated data will be written. Must be the
+  same size as the number of imports given by the distributor on this
+  rank. Call totalNumImport() on the distributor to get this size value.
+*/
+template <class Distributor_t, class AoSoA_t>
+void migrate( const Distributor_t& distributor, const AoSoA_t& src,
+              AoSoA_t& dst,
+              typename std::enable_if<( is_distributor<Distributor_t>::value &&
+                                        is_aosoa<AoSoA_t>::value ),
+                                      int>::type* = 0 )
+{
+    migrate( typename Distributor_t::execution_space{}, distributor, src, dst );
 }
 
 //---------------------------------------------------------------------------//
@@ -356,12 +387,12 @@ void migrate( const Distributor_t& distributor, const AoSoA_t& src,
   Migrate moves all data to a new distribution that is uniquely owned - each
   element will only have a single destination rank.
 
+  \tparam ExecutionSpace Kokkos execution space.
   \tparam Distributor_t Distributor type - must be a distributor.
-
   \tparam AoSoA_t AoSoA type - must be an AoSoA.
 
+  \param exec_space Kokkos execution space.
   \param distributor The distributor to use for the migration.
-
   \param aosoa The AoSoA containing the data to be migrated. Upon input, must
   have the same number of elements as the inputs used to construct the
   destributor. At output, it will be the same size as th enumber of import
@@ -369,8 +400,9 @@ void migrate( const Distributor_t& distributor, const AoSoA_t& src,
   function, consider reserving enough memory in the data structure so
   reallocating is not necessary.
 */
-template <class Distributor_t, class AoSoA_t>
-void migrate( const Distributor_t& distributor, AoSoA_t& aosoa,
+template <class ExecutionSpace, class Distributor_t, class AoSoA_t>
+void migrate( ExecutionSpace exec_space, const Distributor_t& distributor,
+              AoSoA_t& aosoa,
               typename std::enable_if<( is_distributor<Distributor_t>::value &&
                                         is_aosoa<AoSoA_t>::value ),
                                       int>::type* = 0 )
@@ -390,12 +422,42 @@ void migrate( const Distributor_t& distributor, AoSoA_t& aosoa,
         aosoa.resize( distributor.totalNumImport() );
 
     // Move the data.
-    Impl::distributeData( distributor, aosoa, aosoa );
+    Impl::distributeData( exec_space, distributor, aosoa, aosoa );
 
     // If the destination decomposition is smaller than the source
     // decomposition resize after we have moved the data.
     if ( !dst_is_bigger )
         aosoa.resize( distributor.totalNumImport() );
+}
+
+/*!
+  \brief Synchronously migrate data between two different decompositions using
+  the distributor forward communication plan. Single AoSoA version that will
+  resize in-place. Note that resizing does not necessarily allocate more
+  memory. The AoSoA memory will only increase if not enough has already been
+  reserved/allocated for the needed number of elements.
+
+  Migrate moves all data to a new distribution that is uniquely owned - each
+  element will only have a single destination rank.
+
+  \tparam Distributor_t Distributor type - must be a distributor.
+  \tparam AoSoA_t AoSoA type - must be an AoSoA.
+
+  \param distributor The distributor to use for the migration.
+  \param aosoa The AoSoA containing the data to be migrated. Upon input, must
+  have the same number of elements as the inputs used to construct the
+  destributor. At output, it will be the same size as th enumber of import
+  elements on this rank provided by the distributor. Before using this
+  function, consider reserving enough memory in the data structure so
+  reallocating is not necessary.
+*/
+template <class Distributor_t, class AoSoA_t>
+void migrate( const Distributor_t& distributor, AoSoA_t& aosoa,
+              typename std::enable_if<( is_distributor<Distributor_t>::value &&
+                                        is_aosoa<AoSoA_t>::value ),
+                                      int>::type* = 0 )
+{
+    migrate( typename Distributor_t::execution_space{}, distributor, aosoa );
 }
 
 //---------------------------------------------------------------------------//
@@ -408,22 +470,20 @@ void migrate( const Distributor_t& distributor, AoSoA_t& aosoa,
   Migrate moves all data to a new distribution that is uniquely owned - each
   element will only have a single destination rank.
 
+  \tparam ExecutionSpace Kokkos execution space.
   \tparam Distributor_t Distributor type - must be a distributor.
-
   \tparam Slice_t Slice type - must be an Slice.
 
   \param distributor The distributor to use for the migration.
-
   \param src The slice containing the data to be migrated. Must have the same
   number of elements as the inputs used to construct the destributor.
-
   \param dst The slice to which the migrated data will be written. Must be the
   same size as the number of imports given by the distributor on this
   rank. Call totalNumImport() on the distributor to get this size value.
 */
-template <class Distributor_t, class Slice_t>
-void migrate( const Distributor_t& distributor, const Slice_t& src,
-              Slice_t& dst,
+template <class ExecutionSpace, class Distributor_t, class Slice_t>
+void migrate( ExecutionSpace, const Distributor_t& distributor,
+              const Slice_t& src, Slice_t& dst,
               typename std::enable_if<( is_distributor<Distributor_t>::value &&
                                         is_slice<Slice_t>::value ),
                                       int>::type* = 0 )
@@ -497,8 +557,8 @@ void migrate( const Distributor_t& distributor, const Slice_t& src,
                 send_buffer( i - num_stay, n ) =
                     src_data[src_offset + n * Slice_t::vector_length];
     };
-    Kokkos::RangePolicy<typename Distributor_t::execution_space>
-        build_send_buffer_policy( 0, distributor.totalNumExport() );
+    Kokkos::RangePolicy<ExecutionSpace> build_send_buffer_policy(
+        0, distributor.totalNumExport() );
     Kokkos::parallel_for( "Cabana::migrate::build_send_buffer",
                           build_send_buffer_policy, build_send_buffer_func );
     Kokkos::fence();
@@ -571,8 +631,8 @@ void migrate( const Distributor_t& distributor, const Slice_t& src,
             dst_data[dst_offset + n * Slice_t::vector_length] =
                 recv_buffer( i, n );
     };
-    Kokkos::RangePolicy<typename Distributor_t::execution_space>
-        extract_recv_buffer_policy( 0, distributor.totalNumImport() );
+    Kokkos::RangePolicy<ExecutionSpace> extract_recv_buffer_policy(
+        0, distributor.totalNumImport() );
     Kokkos::parallel_for( "Cabana::migrate::extract_recv_buffer",
                           extract_recv_buffer_policy,
                           extract_recv_buffer_func );
@@ -580,6 +640,35 @@ void migrate( const Distributor_t& distributor, const Slice_t& src,
 
     // Barrier before completing to ensure synchronization.
     MPI_Barrier( distributor.comm() );
+}
+
+/*!
+  \brief Synchronously migrate data between two different decompositions using
+  the distributor forward communication plan. Slice version. The user can do
+  this in-place with the same slice but they will need to manage the resizing
+  themselves as we can't resize slices.
+
+  Migrate moves all data to a new distribution that is uniquely owned - each
+  element will only have a single destination rank.
+
+  \tparam Distributor_t Distributor type - must be a distributor.
+  \tparam Slice_t Slice type - must be an Slice.
+
+  \param distributor The distributor to use for the migration.
+  \param src The slice containing the data to be migrated. Must have the same
+  number of elements as the inputs used to construct the destributor.
+  \param dst The slice to which the migrated data will be written. Must be the
+  same size as the number of imports given by the distributor on this
+  rank. Call totalNumImport() on the distributor to get this size value.
+*/
+template <class Distributor_t, class Slice_t>
+void migrate( const Distributor_t& distributor, const Slice_t& src,
+              Slice_t& dst,
+              typename std::enable_if<( is_distributor<Distributor_t>::value &&
+                                        is_slice<Slice_t>::value ),
+                                      int>::type* = 0 )
+{
+    migrate( typename Distributor_t::execution_space{}, distributor, src, dst );
 }
 
 //---------------------------------------------------------------------------//

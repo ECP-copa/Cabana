@@ -10,5 +10,5 @@
 ############################################################################
 
   add_executable(AdvancedCudaSlice advanced_slice_cuda.cpp)
-  target_link_libraries(AdvancedCudaSlice cabanacore)
+  target_link_libraries(AdvancedCudaSlice Core)
   add_test(NAME Core_tutorial_05_cuda COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:AdvancedCudaSlice>)

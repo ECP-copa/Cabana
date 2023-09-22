@@ -16,7 +16,7 @@
 #ifndef CABANA_CORE_HPP
 #define CABANA_CORE_HPP
 
-#include <CabanaCore_config.hpp>
+#include <Cabana_Core_Config.hpp>
 
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_DeepCopy.hpp>
@@ -33,6 +33,7 @@
 #include <Cabana_Sort.hpp>
 #include <Cabana_Tuple.hpp>
 #include <Cabana_Types.hpp>
+#include <Cabana_Utils.hpp>
 #include <Cabana_VerletList.hpp>
 #include <Cabana_Version.hpp>
 

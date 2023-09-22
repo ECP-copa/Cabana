@@ -100,8 +100,8 @@ class DataPointMPI(DataPoint):
         #self.description.params.append(results[1])
         self.description.params.append(str(n))
 
-# Single Cajita result (single line in results file).
-class DataPointCajita(DataPoint):
+# Single Cabana::Grid result (single line in results file).
+class DataPointGrid(DataPoint):
     def __init__(self, description, line):
         self.description = description
 
@@ -238,7 +238,7 @@ class AllDataMPI(AllData):
                 l += 1
 
 # All MPI performance results from multiple files.
-class AllDataCajita(AllData):
+class AllDataGrid(AllData):
     def _endOfFile(self, l):
         return l > self.total
 
@@ -256,7 +256,7 @@ class AllDataCajita(AllData):
                 l += 1
                 n = 0
                 while not self._endOfFile(l) and not self._emptyLine(txt[l]):
-                    self.results.append(DataPointCajita(description, txt[l]))
+                    self.results.append(DataPointGrid(description, txt[l]))
                     l += 1
                     n += 1
             else:
@@ -293,8 +293,10 @@ def getData(filelist):
         txt = f.read()
     if "Cabana Comm" in txt:
         return AllDataMPI(filelist)
-    elif "Cajita Halo" in txt or "Cajita FFT" in txt:
-        return AllDataCajita(filelist, grid=True)
+    # FIXME: Cajita backwards compatibility
+    elif ("Cajita Halo" in txt or "Cajita FFT" in txt or 
+          "Cabana::Grid Halo" in txt or "Cabana::Grid FFT" in txt):
+        return AllDataGrid(filelist, grid=True)
     elif "g2p" in txt:
         return AllDataInterpolation(filelist, grid=True)
 

@@ -61,15 +61,13 @@ void haloExchangeExample()
     using DataTypes = Cabana::MemberTypes<double, double>;
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
-    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 100;
-    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "my_aosoa",
-                                                              num_tuple );
+    Cabana::AoSoA<DataTypes, MemorySpace, VectorLength> aosoa( "my_aosoa",
+                                                               num_tuple );
 
     /*
       Create slices with the MPI rank and a local ID so we can follow where the
@@ -110,9 +108,9 @@ void haloExchangeExample()
       Build a halo where the last 10 elements are sent to the next rank.
     */
     int local_num_send = 10;
-    Kokkos::View<int*, DeviceType> export_ranks( "export_ranks",
-                                                 local_num_send );
-    Kokkos::View<int*, DeviceType> export_ids( "export_ids", local_num_send );
+    Kokkos::View<int*, MemorySpace> export_ranks( "export_ranks",
+                                                  local_num_send );
+    Kokkos::View<int*, MemorySpace> export_ids( "export_ids", local_num_send );
 
     // Last 10 elements (elements 90-99) go to the next rank. Note that this
     // view will most often be filled within a parallel_for but we do so in
@@ -141,8 +139,8 @@ void haloExchangeExample()
     std::sort( neighbors.begin(), neighbors.end() );
     auto unique_end = std::unique( neighbors.begin(), neighbors.end() );
     neighbors.resize( std::distance( neighbors.begin(), unique_end ) );
-    Cabana::Halo<DeviceType> halo( MPI_COMM_WORLD, num_tuple, export_ids,
-                                   export_ranks, neighbors );
+    Cabana::Halo<MemorySpace> halo( MPI_COMM_WORLD, num_tuple, export_ids,
+                                    export_ranks, neighbors );
 
     /*
       Resize the AoSoA to allow for additional ghost data. We can get the
