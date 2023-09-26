@@ -61,7 +61,6 @@ set(HEADERS_IMPL
   impl/Cabana_CartesianGrid.hpp
   impl/Cabana_Erfinv.hpp
   impl/Cabana_Index.hpp
-  impl/Cabana_GaussianMixtureModel.hpp
   impl/Cabana_GaussianWeight.hpp
   impl/Cabana_Hammersley.hpp
   impl/Cabana_Matrix2d.hpp
