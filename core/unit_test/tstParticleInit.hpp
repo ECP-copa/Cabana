@@ -155,21 +155,12 @@ void testRandomCreationParticleList( const int multiplier = 1 )
     Kokkos::Array<double, 3> box_min = { -9.5, -4.7, 0.5 };
     Kokkos::Array<double, 3> box_max = { 7.6, -1.5, 5.5 };
     // Create all particles.
-    auto init_func =
-        KOKKOS_LAMBDA( const int, const double x[3], const double,
-                       typename plist_type::particle_type& particle )
-    {
-        for ( int d = 0; d < 3; ++d )
-            Cabana::get( particle, Cabana::Field::Position<3>(), d ) = x[d];
-
-        return true;
-    };
     int created_particles = 0;
     for ( int m = 0; m < multiplier; ++m )
     {
         created_particles = Cabana::createParticles(
-            Cabana::InitRandom(), init_func, particle_list, num_particle,
-            box_min, box_max, prev_particle );
+            Cabana::InitRandom(), particle_list, Cabana::Field::Position<3>(),
+            num_particle, box_min, box_max, prev_particle );
         prev_particle = created_particles;
     }
     EXPECT_EQ( multiplier * num_particle, created_particles );

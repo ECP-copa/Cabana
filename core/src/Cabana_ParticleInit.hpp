@@ -150,7 +150,6 @@ int createParticles(
     return count_host( 0 );
 }
 
-//---------------------------------------------------------------------------//
 /*!
   \brief Initialize random particles given an initialization functor.
 
@@ -173,17 +172,205 @@ int createParticles(
 
   \return Number of particles created.
 */
-template <class InitFunctor, class ParticleListType, class ArrayType>
-int createParticles( InitRandom tag, const InitFunctor& create_functor,
-                     ParticleListType& particle_list,
-                     const std::size_t num_particles, const ArrayType box_min,
-                     const ArrayType box_max,
-                     const std::size_t previous_num_particles = 0,
-                     const bool shrink_to_fit = true,
-                     const uint64_t seed = 342343901 )
+template <class InitFunctor, class ParticleListType, class PositionTag,
+          class ArrayType>
+int createParticles(
+    InitRandom tag, const InitFunctor& create_functor,
+    ParticleListType& particle_list, PositionTag position_tag,
+    const std::size_t num_particles, const ArrayType box_min,
+    const ArrayType box_max, const std::size_t previous_num_particles = 0,
+    const bool shrink_to_fit = true, const uint64_t seed = 342343901,
+    typename std::enable_if<is_particle_list<ParticleListType>::value,
+                            int>::type* = 0 )
 {
     using exec_space = typename ParticleListType::memory_space::execution_space;
+
     return createParticles( tag, exec_space{}, create_functor, particle_list,
+                            position_tag, num_particles, box_min, box_max,
+                            previous_num_particles, shrink_to_fit, seed );
+}
+
+template <class InitFunctor, class ParticleListType, class ArrayType>
+int createParticles(
+    InitRandom tag, const InitFunctor& create_functor,
+    ParticleListType& particle_list, const std::size_t num_particles,
+    const ArrayType box_min, const ArrayType box_max,
+    const std::size_t previous_num_particles = 0,
+    const bool shrink_to_fit = true, const uint64_t seed = 342343901,
+    typename std::enable_if<is_particle_list<ParticleListType>::value,
+                            int>::type* = 0 )
+{
+    using exec_space = typename ParticleListType::memory_space::execution_space;
+
+    return createParticles( tag, exec_space{}, create_functor, particle_list,
+                            num_particles, box_min, box_max,
+                            previous_num_particles, shrink_to_fit, seed );
+}
+
+/*!
+  \brief Initialize random particles given an initialization functor.
+
+  \param tag Initialization type tag.
+  \param create_functor A functor which populates a particle given the logical
+  position of a particle. This functor returns true if a particle was created
+  and false if it was not giving the signature:
+
+      bool createFunctor( const double pid, const double px[3], const double pv,
+                          typename ParticleAoSoA::tuple_type& particle );
+  \param particle_list The ParticleList to populate. This will be filled with
+  particles and resized to a size equal to the number of particles created.
+  \param num_particles The number of particles to create.
+  \param box_min Array specifying lower corner to create particles within.
+  \param box_max Array specifying upper corner to create particles within.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
+  \param shrink_to_fit Optionally remove unused allocated space after creation.
+  \param seed Optional random seed for generating particles.
+
+  \return Number of particles created.
+*/
+template <class ExecutionSpace, class InitFunctor, class ParticleListType,
+          class PositionTag, class ArrayType>
+int createParticles(
+    InitRandom tag, ExecutionSpace exec_space,
+    const InitFunctor& create_functor, ParticleListType& particle_list,
+    PositionTag, const std::size_t num_particles, const ArrayType box_min,
+    const ArrayType box_max, const std::size_t previous_num_particles = 0,
+    const bool shrink_to_fit = true, const uint64_t seed = 342343901,
+    typename std::enable_if<is_particle_list<ParticleListType>::value,
+                            int>::type* = 0 )
+{
+    auto position_functor =
+        KOKKOS_LAMBDA( const int id, const double x[3], const double vol,
+                       typename ParticleListType::particle_type& particle )
+    {
+        bool create = create_functor( id, x, vol, particle );
+        if ( create )
+            for ( int d = 0; d < 3; ++d )
+                Cabana::get( particle, PositionTag(), d ) = x[d];
+
+        return create;
+    };
+    return createParticles( tag, exec_space, position_functor, particle_list,
+                            num_particles, box_min, box_max,
+                            previous_num_particles, shrink_to_fit, seed );
+}
+
+/*!
+  \brief Initialize random particles given an initialization functor.
+
+  \param tag Initialization type tag.
+  \param particle_list The ParticleList to populate. This will be filled with
+  particles and resized to a size equal to the number of particles created.
+  \param num_particles The number of particles to create.
+  \param box_min Array specifying lower corner to create particles within.
+  \param box_max Array specifying upper corner to create particles within.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
+  \param shrink_to_fit Optionally remove unused allocated space after creation.
+  \param seed Optional random seed for generating particles.
+
+  \return Number of particles created.
+*/
+template <class ExecutionSpace, class ParticleListType, class PositionTag,
+          class ArrayType>
+int createParticles(
+    InitRandom tag, ExecutionSpace exec_space, ParticleListType& particle_list,
+    PositionTag, const std::size_t num_particles, const ArrayType box_min,
+    const ArrayType box_max, const std::size_t previous_num_particles = 0,
+    const bool shrink_to_fit = true, const uint64_t seed = 342343901,
+    typename std::enable_if<is_particle_list<ParticleListType>::value,
+                            int>::type* = 0 )
+{
+    auto position_functor =
+        KOKKOS_LAMBDA( const int, const double x[3], const double,
+                       typename ParticleListType::particle_type& particle )
+    {
+        for ( int d = 0; d < 3; ++d )
+            Cabana::get( particle, PositionTag(), d ) = x[d];
+
+        return true;
+    };
+    return createParticles( tag, exec_space, position_functor, particle_list,
+                            num_particles, box_min, box_max,
+                            previous_num_particles, shrink_to_fit, seed );
+}
+
+/*!
+  \brief Initialize random particles given an initialization functor.
+
+  \param tag Initialization type tag.
+  \param particle_list The ParticleList to populate. This will be filled with
+  particles and resized to a size equal to the number of particles created.
+  \param num_particles The number of particles to create.
+  \param box_min Array specifying lower corner to create particles within.
+  \param box_max Array specifying upper corner to create particles within.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
+  \param shrink_to_fit Optionally remove unused allocated space after creation.
+  \param seed Optional random seed for generating particles.
+
+  \return Number of particles created.
+*/
+template <class ParticleListType, class PositionTag, class ArrayType>
+int createParticles(
+    InitRandom tag, ParticleListType& particle_list, PositionTag,
+    const std::size_t num_particles, const ArrayType box_min,
+    const ArrayType box_max, const std::size_t previous_num_particles = 0,
+    const bool shrink_to_fit = true, const uint64_t seed = 342343901,
+    typename std::enable_if<is_particle_list<ParticleListType>::value,
+                            int>::type* = 0 )
+{
+    using exec_space = typename ParticleListType::memory_space::execution_space;
+
+    auto position_functor =
+        KOKKOS_LAMBDA( const int, const double x[3], const double,
+                       typename ParticleListType::particle_type& particle )
+    {
+        for ( int d = 0; d < 3; ++d )
+            Cabana::get( particle, PositionTag(), d ) = x[d];
+
+        return true;
+    };
+    return createParticles( tag, exec_space{}, position_functor, particle_list,
+                            num_particles, box_min, box_max,
+                            previous_num_particles, shrink_to_fit, seed );
+}
+
+/*!
+  \brief Initialize random particles given an initialization functor.
+
+  \param tag Initialization type tag.
+  \param create_functor A functor which populates a particle given the logical
+  position of a particle. This functor returns true if a particle was created
+  and false if it was not giving the signature:
+
+      bool createFunctor( const double pid, const double px[3], const double pv,
+                          typename ParticleAoSoA::tuple_type& particle );
+  \param particle_list The ParticleList to populate. This will be filled with
+  particles and resized to a size equal to the number of particles created.
+  \param num_particles The number of particles to create.
+  \param box_min Array specifying lower corner to create particles within.
+  \param box_max Array specifying upper corner to create particles within.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
+  \param shrink_to_fit Optionally remove unused allocated space after creation.
+  \param seed Optional random seed for generating particles.
+
+  \return Number of particles created.
+*/
+template <class ParticleListType, class ArrayType>
+int createParticles(
+    InitRandom tag, ParticleListType& particle_list,
+    const std::size_t num_particles, const ArrayType box_min,
+    const ArrayType box_max, const std::size_t previous_num_particles = 0,
+    const bool shrink_to_fit = true, const uint64_t seed = 342343901,
+    typename std::enable_if<is_particle_list<ParticleListType>::value,
+                            int>::type* = 0 )
+{
+    using exec_space = typename ParticleListType::memory_space::execution_space;
+    auto null_op = KOKKOS_LAMBDA( const int ) { return true; };
+    return createParticles( tag, exec_space{}, null_op, particle_list,
                             num_particles, box_min, box_max,
                             previous_num_particles, shrink_to_fit, seed );
 }
@@ -192,6 +379,11 @@ int createParticles( InitRandom tag, const InitFunctor& create_functor,
   \brief Initialize random particles.
 
   \param exec_space Kokkos execution space.
+  \param create_functor A functor which populates a particle given the logical
+  position of a particle. This functor returns true if a particle was created
+  and false if it was not giving the signature:
+
+      bool createFunctor( const double pid );
   \param positions Particle positions slice.
   \param num_particles The number of particles to create.
   \param box_min Array specifying lower corner to create particles within.
@@ -200,11 +392,13 @@ int createParticles( InitRandom tag, const InitFunctor& create_functor,
   already in the container (and should be unchanged).
   \param seed Optional random seed for generating particles.
 */
-template <class ExecutionSpace, class PositionType, class ArrayType>
+template <class ExecutionSpace, class InitFunctor, class PositionType,
+          class ArrayType>
 void createParticles(
-    InitRandom, ExecutionSpace exec_space, PositionType& positions,
-    const std::size_t num_particles, const ArrayType box_min,
-    const ArrayType box_max, const std::size_t previous_num_particles = 0,
+    InitRandom, ExecutionSpace exec_space, const InitFunctor& create_functor,
+    PositionType& positions, const std::size_t num_particles,
+    const ArrayType box_min, const ArrayType box_max,
+    const std::size_t previous_num_particles = 0,
     const uint64_t seed = 342343901,
     typename std::enable_if<( is_slice<PositionType>::value ||
                               Kokkos::is_view<PositionType>::value ),
@@ -227,6 +421,8 @@ void createParticles(
             positions( p, d ) = Kokkos::rand<RandomType, double>::draw(
                 gen, kokkos_min[d], kokkos_max[d] );
         pool.free_state( gen );
+
+        create_functor( p );
     };
 
     Kokkos::RangePolicy<ExecutionSpace> exec_policy(
@@ -259,7 +455,34 @@ void createParticles(
                             int>::type* = 0 )
 {
     using exec_space = typename PositionType::execution_space;
-    createParticles( tag, exec_space{}, positions, num_particles, box_min,
+    auto null_op = KOKKOS_LAMBDA( const int ) { return true; };
+    createParticles( tag, exec_space{}, null_op, positions, num_particles,
+                     box_min, box_max, previous_num_particles, seed );
+}
+
+/*!
+  \brief Initialize random particles.
+
+  \param tag Initialization type tag.
+  \param positions Particle positions slice.
+  \param num_particles The number of particles to create.
+  \param box_min Array specifying lower corner to create particles within.
+  \param box_max Array specifying upper corner to create particles within.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
+  \param seed Optional random seed for generating particles.
+*/
+template <class ExecutionSpace, class PositionType, class ArrayType>
+void createParticles(
+    ExecutionSpace exec_space, InitRandom tag, PositionType& positions,
+    const std::size_t num_particles, const ArrayType box_min,
+    const ArrayType box_max, const std::size_t previous_num_particles = 0,
+    const uint64_t seed = 342343901,
+    typename std::enable_if<( is_slice<PositionType>::value ||
+                              Kokkos::is_view<PositionType>::value ),
+                            int>::type* = 0 )
+{
+    createParticles( tag, exec_space, positions, num_particles, box_min,
                      box_max, previous_num_particles, seed );
 }
 
@@ -364,7 +587,7 @@ int createParticles(
 
     // Pass the functor to the general case.
     return createParticles( tag, exec_space, min_distance_op, particle_list,
-                            num_particles, box_min, box_max,
+                            position_tag, num_particles, box_min, box_max,
                             previous_num_particles, shrink_to_fit, seed );
 }
 
