@@ -19,6 +19,7 @@ set(HEADERS_PUBLIC
   Cabana_Grid_GlobalGrid.hpp
   Cabana_Grid_GlobalGrid_impl.hpp
   Cabana_Grid_GlobalMesh.hpp
+  Cabana_Grid_GlobalParticleComm.hpp
   Cabana_Grid_Halo.hpp
   Cabana_Grid_IndexConversion.hpp
   Cabana_Grid_IndexSpace.hpp

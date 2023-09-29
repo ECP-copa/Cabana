@@ -22,6 +22,7 @@
 #include <Cabana_Grid_BovWriter.hpp>
 #include <Cabana_Grid_GlobalGrid.hpp>
 #include <Cabana_Grid_GlobalMesh.hpp>
+#include <Cabana_Grid_GlobalParticleComm.hpp>
 #include <Cabana_Grid_Halo.hpp>
 #include <Cabana_Grid_IndexConversion.hpp>
 #include <Cabana_Grid_IndexSpace.hpp>

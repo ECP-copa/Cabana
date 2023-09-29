@@ -20,6 +20,7 @@ set(SERIAL_TESTS
 
 set(MPI_TESTS
   GlobalGrid
+  GlobalParticleComm
   LocalGrid
   IndexConversion
   LocalMesh3d
