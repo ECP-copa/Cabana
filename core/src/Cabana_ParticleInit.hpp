@@ -717,6 +717,138 @@ createRandomParticlesMinDistance( ExecutionSpace exec_space,
     Kokkos::fence();
 }
 
+//---------------------------------------------------------------------------//
+// Velocity and Position initialization.
+//---------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Initialize particle positions and velocities.
+
+  \param exec_space Kokkos execution space.
+  \param create_functor A functor which populates a particle given the logical
+  position of a particle. This functor returns true if a particle was created
+  and false if it was not giving the signature:
+
+      bool createFunctor( const double pid, const double px[3], const double pv,
+                          typename ParticleAoSoA::tuple_type& particle );
+  \param particle_list The ParticleList to populate. This will be filled with
+  particles and resized to a size equal to the number of particles created.
+  \param position_tag Position particle list type tag.
+  \param num_particles The number of particles to create.
+  \param box_min Array specifying lower corner to create particles within.
+  \param box_max Array specifying upper corner to create particles within.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
+  \param shrink_to_fit Optionally remove unused allocated space after creation.
+  \param seed Optional random seed for generating particles.
+
+  \return Number of particles created.
+*/
+template <class ExecutionSpace, class InitFunctor, class ParticleListType,
+          class PositionTag, class VelocityTag, class ArrayType>
+int createParticles(
+    InitRandom tag, InitRandom, ExecutionSpace exec_space,
+    const InitFunctor& create_functor, ParticleListType& particle_list,
+    PositionTag position_tag, VelocityTag, const std::size_t num_particles,
+    const ArrayType box_min, const ArrayType box_max,
+    const std::size_t previous_num_particles = 0,
+    const bool shrink_to_fit = true, const uint64_t seed = 342343901,
+    typename std::enable_if<is_particle_list<ParticleListType>::value,
+                            int>::type* = 0 )
+{
+    // Memory space.
+    using memory_space = typename ParticleListType::memory_space;
+
+    using PoolType = Kokkos::Random_XorShift64_Pool<ExecutionSpace>;
+    using RandomType = Kokkos::Random_XorShift64<ExecutionSpace>;
+    PoolType pool( seed );
+
+    // Resize the aosoa prior to lambda capture.
+    auto& aosoa = particle_list.aosoa();
+    aosoa.resize( previous_num_particles + num_particles );
+
+    // Copy corners to device accessible arrays.
+    auto kokkos_min = Impl::copyArray( box_min );
+    auto kokkos_max = Impl::copyArray( box_max );
+
+    auto velocity_functor =
+        KOKKOS_LAMBDA( const int id, const double px[3], const double vol,
+                       typename ParticleListType::particle_type& particle )
+    {
+        // No volume information, so pass zero.
+        int create = create_functor( id, px, vol, particle );
+
+        // If we created a new particle insert it into the list.
+        if ( create )
+        {
+            // Particle velocity.
+            double pv[3];
+            auto gen = pool.get_state();
+            for ( int d = 0; d < 3; ++d )
+                Cabana::get( particle, VelocityTag(), d ) =
+                    Kokkos::rand<RandomType, double>::draw( gen, 0.0, 1.0 );
+            pool.free_state( gen );
+        }
+        return create;
+    };
+
+    // Pass the velocity functor to the position creation.
+    return createParticles( tag, exec_space, velocity_functor, particle_list,
+                            position_tag, num_particles, box_min, box_max,
+                            previous_num_particles, shrink_to_fit, seed );
+}
+
+/*!
+  \brief Initialize particle positions and velocities.
+
+  \param exec_space Kokkos execution space.
+  \param positions Particle positions.
+  \param velocities Particle velocities.
+  \param num_particles The number of particles to create.
+  \param box_min Array specifying lower corner to create particles within.
+  \param box_max Array specifying upper corner to create particles within.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
+  \param seed Optional random seed for generating particles.
+*/
+template <class ExecutionSpace, class PositionType, class VelocityType,
+          class ArrayType>
+void createParticles(
+    InitRandom tag, InitRandom, ExecutionSpace exec_space,
+    PositionType& positions, VelocityType& velocities,
+    const std::size_t num_particles, const ArrayType box_min,
+    const ArrayType box_max, const std::size_t previous_num_particles = 0,
+    const uint64_t seed = 342343901,
+    typename std::enable_if<( is_slice<PositionType>::value ||
+                              Kokkos::is_view<PositionType>::value ),
+                            int>::type* = 0 )
+{
+    // Ensure correct space for the particles (View or Slice).
+    checkSize( velocities, num_particles + previous_num_particles );
+
+    // Copy corners to device accessible arrays.
+    auto kokkos_min = Impl::copyArray( box_min );
+    auto kokkos_max = Impl::copyArray( box_max );
+
+    using PoolType = Kokkos::Random_XorShift64_Pool<ExecutionSpace>;
+    using RandomType = Kokkos::Random_XorShift64<ExecutionSpace>;
+    PoolType pool( seed );
+    auto velocity_functor = KOKKOS_LAMBDA( const int p )
+    {
+        auto gen = pool.get_state();
+        for ( int d = 0; d < 3; ++d )
+            velocities( p, d ) =
+                Kokkos::rand<RandomType, double>::draw( gen, 0.0, 1.0 );
+        pool.free_state( gen );
+    };
+
+    // Pass the velocity functor to the position creation.
+    return createParticles( tag, exec_space, velocity_functor, positions,
+                            num_particles, box_min, box_max,
+                            previous_num_particles, seed );
+}
+
 } // namespace Cabana
 
 #endif

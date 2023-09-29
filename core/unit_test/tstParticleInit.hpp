@@ -48,6 +48,23 @@ void checkRandomParticles( const int num_particle,
         }
 }
 
+template <class VelocityType>
+void checkRandomVelocities( const int num_particle, const double min,
+                            const double max,
+                            const VelocityType host_velocities )
+{
+    // Check that we got as many particles as we should have.
+    EXPECT_EQ( host_velocities.size(), num_particle );
+
+    // Check that all of the particles are in the domain.
+    for ( int p = 0; p < num_particle; ++p )
+        for ( int d = 0; d < 3; ++d )
+        {
+            EXPECT_GE( host_velocities( p, d ), min );
+            EXPECT_LE( host_velocities( p, d ), max );
+        }
+}
+
 template <class PositionType>
 void checkRandomDistances( const int min_distance,
                            const PositionType host_positions )
@@ -94,6 +111,40 @@ void testRandomCreationSlice( const int multiplier = 1 )
 
     checkRandomParticles( multiplier * num_particle, box_min, box_max,
                           host_positions );
+}
+
+void testRandomVelocitySlice( const int multiplier = 1 )
+{
+    int num_particle = 200;
+    int prev_particle = 0;
+    Cabana::AoSoA<Cabana::MemberTypes<double[3], double[3]>, TEST_MEMSPACE>
+        aosoa( "random", num_particle );
+    auto positions = Cabana::slice<0>( aosoa );
+    auto velocities = Cabana::slice<1>( aosoa );
+
+    Kokkos::Array<double, 3> box_min = { -9.5, -4.7, 0.5 };
+    Kokkos::Array<double, 3> box_max = { 7.6, -1.5, 5.5 };
+
+    for ( int m = 0; m < multiplier; ++m )
+    {
+        aosoa.resize( prev_particle + num_particle );
+        positions = Cabana::slice<0>( aosoa );
+        Cabana::createParticles( Cabana::InitRandom(), Cabana::InitRandom(),
+                                 TEST_EXECSPACE{}, positions, velocities,
+                                 num_particle, box_min, box_max,
+                                 prev_particle );
+        prev_particle += num_particle;
+    }
+
+    auto host_aosoa =
+        Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
+    auto host_positions = Cabana::slice<0>( host_aosoa );
+    auto host_velocities = Cabana::slice<1>( host_aosoa );
+
+    checkRandomParticles( multiplier * num_particle, box_min, box_max,
+                          host_positions );
+    checkRandomVelocities( multiplier * num_particle, 0.0, 1.0,
+                           host_velocities );
 }
 
 void testRandomCreationParticleListMinDistance( const int multiplier = 1 )
@@ -177,6 +228,7 @@ void testRandomCreationParticleList( const int multiplier = 1 )
 TEST( TEST_CATEGORY, random_particle_creation_slice_test )
 {
     testRandomCreationSlice();
+    testRandomVelocitySlice();
 }
 TEST( TEST_CATEGORY, random_particle_creation_particlelist_test )
 {
