@@ -979,80 +979,6 @@ template <class ArrayT, class... Types>
 using ArrayPackMemorySpace CAJITA_DEPRECATED =
     Cabana::Grid::ArrayPackMemorySpace<ArrayT, Types...>;
 
-//---------------------------------------------------------------------------//
-// Backwards-compatible single array creation functions.
-//---------------------------------------------------------------------------//
-/*!
-  Array-like container adapter to hold layout and data information for
-  creating halos.
-
-  NOTE: This struct is only used in deprecated functions, but does not include
-  a deprecation tag to avoid nested deprecation warnings.
-*/
-template <class Scalar, class MemorySpace, class ArrayLayout>
-struct LayoutAdapter
-{
-    //! Scalar value type.
-    using value_type = Scalar;
-    //! Kokkos memory space.
-    using memory_space = MemorySpace;
-    //! Array layout.
-    const ArrayLayout& array_layout;
-    //! Get array layout.
-    const ArrayLayout* layout() const { return &array_layout; }
-};
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Create a halo with a layout.
-  \param layout The array layout to build the halo for.
-  \param pattern The pattern to build the halo from.
-  \param width Must be less than or equal to the width of the array
-  halo. Defaults to the width of the array halo.
-  \note The scalar type and memory space must be specified so the proper
-  buffers may be allocated. This means a halo constructed via this method is
-  only compatible with arrays that have the same scalar and memory space.
-*/
-template <class Scalar, class MemorySpace,
-          template <class, class> class LayoutType, class EntityType,
-          class MeshType, class Pattern>
-[[deprecated]] auto createHalo( const LayoutType<EntityType, MeshType>& layout,
-                                const Pattern& pattern, const int width = -1 )
-{
-    LayoutAdapter<Scalar, MemorySpace, LayoutType<EntityType, MeshType>>
-        adapter{ layout };
-    return createHalo( pattern, width, adapter );
-}
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Create a halo.
-  \param array The array to build the halo for.
-  \param pattern The pattern to build the halo from.
-  \param width Must be less than or equal to the width of the array
-  halo. Defaults to the width of the array halo.
-  \note The scalar type and memory space are specified via the input arrays so
-  the proper buffers may be allocated. This means a halo constructed via this
-  method is only compatible with arrays that have the same scalar and device
-  type as the input array.
-*/
-template <class Scalar,
-          template <class, class, class, class...> class ArrayType,
-          class EntityType, class MeshType, class Pattern, class... Params>
-[[deprecated]] auto
-createHalo( const ArrayType<Scalar, EntityType, MeshType, Params...>& array,
-            const Pattern& pattern, const int width = -1 )
-{
-    LayoutAdapter<Scalar,
-                  typename ArrayType<Scalar, EntityType, MeshType,
-                                     Params...>::memory_space,
-                  typename ArrayType<Scalar, EntityType, MeshType,
-                                     Params...>::array_layout>
-        adapter{ *array.layout() };
-    return createHalo( pattern, width, adapter );
-}
-//---------------------------------------------------------------------------//
-
 template <std::size_t NumSpaceDim>
 using HaloPattern CAJITA_DEPRECATED = Cabana::Grid::HaloPattern<NumSpaceDim>;
 template <std::size_t NumSpaceDim>
@@ -1061,11 +987,6 @@ using NodeHaloPattern CAJITA_DEPRECATED =
 template <std::size_t NumSpaceDim>
 using FaceHaloPattern CAJITA_DEPRECATED =
     Cabana::Grid::FaceHaloPattern<NumSpaceDim>;
-
-//! Full 3d halo with all 26 adjacent blocks. Backwards compatibility wrapper.
-class [[deprecated]] FullHaloPattern : public NodeHaloPattern<3>
-{
-};
 
 template <class MemorySpace>
 using Halo CAJITA_DEPRECATED = Cabana::Grid::Halo<MemorySpace>;

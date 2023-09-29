@@ -26,7 +26,6 @@ set(HEADERS_PUBLIC
   Cabana_Grid_LocalGrid.hpp
   Cabana_Grid_LocalGrid_impl.hpp
   Cabana_Grid_LocalMesh.hpp
-  Cabana_Grid_ManualPartitioner.hpp
   Cabana_Grid_MpiTraits.hpp
   Cabana_Grid_Parallel.hpp
   Cabana_Grid_ParticleGridDistributor.hpp
@@ -42,7 +41,6 @@ set(HEADERS_PUBLIC
   Cabana_Grid_SparseLocalGrid_impl.hpp
   Cabana_Grid_Splines.hpp
   Cabana_Grid_Types.hpp
-  Cabana_Grid_UniformDimPartitioner.hpp
   )
 
 if(Cabana_ENABLE_HYPRE)
