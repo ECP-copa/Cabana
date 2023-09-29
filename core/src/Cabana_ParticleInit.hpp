@@ -126,7 +126,7 @@ int createParticles(
         pool.free_state( gen );
 
         // No volume information, so pass zero.
-        int create = create_functor( count( 0 ), px, 0.0, particle );
+        int create = create_functor( p, px, 0.0, particle );
 
         // If we created a new particle insert it into the list.
         if ( create )
