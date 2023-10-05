@@ -438,46 +438,17 @@ jobs:
     defaults:
       run:
         shell: bash
+    env:
+      # Needed because FindMPI relies heavily on the compiler wrappers, which aren't used with hipcc
+      MPI_LOCATION: /usr/lib/x86_64-linux-gnu/openmpi/
     strategy:
       matrix:
         cxx: ['hipcc']
         cmake_build_type: ['Debug']
         kokkos_ver: ['4.0.01']
     runs-on: ubuntu-20.04
-    container: docker.io/ecpe4s/e4s-base-rocm:23.05
+    container: ghcr.io/ecp-copa/ci-containers/rocm:latest
     steps:
-      - name: Build fftw
-        run: |
-          wget --quiet http://www.fftw.org/fftw-3.3.8.tar.gz --output-document=fftw.tar.gz
-          mkdir -p fftw
-          tar -xf fftw.tar.gz -C fftw --strip-components=1
-          cd fftw
-          cmake -B build \
-            -D CMAKE_INSTALL_PREFIX=$HOME/fftw \
-            -D CMAKE_BUILD_TYPE=Release \
-            -D ENABLE_FLOAT=ON
-          cmake --build build --parallel 2
-          cmake --install build
-          cmake -B build \
-            -D CMAKE_INSTALL_PREFIX=$HOME/fftw \
-            -D CMAKE_BUILD_TYPE=Release \
-            -D ENABLE_FLOAT=OFF
-          cmake --build build --parallel 2
-          cmake --install build
-      - name: Checkout GTest
-        uses: actions/checkout@v3
-        with:
-          repository: google/googletest
-          ref: release-1.11.0
-          path: gtest
-      - name: Build gtest
-        working-directory: gtest
-        run: |
-          cmake -B build \
-            -DCMAKE_INSTALL_PREFIX=$HOME/gtest \
-            -DCMAKE_BUILD_TYPE=Release
-          cmake --build build --parallel 2
-          cmake --install build
       - name: Checkout kokkos
         uses: actions/checkout@v3
         with:
@@ -504,30 +475,13 @@ jobs:
       - name: Build arborx
         working-directory: arborx
         run: |
-          PATH=$PATH:/opt/rocm
+          # Build without rocthrust (not available in this container)
           cmake -B build \
+            -DARBORX_ENABLE_ROCTHRUST=OFF \
             -DKokkos_ROOT=${HOME}/kokkos \
             -DCMAKE_INSTALL_PREFIX=$HOME/arborx \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
-          cmake --build build --parallel 2
-          cmake --install build
-      - name: Checkout heffte
-        # actions/checkout doesn't work for external repos yet (actions/checkout#447)
-        run: |
-          git clone --depth 1 --branch v2.1.0 https://bitbucket.org/icl/heffte.git heffte
-      - name: Build heffte
-        working-directory: heffte
-        run: |
-          PATH=$PATH:/opt/rocm
-          cmake -B build \
-            -DBUILD_SHARED_LIBS=ON \
-            -DCMAKE_INSTALL_PREFIX=$HOME/heffte \
-            -DCMAKE_PREFIX_PATH="$HOME/fftw" \
-            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
-            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
-            -DHeffte_ENABLE_FFTW=ON \
-            -DHeffte_ENABLE_ROCM=ON
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout ALL
@@ -536,24 +490,31 @@ jobs:
       - name: Build ALL
         working-directory: ALL
         run: |
-          cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/ALL
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=$HOME/ALL \
+            -DCMAKE_CXX_FLAGS="-I${MPI_LOCATION}/include" \
+            -DCMAKE_EXE_LINKER_FLAGS="-L${MPI_LOCATION}/lib -lmpi" \
+            -DCMAKE_SHARED_LINKER_FLAGS="-L${MPI_LOCATION}/lib -lmpi"
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout Cabana
         uses: actions/checkout@v3
       - name: Build Cabana
         run: |
-          PATH=$PATH:/opt/rocm
           cmake -B build \
             -DCMAKE_INSTALL_PREFIX=$HOME/Cabana \
             -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe" \
-            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/gtest;$HOME/arborx;$HOME/heffte;$HOME/ALL" \
+            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/ALL" \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_FLAGS="-Wall -Wextra -pedantic -Werror" \
             -DCabana_ENABLE_TESTING=ON \
             -DCabana_ENABLE_EXAMPLES=ON \
             -DCabana_ENABLE_PERFORMANCE_TESTING=ON \
             -DCabana_PERFORMANCE_EXPECTED_FLOPS=0 \
+            -DCMAKE_CXX_FLAGS="-I${MPI_LOCATION}/include" \
+            -DCMAKE_EXE_LINKER_FLAGS="-L${MPI_LOCATION}/lib -lmpi" \
+            -DCMAKE_SHARED_LINKER_FLAGS="-L${MPI_LOCATION}/lib -lmpi" \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
             -DCMAKE_DISABLE_FIND_PACKAGE_HDF5=ON \
             -DGPU_TARGETS="gfx908"
