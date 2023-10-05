@@ -240,6 +240,7 @@ jobs:
             hdf5: 'HDF5'
             coverage: 'ON'
     runs-on: ubuntu-20.04
+    timeout-minutes: 30
     container:
       image: ghcr.io/ecp-copa/ci-containers/${{ matrix.distro }}
       options: --security-opt seccomp=unconfined
