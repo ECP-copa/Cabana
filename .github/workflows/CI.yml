@@ -370,11 +370,13 @@ jobs:
           else
             cabana_cmake_opts+=( -DCMAKE_DISABLE_FIND_PACKAGE_HDF5=ON )
           fi
-          # FIXME: Add sanitizer for fedora when fixed
+          # FIXME: Add sanitizer for fedora/opensuse when fixed
           if [[ ${SANITIZER} == 'MSAN' ]]; then
             cabana_cmake_opts+=( -DWITH_MSAN=ON )
           elif [[ ${{ matrix.distro }} != *"fedora"* ]]; then
-            cabana_cmake_opts+=( -DWITH_ASAN=ON )
+            if [[ ${{ matrix.distro }} != *"opensuse"* && ${{ matrix.backend }} != OPENMP ]]; then
+              cabana_cmake_opts+=( -DWITH_ASAN=ON )
+            fi
           fi
           #FIXME: Run valgrind for all builds once fixed/suppressed
           [[ ${{ matrix.distro }} == 'ubuntu:latest' || ${{ matrix.distro }} == 'ubuntu:rolling' || ${{ matrix.backend }} == OPENMP || ${{ matrix.cmake_build_type }} == Release ]] && cabana_cmake_opts+=( -DVALGRIND_EXECUTABLE=False )
