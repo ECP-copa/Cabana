@@ -135,7 +135,7 @@ RUN FFTW_URL=http://www.fftw.org/fftw-${FFTW_VERSION}.tar.gz && \
 # Install heffte
 ARG HEFFTE_VERSION=2.3.0
 ENV HEFFTE_DIR=/opt/heffte
-RUN HEFFTE_URL=https://bitbucket.org/icl/heffte/get/v${HEFFTE_VERSION}.tar.gz && \
+RUN HEFFTE_URL=https://github.com/icl-utk-edu/heffte/archive/v${HEFFTE_VERSION}.tar.gz && \
     HEFFTE_ARCHIVE=heffte.tar.gz && \
     SCRATCH_DIR=/scratch && mkdir -p ${SCRATCH_DIR} && cd ${SCRATCH_DIR} && \
     wget --quiet ${HEFFTE_URL} --output-document=${HEFFTE_ARCHIVE} && \

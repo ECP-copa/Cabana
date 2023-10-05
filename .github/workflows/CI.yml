@@ -300,9 +300,11 @@ jobs:
           cmake --install build
       - name: Checkout heffte
         if: ${{ matrix.heffte != 'OFF' }}
-        # actions/checkout doesn't work for external repos yet (actions/checkout#447)
-        run: |
-          git clone --depth 1 --branch v2.3.0 https://bitbucket.org/icl/heffte.git heffte
+        uses: actions/checkout@v3
+        with:
+          repository: icl-utk-edu/heffte
+          ref: v2.3.0
+          path: heffte
       - name: Build heffte
         if: ${{ matrix.heffte != 'OFF' }}
         working-directory: heffte
