@@ -256,7 +256,7 @@ jobs:
         run: |
           ccache -z
       - name: Checkout kokkos
-        uses: actions/checkout@v2.2.0
+        uses: actions/checkout@v3
         with:
           repository: kokkos/kokkos
           ref: ${{ matrix.kokkos_ver }}
@@ -280,7 +280,7 @@ jobs:
           cmake --install build
       - name: Checkout arborx
         if: ${{ matrix.arborx == 'ArborX' }}
-        uses: actions/checkout@v2.2.0
+        uses: actions/checkout@v3
         with:
           repository: arborx/ArborX
           ref: v1.2
@@ -322,7 +322,7 @@ jobs:
           cmake --install build
       - name: Checkout hypre
         if: ${{ matrix.hypre == 'HYPRE' }}
-        uses: actions/checkout@v2.2.0
+        uses: actions/checkout@v3
         with:
           repository: hypre-space/hypre
           ref: v2.22.1
@@ -353,7 +353,7 @@ jobs:
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout Cabana
-        uses: actions/checkout@v2.2.0
+        uses: actions/checkout@v3
       - name: Build Cabana
         env:
           SANITIZER: ${{ matrix.sanitizer }}
@@ -414,7 +414,7 @@ jobs:
         uses: codecov/codecov-action@v1
       - name: Checkout gh-pages
         if: ${{ matrix.doxygen == 'ON' }}
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: 'gh-pages'
           path: 'html'
