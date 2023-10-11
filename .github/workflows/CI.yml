@@ -516,8 +516,8 @@ jobs:
             -DCabana_ENABLE_PERFORMANCE_TESTING=ON \
             -DCabana_PERFORMANCE_EXPECTED_FLOPS=0 \
             -DCMAKE_CXX_FLAGS="-I${MPI_LOCATION}/include" \
-            -DCMAKE_EXE_LINKER_FLAGS="-L${MPI_LOCATION}/lib -lmpi" \
-            -DCMAKE_SHARED_LINKER_FLAGS="-L${MPI_LOCATION}/lib -lmpi" \
+            -DCMAKE_EXE_LINKER_FLAGS="-L${MPI_LOCATION}/lib -lmpi -lopen-pal" \
+            -DCMAKE_SHARED_LINKER_FLAGS="-L${MPI_LOCATION}/lib -lmpi -lopen-pal" \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
             -DCMAKE_DISABLE_FIND_PACKAGE_HDF5=ON \
             -DGPU_TARGETS="gfx908"
