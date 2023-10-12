@@ -13,6 +13,7 @@
 #include <Cabana_Sort.hpp>
 
 #include <cstdio>
+#include <iostream>
 
 //---------------------------------------------------------------------------//
 // Example of an unmanaged AoSoA.
