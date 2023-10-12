@@ -63,11 +63,12 @@ set(HEADERS_IMPL
   impl/Cabana_TypeTraits.hpp
   )
 
-add_library(cabanacore INTERFACE)
-add_library(Core ALIAS cabanacore)
-add_library(Cabana::Core ALIAS cabanacore)
+add_library(Core INTERFACE)
+add_library(Cabana::Core ALIAS Core)
+
 ### FIXME: remove cabanacore in next release.
-add_library(Cabana::cabanacore ALIAS cabanacore)
+add_library(cabanacore INTERFACE)
+target_link_libraries(cabanacore INTERFACE Core)
 if(CMAKE_VERSION VERSION_GREATER 3.17)
   if(NOT Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS)
     set_property(TARGET cabanacore PROPERTY DEPRECATION "NOTE: cabanacore subpackage is now Core. Link to Cabana::Core. Cabana::cabanacore will be removed in a future release.")
@@ -75,35 +76,35 @@ if(CMAKE_VERSION VERSION_GREATER 3.17)
 endif()
 
 # Require minimum of C++17
-set_target_properties(cabanacore PROPERTIES INTERFACE_COMPILE_FEATURES cxx_std_17)
+set_target_properties(Core PROPERTIES INTERFACE_COMPILE_FEATURES cxx_std_17)
 
-target_link_libraries(cabanacore INTERFACE Kokkos::kokkos)
+target_link_libraries(Core INTERFACE Kokkos::kokkos)
 
 if(Cabana_ENABLE_ARBORX)
-  target_link_libraries(cabanacore INTERFACE ArborX::ArborX)
+  target_link_libraries(Core INTERFACE ArborX::ArborX)
 endif()
 
 if(Cabana_ENABLE_SILO)
-  target_link_libraries(cabanacore INTERFACE SILO::silo)
+  target_link_libraries(Core INTERFACE SILO::silo)
 endif()
 
 if(Cabana_ENABLE_HDF5)
   # FIXME: replace with HDF5::HDF5 when requiring newer CMake
-  target_link_libraries(cabanacore INTERFACE ${HDF5_LIBRARIES})
+  target_link_libraries(Core INTERFACE ${HDF5_LIBRARIES})
 endif()
 
 if(Cabana_ENABLE_MPI)
-  target_link_libraries(cabanacore INTERFACE MPI::MPI_CXX)
+  target_link_libraries(Core INTERFACE MPI::MPI_CXX)
 endif()
 
-target_include_directories(cabanacore INTERFACE
+target_include_directories(Core INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   ${HDF5_INCLUDE_DIRS} # FIXME: remove when requiring newer CMake
   )
 
-install(TARGETS cabanacore
+install(TARGETS Core cabanacore
   EXPORT Cabana_Targets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
