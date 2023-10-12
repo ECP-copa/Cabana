@@ -11,21 +11,21 @@
 
 if(NOT Kokkos_ENABLE_SYCL) #FIXME_SYCL
   add_executable(SparseMapPerformance Cabana_Grid_SparseMapPerformance.cpp)
-  target_link_libraries(SparseMapPerformance Grid)
+  target_link_libraries(SparseMapPerformance Cabana::Grid)
 
   add_executable(SparsePartitionerPerformance Cabana_Grid_SparsePartitionerPerformance.cpp)
-  target_link_libraries(SparsePartitionerPerformance Grid)
+  target_link_libraries(SparsePartitionerPerformance Cabana::Grid)
 endif()
 
 add_executable(HaloPerformance Cabana_Grid_HaloPerformance.cpp)
-target_link_libraries(HaloPerformance Grid)
+target_link_libraries(HaloPerformance Cabana::Grid)
 
 add_executable(InterpolationPerformance Cabana_Grid_InterpolationPerformance.cpp)
-target_link_libraries(InterpolationPerformance Grid)
+target_link_libraries(InterpolationPerformance Cabana::Grid)
 
 if(Cabana_ENABLE_HEFFTE)
   add_executable(FastFourierTransformPerformance Cabana_Grid_FastFourierTransformPerformance.cpp)
-  target_link_libraries(FastFourierTransformPerformance Grid)
+  target_link_libraries(FastFourierTransformPerformance Cabana::Grid)
 endif()
 
 if(Cabana_ENABLE_TESTING)
