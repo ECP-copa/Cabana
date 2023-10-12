@@ -10,5 +10,5 @@
 ############################################################################
 
   add_executable(AdvancedOpenMPSlice advanced_slice_openmp.cpp)
-  target_link_libraries(AdvancedOpenMPSlice Core)
+  target_link_libraries(AdvancedOpenMPSlice Cabana::Core)
   add_test(NAME Core_tutorial_05_openmp COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:AdvancedOpenMPSlice>)
