@@ -100,8 +100,12 @@ target_include_directories(cabanacore INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-  ${HDF5_INCLUDE_DIRS} # FIXME: remove when requiring newer CMake
   )
+if(Cabana_ENABLE_HDF5)
+  target_include_directories(cabanacore INTERFACE
+    ${HDF5_INCLUDE_DIRS} # FIXME: remove when requiring newer CMake
+  )
+endif()
 
 install(TARGETS cabanacore
   EXPORT Cabana_Targets
