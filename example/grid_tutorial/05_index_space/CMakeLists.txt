@@ -10,5 +10,5 @@
 ############################################################################
 
 add_executable(IndexSpace index_space_example.cpp)
-target_link_libraries(IndexSpace Grid)
+target_link_libraries(IndexSpace Cabana::Grid)
 add_test(NAME Grid_tutorial_05 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:IndexSpace>)

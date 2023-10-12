@@ -10,5 +10,5 @@
 ############################################################################
 
 add_executable(MeshTypes types_example.cpp)
-target_link_libraries(MeshTypes Grid)
+target_link_libraries(MeshTypes Cabana::Grid)
 add_test(NAME Grid_tutorial_01 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:MeshTypes>)

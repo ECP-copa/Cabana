@@ -10,6 +10,6 @@
 ############################################################################
 
 add_executable(Interpolation interpolation_example.cpp)
-target_link_libraries(Interpolation Grid)
+target_link_libraries(Interpolation Cabana::Grid)
 add_test(NAME Grid_tutorial_15 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:Interpolation> ${MPIEXEC_POSTFLAGS})
 set_tests_properties(Grid_tutorial_15 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
