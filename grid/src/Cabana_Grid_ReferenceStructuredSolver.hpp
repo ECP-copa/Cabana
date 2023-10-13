@@ -29,6 +29,7 @@
 #include <Kokkos_Core.hpp>
 
 #include <array>
+#include <iostream>
 #include <memory>
 #include <numeric>
 #include <set>

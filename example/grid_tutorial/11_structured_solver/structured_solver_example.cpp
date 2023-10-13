@@ -16,6 +16,7 @@
 #include <mpi.h>
 
 #include <array>
+#include <iostream>
 #include <vector>
 
 //---------------------------------------------------------------------------//
