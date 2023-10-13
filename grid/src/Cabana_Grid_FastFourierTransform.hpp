@@ -569,7 +569,7 @@ class HeffteFastFourierTransform
             2 * fftsize );
         _workspace = Kokkos::View<Scalar* [2], memory_space>(
             Kokkos::ViewAllocateWithoutInitializing( "workspace" ),
-	    _fft->size_workspace() );
+            _fft->size_workspace() );
     }
 
     /*!
