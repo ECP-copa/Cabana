@@ -369,7 +369,7 @@ def plotResults(ax, x, y, backend, color):
     ax.plot(x, y, color=color, lw=linewidth, marker='o', linestyle=dash)
 
 # Add plot labels and show/save.
-def createPlot(fig, ax, data: AllData, speedup=False, backend_label=True, cpu_name="", gpu_name=""):
+def createPlot(fig, ax, data: AllData, speedup=False, backend_label=True, cpu_name="", gpu_name="", filename="Cabana_Benchmark.png", dpi=0):
     if speedup:
         min_max = data.minMaxSize()
         if data.grid: min_max = min_max**3
@@ -393,4 +393,6 @@ def createPlot(fig, ax, data: AllData, speedup=False, backend_label=True, cpu_na
 
     fig.tight_layout()
     plt.show()
-    #plt.savefig("Cabana_Benchmark.png", dpi=300)
+
+    if dpi:
+        plt.savefig(filename, dpi=dpi)
