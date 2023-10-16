@@ -102,44 +102,42 @@ $(function() {
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__Interpolation_8hpp.html">Cabana_Grid_Interpolation.hpp</a>&gt;</span></div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__LocalGrid_8hpp.html">Cabana_Grid_LocalGrid.hpp</a>&gt;</span></div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__LocalMesh_8hpp.html">Cabana_Grid_LocalMesh.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__ManualPartitioner_8hpp.html">Cabana_Grid_ManualPartitioner.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__MpiTraits_8hpp.html">Cabana_Grid_MpiTraits.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__Parallel_8hpp.html">Cabana_Grid_Parallel.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__ParticleGridDistributor_8hpp.html">Cabana_Grid_ParticleGridDistributor.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__ParticleInit_8hpp.html">Cabana_Grid_ParticleInit.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__ParticleList_8hpp.html">Cabana_Grid_ParticleList.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__Partitioner_8hpp.html">Cabana_Grid_Partitioner.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__ReferenceStructuredSolver_8hpp.html">Cabana_Grid_ReferenceStructuredSolver.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#ifndef KOKKOS_ENABLE_SYCL </span><span class="comment">// FIXME_SYCL</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__SparseArray_8hpp.html">Cabana_Grid_SparseArray.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__SparseDimPartitioner_8hpp.html">Cabana_Grid_SparseDimPartitioner.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#include &lt;Cabana_Grid_SparseHalo.hpp&gt;</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__SparseIndexSpace_8hpp.html">Cabana_Grid_SparseIndexSpace.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__SparseLocalGrid_8hpp.html">Cabana_Grid_SparseLocalGrid.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__Splines_8hpp.html">Cabana_Grid_Splines.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__Types_8hpp.html">Cabana_Grid_Types.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__UniformDimPartitioner_8hpp.html">Cabana_Grid_UniformDimPartitioner.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="preprocessor">#ifdef Cabana_ENABLE_HYPRE</span></div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__Hypre_8hpp.html">Cabana_Grid_Hypre.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__HypreSemiStructuredSolver_8hpp.html">Cabana_Grid_HypreSemiStructuredSolver.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__HypreStructuredSolver_8hpp.html">Cabana_Grid_HypreStructuredSolver.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="preprocessor">#ifdef Cabana_ENABLE_HEFFTE</span></div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__FastFourierTransform_8hpp.html">Cabana_Grid_FastFourierTransform.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="preprocessor">#ifdef Cabana_ENABLE_SILO</span></div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__SiloParticleOutput_8hpp.html">Cabana_Grid_SiloParticleOutput.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="preprocessor">#ifdef Cabana_ENABLE_ALL</span></div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__LoadBalancer_8hpp.html">Cabana_Grid_LoadBalancer.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="preprocessor">#endif </span><span class="comment">// end CABANA_GRID_HPP</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__MpiTraits_8hpp.html">Cabana_Grid_MpiTraits.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__Parallel_8hpp.html">Cabana_Grid_Parallel.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__ParticleGridDistributor_8hpp.html">Cabana_Grid_ParticleGridDistributor.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__ParticleInit_8hpp.html">Cabana_Grid_ParticleInit.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__ParticleList_8hpp.html">Cabana_Grid_ParticleList.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__Partitioner_8hpp.html">Cabana_Grid_Partitioner.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__ReferenceStructuredSolver_8hpp.html">Cabana_Grid_ReferenceStructuredSolver.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#ifndef KOKKOS_ENABLE_SYCL </span><span class="comment">// FIXME_SYCL</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__SparseArray_8hpp.html">Cabana_Grid_SparseArray.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__SparseDimPartitioner_8hpp.html">Cabana_Grid_SparseDimPartitioner.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#include &lt;Cabana_Grid_SparseHalo.hpp&gt;</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__SparseIndexSpace_8hpp.html">Cabana_Grid_SparseIndexSpace.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__SparseLocalGrid_8hpp.html">Cabana_Grid_SparseLocalGrid.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__Splines_8hpp.html">Cabana_Grid_Splines.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__Types_8hpp.html">Cabana_Grid_Types.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="preprocessor">#ifdef Cabana_ENABLE_HYPRE</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__Hypre_8hpp.html">Cabana_Grid_Hypre.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__HypreSemiStructuredSolver_8hpp.html">Cabana_Grid_HypreSemiStructuredSolver.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__HypreStructuredSolver_8hpp.html">Cabana_Grid_HypreStructuredSolver.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#ifdef Cabana_ENABLE_HEFFTE</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__FastFourierTransform_8hpp.html">Cabana_Grid_FastFourierTransform.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="preprocessor">#ifdef Cabana_ENABLE_SILO</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__SiloParticleOutput_8hpp.html">Cabana_Grid_SiloParticleOutput.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="preprocessor">#ifdef Cabana_ENABLE_ALL</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="preprocessor">#include &lt;<a class="code" href="Cabana__Grid__LoadBalancer_8hpp.html">Cabana_Grid_LoadBalancer.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="preprocessor">#endif </span><span class="comment">// end CABANA_GRID_HPP</span></div>
 <div class="ttc" id="aCabana__Grid__Array_8hpp_html"><div class="ttname"><a href="Cabana__Grid__Array_8hpp.html">Cabana_Grid_Array.hpp</a></div><div class="ttdoc">Grid field arrays.</div></div>
 <div class="ttc" id="aCabana__Grid__BovWriter_8hpp_html"><div class="ttname"><a href="Cabana__Grid__BovWriter_8hpp.html">Cabana_Grid_BovWriter.hpp</a></div><div class="ttdoc">Brick of values (BOV) grid output.</div></div>
 <div class="ttc" id="aCabana__Grid__FastFourierTransform_8hpp_html"><div class="ttname"><a href="Cabana__Grid__FastFourierTransform_8hpp.html">Cabana_Grid_FastFourierTransform.hpp</a></div><div class="ttdoc">Fast Fourier transforms.</div></div>
@@ -155,7 +153,6 @@ $(function() {
 <div class="ttc" id="aCabana__Grid__LoadBalancer_8hpp_html"><div class="ttname"><a href="Cabana__Grid__LoadBalancer_8hpp.html">Cabana_Grid_LoadBalancer.hpp</a></div><div class="ttdoc">Load Balancer.</div></div>
 <div class="ttc" id="aCabana__Grid__LocalGrid_8hpp_html"><div class="ttname"><a href="Cabana__Grid__LocalGrid_8hpp.html">Cabana_Grid_LocalGrid.hpp</a></div><div class="ttdoc">Local grid.</div></div>
 <div class="ttc" id="aCabana__Grid__LocalMesh_8hpp_html"><div class="ttname"><a href="Cabana__Grid__LocalMesh_8hpp.html">Cabana_Grid_LocalMesh.hpp</a></div><div class="ttdoc">Local mesh.</div></div>
-<div class="ttc" id="aCabana__Grid__ManualPartitioner_8hpp_html"><div class="ttname"><a href="Cabana__Grid__ManualPartitioner_8hpp.html">Cabana_Grid_ManualPartitioner.hpp</a></div><div class="ttdoc">Manual multi-node grid partitioner.</div></div>
 <div class="ttc" id="aCabana__Grid__MpiTraits_8hpp_html"><div class="ttname"><a href="Cabana__Grid__MpiTraits_8hpp.html">Cabana_Grid_MpiTraits.hpp</a></div><div class="ttdoc">MPI traits.</div></div>
 <div class="ttc" id="aCabana__Grid__Parallel_8hpp_html"><div class="ttname"><a href="Cabana__Grid__Parallel_8hpp.html">Cabana_Grid_Parallel.hpp</a></div><div class="ttdoc">Logical grid extension of Kokkos parallel iteration.</div></div>
 <div class="ttc" id="aCabana__Grid__ParticleGridDistributor_8hpp_html"><div class="ttname"><a href="Cabana__Grid__ParticleGridDistributor_8hpp.html">Cabana_Grid_ParticleGridDistributor.hpp</a></div><div class="ttdoc">Multi-node particle redistribution using the grid halo.</div></div>
@@ -170,7 +167,6 @@ $(function() {
 <div class="ttc" id="aCabana__Grid__SparseLocalGrid_8hpp_html"><div class="ttname"><a href="Cabana__Grid__SparseLocalGrid_8hpp.html">Cabana_Grid_SparseLocalGrid.hpp</a></div><div class="ttdoc">Sparse Local grid and related implementations.</div></div>
 <div class="ttc" id="aCabana__Grid__Splines_8hpp_html"><div class="ttname"><a href="Cabana__Grid__Splines_8hpp.html">Cabana_Grid_Splines.hpp</a></div><div class="ttdoc">Spline functions.</div></div>
 <div class="ttc" id="aCabana__Grid__Types_8hpp_html"><div class="ttname"><a href="Cabana__Grid__Types_8hpp.html">Cabana_Grid_Types.hpp</a></div><div class="ttdoc">Grid type tags.</div></div>
-<div class="ttc" id="aCabana__Grid__UniformDimPartitioner_8hpp_html"><div class="ttname"><a href="Cabana__Grid__UniformDimPartitioner_8hpp.html">Cabana_Grid_UniformDimPartitioner.hpp</a></div><div class="ttdoc">Uniform multi-node grid partitioner.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

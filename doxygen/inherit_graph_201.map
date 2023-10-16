@@ -1,4 +1,21 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,172,31"/>
-<area shape="rect" id="node2" href="$classCajita_1_1ManualPartitioner.html" title="Backwards compatibility wrapper for 3D ManualBlockPartitioner." alt="" coords="220,5,395,31"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,549,117,575"/>
+<area shape="rect" id="node2" href="$structCabana_1_1Grid_1_1Experimental_1_1is__matching__array.html" title="Matching Array static type checker." alt="" coords="165,5,440,89"/>
+<area shape="rect" id="node3" href="$structCabana_1_1Grid_1_1Experimental_1_1is__sparse__array.html" title="Sparse array static type checker." alt="" coords="207,114,399,154"/>
+<area shape="rect" id="node4" href="$structCabana_1_1Grid_1_1Experimental_1_1is__sparse__array__layout.html" title="Sparse array layout static type checker." alt="" coords="207,179,399,233"/>
+<area shape="rect" id="node5" href="$structCabana_1_1Grid_1_1HypreIsCompatibleWithMemorySpace.html" title="Hypre device compatibility check." alt="" coords="177,258,428,298"/>
+<area shape="rect" id="node6" href="$structCabana_1_1Grid_1_1isCell.html" title=" " alt="" coords="217,323,388,348"/>
+<area shape="rect" id="node7" href="$structCabana_1_1Grid_1_1isEdge.html" title=" " alt="" coords="213,372,392,397"/>
+<area shape="rect" id="node8" href="$structCabana_1_1Grid_1_1isFace.html" title=" " alt="" coords="215,421,391,447"/>
+<area shape="rect" id="node9" href="$structCabana_1_1Grid_1_1isMeshType.html" title=" " alt="" coords="197,471,409,496"/>
+<area shape="rect" id="node10" href="$structCabana_1_1Grid_1_1isNode.html" title=" " alt="" coords="211,520,394,545"/>
+<area shape="rect" id="node11" href="$structCabana_1_1Grid_1_1isNonUniformMesh.html" title=" " alt="" coords="204,570,401,610"/>
+<area shape="rect" id="node12" href="$structCabana_1_1Grid_1_1isSparseMesh.html" title=" " alt="" coords="191,635,415,660"/>
+<area shape="rect" id="node13" href="$structCabana_1_1Grid_1_1isUniformMesh.html" title=" " alt="" coords="185,684,420,709"/>
+<area shape="rect" id="node14" href="$structCabana_1_1Grid_1_1is__array.html" title=" " alt="" coords="224,734,381,774"/>
+<area shape="rect" id="node15" href="$structCabana_1_1Grid_1_1is__array__layout.html" title="Array static type checker." alt="" coords="224,798,381,838"/>
+<area shape="rect" id="node16" href="$structCabana_1_1Grid_1_1is__particle__list__impl.html" title=" " alt="" coords="217,862,388,902"/>
+<area shape="rect" id="node17" href="$structCabana_1_1is__accessible__from.html" title=" " alt="" coords="190,927,415,981"/>
+<area shape="rect" id="node18" href="$structCabana_1_1is__memory__access__tag.html" title="Memory access type checker." alt="" coords="209,1006,397,1046"/>
+<area shape="rect" id="node19" href="$structCabana_1_1is__particle__list__impl.html" title=" " alt="" coords="235,1070,371,1110"/>
 </map>

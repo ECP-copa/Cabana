@@ -527,7 +527,7 @@ $(function() {
 <div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>        _fft = Impl::createHeffteFft3d(</div>
 <div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>            <a class="code hl_variable" href="classCabana_1_1Grid_1_1Experimental_1_1HeffteFastFourierTransform.html#a004ffba81dfe456b3f3c7df8421e39a1">heffte_execution_space</a>, <a class="code hl_typedef" href="classCabana_1_1Grid_1_1Experimental_1_1HeffteFastFourierTransform.html#a540ad704dde209340cf0ea29a39f9ff6">heffte_backend_type</a>{}, inbox, outbox,</div>
 <div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>            layout.<a class="code hl_function" href="classCabana_1_1Grid_1_1ArrayLayout.html#a97ed9a4b3b164f593978e76abaecbe00">localGrid</a>()-&gt;globalGrid().comm(), heffte_params );</div>
-<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>        <span class="keywordtype">int</span> fftsize = std::max( _fft-&gt;size_outbox(), _fft-&gt;size_inbox() );</div>
+<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>        <span class="keywordtype">long</span> <span class="keywordtype">long</span> fftsize = std::max( _fft-&gt;size_outbox(), _fft-&gt;size_inbox() );</div>
 <div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span> </div>
 <div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>        <span class="comment">// Check the size.</span></div>
 <div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>        <span class="keyword">auto</span> entity_space =</div>
@@ -541,7 +541,7 @@ $(function() {
 <div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>            2 * fftsize );</div>
 <div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>        _workspace = Kokkos::View&lt;Scalar* [2], memory_space&gt;(</div>
 <div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>            Kokkos::ViewAllocateWithoutInitializing( <span class="stringliteral">&quot;workspace&quot;</span> ),</div>
-<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>            4 * fftsize );</div>
+<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>            _fft-&gt;size_workspace() );</div>
 <div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>    }</div>
 <div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span> </div>
 <div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> Array_t, <span class="keyword">class</span> ScaleType&gt;</div>
