@@ -10,7 +10,6 @@
  ****************************************************************************/
 
 #include <Cabana_Grid_GlobalGrid.hpp>
-#include <Cabana_Grid_ManualPartitioner.hpp>
 #include <Cabana_Grid_Partitioner.hpp>
 #include <Cabana_Grid_SparseDimPartitioner.hpp>
 #include <Kokkos_Core.hpp>

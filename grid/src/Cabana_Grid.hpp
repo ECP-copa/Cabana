@@ -28,7 +28,6 @@
 #include <Cabana_Grid_Interpolation.hpp>
 #include <Cabana_Grid_LocalGrid.hpp>
 #include <Cabana_Grid_LocalMesh.hpp>
-#include <Cabana_Grid_ManualPartitioner.hpp>
 #include <Cabana_Grid_MpiTraits.hpp>
 #include <Cabana_Grid_Parallel.hpp>
 #include <Cabana_Grid_ParticleGridDistributor.hpp>
@@ -45,7 +44,6 @@
 #endif
 #include <Cabana_Grid_Splines.hpp>
 #include <Cabana_Grid_Types.hpp>
-#include <Cabana_Grid_UniformDimPartitioner.hpp>
 
 #ifdef Cabana_ENABLE_HYPRE
 #include <Cabana_Grid_Hypre.hpp>
