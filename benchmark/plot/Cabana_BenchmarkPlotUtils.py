@@ -128,6 +128,8 @@ class DataPointInterpolation(DataPoint):
 
 # All performance results from multiple files.
 class AllData:
+    mpi = False
+
     def __init__(self, filelist, grid=False):
         self.grid = grid
         self.results = []
@@ -213,6 +215,8 @@ class AllData:
 
 # All MPI performance results from multiple files.
 class AllDataMPI(AllData):
+    mpi = True
+
     def _endOfFile(self, l):
         return l >= self.total
 
@@ -239,6 +243,8 @@ class AllDataMPI(AllData):
 
 # All MPI performance results from multiple files.
 class AllDataGrid(AllData):
+    mpi = True
+
     def _endOfFile(self, l):
         return l > self.total
 
@@ -264,6 +270,8 @@ class AllDataGrid(AllData):
 
 # All p2g/g2p performance results from multiple files.
 class AllDataInterpolation(AllData):
+    mpi = True
+
     def _getDescription(self, line):
         return DataDescriptionInterpolation(line)
 
@@ -381,8 +389,11 @@ def createPlot(fig, ax, data: AllData, speedup=False, backend_label=True, cpu_na
         ax.set_ylabel("Speedup")
     else:
         ax.set_ylabel("Time (seconds)")
-    if data.grid:
-        ax.set_xlabel("Number of grid points")
+
+    if data.grid: # Always uses MPI
+        ax.set_xlabel("Number of grid points per rank")
+    elif data.mpi:
+        ax.set_xlabel("Number of particles per rank")
     else:
         ax.set_xlabel("Number of particles")
 
