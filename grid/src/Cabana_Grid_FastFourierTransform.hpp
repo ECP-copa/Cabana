@@ -555,7 +555,7 @@ class HeffteFastFourierTransform
         _fft = Impl::createHeffteFft3d(
             heffte_execution_space, heffte_backend_type{}, inbox, outbox,
             layout.localGrid()->globalGrid().comm(), heffte_params );
-        int fftsize = std::max( _fft->size_outbox(), _fft->size_inbox() );
+        long long fftsize = std::max( _fft->size_outbox(), _fft->size_inbox() );
 
         // Check the size.
         auto entity_space =
@@ -569,7 +569,7 @@ class HeffteFastFourierTransform
             2 * fftsize );
         _workspace = Kokkos::View<Scalar* [2], memory_space>(
             Kokkos::ViewAllocateWithoutInitializing( "workspace" ),
-            4 * fftsize );
+            _fft->size_workspace() );
     }
 
     /*!
