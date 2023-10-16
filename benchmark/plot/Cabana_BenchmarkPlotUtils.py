@@ -223,7 +223,7 @@ class AllDataMPI(AllData):
     def _readFile(self, filename):
         with open(filename) as f:
             txt = f.readlines()
-        size = int(txt[4].split()[-1])
+        size = int(txt[5].split()[-1])
 
         l = 8
         self.total = len(txt[l:])
