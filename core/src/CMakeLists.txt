@@ -103,7 +103,7 @@ target_include_directories(Core INTERFACE
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   )
 if(Cabana_ENABLE_HDF5)
-  target_include_directories(cabanacore INTERFACE
+  target_include_directories(Core INTERFACE
     ${HDF5_INCLUDE_DIRS} # FIXME: remove when requiring newer CMake
   )
 endif()
