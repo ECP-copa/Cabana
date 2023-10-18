@@ -41,19 +41,6 @@ class DataDescriptionMPI(DataDescription):
         self.category = details[-1].strip()
         self.params = details[3:-1]
 
-# Header description for one series of runs for p2g/g2p.
-class DataDescriptionInterpolation(DataDescription):
-    # Purposely not calling base __init__
-    def __init__(self, label):
-        #Example: device_p2g_scalar_value_16
-        self.label = label
-        details = label.split("_")
-        self.backend = details[0].strip()
-        self.type = "interpolation"
-        self.category = details[1].strip()
-        self.params = ["_".join(details[2:4]).strip()]
-        self.size = details[-1]
-
 # Create a header description to compare results against.
 class ManualDataDescription:
     def __init__(self, backend, type, category, params):
@@ -111,20 +98,6 @@ class DataPointGrid(DataPoint):
         self.num_rank = int(results[0])
         self.size = int(float(results[1]))
         self._initTimeResults(results[2:])
-
-# Single p2g/g2p result (single line in results file).
-class DataPointInterpolation(DataPoint):
-    # Purposely not calling base __init__
-    def __init__(self, description, line):
-        # Deep copy necessary because unique parameters are used per result (ppc)
-        self.description = deepcopy(description)
-
-        #ppc min max ave
-        self.line = line
-        results = line.split()
-        self.size = int(float(description.size))
-        self._initTimeResults(results[1:])
-        self.description.params.append(results[0])
 
 # All performance results from multiple files.
 class AllData:
@@ -268,16 +241,6 @@ class AllDataGrid(AllData):
             else:
                 l += 1
 
-# All p2g/g2p performance results from multiple files.
-class AllDataInterpolation(AllData):
-    mpi = True
-
-    def _getDescription(self, line):
-        return DataDescriptionInterpolation(line)
-
-    def _getData(self, descr, line):
-        return DataPointInterpolation(descr, line)
-
 # All performance results for a single set of parameters.
 class AllSizesSingleResult:
     def __init__(self, all_data: AllData, descr: ManualDataDescription):
@@ -304,11 +267,8 @@ def getData(filelist):
     if "Cabana Comm" in txt:
         return AllDataMPI(filelist)
     # FIXME: Cajita backwards compatibility
-    elif ("Cajita Halo" in txt or "Cajita FFT" in txt or 
-          "Cabana::Grid Halo" in txt or "Cabana::Grid FFT" in txt):
+    elif ("Cajita" in txt or "Cabana::Grid " in txt):
         return AllDataGrid(filelist, grid=True)
-    elif "g2p" in txt:
-        return AllDataInterpolation(filelist, grid=True)
 
     return AllData(filelist)
 
