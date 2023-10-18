@@ -214,7 +214,7 @@ class AllDataMPI(AllData):
             else:
                 l += 1
 
-# All MPI performance results from multiple files.
+# All Grid performance results from multiple files.
 class AllDataGrid(AllData):
     mpi = True
 
@@ -250,6 +250,8 @@ class AllSizesSingleResult:
             if self._compareAll(d.description, descr):
                 self.sizes = np.append(self.sizes, d.size)
                 self.times = np.append(self.times, d.ave)
+
+    def sort(self):
         indices = np.argsort(self.sizes)
         self.sizes = self.sizes[indices]
         self.times = self.times[indices]
