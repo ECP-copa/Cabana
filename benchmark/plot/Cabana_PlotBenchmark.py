@@ -15,7 +15,7 @@ from  matplotlib import pyplot as plt
 from Cabana_BenchmarkPlotUtils import *
 
 # Plot all results in a list of files.
-def plotAll(ax, data):
+def plotAll(ax, data, sort=False):
     color_dict = getColors(data)
     for backend in data.getAllBackends():
         for cat in data.getAllCategories():
@@ -23,6 +23,8 @@ def plotAll(ax, data):
                 for param in data.getAllParams():
                     desc = ManualDataDescription(backend, type, cat, param)
                     result = AllSizesSingleResult(data, desc)
+                    if sort:
+                        result.sort()
 
                     sizes = scaleSizes(result.sizes, data.grid)
                     plotResults(ax, sizes, result.times, backend, color_dict[cat])
