@@ -15,7 +15,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(Cabana LANGUAGES CXX)
-set(PROJECT_VERSION "1.0-dev")
+set(PROJECT_VERSION "0.7.0-dev")
 
 # If the user doesn't provide a build type default to release
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CXX_FLAGS)
@@ -265,7 +265,7 @@ configure_file(cmake/Cabana.pc.cmakein Cabana.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Cabana.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 write_basic_package_version_file("CabanaConfigVersion.cmake"
-  VERSION ${PROJECT_VERSION} COMPATIBILITY ExactVersion)
+  VERSION ${PROJECT_VERSION} COMPATIBILITY SameMajorVersion)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CabanaConfig.cmakein
   ${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake @ONLY)
