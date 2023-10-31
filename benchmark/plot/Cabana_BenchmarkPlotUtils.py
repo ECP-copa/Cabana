@@ -19,14 +19,25 @@ from copy import deepcopy
 class DataDescription:
     def __init__(self, label):
         #Example: serial_neigh_iteration_3_1
+        #         host_host_halo_gather_0
         self.label = label
         details = label.split("_")
-        self.backend = details[0].strip()
-        self.type = details[1].strip()
-        self.category = details[2].strip()
+        index = 1
+        # MPI has two backends
+        if "host_host" in label or "device_device" in label or "host_device" in label:
+            self.backend = "_".join(details[0:2]).strip()
+            index += 1
+        else:
+            self.backend = details[0].strip()
+        self.type = details[index].strip()
+
+        index += 1
+        self.category = details[index].strip()
         if self.category == "iteration": self.category = "iterate"
+
+        index += 1
         self.params = []
-        for p in details[3:]:
+        for p in details[index:]:
             self.params.append(p.strip())
 
 # Header description for one series of runs with MPI.
@@ -38,6 +49,7 @@ class DataDescriptionMPI(DataDescription):
         details = label.split("_")
         self.backend = "_".join(details[0:2]).strip()
         self.type = details[2].strip()
+        # This is the only difference that still requires this separate class.
         self.category = details[-1].strip()
         self.params = details[3:-1]
 
@@ -230,6 +242,7 @@ class AllDataGrid(AllData):
         while not self._endOfFile(l):
             if self._emptyLine(txt[l]):
                 l += 1
+                print(txt[l])
                 description = DataDescription(txt[l])
             elif self._headerLine(txt[l]):
                 l += 1
