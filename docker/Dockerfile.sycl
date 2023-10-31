@@ -29,7 +29,7 @@ RUN KEYDUMP_URL=https://cloud.cees.ornl.gov/download && \
     gpg --verify ${KEYDUMP_FILE}.sig ${KEYDUMP_FILE} && \
     rm ${KEYDUMP_FILE}*
 
-ARG CMAKE_VERSION=3.19.0
+ARG CMAKE_VERSION=3.26.3
 ENV CMAKE_DIR=/opt/cmake
 RUN CMAKE_KEY=2D2CEF1034921684 && \
     CMAKE_URL=https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION} && \
@@ -39,36 +39,37 @@ RUN CMAKE_KEY=2D2CEF1034921684 && \
     wget --quiet ${CMAKE_URL}/${CMAKE_SHA256}.asc && \
     wget --quiet ${CMAKE_URL}/${CMAKE_SCRIPT} && \
     gpg --verify ${CMAKE_SHA256}.asc ${CMAKE_SHA256} && \
-    grep ${CMAKE_SCRIPT} ${CMAKE_SHA256} | sha256sum --check && \
+    grep -i ${CMAKE_SCRIPT} ${CMAKE_SHA256} | sed -e s/linux/Linux/ | sha256sum --check && \
     mkdir -p ${CMAKE_DIR} && \
     sh ${CMAKE_SCRIPT} --skip-license --prefix=${CMAKE_DIR} && \
     rm cmake*
 ENV PATH=${CMAKE_DIR}/bin:$PATH
 
-ENV SYCL_DIR=/opt/sycl
-RUN SYCL_VERSION=20220112 && \
-    SYCL_ARCHIVE=${SYCL_VERSION}.tar.gz && \
-    SYCL_URL=https://github.com/intel/llvm/archive/sycl-nightly/${SYCL_ARCHIVE} && \
-    export CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda && \
-    export CUDA_LIB_PATH=${CUDA_TOOLKIT_ROOT_DIR}/lib64/stubs && \
-    SCRATCH_DIR=/scratch && mkdir -p ${SCRATCH_DIR} && cd ${SCRATCH_DIR} && \
-    wget --quiet ${SYCL_URL} && \
-    mkdir llvm && \
-    tar -xf ${SYCL_ARCHIVE} -C llvm --strip-components=1 && \
-    cd llvm && \
-    python3 buildbot/configure.py --cuda && \
-    python3 buildbot/compile.py && \
-    mkdir -p ${SYCL_DIR} && \
-    mv ${SCRATCH_DIR}/llvm/build/install/* ${SYCL_DIR} && \
-    echo "${SYCL_DIR}/lib" > /etc/ld.so.conf.d/sycl.conf && ldconfig && \
-    rm -rf ${SCRATCH_DIR}
-ENV PATH=${SYCL_DIR}/bin:$PATH
+# Install the dpcpp compiler, see
+# https://www.intel.com/content/www/us/en/docs/vtune-profiler/installation-guide/2023-1/package-managers.html
+ARG DPCPP_VERSION=2023.0.0
+RUN wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB && \
+    apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB && \
+    echo "deb https://apt.repos.intel.com/oneapi all main" | tee /etc/apt/sources.list.d/oneAPI.list && \
+    apt-get update -o Dir::Etc::sourcelist="sources.list.d/oneAPI.list" -o APT::Get::List-Cleanup="0" && \
+    apt-get install -y intel-oneapi-compiler-dpcpp-cpp-${DPCPP_VERSION} && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+ENV DPCPP=/opt/intel/oneapi/compiler/${DPCPP_VERSION}/linux/bin-llvm/clang++
+
+# Install Codeplay's oneAPI for NVIDIA GPUs, see
+# https://developer.codeplay.com/products/oneapi/nvidia/2023.0.0/guides/get-started-guide-nvidia
+RUN wget https://cloud.cees.ornl.gov/download/oneapi-for-nvidia-gpus-${DPCPP_VERSION}-linux.sh && \
+    chmod +x oneapi-for-nvidia-gpus-${DPCPP_VERSION}-linux.sh && \
+    ./oneapi-for-nvidia-gpus-${DPCPP_VERSION}-linux.sh -y && \
+    rm oneapi-for-nvidia-gpus-${DPCPP_VERSION}-linux.sh
 
 # Install Kokkos
 ARG KOKKOS_VERSION=3.7.02
 ARG KOKKOS_OPTIONS="-DKokkos_ENABLE_SYCL=ON -DCMAKE_CXX_FLAGS=-Wno-unknown-cuda-version -DKokkos_ENABLE_UNSUPPORTED_ARCHS=ON -DKokkos_ARCH_VOLTA70=ON -DCMAKE_CXX_STANDARD=17"
 ENV KOKKOS_DIR=/opt/kokkos
-RUN KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz && \
+RUN . /opt/intel/oneapi/setvars.sh --include-intel-llvm && \
+    KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz && \
     KOKKOS_ARCHIVE=kokkos-${KOKKOS_HASH}.tar.gz && \
     SCRATCH_DIR=/scratch && mkdir -p ${SCRATCH_DIR} && cd ${SCRATCH_DIR} && \
     wget --quiet ${KOKKOS_URL} --output-document=${KOKKOS_ARCHIVE} && \
@@ -76,6 +77,11 @@ RUN KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz
     tar -xf ${KOKKOS_ARCHIVE} -C kokkos --strip-components=1 && \
     cd kokkos && \
     mkdir -p build && cd build && \
-    cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=${KOKKOS_DIR} -D CMAKE_CXX_COMPILER=clang++ ${KOKKOS_OPTIONS} .. && \
+    cmake \
+        -D CMAKE_BUILD_TYPE=Release \
+        -D CMAKE_INSTALL_PREFIX=${KOKKOS_DIR} \
+        -D CMAKE_CXX_COMPILER=${DPCPP} \
+        ${KOKKOS_OPTIONS} \
+        .. && \
     make -j${NPROCS} install && \
     rm -rf ${SCRATCH_DIR}
