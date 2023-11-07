@@ -833,11 +833,17 @@ class NeighborList<
     using list_type =
         VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR, BuildTag>;
 
-    //! Get the total number of neighbors (maximum size of CSR list).
+    //! Get the maximum number of neighbors across all particles.
     KOKKOS_INLINE_FUNCTION
     static std::size_t maxNeighbor( const list_type& list )
     {
-        return list._data.neighbors.extent( 0 );
+        std::size_t max_n = 0;
+        std::size_t num_p = list._data.counts.size();
+        // Loop across all particles to find maximum number of neighbors.
+        for ( std::size_t p = 0; p < num_p; p++ )
+            if ( numNeighbor( list, p ) > max_n )
+                max_n = numNeighbor( list, p );
+        return max_n;
     }
 
     //! Get the number of neighbors for a given particle index.
@@ -877,7 +883,18 @@ class NeighborList<
     KOKKOS_INLINE_FUNCTION
     static std::size_t maxNeighbor( const list_type& list )
     {
-        return list._data.neighbors.extent( 1 );
+        // Size of the allocated memory (list._data.neighbors.extent( 1 )) would
+        // give maximum neighbors, but we keep an overallocation in most cases
+        // (making the size incorrect).
+        std::size_t max_n = 0;
+        std::size_t num_p = list._data.counts.size();
+        // Loop across all particles to find maximum number of neighbors.
+        for ( std::size_t p = 0; p < num_p; p++ )
+        {
+            if ( numNeighbor( list, p ) > max_n )
+                max_n = numNeighbor( list, p );
+        }
+        return max_n;
     }
 
     //! Get the number of neighbors for a given particle index.
