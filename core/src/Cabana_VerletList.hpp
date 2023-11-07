@@ -833,6 +833,14 @@ class NeighborList<
     using list_type =
         VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR, BuildTag>;
 
+    //! Get the total number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static std::size_t totalNeighbor( const list_type& list )
+    {
+        // Size of the allocated memory gives total neighbors.
+        return list._data.neighbors.extent( 0 );
+    }
+
     //! Get the maximum number of neighbors across all particles.
     KOKKOS_INLINE_FUNCTION
     static std::size_t maxNeighbor( const list_type& list )
@@ -878,6 +886,18 @@ class NeighborList<
     //! Neighbor list type.
     using list_type =
         VerletList<MemorySpace, AlgorithmTag, VerletLayout2D, BuildTag>;
+
+    //! Get the total number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static std::size_t totalNeighbor( const list_type& list )
+    {
+        std::size_t total_n = 0;
+        std::size_t num_p = list._data.counts.size();
+        // Sum neighbors across all particles.
+        for ( std::size_t p = 0; p < num_p; p++ )
+            total_n += numNeighbor( list, p );
+        return total_n;
+    }
 
     //! Get the maximum number of neighbors per particle.
     KOKKOS_INLINE_FUNCTION

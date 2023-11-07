@@ -59,6 +59,10 @@ class NeighborList
     //! Kokkos memory space.
     using memory_space = typename NeighborListType::memory_space;
 
+    //! Get the total number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static std::size_t totalNeighbor( const NeighborListType& list );
+
     //! Get the maximum number of neighbors across all particles.
     KOKKOS_INLINE_FUNCTION
     static std::size_t maxNeighbor( const NeighborListType& list );
