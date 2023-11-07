@@ -536,6 +536,32 @@ class NeighborList<Experimental::CrsGraph<MemorySpace, Tag>>
   public:
     //! Kokkos memory space.
     using memory_space = MemorySpace;
+
+    //! Get the total number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static size_type totalNeighbor( crs_graph_type const& crs_graph )
+    {
+        std::size_t total_n = 0;
+        std::size_t num_p = crs_graph.total;
+        // Sum neighbors across all particles.
+        for ( std::size_t p = 0; p < num_p; p++ )
+            total_n += numNeighbor( crs_graph, p );
+        return total_n;
+    }
+
+    //! Get the maximum number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static size_type maxNeighbor( crs_graph_type const& crs_graph )
+    {
+        size_type max_n = 0;
+        size_type num_p = crs_graph.total;
+        // Loop across all particles to find maximum number of neighbors.
+        for ( size_type p = 0; p < num_p; p++ )
+            if ( numNeighbor( crs_graph, p ) > max_n )
+                max_n = numNeighbor( crs_graph, p );
+        return max_n;
+    }
+
     //! Get the number of neighbors for a given particle index.
     static KOKKOS_FUNCTION size_type
     numNeighbor( crs_graph_type const& crs_graph, size_type p )
@@ -568,6 +594,32 @@ class NeighborList<Experimental::Dense<MemorySpace, Tag>>
   public:
     //! Kokkos memory space.
     using memory_space = MemorySpace;
+
+    //! Get the total number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static size_type totalNeighbor( specialization_type const& d )
+    {
+        std::size_t total_n = 0;
+        std::size_t num_p = d.total;
+        // Sum neighbors across all particles.
+        for ( std::size_t p = 0; p < num_p; p++ )
+            total_n += numNeighbor( d, p );
+        return total_n;
+    }
+
+    //! Get the maximum number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static size_type maxNeighbor( specialization_type const& d )
+    {
+        size_type max_n = 0;
+        size_type num_p = d.total;
+        // Loop across all particles to find maximum number of neighbors.
+        for ( size_type p = 0; p < num_p; p++ )
+            if ( numNeighbor( d, p ) > max_n )
+                max_n = numNeighbor( d, p );
+        return max_n;
+    }
+
     //! Get the number of neighbors for a given particle index.
     static KOKKOS_FUNCTION size_type numNeighbor( specialization_type const& d,
                                                   size_type p )
