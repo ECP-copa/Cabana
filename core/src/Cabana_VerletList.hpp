@@ -849,13 +849,8 @@ class NeighborList<
     KOKKOS_INLINE_FUNCTION
     static std::size_t maxNeighbor( const list_type& list )
     {
-        std::size_t max_n = 0;
         std::size_t num_p = list._data.counts.size();
-        // Loop across all particles to find maximum number of neighbors.
-        for ( std::size_t p = 0; p < num_p; p++ )
-            if ( numNeighbor( list, p ) > max_n )
-                max_n = numNeighbor( list, p );
-        return max_n;
+        return Impl::maxNeighbor( list, num_p );
     }
 
     //! Get the number of neighbors for a given particle index.
@@ -895,12 +890,8 @@ class NeighborList<
     KOKKOS_INLINE_FUNCTION
     static std::size_t totalNeighbor( const list_type& list )
     {
-        std::size_t total_n = 0;
         std::size_t num_p = list._data.counts.size();
-        // Sum neighbors across all particles.
-        for ( std::size_t p = 0; p < num_p; p++ )
-            total_n += numNeighbor( list, p );
-        return total_n;
+        return Impl::totalNeighbor( list, num_p );
     }
 
     //! Get the maximum number of neighbors per particle.

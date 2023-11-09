@@ -87,6 +87,33 @@ class NeighborList
 
 //---------------------------------------------------------------------------//
 
+namespace Impl
+{
+//! Iterate to get the total number of neighbors.
+template <class ListType>
+KOKKOS_INLINE_FUNCTION std::size_t
+totalNeighbor( const ListType& list, const std::size_t num_particles )
+{
+    std::size_t total_n = 0;
+    // Sum neighbors across all particles.
+    for ( std::size_t p = 0; p < num_particles; p++ )
+        total_n += NeighborList<ListType>::numNeighbor( list, p );
+    return total_n;
+}
+
+//! Iterate to find the maximum number of neighbors.
+template <class ListType>
+KOKKOS_INLINE_FUNCTION std::size_t
+maxNeighbor( const ListType& list, const std::size_t num_particles )
+{
+    std::size_t max_n = 0;
+    for ( std::size_t p = 0; p < num_particles; p++ )
+        if ( NeighborList<ListType>::numNeighbor( list, p ) > max_n )
+            max_n = NeighborList<ListType>::numNeighbor( list, p );
+    return max_n;
+}
+} // namespace Impl
+
 } // end namespace Cabana
 
 #endif // end CABANA_NEIGHBORLIST_HPP
