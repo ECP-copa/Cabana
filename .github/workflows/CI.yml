@@ -416,7 +416,7 @@ jobs:
           ccache -s
       - name: Upload Report to codecov.io
         if: ${{ matrix.coverage == 'ON' }}
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
       - name: Checkout gh-pages
         if: ${{ matrix.doxygen == 'ON' }}
         uses: actions/checkout@v3
