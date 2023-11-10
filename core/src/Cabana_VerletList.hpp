@@ -91,6 +91,10 @@ struct VerletListData<MemorySpace, VerletLayout2D>
     //! Neighbor list.
     Kokkos::View<int**, memory_space> neighbors;
 
+    //! Actual maximum neighbors per particle (potentially less than allocated
+    //! space).
+    std::size_t max_n;
+
     //! Add a neighbor to the list.
     KOKKOS_INLINE_FUNCTION
     void addNeighbor( const int pid, const int nid ) const
@@ -244,8 +248,8 @@ struct VerletListBuilder
     bool refill;
     bool count;
 
-    // Maximum neighbors per particle
-    std::size_t max_n;
+    // Maximum allocated neighbors per particle
+    std::size_t alloc_n;
 
     // Constructor.
     VerletListBuilder( PositionSlice slice, const std::size_t begin,
@@ -259,7 +263,7 @@ struct VerletListBuilder
         , pid_end( end )
         , cell_stencil( neighborhood_radius, cell_size_ratio, grid_min,
                         grid_max )
-        , max_n( max_neigh )
+        , alloc_n( max_neigh )
     {
         count = true;
         refill = false;
@@ -438,13 +442,13 @@ struct VerletListBuilder
 
     void initCounts( VerletLayout2D )
     {
-        if ( max_n > 0 )
+        if ( alloc_n > 0 )
         {
             count = false;
 
             _data.neighbors = Kokkos::View<int**, memory_space>(
                 Kokkos::ViewAllocateWithoutInitializing( "neighbors" ),
-                _data.counts.size(), max_n );
+                _data.counts.size(), alloc_n );
         }
     }
 
@@ -481,8 +485,8 @@ struct VerletListBuilder
     {
         // Calculate the maximum number of neighbors.
         auto counts = _data.counts;
-        int max_num_neighbor = 0;
-        Kokkos::Max<int> max_reduce( max_num_neighbor );
+        int max;
+        Kokkos::Max<int> max_reduce( max );
         Kokkos::parallel_reduce(
             "Cabana::VerletListBuilder::reduce_max",
             Kokkos::RangePolicy<execution_space>( 0, _data.counts.size() ),
@@ -492,16 +496,16 @@ struct VerletListBuilder
             },
             max_reduce );
         Kokkos::fence();
+        _data.max_n = static_cast<std::size_t>( max );
 
         // Reallocate the neighbor list if previous size is exceeded.
-        if ( count or ( std::size_t )
-                              max_num_neighbor > _data.neighbors.extent( 1 ) )
+        if ( count or _data.max_n > _data.neighbors.extent( 1 ) )
         {
             refill = true;
             Kokkos::deep_copy( _data.counts, 0 );
             _data.neighbors = Kokkos::View<int**, memory_space>(
                 Kokkos::ViewAllocateWithoutInitializing( "neighbors" ),
-                _data.counts.size(), max_num_neighbor );
+                _data.counts.size(), _data.max_n );
         }
     }
 
@@ -833,11 +837,20 @@ class NeighborList<
     using list_type =
         VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR, BuildTag>;
 
-    //! Get the total number of neighbors (maximum size of CSR list).
+    //! Get the total number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static std::size_t totalNeighbor( const list_type& list )
+    {
+        // Size of the allocated memory gives total neighbors.
+        return list._data.neighbors.extent( 0 );
+    }
+
+    //! Get the maximum number of neighbors across all particles.
     KOKKOS_INLINE_FUNCTION
     static std::size_t maxNeighbor( const list_type& list )
     {
-        return list._data.neighbors.extent( 0 );
+        std::size_t num_p = list._data.counts.size();
+        return Impl::maxNeighbor( list, num_p );
     }
 
     //! Get the number of neighbors for a given particle index.
@@ -873,11 +886,20 @@ class NeighborList<
     using list_type =
         VerletList<MemorySpace, AlgorithmTag, VerletLayout2D, BuildTag>;
 
+    //! Get the total number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static std::size_t totalNeighbor( const list_type& list )
+    {
+        std::size_t num_p = list._data.counts.size();
+        return Impl::totalNeighbor( list, num_p );
+    }
+
     //! Get the maximum number of neighbors per particle.
     KOKKOS_INLINE_FUNCTION
     static std::size_t maxNeighbor( const list_type& list )
     {
-        return list._data.neighbors.extent( 1 );
+        // Stored during neighbor search.
+        return list._data.max_n;
     }
 
     //! Get the number of neighbors for a given particle index.

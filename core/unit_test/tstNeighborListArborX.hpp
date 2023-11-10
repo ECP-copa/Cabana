@@ -290,13 +290,13 @@ void testNeighborArborXParallelReduce()
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, verlet_list_full_test ) { testArborXListFull(); }
+TEST( TEST_CATEGORY, neighbor_list_full_test ) { testArborXListFull(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, verlet_list_half_test ) { testArborXListHalf(); }
+TEST( TEST_CATEGORY, neighbor_list_half_test ) { testArborXListHalf(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, verlet_list_full_range_test )
+TEST( TEST_CATEGORY, neighbor_list_full_range_test )
 {
     testArborXListFullPartialRange();
 }

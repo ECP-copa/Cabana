@@ -245,7 +245,7 @@ struct CrsGraph
     Kokkos::View<int*, MemorySpace> row_ptr;
     //! Neighbor offset shift.
     typename MemorySpace::size_type shift;
-    //! Total neighbors.
+    //! Total particles.
     typename MemorySpace::size_type total;
 };
 
@@ -368,7 +368,7 @@ struct Dense
     Kokkos::View<int**, MemorySpace> val;
     //! Neighbor offset shift.
     typename MemorySpace::size_type shift;
-    //! Total neighbors.
+    //! Total particles.
     typename MemorySpace::size_type total;
 };
 
@@ -536,6 +536,21 @@ class NeighborList<Experimental::CrsGraph<MemorySpace, Tag>>
   public:
     //! Kokkos memory space.
     using memory_space = MemorySpace;
+
+    //! Get the total number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static size_type totalNeighbor( crs_graph_type const& crs_graph )
+    {
+        return Impl::totalNeighbor( crs_graph, crs_graph.total );
+    }
+
+    //! Get the maximum number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static size_type maxNeighbor( crs_graph_type const& crs_graph )
+    {
+        return Impl::maxNeighbor( crs_graph, crs_graph.total );
+    }
+
     //! Get the number of neighbors for a given particle index.
     static KOKKOS_FUNCTION size_type
     numNeighbor( crs_graph_type const& crs_graph, size_type p )
@@ -568,6 +583,21 @@ class NeighborList<Experimental::Dense<MemorySpace, Tag>>
   public:
     //! Kokkos memory space.
     using memory_space = MemorySpace;
+
+    //! Get the total number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static size_type totalNeighbor( specialization_type const& d )
+    {
+        return Impl::totalNeighbor( d, d.total );
+    }
+
+    //! Get the maximum number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static size_type maxNeighbor( specialization_type const& d )
+    {
+        return Impl::maxNeighbor( d, d.total );
+    }
+
     //! Get the number of neighbors for a given particle index.
     static KOKKOS_FUNCTION size_type numNeighbor( specialization_type const& d,
                                                   size_type p )

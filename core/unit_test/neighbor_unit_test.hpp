@@ -30,6 +30,8 @@ struct TestNeighborList
 {
     Kokkos::View<int*, Params...> counts;
     Kokkos::View<int**, Params...> neighbors;
+    int max;
+    int total;
 };
 
 template <class KokkosMemorySpace>
@@ -43,6 +45,8 @@ createTestListHostCopy( const TestNeighborList<KokkosMemorySpace>& test_list )
     Kokkos::resize( list_copy.neighbors, test_list.neighbors.extent( 0 ),
                     test_list.neighbors.extent( 1 ) );
     Kokkos::deep_copy( list_copy.neighbors, test_list.neighbors );
+    list_copy.total = test_list.total;
+    list_copy.max = test_list.max;
     return list_copy;
 }
 
@@ -56,15 +60,23 @@ copyListToHost( const ListType& list, const int num_particle, const int max_n )
         Kokkos::View<int*, TEST_MEMSPACE>( "counts", num_particle );
     list_copy.neighbors =
         Kokkos::View<int**, TEST_MEMSPACE>( "neighbors", num_particle, max_n );
-    Kokkos::parallel_for(
+    Kokkos::Max<int> max_reduce( list_copy.max );
+    // Use max here because every rank should return the same value.
+    Kokkos::Max<int> total_reduce( list_copy.total );
+    Kokkos::parallel_reduce(
         "copy list", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, num_particle ),
-        KOKKOS_LAMBDA( const int p ) {
+        KOKKOS_LAMBDA( const int p, int& max_val, int& total_val ) {
             list_copy.counts( p ) =
                 Cabana::NeighborList<ListType>::numNeighbor( list, p );
             for ( int n = 0; n < list_copy.counts( p ); ++n )
                 list_copy.neighbors( p, n ) =
                     Cabana::NeighborList<ListType>::getNeighbor( list, p, n );
-        } );
+
+            // Same for every particle, but we need to extract on device.
+            max_val = Cabana::NeighborList<ListType>::maxNeighbor( list );
+            total_val = Cabana::NeighborList<ListType>::totalNeighbor( list );
+        },
+        max_reduce, total_reduce );
     Kokkos::fence();
     return createTestListHostCopy( list_copy );
 }
@@ -103,16 +115,19 @@ computeFullNeighborList( const PositionSlice& position,
     Kokkos::fence();
 
     // Allocate.
-    auto max_op = KOKKOS_LAMBDA( const int i, int& max_val )
+    auto max_op = KOKKOS_LAMBDA( const int i, int& max_val, int& total_val )
     {
         if ( max_val < list.counts( i ) )
+        {
             max_val = list.counts( i );
+        }
+        total_val += list.counts( i );
     };
-    int max_n;
-    Kokkos::parallel_reduce( exec_policy, max_op, Kokkos::Max<int>( max_n ) );
+    Kokkos::parallel_reduce( exec_policy, max_op, Kokkos::Max<int>( list.max ),
+                             Kokkos::Sum<int>( list.total ) );
     Kokkos::fence();
-    list.neighbors = Kokkos::View<int**, TEST_MEMSPACE>( "test_neighbors",
-                                                         num_particle, max_n );
+    list.neighbors = Kokkos::View<int**, TEST_MEMSPACE>(
+        "test_neighbors", num_particle, list.max );
 
     // Fill.
     auto fill_op = KOKKOS_LAMBDA( const int i )
@@ -174,6 +189,10 @@ void checkFullNeighborList( const ListType& nlist,
         for ( int n = 0; n < N2_list_copy.counts( p ); ++n )
             EXPECT_EQ( computed_neighbors[n], actual_neighbors[n] );
     }
+
+    // Check the total and max interfaces.
+    EXPECT_EQ( N2_list_copy.max, list_copy.max );
+    EXPECT_EQ( N2_list_copy.total, list_copy.total );
 }
 
 //---------------------------------------------------------------------------//
@@ -215,6 +234,10 @@ void checkHalfNeighborList( const ListType& nlist,
             }
         }
     }
+
+    // Check the total and max interfaces (only approximate for max).
+    EXPECT_GE( N2_list_copy.max, list_copy.max );
+    EXPECT_EQ( static_cast<int>( N2_list_copy.total / 2.0 ), list_copy.total );
 }
 
 //---------------------------------------------------------------------------//
