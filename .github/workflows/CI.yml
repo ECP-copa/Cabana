@@ -35,6 +35,7 @@ jobs:
         liball: ['OFF']
         silo: ['OFF']
         hdf5: ['OFF']
+        sanitizer: ['ASAN']
         coverage: ['OFF']
         include:
           - distro: 'ubuntu:latest'
