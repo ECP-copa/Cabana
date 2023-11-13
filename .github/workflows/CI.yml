@@ -249,7 +249,7 @@ jobs:
     continue-on-error: ${{ (matrix.distro == 'ubuntu:intel' && matrix.backend == 'SERIAL' && matrix.cmake_build_type == 'Release') || matrix.distro == 'opensuse:latest' }}
     steps:
       - name: Cache ccache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ matrix.distro }}-${{github.run_id}}
