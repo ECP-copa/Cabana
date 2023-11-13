@@ -397,7 +397,6 @@ jobs:
             -DCabana_PERFORMANCE_EXPECTED_FLOPS=0 \
             -DCabana_ENABLE_COVERAGE_BUILD=${{ matrix.coverage }} \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
-            -DDOXYGEN_WARN_AS_ERROR=FAIL_ON_WARNINGS \
             ${cabana_cmake_opts[@]}
           cmake --build build --parallel 2 --verbose
           CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test
@@ -418,27 +417,6 @@ jobs:
       - name: Upload Report to codecov.io
         if: ${{ matrix.coverage == 'ON' }}
         uses: codecov/codecov-action@v1
-      - name: Checkout gh-pages
-        if: ${{ matrix.doxygen == 'ON' }}
-        uses: actions/checkout@v3
-        with:
-          ref: 'gh-pages'
-          path: 'html'
-      - name: update and commit to gh-pages branch
-        if: ${{ matrix.doxygen == 'ON' }}
-        working-directory: html
-        run: |
-          rm -rf doxygen
-          mv ../build/html doxygen
-          git config --global user.name "Automatic Deployment (GitHub Action)";
-          git config --global user.email "noreply@lanl.gov"
-          git add --all
-          git diff --quiet HEAD || git commit -m "Documentation Update"
-          if [[ "${GITHUB_REF}" == 'refs/heads/master' ]]; then
-            git push
-          else
-            git show
-          fi
 
   HIP:
     defaults:
@@ -587,3 +565,38 @@ jobs:
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
           cmake --build build --parallel 2 --verbose
           cmake --install build
+
+  doxygen:
+    name: Doxygen check and deploy
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ecp-copa/ci-containers/fedora:latest
+    steps:
+    - name: Checkout kokkos
+      uses: actions/checkout@v3
+      with:
+        repository: kokkos/kokkos
+        ref: 4.0.01
+        path: kokkos
+    - name: Build kokkos
+      working-directory: kokkos
+      run: |
+        cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/kokkos
+        cmake --build build --parallel 2
+        cmake --install build
+    - name: Checkout Cabana
+      uses: actions/checkout@v3
+    - name: Generate Cabana doxyfile
+      run: |
+        cmake -B build -DCMAKE_PREFIX_PATH="$HOME/kokkos" -DDOXYGEN_WARN_AS_ERROR=FAIL_ON_WARNINGS
+        cmake --build build --target doxygen
+    - name: Doxygen check
+      uses: mattnotmitt/doxygen-action@v1.9.5
+      with:
+        doxyfile-path: build/Doxyfile.doxygen
+    - name: Doxygen deploy
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/master'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: html
