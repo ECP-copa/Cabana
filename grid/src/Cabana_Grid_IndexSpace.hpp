@@ -501,13 +501,6 @@ CAJITA_DEPRECATED auto createView( Args&&... args )
     return Cabana::Grid::createView( std::forward<Args>( args )... );
 }
 
-template <class Scalar, class... Params>
-CAJITA_DEPRECATED auto createView( const std::string& label,
-                                   const IndexSpace<1>& index_space )
-{
-    return Cabana::Grid::createView<Scalar, Params...>( label, index_space );
-}
-
 template <class... Args>
 CAJITA_DEPRECATED auto createSubview( Args&&... args )
 {
