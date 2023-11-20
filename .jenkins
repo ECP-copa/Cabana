@@ -130,7 +130,7 @@ pipeline {
                         sh '''
                             . /opt/intel/oneapi/setvars.sh --include-intel-llvm && \
                             cd build && \
-                            ctest --output-on-failure -E "Cabana.*MPI|Cabana.*Sort|Cabana_Performance_Comm|Grid_IndexConversion|Grid_Halo|Grid_ParticleGridDistributor|Grid_Interpolation|Grid_BovWriter|valgrind"                        '''
+                            ctest --output-on-failure -E "Cabana.*MPI|Cabana.*Sort|Cabana_Performance_Comm|Grid_IndexConversion|Grid_Halo|Grid_ParticleGridDistributor|Grid_Interpolation|Grid_BovWriter|Grid_GlobalParticleComm|valgrind"                        '''
                     }
                     post {
                         always {
