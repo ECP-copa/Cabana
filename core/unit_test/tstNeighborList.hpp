@@ -22,85 +22,6 @@
 
 namespace Test
 {
-//---------------------------------------------------------------------------//
-// Linked cell list cell stencil test.
-void testLinkedCellStencil()
-{
-    // Point in the middle
-    {
-        double min[3] = { 0.0, 0.0, 0.0 };
-        double max[3] = { 10.0, 10.0, 10.0 };
-        double radius = 1.0;
-        double ratio = 1.0;
-        Cabana::Impl::LinkedCellStencil<double> stencil( radius, ratio, min,
-                                                         max );
-
-        double xp = 4.5;
-        double yp = 5.5;
-        double zp = 3.5;
-        int ic, jc, kc;
-        stencil.grid.locatePoint( xp, yp, zp, ic, jc, kc );
-        int cell = stencil.grid.cardinalCellIndex( ic, jc, kc );
-        int imin, imax, jmin, jmax, kmin, kmax;
-        stencil.getCells( cell, imin, imax, jmin, jmax, kmin, kmax );
-        EXPECT_EQ( imin, 3 );
-        EXPECT_EQ( imax, 6 );
-        EXPECT_EQ( jmin, 4 );
-        EXPECT_EQ( jmax, 7 );
-        EXPECT_EQ( kmin, 2 );
-        EXPECT_EQ( kmax, 5 );
-    }
-
-    // Point in the lower right corner
-    {
-        double min[3] = { 0.0, 0.0, 0.0 };
-        double max[3] = { 10.0, 10.0, 10.0 };
-        double radius = 1.0;
-        double ratio = 1.0;
-        Cabana::Impl::LinkedCellStencil<double> stencil( radius, ratio, min,
-                                                         max );
-
-        double xp = 0.5;
-        double yp = 0.5;
-        double zp = 0.5;
-        int ic, jc, kc;
-        stencil.grid.locatePoint( xp, yp, zp, ic, jc, kc );
-        int cell = stencil.grid.cardinalCellIndex( ic, jc, kc );
-        int imin, imax, jmin, jmax, kmin, kmax;
-        stencil.getCells( cell, imin, imax, jmin, jmax, kmin, kmax );
-        EXPECT_EQ( imin, 0 );
-        EXPECT_EQ( imax, 2 );
-        EXPECT_EQ( jmin, 0 );
-        EXPECT_EQ( jmax, 2 );
-        EXPECT_EQ( kmin, 0 );
-        EXPECT_EQ( kmax, 2 );
-    }
-
-    // Point in the upper left corner
-    {
-        double min[3] = { 0.0, 0.0, 0.0 };
-        double max[3] = { 10.0, 10.0, 10.0 };
-        double radius = 1.0;
-        double ratio = 1.0;
-        Cabana::Impl::LinkedCellStencil<double> stencil( radius, ratio, min,
-                                                         max );
-
-        double xp = 9.5;
-        double yp = 9.5;
-        double zp = 9.5;
-        int ic, jc, kc;
-        stencil.grid.locatePoint( xp, yp, zp, ic, jc, kc );
-        int cell = stencil.grid.cardinalCellIndex( ic, jc, kc );
-        int imin, imax, jmin, jmax, kmin, kmax;
-        stencil.getCells( cell, imin, imax, jmin, jmax, kmin, kmax );
-        EXPECT_EQ( imin, 8 );
-        EXPECT_EQ( imax, 10 );
-        EXPECT_EQ( jmin, 8 );
-        EXPECT_EQ( jmax, 10 );
-        EXPECT_EQ( kmin, 8 );
-        EXPECT_EQ( kmax, 10 );
-    }
-}
 
 //---------------------------------------------------------------------------//
 template <class LayoutTag, class BuildTag>
@@ -326,9 +247,7 @@ void testModifyNeighbors()
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, linked_cell_stencil_test ) { testLinkedCellStencil(); }
 
-//---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, verlet_list_full_test )
 {
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET

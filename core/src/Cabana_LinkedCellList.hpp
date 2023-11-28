@@ -11,11 +11,12 @@
 
 /*!
   \file Cabana_LinkedCellList.hpp
-  \brief Linked cell list binning and sorting
+  \brief Linked cell list binning (spatial sorting) and neighbor iteration.
 */
 #ifndef CABANA_LINKEDCELLLIST_HPP
 #define CABANA_LINKEDCELLLIST_HPP
 
+#include <Cabana_NeighborList.hpp>
 #include <Cabana_Slice.hpp>
 #include <Cabana_Sort.hpp>
 #include <Cabana_Utils.hpp>
@@ -29,11 +30,66 @@
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
+//! Stencil of cells surrounding each cell.
+
+template <class Scalar>
+struct LinkedCellStencil
+{
+    //! Background grid.
+    Impl::CartesianGrid<Scalar> grid;
+    //! Maximum cells per dimension.
+    int max_cells_dir;
+    //! Maximum total cells.
+    int max_cells;
+    //! Range of cells to search based on cutoff.
+    int cell_range;
+
+    //! Default Constructor
+    LinkedCellStencil() {}
+
+    //! Constructor
+    LinkedCellStencil( const Scalar neighborhood_radius,
+                       const Scalar cell_size_ratio, const Scalar grid_min[3],
+                       const Scalar grid_max[3] )
+    {
+        Scalar dx = neighborhood_radius * cell_size_ratio;
+        grid = Impl::CartesianGrid<Scalar>(
+            grid_min[0], grid_min[1], grid_min[2], grid_max[0], grid_max[1],
+            grid_max[2], dx, dx, dx );
+        cell_range = std::ceil( 1 / cell_size_ratio );
+        max_cells_dir = 2 * cell_range + 1;
+        max_cells = max_cells_dir * max_cells_dir * max_cells_dir;
+    }
+
+    //! Given a cell, get the index bounds of the cell stencil.
+    KOKKOS_INLINE_FUNCTION
+    void getCells( const int cell, int& imin, int& imax, int& jmin, int& jmax,
+                   int& kmin, int& kmax ) const
+    {
+        int i, j, k;
+        grid.ijkBinIndex( cell, i, j, k );
+
+        kmin = ( k - cell_range > 0 ) ? k - cell_range : 0;
+        kmax =
+            ( k + cell_range + 1 < grid._nz ) ? k + cell_range + 1 : grid._nz;
+
+        jmin = ( j - cell_range > 0 ) ? j - cell_range : 0;
+        jmax =
+            ( j + cell_range + 1 < grid._ny ) ? j + cell_range + 1 : grid._ny;
+
+        imin = ( i - cell_range > 0 ) ? i - cell_range : 0;
+        imax =
+            ( i + cell_range + 1 < grid._nx ) ? i + cell_range + 1 : grid._nx;
+    }
+};
+
+//---------------------------------------------------------------------------//
 /*!
   \brief Data describing the bin sizes and offsets resulting from a binning
   operation on a 3d regular Cartesian grid.
+  \note Defaults to double precision for backwards compatibility.
 */
-template <class MemorySpace>
+template <class MemorySpace, class Scalar = double>
 class LinkedCellList
 {
   public:
@@ -57,6 +113,8 @@ class LinkedCellList
     using CountView = Kokkos::View<int*, memory_space>;
     //! Offset view type.
     using OffsetView = Kokkos::View<size_type*, memory_space>;
+    //! Stencil type.
+    using stencil_type = Cabana::LinkedCellStencil<Scalar>;
 
     /*!
       \brief Default constructor.
@@ -69,23 +127,79 @@ class LinkedCellList
       \tparam SliceType Slice type for positions.
 
       \param positions Slice of positions.
-
       \param grid_delta Grid sizes in each cardinal direction.
-
       \param grid_min Grid minimum value in each direction.
-
       \param grid_max Grid maximum value in each direction.
     */
     template <class SliceType>
+    LinkedCellList( SliceType positions, const Scalar grid_delta[3],
+                    const Scalar grid_min[3], const Scalar grid_max[3],
+                    typename std::enable_if<( is_slice<SliceType>::value ),
+                                            int>::type* = 0 )
+        : _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
+                 grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
+                 grid_delta[2] )
+        , _cell_stencil( grid_delta[0], 1.0, grid_min, grid_max )
+        , _sorted( false )
+    {
+        std::size_t np = positions.size();
+        allocate( totalBins(), np );
+        build( positions, 0, np );
+    }
+
+    /*!
+      \brief Slice constructor
+
+      \tparam SliceType Slice type for positions.
+
+      \param positions Slice of positions.
+      \param begin The beginning index of the AoSoA range to sort.
+      \param end The end index of the AoSoA range to sort.
+      \param grid_delta Grid sizes in each cardinal direction.
+      \param grid_min Grid minimum value in each direction.
+      \param grid_max Grid maximum value in each direction.
+    */
+    template <class SliceType>
+    LinkedCellList( SliceType positions, const std::size_t begin,
+                    const std::size_t end, const Scalar grid_delta[3],
+                    const Scalar grid_min[3], const Scalar grid_max[3],
+                    typename std::enable_if<( is_slice<SliceType>::value ),
+                                            int>::type* = 0 )
+        : _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
+                 grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
+                 grid_delta[2] )
+        , _cell_stencil( grid_delta[0], 1.0, grid_min, grid_max )
+        , _sorted( false )
+    {
+        allocate( totalBins(), end - begin );
+        build( positions, begin, end );
+    }
+
+    /*!
+      \brief Slice constructor
+
+      \tparam SliceType Slice type for positions.
+
+      \param positions Slice of positions.
+      \param grid_delta Grid sizes in each cardinal direction.
+      \param grid_min Grid minimum value in each direction.
+      \param grid_max Grid maximum value in each direction.
+      \param neighborhood_radius Radius for neighbors.
+      \param cell_size_ratio Ratio of the cell size to the neighborhood size.
+    */
+    template <class SliceType>
     LinkedCellList(
-        SliceType positions, const typename SliceType::value_type grid_delta[3],
-        const typename SliceType::value_type grid_min[3],
-        const typename SliceType::value_type grid_max[3],
+        SliceType positions, const Scalar grid_delta[3],
+        const Scalar grid_min[3], const Scalar grid_max[3],
+        const Scalar neighborhood_radius, const Scalar cell_size_ratio = 1,
         typename std::enable_if<( is_slice<SliceType>::value ), int>::type* =
             0 )
         : _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
                  grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
                  grid_delta[2] )
+        , _cell_stencil( neighborhood_radius, cell_size_ratio, grid_min,
+                         grid_max )
+        , _sorted( false )
     {
         std::size_t np = positions.size();
         allocate( totalBins(), np );
@@ -98,32 +212,36 @@ class LinkedCellList
       \tparam SliceType Slice type for positions.
 
       \param positions Slice of positions.
-
       \param begin The beginning index of the AoSoA range to sort.
-
       \param end The end index of the AoSoA range to sort.
-
       \param grid_delta Grid sizes in each cardinal direction.
-
       \param grid_min Grid minimum value in each direction.
-
       \param grid_max Grid maximum value in each direction.
+      \param neighborhood_radius Radius for neighbors.
+      \param cell_size_ratio Ratio of the cell size to the neighborhood size.
     */
     template <class SliceType>
     LinkedCellList(
         SliceType positions, const std::size_t begin, const std::size_t end,
-        const typename SliceType::value_type grid_delta[3],
-        const typename SliceType::value_type grid_min[3],
-        const typename SliceType::value_type grid_max[3],
+        const Scalar grid_delta[3], const Scalar grid_min[3],
+        const Scalar grid_max[3], const Scalar neighborhood_radius,
+        const Scalar cell_size_ratio = 1,
         typename std::enable_if<( is_slice<SliceType>::value ), int>::type* =
             0 )
         : _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
                  grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
                  grid_delta[2] )
+        , _cell_stencil( neighborhood_radius, cell_size_ratio, grid_min,
+                         grid_max )
+        , _sorted( false )
     {
         allocate( totalBins(), end - begin );
         build( positions, begin, end );
     }
+
+    //! Number of binned particles.
+    KOKKOS_INLINE_FUNCTION
+    int numParticles() const { return _permutes.extent( 0 ); }
 
     /*!
       \brief Get the total number of bins.
@@ -221,6 +339,13 @@ class LinkedCellList
     */
     KOKKOS_INLINE_FUNCTION
     std::size_t rangeEnd() const { return _bin_data.rangeEnd(); }
+
+    /*!
+      \brief Get the linked cell stencil.
+      \return Cell stencil.
+    */
+    KOKKOS_INLINE_FUNCTION
+    stencil_type cellStencil() const { return _cell_stencil; }
 
     /*!
       \brief Get the 1d bin data.
@@ -352,13 +477,85 @@ class LinkedCellList
         build( positions, 0, positions.size() );
     }
 
+    /*!
+      \brief Get the bin cell index for each binned particle.
+    */
+    auto getParticleBins() const
+    {
+        Kokkos::parallel_for(
+            "Cabana::LinkedCellList::storeBinIndices",
+            Kokkos::RangePolicy<execution_space>( 0, totalBins() ), *this );
+        return _particle_bins;
+    }
+
+    /*!
+      \brief Get the bin cell index of the input particle
+    */
+    KOKKOS_INLINE_FUNCTION
+    auto getParticleBin( const int particle_index ) const
+    {
+        return _particle_bins( particle_index );
+    }
+
+    /*!
+      \brief Determines which particles belong to bin i
+      \param i the cardinal bin index of the current bin
+    */
+    KOKKOS_FUNCTION void operator()( const int i ) const
+    {
+        int bin_ijk[3];
+        ijkBinIndex( i, bin_ijk[0], bin_ijk[1], bin_ijk[2] );
+        auto offset = binOffset( bin_ijk[0], bin_ijk[1], bin_ijk[2] );
+        auto size = binSize( bin_ijk[0], bin_ijk[1], bin_ijk[2] );
+        for ( size_t p = offset; p < offset + size; ++p )
+        {
+            if ( _sorted )
+            {
+                _particle_bins( p ) = i;
+            }
+            else
+            {
+                _particle_bins( permutation( p ) ) = i;
+            }
+        }
+    }
+
+    /*!
+      \brief Updates the status of the list sorting
+      \param sorted Bool that is true if the list has been sorted
+    */
+    void update( const bool sorted ) { _sorted = sorted; }
+
+    /*!
+      \brief Returns whether the list has been sorted or not
+    */
+    KOKKOS_INLINE_FUNCTION
+    auto sorted() const { return _sorted; }
+
+    /*!
+      \brief Get the cell indices for the stencil about cell
+    */
+    KOKKOS_INLINE_FUNCTION
+    void getStencilCells( const int cell, int& imin, int& imax, int& jmin,
+                          int& jmax, int& kmin, int& kmax ) const
+    {
+        _cell_stencil.getCells( cell, imin, imax, jmin, jmax, kmin, kmax );
+    }
+
   private:
+    // Building the linked cell.
     BinningData<MemorySpace> _bin_data;
-    Impl::CartesianGrid<double> _grid;
+    Impl::CartesianGrid<Scalar> _grid;
 
     CountView _counts;
     OffsetView _offsets;
     OffsetView _permutes;
+
+    // Iterating over the linked cell.
+    stencil_type _cell_stencil;
+
+    bool _sorted;
+    CountView _particle_bins;
 
     void allocate( const int ncell, const int nparticles )
     {
@@ -371,8 +568,71 @@ class LinkedCellList
         _permutes = OffsetView(
             Kokkos::view_alloc( Kokkos::WithoutInitializing, "permutes" ),
             nparticles );
+        // This is only used for iterating over the particles (not building the
+        // permutaion vector).
+        _particle_bins = CountView(
+            Kokkos::view_alloc( Kokkos::WithoutInitializing, "counts" ),
+            nparticles );
     }
 };
+
+/*!
+  \brief Creation function for linked cell list.
+  \return LinkedCellList.
+*/
+template <class MemorySpace, class SliceType, class Scalar>
+auto createLinkedCellList( SliceType positions, const Scalar grid_delta[3],
+                           const Scalar grid_min[3], const Scalar grid_max[3] )
+{
+    return LinkedCellList<MemorySpace, Scalar>( positions, grid_delta, grid_min,
+                                                grid_max );
+}
+
+/*!
+  \brief Creation function for linked cell list with partial range.
+  \return LinkedCellList.
+*/
+template <class MemorySpace, class SliceType, class Scalar>
+auto createLinkedCellList( SliceType positions, const std::size_t begin,
+                           const std::size_t end, const Scalar grid_delta[3],
+                           const Scalar grid_min[3], const Scalar grid_max[3] )
+{
+    return LinkedCellList<MemorySpace, Scalar>(
+        positions, begin, end, grid_delta, grid_min, grid_max );
+}
+
+/*!
+  \brief Creation function for linked cell list with custom cutoff radius and
+  cell ratio.
+  \return LinkedCellList.
+*/
+template <class MemorySpace, class SliceType, class Scalar>
+auto createLinkedCellList( SliceType positions, const Scalar grid_delta[3],
+                           const Scalar grid_min[3], const Scalar grid_max[3],
+                           const Scalar neighborhood_radius,
+                           const Scalar cell_size_ratio = 1.0 )
+{
+    return LinkedCellList<MemorySpace, Scalar>( positions, grid_delta, grid_min,
+                                                grid_max, neighborhood_radius,
+                                                cell_size_ratio );
+}
+
+/*!
+  \brief Creation function for linked cell list with partial range and custom
+  cutoff radius and/or cell ratio.
+  \return LinkedCellList.
+*/
+template <class MemorySpace, class SliceType, class Scalar>
+auto createLinkedCellList( SliceType positions, const std::size_t begin,
+                           const std::size_t end, const Scalar grid_delta[3],
+                           const Scalar grid_min[3], const Scalar grid_max[3],
+                           const Scalar neighborhood_radius,
+                           const Scalar cell_size_ratio = 1.0 )
+{
+    return LinkedCellList<MemorySpace, Scalar>(
+        positions, begin, end, grid_delta, grid_min, grid_max,
+        neighborhood_radius, cell_size_ratio );
+}
 
 //---------------------------------------------------------------------------//
 //! \cond Impl
@@ -381,8 +641,8 @@ struct is_linked_cell_list_impl : public std::false_type
 {
 };
 
-template <typename MemorySpace>
-struct is_linked_cell_list_impl<LinkedCellList<MemorySpace>>
+template <typename MemorySpace, typename Scalar>
+struct is_linked_cell_list_impl<LinkedCellList<MemorySpace, Scalar>>
     : public std::true_type
 {
 };
@@ -409,12 +669,15 @@ struct is_linked_cell_list
  */
 template <class LinkedCellListType, class AoSoA_t>
 void permute(
-    const LinkedCellListType& linked_cell_list, AoSoA_t& aosoa,
+    LinkedCellListType& linked_cell_list, AoSoA_t& aosoa,
     typename std::enable_if<( is_linked_cell_list<LinkedCellListType>::value &&
                               is_aosoa<AoSoA_t>::value ),
                             int>::type* = 0 )
 {
     permute( linked_cell_list.binningData(), aosoa );
+
+    // Update internal state.
+    linked_cell_list.update( true );
 }
 
 //---------------------------------------------------------------------------//
@@ -431,15 +694,102 @@ void permute(
  */
 template <class LinkedCellListType, class SliceType>
 void permute(
-    const LinkedCellListType& linked_cell_list, SliceType& slice,
+    LinkedCellListType& linked_cell_list, SliceType& slice,
     typename std::enable_if<( is_linked_cell_list<LinkedCellListType>::value &&
                               is_slice<SliceType>::value ),
                             int>::type* = 0 )
 {
     permute( linked_cell_list.binningData(), slice );
+
+    // Update internal state.
+    linked_cell_list.update( true );
 }
 
 //---------------------------------------------------------------------------//
+//! LinkedCellList NeighborList interface.
+template <class MemorySpace, typename Scalar>
+class NeighborList<LinkedCellList<MemorySpace, Scalar>>
+{
+  public:
+    //! Kokkos memory space.
+    using memory_space = MemorySpace;
+    //! Neighbor list type.
+    using list_type = LinkedCellList<MemorySpace, Scalar>;
+
+    //! Get the maximum number of neighbors per particle.
+    KOKKOS_INLINE_FUNCTION static std::size_t
+    totalNeighbor( const list_type& list )
+    {
+        return Impl::totalNeighbor( list, list.numParticles() );
+    }
+
+    //! Get the maximum number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static std::size_t maxNeighbor( const list_type& list )
+    {
+        return Impl::maxNeighbor( list, list.numParticles() );
+    }
+
+    //! Get the number of neighbors for a given particle index.
+    KOKKOS_INLINE_FUNCTION static std::size_t
+    numNeighbor( const list_type& list, const std::size_t particle_index )
+    {
+        int total_count = 0;
+        int imin, imax, jmin, jmax, kmin, kmax;
+        list.getStencilCells( list.getParticleBin( particle_index ), imin, imax,
+                              jmin, jmax, kmin, kmax );
+
+        // Loop over the cell stencil.
+        for ( int i = imin; i < imax; ++i )
+            for ( int j = jmin; j < jmax; ++j )
+                for ( int k = kmin; k < kmax; ++k )
+                {
+                    total_count += list.binSize( i, j, k );
+                }
+        return total_count;
+    }
+
+    //! Get the id for a neighbor for a given particle index and the index of
+    //! the neighbor relative to the particle.
+    KOKKOS_INLINE_FUNCTION static std::size_t
+    getNeighbor( const list_type& list, const std::size_t particle_index,
+                 const std::size_t neighbor_index )
+    {
+        std::size_t total_count = 0;
+        std::size_t previous_count = 0;
+        int imin, imax, jmin, jmax, kmin, kmax;
+        list.getStencilCells( list.getParticleBin( particle_index ), imin, imax,
+                              jmin, jmax, kmin, kmax );
+
+        // Loop over the cell stencil.
+        for ( int i = imin; i < imax; ++i )
+            for ( int j = jmin; j < jmax; ++j )
+                for ( int k = kmin; k < kmax; ++k )
+                {
+                    total_count += list.binSize( i, j, k );
+                    // This neighbor is in this bin.
+                    if ( total_count > neighbor_index )
+                    {
+                        int particle_id = list.binOffset( i, j, k ) +
+                                          ( neighbor_index - previous_count );
+                        if ( list.sorted() )
+                        {
+                            return particle_id;
+                        }
+                        else
+                        {
+                            return list.permutation( particle_id );
+                        }
+                    }
+                    previous_count = total_count;
+                }
+
+        assert( total_count <= totalNeighbor( list ) );
+
+        // Should never make it to this point.
+        return 0;
+    }
+};
 
 } // end namespace Cabana
 
