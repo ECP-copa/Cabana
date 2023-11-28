@@ -286,6 +286,7 @@ void testNeighborParallelReduce()
                                               test_data.aosoa, false );
 }
 
+//---------------------------------------------------------------------------//
 template <class LayoutTag>
 void testModifyNeighbors()
 {
@@ -323,6 +324,63 @@ void testModifyNeighbors()
                 EXPECT_EQ( list_copy.neighbors( p, n ), new_id );
     }
 }
+
+//---------------------------------------------------------------------------//
+template <class LayoutTag>
+void testNeighborHistogram()
+{
+    int particle_x = 10;
+    // Create the AoSoA and fill with particles
+    NeighborListTestDataOrdered test_data( particle_x );
+    auto position = Cabana::slice<0>( test_data.aosoa );
+
+    // Create the neighbor list.
+    using ListType = Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag,
+                                        LayoutTag, Cabana::TeamOpTag>;
+    ListType nlist( position, 0, position.size(), test_data.test_radius,
+                    test_data.cell_size_ratio, test_data.grid_min,
+                    test_data.grid_max );
+
+    // Create the neighbor histogram
+    {
+        int num_bin = 10;
+        auto nhist = neighborHistogram( TEST_EXECSPACE{}, position.size(),
+                                        nlist, num_bin );
+        auto host_histogram =
+            Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), nhist );
+
+        // 122 is the number of neighbors expected for a full spherical shell
+        // with characteristic ratio (cutoff / dx) = 3
+        double bin_max[10] = { 12, 24, 36, 48, 61, 73, 85, 97, 109, 122 };
+        // This is the direct copied output (zeros due to fixed spacing).
+        double bin_count[10] = { 32, 72, 24, 152, 120, 168, 0, 216, 0, 152 };
+
+        for ( int i = 0; i < num_bin; ++i )
+        {
+            EXPECT_EQ( bin_max[i], host_histogram( i, 0 ) );
+            EXPECT_EQ( bin_count[i], host_histogram( i, 1 ) );
+        }
+    }
+
+    // Create another histogram with fewer bins.
+    {
+        int num_bin = 5;
+        auto nhist = neighborHistogram( TEST_EXECSPACE{}, position.size(),
+                                        nlist, num_bin );
+        auto host_histogram =
+            Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), nhist );
+
+        double bin_max[5] = { 24, 48, 73, 97, 122 };
+        // This is the direct copied output.
+        double bin_count[5] = { 104, 176, 288, 216, 152 };
+        for ( int i = 0; i < num_bin; ++i )
+        {
+            EXPECT_EQ( bin_max[i], host_histogram( i, 0 ) );
+            EXPECT_EQ( bin_count[i], host_histogram( i, 1 ) );
+        }
+    }
+}
+
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
@@ -399,6 +457,16 @@ TEST( TEST_CATEGORY, modify_list_test )
 #endif
     testModifyNeighbors<Cabana::VerletLayout2D>();
 }
+
+//---------------------------------------------------------------------------//
+TEST( TEST_CATEGORY, neighbor_histogram_test )
+{
+#ifndef KOKKOS_ENABLE_OPENMPTARGET
+    testNeighborHistogram<Cabana::VerletLayoutCSR>();
+#endif
+    testNeighborHistogram<Cabana::VerletLayout2D>();
+}
+
 //---------------------------------------------------------------------------//
 
 } // end namespace Test
