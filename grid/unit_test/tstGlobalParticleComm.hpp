@@ -173,6 +173,15 @@ void testMigrate2d()
     using RandomType = Kokkos::Random_XorShift64<TEST_EXECSPACE>;
     PoolType pool( 174748 );
 
+    // Copy box bounds to device array.
+    Kokkos::Array<double, 2> global_low_kokkos;
+    Kokkos::Array<double, 2> global_high_kokkos;
+    for ( int d = 0; d < 2; ++d )
+    {
+        global_low_kokkos[d] = global_low[d];
+        global_high_kokkos[d] = global_high[d];
+    }
+
     // Create particles randomly in the global domain.
     auto random_coord_op = KOKKOS_LAMBDA( const int p )
     {
@@ -180,7 +189,7 @@ void testMigrate2d()
         for ( int d = 0; d < 2; ++d )
         {
             position( p, d ) = Kokkos::rand<RandomType, double>::draw(
-                gen, global_low[d], global_high[d] );
+                gen, global_low_kokkos[d], global_high_kokkos[d] );
         }
         pool.free_state( gen );
     };
