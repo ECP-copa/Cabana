@@ -311,7 +311,6 @@ jobs:
         run: |
           [[ ${{ matrix.heffte }} == "FFTW" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_FFTW=ON )
           [[ ${{ matrix.heffte }} == "MKL" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_MKL=ON )
-          # FIXME: Remove MKL path below when we update heFFTe
           cmake -B build \
             -DBUILD_SHARED_LIBS=ON \
             -DCMAKE_INSTALL_PREFIX=$HOME/heffte \
@@ -319,7 +318,6 @@ jobs:
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
             -DMKL_ROOT=/opt/intel/oneapi/mkl/latest \
-            -DHeffte_MKL_IOMP5=/opt/intel/oneapi/compiler/latest/linux/compiler/lib/intel64_lin/libiomp5.so \
             ${heffte_cmake_opts[@]}
           cmake --build build --parallel 2
           cmake --install build
