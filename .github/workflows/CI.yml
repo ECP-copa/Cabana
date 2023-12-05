@@ -93,7 +93,8 @@ jobs:
             heffte: 'MKL'
             hypre: 'OFF'
             coverage: 'OFF'
-          - distro: 'fedora:latest'
+          # FIXME: use fedora:latest when MPI timeouts are fixed
+          - distro: 'fedora:rawhide'
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
@@ -103,7 +104,8 @@ jobs:
             hypre: 'OFF'
             coverage: 'OFF'
             doxygen: 'ON'
-          - distro: 'fedora:latest'
+          # FIXME: use fedora:latest when MPI timeouts are fixed
+          - distro: 'fedora:rawhide'
             cxx: 'clang++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
