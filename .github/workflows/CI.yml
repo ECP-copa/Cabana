@@ -47,7 +47,7 @@ jobs:
             hypre: 'OFF'
             silo: 'OFF'
             coverage: 'OFF'
-          - distro: 'fedora:intel'
+          - distro: 'ubuntu:intel'
             cxx: 'icpx'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
@@ -56,7 +56,7 @@ jobs:
             heffte: 'OFF'
             hypre: 'OFF'
             coverage: 'OFF'
-          - distro: 'fedora:intel'
+          - distro: 'ubuntu:intel'
             cxx: 'icpx'
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
@@ -65,7 +65,7 @@ jobs:
             heffte: 'OFF'
             hypre: 'OFF'
             coverage: 'OFF'
-          - distro: 'fedora:intel'
+          - distro: 'ubuntu:intel'
             cxx: 'icpx'
             backend: 'SERIAL'
             cmake_build_type: 'Release'
@@ -74,7 +74,7 @@ jobs:
             heffte: 'OFF'
             hypre: 'OFF'
             coverage: 'OFF'
-          - distro: 'fedora:intel'
+          - distro: 'ubuntu:intel'
             cxx: 'icpx'
             backend: 'SERIAL'
             cmake_build_type: 'Debug'
@@ -83,7 +83,7 @@ jobs:
             heffte: 'OFF'
             hypre: 'OFF'
             coverage: 'OFF'
-          - distro: 'fedora:intel'
+          - distro: 'ubuntu:intel'
             cxx: 'icpx'
             backend: 'SERIAL'
             cmake_build_type: 'Debug'
@@ -245,7 +245,7 @@ jobs:
       image: ghcr.io/ecp-copa/ci-containers/${{ matrix.distro }}
       options: --security-opt seccomp=unconfined
     # FIXME: remove failing distributions here when passing
-    continue-on-error: ${{ (matrix.distro == 'fedora:intel' && matrix.backend == 'SERIAL' && matrix.cmake_build_type == 'Release') || matrix.distro == 'opensuse:latest' }}
+    continue-on-error: ${{ (matrix.distro == 'ubuntu:intel' && matrix.backend == 'SERIAL' && matrix.cmake_build_type == 'Release') || matrix.distro == 'opensuse:latest' }}
     steps:
       - name: Cache ccache
         uses: actions/cache@v2
