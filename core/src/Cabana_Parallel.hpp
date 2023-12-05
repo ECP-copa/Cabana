@@ -253,7 +253,9 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
-    const FirstNeighborsTag, const SerialOpTag, const std::string& str = "" )
+    const FirstNeighborsTag, const SerialOpTag, const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
 
@@ -317,7 +319,9 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
-    const SecondNeighborsTag, const SerialOpTag, const std::string& str = "" )
+    const SecondNeighborsTag, const SerialOpTag, const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0)
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
 
@@ -388,7 +392,9 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
-    const FirstNeighborsTag, const TeamOpTag, const std::string& str = "" )
+    const FirstNeighborsTag, const TeamOpTag, const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0)
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
 
@@ -460,7 +466,9 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
-    const SecondNeighborsTag, const TeamOpTag, const std::string& str = "" )
+    const SecondNeighborsTag, const TeamOpTag, const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0)
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
 
@@ -539,7 +547,9 @@ inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
     const SecondNeighborsTag, const TeamVectorOpTag,
-    const std::string& str = "" )
+    const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0)
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
 
@@ -642,7 +652,9 @@ inline void neighbor_parallel_reduce(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
     const FirstNeighborsTag, const SerialOpTag, ReduceType& reduce_val,
-    const std::string& str = "" )
+    const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0)
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
 
@@ -712,7 +724,9 @@ inline void neighbor_parallel_reduce(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
     const SecondNeighborsTag, const SerialOpTag, ReduceType& reduce_val,
-    const std::string& str = "" )
+    const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0)
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
 
@@ -789,7 +803,9 @@ inline void neighbor_parallel_reduce(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
     const FirstNeighborsTag, const TeamOpTag, ReduceType& reduce_val,
-    const std::string& str = "" )
+    const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0)
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
 
@@ -870,7 +886,9 @@ inline void neighbor_parallel_reduce(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
     const SecondNeighborsTag, const TeamOpTag, ReduceType& reduce_val,
-    const std::string& str = "" )
+    const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0)
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
 
@@ -956,7 +974,9 @@ inline void neighbor_parallel_reduce(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
     const SecondNeighborsTag, const TeamVectorOpTag, ReduceType& reduce_val,
-    const std::string& str = "" )
+    const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0)
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
 
@@ -1393,7 +1413,7 @@ struct LinkedCellParallelReduce
 */
 
 template <class FunctorType, class LinkedCellType, class... ExecParameters>
-inline void linked_cell_parallel_for(
+inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const LinkedCellType& list,
     const FirstNeighborsTag, const SerialOpTag, const std::string& str = "",
@@ -1445,7 +1465,7 @@ inline void linked_cell_parallel_for(
 */
 
 template <class FunctorType, class LinkedCellType, class... ExecParameters>
-inline void linked_cell_parallel_for(
+inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const LinkedCellType& list,
     const FirstNeighborsTag, const TeamOpTag, const std::string& str = "",
@@ -1516,7 +1536,7 @@ inline void linked_cell_parallel_for(
 */
 template <class FunctorType, class LinkedCellType, class ReduceType,
           class... ExecParameters>
-inline void linked_cell_parallel_reduce(
+inline void neighbor_parallel_reduce(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const LinkedCellType& list,
     const FirstNeighborsTag, const SerialOpTag, ReduceType& reduce_val,
@@ -1571,7 +1591,7 @@ inline void linked_cell_parallel_reduce(
 */
 template <class FunctorType, class LinkedCellType, class ReduceType,
           class... ExecParameters>
-inline void linked_cell_parallel_reduce(
+inline void neighbor_parallel_reduce(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const LinkedCellType& list,
     const FirstNeighborsTag, const TeamOpTag, ReduceType& reduce_val,

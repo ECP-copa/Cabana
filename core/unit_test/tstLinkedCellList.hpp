@@ -411,76 +411,6 @@ void testLinkedListSlice()
 // linked_list_parallel
 //---------------------------------------------------------------------------//
 template <class ListType, class TestListType, class PositionType>
-void checkLinkedCellParallel( const ListType& nlist,
-                              const TestListType& N2_list_copy,
-                              const int num_particle,
-                              const PositionType positions,
-                              const double cutoff )
-{
-    // Create Kokkos views for the write operation.
-    using memory_space = typename TEST_MEMSPACE::memory_space;
-    Kokkos::View<int*, memory_space> serial_result( "serial_result",
-                                                    num_particle );
-    Kokkos::View<int*, memory_space> team_result( "team_result", num_particle );
-
-    // Test the list parallel operation by adding a value from each neighbor
-    // to the particle (within cutoff) and compare to counts.
-    auto c2 = cutoff * cutoff;
-    auto serial_count_op = KOKKOS_LAMBDA( const int i, const int j )
-    {
-        const double dx = positions( i, 0 ) - positions( j, 0 );
-        const double dy = positions( i, 1 ) - positions( j, 1 );
-        const double dz = positions( i, 2 ) - positions( j, 2 );
-        const double r2 = dx * dx + dy * dy + dz * dz;
-        if ( r2 <= c2 )
-        {
-            if ( nlist.sorted() )
-            {
-                Kokkos::atomic_add( &serial_result( nlist.permutation( i ) ),
-                                    nlist.permutation( j ) );
-            }
-            else
-            {
-                Kokkos::atomic_add( &serial_result( i ), j );
-            }
-        }
-    };
-    auto team_count_op = KOKKOS_LAMBDA( const int i, const int j )
-    {
-        const double dx = positions( i, 0 ) - positions( j, 0 );
-        const double dy = positions( i, 1 ) - positions( j, 1 );
-        const double dz = positions( i, 2 ) - positions( j, 2 );
-        const double r2 = dx * dx + dy * dy + dz * dz;
-        if ( r2 <= c2 )
-        {
-            if ( nlist.sorted() )
-            {
-                Kokkos::atomic_add( &team_result( nlist.permutation( i ) ),
-                                    nlist.permutation( j ) );
-            }
-            else
-            {
-                Kokkos::atomic_add( &team_result( i ), j );
-            }
-        }
-    };
-    Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, num_particle );
-    Cabana::linked_cell_parallel_for(
-        policy, serial_count_op, nlist, Cabana::FirstNeighborsTag(),
-        Cabana::SerialOpTag(), "test_1st_serial" );
-    Cabana::linked_cell_parallel_for( policy, team_count_op, nlist,
-                                      Cabana::FirstNeighborsTag(),
-                                      Cabana::TeamOpTag(), "test_1st_team" );
-    Kokkos::fence();
-
-    checkFirstNeighborParallelFor( N2_list_copy, serial_result, team_result,
-                                   1 );
-}
-
-//---------------------------------------------------------------------------//
-// linked_list_parallel
-//---------------------------------------------------------------------------//
-template <class ListType, class TestListType, class PositionType>
 void checkLinkedCellNeighborParallel( const ListType& nlist,
                                       const TestListType& N2_list_copy,
                                       const int num_particle,
@@ -554,54 +484,6 @@ void checkLinkedCellNeighborParallel( const ListType& nlist,
 // linked_list_parallel
 //---------------------------------------------------------------------------//
 template <class ListType, class TestListType, class AoSoAType>
-void checkLinkedCellReduce( const ListType& nlist,
-                            const TestListType& N2_list_copy,
-                            const AoSoAType& aosoa, const int num_particle,
-                            const double cutoff )
-{
-    auto position = Cabana::slice<0>( aosoa );
-
-    // Test the list parallel operation by adding a value from each neighbor
-    // to the particle (within cutoff) and compare to counts.
-    auto c2 = cutoff * cutoff;
-    auto sum_op = KOKKOS_LAMBDA( const int i, const int j, double& sum )
-    {
-        const double dx = position( i, 0 ) - position( j, 0 );
-        const double dy = position( i, 1 ) - position( j, 1 );
-        const double dz = position( i, 2 ) - position( j, 2 );
-        const double r2 = dx * dx + dy * dy + dz * dz;
-        if ( r2 <= c2 )
-        {
-            if ( nlist.sorted() )
-            {
-                sum += position( nlist.permutation( i ), 0 ) +
-                       position( nlist.permutation( j ), 0 );
-            }
-            else
-            {
-                sum += position( i, 0 ) + position( j, 0 );
-            }
-        }
-    };
-    Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, num_particle );
-    double serial_sum = 0;
-    Cabana::linked_cell_parallel_reduce(
-        policy, sum_op, nlist, Cabana::FirstNeighborsTag(),
-        Cabana::SerialOpTag(), serial_sum, "test_1st_serial" );
-    double team_sum = 0;
-    Cabana::linked_cell_parallel_reduce(
-        policy, sum_op, nlist, Cabana::FirstNeighborsTag(), Cabana::TeamOpTag(),
-        team_sum, "test_1st_team" );
-    Kokkos::fence();
-
-    checkFirstNeighborParallelReduce( N2_list_copy, aosoa, serial_sum, team_sum,
-                                      1 );
-}
-
-//---------------------------------------------------------------------------//
-// linked_list_parallel
-//---------------------------------------------------------------------------//
-template <class ListType, class TestListType, class AoSoAType>
 void checkLinkedCellNeighborReduce( const ListType& nlist,
                                     const TestListType& N2_list_copy,
                                     const AoSoAType aosoa,
@@ -664,27 +546,18 @@ void testLinkedCellParallel()
         positions, grid_delta, test_data.grid_min, test_data.grid_max,
         test_data.test_radius, test_data.cell_size_ratio );
 
-    checkLinkedCellParallel( nlist, test_data.N2_list_copy,
-                             test_data.num_particle, positions,
-                             test_data.test_radius );
     checkLinkedCellNeighborParallel( nlist, test_data.N2_list_copy,
                                      test_data.num_particle, positions,
                                      test_data.test_radius );
-    checkLinkedCellReduce( nlist, test_data.N2_list_copy, test_data.aosoa,
-                           test_data.num_particle, test_data.test_radius );
     checkLinkedCellNeighborReduce( nlist, test_data.N2_list_copy,
                                    test_data.aosoa, test_data.num_particle,
                                    test_data.test_radius );
 
     Cabana::permute( nlist, positions );
-    checkLinkedCellParallel( nlist, test_data.N2_list_copy,
-                             test_data.num_particle, positions,
-                             test_data.test_radius );
+
     checkLinkedCellNeighborParallel( nlist, test_data.N2_list_copy,
                                      test_data.num_particle, positions,
                                      test_data.test_radius );
-    checkLinkedCellReduce( nlist, test_data.N2_list_copy, test_data.aosoa,
-                           test_data.num_particle, test_data.test_radius );
     checkLinkedCellNeighborReduce( nlist, test_data.N2_list_copy,
                                    test_data.aosoa, test_data.num_particle,
                                    test_data.test_radius );
