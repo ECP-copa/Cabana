@@ -222,9 +222,9 @@ class TeamVectorOpTag
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param FirstNeighborsTag Tag indicating operations over particle first
+  \note FirstNeighborsTag Tag indicating operations over particle first
   neighbors.
-  \param SerialOpTag Tag indicating a serial loop strategy over neighbors.
+  \note SerialOpTag Tag indicating a serial loop strategy over neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
   the Kokkos::parallel_for called by this code and can be used for
   identification and profiling purposes.
@@ -304,9 +304,9 @@ inline void neighbor_parallel_for(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param SecondNeighborsTag Tag indicating operations over particle first and
+  \note SecondNeighborsTag Tag indicating operations over particle first and
   second neighbors.
-  \param SerialOpTag Tag indicating a serial loop strategy over neighbors.
+  \note SerialOpTag Tag indicating a serial loop strategy over neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
   the Kokkos::parallel_for called by this code and can be used for
   identification and profiling purposes.
@@ -375,9 +375,9 @@ inline void neighbor_parallel_for(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param FirstNeighborsTag Tag indicating operations over particle first
+  \note FirstNeighborsTag Tag indicating operations over particle first
   neighbors.
-  \param TeamOpTag Tag indicating a team parallel strategy over neighbors.
+  \note TeamOpTag Tag indicating a team parallel strategy over neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
   the Kokkos::parallel_for called by this code and can be used for
   identification and profiling purposes.
@@ -446,9 +446,9 @@ inline void neighbor_parallel_for(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param SecondNeighborsTag Tag indicating operations over particle first and
+  \note SecondNeighborsTag Tag indicating operations over particle first and
   second neighbors.
-  \param TeamOpTag Tag indicating a team parallel strategy over particle first
+  \note TeamOpTag Tag indicating a team parallel strategy over particle first
   neighbors and serial execution over second neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
   the Kokkos::parallel_for called by this code and can be used for
@@ -524,9 +524,9 @@ inline void neighbor_parallel_for(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param SecondNeighborsTag Tag indicating operations over particle first and
+  \note SecondNeighborsTag Tag indicating operations over particle first and
   second neighbors.
-  \param TeamVectorOpTag Tag indicating a team parallel strategy over particle
+  \note TeamVectorOpTag Tag indicating a team parallel strategy over particle
   first neighbors and vector parallel loop strategy over second neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
   the Kokkos::parallel_for called by this code and can be used for
@@ -607,9 +607,9 @@ inline void neighbor_parallel_for(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param FirstNeighborsTag Tag indicating operations over particle first
+  \note FirstNeighborsTag Tag indicating operations over particle first
   neighbors.
-  \param SerialOpTag Tag indicating a serial loop strategy over
+  \note SerialOpTag Tag indicating a serial loop strategy over
   neighbors.
   \param reduce_val Scalar to be reduced across particles and neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
@@ -696,9 +696,9 @@ inline void neighbor_parallel_reduce(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param SecondNeighborsTag Tag indicating operations over particle first and
+  \note SecondNeighborsTag Tag indicating operations over particle first and
   second neighbors.
-  \param SerialOpTag Tag indicating a serial loop strategy over neighbors.
+  \note SerialOpTag Tag indicating a serial loop strategy over neighbors.
   \param reduce_val Scalar to be reduced across particles and neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
   the Kokkos::parallel_reduce called by this code and can be used for
@@ -772,9 +772,9 @@ inline void neighbor_parallel_reduce(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param FirstNeighborsTag Tag indicating operations over particle first
+  \note FirstNeighborsTag Tag indicating operations over particle first
   neighbors.
-  \param TeamOpTag Tag indicating a team parallel strategy over particle
+  \note TeamOpTag Tag indicating a team parallel strategy over particle
   neighbors.
   \param reduce_val Scalar to be reduced across particles and neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
@@ -853,9 +853,9 @@ inline void neighbor_parallel_reduce(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param SecondNeighborsTag Tag indicating operations over particle first and
+  \note SecondNeighborsTag Tag indicating operations over particle first and
   second neighbors.
-  \param TeamOpTag Tag indicating a team parallel strategy over particle first
+  \note TeamOpTag Tag indicating a team parallel strategy over particle first
   neighbors and serial loops over second neighbors.
   \param reduce_val Scalar to be reduced across particles and neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
@@ -939,9 +939,9 @@ inline void neighbor_parallel_reduce(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param SecondNeighborsTag Tag indicating operations over particle first and
+  \note SecondNeighborsTag Tag indicating operations over particle first and
   second neighbors.
-  \param TeamVectorOpTag Tag indicating a team parallel strategy over particle
+  \note TeamVectorOpTag Tag indicating a team parallel strategy over particle
   first neighbors and vector loops over second neighbors.
   \param reduce_val Scalar to be reduced across particles and neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
@@ -1028,7 +1028,7 @@ inline void neighbor_parallel_reduce(
   \param i Particle index.
   \param neighbor_functor The neighbor functor to execute in parallel.
   \param list The neighbor list over which to execute the neighbor operations.
-  \param FirstNeighborsTag Tag indicating operations over particle first
+  \note FirstNeighborsTag Tag indicating operations over particle first
   neighbors.
 
   A "functor" is a class containing the function to execute in parallel, data
@@ -1079,7 +1079,7 @@ for_each_neighbor( const IndexType i, const FunctorType& neighbor_functor,
   \param team Kokkos team.
   \param neighbor_functor The neighbor functor to execute in parallel.
   \param list The neighbor list over which to execute the neighbor operations.
-  \param FirstNeighborsTag Tag indicating operations over particle first
+  \note FirstNeighborsTag Tag indicating operations over particle first
   neighbors.
 */
 template <class IndexType, class FunctorType, class NeighborListType,

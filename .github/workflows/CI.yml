@@ -35,6 +35,7 @@ jobs:
         liball: ['OFF']
         silo: ['OFF']
         hdf5: ['OFF']
+        sanitizer: ['ASAN']
         coverage: ['OFF']
         include:
           - distro: 'ubuntu:latest'
@@ -92,7 +93,8 @@ jobs:
             heffte: 'MKL'
             hypre: 'OFF'
             coverage: 'OFF'
-          - distro: 'fedora:latest'
+          # FIXME: use fedora:latest when MPI timeouts are fixed
+          - distro: 'fedora:rawhide'
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
@@ -102,7 +104,8 @@ jobs:
             hypre: 'OFF'
             coverage: 'OFF'
             doxygen: 'ON'
-          - distro: 'fedora:latest'
+          # FIXME: use fedora:latest when MPI timeouts are fixed
+          - distro: 'fedora:rawhide'
             cxx: 'clang++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
@@ -248,7 +251,7 @@ jobs:
     continue-on-error: ${{ (matrix.distro == 'ubuntu:intel' && matrix.backend == 'SERIAL' && matrix.cmake_build_type == 'Release') || matrix.distro == 'opensuse:latest' }}
     steps:
       - name: Cache ccache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ matrix.distro }}-${{github.run_id}}
