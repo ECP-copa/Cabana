@@ -1,4 +1,5 @@
 <map id="core/src/Cabana_SiloParticleOutput.hpp" name="core/src/Cabana_SiloParticleOutput.hpp">
-<area shape="rect" id="node1" title="Write particle output using the Silo format." alt="" coords="5,5,200,45"/>
-<area shape="rect" id="node2" href="$Cabana__Grid__SiloParticleOutput_8hpp.html" title="Write particle output using the Silo format." alt="" coords="19,93,186,133"/>
+<area shape="rect" id="Node000001" title="Write particle output using the Silo format." alt="" coords="5,5,199,54"/>
+<area shape="rect" id="Node000002" href="$Cabana__Grid__SiloParticleOutput_8hpp.html" title="Write particle output using the Silo format." alt="" coords="19,102,185,151"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="105,69,105,101,99,101,99,69"/>
 </map>

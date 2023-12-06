@@ -1,4 +1,5 @@
 <map id="Cabana::Grid::SplineData&lt; Scalar, Order, NumSpaceDim, EntityType, SplineDataMemberTypes&lt; Tags... &gt; &gt;" name="Cabana::Grid::SplineData&lt; Scalar, Order, NumSpaceDim, EntityType, SplineDataMemberTypes&lt; Tags... &gt; &gt;">
-<area shape="rect" id="node1" title="Specify each data member individually through tags." alt="" coords="5,108,259,177"/>
-<area shape="rect" id="node2" href="$structCabana_1_1Grid_1_1SplineDataMember.html" title=" " alt="" coords="44,5,220,60"/>
+<area shape="rect" id="Node000001" title="Specify each data member individually through tags." alt="" coords="5,121,258,208"/>
+<area shape="rect" id="Node000002" href="$structCabana_1_1Grid_1_1SplineDataMember.html" title=" " alt="" coords="44,5,219,73"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="134,89,134,120,129,120,129,89"/>
 </map>

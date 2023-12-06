@@ -1,4 +1,5 @@
 <map id="Cabana::Grid::isUniformMesh&lt; T &gt;" name="Cabana::Grid::isUniformMesh&lt; T &gt;">
-<area shape="rect" id="node1" title=" " alt="" coords="5,79,240,104"/>
-<area shape="rect" id="node2" title=" " alt="" coords="67,5,179,31"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,83,239,113"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="66,5,178,35"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="125,51,125,82,119,82,119,51"/>
 </map>

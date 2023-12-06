@@ -1,4 +1,5 @@
 <map id="Cabana::Grid::HypreSemiStructGMRES&lt; Scalar, EntityType, MemorySpace &gt;" name="Cabana::Grid::HypreSemiStructGMRES&lt; Scalar, EntityType, MemorySpace &gt;">
-<area shape="rect" id="node1" title="GMRES solver." alt="" coords="20,108,235,163"/>
-<area shape="rect" id="node2" href="$classCabana_1_1Grid_1_1HypreSemiStructuredSolver.html" title="Hypre semi&#45;structured solver interface for scalar fields." alt="" coords="5,5,249,60"/>
+<area shape="rect" id="Node000001" title="GMRES solver." alt="" coords="20,121,234,189"/>
+<area shape="rect" id="Node000002" href="$classCabana_1_1Grid_1_1HypreSemiStructuredSolver.html" title="Hypre semi&#45;structured solver interface for scalar fields." alt="" coords="5,5,249,73"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="130,88,130,120,124,120,124,88"/>
 </map>

@@ -1,6 +1,11 @@
 <map id="core/src/Cabana_Sort.hpp" name="core/src/Cabana_Sort.hpp">
-<area shape="rect" id="node1" title="Sorting and binning built on Kokkos BinSort." alt="" coords="23,5,204,31"/>
-<area shape="rect" id="node2" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="5,240,189,265"/>
-<area shape="rect" id="node3" href="$Cabana__LinkedCellList_8hpp.html" title="Linked cell list binning and sorting." alt="" coords="85,79,275,119"/>
-<area shape="rect" id="node4" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="135,167,350,192"/>
+<area shape="rect" id="Node000001" title="Sorting and binning built on Kokkos BinSort." alt="" coords="22,5,202,35"/>
+<area shape="rect" id="Node000002" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="5,257,189,287"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="92,49,74,84,68,132,72,181,83,224,94,256,89,258,78,226,67,182,62,132,69,82,88,46"/>
+<area shape="rect" id="Node000003" href="$Cabana__LinkedCellList_8hpp.html" title="Linked cell list binning and sorting." alt="" coords="84,83,273,132"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="134,46,162,81,158,84,130,49"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="149,145,125,181,110,222,102,258,96,257,104,220,120,178,144,142"/>
+<area shape="rect" id="Node000004" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="134,180,348,209"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="207,143,233,177,228,181,203,146"/>
+<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="202,219,125,259,123,254,199,215"/>
 </map>

@@ -1,7 +1,13 @@
 <map id="grid/src/Cabana_Grid_Parallel.hpp" name="grid/src/Cabana_Grid_Parallel.hpp">
-<area shape="rect" id="node1" title="Logical grid extension of Kokkos parallel iteration." alt="" coords="23,5,175,45"/>
-<area shape="rect" id="node2" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="9,181,189,207"/>
-<area shape="rect" id="node4" href="$Cabana__Grid__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="23,93,175,133"/>
-<area shape="rect" id="node5" href="$Cabana__Grid__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="200,93,423,133"/>
-<area shape="rect" id="node3" href="$Cajita_8hpp_source.html" title=" " alt="" coords="32,255,167,280"/>
+<area shape="rect" id="Node000001" title="Logical grid extension of Kokkos parallel iteration." alt="" coords="25,5,176,54"/>
+<area shape="rect" id="Node000002" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="11,199,190,228"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="47,65,29,83,15,103,8,126,15,150,25,164,38,177,68,196,65,200,35,181,21,168,10,152,3,126,10,101,25,79,43,62"/>
+<area shape="rect" id="Node000004" href="$Cabana__Grid__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="25,102,176,151"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="103,69,103,101,98,101,98,69"/>
+<area shape="rect" id="Node000005" href="$Cabana__Grid__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="201,102,422,151"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="168,58,260,99,258,104,166,63"/>
+<area shape="rect" id="Node000003" href="$Cajita_8hpp_source.html" title=" " alt="" coords="33,276,168,306"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="103,244,103,276,98,276,98,244"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="103,167,103,198,98,198,98,167"/>
+<area shape="poly" id="edge6_Node000005_Node000002" title=" " alt="" coords="240,159,137,200,135,196,238,154"/>
 </map>

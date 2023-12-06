@@ -1,9 +1,19 @@
 <map id="grid/src/Cabana_Grid_Halo.hpp" name="grid/src/Cabana_Grid_Halo.hpp">
-<area shape="rect" id="node1" title="Multi&#45;node grid scatter/gather." alt="" coords="206,5,358,45"/>
-<area shape="rect" id="node2" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="192,181,372,207"/>
-<area shape="rect" id="node4" href="$Cabana__Grid__BovWriter_8hpp.html" title="Brick of values (BOV) grid output." alt="" coords="30,93,182,133"/>
-<area shape="rect" id="node5" href="$Cabana__Grid__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="206,93,358,133"/>
-<area shape="rect" id="node6" href="$Cabana__Grid__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="383,93,605,133"/>
-<area shape="rect" id="node7" href="$Cabana__Grid__SparseHalo_8hpp_source.html" title=" " alt="" coords="630,93,782,133"/>
-<area shape="rect" id="node3" href="$Cajita_8hpp_source.html" title=" " alt="" coords="215,255,349,280"/>
+<area shape="rect" id="Node000001" title="Multi&#45;node grid scatter/gather." alt="" coords="207,5,358,54"/>
+<area shape="rect" id="Node000002" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="193,199,372,228"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="192,43,117,56,50,78,26,92,12,109,9,127,20,149,46,167,89,181,193,200,192,206,87,186,44,171,16,152,4,128,7,106,23,88,48,73,116,51,191,38"/>
+<area shape="rect" id="Node000004" href="$Cabana__Grid__BovWriter_8hpp.html" title="Brick of values (BOV) grid output." alt="" coords="31,102,182,151"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="226,64,151,104,149,99,224,59"/>
+<area shape="rect" id="Node000005" href="$Cabana__Grid__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="207,102,358,151"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="285,69,285,101,280,101,280,69"/>
+<area shape="rect" id="Node000006" href="$Cabana__Grid__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="382,102,604,151"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="350,58,441,99,439,104,347,63"/>
+<area shape="rect" id="Node000007" href="$Cabana__Grid__SparseHalo_8hpp_source.html" title=" " alt="" coords="628,102,779,151"/>
+<area shape="poly" id="edge9_Node000001_Node000007" title=" " alt="" coords="373,46,616,99,628,102,627,107,615,105,372,52"/>
+<area shape="rect" id="Node000003" href="$Cajita_8hpp_source.html" title=" " alt="" coords="215,276,349,306"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="285,244,285,276,280,276,280,244"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="170,155,254,196,252,200,168,160"/>
+<area shape="poly" id="edge6_Node000005_Node000002" title=" " alt="" coords="285,167,285,198,280,198,280,167"/>
+<area shape="poly" id="edge8_Node000006_Node000002" title=" " alt="" coords="421,159,318,200,316,196,419,154"/>
+<area shape="poly" id="edge10_Node000007_Node000002" title=" " alt="" coords="613,154,369,201,368,195,612,149"/>
 </map>

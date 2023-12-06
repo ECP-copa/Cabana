@@ -1,4 +1,5 @@
 <map id="Cabana::Grid::HypreStructPCG&lt; Scalar, EntityType, MemorySpace &gt;" name="Cabana::Grid::HypreStructPCG&lt; Scalar, EntityType, MemorySpace &gt;">
-<area shape="rect" id="node1" title="PCG solver." alt="" coords="20,108,205,163"/>
-<area shape="rect" id="node2" href="$classCabana_1_1Grid_1_1HypreStructuredSolver.html" title="Hypre structured solver interface for scalar fields." alt="" coords="5,5,220,60"/>
+<area shape="rect" id="Node000001" title="PCG solver." alt="" coords="20,121,204,189"/>
+<area shape="rect" id="Node000002" href="$classCabana_1_1Grid_1_1HypreStructuredSolver.html" title="Hypre structured solver interface for scalar fields." alt="" coords="5,5,219,73"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="115,88,115,120,109,120,109,88"/>
 </map>

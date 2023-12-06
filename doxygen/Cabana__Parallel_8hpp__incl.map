@@ -1,11 +1,28 @@
 <map id="core/src/Cabana_Parallel.hpp" name="core/src/Cabana_Parallel.hpp">
-<area shape="rect" id="node1" title="SIMD and neighbor extension of Kokkos parallel iteration." alt="" coords="266,5,465,31"/>
-<area shape="rect" id="node2" href="$Cabana__ExecutionPolicy_8hpp.html" title="SIMD execution policy." alt="" coords="319,79,514,104"/>
-<area shape="rect" id="node5" title=" " alt="" coords="128,299,257,324"/>
-<area shape="rect" id="node6" title=" " alt="" coords="578,299,665,324"/>
-<area shape="rect" id="node7" href="$Cabana__NeighborList_8hpp.html" title="Neighbor list interface." alt="" coords="27,152,208,177"/>
-<area shape="rect" id="node8" href="$Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="177,225,314,251"/>
-<area shape="rect" id="node9" title=" " alt="" coords="760,79,822,104"/>
-<area shape="rect" id="node3" href="$Cabana__Index_8hpp.html" title="AoSoA indexing." alt="" coords="369,152,536,177"/>
-<area shape="rect" id="node4" href="$Cabana__TypeTraits_8hpp_source.html" title=" " alt="" coords="390,225,584,251"/>
+<area shape="rect" id="Node000001" title="SIMD and neighbor extension of Kokkos parallel iteration." alt="" coords="267,5,465,35"/>
+<area shape="rect" id="Node000002" href="$Cabana__ExecutionPolicy_8hpp.html" title="SIMD execution policy." alt="" coords="319,83,514,113"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="378,34,401,68,396,71,373,37"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="130,316,258,346"/>
+<area shape="poly" id="edge15_Node000001_Node000005" title=" " alt="" coords="267,33,200,47,131,71,98,88,67,109,40,133,18,162,9,185,11,206,22,227,40,246,90,281,144,307,141,312,87,286,37,250,18,230,6,208,4,184,13,159,36,130,64,105,95,84,128,66,199,42,266,27"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="577,316,664,346"/>
+<area shape="poly" id="edge17_Node000001_Node000006" title=" " alt="" coords="423,33,476,52,527,81,572,115,604,147,627,185,646,238,648,255,647,272,638,303,633,301,642,271,643,255,641,239,622,187,599,150,569,119,524,85,473,57,421,38"/>
+<area shape="rect" id="Node000007" href="$Cabana__NeighborList_8hpp.html" title="Neighbor list interface." alt="" coords="28,161,208,190"/>
+<area shape="poly" id="edge10_Node000001_Node000007" title=" " alt="" coords="328,38,279,58,229,85,183,119,144,152,141,148,179,115,226,81,277,54,326,33"/>
+<area shape="rect" id="Node000008" href="$Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="178,238,314,268"/>
+<area shape="poly" id="edge12_Node000001_Node000008" title=" " alt="" coords="351,38,330,59,310,84,290,120,275,158,255,224,250,223,270,156,286,118,305,82,326,55,347,34"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="760,83,820,113"/>
+<area shape="poly" id="edge16_Node000001_Node000009" title=" " alt="" coords="466,32,597,53,741,80,745,81,744,87,740,86,596,58,465,38"/>
+<area shape="rect" id="Node000003" href="$Cabana__Index_8hpp.html" title="AoSoA indexing." alt="" coords="368,161,534,190"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="426,112,441,145,436,148,421,114"/>
+<area shape="poly" id="edge8_Node000002_Node000005" title=" " alt="" coords="383,116,261,173,203,207,181,224,168,240,163,255,164,271,177,302,173,304,159,272,158,254,164,237,178,220,200,203,258,168,381,111"/>
+<area shape="poly" id="edge9_Node000002_Node000006" title=" " alt="" coords="464,111,507,129,553,155,595,191,612,213,624,237,631,270,629,301,624,301,626,270,619,239,607,216,591,195,550,160,504,134,462,116"/>
+<area shape="rect" id="Node000004" href="$Cabana__TypeTraits_8hpp_source.html" title=" " alt="" coords="389,238,583,268"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="460,190,476,223,471,225,455,192"/>
+<area shape="poly" id="edge6_Node000003_Node000005" title=" " alt="" coords="436,193,388,230,327,270,244,312,242,307,325,266,385,225,433,189"/>
+<area shape="poly" id="edge7_Node000003_Node000006" title=" " alt="" coords="517,189,560,207,580,220,597,237,614,268,622,300,616,301,609,269,593,240,576,224,557,212,515,193"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="432,271,264,314,263,309,430,266"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="513,266,583,306,581,310,510,271"/>
+<area shape="poly" id="edge11_Node000007_Node000005" title=" " alt="" coords="118,191,116,227,118,247,124,267,139,288,158,305,154,309,135,291,120,269,113,249,110,227,113,190"/>
+<area shape="poly" id="edge13_Node000008_Node000005" title=" " alt="" coords="238,270,215,304,210,301,234,267"/>
+<area shape="poly" id="edge14_Node000008_Node000006" title=" " alt="" coords="315,266,563,315,562,320,314,271"/>
 </map>

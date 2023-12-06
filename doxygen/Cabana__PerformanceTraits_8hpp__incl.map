@@ -1,6 +1,10 @@
 <map id="core/src/impl/Cabana_PerformanceTraits.hpp" name="core/src/impl/Cabana_PerformanceTraits.hpp">
-<area shape="rect" id="node1" title="Default settings for execution spaces." alt="" coords="38,5,209,45"/>
-<area shape="rect" id="node2" href="$Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="108,93,245,119"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,167,135,192"/>
-<area shape="rect" id="node4" title=" " alt="" coords="159,167,245,192"/>
+<area shape="rect" id="Node000001" title="Default settings for execution spaces." alt="" coords="36,5,207,54"/>
+<area shape="rect" id="Node000002" href="$Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="107,102,243,132"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="139,53,160,87,156,90,134,56"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,180,134,209"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="115,55,97,103,79,165,74,164,92,101,110,54"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="157,134,103,172,100,168,153,130"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="158,180,245,209"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="182,131,194,164,189,166,177,133"/>
 </map>

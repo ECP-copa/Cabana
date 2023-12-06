@@ -1,4 +1,5 @@
 <map id="Cabana::Grid::isSparseMesh&lt; SparseMesh&lt; Scalar, NumSpaceDim &gt; &gt;" name="Cabana::Grid::isSparseMesh&lt; SparseMesh&lt; Scalar, NumSpaceDim &gt; &gt;">
-<area shape="rect" id="node1" title=" " alt="" coords="5,79,279,119"/>
-<area shape="rect" id="node2" title=" " alt="" coords="87,5,197,31"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,83,278,132"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="87,5,196,35"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="144,50,144,82,139,82,139,50"/>
 </map>

@@ -1,4 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classCabana_1_1CommunicationData.html" title=" " alt="" coords="5,13,245,67"/>
-<area shape="rect" id="node2" href="$classCabana_1_1Gather_3_01HaloType_00_01AoSoAType_00_01typename_01std_1_1enable__if_3_01is__aoso666e08a1494152c80218c785a19e78d3.html" title="Synchronously gather data from the local decomposition to the ghosts using the halo forward communica..." alt="" coords="293,5,523,75"/>
+<area shape="rect" id="Node000000" href="$classCabana_1_1CommunicationData.html" title=" " alt="" coords="5,15,245,83"/>
+<area shape="rect" id="Node000001" href="$classCabana_1_1Gather_3_01HaloType_00_01AoSoAType_00_01typename_01std_1_1enable__if_3_01is__aoso666e08a1494152c80218c785a19e78d3.html" title="Synchronously gather data from the local decomposition to the ghosts using the halo forward communica..." alt="" coords="293,5,521,92"/>
+<area shape="poly" id="edge1_Node000000_Node000001" title=" " alt="" coords="260,46,292,46,292,51,260,51"/>
 </map>

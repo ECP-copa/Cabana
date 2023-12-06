@@ -1,8 +1,13 @@
 <map id="Cabana::Grid::SplineData&lt; Scalar, Order, NumSpaceDim, EntityType, void &gt;" name="Cabana::Grid::SplineData&lt; Scalar, Order, NumSpaceDim, EntityType, void &gt;">
-<area shape="rect" id="node1" title="Default of void has all data members." alt="" coords="325,178,535,233"/>
-<area shape="rect" id="node2" href="$structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalCellSize_01_4.html" title="Physical cell size spline data member." alt="" coords="26,5,257,75"/>
-<area shape="rect" id="node3" href="$structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineLogicalPosition_01_4.html" title="Logical position spline data member." alt="" coords="10,99,273,154"/>
-<area shape="rect" id="node4" href="$structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalDistance_01_4.html" title="Physical distance spline data member." alt="" coords="5,178,277,233"/>
-<area shape="rect" id="node5" href="$structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineWeightValues_01_4.html" title="Weight values spline data member." alt="" coords="14,257,269,311"/>
-<area shape="rect" id="node6" href="$structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineWeightPhysicalGradients_01_4.html" title="Weight physical gradients spline data member." alt="" coords="15,336,267,405"/>
+<area shape="rect" id="Node000001" title="Default of void has all data members." alt="" coords="325,208,533,276"/>
+<area shape="rect" id="Node000002" href="$structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalCellSize_01_4.html" title="Physical cell size spline data member." alt="" coords="26,5,256,92"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="270,98,278,102,345,154,399,206,395,210,341,158,275,107,268,102"/>
+<area shape="rect" id="Node000003" href="$structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineLogicalPosition_01_4.html" title="Logical position spline data member." alt="" coords="10,116,272,184"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="264,186,325,206,324,211,262,191"/>
+<area shape="rect" id="Node000004" href="$structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalDistance_01_4.html" title="Physical distance spline data member." alt="" coords="5,208,277,276"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="292,239,324,239,324,245,292,245"/>
+<area shape="rect" id="Node000005" href="$structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineWeightValues_01_4.html" title="Weight values spline data member." alt="" coords="14,300,268,368"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="262,293,324,273,325,278,264,298"/>
+<area shape="rect" id="Node000006" href="$structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineWeightPhysicalGradients_01_4.html" title="Weight physical gradients spline data member." alt="" coords="15,392,267,479"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="268,382,275,377,341,326,395,274,399,278,345,330,278,382,270,386"/>
 </map>

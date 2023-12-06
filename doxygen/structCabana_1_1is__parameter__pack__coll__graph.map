@@ -1,4 +1,5 @@
 <map id="Cabana::is_parameter_pack&lt; T &gt;" name="Cabana::is_parameter_pack&lt; T &gt;">
-<area shape="rect" id="node1" title="ParameterPack static type checker." alt="" coords="12,108,168,148"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,175,60"/>
+<area shape="rect" id="Node000001" title="ParameterPack static type checker." alt="" coords="12,121,167,170"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,174,73"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="92,88,92,121,87,121,87,88"/>
 </map>

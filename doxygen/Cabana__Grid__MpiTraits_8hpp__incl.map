@@ -1,8 +1,13 @@
 <map id="grid/src/Cabana_Grid_MpiTraits.hpp" name="grid/src/Cabana_Grid_MpiTraits.hpp">
-<area shape="rect" id="node1" title="MPI traits." alt="" coords="248,5,400,45"/>
-<area shape="rect" id="node2" href="$Cabana__Utils_8hpp.html" title="Cabana utilities." alt="" coords="107,93,235,119"/>
-<area shape="rect" id="node5" title=" " alt="" coords="259,93,389,119"/>
-<area shape="rect" id="node6" title=" " alt="" coords="413,93,470,119"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,167,181,192"/>
-<area shape="rect" id="node4" title=" " alt="" coords="206,167,293,192"/>
+<area shape="rect" id="Node000001" title="MPI traits." alt="" coords="247,5,398,54"/>
+<area shape="rect" id="Node000002" href="$Cabana__Utils_8hpp.html" title="Cabana utilities." alt="" coords="107,102,234,132"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="281,57,210,96,208,92,279,52"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="258,102,387,132"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="325,55,325,86,320,86,320,55"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="410,102,467,132"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="356,52,408,90,405,95,353,57"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,180,181,209"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="158,134,120,171,116,167,154,130"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="205,180,291,209"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="187,130,224,167,221,171,183,134"/>
 </map>

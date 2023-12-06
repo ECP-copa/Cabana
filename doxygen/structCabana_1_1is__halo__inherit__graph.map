@@ -1,4 +1,5 @@
 <map id="Cabana::is_halo&lt; T &gt;" name="Cabana::is_halo&lt; T &gt;">
-<area shape="rect" id="node1" title="Halo static type checker." alt="" coords="10,108,155,133"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,160,60"/>
+<area shape="rect" id="Node000001" title="Halo static type checker." alt="" coords="10,121,154,151"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,159,73"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="85,89,85,120,79,120,79,89"/>
 </map>

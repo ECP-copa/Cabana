@@ -1,4 +1,5 @@
 <map id="Cabana::is_linked_cell_list&lt; T &gt;" name="Cabana::is_linked_cell_list&lt; T &gt;">
-<area shape="rect" id="node1" title="LinkedCellList static type checker." alt="" coords="8,108,161,148"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,164,60"/>
+<area shape="rect" id="Node000001" title="LinkedCellList static type checker." alt="" coords="8,121,161,170"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,164,73"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="87,88,87,121,82,121,82,88"/>
 </map>

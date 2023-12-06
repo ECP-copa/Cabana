@@ -1,10 +1,11 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classCabana_1_1Grid_1_1HypreStructuredSolver.html" title="Hypre structured solver interface for scalar fields." alt="" coords="5,241,220,296"/>
-<area shape="rect" id="node2" href="$classCabana_1_1Grid_1_1HypreStructBiCGSTAB.html" title="BiCGSTAB solver." alt="" coords="268,5,471,60"/>
-<area shape="rect" id="node3" href="$classCabana_1_1Grid_1_1HypreStructDiagonal.html" title="Diagonal preconditioner." alt="" coords="271,84,467,139"/>
-<area shape="rect" id="node4" href="$classCabana_1_1Grid_1_1HypreStructGMRES.html" title="GMRES solver." alt="" coords="276,163,463,217"/>
-<area shape="rect" id="node5" href="$classCabana_1_1Grid_1_1HypreStructJacobi.html" title="Jacobi solver." alt="" coords="277,241,462,296"/>
-<area shape="rect" id="node6" href="$classCabana_1_1Grid_1_1HypreStructPCG.html" title="PCG solver." alt="" coords="277,320,462,375"/>
-<area shape="rect" id="node7" href="$classCabana_1_1Grid_1_1HypreStructPFMG.html" title="PFMG solver." alt="" coords="277,399,462,453"/>
-<area shape="rect" id="node8" href="$classCabana_1_1Grid_1_1HypreStructSMG.html" title="SMG solver." alt="" coords="277,477,462,532"/>
+<area shape="rect" id="Node000000" href="$classCabana_1_1Grid_1_1HypreSemiStructuredSolver.html" title="Hypre semi&#45;structured solver interface for scalar fields." alt="" coords="5,144,249,212"/>
+<area shape="rect" id="Node000001" href="$classCabana_1_1Grid_1_1HypreSemiStructBiCGSTAB.html" title="BiCGSTAB solver." alt="" coords="297,5,511,73"/>
+<area shape="poly" id="edge15_Node000000_Node000001" title=" " alt="" coords="200,134,295,83,321,71,324,76,298,88,203,138"/>
+<area shape="rect" id="Node000002" href="$classCabana_1_1Grid_1_1HypreSemiStructDiagonal.html" title="Diagonal preconditioner." alt="" coords="297,97,511,165"/>
+<area shape="poly" id="edge16_Node000000_Node000002" title=" " alt="" coords="264,152,296,147,296,152,265,157"/>
+<area shape="rect" id="Node000003" href="$classCabana_1_1Grid_1_1HypreSemiStructGMRES.html" title="GMRES solver." alt="" coords="297,189,511,257"/>
+<area shape="poly" id="edge17_Node000000_Node000003" title=" " alt="" coords="265,198,296,203,296,208,264,203"/>
+<area shape="rect" id="Node000004" href="$classCabana_1_1Grid_1_1HypreSemiStructPCG.html" title="PCG solver." alt="" coords="297,281,511,349"/>
+<area shape="poly" id="edge18_Node000000_Node000004" title=" " alt="" coords="204,217,298,266,324,278,321,283,295,271,201,222"/>
 </map>

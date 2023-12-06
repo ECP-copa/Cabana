@@ -1,5 +1,7 @@
 <map id="core/src/Cabana_Types.hpp" name="core/src/Cabana_Types.hpp">
-<area shape="rect" id="node1" title="Memory access type checking." alt="" coords="40,5,231,31"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,79,135,104"/>
-<area shape="rect" id="node3" title=" " alt="" coords="159,79,245,104"/>
+<area shape="rect" id="Node000001" title="Memory access type checking." alt="" coords="40,5,230,35"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,83,134,113"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="125,37,94,73,90,69,121,34"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="158,83,245,113"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="149,34,181,69,177,73,145,37"/>
 </map>

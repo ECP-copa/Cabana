@@ -1,6 +1,10 @@
 <map id="grid/src/Cabana_Grid_Splines.hpp" name="grid/src/Cabana_Grid_Splines.hpp">
-<area shape="rect" id="node1" title="Spline functions." alt="" coords="19,5,171,45"/>
-<area shape="rect" id="node2" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="5,181,185,207"/>
-<area shape="rect" id="node4" href="$Cabana__Grid__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="77,93,229,133"/>
-<area shape="rect" id="node3" href="$Cajita_8hpp_source.html" title=" " alt="" coords="28,255,163,280"/>
+<area shape="rect" id="Node000001" title="Spline functions." alt="" coords="19,5,171,54"/>
+<area shape="rect" id="Node000002" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="5,199,185,228"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="78,69,67,103,63,126,67,150,76,175,88,197,83,200,71,178,62,151,58,126,62,101,73,67"/>
+<area shape="rect" id="Node000004" href="$Cabana__Grid__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="77,102,228,151"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="119,66,140,100,136,103,115,69"/>
+<area shape="rect" id="Node000003" href="$Cajita_8hpp_source.html" title=" " alt="" coords="28,276,162,306"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="98,244,98,276,92,276,92,244"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="130,165,107,200,102,197,126,162"/>
 </map>

@@ -1,4 +1,5 @@
 <map id="Cabana::Grid::is_particle_list_impl&lt; class &gt;" name="Cabana::Grid::is_particle_list_impl&lt; class &gt;">
-<area shape="rect" id="node1" title=" " alt="" coords="5,79,176,119"/>
-<area shape="rect" id="node2" title=" " alt="" coords="35,5,147,31"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,83,176,132"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="35,5,146,35"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="93,50,93,82,88,82,88,50"/>
 </map>

@@ -1,4 +1,5 @@
 <map id="Cabana::Grid::Experimental::HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType &gt;" name="Cabana::Grid::Experimental::HeffteFastFourierTransform&lt; EntityType, MeshType, Scalar, MemorySpace, ExecSpace, BackendType &gt;">
-<area shape="rect" id="node1" title="Interface to heFFTe fast Fourier transform library." alt="" coords="363,20,649,89"/>
-<area shape="rect" id="node2" href="$classCabana_1_1Grid_1_1Experimental_1_1FastFourierTransform.html" title=" " alt="" coords="5,5,315,104"/>
+<area shape="rect" id="Node000001" title="Interface to heFFTe fast Fourier transform library." alt="" coords="362,24,647,111"/>
+<area shape="rect" id="Node000002" href="$classCabana_1_1Grid_1_1Experimental_1_1FastFourierTransform.html" title=" " alt="" coords="5,5,314,130"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="329,65,361,65,361,70,329,70"/>
 </map>

@@ -1,4 +1,5 @@
 <map id="Cabana::Grid::SplineDataMember&lt; Scalar, Order, NumSpaceDim, SplineLogicalPosition &gt;" name="Cabana::Grid::SplineDataMember&lt; Scalar, Order, NumSpaceDim, SplineLogicalPosition &gt;">
-<area shape="rect" id="node1" title="Logical position spline data member." alt="" coords="5,5,268,60"/>
-<area shape="rect" id="node2" href="$structCabana_1_1Grid_1_1SplineData_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01EntityType_00_01void_01_4.html" title="Default of void has all data members." alt="" coords="32,108,241,163"/>
+<area shape="rect" id="Node000001" title="Logical position spline data member." alt="" coords="5,5,267,73"/>
+<area shape="rect" id="Node000002" href="$structCabana_1_1Grid_1_1SplineData_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01EntityType_00_01void_01_4.html" title="Default of void has all data members." alt="" coords="32,121,240,189"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="139,88,139,120,133,120,133,88"/>
 </map>

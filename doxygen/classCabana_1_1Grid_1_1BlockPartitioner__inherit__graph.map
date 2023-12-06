@@ -1,6 +1,9 @@
 <map id="Cabana::Grid::BlockPartitioner&lt; NumSpaceDim &gt;" name="Cabana::Grid::BlockPartitioner&lt; NumSpaceDim &gt;">
-<area shape="rect" id="node1" title="Block partitioner base class." alt="" coords="5,69,216,109"/>
-<area shape="rect" id="node2" href="$classCabana_1_1Grid_1_1DimBlockPartitioner.html" title="Dimension&#45;only partitioner." alt="" coords="269,5,503,45"/>
-<area shape="rect" id="node3" href="$classCabana_1_1Grid_1_1ManualBlockPartitioner.html" title="Manual block partitioner." alt="" coords="285,69,487,109"/>
-<area shape="rect" id="node4" href="$classCabana_1_1Grid_1_1SparseDimPartitioner.html" title=" " alt="" coords="264,134,508,189"/>
+<area shape="rect" id="Node000001" title="Block partitioner base class." alt="" coords="5,79,215,127"/>
+<area shape="rect" id="Node000002" href="$classCabana_1_1Grid_1_1DimBlockPartitioner.html" title="Dimension&#45;only partitioner." alt="" coords="267,5,502,54"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="218,72,290,52,291,57,219,77"/>
+<area shape="rect" id="Node000003" href="$classCabana_1_1Grid_1_1ManualBlockPartitioner.html" title="Manual block partitioner." alt="" coords="284,79,485,127"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="231,100,283,100,283,106,231,106"/>
+<area shape="rect" id="Node000004" href="$classCabana_1_1Grid_1_1SparseDimPartitioner.html" title=" " alt="" coords="263,152,506,220"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="208,130,270,149,269,154,207,135"/>
 </map>

@@ -1,7 +1,13 @@
 <map id="grid/src/Cabana_Grid_SparseLocalGrid.hpp" name="grid/src/Cabana_Grid_SparseLocalGrid.hpp">
-<area shape="rect" id="node1" title="Sparse Local grid and related implementations." alt="" coords="23,5,179,45"/>
-<area shape="rect" id="node2" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="5,269,185,295"/>
-<area shape="rect" id="node4" href="$Cabana__Grid__SparseArray_8hpp.html" title="Sparse grid fields arrays using AoSoA." alt="" coords="82,93,234,133"/>
-<area shape="rect" id="node3" href="$Cajita_8hpp_source.html" title=" " alt="" coords="28,343,163,368"/>
-<area shape="rect" id="node5" href="$Cabana__Grid__SparseHalo_8hpp_source.html" title=" " alt="" coords="133,181,285,221"/>
+<area shape="rect" id="Node000001" title="Sparse Local grid and related implementations." alt="" coords="23,5,178,54"/>
+<area shape="rect" id="Node000002" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="5,295,185,325"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="83,69,72,103,68,158,73,213,83,260,93,294,88,296,78,262,68,213,62,158,67,101,78,67"/>
+<area shape="rect" id="Node000004" href="$Cabana__Grid__SparseArray_8hpp.html" title="Sparse grid fields arrays using AoSoA." alt="" coords="82,102,233,151"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="125,66,146,100,141,103,120,69"/>
+<area shape="rect" id="Node000003" href="$Cajita_8hpp_source.html" title=" " alt="" coords="28,373,162,403"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="98,341,98,372,92,372,92,341"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="138,166,123,200,108,252,100,295,94,294,103,251,118,198,134,163"/>
+<area shape="rect" id="Node000005" href="$Cabana__Grid__SparseHalo_8hpp_source.html" title=" " alt="" coords="133,199,284,247"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="180,163,198,197,193,199,175,165"/>
+<area shape="poly" id="edge6_Node000005_Node000002" title=" " alt="" coords="167,259,116,297,112,293,163,255"/>
 </map>

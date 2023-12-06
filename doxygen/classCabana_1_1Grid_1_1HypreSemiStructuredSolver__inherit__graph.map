@@ -1,7 +1,11 @@
 <map id="Cabana::Grid::HypreSemiStructuredSolver&lt; Scalar, EntityType, MemorySpace &gt;" name="Cabana::Grid::HypreSemiStructuredSolver&lt; Scalar, EntityType, MemorySpace &gt;">
-<area shape="rect" id="node1" title="Hypre semi&#45;structured solver interface for scalar fields." alt="" coords="5,124,249,179"/>
-<area shape="rect" id="node2" href="$classCabana_1_1Grid_1_1HypreSemiStructBiCGSTAB.html" title="BiCGSTAB solver." alt="" coords="297,5,512,60"/>
-<area shape="rect" id="node3" href="$classCabana_1_1Grid_1_1HypreSemiStructDiagonal.html" title="Diagonal preconditioner." alt="" coords="297,84,512,139"/>
-<area shape="rect" id="node4" href="$classCabana_1_1Grid_1_1HypreSemiStructGMRES.html" title="GMRES solver." alt="" coords="297,163,512,217"/>
-<area shape="rect" id="node5" href="$classCabana_1_1Grid_1_1HypreSemiStructPCG.html" title="PCG solver." alt="" coords="297,241,512,296"/>
+<area shape="rect" id="Node000001" title="Hypre semi&#45;structured solver interface for scalar fields." alt="" coords="5,144,249,212"/>
+<area shape="rect" id="Node000002" href="$classCabana_1_1Grid_1_1HypreSemiStructBiCGSTAB.html" title="BiCGSTAB solver." alt="" coords="297,5,511,73"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="200,134,295,83,321,71,324,76,298,88,203,138"/>
+<area shape="rect" id="Node000003" href="$classCabana_1_1Grid_1_1HypreSemiStructDiagonal.html" title="Diagonal preconditioner." alt="" coords="297,97,511,165"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="264,152,296,147,296,152,265,157"/>
+<area shape="rect" id="Node000004" href="$classCabana_1_1Grid_1_1HypreSemiStructGMRES.html" title="GMRES solver." alt="" coords="297,189,511,257"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="265,198,296,203,296,208,264,203"/>
+<area shape="rect" id="Node000005" href="$classCabana_1_1Grid_1_1HypreSemiStructPCG.html" title="PCG solver." alt="" coords="297,281,511,349"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="204,217,298,266,324,278,321,283,295,271,201,222"/>
 </map>

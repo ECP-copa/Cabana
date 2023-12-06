@@ -1,4 +1,5 @@
 <map id="Cabana::is_particle_list&lt; T &gt;" name="Cabana::is_particle_list&lt; T &gt;">
-<area shape="rect" id="node1" title="ParticleList static type checker." alt="" coords="7,93,143,133"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,144,45"/>
+<area shape="rect" id="Node000001" title="ParticleList static type checker." alt="" coords="6,102,142,151"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,143,54"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="77,69,77,101,71,101,71,69"/>
 </map>

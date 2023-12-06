@@ -1,7 +1,13 @@
 <map id="grid/src/Cabana_Grid_ParticleGridDistributor.hpp" name="grid/src/Cabana_Grid_ParticleGridDistributor.hpp">
-<area shape="rect" id="node1" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="5,5,200,45"/>
-<area shape="rect" id="node2" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="7,269,187,295"/>
-<area shape="rect" id="node4" href="$Cabana__Grid__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="84,93,236,133"/>
-<area shape="rect" id="node3" href="$Cajita_8hpp_source.html" title=" " alt="" coords="30,343,165,368"/>
-<area shape="rect" id="node5" href="$Cabana__Grid__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="135,181,287,221"/>
+<area shape="rect" id="Node000001" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="5,5,199,54"/>
+<area shape="rect" id="Node000002" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="7,295,186,325"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="85,69,74,103,69,158,75,213,85,260,95,294,89,296,79,262,69,213,64,158,69,101,80,67"/>
+<area shape="rect" id="Node000004" href="$Cabana__Grid__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="84,102,235,151"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="126,66,147,100,143,103,122,69"/>
+<area shape="rect" id="Node000003" href="$Cajita_8hpp_source.html" title=" " alt="" coords="30,373,164,403"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="99,341,99,372,94,372,94,341"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="140,166,125,200,110,252,101,295,96,294,104,251,119,198,135,163"/>
+<area shape="rect" id="Node000005" href="$Cabana__Grid__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="134,199,286,247"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="181,163,200,197,195,199,177,165"/>
+<area shape="poly" id="edge6_Node000005_Node000002" title=" " alt="" coords="168,259,117,297,114,293,165,255"/>
 </map>

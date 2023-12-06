@@ -1,5 +1,7 @@
 <map id="Cabana::CommunicationPlan&lt; MemorySpace &gt;" name="Cabana::CommunicationPlan&lt; MemorySpace &gt;">
-<area shape="rect" id="node1" title="Communication plan base class." alt="" coords="79,5,277,45"/>
-<area shape="rect" id="node2" href="$classCabana_1_1Distributor.html" title="A communication plan for migrating data from one uniquely&#45;owned decomposition to another uniquely own..." alt="" coords="5,93,148,133"/>
-<area shape="rect" id="node3" href="$classCabana_1_1Halo.html" title="A communication plan for scattering and gathering of ghosted data." alt="" coords="172,101,387,126"/>
+<area shape="rect" id="Node000001" title="Communication plan base class." alt="" coords="78,5,275,54"/>
+<area shape="rect" id="Node000002" href="$classCabana_1_1Distributor.html" title="A communication plan for migrating data from one uniquely&#45;owned decomposition to another uniquely own..." alt="" coords="5,102,148,151"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="143,66,103,103,100,99,139,63"/>
+<area shape="rect" id="Node000003" href="$classCabana_1_1Halo.html" title="A communication plan for scattering and gathering of ghosted data." alt="" coords="171,112,385,141"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="214,62,265,109,261,113,211,66"/>
 </map>

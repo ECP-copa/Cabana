@@ -1,11 +1,19 @@
 <map id="grid/src/Cabana_Grid_Hypre.hpp" name="grid/src/Cabana_Grid_Hypre.hpp">
-<area shape="rect" id="node1" title="HYPRE memory space handling." alt="" coords="472,5,624,45"/>
-<area shape="rect" id="node2" href="$Cabana__Utils_8hpp.html" title="Cabana utilities." alt="" coords="107,93,235,119"/>
-<area shape="rect" id="node5" title=" " alt="" coords="259,93,378,119"/>
-<area shape="rect" id="node6" title=" " alt="" coords="402,93,534,119"/>
-<area shape="rect" id="node7" title=" " alt="" coords="559,93,700,119"/>
-<area shape="rect" id="node8" title=" " alt="" coords="725,93,854,119"/>
-<area shape="rect" id="node9" title=" " alt="" coords="879,93,953,119"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,167,181,192"/>
-<area shape="rect" id="node4" title=" " alt="" coords="206,167,293,192"/>
+<area shape="rect" id="Node000001" title="HYPRE memory space handling." alt="" coords="471,5,622,54"/>
+<area shape="rect" id="Node000002" href="$Cabana__Utils_8hpp.html" title="Cabana utilities." alt="" coords="107,102,234,132"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="471,51,248,101,247,95,470,45"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="258,102,376,132"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="483,57,371,99,369,94,482,52"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="401,102,532,132"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="526,56,492,92,488,89,522,53"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="556,102,697,132"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="571,53,605,89,601,92,567,56"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="721,102,849,132"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="614,52,732,94,730,99,612,57"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="873,102,948,132"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="623,45,859,99,857,104,622,50"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,180,181,209"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="158,134,120,171,116,167,154,130"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="205,180,291,209"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="187,130,224,167,221,171,183,134"/>
 </map>

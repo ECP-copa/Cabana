@@ -1,10 +1,17 @@
 <map id="grid/src/Cabana_Grid_IndexSpace.hpp" name="grid/src/Cabana_Grid_IndexSpace.hpp">
-<area shape="rect" id="node1" title="Logical grid indexing." alt="" coords="379,5,531,45"/>
-<area shape="rect" id="node2" href="$Cabana__Utils_8hpp.html" title="Cabana utilities." alt="" coords="107,93,235,119"/>
-<area shape="rect" id="node5" title=" " alt="" coords="259,93,389,119"/>
-<area shape="rect" id="node6" title=" " alt="" coords="413,93,496,119"/>
-<area shape="rect" id="node7" title=" " alt="" coords="521,93,575,119"/>
-<area shape="rect" id="node8" title=" " alt="" coords="600,93,659,119"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,167,181,192"/>
-<area shape="rect" id="node4" title=" " alt="" coords="206,167,293,192"/>
+<area shape="rect" id="Node000001" title="Logical grid indexing." alt="" coords="376,5,527,54"/>
+<area shape="rect" id="Node000002" href="$Cabana__Utils_8hpp.html" title="Cabana utilities." alt="" coords="107,102,234,132"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="376,56,232,100,231,95,375,51"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="258,102,387,132"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="417,57,358,95,355,91,414,52"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="411,102,492,132"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="454,55,454,86,449,86,449,55"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="517,102,570,132"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="479,53,519,89,515,93,475,57"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="595,102,652,132"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="501,52,582,92,580,97,498,57"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,180,181,209"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="158,134,120,171,116,167,154,130"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="205,180,291,209"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="187,130,224,167,221,171,183,134"/>
 </map>

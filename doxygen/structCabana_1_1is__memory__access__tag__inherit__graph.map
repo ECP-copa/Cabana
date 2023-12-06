@@ -1,4 +1,5 @@
 <map id="Cabana::is_memory_access_tag&lt; class &gt;" name="Cabana::is_memory_access_tag&lt; class &gt;">
-<area shape="rect" id="node1" title="Memory access type checker." alt="" coords="5,79,193,119"/>
-<area shape="rect" id="node2" title=" " alt="" coords="43,5,155,31"/>
+<area shape="rect" id="Node000001" title="Memory access type checker." alt="" coords="5,83,193,132"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="43,5,155,35"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="102,50,102,82,96,82,96,50"/>
 </map>

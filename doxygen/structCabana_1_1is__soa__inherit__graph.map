@@ -1,4 +1,5 @@
 <map id="Cabana::is_soa&lt; T &gt;" name="Cabana::is_soa&lt; T &gt;">
-<area shape="rect" id="node1" title="SoA static type checker." alt="" coords="23,93,163,119"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,181,45"/>
+<area shape="rect" id="Node000001" title="SoA static type checker." alt="" coords="23,102,163,132"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,181,54"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="96,70,96,101,90,101,90,70"/>
 </map>

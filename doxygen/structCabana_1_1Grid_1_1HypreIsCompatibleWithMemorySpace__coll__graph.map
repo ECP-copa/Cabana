@@ -1,4 +1,5 @@
 <map id="Cabana::Grid::HypreIsCompatibleWithMemorySpace&lt; MemorySpace &gt;" name="Cabana::Grid::HypreIsCompatibleWithMemorySpace&lt; MemorySpace &gt;">
-<area shape="rect" id="node1" title="Hypre device compatibility check." alt="" coords="5,79,256,119"/>
-<area shape="rect" id="node2" title=" " alt="" coords="75,5,187,31"/>
+<area shape="rect" id="Node000001" title="Hypre device compatibility check." alt="" coords="5,83,255,132"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="74,5,186,35"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="133,50,133,82,127,82,127,50"/>
 </map>

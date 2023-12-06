@@ -1,4 +1,5 @@
 <map id="Cabana::Field::Position&lt; NumSpaceDim &gt;" name="Cabana::Field::Position&lt; NumSpaceDim &gt;">
-<area shape="rect" id="node1" title="Particle position field type." alt="" coords="17,93,179,133"/>
-<area shape="rect" id="node2" href="$structCabana_1_1Field_1_1Vector.html" title=" " alt="" coords="5,5,191,45"/>
+<area shape="rect" id="Node000001" title="Particle position field type." alt="" coords="17,102,178,151"/>
+<area shape="rect" id="Node000002" href="$structCabana_1_1Field_1_1Vector.html" title=" " alt="" coords="5,5,190,54"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="100,69,100,101,95,101,95,69"/>
 </map>

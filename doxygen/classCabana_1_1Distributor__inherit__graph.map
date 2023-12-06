@@ -1,4 +1,5 @@
 <map id="Cabana::Distributor&lt; MemorySpace &gt;" name="Cabana::Distributor&lt; MemorySpace &gt;">
-<area shape="rect" id="node1" title="A communication plan for migrating data from one uniquely&#45;owned decomposition to another uniquely own..." alt="" coords="33,93,175,133"/>
-<area shape="rect" id="node2" href="$classCabana_1_1CommunicationPlan.html" title="Communication plan base class." alt="" coords="5,5,203,45"/>
+<area shape="rect" id="Node000001" title="A communication plan for migrating data from one uniquely&#45;owned decomposition to another uniquely own..." alt="" coords="32,102,175,151"/>
+<area shape="rect" id="Node000002" href="$classCabana_1_1CommunicationPlan.html" title="Communication plan base class." alt="" coords="5,5,202,54"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="106,69,106,101,101,101,101,69"/>
 </map>

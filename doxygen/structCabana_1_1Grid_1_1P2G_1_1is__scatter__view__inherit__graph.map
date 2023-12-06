@@ -1,4 +1,5 @@
 <map id="Cabana::Grid::P2G::is_scatter_view&lt; T &gt;" name="Cabana::Grid::P2G::is_scatter_view&lt; T &gt;">
-<area shape="rect" id="node1" title="Scatter&#45;View static type checker." alt="" coords="11,108,155,148"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,161,60"/>
+<area shape="rect" id="Node000001" title="Scatter&#45;View static type checker." alt="" coords="11,121,155,170"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,161,73"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="86,88,86,121,80,121,80,88"/>
 </map>

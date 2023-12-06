@@ -1,4 +1,5 @@
 <map id="Cabana::Grid::isNonUniformMesh&lt; const NonUniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;" name="Cabana::Grid::isNonUniformMesh&lt; const NonUniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;">
-<area shape="rect" id="node1" title=" " alt="" coords="5,79,220,133"/>
-<area shape="rect" id="node2" title=" " alt="" coords="57,5,168,31"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,83,220,151"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="58,5,167,35"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="115,51,115,82,110,82,110,51"/>
 </map>

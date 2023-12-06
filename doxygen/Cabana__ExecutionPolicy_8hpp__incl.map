@@ -1,7 +1,15 @@
 <map id="core/src/Cabana_ExecutionPolicy.hpp" name="core/src/Cabana_ExecutionPolicy.hpp">
-<area shape="rect" id="node1" title="SIMD execution policy." alt="" coords="111,5,298,45"/>
-<area shape="rect" id="node2" href="$Cabana__Index_8hpp.html" title="AoSoA indexing." alt="" coords="121,93,288,119"/>
-<area shape="rect" id="node4" title=" " alt="" coords="5,240,135,265"/>
-<area shape="rect" id="node5" title=" " alt="" coords="296,240,383,265"/>
-<area shape="rect" id="node3" href="$Cabana__TypeTraits_8hpp_source.html" title=" " alt="" coords="107,167,302,192"/>
+<area shape="rect" id="Node000001" title="SIMD execution policy." alt="" coords="111,5,297,54"/>
+<area shape="rect" id="Node000002" href="$Cabana__Index_8hpp.html" title="AoSoA indexing." alt="" coords="121,102,287,132"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="207,55,207,86,202,86,202,55"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,257,134,287"/>
+<area shape="poly" id="edge7_Node000001_Node000004" title=" " alt="" coords="166,57,137,78,112,104,89,139,77,180,72,212,71,242,66,242,67,212,72,179,84,137,107,100,134,74,162,52"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="296,257,382,287"/>
+<area shape="poly" id="edge8_Node000001_Node000005" title=" " alt="" coords="245,52,274,74,301,100,328,136,343,179,344,194,343,209,342,242,337,242,338,209,339,194,338,180,323,139,297,104,270,78,242,57"/>
+<area shape="rect" id="Node000003" href="$Cabana__TypeTraits_8hpp_source.html" title=" " alt="" coords="107,180,301,209"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="207,132,207,164,202,164,202,132"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="164,135,128,154,97,181,82,211,74,242,69,241,77,209,93,178,125,149,162,130"/>
+<area shape="poly" id="edge6_Node000002_Node000005" title=" " alt="" coords="247,130,283,149,316,178,332,209,339,241,334,242,327,211,311,181,280,154,244,135"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="180,212,109,252,107,247,178,208"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="231,208,302,247,299,252,228,212"/>
 </map>

@@ -1,4 +1,5 @@
 <map id="Cabana::is_slice&lt; T &gt;" name="Cabana::is_slice&lt; T &gt;">
-<area shape="rect" id="node1" title="Slice static type checker." alt="" coords="14,108,159,133"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,168,60"/>
+<area shape="rect" id="Node000001" title="Slice static type checker." alt="" coords="14,121,158,151"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,167,73"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="89,89,89,120,83,120,83,89"/>
 </map>

@@ -1,4 +1,5 @@
 <map id="Cabana::Grid::NodeHaloPattern&lt; 3 &gt;" name="Cabana::Grid::NodeHaloPattern&lt; 3 &gt;">
-<area shape="rect" id="node1" title=" " alt="" coords="5,79,255,104"/>
-<area shape="rect" id="node2" href="$classCabana_1_1Grid_1_1HaloPattern.html" title=" " alt="" coords="23,5,237,31"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,83,254,113"/>
+<area shape="rect" id="Node000002" href="$classCabana_1_1Grid_1_1HaloPattern.html" title=" " alt="" coords="22,5,237,35"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="132,51,132,82,127,82,127,51"/>
 </map>
