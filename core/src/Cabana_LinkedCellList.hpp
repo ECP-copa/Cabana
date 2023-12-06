@@ -141,10 +141,13 @@ class LinkedCellList
                  grid_delta[2] )
         , _cell_stencil( grid_delta[0], 1.0, grid_min, grid_max )
         , _sorted( false )
+        , _binned( false )
     {
         std::size_t np = positions.size();
         allocate( totalBins(), np );
         build( positions, 0, np );
+        getParticleBins();
+        _binned = true;
     }
 
     /*!
@@ -482,9 +485,12 @@ class LinkedCellList
     */
     auto getParticleBins() const
     {
-        Kokkos::parallel_for(
-            "Cabana::LinkedCellList::storeBinIndices",
-            Kokkos::RangePolicy<execution_space>( 0, totalBins() ), *this );
+        if ( !_binned )
+        {
+            Kokkos::parallel_for(
+                "Cabana::LinkedCellList::storeBinIndices",
+                Kokkos::RangePolicy<execution_space>( 0, totalBins() ), *this );
+        }
         return _particle_bins;
     }
 
@@ -494,6 +500,8 @@ class LinkedCellList
     KOKKOS_INLINE_FUNCTION
     auto getParticleBin( const int particle_index ) const
     {
+        if ( !_binned )
+            getParticleBins();
         return _particle_bins( particle_index );
     }
 
@@ -527,6 +535,12 @@ class LinkedCellList
     void update( const bool sorted ) { _sorted = sorted; }
 
     /*!
+      \brief Updates the status of the particle binning
+      \param sorted Bool that is true if the particles have been binned
+    */
+    void binned( const bool sorted ) { _binned = sorted; }
+
+    /*!
       \brief Returns whether the list has been sorted or not
     */
     KOKKOS_INLINE_FUNCTION
@@ -555,6 +569,7 @@ class LinkedCellList
     stencil_type _cell_stencil;
 
     bool _sorted;
+    bool _binned;
     CountView _particle_bins;
 
     void allocate( const int ncell, const int nparticles )
@@ -678,6 +693,10 @@ void permute(
 
     // Update internal state.
     linked_cell_list.update( true );
+
+    linked_cell_list.binned( false );
+    linked_cell_list.getParticleBins();
+    linked_cell_list.binned( true );
 }
 
 //---------------------------------------------------------------------------//
@@ -703,6 +722,10 @@ void permute(
 
     // Update internal state.
     linked_cell_list.update( true );
+
+    linked_cell_list.binned( false );
+    linked_cell_list.getParticleBins();
+    linked_cell_list.binned( true );
 }
 
 //---------------------------------------------------------------------------//

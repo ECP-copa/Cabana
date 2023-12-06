@@ -321,7 +321,7 @@ inline void neighbor_parallel_for(
     const FunctorType& functor, const NeighborListType& list,
     const SecondNeighborsTag, const SerialOpTag, const std::string& str = "",
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
-                            int>::type* = 0)
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
 
@@ -394,7 +394,7 @@ inline void neighbor_parallel_for(
     const FunctorType& functor, const NeighborListType& list,
     const FirstNeighborsTag, const TeamOpTag, const std::string& str = "",
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
-                            int>::type* = 0)
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
 
@@ -468,7 +468,7 @@ inline void neighbor_parallel_for(
     const FunctorType& functor, const NeighborListType& list,
     const SecondNeighborsTag, const TeamOpTag, const std::string& str = "",
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
-                            int>::type* = 0)
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
 
@@ -549,7 +549,7 @@ inline void neighbor_parallel_for(
     const SecondNeighborsTag, const TeamVectorOpTag,
     const std::string& str = "",
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
-                            int>::type* = 0)
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
 
@@ -654,7 +654,7 @@ inline void neighbor_parallel_reduce(
     const FirstNeighborsTag, const SerialOpTag, ReduceType& reduce_val,
     const std::string& str = "",
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
-                            int>::type* = 0)
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
 
@@ -726,7 +726,7 @@ inline void neighbor_parallel_reduce(
     const SecondNeighborsTag, const SerialOpTag, ReduceType& reduce_val,
     const std::string& str = "",
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
-                            int>::type* = 0)
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
 
@@ -805,7 +805,7 @@ inline void neighbor_parallel_reduce(
     const FirstNeighborsTag, const TeamOpTag, ReduceType& reduce_val,
     const std::string& str = "",
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
-                            int>::type* = 0)
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
 
@@ -888,7 +888,7 @@ inline void neighbor_parallel_reduce(
     const SecondNeighborsTag, const TeamOpTag, ReduceType& reduce_val,
     const std::string& str = "",
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
-                            int>::type* = 0)
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
 
@@ -976,7 +976,7 @@ inline void neighbor_parallel_reduce(
     const SecondNeighborsTag, const TeamVectorOpTag, ReduceType& reduce_val,
     const std::string& str = "",
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
-                            int>::type* = 0)
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
 

@@ -407,6 +407,68 @@ void testLinkedListSlice()
     }
 }
 
+template <class ListType, class TestListType, class PositionType>
+void checkLinkedCellNeighborInterface( const ListType& nlist,
+                                       const TestListType& N2_list_copy,
+                                       const int num_particle,
+                                       const PositionType positions,
+                                       const double cutoff )
+{
+    using memory_space = typename TEST_MEMSPACE::memory_space;
+
+    Kokkos::View<std::size_t*, memory_space> num_n2_neighbors(
+        "num_n2_neighbors", num_particle );
+
+    Cabana::NeighborDiscriminator<Cabana::FullNeighborTag> _discriminator;
+
+    std::size_t max_n2_neighbors = 0;
+    std::size_t sum_n2_neighbors = 0;
+
+    double c2 = cutoff * cutoff;
+
+    Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, num_particle );
+    Kokkos::parallel_for(
+        "Neighbor_Interface", policy, KOKKOS_LAMBDA( const int pid ) {
+            // Test the number of neighbors interface
+            int num_lcl_neighbors =
+                Cabana::NeighborList<ListType>::numNeighbor( nlist, pid );
+
+            for ( std::size_t i = 0; i < num_lcl_neighbors; ++i )
+            {
+                int np = Cabana::NeighborList<ListType>::getNeighbor( nlist,
+                                                                      pid, i );
+
+                const double dx = positions( pid, 0 ) - positions( np, 0 );
+                const double dy = positions( pid, 1 ) - positions( np, 1 );
+                const double dz = positions( pid, 2 ) - positions( np, 2 );
+                const double r2 = dx * dx + dy * dy + dz * dz;
+                if ( r2 <= c2 &&
+                     _discriminator.isValid( pid, 0, 0, 0, np, 0, 0, 0 ) )
+                {
+                    if ( nlist.sorted() )
+                        Kokkos::atomic_add(
+                            &num_n2_neighbors( nlist.permutation( pid ) ), 1 );
+                    else
+                        Kokkos::atomic_add( &num_n2_neighbors( pid ), 1 );
+                }
+            }
+        } );
+
+    auto num_n2_neighbors_host = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), num_n2_neighbors );
+
+    for ( int pid = 0; pid < num_particle; ++pid )
+    {
+        EXPECT_EQ( num_n2_neighbors_host( pid ), N2_list_copy.counts( pid ) );
+        sum_n2_neighbors += num_n2_neighbors_host( pid );
+        if ( num_n2_neighbors_host( pid ) > max_n2_neighbors )
+            max_n2_neighbors = num_n2_neighbors_host( pid );
+    }
+
+    EXPECT_EQ( max_n2_neighbors, N2_list_copy.max );
+    EXPECT_EQ( sum_n2_neighbors, N2_list_copy.total );
+}
+
 //---------------------------------------------------------------------------//
 // linked_list_parallel
 //---------------------------------------------------------------------------//
@@ -546,6 +608,10 @@ void testLinkedCellParallel()
         positions, grid_delta, test_data.grid_min, test_data.grid_max,
         test_data.test_radius, test_data.cell_size_ratio );
 
+    checkLinkedCellNeighborInterface( nlist, test_data.N2_list_copy,
+                                      test_data.num_particle, positions,
+                                      test_data.test_radius );
+
     checkLinkedCellNeighborParallel( nlist, test_data.N2_list_copy,
                                      test_data.num_particle, positions,
                                      test_data.test_radius );
@@ -554,6 +620,10 @@ void testLinkedCellParallel()
                                    test_data.test_radius );
 
     Cabana::permute( nlist, positions );
+
+    checkLinkedCellNeighborInterface( nlist, test_data.N2_list_copy,
+                                      test_data.num_particle, positions,
+                                      test_data.test_radius );
 
     checkLinkedCellNeighborParallel( nlist, test_data.N2_list_copy,
                                      test_data.num_particle, positions,

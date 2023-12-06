@@ -83,12 +83,6 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                             << cutoff_ratios[c];
         Cabana::Benchmark::Timer iteration_timer( iteration_time_name.str(),
                                                   num_problem_size );
-        std::stringstream neigh_iteration_time_name;
-        neigh_iteration_time_name << test_prefix
-                                  << "linkedcell_neighbor_iteration_"
-                                  << cutoff_ratios[c];
-        Cabana::Benchmark::Timer neigh_iteration_timer(
-            neigh_iteration_time_name.str(), num_problem_size );
         std::stringstream sort_time_name;
         sort_time_name << test_prefix << "linkedcell_sort_" << cutoff_ratios[c];
         Cabana::Benchmark::Timer sort_timer( sort_time_name.str(),
@@ -99,12 +93,6 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                                    << cutoff_ratios[c];
         Cabana::Benchmark::Timer iteration_sorted_timer(
             iteration_sorted_time_name.str(), num_problem_size );
-        std::stringstream neigh_iteration_sorted_time_name;
-        neigh_iteration_sorted_time_name
-            << test_prefix << "linkedcell_neighbor_iteration_sorted_"
-            << cutoff_ratios[c];
-        Cabana::Benchmark::Timer neigh_iteration_sorted_timer(
-            neigh_iteration_sorted_time_name.str(), num_problem_size );
 
         // Loop over the problem sizes.
         int pid = 0;
@@ -145,19 +133,11 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                 create_timer.stop( pid );
 
                 iteration_timer.start( pid );
-                Cabana::linked_cell_parallel_for(
-                    policy, count_op, linked_cell_list,
-                    Cabana::FirstNeighborsTag(), IterTag(),
-                    "test_linked_cell" );
-                Kokkos::fence();
-                iteration_timer.stop( pid );
-
-                neigh_iteration_timer.start( pid );
                 Cabana::neighbor_parallel_for(
                     policy, count_op, linked_cell_list,
                     Cabana::FirstNeighborsTag(), IterTag(), "test_neighbor" );
                 Kokkos::fence();
-                neigh_iteration_timer.stop( pid );
+                iteration_timer.stop( pid );
 
                 // Sort the particles.
                 sort_timer.start( p );
@@ -165,20 +145,12 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                 sort_timer.stop( p );
 
                 iteration_sorted_timer.start( pid );
-                Cabana::linked_cell_parallel_for(
-                    policy, count_op, linked_cell_list,
-                    Cabana::FirstNeighborsTag(), IterTag(),
-                    "test_linked_cell_sorted" );
-                Kokkos::fence();
-                iteration_sorted_timer.stop( pid );
-
-                neigh_iteration_sorted_timer.start( pid );
                 Cabana::neighbor_parallel_for(
                     policy, count_op, linked_cell_list,
                     Cabana::FirstNeighborsTag(), IterTag(),
                     "test_neighbor_sorted" );
                 Kokkos::fence();
-                neigh_iteration_sorted_timer.stop( pid );
+                iteration_sorted_timer.stop( pid );
             }
 
             // Increment the problem id.
