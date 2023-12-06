@@ -575,7 +575,7 @@ class HeffteFastFourierTransform
     /*!
       \brief Do a forward FFT.
       \param x The array on which to perform the forward transform.
-      \param ScaleType Method of scaling data.
+      \note ScaleType Method of scaling data.
     */
     template <class Array_t, class ScaleType>
     void forwardImpl( const Array_t& x, const ScaleType )
@@ -586,7 +586,7 @@ class HeffteFastFourierTransform
     /*!
      \brief Do a reverse FFT.
      \param x The array on which to perform the reverse transform
-     \param ScaleType Method of scaling data.
+     \note ScaleType Method of scaling data.
     */
     template <class Array_t, class ScaleType>
     void reverseImpl( const Array_t& x, const ScaleType )
