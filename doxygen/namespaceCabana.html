@@ -401,6 +401,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a5a1ce7155c5c1185f46071b20d4dd332"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a5a1ce7155c5c1185f46071b20d4dd332">permute</a> (const LinkedCellListType &amp;linked_cell_list, SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__linked__cell__list.html">is_linked_cell_list</a>&lt; LinkedCellListType &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
 <tr class="memdesc:a5a1ce7155c5c1185f46071b20d4dd332"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a linked cell list permute a slice.  <br /></td></tr>
 <tr class="separator:a5a1ce7155c5c1185f46071b20d4dd332"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70cddd6233e137bfbe2ca4773e565e5d" id="r_a70cddd6233e137bfbe2ca4773e565e5d"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class ListType &gt; </td></tr>
+<tr class="memitem:a70cddd6233e137bfbe2ca4773e565e5d"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::View&lt; int *[2], typename ListType::memory_space &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a70cddd6233e137bfbe2ca4773e565e5d">neighborHistogram</a> (ExecutionSpace exec_space, const std::size_t num_particles, const ListType &amp;list, const int num_bin)</td></tr>
+<tr class="memdesc:a70cddd6233e137bfbe2ca4773e565e5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a histogram of neighbors per particle.  <br /></td></tr>
+<tr class="separator:a70cddd6233e137bfbe2ca4773e565e5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7dda1a05e595dbec3f4f06e7f878d9e" id="r_ab7dda1a05e595dbec3f4f06e7f878d9e"><td class="memTemplParams" colspan="2">template&lt;class FunctorType , int VectorLength, class... ExecParameters&gt; </td></tr>
 <tr class="memitem:ab7dda1a05e595dbec3f4f06e7f878d9e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ab7dda1a05e595dbec3f4f06e7f878d9e">simd_parallel_for</a> (const <a class="el" href="classCabana_1_1SimdPolicy.html">SimdPolicy</a>&lt; VectorLength, ExecParameters... &gt; &amp;exec_policy, const FunctorType &amp;functor, const std::string &amp;str=&quot;&quot;)</td></tr>
 <tr class="memdesc:ab7dda1a05e595dbec3f4f06e7f878d9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute a vectorized functor in parallel with a 2d execution policy.  <br /></td></tr>
@@ -4178,6 +4182,60 @@ template&lt;class FunctorType , class NeighborListType , class ReduceType , clas
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a70cddd6233e137bfbe2ca4773e565e5d" name="a70cddd6233e137bfbe2ca4773e565e5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70cddd6233e137bfbe2ca4773e565e5d">&#9670;&#160;</a></span>neighborHistogram()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ExecutionSpace , class ListType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Kokkos::View&lt; int *[2], typename ListType::memory_space &gt; Cabana::neighborHistogram </td>
+          <td>(</td>
+          <td class="paramtype">ExecutionSpace&#160;</td>
+          <td class="paramname"><em>exec_space</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>num_particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ListType &amp;&#160;</td>
+          <td class="paramname"><em>list</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>num_bin</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Construct a histogram of neighbors per particle. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">exec_space</td><td>Kokkos execution space. </td></tr>
+    <tr><td class="paramname">num_particles</td><td>Number of particles. </td></tr>
+    <tr><td class="paramname">list</td><td>Neighbor list with valid <a class="el" href="classCabana_1_1NeighborList.html" title="Neighbor list interface. Provides an interface callable at the functor level that gives access to nei...">NeighborList</a> interface. </td></tr>
+    <tr><td class="paramname">num_bin</td><td>Number of bins for the histogram. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Neighbor list histogram View. </dd></dl>
 
 </div>
 </div>
