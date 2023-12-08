@@ -1428,6 +1428,10 @@ inline void neighbor_parallel_for(
 
     auto begin = exec_policy.begin();
     auto end = exec_policy.end();
+    // Cannot iterate over range that was not binned.
+    assert( begin == list.getParticleBegin() );
+    assert( end == list.getParticleEnd() );
+
     using linear_policy_type =
         Kokkos::RangePolicy<SerialOpTag, execution_space>;
     linear_policy_type linear_exec_policy( begin, end );
@@ -1485,6 +1489,10 @@ inline void neighbor_parallel_for(
     using memory_space = typename LinkedCellType::memory_space;
 
     static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
+
+    // Cannot iterate over range that was not binned.
+    assert( exec_policy.begin() == list.getParticleBegin() );
+    assert( exec_policy.end() == list.getParticleEnd() );
 
     auto particle_bins = list.getParticleBins();
 
@@ -1552,6 +1560,10 @@ inline void neighbor_parallel_reduce(
 
     auto begin = exec_policy.begin();
     auto end = exec_policy.end();
+    // Cannot iterate over range that was not binned.
+    assert( begin == list.getParticleBegin() );
+    assert( end == list.getParticleEnd() );
+
     using linear_policy_type =
         Kokkos::RangePolicy<SerialOpTag, execution_space>;
     linear_policy_type linear_exec_policy( begin, end );
@@ -1612,6 +1624,10 @@ inline void neighbor_parallel_reduce(
     using memory_space = typename LinkedCellType::memory_space;
 
     static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
+
+    // Cannot iterate over range that was not binned.
+    assert( exec_policy.begin() == list.getParticleBegin() );
+    assert( exec_policy.end() == list.getParticleEnd() );
 
     auto particle_bins = list.getParticleBins();
 

@@ -251,6 +251,14 @@ class LinkedCellList
     KOKKOS_INLINE_FUNCTION
     int numParticles() const { return _permutes.extent( 0 ); }
 
+    //! Beginning of binned range.
+    KOKKOS_INLINE_FUNCTION
+    std::size_t getParticleBegin() const { return _begin; }
+
+    //! End of binned range.
+    KOKKOS_INLINE_FUNCTION
+    std::size_t getParticleEnd() const { return _end; }
+
     /*!
       \brief Get the total number of bins.
       \return the total number of bins.
@@ -509,6 +517,7 @@ class LinkedCellList
     KOKKOS_INLINE_FUNCTION
     auto getParticleBin( const int particle_index ) const
     {
+        assert( particle_index < static_cast<int>( _particle_bins.size() ) );
         return _particle_bins( particle_index );
     }
 
