@@ -136,7 +136,9 @@ class LinkedCellList
                     const Scalar grid_min[3], const Scalar grid_max[3],
                     typename std::enable_if<( is_slice<SliceType>::value ),
                                             int>::type* = 0 )
-        : _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
+        : _begin( 0 )
+        , _end( positions.size() )
+        , _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
                  grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
                  grid_delta[2] )
         , _cell_stencil( grid_delta[0], 1.0, grid_min, grid_max )
@@ -168,7 +170,9 @@ class LinkedCellList
                     const Scalar grid_min[3], const Scalar grid_max[3],
                     typename std::enable_if<( is_slice<SliceType>::value ),
                                             int>::type* = 0 )
-        : _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
+        : _begin( begin )
+        , _end( end )
+        , _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
                  grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
                  grid_delta[2] )
         , _cell_stencil( grid_delta[0], 1.0, grid_min, grid_max )
@@ -197,7 +201,9 @@ class LinkedCellList
         const Scalar neighborhood_radius, const Scalar cell_size_ratio = 1,
         typename std::enable_if<( is_slice<SliceType>::value ), int>::type* =
             0 )
-        : _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
+        : _begin( 0 )
+        , _end( positions.size() )
+        , _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
                  grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
                  grid_delta[2] )
         , _cell_stencil( neighborhood_radius, cell_size_ratio, grid_min,
@@ -231,7 +237,9 @@ class LinkedCellList
         const Scalar cell_size_ratio = 1,
         typename std::enable_if<( is_slice<SliceType>::value ), int>::type* =
             0 )
-        : _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
+        : _begin( begin )
+        , _end( end )
+        , _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
                  grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
                  grid_delta[2] )
         , _cell_stencil( neighborhood_radius, cell_size_ratio, grid_min,
@@ -523,7 +531,7 @@ class LinkedCellList
             }
             else
             {
-                _particle_bins( permutation( p ) ) = i;
+                _particle_bins( permutation( p ) - _begin ) = i;
             }
         }
     }
@@ -557,6 +565,9 @@ class LinkedCellList
     }
 
   private:
+    std::size_t _begin;
+    std::size_t _end;
+
     // Building the linked cell.
     BinningData<MemorySpace> _bin_data;
     Impl::CartesianGrid<Scalar> _grid;
