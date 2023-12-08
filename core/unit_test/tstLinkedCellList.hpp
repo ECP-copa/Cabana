@@ -605,8 +605,9 @@ void testLinkedCellParallel()
     double grid_size = test_data.cell_size_ratio * test_data.test_radius;
     double grid_delta[3] = { grid_size, grid_size, grid_size };
     auto nlist = Cabana::createLinkedCellList<TEST_MEMSPACE>(
-        positions, grid_delta, test_data.grid_min, test_data.grid_max,
-        test_data.test_radius, test_data.cell_size_ratio );
+        positions, 0, test_data.num_particle - test_data.num_ignore, grid_delta,
+        test_data.grid_min, test_data.grid_max, test_data.test_radius,
+        test_data.cell_size_ratio );
 
     checkLinkedCellNeighborInterface( nlist, test_data.N2_list_copy,
                                       test_data.num_particle, positions,
