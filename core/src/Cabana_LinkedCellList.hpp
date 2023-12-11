@@ -508,6 +508,7 @@ class LinkedCellList
 
     /*!
       \brief Get the bin cell index for each binned particle.
+      \note This View only stores bins for particles which are binned.
     */
     auto getParticleBins() const { return _particle_bins; }
 
@@ -517,8 +518,9 @@ class LinkedCellList
     KOKKOS_INLINE_FUNCTION
     auto getParticleBin( const int particle_index ) const
     {
-        assert( particle_index < static_cast<int>( _particle_bins.size() ) );
-        return _particle_bins( particle_index );
+        assert( particle_index >= static_cast<int>( _begin ) );
+        assert( particle_index < static_cast<int>( _end ) );
+        return _particle_bins( particle_index - _begin );
     }
 
     /*!
