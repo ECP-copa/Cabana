@@ -244,8 +244,8 @@ void checkHalfNeighborList( const ListType& nlist,
 template <class ListType, class TestListType>
 void checkFullNeighborListPartialRange( const ListType& nlist,
                                         const TestListType N2_list_copy,
-                                        const int num_particle,
-                                        const int num_ignore )
+                                        const int num_particle, const int begin,
+                                        const int end )
 {
     // Create host neighbor list copy.
     auto list_copy = copyListToHost( nlist, N2_list_copy.neighbors.extent( 0 ),
@@ -254,7 +254,7 @@ void checkFullNeighborListPartialRange( const ListType& nlist,
     // Check the results.
     for ( int p = 0; p < num_particle; ++p )
     {
-        if ( p < num_ignore )
+        if ( p >= begin && p < end )
         {
             // First check that the number of neighbors are the same.
             EXPECT_EQ( list_copy.counts( p ), N2_list_copy.counts( p ) );

@@ -130,14 +130,14 @@ void testVerletListFullPartialRange()
     // Create the neighbor list.
     Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag,
                        BuildTag>
-        nlist( position, 0, test_data.num_ignore, test_data.test_radius,
+        nlist( position, test_data.begin, test_data.end, test_data.test_radius,
                test_data.cell_size_ratio, test_data.grid_min,
                test_data.grid_max );
 
     // Check the neighbor list.
     checkFullNeighborListPartialRange( nlist, test_data.N2_list_copy,
-                                       test_data.num_particle,
-                                       test_data.num_ignore );
+                                       test_data.num_particle, test_data.begin,
+                                       test_data.end );
 }
 
 //---------------------------------------------------------------------------//
