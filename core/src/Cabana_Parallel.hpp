@@ -1148,8 +1148,6 @@ struct LinkedCellParallelFor
     Functor _functor;
     //! Linked cell list
     LinkedCellType _list;
-    //! result of getStencilCells
-    ViewType _cells;
 
     //! beginning index of the loop
     index_type _begin;
@@ -1160,11 +1158,10 @@ struct LinkedCellParallelFor
     //! Constructor
     LinkedCellParallelFor( std::string label, Policy exec_policy,
                            Functor functor, const LinkedCellType& list,
-                           ViewType cells, const index_type begin = 0 )
+                           const index_type begin = 0 )
         : _exec_policy( exec_policy )
         , _functor( functor )
         , _list( list )
-        , _cells( cells )
         , _begin( begin )
     {
         if ( label.empty() )
@@ -1179,8 +1176,8 @@ struct LinkedCellParallelFor
     KOKKOS_FUNCTION void operator()( SerialOpTag, const index_type i ) const
     {
         int imin, imax, jmin, jmax, kmin, kmax;
-        _list.getStencilCells( _cells( i ), imin, imax, jmin, jmax, kmin,
-                               kmax );
+        _list.getStencilCells( _list.getParticleBin( i ), imin, imax, jmin,
+                               jmax, kmin, kmax );
 
         // Loop over the cell stencil.
         for ( int gi = imin; gi < imax; ++gi )
@@ -1215,8 +1212,8 @@ struct LinkedCellParallelFor
     {
         index_type i = team.league_rank() + _begin;
         int imin, imax, jmin, jmax, kmin, kmax;
-        _list.getStencilCells( _cells( i ), imin, imax, jmin, jmax, kmin,
-                               kmax );
+        _list.getStencilCells( _list.getParticleBin( i ), imin, imax, jmin,
+                               jmax, kmin, kmax );
 
         // Loop over the cell stencil.
         for ( int gi = imin; gi < imax; ++gi )
@@ -1266,8 +1263,6 @@ struct LinkedCellParallelReduce
     Functor _functor;
     //! Linked cell list
     LinkedCellType _list;
-    //! result of getStencilCells
-    ViewType _cells;
 
     //! beginning index of the loop
     index_type _begin;
@@ -1278,12 +1273,11 @@ struct LinkedCellParallelReduce
     //! Constructor
     LinkedCellParallelReduce( std::string label, Policy exec_policy,
                               Functor functor, const LinkedCellType& list,
-                              ViewType cells, ReduceType& reduce_val,
+                              ReduceType& reduce_val,
                               const index_type begin = 0 )
         : _exec_policy( exec_policy )
         , _functor( functor )
         , _list( list )
-        , _cells( cells )
         , _begin( begin )
     {
         if ( label.empty() )
@@ -1300,8 +1294,8 @@ struct LinkedCellParallelReduce
                                      ReduceType& ival ) const
     {
         int imin, imax, jmin, jmax, kmin, kmax;
-        _list.getStencilCells( _cells( i ), imin, imax, jmin, jmax, kmin,
-                               kmax );
+        _list.getStencilCells( _list.getParticleBin( i ), imin, imax, jmin,
+                               jmax, kmin, kmax );
 
         // Loop over the cell stencil.
         for ( int gi = imin; gi < imax; ++gi )
@@ -1337,8 +1331,8 @@ struct LinkedCellParallelReduce
     {
         index_type i = team.league_rank() + _begin;
         int imin, imax, jmin, jmax, kmin, kmax;
-        _list.getStencilCells( _cells( i ), imin, imax, jmin, jmax, kmin,
-                               kmax );
+        _list.getStencilCells( _list.getParticleBin( i ), imin, imax, jmin,
+                               jmax, kmin, kmax );
 
         // Loop over the cell stencil.
         for ( int gi = imin; gi < imax; ++gi )
@@ -1438,12 +1432,10 @@ inline void neighbor_parallel_for(
 
     static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
 
-    auto particle_bins = list.getParticleBins();
-
     Impl::LinkedCellParallelFor<work_tag, FunctorType, linear_policy_type,
                                 LinkedCellType,
                                 typename LinkedCellType::CountView>
-        lcl_par( str, linear_exec_policy, functor, list, particle_bins );
+        lcl_par( str, linear_exec_policy, functor, list );
 }
 
 //---------------------------------------------------------------------------//
@@ -1494,13 +1486,10 @@ inline void neighbor_parallel_for(
     assert( exec_policy.begin() == list.getParticleBegin() );
     assert( exec_policy.end() == list.getParticleEnd() );
 
-    auto particle_bins = list.getParticleBins();
-
     Impl::LinkedCellParallelFor<work_tag, FunctorType, team_policy_type,
                                 LinkedCellType,
                                 typename LinkedCellType::CountView>
-        lcl_par( str, team_policy, functor, list, particle_bins,
-                 exec_policy.begin() );
+        lcl_par( str, team_policy, functor, list, exec_policy.begin() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1570,13 +1559,10 @@ inline void neighbor_parallel_reduce(
 
     static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
 
-    auto particle_bins = list.getParticleBins();
-
     Impl::LinkedCellParallelReduce<
         work_tag, FunctorType, linear_policy_type, LinkedCellType,
         typename LinkedCellType::CountView, ReduceType>
-        lcl_par( str, linear_exec_policy, functor, list, particle_bins,
-                 reduce_val );
+        lcl_par( str, linear_exec_policy, functor, list, reduce_val );
 }
 
 //---------------------------------------------------------------------------//
@@ -1629,12 +1615,10 @@ inline void neighbor_parallel_reduce(
     assert( exec_policy.begin() == list.getParticleBegin() );
     assert( exec_policy.end() == list.getParticleEnd() );
 
-    auto particle_bins = list.getParticleBins();
-
     Impl::LinkedCellParallelReduce<
         work_tag, FunctorType, team_policy_type, LinkedCellType,
         typename LinkedCellType::CountView, ReduceType>
-        lcl_par( str, team_policy, functor, list, particle_bins, reduce_val,
+        lcl_par( str, team_policy, functor, list, reduce_val,
                  exec_policy.begin() );
 }
 
