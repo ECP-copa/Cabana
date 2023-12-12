@@ -967,8 +967,8 @@ void checkSecondNeighborParallelReduceFunctor( const ListType& nlist,
 struct NeighborListTestData
 {
     int num_particle = 300;
-    int begin = 0;
-    int end = 300;
+    int begin = 75;
+    int end = 225;
     double test_radius = 2.32;
     double box_min = -5.3 * test_radius;
     double box_max = 4.7 * test_radius;
