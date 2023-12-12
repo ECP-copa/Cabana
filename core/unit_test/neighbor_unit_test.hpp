@@ -289,14 +289,16 @@ template <class TestListType, class ViewType>
 void checkFirstNeighborParallelFor( const TestListType& N2_list_copy,
                                     const ViewType& serial_result,
                                     const ViewType& team_result,
-                                    const int multiplier )
+                                    const int multiplier,
+                                    const std::size_t begin,
+                                    const std::size_t end )
 {
-    double num_particle = serial_result.size();
+    std::size_t num_particle = serial_result.size();
     Kokkos::View<int*, Kokkos::HostSpace> N2_result( "N2_result",
                                                      num_particle );
 
     // Use a full N^2 neighbor list to check against.
-    for ( int p = 0; p < num_particle; ++p )
+    for ( std::size_t p = 0; p < num_particle; ++p )
         for ( int n = 0; n < N2_list_copy.counts( p ); ++n )
             N2_result( p ) += N2_list_copy.neighbors( p, n );
 
@@ -305,10 +307,13 @@ void checkFirstNeighborParallelFor( const TestListType& N2_list_copy,
         Kokkos::HostSpace(), serial_result );
     auto team_mirror =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), team_result );
-    for ( int p = 0; p < num_particle; ++p )
+    for ( std::size_t p = 0; p < num_particle; ++p )
     {
-        EXPECT_EQ( N2_result( p ) * multiplier, serial_mirror( p ) );
-        EXPECT_EQ( N2_result( p ) * multiplier, team_mirror( p ) );
+        if ( p >= begin && p < end )
+        {
+            EXPECT_EQ( N2_result( p ) * multiplier, serial_mirror( p ) );
+            EXPECT_EQ( N2_result( p ) * multiplier, team_mirror( p ) );
+        }
     }
 }
 
@@ -319,12 +324,12 @@ void checkSecondNeighborParallelFor( const TestListType& N2_list_copy,
                                      const ViewType& vector_result,
                                      const int multiplier )
 {
-    double num_particle = serial_result.size();
+    std::size_t num_particle = serial_result.size();
     Kokkos::View<int*, Kokkos::HostSpace> N2_result( "N2_result",
                                                      num_particle );
 
     // Use a full N^2 neighbor list to check against.
-    for ( int p = 0; p < num_particle; ++p )
+    for ( std::size_t p = 0; p < num_particle; ++p )
         for ( int n = 0; n < N2_list_copy.counts( p ) - 1; ++n )
             for ( int a = n + 1; a < N2_list_copy.counts( p ); ++a )
             {
@@ -339,7 +344,7 @@ void checkSecondNeighborParallelFor( const TestListType& N2_list_copy,
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), team_result );
     auto vector_mirror = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), vector_result );
-    for ( int p = 0; p < num_particle; ++p )
+    for ( std::size_t p = 0; p < num_particle; ++p )
     {
         EXPECT_EQ( N2_result( p ) * multiplier, serial_mirror( p ) );
         EXPECT_EQ( N2_result( p ) * multiplier, team_mirror( p ) );
@@ -348,23 +353,25 @@ void checkSecondNeighborParallelFor( const TestListType& N2_list_copy,
 }
 
 template <class TestListType, class AoSoAType>
-void checkFirstNeighborParallelReduce( const TestListType& N2_list_copy,
-                                       const AoSoAType& aosoa,
-                                       const double serial_sum,
-                                       const double team_sum,
-                                       const int multiplier )
+void checkFirstNeighborParallelReduce(
+    const TestListType& N2_list_copy, const AoSoAType& aosoa,
+    const double serial_sum, const double team_sum, const int multiplier,
+    const std::size_t begin, const std::size_t end )
 {
-    double num_particle = aosoa.size();
+    std::size_t num_particle = aosoa.size();
 
     // Get the expected result from N^2 list in serial.
     auto aosoa_mirror =
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
     auto positions_mirror = Cabana::slice<0>( aosoa_mirror );
     double N2_sum = 0;
-    for ( int p = 0; p < num_particle; ++p )
+    for ( std::size_t p = 0; p < num_particle; ++p )
         for ( int n = 0; n < N2_list_copy.counts( p ); ++n )
-            N2_sum += positions_mirror( p, 0 ) +
-                      positions_mirror( N2_list_copy.neighbors( p, n ), 0 );
+            if ( p >= begin && p < end )
+            {
+                N2_sum += positions_mirror( p, 0 ) +
+                          positions_mirror( N2_list_copy.neighbors( p, n ), 0 );
+            }
 
     // Check the result.
     EXPECT_FLOAT_EQ( N2_sum * multiplier, serial_sum );
@@ -379,14 +386,14 @@ void checkSecondNeighborParallelReduce( const TestListType& N2_list_copy,
                                         const double vector_sum,
                                         const int multiplier )
 {
-    double num_particle = aosoa.size();
+    std::size_t num_particle = aosoa.size();
 
     // Get the expected result from N^2 list in serial.
     auto aosoa_mirror =
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
     auto positions_mirror = Cabana::slice<0>( aosoa_mirror );
     double N2_sum = 0;
-    for ( int p = 0; p < num_particle; ++p )
+    for ( std::size_t p = 0; p < num_particle; ++p )
         for ( int n = 0; n < N2_list_copy.counts( p ); ++n )
             for ( int a = n + 1; a < N2_list_copy.counts( p ); ++a )
                 N2_sum +=
@@ -433,8 +440,8 @@ void checkFirstNeighborParallelForLambda( const ListType& nlist,
                                    Cabana::TeamOpTag(), "test_1st_team" );
     Kokkos::fence();
 
-    checkFirstNeighborParallelFor( N2_list_copy, serial_result, team_result,
-                                   1 );
+    checkFirstNeighborParallelFor( N2_list_copy, serial_result, team_result, 1,
+                                   0, num_particle );
 }
 
 //---------------------------------------------------------------------------//
@@ -595,7 +602,7 @@ void checkFirstNeighborParallelReduceLambda( const ListType& nlist,
     Kokkos::fence();
 
     checkFirstNeighborParallelReduce( N2_list_copy, aosoa, serial_sum, team_sum,
-                                      1 );
+                                      1, 0, num_particle );
 }
 
 //---------------------------------------------------------------------------//
@@ -668,30 +675,30 @@ struct FirstNeighForOp
 template <class ListType, class TestListType>
 void checkFirstNeighborParallelForFunctor( const ListType& nlist,
                                            const TestListType& N2_list_copy,
-                                           const int num_particle,
-                                           const bool use_tag )
+                                           const bool use_tag,
+                                           const std::size_t num_particle )
 {
     if ( use_tag )
     {
         Kokkos::RangePolicy<TEST_EXECSPACE, DoubleValueWorkTag> policy(
             0, num_particle );
-        checkFirstNeighborParallelForFunctor( nlist, N2_list_copy, num_particle,
-                                              policy, 2 );
+        checkFirstNeighborParallelForFunctor( nlist, N2_list_copy, policy, 2,
+                                              num_particle );
     }
     else
     {
         Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, num_particle );
-        checkFirstNeighborParallelForFunctor( nlist, N2_list_copy, num_particle,
-                                              policy, 1 );
+        checkFirstNeighborParallelForFunctor( nlist, N2_list_copy, policy, 1,
+                                              num_particle );
     }
 }
 
 template <class ListType, class TestListType, class PolicyType>
 void checkFirstNeighborParallelForFunctor( const ListType& nlist,
                                            const TestListType& N2_list_copy,
-                                           const int num_particle,
                                            const PolicyType policy,
-                                           const int multiplier )
+                                           const int multiplier,
+                                           const std::size_t num_particle )
 {
     // Create Kokkos views for the write operation.
     using memory_space = typename TEST_MEMSPACE::memory_space;
@@ -711,7 +718,8 @@ void checkFirstNeighborParallelForFunctor( const ListType& nlist,
     Kokkos::fence();
 
     checkFirstNeighborParallelFor( N2_list_copy, serial_functor._result,
-                                   team_functor._result, multiplier );
+                                   team_functor._result, multiplier, 0,
+                                   num_particle );
 }
 
 //---------------------------------------------------------------------------//
@@ -869,7 +877,7 @@ void checkFirstNeighborParallelReduceFunctor( const ListType& nlist,
     Kokkos::fence();
 
     checkFirstNeighborParallelReduce( N2_list_copy, aosoa, serial_sum, team_sum,
-                                      multiplier );
+                                      multiplier, 0, aosoa.size() );
 }
 
 template <class PositionSlice>
@@ -959,7 +967,8 @@ void checkSecondNeighborParallelReduceFunctor( const ListType& nlist,
 struct NeighborListTestData
 {
     int num_particle = 300;
-    int num_ignore = 100;
+    int begin = 0;
+    int end = 300;
     double test_radius = 2.32;
     double box_min = -5.3 * test_radius;
     double box_max = 4.7 * test_radius;

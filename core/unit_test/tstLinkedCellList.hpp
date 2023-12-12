@@ -410,14 +410,16 @@ void testLinkedListSlice()
 template <class ListType, class TestListType, class PositionType>
 void checkLinkedCellNeighborInterface( const ListType& nlist,
                                        const TestListType& N2_list_copy,
-                                       const int num_particle,
+                                       const std::size_t begin,
+                                       const std::size_t end,
                                        const PositionType positions,
                                        const double cutoff )
 {
     using memory_space = typename TEST_MEMSPACE::memory_space;
 
+    // Purposely using zero-init.
     Kokkos::View<std::size_t*, memory_space> num_n2_neighbors(
-        "num_n2_neighbors", num_particle );
+        "num_n2_neighbors", positions.size() );
 
     Cabana::NeighborDiscriminator<Cabana::FullNeighborTag> _discriminator;
 
@@ -426,11 +428,11 @@ void checkLinkedCellNeighborInterface( const ListType& nlist,
 
     double c2 = cutoff * cutoff;
 
-    Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, num_particle );
+    Kokkos::RangePolicy<TEST_EXECSPACE> policy( begin, end );
     Kokkos::parallel_for(
         "Neighbor_Interface", policy, KOKKOS_LAMBDA( const int pid ) {
             // Test the number of neighbors interface
-            int num_lcl_neighbors =
+            std::size_t num_lcl_neighbors =
                 Cabana::NeighborList<ListType>::numNeighbor( nlist, pid );
 
             for ( std::size_t i = 0; i < num_lcl_neighbors; ++i )
@@ -457,9 +459,14 @@ void checkLinkedCellNeighborInterface( const ListType& nlist,
     auto num_n2_neighbors_host = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), num_n2_neighbors );
 
-    for ( int pid = 0; pid < num_particle; ++pid )
+    for ( std::size_t pid = 0; pid < positions.size(); ++pid )
     {
-        EXPECT_EQ( num_n2_neighbors_host( pid ), N2_list_copy.counts( pid ) );
+        if ( pid >= begin && pid < end )
+            EXPECT_EQ( num_n2_neighbors_host( pid ),
+                       N2_list_copy.counts( pid ) );
+        else
+            EXPECT_EQ( num_n2_neighbors_host( pid ), 0 );
+
         sum_n2_neighbors += num_n2_neighbors_host( pid );
         if ( num_n2_neighbors_host( pid ) > max_n2_neighbors )
             max_n2_neighbors = num_n2_neighbors_host( pid );
@@ -475,15 +482,16 @@ void checkLinkedCellNeighborInterface( const ListType& nlist,
 template <class ListType, class TestListType, class PositionType>
 void checkLinkedCellNeighborParallel( const ListType& nlist,
                                       const TestListType& N2_list_copy,
-                                      const int num_particle,
+                                      const int begin, const int end,
                                       const PositionType positions,
                                       const double cutoff )
 {
     // Create Kokkos views for the write operation.
     using memory_space = typename TEST_MEMSPACE::memory_space;
     Kokkos::View<int*, memory_space> serial_result( "serial_result",
-                                                    num_particle );
-    Kokkos::View<int*, memory_space> team_result( "team_result", num_particle );
+                                                    positions.size() );
+    Kokkos::View<int*, memory_space> team_result( "team_result",
+                                                  positions.size() );
 
     // Test the list parallel operation by adding a value from each neighbor
     // to the particle (within cutoff) and compare to counts.
@@ -529,7 +537,7 @@ void checkLinkedCellNeighborParallel( const ListType& nlist,
             }
         }
     };
-    Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, num_particle );
+    Kokkos::RangePolicy<TEST_EXECSPACE> policy( begin, end );
     Cabana::neighbor_parallel_for( policy, serial_count_op, nlist,
                                    Cabana::FirstNeighborsTag(),
                                    Cabana::SerialOpTag(), "test_1st_serial" );
@@ -538,8 +546,8 @@ void checkLinkedCellNeighborParallel( const ListType& nlist,
                                    Cabana::TeamOpTag(), "test_1st_team" );
     Kokkos::fence();
 
-    checkFirstNeighborParallelFor( N2_list_copy, serial_result, team_result,
-                                   1 );
+    checkFirstNeighborParallelFor( N2_list_copy, serial_result, team_result, 1,
+                                   begin, end );
 }
 
 //---------------------------------------------------------------------------//
@@ -548,9 +556,8 @@ void checkLinkedCellNeighborParallel( const ListType& nlist,
 template <class ListType, class TestListType, class AoSoAType>
 void checkLinkedCellNeighborReduce( const ListType& nlist,
                                     const TestListType& N2_list_copy,
-                                    const AoSoAType aosoa,
-                                    const int num_particle,
-                                    const double cutoff )
+                                    const AoSoAType aosoa, const int begin,
+                                    const int end, const double cutoff )
 {
     auto position = Cabana::slice<0>( aosoa );
 
@@ -579,7 +586,7 @@ void checkLinkedCellNeighborReduce( const ListType& nlist,
             }
         }
     };
-    Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, num_particle );
+    Kokkos::RangePolicy<TEST_EXECSPACE> policy( begin, end );
     double serial_sum = 0;
     Cabana::neighbor_parallel_reduce(
         policy, sum_op, nlist, Cabana::FirstNeighborsTag(),
@@ -591,7 +598,32 @@ void checkLinkedCellNeighborReduce( const ListType& nlist,
     Kokkos::fence();
 
     checkFirstNeighborParallelReduce( N2_list_copy, aosoa, serial_sum, team_sum,
-                                      1 );
+                                      1, begin, end );
+}
+
+//---------------------------------------------------------------------------//
+void testLinkedCellNeighborInterface()
+{
+    // Create the AoSoA and fill with random particle positions.
+    NeighborListTestData test_data;
+    auto positions = Cabana::slice<0>( test_data.aosoa );
+    // Create the linked cell list.
+    double grid_size = test_data.cell_size_ratio * test_data.test_radius;
+    double grid_delta[3] = { grid_size, grid_size, grid_size };
+    auto nlist = Cabana::createLinkedCellList<TEST_MEMSPACE>(
+        positions, test_data.begin, test_data.end, grid_delta,
+        test_data.grid_min, test_data.grid_max, test_data.test_radius,
+        test_data.cell_size_ratio );
+
+    checkLinkedCellNeighborInterface( nlist, test_data.N2_list_copy,
+                                      test_data.begin, test_data.end, positions,
+                                      test_data.test_radius );
+
+    Cabana::permute( nlist, positions );
+
+    checkLinkedCellNeighborInterface( nlist, test_data.N2_list_copy,
+                                      test_data.begin, test_data.end, positions,
+                                      test_data.test_radius );
 }
 
 //---------------------------------------------------------------------------//
@@ -600,38 +632,48 @@ void testLinkedCellParallel()
     // Create the AoSoA and fill with random particle positions.
     NeighborListTestData test_data;
     auto positions = Cabana::slice<0>( test_data.aosoa );
-
     // Create the linked cell list.
     double grid_size = test_data.cell_size_ratio * test_data.test_radius;
     double grid_delta[3] = { grid_size, grid_size, grid_size };
     auto nlist = Cabana::createLinkedCellList<TEST_MEMSPACE>(
-        positions, 0, test_data.num_particle - test_data.num_ignore, grid_delta,
+        positions, test_data.begin, test_data.end, grid_delta,
         test_data.grid_min, test_data.grid_max, test_data.test_radius,
         test_data.cell_size_ratio );
 
-    checkLinkedCellNeighborInterface( nlist, test_data.N2_list_copy,
-                                      test_data.num_particle, positions,
-                                      test_data.test_radius );
-
     checkLinkedCellNeighborParallel( nlist, test_data.N2_list_copy,
-                                     test_data.num_particle, positions,
+                                     test_data.begin, test_data.end, positions,
                                      test_data.test_radius );
-    checkLinkedCellNeighborReduce( nlist, test_data.N2_list_copy,
-                                   test_data.aosoa, test_data.num_particle,
-                                   test_data.test_radius );
 
     Cabana::permute( nlist, positions );
 
-    checkLinkedCellNeighborInterface( nlist, test_data.N2_list_copy,
-                                      test_data.num_particle, positions,
-                                      test_data.test_radius );
-
     checkLinkedCellNeighborParallel( nlist, test_data.N2_list_copy,
-                                     test_data.num_particle, positions,
+                                     test_data.begin, test_data.end, positions,
                                      test_data.test_radius );
+}
+
+//---------------------------------------------------------------------------//
+void testLinkedCellReduce()
+{
+    // Create the AoSoA and fill with random particle positions.
+    NeighborListTestData test_data;
+    auto positions = Cabana::slice<0>( test_data.aosoa );
+    // Create the linked cell list.
+    double grid_size = test_data.cell_size_ratio * test_data.test_radius;
+    double grid_delta[3] = { grid_size, grid_size, grid_size };
+    auto nlist = Cabana::createLinkedCellList<TEST_MEMSPACE>(
+        positions, test_data.begin, test_data.end, grid_delta,
+        test_data.grid_min, test_data.grid_max, test_data.test_radius,
+        test_data.cell_size_ratio );
+
     checkLinkedCellNeighborReduce( nlist, test_data.N2_list_copy,
-                                   test_data.aosoa, test_data.num_particle,
-                                   test_data.test_radius );
+                                   test_data.aosoa, test_data.begin,
+                                   test_data.end, test_data.test_radius );
+
+    Cabana::permute( nlist, positions );
+
+    checkLinkedCellNeighborReduce( nlist, test_data.N2_list_copy,
+                                   test_data.aosoa, test_data.begin,
+                                   test_data.end, test_data.test_radius );
 }
 
 //---------------------------------------------------------------------------//
@@ -643,7 +685,14 @@ TEST( TEST_CATEGORY, linked_list_test ) { testLinkedList(); }
 
 TEST( TEST_CATEGORY, linked_list_slice_test ) { testLinkedListSlice(); }
 
+TEST( TEST_CATEGORY, linked_list_neighbor_test )
+{
+    testLinkedCellNeighborInterface();
+}
+
 TEST( TEST_CATEGORY, linked_list_parallel_test ) { testLinkedCellParallel(); }
+
+TEST( TEST_CATEGORY, linked_list_reduce_test ) { testLinkedCellReduce(); }
 
 //---------------------------------------------------------------------------//
 
