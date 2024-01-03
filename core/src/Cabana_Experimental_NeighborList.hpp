@@ -96,24 +96,26 @@ struct AccessTraits<Slice, PrimitivesTag,
     }
 };
 //! Neighbor access trait.
-template <typename SliceLike>
-struct AccessTraits<SliceLike, PredicatesTag>
+template <typename Slice>
+struct AccessTraits<Cabana::Experimental::Impl::SubsliceAndRadius<Slice>,
+                    PredicatesTag>
 {
+    using Self = Cabana::Experimental::Impl::SubsliceAndRadius<Slice>;
     //! Kokkos memory space.
-    using memory_space = typename SliceLike::memory_space;
+    using memory_space = typename Self::memory_space;
     //! Size type.
-    using size_type = typename SliceLike::size_type;
+    using size_type = typename Self::size_type;
     //! Get number of particles.
-    static KOKKOS_FUNCTION size_type size( SliceLike const& x )
+    static KOKKOS_FUNCTION size_type size( Self const& x )
     {
         return x.last - x.first;
     }
     //! Get the particle at the index.
-    static KOKKOS_FUNCTION auto get( SliceLike const& x, size_type i )
+    static KOKKOS_FUNCTION auto get( Self const& x, size_type i )
     {
         assert( i < size( x ) );
         auto const point =
-            AccessTraits<typename SliceLike::slice_type, PrimitivesTag>::get(
+            AccessTraits<typename Self::slice_type, PrimitivesTag>::get(
                 x.slice, x.first + i );
         return attach( intersects( Sphere{ point, x.radius } ), (int)i );
     }
