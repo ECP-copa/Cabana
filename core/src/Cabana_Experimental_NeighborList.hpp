@@ -77,7 +77,7 @@ max_reduce( ExecutionSpace const& space, Kokkos::View<D, P...> const& v )
 {
     using V = Kokkos::View<D, P...>;
     static_assert( V::rank == 1 );
-    static_assert( Kokkos::is_execution_space_v<ExecutionSpace> );
+    static_assert( Kokkos::is_execution_space<ExecutionSpace>::value );
     static_assert(
         is_accessible_from<typename V::memory_space, ExecutionSpace>::value );
     using Ret = typename Kokkos::View<D, P...>::non_const_value_type;
