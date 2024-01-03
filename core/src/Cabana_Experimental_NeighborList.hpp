@@ -415,7 +415,7 @@ auto make2DNeighborList( ExecutionSpace space, Tag,
         Impl::makePredicates( coordinate_slice, first, last, radius );
 
     auto const n_queries =
-        ArborX::AccessTraits<decltype( predicates ),
+        ArborX::AccessTraits<std::remove_const_t<decltype( predicates )>,
                              ArborX::PredicatesTag>::size( predicates );
 
     Kokkos::View<int**, memory_space> neighbors;
