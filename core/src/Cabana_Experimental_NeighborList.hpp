@@ -18,6 +18,7 @@
 
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_Slice.hpp>
+#include <Cabana_Types.hpp> // is_accessible_from
 
 #include <ArborX.hpp>
 
@@ -68,6 +69,29 @@ auto makePredicates(
 {
     return Impl::SubsliceAndRadius<stdcxx20::remove_cvref_t<Slice>>{
         std::forward<Slice>( slice ), first, last, radius };
+}
+
+template <typename ExecutionSpace, typename D, typename... P>
+typename Kokkos::View<D, P...>::non_const_value_type
+max_reduce( ExecutionSpace const& space, Kokkos::View<D, P...> const& v )
+{
+    using V = Kokkos::View<D, P...>;
+    static_assert( V::rank == 1 );
+    static_assert( Kokkos::is_execution_space<ExecutionSpace>::value );
+    static_assert(
+        is_accessible_from<typename V::memory_space, ExecutionSpace>::value );
+    using Ret = typename Kokkos::View<D, P...>::non_const_value_type;
+    Ret max_val;
+    Kokkos::parallel_reduce(
+        Kokkos::RangePolicy<ExecutionSpace>( space, 0, v.extent( 0 ) ),
+        KOKKOS_LAMBDA( int i, Ret& partial_max ) {
+            if ( v( i ) > partial_max )
+            {
+                partial_max = v( i );
+            }
+        },
+        Kokkos::Max<Ret>( max_val ) );
+    return max_val;
 }
 //! \endcond
 } // namespace Impl
@@ -437,7 +461,7 @@ auto make2DNeighborList( ExecutionSpace space, Tag,
                                                             Tag>{ counts } );
     }
 
-    auto const max_neighbors = ArborX::max( space, counts );
+    auto const max_neighbors = Impl::max_reduce( space, counts );
     if ( max_neighbors <= buffer_size )
     {
         // NOTE We do not bother shrinking to eliminate the excess allocation.
