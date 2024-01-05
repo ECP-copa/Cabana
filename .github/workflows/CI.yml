@@ -451,7 +451,7 @@ jobs:
       matrix:
         cxx: ['hipcc']
         cmake_build_type: ['Debug']
-        kokkos_ver: ['4.0.01']
+        kokkos_ver: ['4.2.00']
     runs-on: ubuntu-20.04
     container: ghcr.io/ecp-copa/ci-containers/rocm:latest
     steps:
