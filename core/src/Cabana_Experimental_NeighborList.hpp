@@ -120,9 +120,12 @@ struct AccessTraits<Slice, PrimitivesTag,
     }
 };
 //! Neighbor access trait.
-template <typename SliceLike>
-struct AccessTraits<SliceLike, PredicatesTag>
+template <typename Slice>
+struct AccessTraits<Cabana::Experimental::Impl::SubsliceAndRadius<Slice>,
+                    PredicatesTag>
 {
+    //! Slice wrapper with partial range and radius information.
+    using SliceLike = Cabana::Experimental::Impl::SubsliceAndRadius<Slice>;
     //! Kokkos memory space.
     using memory_space = typename SliceLike::memory_space;
     //! Size type.
@@ -437,7 +440,7 @@ auto make2DNeighborList( ExecutionSpace space, Tag,
         Impl::makePredicates( coordinate_slice, first, last, radius );
 
     auto const n_queries =
-        ArborX::AccessTraits<decltype( predicates ),
+        ArborX::AccessTraits<std::remove_const_t<decltype( predicates )>,
                              ArborX::PredicatesTag>::size( predicates );
 
     Kokkos::View<int**, memory_space> neighbors;
