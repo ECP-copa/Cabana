@@ -38,15 +38,10 @@ template <class MemorySpace>
 class BinningData
 {
   public:
-    // FIXME: extracting the self type for backwards compatibility with previous
-    // template on DeviceType. Should simply be MemorySpace after next release.
-    //! Memory space.
-    using memory_space = typename MemorySpace::memory_space;
-    // FIXME: replace warning with memory space assert after next release.
-    static_assert( Impl::deprecated( Kokkos::is_device<MemorySpace>() ) );
+    //! Kokkos memory space.
+    using memory_space = MemorySpace;
+    static_assert( Kokkos::is_memory_space<MemorySpace>() );
 
-    //! Default device type.
-    using device_type [[deprecated]] = typename memory_space::device_type;
     //! Default execution space.
     using execution_space = typename memory_space::execution_space;
     //! Memory space size type.
@@ -673,7 +668,7 @@ void permute(
   \param view The view to permute.
  */
 template <class BinningDataType, class ViewType,
-          class DeviceType = typename BinningDataType::device_type>
+          class MemorySpace = typename BinningDataType::memory_space>
 void permute(
     const BinningDataType& binning_data, ViewType& view,
     typename std::enable_if<( is_binning_data<BinningDataType>::value &&
@@ -690,7 +685,7 @@ void permute(
     for ( std::size_t d = 1; d < view.rank; ++d )
         num_comp *= view.extent( d );
 
-    Kokkos::View<typename ViewType::value_type**, DeviceType> scratch(
+    Kokkos::View<typename ViewType::value_type**, MemorySpace> scratch(
         Kokkos::ViewAllocateWithoutInitializing( "scratch" ), end - begin,
         num_comp );
 
@@ -701,7 +696,8 @@ void permute(
             scratch( i - begin, n ) = view( permute_i, n );
     };
     auto policy =
-        Kokkos::RangePolicy<typename DeviceType::execution_space>( begin, end );
+        Kokkos::RangePolicy<typename BinningDataType::execution_space>( begin,
+                                                                        end );
     Kokkos::parallel_for( "Cabana::kokkosBinSort::permute_to_scratch", policy,
                           permute_to_scratch );
     Kokkos::fence();
