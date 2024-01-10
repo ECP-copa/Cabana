@@ -236,16 +236,6 @@ endif()
 add_subdirectory(core)
 
 option(Cabana_ENABLE_GRID "Build grid and particle-grid capabilities" ${Cabana_ENABLE_MPI})
-### FIXME: remove in next release.
-option(Cabana_ENABLE_CAJITA "Build grid and particle-grid capabilities" OFF)
-option(Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS "Do not warn about Cajita deprecation." OFF)
-if (Cabana_ENABLE_CAJITA)
-  if (NOT Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS)
-    message(DEPRECATION "Option Cabana_ENABLE_CAJITA is deprecated, replaced by Cabana_ENABLE_GRID")
-  endif()
-  set(Cabana_ENABLE_GRID ON)
-endif()
-
 if(Cabana_ENABLE_GRID)
   if(MPI_FOUND)
     add_subdirectory(grid)

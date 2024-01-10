@@ -281,8 +281,7 @@ def getData(filelist):
         txt = f.read()
     if "Cabana Comm" in txt:
         return AllDataMPI(filelist)
-    # FIXME: Cajita backwards compatibility
-    elif ("Cajita" in txt or "Cabana::Grid " in txt):
+    elif ("Cabana::Grid " in txt):
         return AllDataGrid(filelist, grid=True)
 
     return AllData(filelist)

@@ -18,7 +18,6 @@
 
 #include <Cabana_Grid_IndexSpace.hpp>
 #include <Cabana_Grid_LocalGrid.hpp>
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Profiling_ScopedRegion.hpp>
 
@@ -583,22 +582,5 @@ inline void grid_parallel_reduce(
 
 } // namespace Grid
 } // namespace Cabana
-
-namespace Cajita
-{
-//! \cond Deprecated
-template <class... Args>
-CAJITA_DEPRECATED void grid_parallel_for( Args&&... args )
-{
-    return Cabana::Grid::grid_parallel_for( std::forward<Args>( args )... );
-}
-
-template <class... Args>
-CAJITA_DEPRECATED void grid_parallel_reduce( Args&&... args )
-{
-    return Cabana::Grid::grid_parallel_reduce( std::forward<Args>( args )... );
-}
-//! \endcond
-} // namespace Cajita
 
 #endif // end CABANA_GRID_PARALLEL_HPP

@@ -914,14 +914,4 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
 } // namespace Grid
 } // namespace Cabana
 
-namespace Cajita
-{
-//! \cond Deprecated
-template <class Device, unsigned long long CellPerTileDim = 4,
-          std::size_t NumSpaceDim = 3>
-using SparseDimPartitioner CAJITA_DEPRECATED =
-    Cabana::Grid::SparseDimPartitioner<Device, CellPerTileDim, NumSpaceDim>;
-//! \endcond
-} // namespace Cajita
-
 #endif // end CABANA_GRID_SPARSEDIMPARTITIONER_HPP

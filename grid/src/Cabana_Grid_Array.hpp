@@ -20,7 +20,6 @@
 #include <Cabana_Grid_LocalGrid.hpp>
 #include <Cabana_Grid_MpiTraits.hpp>
 #include <Cabana_Grid_Types.hpp>
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 
@@ -1122,113 +1121,5 @@ void norm2( const Array_t& array,
 
 } // namespace Grid
 } // namespace Cabana
-
-namespace Cajita
-{
-//! \cond Deprecated
-template <class EntityType, class MeshType>
-using ArrayLayout CAJITA_DEPRECATED =
-    Cabana::Grid::ArrayLayout<EntityType, MeshType>;
-
-template <class T>
-using is_array_layout CAJITA_DEPRECATED = Cabana::Grid::is_array_layout<T>;
-
-template <class... Args>
-CAJITA_DEPRECATED auto createArrayLayout( Args&&... args )
-{
-    return Cabana::Grid::createArrayLayout( std::forward<Args>( args )... );
-}
-
-template <class Scalar, class EntityType, class MeshType, class... Params>
-using Array CAJITA_DEPRECATED =
-    Cabana::Grid::Array<Scalar, EntityType, MeshType, Params...>;
-
-template <class T>
-using is_array CAJITA_DEPRECATED = Cabana::Grid::is_array<T>;
-
-template <class Scalar, class... Params, class... Args>
-CAJITA_DEPRECATED auto createArray( Args&&... args )
-{
-    return Cabana::Grid::createArray<Scalar, Params...>(
-        std::forward<Args>( args )... );
-}
-
-template <class... Args>
-CAJITA_DEPRECATED auto createSubarray( Args&&... args )
-{
-    return Cabana::Grid::createSubarray( std::forward<Args>( args )... );
-}
-
-namespace ArrayOp
-{
-template <class... Args>
-CAJITA_DEPRECATED auto clone( Args&&... args )
-{
-    return Cabana::Grid::ArrayOp::clone( std::forward<Args>( args )... );
-}
-template <class... Args>
-CAJITA_DEPRECATED auto assign( Args&&... args )
-{
-    return Cabana::Grid::ArrayOp::assign( std::forward<Args>( args )... );
-}
-template <class... Args>
-CAJITA_DEPRECATED void scale( Args&&... args )
-{
-    return Cabana::Grid::ArrayOp::scale( std::forward<Args>( args )... );
-}
-template <class... Args>
-CAJITA_DEPRECATED void copy( Args&&... args )
-{
-    return Cabana::Grid::ArrayOp::copy( std::forward<Args>( args )... );
-}
-template <class... Args>
-CAJITA_DEPRECATED auto cloneCopy( Args&&... args )
-{
-    return Cabana::Grid::ArrayOp::cloneCopy( std::forward<Args>( args )... );
-}
-template <class... Args>
-CAJITA_DEPRECATED void update( Args&&... args )
-{
-    return Cabana::Grid::ArrayOp::update( std::forward<Args>( args )... );
-}
-
-template <class ViewType, std::size_t NumSpaceDim>
-using DotFunctor CAJITA_DEPRECATED =
-    Cabana::Grid::ArrayOp::DotFunctor<ViewType, NumSpaceDim>;
-template <class... Args>
-CAJITA_DEPRECATED void dot( Args&&... args )
-{
-    return Cabana::Grid::ArrayOp::dot( std::forward<Args>( args )... );
-}
-
-template <class ViewType, std::size_t NumSpaceDim>
-using NormInfFunctor CAJITA_DEPRECATED =
-    Cabana::Grid::ArrayOp::NormInfFunctor<ViewType, NumSpaceDim>;
-template <class... Args>
-CAJITA_DEPRECATED void normInf( Args&&... args )
-{
-    return Cabana::Grid::ArrayOp::normInf( std::forward<Args>( args )... );
-}
-
-template <class ViewType, std::size_t NumSpaceDim>
-using Norm1Functor CAJITA_DEPRECATED =
-    Cabana::Grid::ArrayOp::Norm1Functor<ViewType, NumSpaceDim>;
-template <class... Args>
-CAJITA_DEPRECATED void norm1( Args&&... args )
-{
-    return Cabana::Grid::ArrayOp::norm1( std::forward<Args>( args )... );
-}
-
-template <class ViewType, std::size_t NumSpaceDim>
-using Norm2Functor CAJITA_DEPRECATED =
-    Cabana::Grid::ArrayOp::Norm2Functor<ViewType, NumSpaceDim>;
-template <class... Args>
-CAJITA_DEPRECATED void norm2( Args&&... args )
-{
-    return Cabana::Grid::ArrayOp::norm2( std::forward<Args>( args )... );
-}
-//! \endcond
-} // namespace ArrayOp
-} // namespace Cajita
 
 #endif // end CABANA_GRID_ARRAY_HPP

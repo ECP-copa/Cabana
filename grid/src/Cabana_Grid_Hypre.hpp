@@ -16,8 +16,6 @@
 #ifndef CABANA_GRID_HYPRE_HPP
 #define CABANA_GRID_HYPRE_HPP
 
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
-
 #include <HYPRE_config.h>
 #include <HYPRE_struct_ls.h>
 #include <HYPRE_struct_mv.h>
@@ -85,14 +83,5 @@ struct HypreIsCompatibleWithMemorySpace<Kokkos::HostSpace> : std::true_type
 #endif // end HYPRE_USING_GPU
 } // namespace Grid
 } // namespace Cabana
-
-namespace Cajita
-{
-//! \cond Deprecated
-template <class MemorySpace>
-using HypreIsCompatibleWithMemorySpace CAJITA_DEPRECATED =
-    Cabana::Grid::HypreIsCompatibleWithMemorySpace<MemorySpace>;
-//! \endcond
-} // namespace Cajita
 
 #endif // end CABANA_GRID_HYPRE_HPP

@@ -18,7 +18,6 @@
 
 #include <Cabana_Grid_IndexSpace.hpp>
 #include <Cabana_Grid_Types.hpp>
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 
@@ -178,24 +177,5 @@ L2G<MeshType, EntityType> createL2G( const LocalGrid<MeshType>& local_grid,
 } // end namespace IndexConversion
 } // namespace Grid
 } // namespace Cabana
-
-namespace Cajita
-{
-//! \cond Deprecated
-namespace IndexConversion
-{
-template <class MeshType, class EntityType>
-using L2G CAJITA_DEPRECATED =
-    Cabana::Grid::IndexConversion::L2G<EntityType, MeshType>;
-
-template <class... Args>
-CAJITA_DEPRECATED auto createL2G( Args&&... args )
-{
-    return Cabana::Grid::IndexConversion::createL2G(
-        std::forward<Args>( args )... );
-}
-//! \endcond
-} // namespace IndexConversion
-} // namespace Cajita
 
 #endif // end CABANA_GRID_INDEXCONVERSION_HPP
