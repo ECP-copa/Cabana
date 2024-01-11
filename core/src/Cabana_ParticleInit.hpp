@@ -263,32 +263,6 @@ void createParticles(
                      box_max, previous_num_particles, seed );
 }
 
-//! Generate random particles.
-template <class ExecutionSpace, class PositionType>
-[[deprecated( "Use createParticles instead." )]] void
-createRandomParticles( ExecutionSpace exec_space, PositionType& positions,
-                       const std::size_t num_particles, const double box_min,
-                       const double box_max )
-{
-    std::array<double, 3> array_min = { box_min, box_min, box_min };
-    std::array<double, 3> array_max = { box_max, box_max, box_max };
-    createParticles( InitRandom{}, exec_space, positions, num_particles,
-                     array_min, array_max );
-}
-
-/*!
-  Generate random particles. Default execution space.
-*/
-template <class PositionType>
-[[deprecated( "Use createParticles instead." )]] void
-createRandomParticles( PositionType& positions, const std::size_t num_particles,
-                       const double box_min, const double box_max )
-{
-    using exec_space = typename PositionType::execution_space;
-    createRandomParticles( exec_space{}, positions, num_particles, box_min,
-                           box_max );
-}
-
 //---------------------------------------------------------------------------//
 // Random with minimum separation
 //---------------------------------------------------------------------------//
@@ -410,88 +384,6 @@ int createParticles( InitRandom tag, const InitFunctor& create_functor,
                             position_tag, num_particles, min_dist, box_min,
                             box_max, previous_num_particles, shrink_to_fit,
                             seed );
-}
-
-/*!
-  \brief Generate random particles with minimum distance between neighbors.
-  \note This approximates many physical scenarios, e.g. atomic simulations.
-
-  \note This version will continue sampling until the number of selected
-  particles is created. This can be extremely slow based on the requested box
-  size and minimum separation distance.
-*/
-template <class PositionType>
-[[deprecated( "Use createParticles instead." )]] void
-createRandomParticlesMinDistance( PositionType& positions,
-                                  const std::size_t num_particles,
-                                  const double box_min, const double box_max,
-                                  const double min_dist )
-{
-    using exec_space = typename PositionType::execution_space;
-    createRandomParticlesMinDistance( exec_space{}, positions, num_particles,
-                                      box_min, box_max, min_dist );
-}
-
-/*!
-  \brief Generate random particles with minimum distance between neighbors.
-  \note This approximates many physical scenarios, e.g. atomic simulations.
-
-  This version will continue sampling until the number of selected particles is
-  created. This can be extremely slow based on the requested box size and
-  minimum separation distance.
-*/
-template <class ExecutionSpace, class PositionType>
-[[deprecated( "Use createParticles instead." )]] void
-createRandomParticlesMinDistance( ExecutionSpace exec_space,
-                                  PositionType& positions,
-                                  const std::size_t num_particles,
-                                  const double box_min, const double box_max,
-                                  const double min_dist )
-{
-    double min_dist_sqr = min_dist * min_dist;
-
-    using PoolType = Kokkos::Random_XorShift64_Pool<ExecutionSpace>;
-    using RandomType = Kokkos::Random_XorShift64<ExecutionSpace>;
-    PoolType pool( 342343901 );
-
-    auto random_coord_op = KOKKOS_LAMBDA( const int p )
-    {
-        auto gen = pool.get_state();
-
-        // Create particles. Only add particles that are outside a minimum
-        // distance from other particles.
-        bool found_neighbor = true;
-
-        // Keep trying new random coordinates until we insert one that is
-        // not within the minimum distance of any other particle.
-        while ( found_neighbor )
-        {
-            found_neighbor = false;
-
-            for ( int d = 0; d < 3; ++d )
-                positions( p, d ) = Kokkos::rand<RandomType, double>::draw(
-                    gen, box_min, box_max );
-
-            for ( int n = 0; n < p; n++ )
-            {
-                double dx = positions( n, 0 ) - positions( p, 0 );
-                double dy = positions( n, 1 ) - positions( p, 1 );
-                double dz = positions( n, 2 ) - positions( p, 2 );
-                double dist = dx * dx + dy * dy + dz * dz;
-                if ( dist < min_dist_sqr )
-                {
-                    found_neighbor = true;
-                    break;
-                }
-            }
-        }
-        pool.free_state( gen );
-    };
-
-    Kokkos::RangePolicy<ExecutionSpace> exec_policy( exec_space, 0,
-                                                     num_particles );
-    Kokkos::parallel_for( exec_policy, random_coord_op );
-    Kokkos::fence();
 }
 
 } // namespace Cabana
