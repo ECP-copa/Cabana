@@ -345,6 +345,39 @@ jobs:
             ${hypre_cmake_opts[@]}
           cmake --build build --parallel 2
           cmake --install build
+      - name: Checkout HDF5
+        if: ${{ matrix.hdf5 == 'HDF5' && matrix.distro == 'ubuntu:latest' }}
+        uses: actions/checkout@v3
+        with:
+          repository: HDFGroup/hdf5
+          ref: hdf5-1_14_3
+          path: hdf5-1_14_3
+      - name: Build HDF5
+        if: ${{ matrix.hdf5 == 'HDF5' && matrix.distro == 'ubuntu:latest' }}
+        working-directory: hdf5-1_14_3
+        run: |
+          mkdir hdf5
+          cd hdf5
+          export HDF5_ROOT=$HOME/hdf5
+          echo "HDF5_ROOT=$HDF5_ROOT" >> $GITHUB_ENV
+          cmake -C ../config/cmake/cacheinit.cmake -G "Unix Makefiles" \
+            -DCMAKE_C_COMPILER="mpicc" \
+            -DCMAKE_INSTALL_PREFIX=$HDF5_ROOT \
+            -DHDF5_BUILD_FORTRAN:BOOL=OFF \
+            -DHDF5_BUILD_JAVA:BOOL=OFF \
+            -DHDF5_BUILD_CPP_LIB:BOOL=OFF \
+            -DHDF5_BUILD_HL_LIB:BOOL=OFF \
+            -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=OFF \
+            -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=OFF \
+            -DBUILD_TESTING:BOOL=OFF \
+            -DHDF5_BUILD_EXAMPLES:BOOL=OFF \
+            -DHDF5_BUILD_HL_LIB:BOOL=OFF \
+            -DHDF5_BUILD_TOOLS:BOOL=OFF \
+            -DHDF5_ENABLE_PARALLEL:BOOL=ON \
+            -DHDF5_ENABLE_SUBFILING_VFD:BOOL=ON\
+            -DBUILD_SHARED_LIBS:BOOL=ON \
+            ..
+          make -j 2 install
       - name: Checkout ALL
         if: ${{ matrix.liball == 'libALL' }}
         run: |
