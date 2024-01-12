@@ -16,7 +16,7 @@
 //---------------------------------------------------------------------------//
 // HDF5 output example
 //---------------------------------------------------------------------------//
-void hdf5_output()
+void hdf5Output()
 {
     /*
       HDF5 is a parallel file format for large datasets. In this example, we
@@ -157,7 +157,7 @@ int main( int argc, char* argv[] )
     MPI_Init( &argc, &argv );
     Kokkos::initialize( argc, argv );
 
-    hdf5_output();
+    hdf5Output();
 
     Kokkos::finalize();
 
