@@ -214,6 +214,8 @@ class HypreStructuredSolver
         checkHypreError( error );
         error = HYPRE_StructMatrixSetSymmetric( _A, is_symmetric );
         checkHypreError( error );
+        error = HYPRE_StructMatrixInitialize( _A );
+        checkHypreError( error );
     }
 
     /*!
@@ -253,8 +255,9 @@ class HypreStructuredSolver
         const std::size_t num_space_dim = Array_t::num_space_dim;
 
         // Intialize the matrix for setting values.
-        auto error = HYPRE_StructMatrixInitialize( _A );
-        checkHypreError( error );
+        // Moving this to the place where the matrix is created
+//        auto error = HYPRE_StructMatrixInitialize( _A );
+//        checkHypreError( error );
 
         // Copy the matrix entries into HYPRE. The HYPRE layout is fixed as
         // layout-right.
@@ -272,15 +275,18 @@ class HypreStructuredSolver
         auto values_subv = createSubview( values.view(), owned_space );
         Kokkos::deep_copy( a_values, values_subv );
 
+
         // Insert values into the HYPRE matrix.
         std::vector<HYPRE_Int> indices( _stencil_size );
         std::iota( indices.begin(), indices.end(), 0 );
-        error = HYPRE_StructMatrixSetBoxValues(
+        auto error = HYPRE_StructMatrixSetBoxValues(
             _A, _lower.data(), _upper.data(), indices.size(), indices.data(),
             a_values.data() );
         checkHypreError( error );
         error = HYPRE_StructMatrixAssemble( _A );
         checkHypreError( error );
+
+
     }
 
     /*!
@@ -386,8 +392,8 @@ class HypreStructuredSolver
         const std::size_t num_space_dim = Array_t::num_space_dim;
 
         // Initialize the RHS.
-        auto error = HYPRE_StructVectorInitialize( _b );
-        checkHypreError( error );
+//        auto error = HYPRE_StructVectorInitialize( _b );
+//        checkHypreError( error );
 
         // Copy the RHS into HYPRE. The HYPRE layout is fixed as layout-right.
         auto owned_space = b.layout()->indexSpace( Own(), Local() );
@@ -405,14 +411,14 @@ class HypreStructuredSolver
         Kokkos::deep_copy( vector_values, b_subv );
 
         // Insert b values into the HYPRE vector.
-        error = HYPRE_StructVectorSetBoxValues(
+        auto error = HYPRE_StructVectorSetBoxValues(
             _b, _lower.data(), _upper.data(), vector_values.data() );
         checkHypreError( error );
         error = HYPRE_StructVectorAssemble( _b );
         checkHypreError( error );
 
         // Solve the problem
-        this->solveImpl( _A, _b, _x );
+            this->solveImpl( _A, _b, _x );
 
         // Extract the solution from the LHS
         error = HYPRE_StructVectorGetBoxValues(
