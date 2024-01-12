@@ -175,6 +175,9 @@ void hdf5OutputSubfiling()
             {
                 if ( h5_config.subfiling )
                 {
+                    if ( comm_rank == 0 )
+                        std::cout << "Using HDF5 subfiling.\n" << std::endl;
+
                     MPI_Comm shmcomm;
                     MPI_Comm_split_type( MPI_COMM_WORLD, MPI_COMM_TYPE_SHARED,
                                          0, MPI_INFO_NULL, &shmcomm );
@@ -223,6 +226,12 @@ void hdf5OutputSubfiling()
 
                             execvp( args[0], args );
                         }
+                    }
+                    else
+                    {
+                        if ( comm_rank == 0 )
+                            std::cout << "HDF5 subfiling disabled.\n"
+                                      << std::endl;
                     }
                     MPI_Comm_free( &shmcomm );
                 }
