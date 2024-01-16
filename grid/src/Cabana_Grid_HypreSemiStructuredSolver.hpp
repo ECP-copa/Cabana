@@ -337,7 +337,8 @@ class HypreSemiStructuredSolver
         checkHypreError( error );
 
         // Prepare the matrix for setting values
-        error = HYPRE_SStructMatrixInitialize( _A ) checkHypreError( error );
+        error = HYPRE_SStructMatrixInitialize( _A );
+        checkHypreError( error );
     }
 
     /*!
