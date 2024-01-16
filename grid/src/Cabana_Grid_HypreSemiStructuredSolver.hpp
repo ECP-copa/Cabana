@@ -524,10 +524,6 @@ class HypreSemiStructuredSolver
 
         int part = 0;
 
-        // Initialize the RHS.
-        auto error = HYPRE_SStructVectorInitialize( _b );
-        checkHypreError( error );
-
         // Copy the RHS into HYPRE. The HYPRE layout is fixed as layout-right.
         auto owned_space = b.layout()->indexSpace( Own(), Local() );
         std::array<long, num_space_dim + 1> reorder_min;
@@ -542,6 +538,7 @@ class HypreSemiStructuredSolver
         // The process of creating the view and then deep copying each
         // variable is functional, but we should avoid this process
         // for performance if possible
+        int error;
         for ( int var = 0; var < n_vars; ++var )
         {
             reorder_min.back() = var;
