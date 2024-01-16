@@ -328,23 +328,16 @@ class HypreSemiStructuredSolver
         error = HYPRE_SStructGraphAssemble( _graph );
         checkHypreError( error );
 
-        // Create the matrix.
+        // Create the matrix. must be done after graph is assembled
         error = HYPRE_SStructMatrixCreate( _comm, _graph, &_A );
         checkHypreError( error );
 
         // Set the SStruct matrix object type
         error = HYPRE_SStructMatrixSetObjectType( _A, object_type );
         checkHypreError( error );
-    }
 
-    /*!
-        \brief Prepare the hypre matrix to have it's values set
-    */
-    void initializeHypreMatrix()
-    {
-        // Initialize the matrix.
-        auto error = HYPRE_SStructMatrixInitialize( _A );
-        checkHypreError( error );
+        // Prepare the matrix for setting values
+        error = HYPRE_SStructMatrixInitialize( _A ) checkHypreError( error );
     }
 
     /*!

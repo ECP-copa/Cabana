@@ -209,7 +209,7 @@ class HypreStructuredSolver
             checkHypreError( error );
         }
 
-        // Create the matrix.
+        // Create the matrix object. Must be done after the stencil is setup
         error = HYPRE_StructMatrixCreate( _comm, _grid, _stencil, &_A );
         checkHypreError( error );
         error = HYPRE_StructMatrixSetSymmetric( _A, is_symmetric );
