@@ -254,11 +254,6 @@ class HypreStructuredSolver
         // Spatial dimension.
         const std::size_t num_space_dim = Array_t::num_space_dim;
 
-        // Intialize the matrix for setting values.
-        // Moving this to the place where the matrix is created
-//        auto error = HYPRE_StructMatrixInitialize( _A );
-//        checkHypreError( error );
-
         // Copy the matrix entries into HYPRE. The HYPRE layout is fixed as
         // layout-right.
         auto owned_space = values.layout()->indexSpace( Own(), Local() );
@@ -275,7 +270,6 @@ class HypreStructuredSolver
         auto values_subv = createSubview( values.view(), owned_space );
         Kokkos::deep_copy( a_values, values_subv );
 
-
         // Insert values into the HYPRE matrix.
         std::vector<HYPRE_Int> indices( _stencil_size );
         std::iota( indices.begin(), indices.end(), 0 );
@@ -285,8 +279,6 @@ class HypreStructuredSolver
         checkHypreError( error );
         error = HYPRE_StructMatrixAssemble( _A );
         checkHypreError( error );
-
-
     }
 
     /*!
@@ -353,6 +345,7 @@ class HypreStructuredSolver
         if ( _is_preconditioner )
             throw std::logic_error( "Cannot call setup() on preconditioners" );
 
+        // FIXME: appears to be a memory issue in the call to this function
         this->setupImpl( _A, _b, _x );
     }
 
@@ -391,10 +384,6 @@ class HypreStructuredSolver
         // Spatial dimension.
         const std::size_t num_space_dim = Array_t::num_space_dim;
 
-        // Initialize the RHS.
-//        auto error = HYPRE_StructVectorInitialize( _b );
-//        checkHypreError( error );
-
         // Copy the RHS into HYPRE. The HYPRE layout is fixed as layout-right.
         auto owned_space = b.layout()->indexSpace( Own(), Local() );
         std::array<long, num_space_dim + 1> reorder_size;
@@ -418,7 +407,7 @@ class HypreStructuredSolver
         checkHypreError( error );
 
         // Solve the problem
-            this->solveImpl( _A, _b, _x );
+        this->solveImpl( _A, _b, _x );
 
         // Extract the solution from the LHS
         error = HYPRE_StructVectorGetBoxValues(
