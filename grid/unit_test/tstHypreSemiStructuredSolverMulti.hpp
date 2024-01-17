@@ -115,8 +115,6 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
             entry_view( i, j, k, 6 ) = -1.0;
         } );
 
-    solver->initializeHypreMatrix();
-
     for ( int v_h = 0; v_h < 3; ++v_h )
     {
         solver->setMatrixValues( *matrix_entries, v_h, v_h );

@@ -209,10 +209,12 @@ class HypreStructuredSolver
             checkHypreError( error );
         }
 
-        // Create the matrix.
+        // Create the matrix object. Must be done after the stencil is setup
         error = HYPRE_StructMatrixCreate( _comm, _grid, _stencil, &_A );
         checkHypreError( error );
         error = HYPRE_StructMatrixSetSymmetric( _A, is_symmetric );
+        checkHypreError( error );
+        error = HYPRE_StructMatrixInitialize( _A );
         checkHypreError( error );
     }
 
@@ -252,10 +254,6 @@ class HypreStructuredSolver
         // Spatial dimension.
         const std::size_t num_space_dim = Array_t::num_space_dim;
 
-        // Intialize the matrix for setting values.
-        auto error = HYPRE_StructMatrixInitialize( _A );
-        checkHypreError( error );
-
         // Copy the matrix entries into HYPRE. The HYPRE layout is fixed as
         // layout-right.
         auto owned_space = values.layout()->indexSpace( Own(), Local() );
@@ -275,7 +273,7 @@ class HypreStructuredSolver
         // Insert values into the HYPRE matrix.
         std::vector<HYPRE_Int> indices( _stencil_size );
         std::iota( indices.begin(), indices.end(), 0 );
-        error = HYPRE_StructMatrixSetBoxValues(
+        auto error = HYPRE_StructMatrixSetBoxValues(
             _A, _lower.data(), _upper.data(), indices.size(), indices.data(),
             a_values.data() );
         checkHypreError( error );
@@ -347,6 +345,7 @@ class HypreStructuredSolver
         if ( _is_preconditioner )
             throw std::logic_error( "Cannot call setup() on preconditioners" );
 
+        // FIXME: appears to be a memory issue in the call to this function
         this->setupImpl( _A, _b, _x );
     }
 
@@ -385,10 +384,6 @@ class HypreStructuredSolver
         // Spatial dimension.
         const std::size_t num_space_dim = Array_t::num_space_dim;
 
-        // Initialize the RHS.
-        auto error = HYPRE_StructVectorInitialize( _b );
-        checkHypreError( error );
-
         // Copy the RHS into HYPRE. The HYPRE layout is fixed as layout-right.
         auto owned_space = b.layout()->indexSpace( Own(), Local() );
         std::array<long, num_space_dim + 1> reorder_size;
@@ -405,7 +400,7 @@ class HypreStructuredSolver
         Kokkos::deep_copy( vector_values, b_subv );
 
         // Insert b values into the HYPRE vector.
-        error = HYPRE_StructVectorSetBoxValues(
+        auto error = HYPRE_StructVectorSetBoxValues(
             _b, _lower.data(), _upper.data(), vector_values.data() );
         checkHypreError( error );
         error = HYPRE_StructVectorAssemble( _b );
