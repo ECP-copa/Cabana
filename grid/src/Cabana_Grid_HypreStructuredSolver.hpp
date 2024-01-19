@@ -407,7 +407,7 @@ class HypreStructuredSolver
         checkHypreError( error );
 
         // Solve the problem
-        this->solveImpl( _A, _b, _x );
+        this->solveImpl();
 
         // Extract the solution from the LHS
         error = HYPRE_StructVectorGetBoxValues(
@@ -451,8 +451,7 @@ class HypreStructuredSolver
     virtual void setupImpl() = 0;
 
     //! Solver implementation.
-    virtual void solveImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                            HYPRE_StructVector x ) = 0;
+    virtual void solveImpl() = 0;
 
     //! Get the number of iterations taken on the last solve.
     virtual int getNumIterImpl() = 0;
@@ -587,10 +586,9 @@ class HypreStructPCG
         this->checkHypreError( error );
     }
 
-    void solveImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void solveImpl() override
     {
-        auto error = HYPRE_StructPCGSolve( _solver, A, b, x );
+        auto error = HYPRE_StructPCGSolve( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
@@ -713,10 +711,9 @@ class HypreStructGMRES
         this->checkHypreError( error );
     }
 
-    void solveImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void solveImpl() override
     {
-        auto error = HYPRE_StructGMRESSolve( _solver, A, b, x );
+        auto error = HYPRE_StructGMRESSolve( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
@@ -832,10 +829,9 @@ class HypreStructBiCGSTAB
         this->checkHypreError( error );
     }
 
-    void solveImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void solveImpl() override
     {
-        auto error = HYPRE_StructBiCGSTABSolve( _solver, A, b, x );
+        auto error = HYPRE_StructBiCGSTABSolve( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
@@ -1022,10 +1018,9 @@ class HypreStructPFMG
         this->checkHypreError( error );
     }
 
-    void solveImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void solveImpl() override
     {
-        auto error = HYPRE_StructPFMGSolve( _solver, A, b, x );
+        auto error = HYPRE_StructPFMGSolve( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
@@ -1154,10 +1149,9 @@ class HypreStructSMG
         this->checkHypreError( error );
     }
 
-    void solveImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void solveImpl() override
     {
-        auto error = HYPRE_StructSMGSolve( _solver, A, b, x );
+        auto error = HYPRE_StructSMGSolve( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
@@ -1254,10 +1248,9 @@ class HypreStructJacobi
         this->checkHypreError( error );
     }
 
-    void solveImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void solveImpl() override
     {
-        auto error = HYPRE_StructJacobiSolve( _solver, A, b, x );
+        auto error = HYPRE_StructJacobiSolve( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
@@ -1347,8 +1340,7 @@ class HypreStructDiagonal
             "Diagonal preconditioner cannot be used as a solver" );
     }
 
-    void solveImpl( HYPRE_StructMatrix, HYPRE_StructVector,
-                    HYPRE_StructVector ) override
+    void solveImpl() override
     {
         throw std::logic_error(
             "Diagonal preconditioner cannot be used as a solver" );
