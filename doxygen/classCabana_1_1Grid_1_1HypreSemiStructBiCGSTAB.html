@@ -111,10 +111,9 @@ Collaboration diagram for Cabana::Grid::HypreSemiStructBiCGSTAB&lt; Scalar, Enti
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a0e7c9d074f71f7447a804edde5c4ff68" id="r_a0e7c9d074f71f7447a804edde5c4ff68"><td class="memItemLeft" align="right" valign="top"><a id="a0e7c9d074f71f7447a804edde5c4ff68" name="a0e7c9d074f71f7447a804edde5c4ff68"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>Base</b> = <a class="el" href="classCabana_1_1Grid_1_1HypreSemiStructuredSolver.html">HypreSemiStructuredSolver</a>&lt;Scalar, EntityType, MemorySpace&gt;</td></tr>
-<tr class="memdesc:a0e7c9d074f71f7447a804edde5c4ff68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base HYPRE semi-structured solver type. <br /></td></tr>
-<tr class="separator:a0e7c9d074f71f7447a804edde5c4ff68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c16a20c64c8ba94e8c7c721a7e26946" id="r_a6c16a20c64c8ba94e8c7c721a7e26946"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c16a20c64c8ba94e8c7c721a7e26946">base_type</a></td></tr>
+<tr class="memdesc:a6c16a20c64c8ba94e8c7c721a7e26946"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base HYPRE semi-structured solver type.  <br /></td></tr>
+<tr class="separator:a6c16a20c64c8ba94e8c7c721a7e26946"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_types_classCabana_1_1Grid_1_1HypreSemiStructuredSolver"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_types_classCabana_1_1Grid_1_1HypreSemiStructuredSolver')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classCabana_1_1Grid_1_1HypreSemiStructuredSolver.html">Cabana::Grid::HypreSemiStructuredSolver&lt; Scalar, EntityType, MemorySpace &gt;</a></td></tr>
 <tr class="memitem:a85fcd680aeb668dba2ee966c152cb6d5 inherit pub_types_classCabana_1_1Grid_1_1HypreSemiStructuredSolver" id="r_a85fcd680aeb668dba2ee966c152cb6d5"><td class="memItemLeft" align="right" valign="top">
 using&#160;</td><td class="memItemRight" valign="bottom"><b>entity_type</b> = EntityType</td></tr>
@@ -229,12 +228,12 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a7e59889e86b36e090db3a33f533d7648" id="r_a7e59889e86b36e090db3a33f533d7648"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7e59889e86b36e090db3a33f533d7648">setPrintLevelImpl</a> (const int print_level) override</td></tr>
 <tr class="memdesc:a7e59889e86b36e090db3a33f533d7648"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the output level.  <br /></td></tr>
 <tr class="separator:a7e59889e86b36e090db3a33f533d7648"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af62b1ba25103d174df137a0517f58f04" id="r_af62b1ba25103d174df137a0517f58f04"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af62b1ba25103d174df137a0517f58f04">setupImpl</a> (HYPRE_SStructMatrix A, HYPRE_SStructVector b, HYPRE_SStructVector x) override</td></tr>
-<tr class="memdesc:af62b1ba25103d174df137a0517f58f04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setup implementation.  <br /></td></tr>
-<tr class="separator:af62b1ba25103d174df137a0517f58f04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6a5a3c50c9da289f02477203b3fa3fc" id="r_ad6a5a3c50c9da289f02477203b3fa3fc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad6a5a3c50c9da289f02477203b3fa3fc">solveImpl</a> (HYPRE_SStructMatrix A, HYPRE_SStructVector b, HYPRE_SStructVector x) override</td></tr>
-<tr class="memdesc:ad6a5a3c50c9da289f02477203b3fa3fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solver implementation.  <br /></td></tr>
-<tr class="separator:ad6a5a3c50c9da289f02477203b3fa3fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34cad64e7c8fda8c1b76eda709fa358f" id="r_a34cad64e7c8fda8c1b76eda709fa358f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a34cad64e7c8fda8c1b76eda709fa358f">setupImpl</a> () override</td></tr>
+<tr class="memdesc:a34cad64e7c8fda8c1b76eda709fa358f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setup implementation.  <br /></td></tr>
+<tr class="separator:a34cad64e7c8fda8c1b76eda709fa358f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08e82f7f36c9147b45adc8b8f5a13c5e" id="r_a08e82f7f36c9147b45adc8b8f5a13c5e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a08e82f7f36c9147b45adc8b8f5a13c5e">solveImpl</a> () override</td></tr>
+<tr class="memdesc:a08e82f7f36c9147b45adc8b8f5a13c5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solver implementation.  <br /></td></tr>
+<tr class="separator:a08e82f7f36c9147b45adc8b8f5a13c5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73de6d2c3c81dc820292bd226646562f" id="r_a73de6d2c3c81dc820292bd226646562f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a73de6d2c3c81dc820292bd226646562f">getNumIterImpl</a> () override</td></tr>
 <tr class="memdesc:a73de6d2c3c81dc820292bd226646562f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of iterations taken on the last solve.  <br /></td></tr>
 <tr class="separator:a73de6d2c3c81dc820292bd226646562f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -257,11 +256,45 @@ Additional Inherited Members</h2></td></tr>
 const int&#160;</td><td class="memItemRight" valign="bottom"><b>object_type</b> = HYPRE_SSTRUCT</td></tr>
 <tr class="memdesc:a27629f99addff4964506366f4f37e972 inherit pub_attribs_classCabana_1_1Grid_1_1HypreSemiStructuredSolver"><td class="mdescLeft">&#160;</td><td class="mdescRight">Object Type for SStruct. <br /></td></tr>
 <tr class="separator:a27629f99addff4964506366f4f37e972 inherit pub_attribs_classCabana_1_1Grid_1_1HypreSemiStructuredSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_classCabana_1_1Grid_1_1HypreSemiStructuredSolver"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_attribs_classCabana_1_1Grid_1_1HypreSemiStructuredSolver')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classCabana_1_1Grid_1_1HypreSemiStructuredSolver.html">Cabana::Grid::HypreSemiStructuredSolver&lt; Scalar, EntityType, MemorySpace &gt;</a></td></tr>
+<tr class="memitem:a4afc6f13c0ca38e4eeabdeaa3f13b18e inherit pro_attribs_classCabana_1_1Grid_1_1HypreSemiStructuredSolver" id="r_a4afc6f13c0ca38e4eeabdeaa3f13b18e"><td class="memItemLeft" align="right" valign="top">
+HYPRE_SStructMatrix&#160;</td><td class="memItemRight" valign="bottom"><b>_A</b></td></tr>
+<tr class="memdesc:a4afc6f13c0ca38e4eeabdeaa3f13b18e inherit pro_attribs_classCabana_1_1Grid_1_1HypreSemiStructuredSolver"><td class="mdescLeft">&#160;</td><td class="mdescRight">Matrix for the problem Ax = b. <br /></td></tr>
+<tr class="separator:a4afc6f13c0ca38e4eeabdeaa3f13b18e inherit pro_attribs_classCabana_1_1Grid_1_1HypreSemiStructuredSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adbbd6322f20742004b1d3559b338eb76 inherit pro_attribs_classCabana_1_1Grid_1_1HypreSemiStructuredSolver" id="r_adbbd6322f20742004b1d3559b338eb76"><td class="memItemLeft" align="right" valign="top">
+HYPRE_SStructVector&#160;</td><td class="memItemRight" valign="bottom"><b>_b</b></td></tr>
+<tr class="memdesc:adbbd6322f20742004b1d3559b338eb76 inherit pro_attribs_classCabana_1_1Grid_1_1HypreSemiStructuredSolver"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forcing term for the problem Ax = b. <br /></td></tr>
+<tr class="separator:adbbd6322f20742004b1d3559b338eb76 inherit pro_attribs_classCabana_1_1Grid_1_1HypreSemiStructuredSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4d1d8796a4a393b9a77f51e2889efec inherit pro_attribs_classCabana_1_1Grid_1_1HypreSemiStructuredSolver" id="r_ab4d1d8796a4a393b9a77f51e2889efec"><td class="memItemLeft" align="right" valign="top">
+HYPRE_SStructVector&#160;</td><td class="memItemRight" valign="bottom"><b>_x</b></td></tr>
+<tr class="memdesc:ab4d1d8796a4a393b9a77f51e2889efec inherit pro_attribs_classCabana_1_1Grid_1_1HypreSemiStructuredSolver"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solution to the problem Ax = b. <br /></td></tr>
+<tr class="separator:ab4d1d8796a4a393b9a77f51e2889efec inherit pro_attribs_classCabana_1_1Grid_1_1HypreSemiStructuredSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;class Scalar, class EntityType, class MemorySpace&gt;<br />
 class Cabana::Grid::HypreSemiStructBiCGSTAB&lt; Scalar, EntityType, MemorySpace &gt;</div><p>BiCGSTAB solver. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="a6c16a20c64c8ba94e8c7c721a7e26946" name="a6c16a20c64c8ba94e8c7c721a7e26946"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c16a20c64c8ba94e8c7c721a7e26946">&#9670;&#160;</a></span>base_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class EntityType , class MemorySpace &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classCabana_1_1Grid_1_1HypreSemiStructBiCGSTAB.html">Cabana::Grid::HypreSemiStructBiCGSTAB</a>&lt; Scalar, EntityType, MemorySpace &gt;::base_type</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line"> </div>
+<div class="line">        HypreSemiStructuredSolver&lt;Scalar, EntityType, MemorySpace&gt;</div>
+</div><!-- fragment -->
+<p>Base HYPRE semi-structured solver type. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="a0bc8a6f0ef87e66a265405940b428bdd" name="a0bc8a6f0ef87e66a265405940b428bdd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0bc8a6f0ef87e66a265405940b428bdd">&#9670;&#160;</a></span>getFinalRelativeResidualNormImpl()</h2>
 
@@ -541,8 +574,8 @@ template&lt;class Scalar , class EntityType , class MemorySpace &gt; </div>
 
 </div>
 </div>
-<a id="af62b1ba25103d174df137a0517f58f04" name="af62b1ba25103d174df137a0517f58f04"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af62b1ba25103d174df137a0517f58f04">&#9670;&#160;</a></span>setupImpl()</h2>
+<a id="a34cad64e7c8fda8c1b76eda709fa358f" name="a34cad64e7c8fda8c1b76eda709fa358f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34cad64e7c8fda8c1b76eda709fa358f">&#9670;&#160;</a></span>setupImpl()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -555,17 +588,8 @@ template&lt;class Scalar , class EntityType , class MemorySpace &gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classCabana_1_1Grid_1_1HypreSemiStructBiCGSTAB.html">Cabana::Grid::HypreSemiStructBiCGSTAB</a>&lt; Scalar, EntityType, MemorySpace &gt;::setupImpl </td>
           <td>(</td>
-          <td class="paramtype">HYPRE_SStructMatrix</td>          <td class="paramname"><span class="paramname"><em>A</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td></td>
-          <td class="paramtype">HYPRE_SStructVector</td>          <td class="paramname"><span class="paramname"><em>b</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">HYPRE_SStructVector</td>          <td class="paramname"><span class="paramname"><em>x</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -577,12 +601,12 @@ template&lt;class Scalar , class EntityType , class MemorySpace &gt; </div>
 
 <p>Setup implementation. </p>
 
-<p>Implements <a class="el" href="classCabana_1_1Grid_1_1HypreSemiStructuredSolver.html#a2005fcfea326ae51ad22ab629a0a1516">Cabana::Grid::HypreSemiStructuredSolver&lt; Scalar, EntityType, MemorySpace &gt;</a>.</p>
+<p>Implements <a class="el" href="classCabana_1_1Grid_1_1HypreSemiStructuredSolver.html#a9f175f49ccaf64ba4700979f1b035355">Cabana::Grid::HypreSemiStructuredSolver&lt; Scalar, EntityType, MemorySpace &gt;</a>.</p>
 
 </div>
 </div>
-<a id="ad6a5a3c50c9da289f02477203b3fa3fc" name="ad6a5a3c50c9da289f02477203b3fa3fc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad6a5a3c50c9da289f02477203b3fa3fc">&#9670;&#160;</a></span>solveImpl()</h2>
+<a id="a08e82f7f36c9147b45adc8b8f5a13c5e" name="a08e82f7f36c9147b45adc8b8f5a13c5e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a08e82f7f36c9147b45adc8b8f5a13c5e">&#9670;&#160;</a></span>solveImpl()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -595,17 +619,8 @@ template&lt;class Scalar , class EntityType , class MemorySpace &gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classCabana_1_1Grid_1_1HypreSemiStructBiCGSTAB.html">Cabana::Grid::HypreSemiStructBiCGSTAB</a>&lt; Scalar, EntityType, MemorySpace &gt;::solveImpl </td>
           <td>(</td>
-          <td class="paramtype">HYPRE_SStructMatrix</td>          <td class="paramname"><span class="paramname"><em>A</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td></td>
-          <td class="paramtype">HYPRE_SStructVector</td>          <td class="paramname"><span class="paramname"><em>b</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">HYPRE_SStructVector</td>          <td class="paramname"><span class="paramname"><em>x</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -617,7 +632,7 @@ template&lt;class Scalar , class EntityType , class MemorySpace &gt; </div>
 
 <p>Solver implementation. </p>
 
-<p>Implements <a class="el" href="classCabana_1_1Grid_1_1HypreSemiStructuredSolver.html#ad9faf866eb26accd7a033fa2cbf86817">Cabana::Grid::HypreSemiStructuredSolver&lt; Scalar, EntityType, MemorySpace &gt;</a>.</p>
+<p>Implements <a class="el" href="classCabana_1_1Grid_1_1HypreSemiStructuredSolver.html#a694ba4e145eddb008317b448214f73a8">Cabana::Grid::HypreSemiStructuredSolver&lt; Scalar, EntityType, MemorySpace &gt;</a>.</p>
 
 </div>
 </div>
