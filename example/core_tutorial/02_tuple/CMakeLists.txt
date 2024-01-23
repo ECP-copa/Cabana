@@ -11,4 +11,4 @@
 
   add_executable(Tuple tuple_example.cpp)
   target_link_libraries(Tuple Cabana::Core)
-  add_test(NAME Core_tutorial_02 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:Tuple>)
+  add_test(NAME Cabana_Core_Tutorial_02 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:Tuple>)

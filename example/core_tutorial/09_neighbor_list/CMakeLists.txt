@@ -11,4 +11,4 @@
 
   add_executable(VerletList verlet_list_example.cpp)
   target_link_libraries(VerletList Cabana::Core)
-  add_test(NAME Core_tutorial_09 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:VerletList>)
+  add_test(NAME Cabana_Core_Tutorial_09 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:VerletList>)

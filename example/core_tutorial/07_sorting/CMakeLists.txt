@@ -11,4 +11,4 @@
 
   add_executable(Sorting sorting_example.cpp)
   target_link_libraries(Sorting Cabana::Core)
-  add_test(NAME Core_tutorial_07 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:Sorting>)
+  add_test(NAME Cabana_Core_Tutorial_07 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:Sorting>)

@@ -11,5 +11,5 @@
 
 add_executable(Array array_example.cpp)
 target_link_libraries(Array Cabana::Grid)
-add_test(NAME Grid_tutorial_08 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:Array> ${MPIEXEC_POSTFLAGS})
-set_tests_properties(Grid_tutorial_08 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
+add_test(NAME Cabana_Grid_Tutorial_08 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:Array> ${MPIEXEC_POSTFLAGS})
+set_tests_properties(Cabana_Grid_Tutorial_08 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

@@ -11,6 +11,6 @@
 
   add_executable(Migration migration_example.cpp)
   target_link_libraries(Migration Cabana::Core)
-  add_test(NAME Core_tutorial_11 COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG}
+  add_test(NAME Cabana_Core_Tutorial_11 COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG}
     ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:Migration> ${MPIEXEC_POSTFLAGS})
-  set_tests_properties(Core_tutorial_11 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
+  set_tests_properties(Cabana_Core_Tutorial_11 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

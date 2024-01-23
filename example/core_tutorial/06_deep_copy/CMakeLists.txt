@@ -11,4 +11,4 @@
 
   add_executable(DeepCopy deep_copy_example.cpp)
   target_link_libraries(DeepCopy Cabana::Core)
-  add_test(NAME Core_tutorial_06 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:DeepCopy>)
+  add_test(NAME Cabana_Core_Tutorial_06 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:DeepCopy>)
