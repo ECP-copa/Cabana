@@ -399,11 +399,11 @@ void parallelMultiSpaceTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, parallel_index_space_test ) { parallelIndexSpaceTest(); }
+TEST( Parallel, IndexSpace ) { parallelIndexSpaceTest(); }
 
-TEST( TEST_CATEGORY, parallel_local_grid_test ) { parallelLocalGridTest(); }
+TEST( Parallel, LocalGrid ) { parallelLocalGridTest(); }
 
-TEST( TEST_CATEGORY, parallel_multispace_test ) { parallelMultiSpaceTest(); }
+TEST( Parallel, Multispace ) { parallelMultiSpaceTest(); }
 
 //---------------------------------------------------------------------------//
 

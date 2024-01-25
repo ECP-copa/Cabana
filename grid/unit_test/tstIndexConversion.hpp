@@ -233,104 +233,104 @@ void testConversion2d( const std::array<bool, 2>& is_dim_periodic )
 
 //---------------------------------------------------------------------------//
 // 3d
-TEST( index_conversion, node_periodic_3d_test )
+TEST( IndexConversion, NodePeriodic3d )
 {
     testConversion3d<Cabana::Grid::Node>( { { true, true, true } } );
 }
-TEST( index_conversion, cell_periodic_3d_test )
+TEST( IndexConversion, CellPeriodic3d )
 {
     testConversion3d<Cabana::Grid::Cell>( { { true, true, true } } );
 }
-TEST( index_conversion, face_i_periodic_3d_test )
+TEST( IndexConversion, FaceIPeriodic3d )
 {
     testConversion3d<Cabana::Grid::Face<Dim::I>>( { { true, true, true } } );
 }
-TEST( index_conversion, face_j_periodic_3d_test )
+TEST( IndexConversion, FaceJPeriodic3d )
 {
     testConversion3d<Cabana::Grid::Face<Dim::J>>( { { true, true, true } } );
 }
-TEST( index_conversion, face_k_periodic_3d_test )
+TEST( IndexConversion, FaceKPeriodic3d )
 {
     testConversion3d<Cabana::Grid::Face<Dim::K>>( { { true, true, true } } );
 }
-TEST( index_conversion, edge_i_periodic_3d_test )
+TEST( IndexConversion, EdgeIPeriodic3d )
 {
     testConversion3d<Cabana::Grid::Edge<Dim::I>>( { { true, true, true } } );
 }
-TEST( index_conversion, edge_j_periodic_3d_test )
+TEST( IndexConversion, EdgeJPeriodic3d )
 {
     testConversion3d<Cabana::Grid::Edge<Dim::J>>( { { true, true, true } } );
 }
-TEST( index_conversion, edge_k_periodic_3d_test )
+TEST( IndexConversion, EdgeKPeriodic3d )
 {
     testConversion3d<Cabana::Grid::Edge<Dim::K>>( { { true, true, true } } );
 }
 
-TEST( index_conversion, node_not_periodic_3d_test )
+TEST( IndexConversion, NodeNonPeriodic3d )
 {
     testConversion3d<Cabana::Grid::Node>( { { false, false, false } } );
 }
-TEST( index_conversion, cell_not_periodic_3d_test )
+TEST( IndexConversion, CellNonPeriodic3d )
 {
     testConversion3d<Cabana::Grid::Cell>( { { false, false, false } } );
 }
-TEST( index_conversion, face_i_not_periodic_3d_test )
+TEST( IndexConversion, FaceINonPeriodic3d )
 {
     testConversion3d<Cabana::Grid::Face<Dim::I>>( { { false, false, false } } );
 }
-TEST( index_conversion, face_j_not_periodic_3d_test )
+TEST( IndexConversion, FaceJNonPeriodic3d )
 {
     testConversion3d<Cabana::Grid::Face<Dim::J>>( { { false, false, false } } );
 }
-TEST( index_conversion, face_k_not_periodic_3d_test )
+TEST( IndexConversion, FaceKNonPeriodic3d )
 {
     testConversion3d<Cabana::Grid::Face<Dim::K>>( { { false, false, false } } );
 }
-TEST( index_conversion, edge_i_not_periodic_3d_test )
+TEST( IndexConversion, EdgeINonPeriodic3d )
 {
     testConversion3d<Cabana::Grid::Edge<Dim::I>>( { { false, false, false } } );
 }
-TEST( index_conversion, edge_j_not_periodic_3d_test )
+TEST( IndexConversion, EdgeJNonPeriodic3d )
 {
     testConversion3d<Cabana::Grid::Edge<Dim::J>>( { { false, false, false } } );
 }
-TEST( index_conversion, edge_k_not_periodic_3d_test )
+TEST( IndexConversion, EdgeKNonPeriodic3d )
 {
     testConversion3d<Cabana::Grid::Edge<Dim::K>>( { { false, false, false } } );
 }
 
 //---------------------------------------------------------------------------//
 // 2d
-TEST( index_conversion, node_periodic_2d_test )
+TEST( IndexConversion, NodePeriodic2d )
 {
     testConversion3d<Cabana::Grid::Node>( { { true, true } } );
 }
-TEST( index_conversion, cell_periodic_2d_test )
+TEST( IndexConversion, CellPeriodic2d )
 {
     testConversion3d<Cabana::Grid::Cell>( { { true, true } } );
 }
-TEST( index_conversion, face_i_periodic_2d_test )
+TEST( IndexConversion, FaceIPeriodic2d )
 {
     testConversion3d<Cabana::Grid::Face<Dim::I>>( { { true, true } } );
 }
-TEST( index_conversion, face_j_periodic_2d_test )
+TEST( IndexConversion, FaceJPeriodic2d )
 {
     testConversion3d<Cabana::Grid::Face<Dim::J>>( { { true, true } } );
 }
 
-TEST( index_conversion, node_not_periodic_2d_test )
+TEST( IndexConversion, NodeNonPeriodic2d )
 {
     testConversion3d<Cabana::Grid::Node>( { { false, false } } );
 }
-TEST( index_conversion, cell_not_periodic_2d_test )
+TEST( IndexConversion, CellNonPeriodic2d )
 {
     testConversion3d<Cabana::Grid::Cell>( { { false, false } } );
 }
-TEST( index_conversion, face_i_not_periodic_2d_test )
+TEST( IndexConversion, FaceINonPeriodic2d )
 {
     testConversion3d<Cabana::Grid::Face<Dim::I>>( { { false, false } } );
 }
-TEST( index_conversion, face_j_not_periodic_2d_test )
+TEST( IndexConversion, FaceJNonPeriodic2d )
 {
     testConversion3d<Cabana::Grid::Face<Dim::J>>( { { false, false } } );
 }

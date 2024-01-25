@@ -443,21 +443,21 @@ void testAssign()
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, deep_copy_to_host_same_layout_test )
+TEST( DeepCopy, ToHostSameLayout )
 {
     testAoSoADeepCopy<Kokkos::HostSpace, TEST_MEMSPACE, 16, 16>();
     testParticleListDeepCopy<Kokkos::HostSpace, TEST_MEMSPACE, 16, 16>();
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, deep_copy_from_host_same_layout_test )
+TEST( DeepCopy, FromHostSameLayout )
 {
     testAoSoADeepCopy<TEST_MEMSPACE, Kokkos::HostSpace, 16, 16>();
     testParticleListDeepCopy<TEST_MEMSPACE, Kokkos::HostSpace, 16, 16>();
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, deep_copy_to_host_different_layout_test )
+TEST( DeepCopy, ToHostDifferentLayout )
 {
     testAoSoADeepCopy<Kokkos::HostSpace, TEST_MEMSPACE, 16, 32>();
     testAoSoADeepCopy<Kokkos::HostSpace, TEST_MEMSPACE, 64, 8>();
@@ -466,7 +466,7 @@ TEST( TEST_CATEGORY, deep_copy_to_host_different_layout_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, deep_copy_from_host_different_layout_test )
+TEST( DeepCopy, FromHostDifferentLayout )
 {
     testAoSoADeepCopy<TEST_MEMSPACE, Kokkos::HostSpace, 64, 8>();
     testAoSoADeepCopy<TEST_MEMSPACE, Kokkos::HostSpace, 16, 32>();
@@ -475,10 +475,10 @@ TEST( TEST_CATEGORY, deep_copy_from_host_different_layout_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, mirror_test ) { testMirror(); }
+TEST( DeepCopy, Mirror ) { testMirror(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, assign_test ) { testAssign(); }
+TEST( DeepCopy, Assign ) { testAssign(); }
 
 //---------------------------------------------------------------------------//
 

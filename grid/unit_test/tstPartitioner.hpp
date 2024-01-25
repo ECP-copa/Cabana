@@ -231,13 +231,13 @@ void testManualPartitioner2d()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, partitioner_owned_cell_info_test_3d )
+TEST( Partitioner, OwnedCellInfo3d )
 {
     testBlockPartitioner3d();
     testManualPartitioner3d();
 }
 
-TEST( TEST_CATEGORY, partitioner_owned_cell_info_test_2d )
+TEST( Partitioner, OwnedCellInfo2d )
 {
     testBlockPartitioner2d();
     testManualPartitioner2d();

@@ -282,23 +282,23 @@ void nonUniformTest2d()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( mesh, uniform_test_3d )
+TEST( GlobalMesh, Uniform3d )
 {
     uniformTest3D1();
     uniformTest3D2();
     uniformTest3D3();
 }
 
-TEST( mesh, uniform_test_2d )
+TEST( GlobalMesh, Uniform2d )
 {
     uniformTest2D1();
     uniformTest2D2();
     uniformTest2D3();
 }
 
-TEST( mesh, non_uniform_test_3d ) { nonUniformTest3d(); }
+TEST( GlobalMesh, NonUniform3d ) { nonUniformTest3d(); }
 
-TEST( mesh, non_uniform_test_2d ) { nonUniformTest2d(); }
+TEST( GlobalMesh, NonUniform2d ) { nonUniformTest2d(); }
 
 //---------------------------------------------------------------------------//
 

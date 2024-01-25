@@ -460,13 +460,13 @@ void arrayBoundaryTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( array, array_test )
+TEST( Array, 2d )
 {
     layoutTest();
     arrayTest();
     arrayOpTest();
 }
-TEST( array, array_boundary_test )
+TEST( Array, Boundary2d )
 {
     arrayBoundaryTest<Own, Cell>();
     arrayBoundaryTest<Own, Node>();

@@ -756,41 +756,41 @@ void test9( const bool use_topology )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, distributor_test_1 ) { test1( true ); }
+TEST( Distributor, Test1 ) { test1( true ); }
 
-TEST( TEST_CATEGORY, distributor_test_2 ) { test2( true ); }
+TEST( Distributor, Test2 ) { test2( true ); }
 
-TEST( TEST_CATEGORY, distributor_test_3 ) { test3( true ); }
+TEST( Distributor, Test3 ) { test3( true ); }
 
-TEST( TEST_CATEGORY, distributor_test_4 ) { test4( true ); }
+TEST( Distributor, Test4 ) { test4( true ); }
 
-TEST( TEST_CATEGORY, distributor_test_5 ) { test5( true ); }
+TEST( Distributor, Test5 ) { test5( true ); }
 
-TEST( TEST_CATEGORY, distributor_test_6 ) { test6( true ); }
+TEST( Distributor, Test6 ) { test6( true ); }
 
-TEST( TEST_CATEGORY, distributor_test_7 ) { test7( true ); }
+TEST( Distributor, Test7 ) { test7( true ); }
 
-TEST( TEST_CATEGORY, distributor_test_8 ) { test8( true ); }
+TEST( Distributor, Test8 ) { test8( true ); }
 
-TEST( TEST_CATEGORY, distributor_test_9 ) { test9( true ); }
+TEST( Distributor, Test9 ) { test9( true ); }
 
-TEST( TEST_CATEGORY, distributor_test_1_no_topo ) { test1( false ); }
+TEST( Distributor, Test1NoTopo ) { test1( false ); }
 
-TEST( TEST_CATEGORY, distributor_test_2_no_topo ) { test2( false ); }
+TEST( Distributor, Test2NoTopo ) { test2( false ); }
 
-TEST( TEST_CATEGORY, distributor_test_3_no_topo ) { test3( false ); }
+TEST( Distributor, Test3NoTopo ) { test3( false ); }
 
-TEST( TEST_CATEGORY, distributor_test_4_no_topo ) { test4( false ); }
+TEST( Distributor, Test4NoTopo ) { test4( false ); }
 
-TEST( TEST_CATEGORY, distributor_test_5_no_topo ) { test5( false ); }
+TEST( Distributor, Test5NoTopo ) { test5( false ); }
 
-TEST( TEST_CATEGORY, distributor_test_6_no_topo ) { test6( false ); }
+TEST( Distributor, Test6NoTopo ) { test6( false ); }
 
-TEST( TEST_CATEGORY, distributor_test_7_no_topo ) { test7( false ); }
+TEST( Distributor, Test7NoTopo ) { test7( false ); }
 
-TEST( TEST_CATEGORY, distributor_test_8_no_topo ) { test8( false ); }
+TEST( Distributor, Test8NoTopo ) { test8( false ); }
 
-TEST( TEST_CATEGORY, distributor_test_9_no_topo ) { test9( false ); }
+TEST( Distributor, Test9NoTopo ) { test9( false ); }
 
 //---------------------------------------------------------------------------//
 

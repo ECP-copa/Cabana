@@ -228,7 +228,7 @@ void forwardReverseTest2d( bool use_default, bool use_params )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( fast_fourier_transform, forward_reverse_3d_test )
+TEST( FastFourier, ForwardReverse3d )
 {
     // Dummy template argument.
     forwardReverseTest3d<Experimental::Impl::FFTBackendDefault>( true, true );
@@ -244,7 +244,7 @@ TEST( fast_fourier_transform, forward_reverse_3d_test )
 #endif
 }
 
-TEST( fast_fourier_transform, forward_reverse_2d_test )
+TEST( FastFourier, ForwardReverse2d )
 {
     // Dummy template argument.
     forwardReverseTest2d<Experimental::Impl::FFTBackendDefault>( true, true );

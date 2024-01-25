@@ -458,15 +458,12 @@ void random_distribution_automatic_rank( int occupy_num_per_rank,
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( sparse_dim_partitioner, sparse_dim_partitioner_uniform_test )
-{
-    uniform_distribution_automatic_rank();
-}
-TEST( sparse_dim_partitioner, sparse_dim_partitioner_random_tile_test )
+TEST( SparseDimPartitioner, Uniform ) { uniform_distribution_automatic_rank(); }
+TEST( SparseDimPartitioner, RandomTile )
 {
     random_distribution_automatic_rank( 32, true );
 }
-TEST( sparse_dim_partitioner, sparse_dim_partitioner_random_par_test )
+TEST( SparseDimPartitioner, RandomParticle )
 {
     random_distribution_automatic_rank( 50, false );
 }

@@ -717,31 +717,31 @@ void tileIndexSpaceTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, atomic_test )
+TEST( SparseIndexSpace, Atomic )
 {
     testAtomicOr();
     testAtomicOrPro();
 }
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, tile_space_test )
+TEST( SparseIndexSpace, TileSpace )
 {
     testTileSpace<2, 4>(); // tile size 4x4x4
 }
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, block_space_test )
+TEST( SparseIndexSpace, BlockSpace )
 {
     testBlockSpace<HashTypes::Naive>();
     testBlockSpace<HashTypes::Morton>();
 }
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, sparse_map_space_test )
+TEST( SparseIndexSpace, SparseMapSpace )
 {
     testSparseMapFullInsert();
     testSparseMapSparseInsert();
     testSparseMapReinsert();
 }
 
-TEST( TEST_CATEGORY, tile_index_space_test ) { tileIndexSpaceTest(); }
+TEST( SparseIndexSpace, TileIndexSpace ) { tileIndexSpaceTest(); }
 //---------------------------------------------------------------------------//
 
 } // end namespace Test

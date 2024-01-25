@@ -598,7 +598,7 @@ void sparseGridTest3d()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( global_grid, 3d_grid_test )
+TEST( GlobalGrid, 3d )
 {
     std::array<bool, 3> periodic = { true, true, true };
     gridTest3d( periodic );
@@ -606,7 +606,7 @@ TEST( global_grid, 3d_grid_test )
     gridTest3d( not_periodic );
 }
 
-TEST( global_grid, 2d_grid_test )
+TEST( GlobalGrid, 2d )
 {
     std::array<bool, 2> periodic = { true, true };
     gridTest2d( periodic );
@@ -614,7 +614,7 @@ TEST( global_grid, 2d_grid_test )
     gridTest2d( not_periodic );
 }
 
-TEST( global_grid, 3d_sparse_grid_test ) { sparseGridTest3d(); }
+TEST( GlobalGrid, 3dSparse ) { sparseGridTest3d(); }
 
 //---------------------------------------------------------------------------//
 

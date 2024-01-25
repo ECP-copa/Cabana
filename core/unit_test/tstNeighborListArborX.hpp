@@ -290,25 +290,19 @@ void testNeighborArborXParallelReduce()
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, neighbor_list_full_test ) { testArborXListFull(); }
+TEST( ArborXList, Full ) { testArborXListFull(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, neighbor_list_half_test ) { testArborXListHalf(); }
+TEST( ArborXList, Half ) { testArborXListHalf(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, neighbor_list_full_range_test )
-{
-    testArborXListFullPartialRange();
-}
+TEST( ArborXList, FullRange ) { testArborXListFullPartialRange(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, parallel_for_test ) { testNeighborArborXParallelFor(); }
+TEST( ArborXList, ParallelFor ) { testNeighborArborXParallelFor(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, parallel_reduce_test )
-{
-    testNeighborArborXParallelReduce();
-}
+TEST( ArborXList, ParallelReduce ) { testNeighborArborXParallelReduce(); }
 //---------------------------------------------------------------------------//
 
 } // end namespace Test

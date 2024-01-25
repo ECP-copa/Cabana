@@ -228,25 +228,25 @@ void initSliceTest( InitType init_type, int ppc, const int multiplier = 1 )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, random_init_test )
+TEST( ParticleInit, Random )
 {
     initParticleListTest( Cabana::InitRandom(), 17 );
     initSliceTest( Cabana::InitRandom(), 12 );
 }
 
-TEST( TEST_CATEGORY, uniform_init_test )
+TEST( ParticleInit, Uniform )
 {
     initParticleListTest( Cabana::InitUniform(), 3 );
     initSliceTest( Cabana::InitUniform(), 2 );
 }
 
-TEST( TEST_CATEGORY, multiple_random_init_test )
+TEST( ParticleInit, MultipleRandom )
 {
     initParticleListTest( Cabana::InitRandom(), 5, 4 );
     initSliceTest( Cabana::InitRandom(), 9, 3 );
 }
 
-TEST( TEST_CATEGORY, multiple_uniform_init_test )
+TEST( ParticleInit, MultipleUniform )
 {
     initParticleListTest( Cabana::InitUniform(), 2, 5 );
     initSliceTest( Cabana::InitRandom(), 2, 3 );
