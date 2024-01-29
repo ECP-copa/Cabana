@@ -72,7 +72,7 @@ ENV PATH=${OPENMPI_DIR}/bin:$PATH
 
 # Install Kokkos
 ARG KOKKOS_VERSION=4.1.00
-ARG KOKKOS_OPTIONS="-DKokkos_ENABLE_HIP=ON -DKokkos_ENABLE_LIBDL=OFF -DKokkos_ARCH_VEGA906=ON"
+ARG KOKKOS_OPTIONS="-DKokkos_ENABLE_HIP=ON -DKokkos_ENABLE_LIBDL=OFF -DKokkos_ARCH_VEGA908=ON"
 ENV KOKKOS_DIR=/opt/kokkos
 RUN KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz && \
     KOKKOS_ARCHIVE=kokkos-${KOKKOS_HASH}.tar.gz && \
@@ -100,6 +100,7 @@ RUN ARBORX_VERSION=v1.4 && \
       -D CMAKE_INSTALL_PREFIX=${ARBORX_DIR} \
       -D CMAKE_BUILD_TYPE=Debug \
       -D CMAKE_CXX_COMPILER=hipcc \
+      -D CMAKE_CXX_FLAGS=-amdgpu-target=gfx908 \
       -D CMAKE_CXX_EXTENSIONS=OFF \
       -D CMAKE_PREFIX_PATH=${KOKKOS_DIR} \
     .. && \
@@ -148,7 +149,7 @@ RUN HEFFTE_URL=https://github.com/icl-utk-edu/heffte/archive/v${HEFFTE_VERSION}.
       -D CMAKE_BUILD_TYPE=Debug \
       -D CMAKE_CXX_COMPILER=hipcc \
       -D CMAKE_CXX_STANDARD=14 \
-      -D CMAKE_CXX_FLAGS="--amdgpu-target=gfx906" \
+      -D CMAKE_CXX_FLAGS="--amdgpu-target=gfx908" \
       -D Heffte_ENABLE_ROCM=ON \
       -D Heffte_ENABLE_FFTW=ON \
     .. && \
