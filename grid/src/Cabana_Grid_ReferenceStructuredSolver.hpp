@@ -27,6 +27,7 @@
 #include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Profiling_ScopedRegion.hpp>
 
 #include <array>
 #include <iostream>
@@ -279,7 +280,7 @@ class ReferenceConjugateGradient
     */
     void solve( const Array_t& b, Array_t& x ) override
     {
-        Kokkos::Profiling::pushRegion(
+        Kokkos::Profiling::ScopedRegion region(
             "Cabana::Grid::ReferenceStructuredSolver::solve" );
 
         // Get the local grid.
@@ -457,8 +458,6 @@ class ReferenceConjugateGradient
         // If we didn't converge throw.
         if ( !converged )
             throw std::runtime_error( "CG solver did not converge" );
-
-        Kokkos::Profiling::popRegion();
     }
 
     //! Get the number of iterations taken on the last solve.
