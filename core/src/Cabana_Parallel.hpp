@@ -21,6 +21,7 @@
 #include <Cabana_Types.hpp> // is_accessible_from
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Profiling_ScopedRegion.hpp>
 
 #include <cstdlib>
 #include <type_traits>
@@ -172,12 +173,10 @@ inline void simd_parallel_for(
     const SimdPolicy<VectorLength, ExecParameters...>& exec_policy,
     const FunctorType& functor, const std::string& str = "" )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::simd_parallel_for" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::simd_parallel_for" );
 
     Impl::ParallelFor<SimdPolicy<VectorLength, ExecParameters...>, FunctorType>(
         str, exec_policy, functor );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -253,7 +252,7 @@ inline void neighbor_parallel_for(
     const FunctorType& functor, const NeighborListType& list,
     const FirstNeighborsTag, const SerialOpTag, const std::string& str = "" )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::neighbor_parallel_for" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -287,8 +286,6 @@ inline void neighbor_parallel_for(
         Kokkos::parallel_for( linear_exec_policy, neigh_func );
     else
         Kokkos::parallel_for( str, linear_exec_policy, neigh_func );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -317,7 +314,7 @@ inline void neighbor_parallel_for(
     const FunctorType& functor, const NeighborListType& list,
     const SecondNeighborsTag, const SerialOpTag, const std::string& str = "" )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::neighbor_parallel_for" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -359,8 +356,6 @@ inline void neighbor_parallel_for(
         Kokkos::parallel_for( linear_exec_policy, neigh_func );
     else
         Kokkos::parallel_for( str, linear_exec_policy, neigh_func );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -388,7 +383,7 @@ inline void neighbor_parallel_for(
     const FunctorType& functor, const NeighborListType& list,
     const FirstNeighborsTag, const TeamOpTag, const std::string& str = "" )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::neighbor_parallel_for" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -429,8 +424,6 @@ inline void neighbor_parallel_for(
         Kokkos::parallel_for( team_policy, neigh_func );
     else
         Kokkos::parallel_for( str, team_policy, neigh_func );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -460,7 +453,7 @@ inline void neighbor_parallel_for(
     const FunctorType& functor, const NeighborListType& list,
     const SecondNeighborsTag, const TeamOpTag, const std::string& str = "" )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::neighbor_parallel_for" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -507,8 +500,6 @@ inline void neighbor_parallel_for(
         Kokkos::parallel_for( team_policy, neigh_func );
     else
         Kokkos::parallel_for( str, team_policy, neigh_func );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -539,7 +530,7 @@ inline void neighbor_parallel_for(
     const SecondNeighborsTag, const TeamVectorOpTag,
     const std::string& str = "" )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::neighbor_parallel_for" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -588,8 +579,6 @@ inline void neighbor_parallel_for(
         Kokkos::parallel_for( team_policy, neigh_func );
     else
         Kokkos::parallel_for( str, team_policy, neigh_func );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -642,7 +631,8 @@ inline void neighbor_parallel_reduce(
     const FirstNeighborsTag, const SerialOpTag, ReduceType& reduce_val,
     const std::string& str = "" )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
+    Kokkos::Profiling::ScopedRegion region(
+        "Cabana::neighbor_parallel_reduce" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -678,8 +668,6 @@ inline void neighbor_parallel_reduce(
     else
         Kokkos::parallel_reduce( str, linear_exec_policy, neigh_reduce,
                                  reduce_val );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -712,7 +700,8 @@ inline void neighbor_parallel_reduce(
     const SecondNeighborsTag, const SerialOpTag, ReduceType& reduce_val,
     const std::string& str = "" )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
+    Kokkos::Profiling::ScopedRegion region(
+        "Cabana::neighbor_parallel_reduce" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -755,8 +744,6 @@ inline void neighbor_parallel_reduce(
     else
         Kokkos::parallel_reduce( str, linear_exec_policy, neigh_reduce,
                                  reduce_val );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -789,7 +776,8 @@ inline void neighbor_parallel_reduce(
     const FirstNeighborsTag, const TeamOpTag, ReduceType& reduce_val,
     const std::string& str = "" )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
+    Kokkos::Profiling::ScopedRegion region(
+        "Cabana::neighbor_parallel_reduce" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -835,8 +823,6 @@ inline void neighbor_parallel_reduce(
         Kokkos::parallel_reduce( team_policy, neigh_reduce, reduce_val );
     else
         Kokkos::parallel_reduce( str, team_policy, neigh_reduce, reduce_val );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -870,7 +856,8 @@ inline void neighbor_parallel_reduce(
     const SecondNeighborsTag, const TeamOpTag, ReduceType& reduce_val,
     const std::string& str = "" )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
+    Kokkos::Profiling::ScopedRegion region(
+        "Cabana::neighbor_parallel_reduce" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -921,8 +908,6 @@ inline void neighbor_parallel_reduce(
         Kokkos::parallel_reduce( team_policy, neigh_reduce, reduce_val );
     else
         Kokkos::parallel_reduce( str, team_policy, neigh_reduce, reduce_val );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -956,7 +941,8 @@ inline void neighbor_parallel_reduce(
     const SecondNeighborsTag, const TeamVectorOpTag, ReduceType& reduce_val,
     const std::string& str = "" )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
+    Kokkos::Profiling::ScopedRegion region(
+        "Cabana::neighbor_parallel_reduce" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -1012,8 +998,6 @@ inline void neighbor_parallel_reduce(
         Kokkos::parallel_reduce( team_policy, neigh_reduce, reduce_val );
     else
         Kokkos::parallel_reduce( str, team_policy, neigh_reduce, reduce_val );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//

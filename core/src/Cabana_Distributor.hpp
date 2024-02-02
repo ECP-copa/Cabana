@@ -21,6 +21,7 @@
 #include <Cabana_Slice.hpp>
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Profiling_ScopedRegion.hpp>
 
 #include <mpi.h>
 
@@ -176,7 +177,7 @@ void distributeData(
                               is_aosoa<AoSoA_t>::value ),
                             int>::type* = 0 )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::migrate" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::migrate" );
 
     static_assert( is_accessible_from<typename Distributor_t::memory_space,
                                       ExecutionSpace>{},
@@ -304,7 +305,6 @@ void distributeData(
 
     // Barrier before completing to ensure synchronization.
     MPI_Barrier( distributor.comm() );
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
