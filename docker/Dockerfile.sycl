@@ -65,7 +65,7 @@ RUN wget https://cloud.cees.ornl.gov/download/oneapi-for-nvidia-gpus-${DPCPP_VER
     rm oneapi-for-nvidia-gpus-${DPCPP_VERSION}-linux.sh
 
 # Install Kokkos
-ARG KOKKOS_VERSION=3.7.02
+ARG KOKKOS_VERSION=4.1.00
 ARG KOKKOS_OPTIONS="-DKokkos_ENABLE_SYCL=ON -DCMAKE_CXX_FLAGS=-Wno-unknown-cuda-version -DKokkos_ENABLE_UNSUPPORTED_ARCHS=ON -DKokkos_ARCH_VOLTA70=ON -DCMAKE_CXX_STANDARD=17"
 ENV KOKKOS_DIR=/opt/kokkos
 RUN . /opt/intel/oneapi/setvars.sh --include-intel-llvm && \
