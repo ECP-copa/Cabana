@@ -37,7 +37,7 @@ RUN KEYDUMP_URL=https://cloud.cees.ornl.gov/download && \
 
 # Install CMake
 ENV CMAKE_DIR=/opt/cmake
-RUN CMAKE_VERSION=3.16.9 && \
+RUN CMAKE_VERSION=3.22.4 && \
     CMAKE_KEY=2D2CEF1034921684 && \
     CMAKE_URL=https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION} && \
     CMAKE_SCRIPT=cmake-${CMAKE_VERSION}-Linux-x86_64.sh && \
@@ -46,10 +46,10 @@ RUN CMAKE_VERSION=3.16.9 && \
     wget --quiet ${CMAKE_URL}/${CMAKE_SHA256}.asc && \
     wget --quiet ${CMAKE_URL}/${CMAKE_SCRIPT} && \
     gpg --verify ${CMAKE_SHA256}.asc ${CMAKE_SHA256} && \
-    grep ${CMAKE_SCRIPT} ${CMAKE_SHA256} | sha256sum --check && \
+    grep -i ${CMAKE_SCRIPT} ${CMAKE_SHA256} | sed -e s/linux/Linux/ | sha256sum --check && \
     mkdir -p ${CMAKE_DIR} && \
     sh ${CMAKE_SCRIPT} --skip-license --prefix=${CMAKE_DIR} && \
-    rm ${CMAKE_SCRIPT}
+    rm cmake*
 ENV PATH=${CMAKE_DIR}/bin:$PATH
 
 # Install Open MPI
@@ -133,7 +133,7 @@ RUN FFTW_URL=http://www.fftw.org/fftw-${FFTW_VERSION}.tar.gz && \
     rm -rf ${SCRATCH_DIR}
 
 # Install heffte
-ARG HEFFTE_VERSION=2.3.0
+ARG HEFFTE_VERSION=2.4.0
 ENV HEFFTE_DIR=/opt/heffte
 RUN HEFFTE_URL=https://github.com/icl-utk-edu/heffte/archive/v${HEFFTE_VERSION}.tar.gz && \
     HEFFTE_ARCHIVE=heffte.tar.gz && \
@@ -150,6 +150,7 @@ RUN HEFFTE_URL=https://github.com/icl-utk-edu/heffte/archive/v${HEFFTE_VERSION}.
       -D CMAKE_CXX_COMPILER=hipcc \
       -D CMAKE_CXX_STANDARD=14 \
       -D CMAKE_CXX_FLAGS="--amdgpu-target=gfx908" \
+      -D Heffte_ENABLE_TESTING=OFF \
       -D Heffte_ENABLE_ROCM=ON \
       -D Heffte_ENABLE_FFTW=ON \
     .. && \
