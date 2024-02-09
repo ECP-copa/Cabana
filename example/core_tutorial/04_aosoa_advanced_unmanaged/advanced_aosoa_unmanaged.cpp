@@ -115,13 +115,13 @@ void unmanagedAoAoAExample()
     }
 
     /*
-     * Use the view in an algorithm, like sort
+     * Use the view in an algorithm, like binning
      */
-    auto binning_data = Cabana::sortByKey( slice_b );
+    auto binning_data = Cabana::binByKey( slice_b, 64 );
     Cabana::permute( binning_data, aosoa );
 
     // Check it worked
-    for ( int i = 1; i < num_tuple; i++ )
+    for ( int i = 1; i < num_tuple; i += 2 )
     {
         // We expect it to be monotonically increasing
         if ( !( slice_b( i - 1 ) <= slice_b( i ) ) )
