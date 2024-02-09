@@ -109,8 +109,8 @@ void unmanagedAoAoAExample()
         if ( slice_b( i ) != ( i % VectorLength ) )
         {
             // Unexpected Value
-            printf( "%d: Unexpected %d != %d \n", __LINE__, slice_b( i ),
-                    i % VectorLength );
+            std::cout << "Error: " << slice_b( i ) << " != " << i % VectorLength
+                      << std::endl;
         }
     }
 
@@ -127,13 +127,14 @@ void unmanagedAoAoAExample()
         if ( !( slice_b( i - 1 ) <= slice_b( i ) ) )
         {
             // Unexpected value
-            printf( "%d: Unexpected %d vs %d \n", __LINE__, slice_b( i - 1 ),
-                    slice_b( i ) );
+            std::cout << "Error: " << slice_b( i - 1 ) << " > " << slice_b( i )
+                      << std::endl;
         }
 
         // We can also set values
         slice_a( i, 0 ) = i / 2;
     }
+    std::cout << "Successful Cabana binning on unmanaged AoSoA." << std::endl;
 
     // Clean up local data
     delete[] local_data;
