@@ -1,5 +1,5 @@
 # Use -complete to get both rocm and rocfft
-ARG BASE=rocm/dev-ubuntu-20.04:4.5-complete
+ARG BASE=rocm/dev-ubuntu-20.04:5.2-complete
 FROM $BASE
 
 ARG NPROCS=4
