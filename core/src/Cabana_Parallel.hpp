@@ -210,6 +210,98 @@ class TeamVectorOpTag
 {
 };
 
+namespace Impl
+{
+template <class PolicyType, class FunctorType>
+void executeNeighborParallel( PolicyType policy, FunctorType neigh_func,
+                              std::string str )
+{
+    if ( str.empty() )
+        Kokkos::parallel_for( policy, neigh_func );
+    else
+        Kokkos::parallel_for( str, policy, neigh_func );
+}
+
+template <class NeighborTraits, class IndexType, class WorkTag,
+          class FunctorType, class ListType, class PolicyType>
+void neighborParallelFirstSerialDirect( const FunctorType& functor,
+                                        ListType list, PolicyType policy,
+                                        std::string str )
+{
+    auto neigh_func = KOKKOS_LAMBDA( const IndexType i )
+    {
+        for ( IndexType n = 0; n < NeighborTraits::numNeighbor( list, i ); ++n )
+            Impl::functorTagDispatch<WorkTag>(
+                functor, i,
+                static_cast<IndexType>(
+                    NeighborTraits::getNeighbor( list, i, n ) ) );
+    };
+
+    executeNeighborParallel( policy, neigh_func, str );
+}
+template <class NeighborTraits, class IndexType, class WorkTag,
+          class FunctorType, class ListType, class PolicyType>
+void neighborParallelFirstSerialIndirect( const FunctorType& functor,
+                                          const ListType& list,
+                                          PolicyType policy, std::string str )
+{
+    auto neigh_func = KOKKOS_LAMBDA( const IndexType i )
+    {
+        for ( IndexType n = 0; n < NeighborTraits::numNeighbor( list, i ); ++n )
+            Impl::functorTagDispatch<WorkTag>( functor, i, n );
+    };
+
+    executeNeighborParallel( policy, neigh_func, str );
+}
+
+template <class NeighborTraits, class IndexType, class WorkTag,
+          class FunctorType, class ListType, class PolicyType>
+void neighborParallelFirstTeamDirect( const FunctorType& functor, ListType list,
+                                      PolicyType policy,
+                                      const IndexType range_begin,
+                                      std::string str )
+{
+    auto neigh_func =
+        KOKKOS_LAMBDA( const typename PolicyType::member_type& team )
+    {
+        IndexType i = team.league_rank() + range_begin;
+        Kokkos::parallel_for(
+            Kokkos::TeamThreadRange( team,
+                                     NeighborTraits::numNeighbor( list, i ) ),
+            [&]( const IndexType n )
+            {
+                Impl::functorTagDispatch<WorkTag>(
+                    functor, i,
+                    static_cast<IndexType>(
+                        NeighborTraits::getNeighbor( list, i, n ) ) );
+            } );
+    };
+
+    executeNeighborParallel( policy, neigh_func, str );
+}
+template <class NeighborTraits, class IndexType, class WorkTag,
+          class FunctorType, class ListType, class PolicyType>
+void neighborParallelFirstTeamIndirect( const FunctorType& functor,
+                                        ListType list, PolicyType policy,
+                                        const IndexType range_begin,
+                                        std::string str )
+{
+    auto neigh_func =
+        KOKKOS_LAMBDA( const typename PolicyType::member_type& team )
+    {
+        IndexType i = team.league_rank() + range_begin;
+        Kokkos::parallel_for(
+            Kokkos::TeamThreadRange( team,
+                                     NeighborTraits::numNeighbor( list, i ) ),
+            [&]( const IndexType n )
+            { Impl::functorTagDispatch<WorkTag>( functor, i, n ); } );
+    };
+
+    executeNeighborParallel( policy, neigh_func, str );
+}
+
+} // namespace Impl
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Execute functor in parallel according to the execution policy over
@@ -251,7 +343,8 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
-    const FirstNeighborsTag, const SerialOpTag, const std::string& str = "" )
+    const FirstNeighborsTag, const SerialOpTag, const std::string& str = "",
+    const bool direct_index = true )
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
 
@@ -274,19 +367,14 @@ inline void neighbor_parallel_for(
 
     static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
 
-    auto neigh_func = KOKKOS_LAMBDA( const index_type i )
-    {
-        for ( index_type n = 0;
-              n < neighbor_list_traits::numNeighbor( list, i ); ++n )
-            Impl::functorTagDispatch<work_tag>(
-                functor, i,
-                static_cast<index_type>(
-                    neighbor_list_traits::getNeighbor( list, i, n ) ) );
-    };
-    if ( str.empty() )
-        Kokkos::parallel_for( linear_exec_policy, neigh_func );
+    if ( direct_index )
+        Impl::neighborParallelFirstSerialDirect<neighbor_list_traits,
+                                                index_type, work_tag>(
+            functor, list, linear_exec_policy, str );
     else
-        Kokkos::parallel_for( str, linear_exec_policy, neigh_func );
+        Impl::neighborParallelFirstSerialIndirect<neighbor_list_traits,
+                                                  index_type, work_tag>(
+            functor, list, linear_exec_policy, str );
 
     Kokkos::Profiling::popRegion();
 }
@@ -386,7 +474,8 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
-    const FirstNeighborsTag, const TeamOpTag, const std::string& str = "" )
+    const FirstNeighborsTag, const TeamOpTag, const std::string& str = "",
+    const bool direct_index = true )
 {
     Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
 
@@ -410,25 +499,14 @@ inline void neighbor_parallel_for(
 
     const auto range_begin = exec_policy.begin();
 
-    auto neigh_func =
-        KOKKOS_LAMBDA( const typename kokkos_policy::member_type& team )
-    {
-        index_type i = team.league_rank() + range_begin;
-        Kokkos::parallel_for(
-            Kokkos::TeamThreadRange(
-                team, neighbor_list_traits::numNeighbor( list, i ) ),
-            [&]( const index_type n )
-            {
-                Impl::functorTagDispatch<work_tag>(
-                    functor, i,
-                    static_cast<index_type>(
-                        neighbor_list_traits::getNeighbor( list, i, n ) ) );
-            } );
-    };
-    if ( str.empty() )
-        Kokkos::parallel_for( team_policy, neigh_func );
+    if ( direct_index )
+        Impl::neighborParallelFirstTeamDirect<neighbor_list_traits, index_type,
+                                              work_tag>(
+            functor, list, team_policy, range_begin, str );
     else
-        Kokkos::parallel_for( str, team_policy, neigh_func );
+        Impl::neighborParallelFirstTeamIndirect<neighbor_list_traits,
+                                                index_type, work_tag>(
+            functor, list, team_policy, range_begin, str );
 
     Kokkos::Profiling::popRegion();
 }
