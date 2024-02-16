@@ -50,6 +50,61 @@ class HalfNeighborTag
 };
 
 //---------------------------------------------------------------------------//
+//! Neighborhood discriminator.
+template <class Tag>
+class NeighborDiscriminator;
+
+//! Full list discriminator specialization.
+template <>
+class NeighborDiscriminator<FullNeighborTag>
+{
+  public:
+    /*!
+      \brief Check whether neighbor pair is valid.
+
+      Full neighbor lists count and store the neighbors of all particles. The
+      only criteria for a potentially valid neighbor is that the particle does
+      not neighbor itself (i.e. the particle index "p" is not the same as the
+      neighbor index "n").
+    */
+    KOKKOS_INLINE_FUNCTION
+    static bool isValid( const std::size_t p, const double, const double,
+                         const double, const std::size_t n, const double,
+                         const double, const double )
+    {
+        return ( p != n );
+    }
+};
+
+//! Half list discriminator specialization.
+template <>
+class NeighborDiscriminator<HalfNeighborTag>
+{
+  public:
+    /*!
+      \brief Check whether neighbor pair is valid.
+
+      Half neighbor lists only store half of the neighbors be eliminating
+      duplicate pairs such that the fact that particle "p" neighbors particle
+      "n" is stored in the list but "n" neighboring "p" is not stored but rather
+      implied. We discriminate by only storing neighbors whose coordinates are
+      greater in the x direction. If they are the same then the y direction is
+      checked next and finally the z direction if the y coordinates are the
+      same.
+    */
+    KOKKOS_INLINE_FUNCTION static bool
+    isValid( const std::size_t p, const double xp, const double yp,
+             const double zp, const std::size_t n, const double xn,
+             const double yn, const double zn )
+    {
+        return ( ( p != n ) &&
+                 ( ( xn > xp ) ||
+                   ( ( xn == xp ) &&
+                     ( ( yn > yp ) || ( ( yn == yp ) && ( zn > zp ) ) ) ) ) );
+    }
+};
+
+//---------------------------------------------------------------------------//
 /*!
   \brief Neighbor list interface. Provides an interface callable at the
   functor level that gives access to neighbor data for particles.

@@ -154,24 +154,24 @@ void testArborXListFullPartialRange()
     {
         // Create the neighbor list.
         auto const nlist = Cabana::Experimental::makeNeighborList(
-            Cabana::FullNeighborTag{}, position, 0, test_data.num_ignore,
+            Cabana::FullNeighborTag{}, position, 0, test_data.end,
             test_data.test_radius );
 
         // Check the neighbor list.
         checkFullNeighborListPartialRange( nlist, test_data.N2_list_copy,
-                                           test_data.num_particle,
-                                           test_data.num_ignore );
+                                           test_data.num_particle, 0,
+                                           test_data.end );
     }
     {
         // Create the neighbor list.
         auto const nlist = Cabana::Experimental::make2DNeighborList(
-            Cabana::FullNeighborTag{}, position, 0, test_data.num_ignore,
+            Cabana::FullNeighborTag{}, position, 0, test_data.end,
             test_data.test_radius );
 
         // Check the neighbor list.
         checkFullNeighborListPartialRange( nlist, test_data.N2_list_copy,
-                                           test_data.num_particle,
-                                           test_data.num_ignore );
+                                           test_data.num_particle, 0,
+                                           test_data.end );
     }
 }
 
