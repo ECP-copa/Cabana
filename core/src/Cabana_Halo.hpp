@@ -21,6 +21,7 @@
 #include <Cabana_Slice.hpp>
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Profiling_ScopedRegion.hpp>
 
 #include <mpi.h>
 
@@ -286,7 +287,7 @@ class Gather<HaloType, AoSoAType,
     template <class ExecutionSpace>
     void apply( ExecutionSpace )
     {
-        Kokkos::Profiling::pushRegion( "Cabana::gather" );
+        Kokkos::Profiling::ScopedRegion region( "Cabana::gather" );
 
         // Get the buffers and particle data (local copies for lambdas below).
         auto send_buffer = this->getSendBuffer();
@@ -362,8 +363,6 @@ class Gather<HaloType, AoSoAType,
 
         // Barrier before completing to ensure synchronization.
         MPI_Barrier( _halo.comm() );
-
-        Kokkos::Profiling::popRegion();
     }
 
     void apply() override { apply( execution_space{} ); }
@@ -467,7 +466,7 @@ class Gather<HaloType, SliceType,
     template <class ExecutionSpace>
     void apply( ExecutionSpace )
     {
-        Kokkos::Profiling::pushRegion( "Cabana::gather" );
+        Kokkos::Profiling::ScopedRegion region( "Cabana::gather" );
 
         // Get the buffers (local copies for lambdas below).
         auto send_buffer = this->getSendBuffer();
@@ -562,8 +561,6 @@ class Gather<HaloType, SliceType,
 
         // Barrier before completing to ensure synchronization.
         MPI_Barrier( _halo.comm() );
-
-        Kokkos::Profiling::popRegion();
     }
 
     void apply() override { apply( execution_space{} ); }
@@ -717,7 +714,7 @@ class Scatter
     template <class ExecutionSpace>
     void apply( ExecutionSpace )
     {
-        Kokkos::Profiling::pushRegion( "Cabana::scatter" );
+        Kokkos::Profiling::ScopedRegion region( "Cabana::scatter" );
 
         // Get the buffers (local copies for lambdas below).
         auto send_buffer = this->getSendBuffer();
@@ -816,7 +813,6 @@ class Scatter
 
         // Barrier before completing to ensure synchronization.
         MPI_Barrier( _halo.comm() );
-        Kokkos::Profiling::popRegion();
     }
 
     void apply() override { apply( execution_space{} ); }

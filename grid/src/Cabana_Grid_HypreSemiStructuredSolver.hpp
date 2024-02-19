@@ -31,6 +31,7 @@
 #include <HYPRE_struct_mv.h>
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Profiling_ScopedRegion.hpp>
 
 #include <array>
 #include <memory>
@@ -494,7 +495,7 @@ class HypreSemiStructuredSolver
     template <class Array_t>
     void solve( const Array_t& b, Array_t& x, int n_vars = 3 )
     {
-        Kokkos::Profiling::pushRegion(
+        Kokkos::Profiling::ScopedRegion region(
             "Cabana::Grid::HypreSemiStructuredSolver::solve" );
 
         static_assert( is_array<Array_t>::value, "Must use an array" );
@@ -581,8 +582,6 @@ class HypreSemiStructuredSolver
             auto x_subv = createSubview( x.view(), reorder_space );
             Kokkos::deep_copy( x_subv, x_values );
         }
-
-        Kokkos::Profiling::popRegion();
     }
 
     //! Get the number of iterations taken on the last solve.

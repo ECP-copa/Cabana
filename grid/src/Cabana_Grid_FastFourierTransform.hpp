@@ -22,6 +22,7 @@
 #include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Profiling_ScopedRegion.hpp>
 
 #include <heffte_fft3d.h>
 
@@ -235,12 +236,10 @@ class FastFourierTransform
                   entity_type, mesh_type, memory_space, value_type>::value ),
             int>::type* = 0 )
     {
-        Kokkos::Profiling::pushRegion( "Cabana::FFT::forward" );
+        Kokkos::Profiling::ScopedRegion region( "Cabana::FFT::forward" );
 
         checkArrayDofs( x.layout()->dofsPerEntity() );
         static_cast<Derived*>( this )->forwardImpl( x, scaling );
-
-        Kokkos::Profiling::popRegion();
     }
 
     /*!
@@ -259,12 +258,10 @@ class FastFourierTransform
                   entity_type, mesh_type, memory_space, value_type>::value ),
             int>::type* = 0 )
     {
-        Kokkos::Profiling::pushRegion( "Cabana::FFT::reverse" );
+        Kokkos::Profiling::ScopedRegion region( "Cabana::FFT::reverse" );
 
         checkArrayDofs( x.layout()->dofsPerEntity() );
         static_cast<Derived*>( this )->reverseImpl( x, scaling );
-
-        Kokkos::Profiling::popRegion();
     }
 
     /*!

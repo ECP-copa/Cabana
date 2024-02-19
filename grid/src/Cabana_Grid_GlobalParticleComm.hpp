@@ -206,7 +206,7 @@ class GlobalParticleComm
     void build( ExecutionSpace exec_space, PositionType positions,
                 const std::size_t begin, const std::size_t end )
     {
-        Kokkos::Profiling::pushRegion(
+        Kokkos::Profiling::ScopedRegion region(
             "Cabana::Grid::GlobalParticleComm::build" );
 
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
@@ -260,8 +260,6 @@ class GlobalParticleComm
         Kokkos::parallel_for( "Cabana::Grid::GlobalParticleComm::build", policy,
                               build_migrate );
         Kokkos::fence();
-
-        Kokkos::Profiling::popRegion();
     }
 
     //! Bin particles across the global grid.

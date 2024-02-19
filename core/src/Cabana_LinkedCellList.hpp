@@ -22,6 +22,7 @@
 #include <impl/Cabana_CartesianGrid.hpp>
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Profiling_ScopedRegion.hpp>
 #include <Kokkos_ScatterView.hpp>
 
 #include <cassert>
@@ -242,7 +243,8 @@ class LinkedCellList
     void build( ExecutionSpace, SliceType positions, const std::size_t begin,
                 const std::size_t end )
     {
-        Kokkos::Profiling::pushRegion( "Cabana::LinkedCellList::build" );
+        Kokkos::Profiling::ScopedRegion region(
+            "Cabana::LinkedCellList::build" );
 
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
         assert( end >= begin );
@@ -318,8 +320,6 @@ class LinkedCellList
         // Create the binning data.
         _bin_data = BinningData<MemorySpace>( begin, end, _counts, _offsets,
                                               _permutes );
-
-        Kokkos::Profiling::popRegion();
     }
 
     /*!

@@ -29,6 +29,7 @@
 #define CABANA_SILOPARTICLEOUTPUT_HPP
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Profiling_ScopedRegion.hpp>
 
 #include <Cabana_Slice.hpp>
 
@@ -403,7 +404,7 @@ void writePartialRangeTimeStep( const std::string& prefix, MPI_Comm comm,
                                 const CoordSliceType& coords,
                                 FieldSliceTypes&&... fields )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::SiloParticleOutput" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::SiloParticleOutput" );
 
     // Create the parallel baton.
     int mpi_tag = 1948;
@@ -478,8 +479,6 @@ void writePartialRangeTimeStep( const std::string& prefix, MPI_Comm comm,
 
     // Finish.
     PMPIO_Finish( baton );
-
-    Kokkos::Profiling::popRegion();
 }
 
 /*!
