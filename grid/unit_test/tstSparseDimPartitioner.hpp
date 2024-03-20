@@ -91,8 +91,8 @@ void uniform_distribution_automatic_rank()
     }
 
     // test ownedCellsPerDimension function
-    // Ground truth should be the average cell num in ranks (based on the inital
-    // partition)
+    // Ground truth should be the average cell num in ranks (based on the
+    // initial partition)
     std::array<int, 3> cart_rank;
     std::array<int, 3> periodic_dims = { 0, 0, 0 };
     int reordered_cart_ranks = 1;
@@ -430,7 +430,7 @@ void random_distribution_automatic_rank( int occupy_num_per_rank,
         // compute workload from a sparseMap and do partition optimization
         partitioner.optimizePartition( sis, MPI_COMM_WORLD );
     }
-    // use particle positions to compute teh workload on MPI ranks
+    // use particle positions to compute the workload on MPI ranks
     else
     {
         // randomly generate a fixed number of particles on each MPI rank

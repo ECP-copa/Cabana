@@ -158,8 +158,8 @@ void migrationExample()
     // Make a new AoSoA. Note that this has the same data types, vector
     // length, and memory space as the original aosoa.
     //
-    // Also note how this AoSoA is sized. The distrubutor computes how many
-    // imported elements each rank will recieve. We discard 10 elements, get
+    // Also note how this AoSoA is sized. The distributor computes how many
+    // imported elements each rank will receive. We discard 10 elements, get
     // 10 from our neighbor, and keep 80 of our own so this number should be 90.
     Cabana::AoSoA<DataTypes, MemorySpace, VectorLength> destination(
         "destination", distributor.totalNumImport() );

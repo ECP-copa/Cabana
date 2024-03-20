@@ -911,7 +911,7 @@ class Halo
     // The tag we use for sending to each neighbor.
     std::vector<int> _send_tags;
 
-    // The tag we use for receiveing from each neighbor.
+    // The tag we use for receiving from each neighbor.
     std::vector<int> _receive_tags;
 
     // For each neighbor, send/receive buffers for data we own.

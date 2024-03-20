@@ -80,7 +80,7 @@ void sliceExample()
       Create a slice over each tuple member in the AoSoA. An integer template
       parameter is used to indicate which member to slice. A slice object
       simply wraps the data associated with an AoSoA member in a more
-      conventient accessor structure. A slice therefore has the same memory
+      convenient accessor structure. A slice therefore has the same memory
       space as the AoSoA from which it was derived. Slices may optionally be
       assigned a label. This label is not included in the memory tracker
       because slices are unmanaged memory but may still be used for diagnostic

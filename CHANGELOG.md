@@ -98,7 +98,7 @@
 - CUDA and HIP support and testing in continuous integration
 - Mirror view capability for AoSoA
 - New performance benchmarks for sorting, communication, and neighbor lists
-- Improving AoSoA memory managment with empty() and shrinkToFit()
+- Improving AoSoA memory management with empty() and shrinkToFit()
 - Second level neighbor parallel for and reduce algorithms for triplet operations
 - Unmanaged AoSoA for wrapping user memory
 

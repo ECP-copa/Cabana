@@ -121,7 +121,7 @@ void gridHaloExample()
 
         /*
           Create a halo. Note that this is done with the array data and that no
-          communication has occured yet. The halo width (within the value
+          communication has occurred yet. The halo width (within the value
           allocated) is also passed, together with options for the type of
           communication:
            - Node pattern communicates with 26 MPI neighbors in 3D (8 in 2D)

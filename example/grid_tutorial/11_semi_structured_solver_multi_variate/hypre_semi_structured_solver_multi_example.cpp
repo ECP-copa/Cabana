@@ -193,7 +193,7 @@ int main( int argc, char* argv[] )
           The hypre solver capabilities used by Cabana must be initialized and
           finalized. HYPRE_Finalize() finalizes hypre. A call to
           HYPRE_Finalize() should not occur before all calls to hypre
-          capabilites are finished.
+          capabilities are finished.
         */
         HYPRE_Finalize();
     }

@@ -92,7 +92,7 @@ void indexSpaceExample()
     std::cout << "Size: " << is3.size() << std::endl;
 
     /*
-      Finally, it is possible to check whether a given set of indicies in within
+      Finally, it is possible to check whether a given set of indices in within
       the range of an index space (in this case false and then true based on the
       second indices).
     */
@@ -106,7 +106,7 @@ void indexSpaceExample()
     /*
       Index spaces can also have dimensions appended. Using the 3D index space
       created above, we create a 4D index space (the minimum input can be
-      ommitted to start from zero).
+      omitted to start from zero).
     */
     auto is4 = Cabana::Grid::appendDimension( is3, 3, 10 );
     std::cout << "\nappended 4D index space:\nExtent: ";

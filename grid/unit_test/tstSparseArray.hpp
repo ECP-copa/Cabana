@@ -158,7 +158,7 @@ void generate_random_particles( const int particle_number,
 template <typename EntityType>
 void sparse_array_test( int par_num, EntityType entity )
 {
-    // basic senario information
+    // basic scenario information
     constexpr int size_tile_per_dim = 32;
     constexpr int cell_per_tile_dim = 4;
     constexpr int cell_per_tile =
@@ -403,7 +403,7 @@ void sparse_array_test( int par_num, EntityType entity )
 template <typename EntityType>
 void full_occupy_test( EntityType entity )
 {
-    // basic senario information
+    // basic scenario information
     constexpr int size_tile_per_dim = 8;
     constexpr int cell_per_tile_dim = 4;
     constexpr int cell_per_tile =

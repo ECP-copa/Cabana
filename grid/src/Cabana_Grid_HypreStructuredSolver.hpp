@@ -283,7 +283,7 @@ class HypreStructuredSolver
     }
 
     /*!
-      \brief Print the hypre matrix to ouput file
+      \brief Print the hypre matrix to output file
       \param prefix File prefix for where hypre output is written
     */
     void printMatrix( const char* prefix )
@@ -292,7 +292,7 @@ class HypreStructuredSolver
     }
 
     /*!
-      \brief Print the hypre LHS to ouput file
+      \brief Print the hypre LHS to output file
       \param prefix File prefix for where hypre output is written
     */
     void printLHS( const char* prefix )
@@ -301,7 +301,7 @@ class HypreStructuredSolver
     }
 
     /*!
-      \brief Print the hypre RHS to ouput file
+      \brief Print the hypre RHS to output file
       \param prefix File prefix for where hypre output is written
     */
     void printRHS( const char* prefix )

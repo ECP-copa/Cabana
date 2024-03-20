@@ -503,7 +503,7 @@ void sparseGridTest3d()
                    global_num_cell[Dim::K] + 1 );
     }
 
-    // Check the number of edges entires
+    // Check the number of edges entries
     {
         // Number of I edges
         EXPECT_EQ( global_grid->globalNumEntity( Edge<Dim::I>(), Dim::I ),
