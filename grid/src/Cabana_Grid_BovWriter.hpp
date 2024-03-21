@@ -172,6 +172,7 @@ reorderView( TargetView& target, const SourceView& source,
   This version writes a single output and does not use bricklets. We will do
   this in the future to improve parallel visualization.
 
+  \param prefix The filename prefix
   \param time_step_index The index of the time step we are writing.
   \param time The current time
   \param array The array to write
@@ -179,9 +180,9 @@ reorderView( TargetView& target, const SourceView& source,
   consistent.
 */
 template <class ExecutionSpace, class Array_t>
-void writeTimeStep( ExecutionSpace, const int time_step_index,
-                    const double time, const Array_t& array,
-                    const bool gather_array = true )
+void writeTimeStep( ExecutionSpace, const std::string& prefix,
+                    const int time_step_index, const double time,
+                    const Array_t& array, const bool gather_array = true )
 {
     static_assert( isUniformMesh<typename Array_t::mesh_type>::value,
                    "ViSIT BOV writer can only be used with uniform mesh" );
@@ -281,8 +282,8 @@ void writeTimeStep( ExecutionSpace, const int time_step_index,
 
     // Compose a data file name prefix.
     std::stringstream file_name;
-    file_name << "grid_" << array.label() << "_" << std::setfill( '0' )
-              << std::setw( 6 ) << time_step_index;
+    file_name << prefix << "_" << std::setfill( '0' ) << std::setw( 6 )
+              << time_step_index;
 
     // Open a binary data file.
     std::string data_file_name = file_name.str() + ".dat";
@@ -400,11 +401,33 @@ void writeTimeStep( ExecutionSpace, const int time_step_index,
   consistent.
 */
 template <class Array_t>
+void writeTimeStep( const std::string& prefix, const int time_step_index,
+                    const double time, const Array_t& array,
+                    const bool gather_array = true )
+{
+    using exec_space = typename Array_t::execution_space;
+    writeTimeStep( exec_space{}, prefix, time_step_index, time, array,
+                   gather_array );
+}
+
+template <class ExecutionSpace, class Array_t,
+          typename std::enable_if<
+              Kokkos::is_execution_space<ExecutionSpace>::value, int>::type = 0>
+void writeTimeStep( ExecutionSpace, const int time_step_index,
+                    const double time, const Array_t& array,
+                    const bool gather_array = true )
+{
+    writeTimeStep( ExecutionSpace{}, "grid_" + array.label(), time_step_index,
+                   time, array, gather_array );
+}
+
+template <class Array_t>
 void writeTimeStep( const int time_step_index, const double time,
                     const Array_t& array, const bool gather_array = true )
 {
     using exec_space = typename Array_t::execution_space;
-    writeTimeStep( exec_space{}, time_step_index, time, array, gather_array );
+    writeTimeStep( exec_space{}, "grid_" + array.label(), time_step_index, time,
+                   array, gather_array );
 }
 
 //---------------------------------------------------------------------------//
