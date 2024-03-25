@@ -2565,7 +2565,7 @@ template&lt;class Distributor_t , class AoSoA_t &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">distributor</td><td>The distributor to use for the migration. </td></tr>
-    <tr><td class="paramname">aosoa</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> containing the data to be migrated. Upon input, must have the same number of elements as the inputs used to construct the destributor. At output, it will be the same size as th enumber of import elements on this rank provided by the distributor. Before using this function, consider reserving enough memory in the data structure so reallocating is not necessary. </td></tr>
+    <tr><td class="paramname">aosoa</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> containing the data to be migrated. Upon input, must have the same number of elements as the inputs used to construct the distributor. At output, it will be the same size as th enumber of import elements on this rank provided by the distributor. Before using this function, consider reserving enough memory in the data structure so reallocating is not necessary. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2666,7 +2666,7 @@ template&lt;class Distributor_t , class Slice_t &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">distributor</td><td>The distributor to use for the migration. </td></tr>
-    <tr><td class="paramname">src</td><td>The slice containing the data to be migrated. Must have the same number of elements as the inputs used to construct the destributor. </td></tr>
+    <tr><td class="paramname">src</td><td>The slice containing the data to be migrated. Must have the same number of elements as the inputs used to construct the distributor. </td></tr>
     <tr><td class="paramname">dst</td><td>The slice to which the migrated data will be written. Must be the same size as the number of imports given by the distributor on this rank. Call totalNumImport() on the distributor to get this size value. </td></tr>
   </table>
   </dd>
@@ -2719,7 +2719,7 @@ template&lt;class ExecutionSpace , class Distributor_t , class AoSoA_t &gt; </di
   <table class="params">
     <tr><td class="paramname">exec_space</td><td>Kokkos execution space. </td></tr>
     <tr><td class="paramname">distributor</td><td>The distributor to use for the migration. </td></tr>
-    <tr><td class="paramname">aosoa</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> containing the data to be migrated. Upon input, must have the same number of elements as the inputs used to construct the destributor. At output, it will be the same size as th enumber of import elements on this rank provided by the distributor. Before using this function, consider reserving enough memory in the data structure so reallocating is not necessary. </td></tr>
+    <tr><td class="paramname">aosoa</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> containing the data to be migrated. Upon input, must have the same number of elements as the inputs used to construct the distributor. At output, it will be the same size as th enumber of import elements on this rank provided by the distributor. Before using this function, consider reserving enough memory in the data structure so reallocating is not necessary. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2833,7 +2833,7 @@ template&lt;class ExecutionSpace , class Distributor_t , class Slice_t &gt; </di
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">distributor</td><td>The distributor to use for the migration. </td></tr>
-    <tr><td class="paramname">src</td><td>The slice containing the data to be migrated. Must have the same number of elements as the inputs used to construct the destributor. </td></tr>
+    <tr><td class="paramname">src</td><td>The slice containing the data to be migrated. Must have the same number of elements as the inputs used to construct the distributor. </td></tr>
     <tr><td class="paramname">dst</td><td>The slice to which the migrated data will be written. Must be the same size as the number of imports given by the distributor on this rank. Call totalNumImport() on the distributor to get this size value. </td></tr>
   </table>
   </dd>

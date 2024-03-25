@@ -256,7 +256,7 @@ template&lt;class PackViewType , class RankViewType &gt; </div>
 </div><div class="memdoc">
 
 <p>Create the export steering vector. </p>
-<p>Creates an array describing which export element ids are moved to which location in the send buffer of the communcation plan. Ordered such that if a rank sends to itself then those values come first.</p>
+<p>Creates an array describing which export element ids are moved to which location in the send buffer of the communication plan. Ordered such that if a rank sends to itself then those values come first.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">neighbor_ids</td><td>The id of each element in the neighbor send buffers.</td></tr>
@@ -304,7 +304,7 @@ template&lt;class PackViewType , class RankViewType , class IdViewType &gt; </di
 </div><div class="memdoc">
 
 <p>Create the export steering vector. </p>
-<p>Creates an array describing which export element ids are moved to which location in the contiguous send buffer of the communcation plan. Ordered such that if a rank sends to itself then those values come first.</p>
+<p>Creates an array describing which export element ids are moved to which location in the contiguous send buffer of the communication plan. Ordered such that if a rank sends to itself then those values come first.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">neighbor_ids</td><td>The id of each element in the neighbor send buffers.</td></tr>
@@ -528,7 +528,7 @@ template&lt;class MemorySpace &gt; </div>
 
 <p>Get the number of export elements. </p>
 <dl class="section return"><dt>Returns</dt><dd>The number of export elements.</dd></dl>
-<p>Whenever the communciation plan is applied, this is the total number of elements expected to be input on the sending ranks (in the forward communication plan). This will be different than the number returned by <a class="el" href="#a57c004e3614b1d62fd95f55bdcf3ce5d" title="Get the total number of exports this rank will do.">totalNumExport()</a> if some of the export ranks used in the construction are -1 and therefore will not particpate in an export operation. </p>
+<p>Whenever the communication plan is applied, this is the total number of elements expected to be input on the sending ranks (in the forward communication plan). This will be different than the number returned by <a class="el" href="#a57c004e3614b1d62fd95f55bdcf3ce5d" title="Get the total number of exports this rank will do.">totalNumExport()</a> if some of the export ranks used in the construction are -1 and therefore will not particpate in an export operation. </p>
 
 </div>
 </div>

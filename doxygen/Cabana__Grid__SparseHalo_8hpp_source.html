@@ -228,7 +228,7 @@ $(function() { codefold.init(0); });
 <div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>                <span class="comment">// add neighbor to the list</span></div>
 <div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>                _neighbor_ranks.push_back( rank );</div>
 <div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>                <span class="comment">// set the tag to use for sending data to this neighbor</span></div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>                <span class="comment">// the corresponding neighbor will have the same recieving tag</span></div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>                <span class="comment">// the corresponding neighbor will have the same receiving tag</span></div>
 <div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>                _send_tags.push_back( neighbor_id( n ) );</div>
 <div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>                <span class="comment">// set the tag to use for receiving data from this neighbor</span></div>
 <div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>                <span class="comment">// the corresponding neighbor will have the same sending tag</span></div>
@@ -320,7 +320,7 @@ $(function() { codefold.init(0); });
 <div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>            <span class="comment">// well-prepared during construction/initialization)</span></div>
 <div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>            <span class="keywordflow">if</span> ( rank == _neighbor_ranks[i] )</div>
 <div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>            {</div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>                <span class="comment">// get shared tile index spcae from local grid</span></div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>                <span class="comment">// get shared tile index space from local grid</span></div>
 <div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>                _owned_tile_spaces.push_back(</div>
 <div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>                    local_grid</div>
 <div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>                        -&gt;<span class="keyword">template</span> sharedTileIndexSpace&lt;cell_bits_per_tile_dim&gt;(</div>
@@ -512,7 +512,7 @@ $(function() { codefold.init(0); });
 <div class="line"><a id="l00492" name="l00492"></a><span class="lineno">  492</span>            }</div>
 <div class="line"><a id="l00493" name="l00493"></a><span class="lineno">  493</span>            <span class="comment">// if the current owned share space and the neighbor&#39;s ghosted share</span></div>
 <div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span>            <span class="comment">// space is non-emty, the neighbor will send data to us and we need</span></div>
-<div class="line"><a id="l00495" name="l00495"></a><span class="lineno">  495</span>            <span class="comment">// to recieve data accordingly</span></div>
+<div class="line"><a id="l00495" name="l00495"></a><span class="lineno">  495</span>            <span class="comment">// to receive data accordingly</span></div>
 <div class="line"><a id="l00496" name="l00496"></a><span class="lineno">  496</span>            <span class="keywordflow">if</span> ( !( h_counting( Index::own ) == 0 ||</div>
 <div class="line"><a id="l00497" name="l00497"></a><span class="lineno">  497</span>                    h_neighbor_counting( Index::ghost ) == 0 ) )</div>
 <div class="line"><a id="l00498" name="l00498"></a><span class="lineno">  498</span>            {</div>
@@ -582,7 +582,7 @@ $(function() { codefold.init(0); });
 <div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>        MPI_Barrier( comm );</div>
 <div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span> </div>
 <div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>        <span class="comment">// ------------------------------------------------------------------</span></div>
-<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>        <span class="comment">// communicate steering (array keys) for all valid sends and recieves</span></div>
+<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>        <span class="comment">// communicate steering (array keys) for all valid sends and receives</span></div>
 <div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>        std::vector&lt;MPI_Request&gt; steering_requests(</div>
 <div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>            valid_recvs.size() + valid_sends.size(), MPI_REQUEST_NULL );</div>
 <div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>        <span class="keyword">const</span> <span class="keywordtype">int</span> mpi_tag_steering = 3214;</div>
@@ -742,7 +742,7 @@ $(function() { codefold.init(0); });
 <div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>        MPI_Barrier( comm );</div>
 <div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span> </div>
 <div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>        <span class="comment">// ------------------------------------------------------------------</span></div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>        <span class="comment">// communicate steering (array keys) for all valid sends and recieves</span></div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>        <span class="comment">// communicate steering (array keys) for all valid sends and receives</span></div>
 <div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>        std::vector&lt;MPI_Request&gt; steering_requests(</div>
 <div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>            valid_recvs.size() + valid_sends.size(), MPI_REQUEST_NULL );</div>
 <div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>        <span class="keyword">const</span> <span class="keywordtype">int</span> mpi_tag_steering = 214;</div>
@@ -1172,7 +1172,7 @@ $(function() { codefold.init(0); });
 <div class="line"><a id="l01255" name="l01255"></a><span class="lineno"> 1255</span>    std::vector&lt;std::array&lt;int, num_space_dim&gt;&gt; _valid_neighbor_ids;</div>
 <div class="line"><a id="l01256" name="l01256"></a><span class="lineno"> 1256</span>    <span class="comment">// sending tags</span></div>
 <div class="line"><a id="l01257" name="l01257"></a><span class="lineno"> 1257</span>    std::vector&lt;int&gt; _send_tags;</div>
-<div class="line"><a id="l01258" name="l01258"></a><span class="lineno"> 1258</span>    <span class="comment">// receiving tages</span></div>
+<div class="line"><a id="l01258" name="l01258"></a><span class="lineno"> 1258</span>    <span class="comment">// receiving tags</span></div>
 <div class="line"><a id="l01259" name="l01259"></a><span class="lineno"> 1259</span>    std::vector&lt;int&gt; _receive_tags;</div>
 <div class="line"><a id="l01260" name="l01260"></a><span class="lineno"> 1260</span> </div>
 <div class="line"><a id="l01261" name="l01261"></a><span class="lineno"> 1261</span>    <span class="comment">// owned view buffers</span></div>
