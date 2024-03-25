@@ -395,7 +395,7 @@ void migrate( const Distributor_t& distributor, const AoSoA_t& src,
   \param distributor The distributor to use for the migration.
   \param aosoa The AoSoA containing the data to be migrated. Upon input, must
   have the same number of elements as the inputs used to construct the
-  destributor. At output, it will be the same size as th enumber of import
+  distributor. At output, it will be the same size as th enumber of import
   elements on this rank provided by the distributor. Before using this
   function, consider reserving enough memory in the data structure so
   reallocating is not necessary.
@@ -446,7 +446,7 @@ void migrate( ExecutionSpace exec_space, const Distributor_t& distributor,
   \param distributor The distributor to use for the migration.
   \param aosoa The AoSoA containing the data to be migrated. Upon input, must
   have the same number of elements as the inputs used to construct the
-  destributor. At output, it will be the same size as th enumber of import
+  distributor. At output, it will be the same size as th enumber of import
   elements on this rank provided by the distributor. Before using this
   function, consider reserving enough memory in the data structure so
   reallocating is not necessary.
@@ -476,7 +476,7 @@ void migrate( const Distributor_t& distributor, AoSoA_t& aosoa,
 
   \param distributor The distributor to use for the migration.
   \param src The slice containing the data to be migrated. Must have the same
-  number of elements as the inputs used to construct the destributor.
+  number of elements as the inputs used to construct the distributor.
   \param dst The slice to which the migrated data will be written. Must be the
   same size as the number of imports given by the distributor on this
   rank. Call totalNumImport() on the distributor to get this size value.
@@ -656,7 +656,7 @@ void migrate( ExecutionSpace, const Distributor_t& distributor,
 
   \param distributor The distributor to use for the migration.
   \param src The slice containing the data to be migrated. Must have the same
-  number of elements as the inputs used to construct the destributor.
+  number of elements as the inputs used to construct the distributor.
   \param dst The slice to which the migrated data will be written. Must be the
   same size as the number of imports given by the distributor on this
   rank. Call totalNumImport() on the distributor to get this size value.

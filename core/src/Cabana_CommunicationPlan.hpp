@@ -528,7 +528,7 @@ class CommunicationPlan
       \brief Get the number of export elements.
       \return The number of export elements.
 
-      Whenever the communciation plan is applied, this is the total number of
+      Whenever the communication plan is applied, this is the total number of
       elements expected to be input on the sending ranks (in the forward
       communication plan). This will be different than the number returned by
       totalNumExport() if some of the export ranks used in the construction
@@ -928,7 +928,7 @@ class CommunicationPlan
       \brief Create the export steering vector.
 
       Creates an array describing which export element ids are moved to which
-      location in the send buffer of the communcation plan. Ordered such that
+      location in the send buffer of the communication plan. Ordered such that
       if a rank sends to itself then those values come first.
 
       \param neighbor_ids The id of each element in the neighbor send buffers.
@@ -951,7 +951,7 @@ class CommunicationPlan
       \brief Create the export steering vector.
 
       Creates an array describing which export element ids are moved to which
-      location in the contiguous send buffer of the communcation plan. Ordered
+      location in the contiguous send buffer of the communication plan. Ordered
       such that if a rank sends to itself then those values come first.
 
       \param neighbor_ids The id of each element in the neighbor send buffers.

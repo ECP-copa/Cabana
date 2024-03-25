@@ -82,7 +82,7 @@ void structuredSolverExample()
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
         { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
 
-    // Create an array and initialze to zero.
+    // Create an array and initialize to zero.
     auto lhs =
         Cabana::Grid::createArray<double, MemorySpace>( "lhs", vector_layout );
     Cabana::Grid::ArrayOp::assign( *lhs, 0.0, Cabana::Grid::Own() );
@@ -109,7 +109,7 @@ void structuredSolverExample()
                                                 Cabana::Grid::Dim::K );
 
     // Fill out laplacian entries of reference solver. Entities on the system
-    // boundary need to be initialzed to zero.
+    // boundary need to be initialized to zero.
     Kokkos::parallel_for(
         "fill_ref_entries",
         createExecutionPolicy( owned_space, ExecutionSpace() ),

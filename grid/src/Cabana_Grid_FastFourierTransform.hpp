@@ -651,7 +651,7 @@ class HeffteFastFourierTransform
 //---------------------------------------------------------------------------//
 // heFFTe creation
 //---------------------------------------------------------------------------//
-//! Creation function for heFFTe FFT with explict FFT backend.
+//! Creation function for heFFTe FFT with explicit FFT backend.
 //! \param exec_space Kokkos execution space
 //! \param layout FFT entity array
 //! \param params FFT parameters
@@ -681,7 +681,7 @@ auto createHeffteFastFourierTransform(
         exec_space, layout, params );
 }
 
-//! Creation function for heFFTe FFT with explict FFT backend and default
+//! Creation function for heFFTe FFT with explicit FFT backend and default
 //! parameters.
 //! \param exec_space Kokkos execution space
 //! \param layout FFT entity array
@@ -722,7 +722,7 @@ auto createHeffteFastFourierTransform(
         exec_space, layout );
 }
 
-//! Creation function for heFFTe FFT with explict FFT backend.
+//! Creation function for heFFTe FFT with explicit FFT backend.
 //! \param layout FFT entity array
 //! \param params FFT parameters
 template <class Scalar, class MemorySpace, class BackendType, class EntityType,
@@ -751,7 +751,7 @@ auto createHeffteFastFourierTransform(
         exec_space{}, layout, params );
 }
 
-//! Creation function for heFFTe FFT with explict FFT backend and default
+//! Creation function for heFFTe FFT with explicit FFT backend and default
 //! parameters.
 //! \param layout FFT entity array
 template <class Scalar, class MemorySpace, class BackendType, class EntityType,

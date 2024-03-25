@@ -32,7 +32,7 @@
 #include <string>
 
 //---------------------------------------------------------------------------//
-// Naming convension:
+// Naming convention:
 //  Tile ID / Tile ijk = 3D tile indexing, i.e., (i, j, k)
 //  Tile No. = 1D number indicating the tile position in the allocated array
 //  Tile key / Hash key = 1D number, computed with the given indexing method and
@@ -157,7 +157,7 @@ constexpr int bitPack( const uint64_t mask, const uint64_t data )
   \brief (Host/Device) Spread out the data bits where the corresponding bit of
   the mask is 1
   \param mask mask value
-  \param data integer to be spreaded
+  \param data integer to be spread
 */
 KOKKOS_INLINE_FUNCTION
 constexpr uint64_t bitSpread( const uint64_t mask, const int data )
@@ -743,7 +743,7 @@ class BlockMap
       \param size_x, size_y, size_z The size of the block (MPI rank) in each
       dimension (Unit: tile)
       \param pre_alloc_size Expected capacity of the
-      allocator to store the tiles when tile nums exceed the capcity
+      allocator to store the tiles when tile nums exceed the capacity
     */
     BlockMap( const int size_x, const int size_y, const int size_z,
               const value_type pre_alloc_size )
@@ -1029,7 +1029,7 @@ class TileMap
 
     /*!
       \brief Compute a single number from given coordinates
-      \tparam Func Transfer fuctions from coords to the single number
+      \tparam Func Transfer functions from coords to the single number
       \param coords Input coordinates
     */
     template <typename Func, typename... Coords>
@@ -1048,7 +1048,7 @@ class TileMap
       \brief Compute the coordinates from a given single number;
              The dimension of the coordinate is determined by the input param
       number
-      \tparam Func Transfer fuctions from the single number to coords
+      \tparam Func Transfer functions from the single number to coords
       \param key The given single number
       \param coords The output coordinates
     */

@@ -127,7 +127,7 @@ void testVerletListFull()
         checkFullNeighborList( nlist, test_data.N2_list_copy,
                                test_data.num_particle );
 
-        // Test rebuild function with explict execution space.
+        // Test rebuild function with explicit execution space.
         nlist.build( TEST_EXECSPACE{}, position, 0, position.size(),
                      test_data.test_radius, test_data.cell_size_ratio,
                      test_data.grid_min, test_data.grid_max );

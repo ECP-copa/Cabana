@@ -901,7 +901,7 @@ void readTimeStep( HDF5Config h5_config, const std::string& prefix,
     // Get the rank of the dataspace.
     ndims = H5Sget_simple_extent_ndims( filespace_id );
 
-    // Get the extents fo the file dataspace.
+    // Get the extents of the file dataspace.
     H5Sget_simple_extent_dims( filespace_id, dimsf, NULL );
 
     std::vector<int> all_offsets( comm_size );

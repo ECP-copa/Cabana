@@ -28,7 +28,7 @@ namespace Cabana
 namespace Grid
 {
 //---------------------------------------------------------------------------//
-// Forward decalaration of local mesh.
+// Forward declaration of local mesh.
 template <class MemorySpace, class MeshType>
 class LocalMesh;
 

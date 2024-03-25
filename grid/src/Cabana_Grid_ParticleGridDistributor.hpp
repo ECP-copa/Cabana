@@ -283,7 +283,7 @@ createParticleGridDistributor( const LocalGridType& local_grid,
   migrating.
   \param force_migrate Migrate particles outside the local domain regardless of
   ghosted halo.
-  \return Whether any particle migration occured.
+  \return Whether any particle migration occurred.
 */
 template <class LocalGridType, class ParticlePositions, class ParticleContainer>
 bool particleGridMigrate( const LocalGridType& local_grid,
@@ -332,7 +332,7 @@ bool particleGridMigrate( const LocalGridType& local_grid,
   migrating.
   \param force_migrate Migrate particles outside the local domain regardless of
   ghosted halo.
-  \return Whether any particle migration occured.
+  \return Whether any particle migration occurred.
 */
 template <class LocalGridType, class ParticlePositions, class ParticleContainer>
 bool particleGridMigrate( const LocalGridType& local_grid,

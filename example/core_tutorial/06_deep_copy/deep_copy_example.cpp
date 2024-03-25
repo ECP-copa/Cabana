@@ -117,9 +117,9 @@ void deepCopyExample()
        the same memory space as dst_aosoa was created in (in this case if
        dst_aosoa is already on the host) we will receive the same dst_aosoa back
        - no memory allocations or copies will occur. This is particularly useful
-       for writing code that will run on both heterogenous and homogenous
-       architectures where the heterogenous case requires an allocation and a
-       copy while the homogenous case does not.
+       for writing code that will run on both heterogeneous and homogeneous
+       architectures where the heterogeneous case requires an allocation and a
+       copy while the homogeneous case does not.
      */
 
     /*

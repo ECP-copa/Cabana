@@ -173,7 +173,7 @@ class SparseHalo
                 // add neighbor to the list
                 _neighbor_ranks.push_back( rank );
                 // set the tag to use for sending data to this neighbor
-                // the corresponding neighbor will have the same recieving tag
+                // the corresponding neighbor will have the same receiving tag
                 _send_tags.push_back( neighbor_id( n ) );
                 // set the tag to use for receiving data from this neighbor
                 // the corresponding neighbor will have the same sending tag
@@ -276,7 +276,7 @@ class SparseHalo
             // well-prepared during construction/initialization)
             if ( rank == _neighbor_ranks[i] )
             {
-                // get shared tile index spcae from local grid
+                // get shared tile index space from local grid
                 _owned_tile_spaces.push_back(
                     local_grid
                         ->template sharedTileIndexSpace<cell_bits_per_tile_dim>(
@@ -492,7 +492,7 @@ class SparseHalo
             }
             // if the current owned share space and the neighbor's ghosted share
             // space is non-emty, the neighbor will send data to us and we need
-            // to recieve data accordingly
+            // to receive data accordingly
             if ( !( h_counting( Index::own ) == 0 ||
                     h_neighbor_counting( Index::ghost ) == 0 ) )
             {
@@ -547,7 +547,7 @@ class SparseHalo
 
     /*!
          \brief Gather data into our ghosted share space from their owners.
-         \tparam ExecSpace exectution space
+         \tparam ExecSpace execution space
          \tparam SparseArrayType sparse array type
          \tparam SparseMapType sparse map type
          \param exec_space execution space
@@ -578,7 +578,7 @@ class SparseHalo
         MPI_Barrier( comm );
 
         // ------------------------------------------------------------------
-        // communicate steering (array keys) for all valid sends and recieves
+        // communicate steering (array keys) for all valid sends and receives
         std::vector<MPI_Request> steering_requests(
             valid_recvs.size() + valid_sends.size(), MPI_REQUEST_NULL );
         const int mpi_tag_steering = 3214;
@@ -716,7 +716,7 @@ class SparseHalo
     /*!
         \brief Scatter data from our ghosts to their owners using the given type
      of reduce operation.
-        \tparam ExecSpace exectution space
+        \tparam ExecSpace execution space
         \tparam ReduceOp The type of reduction functor
         \tparam SparseArrayType sparse array type
         \tparam SparseMapType sparse map type
@@ -750,7 +750,7 @@ class SparseHalo
         MPI_Barrier( comm );
 
         // ------------------------------------------------------------------
-        // communicate steering (array keys) for all valid sends and recieves
+        // communicate steering (array keys) for all valid sends and receives
         std::vector<MPI_Request> steering_requests(
             valid_recvs.size() + valid_sends.size(), MPI_REQUEST_NULL );
         const int mpi_tag_steering = 214;
@@ -1255,7 +1255,7 @@ class SparseHalo
     std::vector<std::array<int, num_space_dim>> _valid_neighbor_ids;
     // sending tags
     std::vector<int> _send_tags;
-    // receiving tages
+    // receiving tags
     std::vector<int> _receive_tags;
 
     // owned view buffers
