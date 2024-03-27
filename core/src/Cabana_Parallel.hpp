@@ -1195,7 +1195,7 @@ struct LinkedCellParallelFor
                         if ( !_list.sorted() )
                             jj = _list.permutation( j );
                         else
-                            jj = j;
+                            jj = j + _begin;
                         // Avoid self interactions (dummy position args).
                         if ( _discriminator.isValid( i, 0, 0, 0, jj, 0, 0, 0 ) )
                         {
@@ -1233,7 +1233,7 @@ struct LinkedCellParallelFor
                             if ( !_list.sorted() )
                                 jj = _list.permutation( j );
                             else
-                                jj = j;
+                                jj = j + _begin;
                             // Avoid self interactions (dummy position args).
                             if ( _discriminator.isValid( i, 0, 0, 0, jj, 0, 0,
                                                          0 ) )
@@ -1313,7 +1313,7 @@ struct LinkedCellParallelReduce
                         if ( !_list.sorted() )
                             jj = _list.permutation( j );
                         else
-                            jj = j;
+                            jj = j + _begin;
                         // Avoid self interactions (dummy position args).
                         if ( _discriminator.isValid( i, 0, 0, 0, jj, 0, 0, 0 ) )
                         {
@@ -1352,7 +1352,7 @@ struct LinkedCellParallelReduce
                             if ( !_list.sorted() )
                                 jj = _list.permutation( j );
                             else
-                                jj = j;
+                                jj = j + _begin;
                             // Avoid self interactions (dummy position args).
                             if ( _discriminator.isValid( i, 0, 0, 0, jj, 0, 0,
                                                          0 ) )
@@ -1435,7 +1435,7 @@ inline void neighbor_parallel_for(
     Impl::LinkedCellParallelFor<work_tag, FunctorType, linear_policy_type,
                                 LinkedCellType,
                                 typename LinkedCellType::CountView>
-        lcl_par( str, linear_exec_policy, functor, list );
+        lcl_par( str, linear_exec_policy, functor, list, exec_policy.begin() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1562,7 +1562,8 @@ inline void neighbor_parallel_reduce(
     Impl::LinkedCellParallelReduce<
         work_tag, FunctorType, linear_policy_type, LinkedCellType,
         typename LinkedCellType::CountView, ReduceType>
-        lcl_par( str, linear_exec_policy, functor, list, reduce_val );
+        lcl_par( str, linear_exec_policy, functor, list, reduce_val,
+                 exec_policy.begin() );
 }
 
 //---------------------------------------------------------------------------//

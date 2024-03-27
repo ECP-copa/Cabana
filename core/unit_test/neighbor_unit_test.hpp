@@ -298,9 +298,13 @@ void checkFirstNeighborParallelFor( const TestListType& N2_list_copy,
                                                      num_particle );
 
     // Use a full N^2 neighbor list to check against.
-    for ( std::size_t p = 0; p < num_particle; ++p )
+    for ( std::size_t p = begin; p < end; ++p )
         for ( int n = 0; n < N2_list_copy.counts( p ); ++n )
-            N2_result( p ) += N2_list_copy.neighbors( p, n );
+        {
+            if ( N2_list_copy.neighbors( p, n ) >= begin &&
+                 N2_list_copy.neighbors( p, n ) < end )
+                N2_result( p ) += N2_list_copy.neighbors( p, n );
+        }
 
     // Check the result.
     auto serial_mirror = Kokkos::create_mirror_view_and_copy(
@@ -369,8 +373,11 @@ void checkFirstNeighborParallelReduce(
         for ( int n = 0; n < N2_list_copy.counts( p ); ++n )
             if ( p >= begin && p < end )
             {
-                N2_sum += positions_mirror( p, 0 ) +
-                          positions_mirror( N2_list_copy.neighbors( p, n ), 0 );
+                if ( N2_list_copy.neighbors( p, n ) >= begin &&
+                     N2_list_copy.neighbors( p, n ) < end )
+                    N2_sum +=
+                        positions_mirror( p, 0 ) +
+                        positions_mirror( N2_list_copy.neighbors( p, n ), 0 );
             }
 
     // Check the result.

@@ -420,11 +420,31 @@ void checkLinkedCellNeighborInterface( const ListType& nlist,
     // Purposely using zero-init.
     Kokkos::View<std::size_t*, memory_space> num_n2_neighbors(
         "num_n2_neighbors", positions.size() );
+    Kokkos::View<std::size_t*> N2_copy_neighbors( "num_n2_neighbors",
+                                                  positions.size() );
 
     Cabana::NeighborDiscriminator<Cabana::FullNeighborTag> _discriminator;
 
     std::size_t max_n2_neighbors = 0;
     std::size_t sum_n2_neighbors = 0;
+
+    std::size_t N2_copy_max = 0;
+    std::size_t N2_copy_sum = 0;
+
+    for ( int p = begin; p < end; ++p )
+    {
+        for ( int n = 0; n < N2_list_copy.counts( p ); ++n )
+        {
+            if ( N2_list_copy.neighbors( p, n ) >= begin &&
+                 N2_list_copy.neighbors( p, n ) < end )
+            {
+                N2_copy_neighbors( p ) += 1;
+            }
+        }
+        if ( N2_copy_neighbors( p ) > N2_copy_max )
+            N2_copy_max = N2_copy_neighbors( p );
+        N2_copy_sum += N2_copy_neighbors( p );
+    }
 
     double c2 = cutoff * cutoff;
 
@@ -440,16 +460,22 @@ void checkLinkedCellNeighborInterface( const ListType& nlist,
                 int np = Cabana::NeighborList<ListType>::getNeighbor( nlist,
                                                                       pid, i );
 
+                if ( nlist.sorted() )
+                    np += begin;
+
                 const double dx = positions( pid, 0 ) - positions( np, 0 );
                 const double dy = positions( pid, 1 ) - positions( np, 1 );
                 const double dz = positions( pid, 2 ) - positions( np, 2 );
                 const double r2 = dx * dx + dy * dy + dz * dz;
+
                 if ( r2 <= c2 &&
                      _discriminator.isValid( pid, 0, 0, 0, np, 0, 0, 0 ) )
                 {
                     if ( nlist.sorted() )
                         Kokkos::atomic_add(
-                            &num_n2_neighbors( nlist.permutation( pid ) ), 1 );
+                            &num_n2_neighbors(
+                                nlist.permutation( pid - begin ) ),
+                            1 );
                     else
                         Kokkos::atomic_add( &num_n2_neighbors( pid ), 1 );
                 }
@@ -462,18 +488,21 @@ void checkLinkedCellNeighborInterface( const ListType& nlist,
     for ( std::size_t pid = 0; pid < positions.size(); ++pid )
     {
         if ( pid >= begin && pid < end )
-            EXPECT_EQ( num_n2_neighbors_host( pid ),
-                       N2_list_copy.counts( pid ) );
+        {
+            EXPECT_EQ( num_n2_neighbors_host( pid ), N2_copy_neighbors( pid ) );
+        }
         else
+        {
             EXPECT_EQ( num_n2_neighbors_host( pid ), 0 );
+        }
 
         sum_n2_neighbors += num_n2_neighbors_host( pid );
         if ( num_n2_neighbors_host( pid ) > max_n2_neighbors )
             max_n2_neighbors = num_n2_neighbors_host( pid );
     }
 
-    EXPECT_EQ( max_n2_neighbors, N2_list_copy.max );
-    EXPECT_EQ( sum_n2_neighbors, N2_list_copy.total );
+    EXPECT_EQ( max_n2_neighbors, N2_copy_max );
+    EXPECT_EQ( sum_n2_neighbors, N2_copy_sum );
 }
 
 //---------------------------------------------------------------------------//
@@ -509,8 +538,9 @@ void checkLinkedCellNeighborParallel( const ListType& nlist,
         {
             if ( nlist.sorted() )
             {
-                Kokkos::atomic_add( &serial_result( nlist.permutation( i ) ),
-                                    nlist.permutation( j ) );
+                Kokkos::atomic_add(
+                    &serial_result( nlist.permutation( i - begin ) ),
+                    nlist.permutation( j - begin ) );
             }
             else
             {
@@ -528,8 +558,9 @@ void checkLinkedCellNeighborParallel( const ListType& nlist,
         {
             if ( nlist.sorted() )
             {
-                Kokkos::atomic_add( &team_result( nlist.permutation( i ) ),
-                                    nlist.permutation( j ) );
+                Kokkos::atomic_add(
+                    &team_result( nlist.permutation( i - begin ) ),
+                    nlist.permutation( j - begin ) );
             }
             else
             {
@@ -577,8 +608,8 @@ void checkLinkedCellNeighborReduce( const ListType& nlist,
         {
             if ( nlist.sorted() )
             {
-                sum += position( nlist.permutation( i ), 0 ) +
-                       position( nlist.permutation( j ), 0 );
+                sum += position( nlist.permutation( i - begin ), 0 ) +
+                       position( nlist.permutation( j - begin ), 0 );
             }
             else
             {
