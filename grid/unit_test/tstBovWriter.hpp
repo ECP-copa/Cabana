@@ -115,7 +115,7 @@ void writeTest3d()
         // Write the fields to a file.
         Experimental::BovWriter::writeTimeStep( "grid_cell_field_3d", 302, 3.43,
                                                 *cell_field );
-        Experimental::BovWriter::writeTimeStep( "grid_cell_field_3d", 1972,
+        Experimental::BovWriter::writeTimeStep( "grid_node_field_3d", 1972,
                                                 12.457, *node_field );
     }
     // Read the data back in on rank 0 and make sure it is OK.
@@ -274,7 +274,7 @@ void writeTest2d()
         // Write the fields to a file.
         Experimental::BovWriter::writeTimeStep( "grid_cell_field_2d", 302, 3.43,
                                                 *cell_field );
-        Experimental::BovWriter::writeTimeStep( "grid_cell_field_2d", 1972,
+        Experimental::BovWriter::writeTimeStep( "grid_node_field_2d", 1972,
                                                 12.457, *node_field );
     }
     // Read the data back in on rank 0 and make sure it is OK.
