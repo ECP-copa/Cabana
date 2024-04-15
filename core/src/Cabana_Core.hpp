@@ -21,6 +21,7 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_DeepCopy.hpp>
 #include <Cabana_Fields.hpp>
+#include <Cabana_GaussianMixtureModel.hpp>
 #include <Cabana_LinkedCellList.hpp>
 #include <Cabana_MemberTypes.hpp>
 #include <Cabana_NeighborList.hpp>
