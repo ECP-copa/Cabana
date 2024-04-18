@@ -155,8 +155,12 @@ class LinkedCellList
       \tparam SliceType Slice type for positions.
 
       \param positions Slice of positions.
-      \param begin The beginning index of the AoSoA range to sort.
-      \param end The end index of the AoSoA range to sort.
+      \param begin The beginning index of particles to bin or find neighbors
+      for. Particles outside this range will NOT be considered as candidate
+      neighbors.
+      \param end The end index of particles to bin or find neighbors
+      for. Particles outside this range will NOT be considered as candidate
+      neighbors.
       \param grid_delta Grid sizes in each cardinal direction.
       \param grid_min Grid minimum value in each direction.
       \param grid_max Grid maximum value in each direction.
@@ -218,8 +222,12 @@ class LinkedCellList
       \tparam SliceType Slice type for positions.
 
       \param positions Slice of positions.
-      \param begin The beginning index of the AoSoA range to sort.
-      \param end The end index of the AoSoA range to sort.
+      \param begin The beginning index of particles to bin or find neighbors
+      for. Particles outside this range will NOT be considered as candidate
+      neighbors.
+      \param end The end index of particles to bin or find neighbors
+      for. Particles outside this range will NOT be considered as candidate
+      neighbors.
       \param grid_delta Grid sizes in each cardinal direction.
       \param grid_min Grid minimum value in each direction.
       \param grid_max Grid maximum value in each direction.
@@ -376,8 +384,12 @@ class LinkedCellList
       \tparam SliceType Slice type for positions.
 
       \param positions Slice of positions.
-      \param begin The beginning index of the slice range to sort.
-      \param end The end index of the slice range to sort.
+      \param begin The beginning index of particles to bin or find neighbors
+      for. Particles outside this range will NOT be considered as candidate
+      neighbors.
+      \param end The end index of particles to bin or find neighbors
+      for. Particles outside this range will NOT be considered as candidate
+      neighbors.
     */
     template <class ExecutionSpace, class SliceType>
     void build( ExecutionSpace, SliceType positions, const std::size_t begin,
@@ -472,8 +484,12 @@ class LinkedCellList
       \tparam SliceType Slice type for positions.
 
       \param positions Slice of positions.
-      \param begin The beginning index of the slice range to sort.
-      \param end The end index of the slice range to sort.
+      \param begin The beginning index of particles to bin or find neighbors
+      for. Particles outside this range will NOT be considered as candidate
+      neighbors.
+      \param end The end index of particles to bin or find neighbors
+      for. Particles outside this range will NOT be considered as candidate
+      neighbors.
     */
     template <class SliceType>
     void build( SliceType positions, const std::size_t begin,
