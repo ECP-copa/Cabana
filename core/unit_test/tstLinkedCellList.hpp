@@ -420,8 +420,8 @@ void checkLinkedCellNeighborInterface( const ListType& nlist,
     // Purposely using zero-init.
     Kokkos::View<std::size_t*, memory_space> num_n2_neighbors(
         "num_n2_neighbors", positions.size() );
-    Kokkos::View<std::size_t*> N2_copy_neighbors( "num_n2_neighbors",
-                                                  positions.size() );
+    Kokkos::View<std::size_t*, Kokkos::HostSpace> N2_copy_neighbors(
+        "num_n2_neighbors", positions.size() );
 
     Cabana::NeighborDiscriminator<Cabana::FullNeighborTag> _discriminator;
 
