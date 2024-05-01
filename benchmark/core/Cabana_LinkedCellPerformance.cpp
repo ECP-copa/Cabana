@@ -79,10 +79,10 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
         Cabana::Benchmark::Timer create_timer( create_time_name.str(),
                                                num_problem_size );
         std::stringstream iteration_time_name;
-        iteration_time_name << test_prefix << "linkedcell_iteration_"
+        iteration_time_name << test_prefix << "linkedcell_iteration_unsorted_"
                             << cutoff_ratios[c];
-        Cabana::Benchmark::Timer iteration_timer( iteration_time_name.str(),
-                                                  num_problem_size );
+        Cabana::Benchmark::Timer iteration_unsorted_timer(
+            iteration_time_name.str(), num_problem_size );
         std::stringstream sort_time_name;
         sort_time_name << test_prefix << "linkedcell_sort_" << cutoff_ratios[c];
         Cabana::Benchmark::Timer sort_timer( sort_time_name.str(),
@@ -132,12 +132,12 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                 linked_cell_list.build( x );
                 create_timer.stop( pid );
 
-                iteration_timer.start( pid );
+                iteration_unsorted_timer.start( pid );
                 Cabana::neighbor_parallel_for(
                     policy, count_op, linked_cell_list,
                     Cabana::FirstNeighborsTag(), IterTag(), "test_neighbor" );
                 Kokkos::fence();
-                iteration_timer.stop( pid );
+                iteration_unsorted_timer.stop( pid );
 
                 // Sort the particles.
                 sort_timer.start( p );
@@ -159,12 +159,10 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
 
         // Output results.
         outputResults( stream, "problem_size", psizes, create_timer );
-        outputResults( stream, "problem_size", psizes, iteration_timer );
-        outputResults( stream, "problem_size", psizes, neigh_iteration_timer );
+        outputResults( stream, "problem_size", psizes,
+                       iteration_unsorted_timer );
         outputResults( stream, "problem_size", psizes, sort_timer );
         outputResults( stream, "problem_size", psizes, iteration_sorted_timer );
-        outputResults( stream, "problem_size", psizes,
-                       neigh_iteration_sorted_timer );
     }
 }
 
