@@ -584,6 +584,17 @@ class LinkedCellList
         _cell_stencil.getCells( cell, imin, imax, jmin, jmax, kmin, kmax );
     }
 
+    // Get a candidate neighbor particle at a given binned offset.
+    auto getParticle( const int offset ) const
+    {
+        std::size_t j;
+        if ( !sorted() )
+            j = permutation( offset );
+        else
+            j = offset + getParticleBegin();
+        return j;
+    }
+
   private:
     std::size_t _begin;
     std::size_t _end;
@@ -823,7 +834,7 @@ class NeighborList<LinkedCellList<MemorySpace, Scalar>>
                                           ( neighbor_index - previous_count );
                         if ( list.sorted() )
                         {
-                            return particle_id;
+                            return particle_id + list.getParticleBegin();
                         }
                         else
                         {

@@ -431,7 +431,7 @@ void checkLinkedCellNeighborInterface( const ListType& nlist,
     std::size_t N2_copy_max = 0;
     std::size_t N2_copy_sum = 0;
 
-    for ( int p = begin; p < end; ++p )
+    for ( std::size_t p = begin; p < end; ++p )
     {
         for ( int n = 0; n < N2_list_copy.counts( p ); ++n )
         {
@@ -459,9 +459,6 @@ void checkLinkedCellNeighborInterface( const ListType& nlist,
             {
                 int np = Cabana::NeighborList<ListType>::getNeighbor( nlist,
                                                                       pid, i );
-
-                if ( nlist.sorted() )
-                    np += begin;
 
                 const double dx = positions( pid, 0 ) - positions( np, 0 );
                 const double dy = positions( pid, 1 ) - positions( np, 1 );
