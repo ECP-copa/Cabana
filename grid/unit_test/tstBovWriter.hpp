@@ -71,12 +71,6 @@ void writeTest3d()
             createArray<double, TEST_MEMSPACE>( "cell_field_3d", cell_layout );
         auto cell_data = cell_field->view();
 
-        // FIXME_SYCL (remove ifdef when newest Kokkos is required)
-#if ( defined __SYCL_DEVICE_ONLY__ )
-        using Kokkos::Experimental::cos;
-        using Kokkos::Experimental::fabs;
-#endif
-
         Kokkos::parallel_for(
             "fill_cell_field",
             createExecutionPolicy(
@@ -87,8 +81,9 @@ void writeTest3d()
                 double yarg = double( off_j + j ) / num_cell_dev[1];
                 double zarg = double( off_k + k ) / num_cell_dev[2];
                 cell_data( i, j, k, 0 ) =
-                    1.0 + fabs( cos( pi2 * xarg ) * cos( pi2 * yarg ) *
-                                cos( pi2 * zarg ) );
+                    1.0 + fabs( Kokkos::cos( pi2 * xarg ) *
+                                Kokkos::cos( pi2 * yarg ) *
+                                Kokkos::cos( pi2 * zarg ) );
             } );
 
         // Create a vector node field and fill it with data.
@@ -105,9 +100,12 @@ void writeTest3d()
                 double xarg = double( off_i + i ) / num_cell_dev[0];
                 double yarg = double( off_j + j ) / num_cell_dev[1];
                 double zarg = double( off_k + k ) / num_cell_dev[2];
-                node_data( i, j, k, Dim::I ) = 1.0 + fabs( cos( pi2 * xarg ) );
-                node_data( i, j, k, Dim::J ) = 1.0 + fabs( cos( pi2 * yarg ) );
-                node_data( i, j, k, Dim::K ) = 1.0 + fabs( cos( pi2 * zarg ) );
+                node_data( i, j, k, Dim::I ) =
+                    1.0 + fabs( Kokkos::cos( pi2 * xarg ) );
+                node_data( i, j, k, Dim::J ) =
+                    1.0 + fabs( Kokkos::cos( pi2 * yarg ) );
+                node_data( i, j, k, Dim::K ) =
+                    1.0 + fabs( Kokkos::cos( pi2 * zarg ) );
             } );
 
         // Gather the node data.
@@ -115,8 +113,10 @@ void writeTest3d()
         node_halo->gather( TEST_EXECSPACE(), *node_field );
 
         // Write the fields to a file.
-        Experimental::BovWriter::writeTimeStep( 302, 3.43, *cell_field );
-        Experimental::BovWriter::writeTimeStep( 1972, 12.457, *node_field );
+        Experimental::BovWriter::writeTimeStep( "grid_cell_field_3d", 302, 3.43,
+                                                *cell_field );
+        Experimental::BovWriter::writeTimeStep( "grid_node_field_3d", 1972,
+                                                12.457, *node_field );
     }
     // Read the data back in on rank 0 and make sure it is OK.
     int rank;
@@ -145,10 +145,10 @@ void writeTest3d()
                     cell_data_file.seekg( cell_id * sizeof( double ) );
                     cell_data_file.read( (char*)&cell_value, sizeof( double ) );
 
-                    EXPECT_FLOAT_EQ(
-                        cell_value,
-                        1.0 + fabs( cos( pi2 * xarg ) * cos( pi2 * yarg ) *
-                                    cos( pi2 * zarg ) ) );
+                    EXPECT_FLOAT_EQ( cell_value,
+                                     1.0 + fabs( Kokkos::cos( pi2 * xarg ) *
+                                                 Kokkos::cos( pi2 * yarg ) *
+                                                 Kokkos::cos( pi2 * zarg ) ) );
                     ++cell_id;
                 }
 
@@ -178,19 +178,19 @@ void writeTest3d()
                     node_data_file.seekg( node_id * sizeof( double ) );
                     node_data_file.read( (char*)&node_value, sizeof( double ) );
                     EXPECT_FLOAT_EQ( node_value,
-                                     1.0 + fabs( cos( pi2 * xarg ) ) );
+                                     1.0 + fabs( Kokkos::cos( pi2 * xarg ) ) );
                     ++node_id;
 
                     node_data_file.seekg( node_id * sizeof( double ) );
                     node_data_file.read( (char*)&node_value, sizeof( double ) );
                     EXPECT_FLOAT_EQ( node_value,
-                                     1.0 + fabs( cos( pi2 * yarg ) ) );
+                                     1.0 + fabs( Kokkos::cos( pi2 * yarg ) ) );
                     ++node_id;
 
                     node_data_file.seekg( node_id * sizeof( double ) );
                     node_data_file.read( (char*)&node_value, sizeof( double ) );
                     EXPECT_FLOAT_EQ( node_value,
-                                     1.0 + fabs( cos( pi2 * zarg ) ) );
+                                     1.0 + fabs( Kokkos::cos( pi2 * zarg ) ) );
                     ++node_id;
                 }
 
@@ -236,11 +236,6 @@ void writeTest2d()
             createArray<double, TEST_MEMSPACE>( "cell_field_2d", cell_layout );
         auto cell_data = cell_field->view();
 
-        // FIXME_SYCL (remove ifdef when newest Kokkos is required)
-#if ( defined __SYCL_DEVICE_ONLY__ )
-        using Kokkos::Experimental::cos;
-        using Kokkos::Experimental::fabs;
-#endif
         Kokkos::parallel_for(
             "fill_cell_field",
             createExecutionPolicy(
@@ -249,8 +244,8 @@ void writeTest2d()
             KOKKOS_LAMBDA( const int i, const int j ) {
                 double xarg = double( off_i + i ) / num_cell_dev[0];
                 double yarg = double( off_j + j ) / num_cell_dev[1];
-                cell_data( i, j, 0 ) =
-                    1.0 + fabs( cos( pi2 * xarg ) * cos( pi2 * yarg ) );
+                cell_data( i, j, 0 ) = 1.0 + fabs( Kokkos::cos( pi2 * xarg ) *
+                                                   Kokkos::cos( pi2 * yarg ) );
             } );
 
         // Create a vector node field and fill it with data.
@@ -266,8 +261,10 @@ void writeTest2d()
             KOKKOS_LAMBDA( const int i, const int j ) {
                 double xarg = double( off_i + i ) / num_cell_dev[0];
                 double yarg = double( off_j + j ) / num_cell_dev[1];
-                node_data( i, j, Dim::I ) = 1.0 + fabs( cos( pi2 * xarg ) );
-                node_data( i, j, Dim::J ) = 1.0 + fabs( cos( pi2 * yarg ) );
+                node_data( i, j, Dim::I ) =
+                    1.0 + fabs( Kokkos::cos( pi2 * xarg ) );
+                node_data( i, j, Dim::J ) =
+                    1.0 + fabs( Kokkos::cos( pi2 * yarg ) );
             } );
 
         // Gather the node data.
@@ -275,8 +272,10 @@ void writeTest2d()
         node_halo->gather( TEST_EXECSPACE(), *node_field );
 
         // Write the fields to a file.
-        Experimental::BovWriter::writeTimeStep( 302, 3.43, *cell_field );
-        Experimental::BovWriter::writeTimeStep( 1972, 12.457, *node_field );
+        Experimental::BovWriter::writeTimeStep( "grid_cell_field_2d", 302, 3.43,
+                                                *cell_field );
+        Experimental::BovWriter::writeTimeStep( "grid_node_field_2d", 1972,
+                                                12.457, *node_field );
     }
     // Read the data back in on rank 0 and make sure it is OK.
     int rank;
@@ -302,8 +301,9 @@ void writeTest2d()
                 cell_data_file.seekg( cell_id * sizeof( double ) );
                 cell_data_file.read( (char*)&cell_value, sizeof( double ) );
 
-                EXPECT_FLOAT_EQ( cell_value, 1.0 + fabs( cos( pi2 * xarg ) *
-                                                         cos( pi2 * yarg ) ) );
+                EXPECT_FLOAT_EQ( cell_value,
+                                 1.0 + fabs( Kokkos::cos( pi2 * xarg ) *
+                                             Kokkos::cos( pi2 * yarg ) ) );
                 ++cell_id;
             }
 
@@ -328,12 +328,14 @@ void writeTest2d()
 
                 node_data_file.seekg( node_id * sizeof( double ) );
                 node_data_file.read( (char*)&node_value, sizeof( double ) );
-                EXPECT_FLOAT_EQ( node_value, 1.0 + fabs( cos( pi2 * xarg ) ) );
+                EXPECT_FLOAT_EQ( node_value,
+                                 1.0 + fabs( Kokkos::cos( pi2 * xarg ) ) );
                 ++node_id;
 
                 node_data_file.seekg( node_id * sizeof( double ) );
                 node_data_file.read( (char*)&node_value, sizeof( double ) );
-                EXPECT_FLOAT_EQ( node_value, 1.0 + fabs( cos( pi2 * yarg ) ) );
+                EXPECT_FLOAT_EQ( node_value,
+                                 1.0 + fabs( Kokkos::cos( pi2 * yarg ) ) );
                 ++node_id;
             }
 

@@ -1018,4 +1018,61 @@ struct NeighborListTestData
 };
 
 //---------------------------------------------------------------------------//
+// Default ordered test settings.
+struct NeighborListTestDataOrdered
+{
+    int num_particle;
+    int num_ignore = 100;
+    double test_radius;
+    double box_min = 0.0;
+    double box_max = 5.0;
+
+    double cell_size_ratio = 0.5;
+    double grid_min[3] = { box_min, box_min, box_min };
+    double grid_max[3] = { box_max, box_max, box_max };
+
+    using DataTypes = Cabana::MemberTypes<double[3]>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
+    AoSoA_t aosoa;
+
+    TestNeighborList<typename TEST_EXECSPACE::array_layout, Kokkos::HostSpace>
+        N2_list_copy;
+
+    NeighborListTestDataOrdered( const int particle_x, const int m = 3 )
+    {
+        num_particle = particle_x * particle_x * particle_x;
+        double dx = ( grid_max[0] - grid_min[0] ) / particle_x;
+        // Use a fixed ratio of cutoff / spacing (and include a floating point
+        // tolerance).
+        test_radius = m * dx + 1e-7;
+
+        // Create the AoSoA and fill with ordered particle positions.
+        aosoa = AoSoA_t( "ordered", num_particle );
+        createParticles( particle_x, dx );
+
+        // Create a full N^2 neighbor list to check against.
+        auto positions = Cabana::slice<0>( aosoa );
+        auto N2_list = computeFullNeighborList( positions, test_radius );
+        N2_list_copy = createTestListHostCopy( N2_list );
+    }
+
+    void createParticles( const int particle_x, const double dx )
+    {
+        auto positions = Cabana::slice<0>( aosoa );
+
+        Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, positions.size() );
+        Kokkos::parallel_for(
+            "ordered_particles", policy, KOKKOS_LAMBDA( int pid ) {
+                int i = pid / ( particle_x * particle_x );
+                int j = ( pid / particle_x ) % particle_x;
+                int k = pid % particle_x;
+                positions( pid, 0 ) = dx / 2 + dx * i;
+                positions( pid, 1 ) = dx / 2 + dx * j;
+                positions( pid, 2 ) = dx / 2 + dx * k;
+            } );
+        Kokkos::fence();
+    }
+};
+
+//---------------------------------------------------------------------------//
 } // end namespace Test

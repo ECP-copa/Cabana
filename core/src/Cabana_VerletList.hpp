@@ -21,6 +21,7 @@
 #include <Cabana_Parallel.hpp>
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Profiling_ScopedRegion.hpp>
 
 #include <cassert>
 
@@ -660,7 +661,7 @@ class VerletList
                 const typename PositionSlice::value_type grid_max[3],
                 const std::size_t max_neigh = 0 )
     {
-        Kokkos::Profiling::pushRegion( "Cabana::VerletList::build" );
+        Kokkos::Profiling::ScopedRegion region( "Cabana::VerletList::build" );
 
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
 
@@ -715,8 +716,6 @@ class VerletList
 
         // Get the data from the builder.
         _data = builder._data;
-
-        Kokkos::Profiling::popRegion();
     }
 
     //! Modify a neighbor in the list; for example, mark it as a broken bond.

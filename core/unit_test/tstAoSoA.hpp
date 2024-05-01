@@ -167,7 +167,7 @@ void testAoSoA()
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Now extend the capacity of the container. First make the capacity
-    // smaller - this wont actually do anything because we never decrease the
+    // smaller - this won't actually do anything because we never decrease the
     // allocation of the container.
     aosoa.reserve( 1 );
 

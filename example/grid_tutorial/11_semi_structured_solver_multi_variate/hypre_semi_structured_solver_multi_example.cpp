@@ -127,8 +127,6 @@ void hypreSemiStructuredSolverExample()
             entry_view( i, j, k, 6 ) = -1.0;
         } );
 
-    solver->initializeHypreMatrix();
-
     for ( int v_h = 0; v_h < 3; ++v_h )
     {
         solver->setMatrixValues( *matrix_entries, v_h, v_h );
@@ -195,7 +193,7 @@ int main( int argc, char* argv[] )
           The hypre solver capabilities used by Cabana must be initialized and
           finalized. HYPRE_Finalize() finalizes hypre. A call to
           HYPRE_Finalize() should not occur before all calls to hypre
-          capabilites are finished.
+          capabilities are finished.
         */
         HYPRE_Finalize();
     }

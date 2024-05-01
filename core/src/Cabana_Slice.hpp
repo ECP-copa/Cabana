@@ -631,7 +631,7 @@ class Slice
     }
 
     /*!
-      \brief Assignement operator for different memory spaces for assigning
+      \brief Assignment operator for different memory spaces for assigning
       new memory access traits to the view.
       \tparam MAT Memory access type
       \param rhs The slice to shallow copy with a potentially different memory

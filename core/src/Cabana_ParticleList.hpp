@@ -214,6 +214,8 @@ class ParticleList
 
     //! Get the number of particles in the list.
     std::size_t size() const { return _aosoa.size(); }
+    //! Update the number of particles in the list.
+    void resize( const std::size_t n ) { _aosoa.resize( n ); }
 
     //! Get the AoSoA.
     aosoa_type& aosoa() { return _aosoa; }

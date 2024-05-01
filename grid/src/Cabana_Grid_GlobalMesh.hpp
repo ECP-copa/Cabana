@@ -154,7 +154,7 @@ class GlobalMesh
         return highCorner( dim ) - lowCorner( dim );
     }
 
-    //! \brief Get the global numer of cells in a given dimension.
+    //! \brief Get the global number of cells in a given dimension.
     //! \param dim Spatial dimension.
     int globalNumCell( const std::size_t dim ) const
     {
@@ -358,7 +358,7 @@ class GlobalMesh<NonUniformMesh<Scalar, 3>>
         return highCorner( dim ) - lowCorner( dim );
     }
 
-    //! \brief Get the global numer of cells in a given dimension.
+    //! \brief Get the global number of cells in a given dimension.
     //! \param dim Spatial dimension.
     int globalNumCell( const std::size_t dim ) const
     {
@@ -448,7 +448,7 @@ class GlobalMesh<NonUniformMesh<Scalar, 2>>
         return highCorner( dim ) - lowCorner( dim );
     }
 
-    //! \brief Get the global numer of cells in a given dimension.
+    //! \brief Get the global number of cells in a given dimension.
     //! \param dim Spatial dimension.
     int globalNumCell( const std::size_t dim ) const
     {

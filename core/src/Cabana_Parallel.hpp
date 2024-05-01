@@ -23,6 +23,7 @@
 #include <impl/Cabana_CartesianGrid.hpp>
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Profiling_ScopedRegion.hpp>
 
 #include <cstdlib>
 #include <type_traits>
@@ -174,12 +175,10 @@ inline void simd_parallel_for(
     const SimdPolicy<VectorLength, ExecParameters...>& exec_policy,
     const FunctorType& functor, const std::string& str = "" )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::simd_parallel_for" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::simd_parallel_for" );
 
     Impl::ParallelFor<SimdPolicy<VectorLength, ExecParameters...>, FunctorType>(
         str, exec_policy, functor );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -224,9 +223,9 @@ class TeamVectorOpTag
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param FirstNeighborsTag Tag indicating operations over particle first
+  \note FirstNeighborsTag Tag indicating operations over particle first
   neighbors.
-  \param SerialOpTag Tag indicating a serial loop strategy over neighbors.
+  \note SerialOpTag Tag indicating a serial loop strategy over neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
   the Kokkos::parallel_for called by this code and can be used for
   identification and profiling purposes.
@@ -257,7 +256,7 @@ inline void neighbor_parallel_for(
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
                             int>::type* = 0 )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::neighbor_parallel_for" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -291,8 +290,6 @@ inline void neighbor_parallel_for(
         Kokkos::parallel_for( linear_exec_policy, neigh_func );
     else
         Kokkos::parallel_for( str, linear_exec_policy, neigh_func );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -308,9 +305,9 @@ inline void neighbor_parallel_for(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param SecondNeighborsTag Tag indicating operations over particle first and
+  \note SecondNeighborsTag Tag indicating operations over particle first and
   second neighbors.
-  \param SerialOpTag Tag indicating a serial loop strategy over neighbors.
+  \note SerialOpTag Tag indicating a serial loop strategy over neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
   the Kokkos::parallel_for called by this code and can be used for
   identification and profiling purposes.
@@ -323,7 +320,7 @@ inline void neighbor_parallel_for(
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
                             int>::type* = 0 )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::neighbor_parallel_for" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -365,8 +362,6 @@ inline void neighbor_parallel_for(
         Kokkos::parallel_for( linear_exec_policy, neigh_func );
     else
         Kokkos::parallel_for( str, linear_exec_policy, neigh_func );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -381,9 +376,9 @@ inline void neighbor_parallel_for(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param FirstNeighborsTag Tag indicating operations over particle first
+  \note FirstNeighborsTag Tag indicating operations over particle first
   neighbors.
-  \param TeamOpTag Tag indicating a team parallel strategy over neighbors.
+  \note TeamOpTag Tag indicating a team parallel strategy over neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
   the Kokkos::parallel_for called by this code and can be used for
   identification and profiling purposes.
@@ -396,7 +391,7 @@ inline void neighbor_parallel_for(
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
                             int>::type* = 0 )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::neighbor_parallel_for" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -437,8 +432,6 @@ inline void neighbor_parallel_for(
         Kokkos::parallel_for( team_policy, neigh_func );
     else
         Kokkos::parallel_for( str, team_policy, neigh_func );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -454,9 +447,9 @@ inline void neighbor_parallel_for(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param SecondNeighborsTag Tag indicating operations over particle first and
+  \note SecondNeighborsTag Tag indicating operations over particle first and
   second neighbors.
-  \param TeamOpTag Tag indicating a team parallel strategy over particle first
+  \note TeamOpTag Tag indicating a team parallel strategy over particle first
   neighbors and serial execution over second neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
   the Kokkos::parallel_for called by this code and can be used for
@@ -470,7 +463,7 @@ inline void neighbor_parallel_for(
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
                             int>::type* = 0 )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::neighbor_parallel_for" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -517,8 +510,6 @@ inline void neighbor_parallel_for(
         Kokkos::parallel_for( team_policy, neigh_func );
     else
         Kokkos::parallel_for( str, team_policy, neigh_func );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -534,9 +525,9 @@ inline void neighbor_parallel_for(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param SecondNeighborsTag Tag indicating operations over particle first and
+  \note SecondNeighborsTag Tag indicating operations over particle first and
   second neighbors.
-  \param TeamVectorOpTag Tag indicating a team parallel strategy over particle
+  \note TeamVectorOpTag Tag indicating a team parallel strategy over particle
   first neighbors and vector parallel loop strategy over second neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
   the Kokkos::parallel_for called by this code and can be used for
@@ -551,7 +542,7 @@ inline void neighbor_parallel_for(
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
                             int>::type* = 0 )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_for" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::neighbor_parallel_for" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -600,8 +591,6 @@ inline void neighbor_parallel_for(
         Kokkos::parallel_for( team_policy, neigh_func );
     else
         Kokkos::parallel_for( str, team_policy, neigh_func );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -619,9 +608,9 @@ inline void neighbor_parallel_for(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param FirstNeighborsTag Tag indicating operations over particle first
+  \note FirstNeighborsTag Tag indicating operations over particle first
   neighbors.
-  \param SerialOpTag Tag indicating a serial loop strategy over
+  \note SerialOpTag Tag indicating a serial loop strategy over
   neighbors.
   \param reduce_val Scalar to be reduced across particles and neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
@@ -656,7 +645,8 @@ inline void neighbor_parallel_reduce(
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
                             int>::type* = 0 )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
+    Kokkos::Profiling::ScopedRegion region(
+        "Cabana::neighbor_parallel_reduce" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -692,8 +682,6 @@ inline void neighbor_parallel_reduce(
     else
         Kokkos::parallel_reduce( str, linear_exec_policy, neigh_reduce,
                                  reduce_val );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -710,9 +698,9 @@ inline void neighbor_parallel_reduce(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param SecondNeighborsTag Tag indicating operations over particle first and
+  \note SecondNeighborsTag Tag indicating operations over particle first and
   second neighbors.
-  \param SerialOpTag Tag indicating a serial loop strategy over neighbors.
+  \note SerialOpTag Tag indicating a serial loop strategy over neighbors.
   \param reduce_val Scalar to be reduced across particles and neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
   the Kokkos::parallel_reduce called by this code and can be used for
@@ -728,7 +716,8 @@ inline void neighbor_parallel_reduce(
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
                             int>::type* = 0 )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
+    Kokkos::Profiling::ScopedRegion region(
+        "Cabana::neighbor_parallel_reduce" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -771,8 +760,6 @@ inline void neighbor_parallel_reduce(
     else
         Kokkos::parallel_reduce( str, linear_exec_policy, neigh_reduce,
                                  reduce_val );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -788,9 +775,9 @@ inline void neighbor_parallel_reduce(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param FirstNeighborsTag Tag indicating operations over particle first
+  \note FirstNeighborsTag Tag indicating operations over particle first
   neighbors.
-  \param TeamOpTag Tag indicating a team parallel strategy over particle
+  \note TeamOpTag Tag indicating a team parallel strategy over particle
   neighbors.
   \param reduce_val Scalar to be reduced across particles and neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
@@ -807,7 +794,8 @@ inline void neighbor_parallel_reduce(
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
                             int>::type* = 0 )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
+    Kokkos::Profiling::ScopedRegion region(
+        "Cabana::neighbor_parallel_reduce" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -853,8 +841,6 @@ inline void neighbor_parallel_reduce(
         Kokkos::parallel_reduce( team_policy, neigh_reduce, reduce_val );
     else
         Kokkos::parallel_reduce( str, team_policy, neigh_reduce, reduce_val );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -871,9 +857,9 @@ inline void neighbor_parallel_reduce(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param SecondNeighborsTag Tag indicating operations over particle first and
+  \note SecondNeighborsTag Tag indicating operations over particle first and
   second neighbors.
-  \param TeamOpTag Tag indicating a team parallel strategy over particle first
+  \note TeamOpTag Tag indicating a team parallel strategy over particle first
   neighbors and serial loops over second neighbors.
   \param reduce_val Scalar to be reduced across particles and neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
@@ -890,7 +876,8 @@ inline void neighbor_parallel_reduce(
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
                             int>::type* = 0 )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
+    Kokkos::Profiling::ScopedRegion region(
+        "Cabana::neighbor_parallel_reduce" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -941,8 +928,6 @@ inline void neighbor_parallel_reduce(
         Kokkos::parallel_reduce( team_policy, neigh_reduce, reduce_val );
     else
         Kokkos::parallel_reduce( str, team_policy, neigh_reduce, reduce_val );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -959,9 +944,9 @@ inline void neighbor_parallel_reduce(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The neighbor list over which to execute the neighbor operations.
-  \param SecondNeighborsTag Tag indicating operations over particle first and
+  \note SecondNeighborsTag Tag indicating operations over particle first and
   second neighbors.
-  \param TeamVectorOpTag Tag indicating a team parallel strategy over particle
+  \note TeamVectorOpTag Tag indicating a team parallel strategy over particle
   first neighbors and vector loops over second neighbors.
   \param reduce_val Scalar to be reduced across particles and neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
@@ -978,7 +963,8 @@ inline void neighbor_parallel_reduce(
     typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
                             int>::type* = 0 )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::neighbor_parallel_reduce" );
+    Kokkos::Profiling::ScopedRegion region(
+        "Cabana::neighbor_parallel_reduce" );
 
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -1034,8 +1020,6 @@ inline void neighbor_parallel_reduce(
         Kokkos::parallel_reduce( team_policy, neigh_reduce, reduce_val );
     else
         Kokkos::parallel_reduce( str, team_policy, neigh_reduce, reduce_val );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -1050,7 +1034,7 @@ inline void neighbor_parallel_reduce(
   \param i Particle index.
   \param neighbor_functor The neighbor functor to execute in parallel.
   \param list The neighbor list over which to execute the neighbor operations.
-  \param FirstNeighborsTag Tag indicating operations over particle first
+  \note FirstNeighborsTag Tag indicating operations over particle first
   neighbors.
 
   A "functor" is a class containing the function to execute in parallel, data
@@ -1101,7 +1085,7 @@ for_each_neighbor( const IndexType i, const FunctorType& neighbor_functor,
   \param team Kokkos team.
   \param neighbor_functor The neighbor functor to execute in parallel.
   \param list The neighbor list over which to execute the neighbor operations.
-  \param FirstNeighborsTag Tag indicating operations over particle first
+  \note FirstNeighborsTag Tag indicating operations over particle first
   neighbors.
 */
 template <class IndexType, class FunctorType, class NeighborListType,

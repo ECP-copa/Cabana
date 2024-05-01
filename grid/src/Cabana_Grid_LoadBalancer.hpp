@@ -21,6 +21,7 @@
 #include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Profiling_ScopedRegion.hpp>
 
 #include <ALL.hpp>
 
@@ -122,7 +123,8 @@ class LoadBalancer<UniformMesh<Scalar, NumSpaceDim>>
         const BlockPartitioner<NumSpaceDim>& partitioner,
         const double local_work )
     {
-        Kokkos::Profiling::pushRegion( "Cabana::Grid::LoadBalancer::balance" );
+        Kokkos::Profiling::ScopedRegion region(
+            "Cabana::Grid::LoadBalancer::balance" );
 
         // Create new decomposition
         _liball->setWork( local_work );
@@ -155,7 +157,6 @@ class LoadBalancer<UniformMesh<Scalar, NumSpaceDim>>
         global_grid->setNumCellAndOffset( num_cell, cell_index_lo );
         _global_grid = global_grid;
 
-        Kokkos::Profiling::popRegion();
         return _global_grid;
     }
 

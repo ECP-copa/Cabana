@@ -80,7 +80,7 @@ void gridParallelExample()
 
       Here we use a lambda function for simplicity, but a functor with or
       without tag arguments are also options. Note that the kernel signature
-      uses the three indicies of the 3D grid. We set every value on the cells in
+      uses the three indices of the 3D grid. We set every value on the cells in
       the grid to 1.
     */
     auto array_view = array->view();

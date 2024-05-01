@@ -81,8 +81,8 @@ void typesExample()
 
     /*
       Related, there are type tags to distinguish local and global indexing:
-      local indicies are unique only within a given MPI rank, while global
-      indicies are unique across all MPI ranks. For example, a given node might
+      local indices are unique only within a given MPI rank, while global
+      indices are unique across all MPI ranks. For example, a given node might
       have a different local index on different MPI ranks if it is a ghost, but
       it will always have a unique global index on every MPI rank.
 

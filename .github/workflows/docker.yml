@@ -18,6 +18,7 @@ concurrency:
 jobs:
   Build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout kokkos
         uses: actions/checkout@v3
@@ -47,7 +48,7 @@ jobs:
           path: cabana
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -71,7 +72,7 @@ jobs:
 
       - name: Build and Push Docker Image
         id: docker_build
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         with:
           context: ${{github.workspace}}
           file: cabana/.github/workflows/Dockerfile

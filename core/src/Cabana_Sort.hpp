@@ -22,6 +22,7 @@
 #include <Cabana_Utils.hpp>
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Profiling_ScopedRegion.hpp>
 #include <Kokkos_Sort.hpp>
 
 #include <type_traits>
@@ -169,14 +170,13 @@ auto kokkosBinSort( KeyViewType keys, Comparator comp,
                     const bool sort_within_bins, const std::size_t begin,
                     const std::size_t end )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::BinSort" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::BinSort" );
     using memory_space = typename KeyViewType::memory_space;
     static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
 
     Kokkos::BinSort<KeyViewType, Comparator> bin_sort( keys, begin, end, comp,
                                                        sort_within_bins );
     bin_sort.create_permute_vector();
-    Kokkos::Profiling::popRegion();
 
     return BinningData<memory_space>( begin, end, bin_sort.get_bin_count(),
                                       bin_sort.get_bin_offsets(),
@@ -190,7 +190,7 @@ template <class KeyViewType,
 Kokkos::MinMaxScalar<typename KeyViewType::non_const_value_type>
 keyMinMax( KeyViewType keys, const std::size_t begin, const std::size_t end )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::keyMinMax" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::keyMinMax" );
 
     using memory_space = typename KeyViewType::memory_space;
     static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
@@ -213,8 +213,6 @@ keyMinMax( KeyViewType keys, const std::size_t begin, const std::size_t end )
         },
         reducer );
     Kokkos::fence();
-
-    Kokkos::Profiling::popRegion();
 
     return result;
 }
@@ -561,7 +559,7 @@ void permute(
                               is_aosoa<AoSoA_t>::value ),
                             int>::type* = 0 )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::permute" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::permute" );
 
     using memory_space = typename BinningDataType::memory_space;
     static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
@@ -592,8 +590,6 @@ void permute(
                           Kokkos::RangePolicy<ExecutionSpace>( begin, end ),
                           copy_back );
     Kokkos::fence();
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -614,7 +610,7 @@ void permute(
                               is_slice<SliceType>::value ),
                             int>::type* = 0 )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::permute" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::permute" );
 
     using memory_space = typename BinningDataType::memory_space;
     static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
@@ -662,8 +658,6 @@ void permute(
                           Kokkos::RangePolicy<ExecutionSpace>( begin, end ),
                           copy_back );
     Kokkos::fence();
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//

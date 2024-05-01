@@ -18,6 +18,8 @@
 
 #include <Kokkos_Core.hpp>
 
+#include <Cabana_Sort.hpp>
+
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
@@ -168,6 +170,55 @@ maxNeighbor( const ListType& list, const std::size_t num_particles )
     return max_n;
 }
 } // namespace Impl
+
+/*!
+  \brief Construct a histogram of neighbors per particle.
+  \param exec_space Kokkos execution space.
+  \param num_particles Number of particles.
+  \param list Neighbor list with valid NeighborList interface.
+  \param num_bin Number of bins for the histogram.
+  \return Neighbor list histogram View.
+*/
+template <class ExecutionSpace, class ListType>
+Kokkos::View<int* [2], typename ListType::memory_space>
+neighborHistogram( ExecutionSpace exec_space, const std::size_t num_particles,
+                   const ListType& list, const int num_bin )
+{
+    // Allocate View of neighbors per particle
+    auto num_neigh = Kokkos::View<int*, typename ListType::memory_space>(
+        "particle_count", num_particles );
+
+    // Extract from neighbor list interface.
+    auto extract_functor = KOKKOS_LAMBDA( const int p )
+    {
+        num_neigh( p ) = NeighborList<ListType>::numNeighbor( list, p );
+    };
+    Kokkos::RangePolicy<ExecutionSpace> particle_policy( exec_space, 0,
+                                                         num_particles );
+    Kokkos::parallel_for( particle_policy, extract_functor );
+    Kokkos::fence();
+
+    auto bin_data = Cabana::binByKey( num_neigh, num_bin );
+
+    auto histogram = Kokkos::View<int* [2], typename ListType::memory_space>(
+        "particle_count", num_bin, 2 );
+    auto histogram_functor = KOKKOS_LAMBDA( const int b )
+    {
+        int max_neigh = NeighborList<ListType>::maxNeighbor( list );
+        double bin_width =
+            static_cast<double>( max_neigh ) / static_cast<double>( num_bin );
+        if ( num_bin > max_neigh )
+            bin_width = 1;
+        // Wait to cast back to int to get the actual bin edge.
+        histogram( b, 0 ) = static_cast<int>( ( b + 1 ) * bin_width );
+        histogram( b, 1 ) = bin_data.binSize( b );
+    };
+    Kokkos::RangePolicy<ExecutionSpace> bin_policy( exec_space, 0, num_bin );
+    Kokkos::parallel_for( bin_policy, histogram_functor );
+    Kokkos::fence();
+
+    return histogram;
+}
 
 } // end namespace Cabana
 
