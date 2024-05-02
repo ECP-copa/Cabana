@@ -1357,9 +1357,9 @@ struct LinkedCellParallelReduce
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The linked cell list over which to execute neighbor operations.
-  \param FirstNeighborsTag Tag indicating operations over particle first
+  \note FirstNeighborsTag Tag indicating operations over particle first
   neighbors.
-  \param SerialOpTag Tag indicating a serial loop strategy over neighbors.
+  \note SerialOpTag Tag indicating a serial loop strategy over neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
   the Kokkos::parallel_for called by this code and can be used for
   identification and profiling purposes.
@@ -1428,9 +1428,9 @@ inline void neighbor_parallel_for(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The linked cell list over which to execute neighbor operations.
-  \param FirstNeighborsTag Tag indicating operations over particle first
+  \note FirstNeighborsTag Tag indicating operations over particle first
   neighbors.
-  \param TeamOpTag Tag indicating a team parallel strategy over particle
+  \note TeamOpTag Tag indicating a team parallel strategy over particle
   neighbors.
   \param str Optional name for the functor. Will be forwarded if non-empty to
   the Kokkos::parallel_for called by this code and can be used for
@@ -1482,9 +1482,9 @@ inline void neighbor_parallel_for(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The linked cell list over which to execute neighbor operations.
-  \param FirstNeighborsTag Tag indicating operations over particle first
+  \note FirstNeighborsTag Tag indicating operations over particle first
   neighbors.
-  \param SerialOpTag Tag indicating a serial loop strategy over neighbors.
+  \note SerialOpTag Tag indicating a serial loop strategy over neighbors.
   \param reduce_val the value begin reduced
   \param str Optional name for the functor. Will be forwarded if non-empty to
   the Kokkos::parallel_for called by this code and can be used for
@@ -1556,9 +1556,9 @@ inline void neighbor_parallel_reduce(
   \param exec_policy The policy over which to execute the functor.
   \param functor The functor to execute in parallel
   \param list The linked cell list over which to execute neighbor operations.
-  \param FirstNeighborsTag Tag indicating operations over particle first
+  \note FirstNeighborsTag Tag indicating operations over particle first
   neighbors.
-  \param TeamOpTag Tag indicating a team parallel strategy over particle
+  \note TeamOpTag Tag indicating a team parallel strategy over particle
   neighbors.
   \param reduce_val the value begin reduced
   \param str Optional name for the functor. Will be forwarded if non-empty to

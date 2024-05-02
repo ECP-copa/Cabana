@@ -584,7 +584,10 @@ class LinkedCellList
         _cell_stencil.getCells( cell, imin, imax, jmin, jmax, kmin, kmax );
     }
 
-    // Get a candidate neighbor particle at a given binned offset.
+    /*!
+      \brief Get a candidate neighbor particle at a given binned offset.
+      \param offset Particle offset in the binned layout.
+    */
     KOKKOS_INLINE_FUNCTION
     auto getParticle( const int offset ) const
     {
