@@ -585,6 +585,7 @@ class LinkedCellList
     }
 
     // Get a candidate neighbor particle at a given binned offset.
+    KOKKOS_INLINE_FUNCTION
     auto getParticle( const int offset ) const
     {
         std::size_t j;
