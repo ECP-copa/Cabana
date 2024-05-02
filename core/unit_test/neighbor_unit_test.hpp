@@ -682,8 +682,8 @@ struct FirstNeighForOp
 template <class ListType, class TestListType>
 void checkFirstNeighborParallelForFunctor( const ListType& nlist,
                                            const TestListType& N2_list_copy,
-                                           const bool use_tag,
-                                           const std::size_t num_particle )
+                                           const int num_particle,
+                                           const bool use_tag )
 {
     if ( use_tag )
     {
