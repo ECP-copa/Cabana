@@ -435,8 +435,8 @@ void checkLinkedCellNeighborInterface( const ListType& nlist,
     {
         for ( int n = 0; n < N2_list_copy.counts( p ); ++n )
         {
-            if ( N2_list_copy.neighbors( p, n ) >= begin &&
-                 N2_list_copy.neighbors( p, n ) < end )
+            if ( N2_list_copy.neighbors( p, n ) >= static_cast<int>( begin ) &&
+                 N2_list_copy.neighbors( p, n ) < static_cast<int>( end ) )
             {
                 N2_copy_neighbors( p ) += 1;
             }
@@ -457,8 +457,8 @@ void checkLinkedCellNeighborInterface( const ListType& nlist,
 
             for ( std::size_t i = 0; i < num_lcl_neighbors; ++i )
             {
-                int np = Cabana::NeighborList<ListType>::getNeighbor( nlist,
-                                                                      pid, i );
+                std::size_t np = Cabana::NeighborList<ListType>::getNeighbor(
+                    nlist, pid, i );
 
                 const double dx = positions( pid, 0 ) - positions( np, 0 );
                 const double dy = positions( pid, 1 ) - positions( np, 1 );
@@ -508,7 +508,8 @@ void checkLinkedCellNeighborInterface( const ListType& nlist,
 template <class ListType, class TestListType, class PositionType>
 void checkLinkedCellNeighborParallel( const ListType& nlist,
                                       const TestListType& N2_list_copy,
-                                      const int begin, const int end,
+                                      const std::size_t begin,
+                                      const std::size_t end,
                                       const PositionType positions,
                                       const double cutoff )
 {
@@ -584,8 +585,9 @@ void checkLinkedCellNeighborParallel( const ListType& nlist,
 template <class ListType, class TestListType, class AoSoAType>
 void checkLinkedCellNeighborReduce( const ListType& nlist,
                                     const TestListType& N2_list_copy,
-                                    const AoSoAType aosoa, const int begin,
-                                    const int end, const double cutoff )
+                                    const AoSoAType aosoa,
+                                    const std::size_t begin,
+                                    const std::size_t end, const double cutoff )
 {
     auto position = Cabana::slice<0>( aosoa );
 

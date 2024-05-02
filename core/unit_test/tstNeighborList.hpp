@@ -237,7 +237,7 @@ void testModifyNeighbors()
         copyListToHost( nlist, test_data.N2_list_copy.neighbors.extent( 0 ),
                         test_data.N2_list_copy.neighbors.extent( 1 ) );
     // Check the results.
-    for ( int p = 0; p < test_data.num_particle; ++p )
+    for ( std::size_t p = 0; p < test_data.num_particle; ++p )
     {
         for ( int n = 0; n < test_data.N2_list_copy.counts( p ); ++n )
             // Check that all neighbors were changed.
