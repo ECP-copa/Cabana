@@ -213,10 +213,12 @@ int main( int argc, char* argv[] )
     if ( argc > 2 )
         run_type = argv[2];
     std::vector<int> problem_sizes = { 100, 1000 };
+    std::vector<int> host_problem_sizes = problem_sizes;
     std::vector<double> cutoff_ratios = { 2.0, 3.0 };
     if ( run_type == "large" )
     {
         problem_sizes = { 1000, 10000, 100000, 1000000, 10000000 };
+        host_problem_sizes = { 1000, 10000, 100000 };
         cutoff_ratios = { 3.0, 4.0, 5.0 };
     }
 
@@ -237,7 +239,7 @@ int main( int argc, char* argv[] )
         performanceTest<device_type>( file, "device_", problem_sizes,
                                       cutoff_ratios );
     }
-    performanceTest<host_device_type>( file, "host_", problem_sizes,
+    performanceTest<host_device_type>( file, "host_", host_problem_sizes,
                                        cutoff_ratios );
 
     // Close the output file on rank 0.
