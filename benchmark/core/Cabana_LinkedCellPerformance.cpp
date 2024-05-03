@@ -30,7 +30,9 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                       std::vector<int> problem_sizes,
                       std::vector<double> cutoff_ratios )
 {
+    using exec_space = typename Device::execution_space;
     using memory_space = typename Device::memory_space;
+    using IterTag = Cabana::SerialOpTag;
 
     // Declare problem sizes.
     int num_problem_size = problem_sizes.size();
@@ -76,12 +78,24 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                          << cutoff_ratios[c];
         Cabana::Benchmark::Timer create_timer( create_time_name.str(),
                                                num_problem_size );
+        std::stringstream iteration_time_name;
+        iteration_time_name << test_prefix << "linkedcell_iteration_unsorted_"
+                            << cutoff_ratios[c];
+        Cabana::Benchmark::Timer iteration_unsorted_timer(
+            iteration_time_name.str(), num_problem_size );
         std::stringstream sort_time_name;
         sort_time_name << test_prefix << "linkedcell_sort_" << cutoff_ratios[c];
         Cabana::Benchmark::Timer sort_timer( sort_time_name.str(),
                                              num_problem_size );
+        std::stringstream iteration_sorted_time_name;
+        iteration_sorted_time_name << test_prefix
+                                   << "linkedcell_iteration_sorted_"
+                                   << cutoff_ratios[c];
+        Cabana::Benchmark::Timer iteration_sorted_timer(
+            iteration_sorted_time_name.str(), num_problem_size );
 
         // Loop over the problem sizes.
+        int pid = 0;
         std::vector<int> psizes;
         for ( int p = 0; p < num_problem_size; ++p )
         {
@@ -98,27 +112,57 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
             double sort_delta[3] = { cutoff, cutoff, cutoff };
             double grid_min[3] = { x_min[p], x_min[p], x_min[p] };
             double grid_max[3] = { x_max[p], x_max[p], x_max[p] };
-            Cabana::LinkedCellList<memory_space> linked_cell_list(
+            auto linked_cell_list = Cabana::createLinkedCellList<memory_space>(
                 x, sort_delta, grid_min, grid_max );
+
+            // Setup for neighbor iteration.
+            Kokkos::View<int*, memory_space> per_particle_result( "result",
+                                                                  num_p );
+            auto count_op = KOKKOS_LAMBDA( const int i, const int n )
+            {
+                Kokkos::atomic_add( &per_particle_result( i ), n );
+            };
+            Kokkos::RangePolicy<exec_space> policy( 0, num_p );
 
             // Run tests and time the ensemble
             for ( int t = 0; t < num_run; ++t )
             {
                 // Build the linked cell list.
-                create_timer.start( p );
+                create_timer.start( pid );
                 linked_cell_list.build( x );
-                create_timer.stop( p );
+                create_timer.stop( pid );
+
+                iteration_unsorted_timer.start( pid );
+                Cabana::neighbor_parallel_for(
+                    policy, count_op, linked_cell_list,
+                    Cabana::FirstNeighborsTag(), IterTag(), "test_neighbor" );
+                Kokkos::fence();
+                iteration_unsorted_timer.stop( pid );
 
                 // Sort the particles.
                 sort_timer.start( p );
                 Cabana::permute( linked_cell_list, aosoas[p] );
                 sort_timer.stop( p );
+
+                iteration_sorted_timer.start( pid );
+                Cabana::neighbor_parallel_for(
+                    policy, count_op, linked_cell_list,
+                    Cabana::FirstNeighborsTag(), IterTag(),
+                    "test_neighbor_sorted" );
+                Kokkos::fence();
+                iteration_sorted_timer.stop( pid );
             }
+
+            // Increment the problem id.
+            ++pid;
         }
 
         // Output results.
         outputResults( stream, "problem_size", psizes, create_timer );
+        outputResults( stream, "problem_size", psizes,
+                       iteration_unsorted_timer );
         outputResults( stream, "problem_size", psizes, sort_timer );
+        outputResults( stream, "problem_size", psizes, iteration_sorted_timer );
     }
 }
 

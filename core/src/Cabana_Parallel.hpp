@@ -17,8 +17,10 @@
 #define CABANA_PARALLEL_HPP
 
 #include <Cabana_ExecutionPolicy.hpp>
+#include <Cabana_LinkedCellList.hpp>
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_Types.hpp> // is_accessible_from
+#include <impl/Cabana_CartesianGrid.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Profiling_ScopedRegion.hpp>
@@ -250,7 +252,9 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
-    const FirstNeighborsTag, const SerialOpTag, const std::string& str = "" )
+    const FirstNeighborsTag, const SerialOpTag, const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::ScopedRegion region( "Cabana::neighbor_parallel_for" );
 
@@ -312,7 +316,9 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
-    const SecondNeighborsTag, const SerialOpTag, const std::string& str = "" )
+    const SecondNeighborsTag, const SerialOpTag, const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::ScopedRegion region( "Cabana::neighbor_parallel_for" );
 
@@ -381,7 +387,9 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
-    const FirstNeighborsTag, const TeamOpTag, const std::string& str = "" )
+    const FirstNeighborsTag, const TeamOpTag, const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::ScopedRegion region( "Cabana::neighbor_parallel_for" );
 
@@ -451,7 +459,9 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
-    const SecondNeighborsTag, const TeamOpTag, const std::string& str = "" )
+    const SecondNeighborsTag, const TeamOpTag, const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::ScopedRegion region( "Cabana::neighbor_parallel_for" );
 
@@ -528,7 +538,9 @@ inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
     const SecondNeighborsTag, const TeamVectorOpTag,
-    const std::string& str = "" )
+    const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::ScopedRegion region( "Cabana::neighbor_parallel_for" );
 
@@ -629,7 +641,9 @@ inline void neighbor_parallel_reduce(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
     const FirstNeighborsTag, const SerialOpTag, ReduceType& reduce_val,
-    const std::string& str = "" )
+    const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::ScopedRegion region(
         "Cabana::neighbor_parallel_reduce" );
@@ -698,7 +712,9 @@ inline void neighbor_parallel_reduce(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
     const SecondNeighborsTag, const SerialOpTag, ReduceType& reduce_val,
-    const std::string& str = "" )
+    const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::ScopedRegion region(
         "Cabana::neighbor_parallel_reduce" );
@@ -774,7 +790,9 @@ inline void neighbor_parallel_reduce(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
     const FirstNeighborsTag, const TeamOpTag, ReduceType& reduce_val,
-    const std::string& str = "" )
+    const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::ScopedRegion region(
         "Cabana::neighbor_parallel_reduce" );
@@ -854,7 +872,9 @@ inline void neighbor_parallel_reduce(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
     const SecondNeighborsTag, const TeamOpTag, ReduceType& reduce_val,
-    const std::string& str = "" )
+    const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::ScopedRegion region(
         "Cabana::neighbor_parallel_reduce" );
@@ -939,7 +959,9 @@ inline void neighbor_parallel_reduce(
     const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor, const NeighborListType& list,
     const SecondNeighborsTag, const TeamVectorOpTag, ReduceType& reduce_val,
-    const std::string& str = "" )
+    const std::string& str = "",
+    typename std::enable_if<( !is_linked_cell_list<NeighborListType>::value ),
+                            int>::type* = 0 )
 {
     Kokkos::Profiling::ScopedRegion region(
         "Cabana::neighbor_parallel_reduce" );
@@ -1085,6 +1107,497 @@ for_each_neighbor( const IndexType i, const TeamMemberType team,
                 static_cast<IndexType>(
                     neighbor_list_traits::getNeighbor( list, i, n ) ) );
         } );
+}
+
+//---------------------------------------------------------------------------//
+// Linked Cell Parallel For
+//---------------------------------------------------------------------------//
+namespace Impl
+{
+//! \cond Impl
+/*!
+  \brief Struct for performing a loop over linked cell bins
+  and then the particles in those bins on device
+*/
+template <class WorkTag, class Functor, class Policy, class LinkedCellType,
+          class ViewType>
+struct LinkedCellParallelFor
+{
+    //! index type to be used for _begin
+    using index_type = typename Policy::index_type;
+
+    //! Execution policy
+    Policy _exec_policy;
+    //! Functor to execute
+    Functor _functor;
+    //! Linked cell list
+    LinkedCellType _list;
+
+    //! beginning index of the loop
+    index_type _begin;
+
+    //! discriminator for whether a particle is a neighbor or not
+    NeighborDiscriminator<FullNeighborTag> _discriminator;
+
+    //! Constructor
+    LinkedCellParallelFor( std::string label, Policy exec_policy,
+                           Functor functor, const LinkedCellType& list,
+                           const index_type begin = 0 )
+        : _exec_policy( exec_policy )
+        , _functor( functor )
+        , _list( list )
+        , _begin( begin )
+    {
+        if ( label.empty() )
+            Kokkos::parallel_for( dynamic_cast<const Policy&>( exec_policy ),
+                                  *this );
+        else
+            Kokkos::parallel_for(
+                label, dynamic_cast<const Policy&>( exec_policy ), *this );
+    }
+
+    //! Performs a loop over the particles in neighboring bins in Serial
+    KOKKOS_FUNCTION void operator()( SerialOpTag, const index_type i ) const
+    {
+        int imin, imax, jmin, jmax, kmin, kmax;
+        _list.getStencilCells( _list.getParticleBin( i ), imin, imax, jmin,
+                               jmax, kmin, kmax );
+
+        // Loop over the cell stencil.
+        for ( int gi = imin; gi < imax; ++gi )
+            for ( int gj = jmin; gj < jmax; ++gj )
+                for ( int gk = kmin; gk < kmax; ++gk )
+                {
+                    // Check the particles in this bin to see if they are
+                    // neighbors.
+                    auto offset = _list.binOffset( gi, gj, gk );
+                    auto size = _list.binSize( gi, gj, gk );
+                    for ( std::size_t n = offset; n < offset + size; ++n )
+                    {
+                        // Get the true id of the candidate neighbor.
+                        auto j = _list.getParticle( n );
+
+                        // Avoid self interactions (dummy position args).
+                        if ( _discriminator.isValid( i, 0, 0, 0, j, 0, 0, 0 ) )
+                        {
+                            Impl::functorTagDispatch<WorkTag>( _functor, i, j );
+                        }
+                    }
+                }
+    }
+
+    //! Performs a loop over the particles in neighboring bins in TeamOp
+    KOKKOS_FUNCTION void
+    operator()( TeamOpTag, const typename Policy::member_type& team ) const
+    {
+        index_type i = team.league_rank() + _begin;
+        int imin, imax, jmin, jmax, kmin, kmax;
+        _list.getStencilCells( _list.getParticleBin( i ), imin, imax, jmin,
+                               jmax, kmin, kmax );
+
+        // Loop over the cell stencil.
+        for ( int gi = imin; gi < imax; ++gi )
+            for ( int gj = jmin; gj < jmax; ++gj )
+                for ( int gk = kmin; gk < kmax; ++gk )
+                {
+                    // Check the particles in this bin to see if they
+                    // are neighbors.
+                    auto offset = _list.binOffset( gi, gj, gk );
+                    auto size = _list.binSize( gi, gj, gk );
+                    Kokkos::parallel_for(
+                        Kokkos::TeamThreadRange( team, offset, offset + size ),
+                        [&]( const index_type n )
+                        {
+                            // Get the true id of the candidate neighbor.
+                            auto j = _list.getParticle( n );
+
+                            // Avoid self interactions (dummy position args).
+                            if ( _discriminator.isValid( i, 0, 0, 0, j, 0, 0,
+                                                         0 ) )
+                            {
+                                Impl::functorTagDispatch<WorkTag>( _functor, i,
+                                                                   j );
+                            }
+                        } );
+                }
+    };
+};
+
+/*!
+  \brief Struct for performing a loop over linked cell bins
+  and then the particles in those bins on device
+*/
+template <class WorkTag, class Functor, class Policy, class LinkedCellType,
+          class ViewType, class ReduceType>
+struct LinkedCellParallelReduce
+{
+    //! index type to be used for _begin
+    using index_type = typename Policy::index_type;
+
+    //! Execution policy
+    Policy _exec_policy;
+    //! Functor to execute
+    Functor _functor;
+    //! Linked cell list
+    LinkedCellType _list;
+
+    //! beginning index of the loop
+    index_type _begin;
+
+    //! discriminator for whether a particle is a neighbor or not
+    NeighborDiscriminator<FullNeighborTag> _discriminator;
+
+    //! Constructor
+    LinkedCellParallelReduce( std::string label, Policy exec_policy,
+                              Functor functor, const LinkedCellType& list,
+                              ReduceType& reduce_val,
+                              const index_type begin = 0 )
+        : _exec_policy( exec_policy )
+        , _functor( functor )
+        , _list( list )
+        , _begin( begin )
+    {
+        if ( label.empty() )
+            Kokkos::parallel_reduce( dynamic_cast<const Policy&>( exec_policy ),
+                                     *this, reduce_val );
+        else
+            Kokkos::parallel_reduce( label,
+                                     dynamic_cast<const Policy&>( exec_policy ),
+                                     *this, reduce_val );
+    }
+
+    //! Performs a loop over the particles in neighboring bins in Serial
+    KOKKOS_FUNCTION void operator()( SerialOpTag, const index_type i,
+                                     ReduceType& ival ) const
+    {
+        int imin, imax, jmin, jmax, kmin, kmax;
+        _list.getStencilCells( _list.getParticleBin( i ), imin, imax, jmin,
+                               jmax, kmin, kmax );
+
+        // Loop over the cell stencil.
+        for ( int gi = imin; gi < imax; ++gi )
+            for ( int gj = jmin; gj < jmax; ++gj )
+                for ( int gk = kmin; gk < kmax; ++gk )
+                {
+                    // Check the particles in this bin to see if they are
+                    // neighbors.
+                    auto offset = _list.binOffset( gi, gj, gk );
+                    auto size = _list.binSize( gi, gj, gk );
+                    for ( std::size_t j = offset; j < offset + size; ++j )
+                    {
+                        // Get the true id of the candidate neighbor.
+                        std::size_t jj;
+                        if ( !_list.sorted() )
+                            jj = _list.permutation( j );
+                        else
+                            jj = j + _begin;
+                        // Avoid self interactions (dummy position args).
+                        if ( _discriminator.isValid( i, 0, 0, 0, jj, 0, 0, 0 ) )
+                        {
+                            Impl::functorTagDispatch<WorkTag>( _functor, i, jj,
+                                                               ival );
+                        }
+                    }
+                }
+    }
+
+    //! Performs a loop over the particles in neighboring bins in TeamOp
+    KOKKOS_FUNCTION void operator()( TeamOpTag,
+                                     const typename Policy::member_type& team,
+                                     ReduceType& ival ) const
+    {
+        index_type i = team.league_rank() + _begin;
+        int imin, imax, jmin, jmax, kmin, kmax;
+        _list.getStencilCells( _list.getParticleBin( i ), imin, imax, jmin,
+                               jmax, kmin, kmax );
+
+        // Loop over the cell stencil.
+        for ( int gi = imin; gi < imax; ++gi )
+            for ( int gj = jmin; gj < jmax; ++gj )
+                for ( int gk = kmin; gk < kmax; ++gk )
+                {
+                    // Check the particles in this bin to see if they
+                    // are neighbors.
+                    auto offset = _list.binOffset( gi, gj, gk );
+                    auto size = _list.binSize( gi, gj, gk );
+                    Kokkos::parallel_for(
+                        Kokkos::TeamThreadRange( team, offset, offset + size ),
+                        [&]( const index_type j )
+                        {
+                            // Get the true id of the candidate neighbor.
+                            std::size_t jj;
+                            if ( !_list.sorted() )
+                                jj = _list.permutation( j );
+                            else
+                                jj = j + _begin;
+                            // Avoid self interactions (dummy position args).
+                            if ( _discriminator.isValid( i, 0, 0, 0, jj, 0, 0,
+                                                         0 ) )
+                            {
+                                Impl::functorTagDispatch<WorkTag>( _functor, i,
+                                                                   jj, ival );
+                            }
+                        } );
+                }
+    };
+};
+//! \endcond
+} // namespace Impl
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Execute functor in parallel according to the execution policy over
+  particles with thread-local serial loops over linked cell list bins and
+  particle first neighbors in those bins.
+
+  \tparam FunctorType The functor type to execute.
+  \tparam NeighborListType The neighbor list type.
+  \tparam ExecParams The Kokkos range policy parameters.
+
+  \param exec_policy The policy over which to execute the functor.
+  \param functor The functor to execute in parallel
+  \param list The linked cell list over which to execute neighbor operations.
+  \note FirstNeighborsTag Tag indicating operations over particle first
+  neighbors.
+  \note SerialOpTag Tag indicating a serial loop strategy over neighbors.
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
+
+  A "functor" is a class containing the function to execute in parallel, data
+  needed for that execution, and an optional \c execution_space typedef.  Here
+  is an example functor for neighbor parallel_for:
+
+  \code
+  class FunctorType {
+  public:
+  typedef  ...  execution_space ;
+  void operator() ( const int particle_index, const int neighbor_index ) const ;
+  };
+  \endcode
+
+  In the above example, \c Index is a Cabana index to a given AoSoA element
+  for a particle and its neighbor. Its <tt>operator()</tt> method defines the
+  operation to parallelize, over the range of indices
+  <tt>idx=[begin,end]</tt>.  This compares to a single iteration \c idx of a
+  \c for loop.
+*/
+
+template <class FunctorType, class LinkedCellType, class... ExecParameters>
+inline void neighbor_parallel_for(
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor, const LinkedCellType& list,
+    const FirstNeighborsTag, const SerialOpTag, const std::string& str = "",
+    typename std::enable_if<( is_linked_cell_list<LinkedCellType>::value ),
+                            int>::type* = 0 )
+{
+    using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+    using execution_space =
+        typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
+
+    using memory_space = typename LinkedCellType::memory_space;
+
+    auto begin = exec_policy.begin();
+    auto end = exec_policy.end();
+    // Cannot iterate over range that was not binned.
+    assert( begin == list.getParticleBegin() );
+    assert( end == list.getParticleEnd() );
+
+    using linear_policy_type =
+        Kokkos::RangePolicy<SerialOpTag, execution_space>;
+    linear_policy_type linear_exec_policy( begin, end );
+
+    static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
+
+    Impl::LinkedCellParallelFor<work_tag, FunctorType, linear_policy_type,
+                                LinkedCellType,
+                                typename LinkedCellType::CountView>
+        lcl_par( str, linear_exec_policy, functor, list, exec_policy.begin() );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Execute functor in parallel according to the execution policy over
+  particles with thread-local serial loops over linked cell list bins and
+  team threading over particle first neighbors in those bins.
+
+  \tparam FunctorType The functor type to execute.
+  \tparam NeighborListType The neighbor list type.
+  \tparam ExecParams The Kokkos range policy parameters.
+
+  \param exec_policy The policy over which to execute the functor.
+  \param functor The functor to execute in parallel
+  \param list The linked cell list over which to execute neighbor operations.
+  \note FirstNeighborsTag Tag indicating operations over particle first
+  neighbors.
+  \note TeamOpTag Tag indicating a team parallel strategy over particle
+  neighbors.
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
+*/
+
+template <class FunctorType, class LinkedCellType, class... ExecParameters>
+inline void neighbor_parallel_for(
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor, const LinkedCellType& list,
+    const FirstNeighborsTag, const TeamOpTag, const std::string& str = "",
+    typename std::enable_if<( is_linked_cell_list<LinkedCellType>::value ),
+                            int>::type* = 0 )
+{
+    using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+    using execution_space =
+        typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
+
+    using team_policy_type =
+        Kokkos::TeamPolicy<TeamOpTag, execution_space,
+                           Kokkos::Schedule<Kokkos::Dynamic>>;
+    team_policy_type team_policy( exec_policy.end() - exec_policy.begin(),
+                                  Kokkos::AUTO );
+
+    using memory_space = typename LinkedCellType::memory_space;
+
+    static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
+
+    // Cannot iterate over range that was not binned.
+    assert( exec_policy.begin() == list.getParticleBegin() );
+    assert( exec_policy.end() == list.getParticleEnd() );
+
+    Impl::LinkedCellParallelFor<work_tag, FunctorType, team_policy_type,
+                                LinkedCellType,
+                                typename LinkedCellType::CountView>
+        lcl_par( str, team_policy, functor, list, exec_policy.begin() );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Execute functor in parallel according to the execution policy over
+  particles with thread-local serial loops over linked cell list bins and
+  particle first neighbors in those bins.
+
+  \tparam FunctorType The functor type to execute.
+  \tparam NeighborListType The neighbor list type.
+  \tparam ExecParams The Kokkos range policy parameters.
+
+  \param exec_policy The policy over which to execute the functor.
+  \param functor The functor to execute in parallel
+  \param list The linked cell list over which to execute neighbor operations.
+  \note FirstNeighborsTag Tag indicating operations over particle first
+  neighbors.
+  \note SerialOpTag Tag indicating a serial loop strategy over neighbors.
+  \param reduce_val the value begin reduced
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
+
+  A "functor" is a class containing the function to execute in parallel, data
+  needed for that execution, and an optional \c execution_space typedef.  Here
+  is an example functor for neighbor parallel_for:
+
+  \code
+  class FunctorType {
+  public:
+  typedef  ...  execution_space ;
+  void operator() ( const int particle_index, const int neighbor_index ) const ;
+  };
+  \endcode
+
+  In the above example, \c Index is a Cabana index to a given AoSoA element
+  for a particle and its neighbor. Its <tt>operator()</tt> method defines the
+  operation to parallelize, over the range of indices
+  <tt>idx=[begin,end]</tt>.  This compares to a single iteration \c idx of a
+  \c for loop.
+*/
+template <class FunctorType, class LinkedCellType, class ReduceType,
+          class... ExecParameters>
+inline void neighbor_parallel_reduce(
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor, const LinkedCellType& list,
+    const FirstNeighborsTag, const SerialOpTag, ReduceType& reduce_val,
+    const std::string& str = "",
+    typename std::enable_if<( is_linked_cell_list<LinkedCellType>::value ),
+                            int>::type* = 0 )
+{
+    using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+    using execution_space =
+        typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
+
+    using memory_space = typename LinkedCellType::memory_space;
+
+    auto begin = exec_policy.begin();
+    auto end = exec_policy.end();
+    // Cannot iterate over range that was not binned.
+    assert( begin == list.getParticleBegin() );
+    assert( end == list.getParticleEnd() );
+
+    using linear_policy_type =
+        Kokkos::RangePolicy<SerialOpTag, execution_space>;
+    linear_policy_type linear_exec_policy( begin, end );
+
+    static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
+
+    Impl::LinkedCellParallelReduce<
+        work_tag, FunctorType, linear_policy_type, LinkedCellType,
+        typename LinkedCellType::CountView, ReduceType>
+        lcl_par( str, linear_exec_policy, functor, list, reduce_val,
+                 exec_policy.begin() );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Execute functor in parallel according to the execution policy over
+  particles with thread-local serial loops over linked cell list bins and
+  team threading over particle first neighbors in those bins.
+
+  \tparam FunctorType The functor type to execute.
+  \tparam NeighborListType The neighbor list type.
+  \tparam ExecParams The Kokkos range policy parameters.
+
+  \param exec_policy The policy over which to execute the functor.
+  \param functor The functor to execute in parallel
+  \param list The linked cell list over which to execute neighbor operations.
+  \note FirstNeighborsTag Tag indicating operations over particle first
+  neighbors.
+  \note TeamOpTag Tag indicating a team parallel strategy over particle
+  neighbors.
+  \param reduce_val the value begin reduced
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
+*/
+template <class FunctorType, class LinkedCellType, class ReduceType,
+          class... ExecParameters>
+inline void neighbor_parallel_reduce(
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor, const LinkedCellType& list,
+    const FirstNeighborsTag, const TeamOpTag, ReduceType& reduce_val,
+    const std::string& str = "",
+    typename std::enable_if<( is_linked_cell_list<LinkedCellType>::value ),
+                            int>::type* = 0 )
+{
+    using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+    using execution_space =
+        typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
+
+    using team_policy_type =
+        Kokkos::TeamPolicy<TeamOpTag, execution_space,
+                           Kokkos::Schedule<Kokkos::Dynamic>>;
+    team_policy_type team_policy( exec_policy.end() - exec_policy.begin(),
+                                  Kokkos::AUTO );
+
+    using memory_space = typename LinkedCellType::memory_space;
+
+    static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
+
+    // Cannot iterate over range that was not binned.
+    assert( exec_policy.begin() == list.getParticleBegin() );
+    assert( exec_policy.end() == list.getParticleEnd() );
+
+    Impl::LinkedCellParallelReduce<
+        work_tag, FunctorType, team_policy_type, LinkedCellType,
+        typename LinkedCellType::CountView, ReduceType>
+        lcl_par( str, team_policy, functor, list, reduce_val,
+                 exec_policy.begin() );
 }
 
 } // end namespace Cabana
