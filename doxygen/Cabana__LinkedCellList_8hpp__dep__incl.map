@@ -1,8 +1,12 @@
 <map id="core/src/Cabana_LinkedCellList.hpp" name="core/src/Cabana_LinkedCellList.hpp">
-<area shape="rect" id="Node000001" title="Linked cell list binning and sorting." alt="" coords="5,5,195,54"/>
-<area shape="rect" id="Node000002" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="8,180,192,209"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="71,68,56,99,53,115,56,131,70,157,87,177,83,181,65,160,51,133,48,115,51,97,66,65"/>
-<area shape="rect" id="Node000003" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="65,102,279,132"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="132,64,162,100,158,103,128,68"/>
-<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="150,145,115,181,112,177,146,141"/>
+<area shape="rect" id="Node000001" title="Linked cell list binning (spatial sorting) and neighbor iteration." alt="" coords="49,5,238,54"/>
+<area shape="rect" id="Node000002" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="5,257,189,287"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="73,65,52,82,35,103,28,123,27,145,32,166,40,187,63,226,86,255,82,258,58,229,35,190,26,168,22,145,23,122,31,101,48,78,70,61"/>
+<area shape="rect" id="Node000003" href="$Cabana__Parallel_8hpp.html" title="SIMD and neighbor extension of Kokkos parallel iteration." alt="" coords="45,102,243,132"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="146,70,146,101,141,101,141,70"/>
+<area shape="rect" id="Node000004" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="134,180,348,209"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="218,61,240,78,257,101,263,122,262,143,251,180,246,178,257,142,258,122,252,103,236,82,214,65"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="136,147,125,180,103,258,98,256,120,179,131,146"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="176,139,224,177,221,181,172,144"/>
+<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="202,219,125,259,123,254,199,215"/>
 </map>

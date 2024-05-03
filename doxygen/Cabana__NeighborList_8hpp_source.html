@@ -120,119 +120,163 @@ $(function() { codefold.init(0); });
 </div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> NeighborListType&gt;</div>
-<div class="foldopen" id="foldopen00058" data-start="{" data-end="};">
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList.html">   58</a></span><span class="keyword">class </span><a class="code hl_class" href="classCabana_1_1NeighborList.html">NeighborList</a></div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>{</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList.html#a1f8c5ca4861b5985c4af4d8b6747fb30">   62</a></span>    <span class="keyword">using </span><a class="code hl_typedef" href="classCabana_1_1NeighborList.html#a1f8c5ca4861b5985c4af4d8b6747fb30">memory_space</a> = <span class="keyword">typename</span> NeighborListType::memory_space;</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList.html#aafb4de42fd30a56327eda4e6230d4005">   66</a></span>    <span class="keyword">static</span> std::size_t <a class="code hl_function" href="classCabana_1_1NeighborList.html#aafb4de42fd30a56327eda4e6230d4005">totalNeighbor</a>( <span class="keyword">const</span> NeighborListType&amp; list );</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList.html#ad87ea2693460085c2756ec71d8fcfced">   70</a></span>    <span class="keyword">static</span> std::size_t <a class="code hl_function" href="classCabana_1_1NeighborList.html#ad87ea2693460085c2756ec71d8fcfced">maxNeighbor</a>( <span class="keyword">const</span> NeighborListType&amp; list );</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList.html#a7b71b665e7fcb7da636dff8637fe1928">   74</a></span>    <span class="keyword">static</span> std::size_t <a class="code hl_function" href="classCabana_1_1NeighborList.html#a7b71b665e7fcb7da636dff8637fe1928">numNeighbor</a>( <span class="keyword">const</span> NeighborListType&amp; list,</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>                                    <span class="keyword">const</span> std::size_t particle_index );</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList.html#a86969ce8c6d1608b4b8791601858f5a1">   79</a></span>    <span class="keyword">static</span> std::size_t <a class="code hl_function" href="classCabana_1_1NeighborList.html#a86969ce8c6d1608b4b8791601858f5a1">getNeighbor</a>( <span class="keyword">const</span> NeighborListType&amp; list,</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>                                    <span class="keyword">const</span> std::size_t particle_index,</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>                                    <span class="keyword">const</span> std::size_t neighbor_index );</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList.html#a5ab550fae8b7d4ae587f599cd15c1a94">   85</a></span>    std::size_t <a class="code hl_function" href="classCabana_1_1NeighborList.html#a5ab550fae8b7d4ae587f599cd15c1a94">setNeighbor</a>( NeighborListType&amp; list,</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>                             <span class="keyword">const</span> std::size_t particle_index,</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>                             <span class="keyword">const</span> std::size_t neighbor_index );</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>};</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Tag&gt;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborDiscriminator.html">   55</a></span><span class="keyword">class </span><a class="code hl_class" href="classCabana_1_1NeighborDiscriminator.html">NeighborDiscriminator</a>;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="keyword">template</span> &lt;&gt;</div>
+<div class="foldopen" id="foldopen00059" data-start="{" data-end="};">
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborDiscriminator_3_01FullNeighborTag_01_4.html">   59</a></span><span class="keyword">class </span><a class="code hl_class" href="classCabana_1_1NeighborDiscriminator.html">NeighborDiscriminator</a>&lt;<a class="code hl_class" href="classCabana_1_1FullNeighborTag.html">FullNeighborTag</a>&gt;</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>{</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    KOKKOS_INLINE_FUNCTION</div>
+<div class="foldopen" id="foldopen00071" data-start="{" data-end="}">
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborDiscriminator_3_01FullNeighborTag_01_4.html#a6c1abfa3dd7e4ade467aca5b361acbf8">   71</a></span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="classCabana_1_1NeighborDiscriminator_3_01FullNeighborTag_01_4.html#a6c1abfa3dd7e4ade467aca5b361acbf8">isValid</a>( <span class="keyword">const</span> std::size_t p, <span class="keyword">const</span> <span class="keywordtype">double</span>, <span class="keyword">const</span> <span class="keywordtype">double</span>,</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>                         <span class="keyword">const</span> <span class="keywordtype">double</span>, <span class="keyword">const</span> std::size_t n, <span class="keyword">const</span> <span class="keywordtype">double</span>,</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>                         <span class="keyword">const</span> <span class="keywordtype">double</span>, <span class="keyword">const</span> <span class="keywordtype">double</span> )</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    {</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <span class="keywordflow">return</span> ( p != n );</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    }</div>
 </div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span><span class="keyword">namespace </span>Impl</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>{</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> ListType&gt;</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>KOKKOS_INLINE_FUNCTION std::size_t</div>
-<div class="foldopen" id="foldopen00097" data-start="{" data-end="}">
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno"><a class="line" href="Cabana__NeighborList_8hpp.html#aa796f187077b30ff335b4b4fcbade897">   97</a></span><a class="code hl_function" href="Cabana__NeighborList_8hpp.html#aa796f187077b30ff335b4b4fcbade897">totalNeighbor</a>( <span class="keyword">const</span> ListType&amp; list, <span class="keyword">const</span> std::size_t num_particles )</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>{</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    std::size_t total_n = 0;</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    <span class="comment">// Sum neighbors across all particles.</span></div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    <span class="keywordflow">for</span> ( std::size_t p = 0; p &lt; num_particles; p++ )</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>        total_n += <a class="code hl_class" href="classCabana_1_1NeighborList.html">NeighborList&lt;ListType&gt;::numNeighbor</a>( list, p );</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    <span class="keywordflow">return</span> total_n;</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>}</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>};</div>
 </div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> ListType&gt;</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>KOKKOS_INLINE_FUNCTION std::size_t</div>
-<div class="foldopen" id="foldopen00109" data-start="{" data-end="}">
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno"><a class="line" href="Cabana__NeighborList_8hpp.html#aa582134430b66955c7eddecd6619adf1">  109</a></span><a class="code hl_function" href="Cabana__NeighborList_8hpp.html#aa582134430b66955c7eddecd6619adf1">maxNeighbor</a>( <span class="keyword">const</span> ListType&amp; list, <span class="keyword">const</span> std::size_t num_particles )</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>{</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    std::size_t max_n = 0;</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    <span class="keywordflow">for</span> ( std::size_t p = 0; p &lt; num_particles; p++ )</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>        <span class="keywordflow">if</span> ( <a class="code hl_class" href="classCabana_1_1NeighborList.html">NeighborList&lt;ListType&gt;::numNeighbor</a>( list, p ) &gt; max_n )</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>            max_n = <a class="code hl_function" href="classCabana_1_1NeighborList.html#a7b71b665e7fcb7da636dff8637fe1928">NeighborList&lt;ListType&gt;::numNeighbor</a>( list, p );</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    <span class="keywordflow">return</span> max_n;</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>}</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="keyword">template</span> &lt;&gt;</div>
+<div class="foldopen" id="foldopen00081" data-start="{" data-end="};">
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborDiscriminator_3_01HalfNeighborTag_01_4.html">   81</a></span><span class="keyword">class </span><a class="code hl_class" href="classCabana_1_1NeighborDiscriminator.html">NeighborDiscriminator</a>&lt;<a class="code hl_class" href="classCabana_1_1HalfNeighborTag.html">HalfNeighborTag</a>&gt;</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>{</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>  <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    KOKKOS_INLINE_FUNCTION <span class="keyword">static</span> <span class="keywordtype">bool</span></div>
+<div class="foldopen" id="foldopen00096" data-start="{" data-end="}">
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborDiscriminator_3_01HalfNeighborTag_01_4.html#abd0c3093be36740a2f19754d9662cedd">   96</a></span>    <a class="code hl_function" href="classCabana_1_1NeighborDiscriminator_3_01HalfNeighborTag_01_4.html#abd0c3093be36740a2f19754d9662cedd">isValid</a>( <span class="keyword">const</span> std::size_t p, <span class="keyword">const</span> <span class="keywordtype">double</span> xp, <span class="keyword">const</span> <span class="keywordtype">double</span> yp,</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>             <span class="keyword">const</span> <span class="keywordtype">double</span> zp, <span class="keyword">const</span> std::size_t n, <span class="keyword">const</span> <span class="keywordtype">double</span> xn,</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>             <span class="keyword">const</span> <span class="keywordtype">double</span> yn, <span class="keyword">const</span> <span class="keywordtype">double</span> zn )</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    {</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>        <span class="keywordflow">return</span> ( ( p != n ) &amp;&amp;</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>                 ( ( xn &gt; xp ) ||</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>                   ( ( xn == xp ) &amp;&amp;</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>                     ( ( yn &gt; yp ) || ( ( yn == yp ) &amp;&amp; ( zn &gt; zp ) ) ) ) ) );</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    }</div>
 </div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>} <span class="comment">// namespace Impl</span></div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>};</div>
+</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> NeighborListType&gt;</div>
+<div class="foldopen" id="foldopen00113" data-start="{" data-end="};">
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList.html">  113</a></span><span class="keyword">class </span><a class="code hl_class" href="classCabana_1_1NeighborList.html">NeighborList</a></div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>{</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>  <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList.html#a1f8c5ca4861b5985c4af4d8b6747fb30">  117</a></span>    <span class="keyword">using </span><a class="code hl_typedef" href="classCabana_1_1NeighborList.html#a1f8c5ca4861b5985c4af4d8b6747fb30">memory_space</a> = <span class="keyword">typename</span> NeighborListType::memory_space;</div>
 <div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> ExecutionSpace, <span class="keyword">class</span> ListType&gt;</div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>Kokkos::View&lt;int* [2], typename ListType::memory_space&gt;</div>
-<div class="foldopen" id="foldopen00129" data-start="{" data-end="}">
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a70cddd6233e137bfbe2ca4773e565e5d">  129</a></span><a class="code hl_function" href="namespaceCabana.html#a70cddd6233e137bfbe2ca4773e565e5d">neighborHistogram</a>( ExecutionSpace exec_space, <span class="keyword">const</span> std::size_t num_particles,</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>                   <span class="keyword">const</span> ListType&amp; list, <span class="keyword">const</span> <span class="keywordtype">int</span> num_bin )</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>{</div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>    <span class="comment">// Allocate View of neighbors per particle</span></div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>    <span class="keyword">auto</span> num_neigh = Kokkos::View&lt;int*, typename ListType::memory_space&gt;(</div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>        <span class="stringliteral">&quot;particle_count&quot;</span>, num_particles );</div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span> </div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    <span class="comment">// Extract from neighbor list interface.</span></div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    <span class="keyword">auto</span> extract_functor = KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> p )</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>    {</div>
-<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>        num_neigh( p ) = <a class="code hl_function" href="classCabana_1_1NeighborList.html#a7b71b665e7fcb7da636dff8637fe1928">NeighborList&lt;ListType&gt;::numNeighbor</a>( list, p );</div>
-<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>    };</div>
-<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>    Kokkos::RangePolicy&lt;ExecutionSpace&gt; particle_policy( exec_space, 0,</div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>                                                         num_particles );</div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>    Kokkos::parallel_for( particle_policy, extract_functor );</div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>    Kokkos::fence();</div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span> </div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    <span class="keyword">auto</span> bin_data = <a class="code hl_function" href="namespaceCabana.html#a07d805b955e236c9c87c50f76c4dde7c">Cabana::binByKey</a>( num_neigh, num_bin );</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span> </div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    <span class="keyword">auto</span> histogram = Kokkos::View&lt;int* [2], typename ListType::memory_space&gt;(</div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>        <span class="stringliteral">&quot;particle_count&quot;</span>, num_bin, 2 );</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    <span class="keyword">auto</span> histogram_functor = KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> b )</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    {</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>        <span class="keywordtype">int</span> max_neigh = <a class="code hl_function" href="classCabana_1_1NeighborList.html#ad87ea2693460085c2756ec71d8fcfced">NeighborList&lt;ListType&gt;::maxNeighbor</a>( list );</div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>        <span class="keywordtype">double</span> bin_width =</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>            <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>( max_neigh ) / <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>( num_bin );</div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>        <span class="keywordflow">if</span> ( num_bin &gt; max_neigh )</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>            bin_width = 1;</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>        <span class="comment">// Wait to cast back to int to get the actual bin edge.</span></div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>        histogram( b, 0 ) = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>( ( b + 1 ) * bin_width );</div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>        histogram( b, 1 ) = bin_data.binSize( b );</div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    };</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    Kokkos::RangePolicy&lt;ExecutionSpace&gt; bin_policy( exec_space, 0, num_bin );</div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    Kokkos::parallel_for( bin_policy, histogram_functor );</div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    Kokkos::fence();</div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span> </div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>    <span class="keywordflow">return</span> histogram;</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>}</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>    KOKKOS_INLINE_FUNCTION</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList.html#aafb4de42fd30a56327eda4e6230d4005">  121</a></span>    <span class="keyword">static</span> std::size_t <a class="code hl_function" href="classCabana_1_1NeighborList.html#aafb4de42fd30a56327eda4e6230d4005">totalNeighbor</a>( <span class="keyword">const</span> NeighborListType&amp; list );</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>    KOKKOS_INLINE_FUNCTION</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList.html#ad87ea2693460085c2756ec71d8fcfced">  125</a></span>    <span class="keyword">static</span> std::size_t <a class="code hl_function" href="classCabana_1_1NeighborList.html#ad87ea2693460085c2756ec71d8fcfced">maxNeighbor</a>( <span class="keyword">const</span> NeighborListType&amp; list );</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span> </div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    KOKKOS_INLINE_FUNCTION</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList.html#a7b71b665e7fcb7da636dff8637fe1928">  129</a></span>    <span class="keyword">static</span> std::size_t <a class="code hl_function" href="classCabana_1_1NeighborList.html#a7b71b665e7fcb7da636dff8637fe1928">numNeighbor</a>( <span class="keyword">const</span> NeighborListType&amp; list,</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>                                    <span class="keyword">const</span> std::size_t particle_index );</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span> </div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>    KOKKOS_INLINE_FUNCTION</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList.html#a86969ce8c6d1608b4b8791601858f5a1">  134</a></span>    <span class="keyword">static</span> std::size_t <a class="code hl_function" href="classCabana_1_1NeighborList.html#a86969ce8c6d1608b4b8791601858f5a1">getNeighbor</a>( <span class="keyword">const</span> NeighborListType&amp; list,</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>                                    <span class="keyword">const</span> std::size_t particle_index,</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>                                    <span class="keyword">const</span> std::size_t neighbor_index );</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span> </div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>    KOKKOS_INLINE_FUNCTION</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList.html#a5ab550fae8b7d4ae587f599cd15c1a94">  140</a></span>    std::size_t <a class="code hl_function" href="classCabana_1_1NeighborList.html#a5ab550fae8b7d4ae587f599cd15c1a94">setNeighbor</a>( NeighborListType&amp; list,</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>                             <span class="keyword">const</span> std::size_t particle_index,</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>                             <span class="keyword">const</span> std::size_t neighbor_index );</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>};</div>
 </div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>} <span class="comment">// end namespace Cabana</span></div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span> </div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span><span class="preprocessor">#endif </span><span class="comment">// end CABANA_NEIGHBORLIST_HPP</span></div>
-<div class="ttc" id="aCabana__NeighborList_8hpp_html_aa582134430b66955c7eddecd6619adf1"><div class="ttname"><a href="Cabana__NeighborList_8hpp.html#aa582134430b66955c7eddecd6619adf1">Cabana::Impl::maxNeighbor</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION std::size_t maxNeighbor(const ListType &amp;list, const std::size_t num_particles)</div><div class="ttdoc">Iterate to find the maximum number of neighbors.</div><div class="ttdef"><b>Definition</b> Cabana_NeighborList.hpp:109</div></div>
-<div class="ttc" id="aCabana__NeighborList_8hpp_html_aa796f187077b30ff335b4b4fcbade897"><div class="ttname"><a href="Cabana__NeighborList_8hpp.html#aa796f187077b30ff335b4b4fcbade897">Cabana::Impl::totalNeighbor</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION std::size_t totalNeighbor(const ListType &amp;list, const std::size_t num_particles)</div><div class="ttdoc">Iterate to get the total number of neighbors.</div><div class="ttdef"><b>Definition</b> Cabana_NeighborList.hpp:97</div></div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span> </div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span> </div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span><span class="keyword">namespace </span>Impl</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>{</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> ListType&gt;</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>KOKKOS_INLINE_FUNCTION std::size_t</div>
+<div class="foldopen" id="foldopen00152" data-start="{" data-end="}">
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno"><a class="line" href="Cabana__NeighborList_8hpp.html#aa796f187077b30ff335b4b4fcbade897">  152</a></span><a class="code hl_function" href="Cabana__NeighborList_8hpp.html#aa796f187077b30ff335b4b4fcbade897">totalNeighbor</a>( <span class="keyword">const</span> ListType&amp; list, <span class="keyword">const</span> std::size_t num_particles )</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>{</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    std::size_t total_n = 0;</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>    <span class="comment">// Sum neighbors across all particles.</span></div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    <span class="keywordflow">for</span> ( std::size_t p = 0; p &lt; num_particles; p++ )</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>        total_n += <a class="code hl_class" href="classCabana_1_1NeighborList.html">NeighborList&lt;ListType&gt;::numNeighbor</a>( list, p );</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    <span class="keywordflow">return</span> total_n;</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>}</div>
+</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span> </div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> ListType&gt;</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>KOKKOS_INLINE_FUNCTION std::size_t</div>
+<div class="foldopen" id="foldopen00164" data-start="{" data-end="}">
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno"><a class="line" href="Cabana__NeighborList_8hpp.html#aa582134430b66955c7eddecd6619adf1">  164</a></span><a class="code hl_function" href="Cabana__NeighborList_8hpp.html#aa582134430b66955c7eddecd6619adf1">maxNeighbor</a>( <span class="keyword">const</span> ListType&amp; list, <span class="keyword">const</span> std::size_t num_particles )</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>{</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    std::size_t max_n = 0;</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>    <span class="keywordflow">for</span> ( std::size_t p = 0; p &lt; num_particles; p++ )</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>        <span class="keywordflow">if</span> ( <a class="code hl_class" href="classCabana_1_1NeighborList.html">NeighborList&lt;ListType&gt;::numNeighbor</a>( list, p ) &gt; max_n )</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>            max_n = <a class="code hl_function" href="classCabana_1_1NeighborList.html#a7b71b665e7fcb7da636dff8637fe1928">NeighborList&lt;ListType&gt;::numNeighbor</a>( list, p );</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    <span class="keywordflow">return</span> max_n;</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>}</div>
+</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>} <span class="comment">// namespace Impl</span></div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span> </div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> ExecutionSpace, <span class="keyword">class</span> ListType&gt;</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>Kokkos::View&lt;int* [2], typename ListType::memory_space&gt;</div>
+<div class="foldopen" id="foldopen00184" data-start="{" data-end="}">
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a70cddd6233e137bfbe2ca4773e565e5d">  184</a></span><a class="code hl_function" href="namespaceCabana.html#a70cddd6233e137bfbe2ca4773e565e5d">neighborHistogram</a>( ExecutionSpace exec_space, <span class="keyword">const</span> std::size_t num_particles,</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>                   <span class="keyword">const</span> ListType&amp; list, <span class="keyword">const</span> <span class="keywordtype">int</span> num_bin )</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>{</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>    <span class="comment">// Allocate View of neighbors per particle</span></div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>    <span class="keyword">auto</span> num_neigh = Kokkos::View&lt;int*, typename ListType::memory_space&gt;(</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>        <span class="stringliteral">&quot;particle_count&quot;</span>, num_particles );</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span> </div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>    <span class="comment">// Extract from neighbor list interface.</span></div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>    <span class="keyword">auto</span> extract_functor = KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> p )</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>    {</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>        num_neigh( p ) = <a class="code hl_function" href="classCabana_1_1NeighborList.html#a7b71b665e7fcb7da636dff8637fe1928">NeighborList&lt;ListType&gt;::numNeighbor</a>( list, p );</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>    };</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>    Kokkos::RangePolicy&lt;ExecutionSpace&gt; particle_policy( exec_space, 0,</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>                                                         num_particles );</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>    Kokkos::parallel_for( particle_policy, extract_functor );</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>    Kokkos::fence();</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span> </div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>    <span class="keyword">auto</span> bin_data = <a class="code hl_function" href="namespaceCabana.html#a07d805b955e236c9c87c50f76c4dde7c">Cabana::binByKey</a>( num_neigh, num_bin );</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span> </div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>    <span class="keyword">auto</span> histogram = Kokkos::View&lt;int* [2], typename ListType::memory_space&gt;(</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>        <span class="stringliteral">&quot;particle_count&quot;</span>, num_bin, 2 );</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>    <span class="keyword">auto</span> histogram_functor = KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> b )</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    {</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        <span class="keywordtype">int</span> max_neigh = <a class="code hl_function" href="classCabana_1_1NeighborList.html#ad87ea2693460085c2756ec71d8fcfced">NeighborList&lt;ListType&gt;::maxNeighbor</a>( list );</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>        <span class="keywordtype">double</span> bin_width =</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>            <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>( max_neigh ) / <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>( num_bin );</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>        <span class="keywordflow">if</span> ( num_bin &gt; max_neigh )</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>            bin_width = 1;</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>        <span class="comment">// Wait to cast back to int to get the actual bin edge.</span></div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>        histogram( b, 0 ) = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>( ( b + 1 ) * bin_width );</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>        histogram( b, 1 ) = bin_data.binSize( b );</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    };</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>    Kokkos::RangePolicy&lt;ExecutionSpace&gt; bin_policy( exec_space, 0, num_bin );</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>    Kokkos::parallel_for( bin_policy, histogram_functor );</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>    Kokkos::fence();</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span> </div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    <span class="keywordflow">return</span> histogram;</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>}</div>
+</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span> </div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>} <span class="comment">// end namespace Cabana</span></div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span> </div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span><span class="preprocessor">#endif </span><span class="comment">// end CABANA_NEIGHBORLIST_HPP</span></div>
+<div class="ttc" id="aCabana__NeighborList_8hpp_html_aa582134430b66955c7eddecd6619adf1"><div class="ttname"><a href="Cabana__NeighborList_8hpp.html#aa582134430b66955c7eddecd6619adf1">Cabana::Impl::maxNeighbor</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION std::size_t maxNeighbor(const ListType &amp;list, const std::size_t num_particles)</div><div class="ttdoc">Iterate to find the maximum number of neighbors.</div><div class="ttdef"><b>Definition</b> Cabana_NeighborList.hpp:164</div></div>
+<div class="ttc" id="aCabana__NeighborList_8hpp_html_aa796f187077b30ff335b4b4fcbade897"><div class="ttname"><a href="Cabana__NeighborList_8hpp.html#aa796f187077b30ff335b4b4fcbade897">Cabana::Impl::totalNeighbor</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION std::size_t totalNeighbor(const ListType &amp;list, const std::size_t num_particles)</div><div class="ttdoc">Iterate to get the total number of neighbors.</div><div class="ttdef"><b>Definition</b> Cabana_NeighborList.hpp:152</div></div>
 <div class="ttc" id="aCabana__Sort_8hpp_html"><div class="ttname"><a href="Cabana__Sort_8hpp.html">Cabana_Sort.hpp</a></div><div class="ttdoc">Sorting and binning built on Kokkos BinSort.</div></div>
 <div class="ttc" id="aclassCabana_1_1FullNeighborTag_html"><div class="ttname"><a href="classCabana_1_1FullNeighborTag.html">Cabana::FullNeighborTag</a></div><div class="ttdoc">Tag for full neighbor lists.</div><div class="ttdef"><b>Definition</b> Cabana_NeighborList.hpp:36</div></div>
 <div class="ttc" id="aclassCabana_1_1HalfNeighborTag_html"><div class="ttname"><a href="classCabana_1_1HalfNeighborTag.html">Cabana::HalfNeighborTag</a></div><div class="ttdoc">Tag for half neighbor lists.</div><div class="ttdef"><b>Definition</b> Cabana_NeighborList.hpp:49</div></div>
-<div class="ttc" id="aclassCabana_1_1NeighborList_html"><div class="ttname"><a href="classCabana_1_1NeighborList.html">Cabana::NeighborList</a></div><div class="ttdoc">Neighbor list interface. Provides an interface callable at the functor level that gives access to nei...</div><div class="ttdef"><b>Definition</b> Cabana_NeighborList.hpp:59</div></div>
-<div class="ttc" id="aclassCabana_1_1NeighborList_html_a1f8c5ca4861b5985c4af4d8b6747fb30"><div class="ttname"><a href="classCabana_1_1NeighborList.html#a1f8c5ca4861b5985c4af4d8b6747fb30">Cabana::NeighborList::memory_space</a></div><div class="ttdeci">typename NeighborListType::memory_space memory_space</div><div class="ttdoc">Kokkos memory space.</div><div class="ttdef"><b>Definition</b> Cabana_NeighborList.hpp:62</div></div>
+<div class="ttc" id="aclassCabana_1_1NeighborDiscriminator_3_01FullNeighborTag_01_4_html_a6c1abfa3dd7e4ade467aca5b361acbf8"><div class="ttname"><a href="classCabana_1_1NeighborDiscriminator_3_01FullNeighborTag_01_4.html#a6c1abfa3dd7e4ade467aca5b361acbf8">Cabana::NeighborDiscriminator&lt; FullNeighborTag &gt;::isValid</a></div><div class="ttdeci">static KOKKOS_INLINE_FUNCTION bool isValid(const std::size_t p, const double, const double, const double, const std::size_t n, const double, const double, const double)</div><div class="ttdoc">Check whether neighbor pair is valid.</div><div class="ttdef"><b>Definition</b> Cabana_NeighborList.hpp:71</div></div>
+<div class="ttc" id="aclassCabana_1_1NeighborDiscriminator_3_01HalfNeighborTag_01_4_html_abd0c3093be36740a2f19754d9662cedd"><div class="ttname"><a href="classCabana_1_1NeighborDiscriminator_3_01HalfNeighborTag_01_4.html#abd0c3093be36740a2f19754d9662cedd">Cabana::NeighborDiscriminator&lt; HalfNeighborTag &gt;::isValid</a></div><div class="ttdeci">static KOKKOS_INLINE_FUNCTION bool isValid(const std::size_t p, const double xp, const double yp, const double zp, const std::size_t n, const double xn, const double yn, const double zn)</div><div class="ttdoc">Check whether neighbor pair is valid.</div><div class="ttdef"><b>Definition</b> Cabana_NeighborList.hpp:96</div></div>
+<div class="ttc" id="aclassCabana_1_1NeighborDiscriminator_html"><div class="ttname"><a href="classCabana_1_1NeighborDiscriminator.html">Cabana::NeighborDiscriminator</a></div><div class="ttdoc">Neighborhood discriminator.</div><div class="ttdef"><b>Definition</b> Cabana_NeighborList.hpp:55</div></div>
+<div class="ttc" id="aclassCabana_1_1NeighborList_html"><div class="ttname"><a href="classCabana_1_1NeighborList.html">Cabana::NeighborList</a></div><div class="ttdoc">Neighbor list interface. Provides an interface callable at the functor level that gives access to nei...</div><div class="ttdef"><b>Definition</b> Cabana_NeighborList.hpp:114</div></div>
+<div class="ttc" id="aclassCabana_1_1NeighborList_html_a1f8c5ca4861b5985c4af4d8b6747fb30"><div class="ttname"><a href="classCabana_1_1NeighborList.html#a1f8c5ca4861b5985c4af4d8b6747fb30">Cabana::NeighborList::memory_space</a></div><div class="ttdeci">typename NeighborListType::memory_space memory_space</div><div class="ttdoc">Kokkos memory space.</div><div class="ttdef"><b>Definition</b> Cabana_NeighborList.hpp:117</div></div>
 <div class="ttc" id="aclassCabana_1_1NeighborList_html_a5ab550fae8b7d4ae587f599cd15c1a94"><div class="ttname"><a href="classCabana_1_1NeighborList.html#a5ab550fae8b7d4ae587f599cd15c1a94">Cabana::NeighborList::setNeighbor</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION std::size_t setNeighbor(NeighborListType &amp;list, const std::size_t particle_index, const std::size_t neighbor_index)</div><div class="ttdoc">Set the id for a neighbor for a given particle index and neighbor index.</div></div>
 <div class="ttc" id="aclassCabana_1_1NeighborList_html_a7b71b665e7fcb7da636dff8637fe1928"><div class="ttname"><a href="classCabana_1_1NeighborList.html#a7b71b665e7fcb7da636dff8637fe1928">Cabana::NeighborList::numNeighbor</a></div><div class="ttdeci">static KOKKOS_INLINE_FUNCTION std::size_t numNeighbor(const NeighborListType &amp;list, const std::size_t particle_index)</div><div class="ttdoc">Get the number of neighbors for a given particle index.</div></div>
 <div class="ttc" id="aclassCabana_1_1NeighborList_html_a86969ce8c6d1608b4b8791601858f5a1"><div class="ttname"><a href="classCabana_1_1NeighborList.html#a86969ce8c6d1608b4b8791601858f5a1">Cabana::NeighborList::getNeighbor</a></div><div class="ttdeci">static KOKKOS_INLINE_FUNCTION std::size_t getNeighbor(const NeighborListType &amp;list, const std::size_t particle_index, const std::size_t neighbor_index)</div><div class="ttdoc">Get the id for a neighbor for a given particle index and neighbor index.</div></div>
@@ -240,7 +284,7 @@ $(function() { codefold.init(0); });
 <div class="ttc" id="aclassCabana_1_1NeighborList_html_ad87ea2693460085c2756ec71d8fcfced"><div class="ttname"><a href="classCabana_1_1NeighborList.html#ad87ea2693460085c2756ec71d8fcfced">Cabana::NeighborList::maxNeighbor</a></div><div class="ttdeci">static KOKKOS_INLINE_FUNCTION std::size_t maxNeighbor(const NeighborListType &amp;list)</div><div class="ttdoc">Get the maximum number of neighbors across all particles.</div></div>
 <div class="ttc" id="anamespaceCabana_html"><div class="ttname"><a href="namespaceCabana.html">Cabana</a></div><div class="ttdoc">Core: particle data structures and algorithms.</div><div class="ttdef"><b>Definition</b> Cabana_AoSoA.hpp:36</div></div>
 <div class="ttc" id="anamespaceCabana_html_a07d805b955e236c9c87c50f76c4dde7c"><div class="ttname"><a href="namespaceCabana.html#a07d805b955e236c9c87c50f76c4dde7c">Cabana::binByKey</a></div><div class="ttdeci">auto binByKey(KeyViewType keys, const int nbin, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</div><div class="ttdoc">Bin an AoSoA over a subset of its range based on the associated key values and number of bins....</div><div class="ttdef"><b>Definition</b> Cabana_Sort.hpp:418</div></div>
-<div class="ttc" id="anamespaceCabana_html_a70cddd6233e137bfbe2ca4773e565e5d"><div class="ttname"><a href="namespaceCabana.html#a70cddd6233e137bfbe2ca4773e565e5d">Cabana::neighborHistogram</a></div><div class="ttdeci">Kokkos::View&lt; int *[2], typename ListType::memory_space &gt; neighborHistogram(ExecutionSpace exec_space, const std::size_t num_particles, const ListType &amp;list, const int num_bin)</div><div class="ttdoc">Construct a histogram of neighbors per particle.</div><div class="ttdef"><b>Definition</b> Cabana_NeighborList.hpp:129</div></div>
+<div class="ttc" id="anamespaceCabana_html_a70cddd6233e137bfbe2ca4773e565e5d"><div class="ttname"><a href="namespaceCabana.html#a70cddd6233e137bfbe2ca4773e565e5d">Cabana::neighborHistogram</a></div><div class="ttdeci">Kokkos::View&lt; int *[2], typename ListType::memory_space &gt; neighborHistogram(ExecutionSpace exec_space, const std::size_t num_particles, const ListType &amp;list, const int num_bin)</div><div class="ttdoc">Construct a histogram of neighbors per particle.</div><div class="ttdef"><b>Definition</b> Cabana_NeighborList.hpp:184</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

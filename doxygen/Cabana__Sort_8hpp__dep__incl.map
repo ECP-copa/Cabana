@@ -1,21 +1,23 @@
 <map id="core/src/Cabana_Sort.hpp" name="core/src/Cabana_Sort.hpp">
-<area shape="rect" id="Node000001" title="Sorting and binning built on Kokkos BinSort." alt="" coords="36,5,216,35"/>
-<area shape="rect" id="Node000002" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="390,354,574,384"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="99,47,62,84,27,130,15,155,9,180,10,204,21,227,45,248,80,268,126,286,178,303,290,331,393,351,392,356,288,336,176,308,124,291,78,273,42,252,17,230,5,205,4,179,10,153,22,128,58,80,95,43"/>
-<area shape="rect" id="Node000003" href="$Cabana__LinkedCellList_8hpp.html" title="Linked cell list binning and sorting." alt="" coords="31,180,221,228"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="129,50,129,179,123,179,123,50"/>
-<area shape="rect" id="Node000005" href="$Cabana__NeighborList_8hpp.html" title="Neighbor list interface." alt="" coords="397,83,583,132"/>
-<area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="202,36,397,82,396,87,201,42"/>
-<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="193,233,452,351,450,356,191,238"/>
-<area shape="rect" id="Node000004" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="375,276,589,306"/>
-<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="236,229,423,273,422,278,235,234"/>
-<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="485,322,485,353,479,353,479,322"/>
-<area shape="poly" id="edge7_Node000005_Node000002" title=" " alt="" coords="599,124,684,146,717,161,739,178,748,194,753,210,752,225,747,240,727,266,696,290,657,311,616,329,536,356,535,351,614,324,655,306,693,286,723,262,742,237,747,224,747,210,743,196,735,181,715,166,682,152,598,129"/>
-<area shape="poly" id="edge12_Node000005_Node000004" title=" " alt="" coords="491,147,485,276,480,276,486,147"/>
-<area shape="rect" id="Node000006" href="$Cabana__Experimental__NeighborList_8hpp.html" title="ArborX tree&#45;based neighbor lists." alt="" coords="245,180,453,228"/>
-<area shape="poly" id="edge8_Node000005_Node000006" title=" " alt="" coords="444,143,386,181,383,177,441,138"/>
-<area shape="rect" id="Node000007" href="$Cabana__Parallel_8hpp.html" title="SIMD and neighbor extension of Kokkos parallel iteration." alt="" coords="527,189,725,219"/>
-<area shape="poly" id="edge9_Node000005_Node000007" title=" " alt="" coords="538,139,607,186,604,191,535,143"/>
-<area shape="poly" id="edge10_Node000007_Node000002" title=" " alt="" coords="628,235,621,271,613,290,603,308,587,324,569,337,530,356,528,351,566,332,584,320,599,304,609,288,616,270,622,234"/>
-<area shape="poly" id="edge11_Node000007_Node000004" title=" " alt="" coords="590,229,507,278,504,274,588,225"/>
+<area shape="rect" id="Node000001" title="Sorting and binning built on Kokkos BinSort." alt="" coords="47,5,228,35"/>
+<area shape="rect" id="Node000002" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="178,432,361,461"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="107,46,75,75,43,111,18,155,11,178,8,203,8,292,12,321,24,345,42,366,65,384,120,411,180,428,178,434,119,416,62,388,38,370,19,348,7,322,3,293,3,203,5,177,13,153,39,108,71,71,104,42"/>
+<area shape="rect" id="Node000003" href="$Cabana__LinkedCellList_8hpp.html" title="Linked cell list binning (spatial sorting) and neighbor iteration." alt="" coords="43,180,232,228"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="140,50,140,179,135,179,135,50"/>
+<area shape="rect" id="Node000006" href="$Cabana__NeighborList_8hpp.html" title="Neighbor list interface." alt="" coords="247,83,433,132"/>
+<area shape="poly" id="edge9_Node000001_Node000006" title=" " alt="" coords="186,39,284,80,282,85,184,44"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="133,244,130,276,131,312,138,349,153,382,166,398,182,410,219,429,216,434,179,415,162,402,148,385,133,350,125,313,125,276,127,243"/>
+<area shape="rect" id="Node000004" href="$Cabana__Parallel_8hpp.html" title="SIMD and neighbor extension of Kokkos parallel iteration." alt="" coords="310,276,509,306"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="229,231,365,273,363,278,227,236"/>
+<area shape="rect" id="Node000005" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="163,354,376,384"/>
+<area shape="poly" id="edge8_Node000003_Node000005" title=" " alt="" coords="168,239,260,352,256,355,164,242"/>
+<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="411,322,405,354,390,385,375,401,357,415,319,433,316,429,354,410,371,397,386,382,400,352,406,321"/>
+<area shape="poly" id="edge6_Node000004_Node000005" title=" " alt="" coords="371,316,297,356,294,351,369,311"/>
+<area shape="poly" id="edge7_Node000005_Node000002" title=" " alt="" coords="272,400,272,431,267,431,267,400"/>
+<area shape="poly" id="edge10_Node000006_Node000002" title=" " alt="" coords="448,117,477,126,505,138,531,156,552,178,558,191,558,203,552,229,543,271,522,308,497,336,474,354,415,386,361,413,310,433,308,429,358,408,412,381,471,349,494,332,518,304,538,269,547,228,553,202,553,192,547,181,527,160,503,143,475,131,447,122"/>
+<area shape="poly" id="edge12_Node000006_Node000003" title=" " alt="" coords="277,141,189,182,187,177,274,136"/>
+<area shape="poly" id="edge13_Node000006_Node000004" title=" " alt="" coords="449,123,493,144,513,160,529,178,536,191,538,204,529,230,516,246,500,259,464,278,461,273,497,255,512,242,524,227,533,204,531,193,524,181,509,163,490,149,447,128"/>
+<area shape="poly" id="edge14_Node000006_Node000005" title=" " alt="" coords="315,146,297,181,284,229,276,278,272,353,267,353,271,277,279,228,292,179,310,143"/>
+<area shape="rect" id="Node000007" href="$Cabana__Experimental__NeighborList_8hpp.html" title="ArborX tree&#45;based neighbor lists." alt="" coords="307,180,515,228"/>
+<area shape="poly" id="edge11_Node000006_Node000007" title=" " alt="" coords="369,142,395,177,391,181,364,146"/>
 </map>
