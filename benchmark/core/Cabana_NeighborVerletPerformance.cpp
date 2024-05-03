@@ -228,7 +228,7 @@ int main( int argc, char* argv[] )
     std::vector<double> cell_ratios = { 1.0 };
     if ( run_type == "large" )
     {
-        problem_sizes = { 1000, 10000, 100000, 1000000 };
+        problem_sizes = { 1000, 10000, 100000, 1000000, 10000000 };
         cutoff_ratios = { 3.0, 4.0, 5.0 };
         cell_ratios = { 1.0 };
     }
