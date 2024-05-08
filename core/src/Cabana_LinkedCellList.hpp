@@ -846,6 +846,17 @@ class LinkedCellList
     }
 
     /*!
+      \brief Get the cell indices for the stencil about cell
+    */
+    KOKKOS_INLINE_FUNCTION
+    void getStencilCells( const int cell,
+                          Kokkos::Array<int, num_space_dim>& min,
+                          Kokkos::Array<int, num_space_dim>& max ) const
+    {
+        _cell_stencil.getCells( cell, min, max );
+    }
+
+    /*!
       \brief Get a candidate neighbor particle at a given binned offset.
       \param offset Particle offset in the binned layout.
     */
@@ -1135,14 +1146,16 @@ void permute(
 
 //---------------------------------------------------------------------------//
 //! LinkedCellList NeighborList interface.
-template <class MemorySpace, typename Scalar>
-class NeighborList<LinkedCellList<MemorySpace, Scalar>>
+template <class MemorySpace, typename Scalar, std::size_t NumSpaceDim>
+class NeighborList<LinkedCellList<MemorySpace, Scalar, NumSpaceDim>>
 {
   public:
     //! Kokkos memory space.
     using memory_space = MemorySpace;
     //! Neighbor list type.
-    using list_type = LinkedCellList<MemorySpace, Scalar>;
+    using list_type = LinkedCellList<MemorySpace, Scalar, NumSpaceDim>;
+    //! Spatial dimension
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
 
     //! Get the total number of neighbors across all particles.
     KOKKOS_INLINE_FUNCTION static std::size_t
@@ -1170,51 +1183,117 @@ class NeighborList<LinkedCellList<MemorySpace, Scalar>>
     }
 
     //! Get the number of neighbors for a given particle index.
-    KOKKOS_INLINE_FUNCTION static std::size_t
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION static std::enable_if_t<3 == NSD, std::size_t>
     numNeighbor( const list_type& list, const std::size_t particle_index )
     {
         int total_count = 0;
-        int imin, imax, jmin, jmax, kmin, kmax;
-        list.getStencilCells( list.getParticleBin( particle_index ), imin, imax,
-                              jmin, jmax, kmin, kmax );
+        Kokkos::Array<int, 3> min;
+        Kokkos::Array<int, 3> max;
+        list.getStencilCells( list.getParticleBin( particle_index ), min, max );
 
-        // Loop over the cell stencil.
-        for ( int i = imin; i < imax; ++i )
-            for ( int j = jmin; j < jmax; ++j )
-                for ( int k = kmin; k < kmax; ++k )
+        Kokkos::Array<int, 3> ijk;
+        for ( int i = min[0]; i < max[0]; ++i )
+            for ( int j = min[1]; j < max[1]; ++j )
+                for ( int k = min[2]; k < max[2]; ++k )
                 {
-                    total_count += list.binSize( i, j, k );
+                    ijk = { i, j, k };
+                    total_count += list.binSize( ijk );
                 }
+
+        return total_count;
+    }
+
+    //! Get the number of neighbors for a given particle index.
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION static std::enable_if_t<2 == NSD, std::size_t>
+    numNeighbor( const list_type& list, const std::size_t particle_index )
+    {
+        int total_count = 0;
+        Kokkos::Array<int, 2> min;
+        Kokkos::Array<int, 2> max;
+        list.getStencilCells( list.getParticleBin( particle_index ), min, max );
+
+        Kokkos::Array<int, 2> ij;
+        for ( int i = min[0]; i < max[0]; ++i )
+            for ( int j = min[1]; j < max[1]; ++j )
+            {
+                ij = { i, j };
+                total_count += list.binSize( ij );
+            }
+
         return total_count;
     }
 
     //! Get the id for a neighbor for a given particle index and the index of
     //! the neighbor relative to the particle.
-    KOKKOS_INLINE_FUNCTION static std::size_t
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION static std::enable_if_t<3 == NSD, std::size_t>
     getNeighbor( const list_type& list, const std::size_t particle_index,
                  const std::size_t neighbor_index )
     {
         std::size_t total_count = 0;
         std::size_t previous_count = 0;
-        int imin, imax, jmin, jmax, kmin, kmax;
-        list.getStencilCells( list.getParticleBin( particle_index ), imin, imax,
-                              jmin, jmax, kmin, kmax );
+        Kokkos::Array<int, 3> min;
+        Kokkos::Array<int, 3> max;
+        list.getStencilCells( list.getParticleBin( particle_index ), min, max );
 
-        // Loop over the cell stencil.
-        for ( int i = imin; i < imax; ++i )
-            for ( int j = jmin; j < jmax; ++j )
-                for ( int k = kmin; k < kmax; ++k )
+        Kokkos::Array<int, 3> ijk;
+        for ( int i = min[0]; i < max[0]; ++i )
+            for ( int j = min[1]; j < max[1]; ++j )
+                for ( int k = min[2]; k < max[2]; ++k )
                 {
-                    total_count += list.binSize( i, j, k );
+                    ijk = { i, j, k };
+
+                    total_count += list.binSize( ijk );
                     // This neighbor is in this bin.
                     if ( total_count > neighbor_index )
                     {
-                        int particle_id = list.binOffset( i, j, k ) +
+                        int particle_id = list.binOffset( ijk ) +
                                           ( neighbor_index - previous_count );
                         return list.getParticle( particle_id );
                     }
+                    // Update previous to all bins so far.
                     previous_count = total_count;
                 }
+
+        assert( total_count <= totalNeighbor( list ) );
+
+        // Should never make it to this point.
+        return 0;
+    }
+
+    //! Get the id for a neighbor for a given particle index and the index of
+    //! the neighbor relative to the particle.
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION static std::enable_if_t<2 == NSD, std::size_t>
+    getNeighbor( const list_type& list, const std::size_t particle_index,
+                 const std::size_t neighbor_index )
+    {
+        std::size_t total_count = 0;
+        std::size_t previous_count = 0;
+        Kokkos::Array<int, 2> min;
+        Kokkos::Array<int, 2> max;
+        list.getStencilCells( list.getParticleBin( particle_index ), min, max );
+
+        // Loop over the cell stencil.
+        Kokkos::Array<int, 2> ij;
+        for ( int i = min[0]; i < max[0]; ++i )
+            for ( int j = min[1]; j < max[1]; ++j )
+            {
+                ij = { i, j };
+
+                total_count += list.binSize( ij );
+                // This neighbor is in this bin.
+                if ( total_count > neighbor_index )
+                {
+                    int particle_id = list.binOffset( ij ) +
+                                      ( neighbor_index - previous_count );
+                    return list.getParticle( particle_id );
+                }
+                // Update previous to all bins so far.
+                previous_count = total_count;
+            }
 
         assert( total_count <= totalNeighbor( list ) );
 
