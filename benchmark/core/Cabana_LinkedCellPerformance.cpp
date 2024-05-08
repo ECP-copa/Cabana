@@ -112,7 +112,7 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
             double sort_delta[3] = { cutoff, cutoff, cutoff };
             double grid_min[3] = { x_min[p], x_min[p], x_min[p] };
             double grid_max[3] = { x_max[p], x_max[p], x_max[p] };
-            auto linked_cell_list = Cabana::createLinkedCellList<memory_space>(
+            auto linked_cell_list = Cabana::createLinkedCellList(
                 x, sort_delta, grid_min, grid_max );
 
             // Setup for neighbor iteration.
