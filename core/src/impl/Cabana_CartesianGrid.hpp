@@ -167,6 +167,20 @@ class CartesianGrid
         jc = ( jc == _nx[1] ) ? jc - 1 : jc;
     }
 
+    // Given a position get the ijk indices of the cell in which
+    KOKKOS_INLINE_FUNCTION void
+    locatePoint( const Kokkos::Array<Real, num_space_dim> p,
+                 Kokkos::Array<int, num_space_dim>& c ) const
+    {
+        // Since we use a floor function a point on the outer boundary
+        // will be found in the next cell, causing an out of bounds error
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+        {
+            c[d] = cellsBetween( p[d], _min[d], _rdx[d] );
+            c[d] = ( c[d] == _nx[d] ) ? c[d] - 1 : c[d];
+        }
+    }
+
     // Given a position and a cell index get square of the minimum distance to
     // that point to any point in the cell. If the point is in the cell the
     // returned distance is zero.
@@ -222,6 +236,16 @@ class CartesianGrid
     cardinalCellIndex( const int i, const int j ) const
     {
         return i * _nx[1] + j;
+    }
+
+    // Given the ij index of a cell get its cardinal index.
+    KOKKOS_INLINE_FUNCTION int
+    cardinalCellIndex( const Kokkos::Array<int, num_space_dim> ijk ) const
+    {
+        if constexpr ( num_space_dim == 3 )
+            return cardinalCellIndex( ijk[0], ijk[1], ijk[2] );
+        else
+            return cardinalCellIndex( ijk[0], ijk[1] );
     }
 
     template <std::size_t NSD = num_space_dim>
