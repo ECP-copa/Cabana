@@ -33,11 +33,14 @@ namespace Cabana
 //---------------------------------------------------------------------------//
 //! Stencil of cells surrounding each cell.
 
-template <class Scalar>
+template <class Scalar, std::size_t NumSpaceDim = 3>
 struct LinkedCellStencil
 {
+    //! Spatial dimension.
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
+
     //! Background grid.
-    Impl::CartesianGrid<Scalar> grid;
+    Impl::CartesianGrid<Scalar, num_space_dim> grid;
     //! Maximum cells per dimension.
     int max_cells_dir;
     //! Maximum total cells.
@@ -48,39 +51,71 @@ struct LinkedCellStencil
     //! Default Constructor
     LinkedCellStencil() = default;
 
-    //! Constructor
+    //! Array Constructor
+    template <class ArrayType>
     LinkedCellStencil( const Scalar neighborhood_radius,
-                       const Scalar cell_size_ratio, const Scalar grid_min[3],
-                       const Scalar grid_max[3] )
+                       const Scalar cell_size_ratio, const ArrayType& grid_min,
+                       const ArrayType& grid_max )
     {
         Scalar dx = neighborhood_radius * cell_size_ratio;
-        grid = Impl::CartesianGrid<Scalar>(
-            grid_min[0], grid_min[1], grid_min[2], grid_max[0], grid_max[1],
-            grid_max[2], dx, dx, dx );
+        grid = Impl::CartesianGrid<Scalar, num_space_dim>( grid_min, grid_max,
+                                                           dx );
+        cell_range = std::ceil( 1 / cell_size_ratio );
+        max_cells_dir = 2 * cell_range + 1;
+        max_cells = max_cells_dir * max_cells_dir * max_cells_dir;
+    }
+
+    //! Constructor
+    LinkedCellStencil( const Scalar neighborhood_radius,
+                       const Scalar cell_size_ratio,
+                       const Scalar grid_min[num_space_dim],
+                       const Scalar grid_max[num_space_dim] )
+    {
+        Scalar dx = neighborhood_radius * cell_size_ratio;
+        grid = Impl::CartesianGrid<Scalar, num_space_dim>( grid_min, grid_max,
+                                                           dx );
         cell_range = std::ceil( 1 / cell_size_ratio );
         max_cells_dir = 2 * cell_range + 1;
         max_cells = max_cells_dir * max_cells_dir * max_cells_dir;
     }
 
     //! Given a cell, get the index bounds of the cell stencil.
-    KOKKOS_INLINE_FUNCTION
-    void getCells( const int cell, int& imin, int& imax, int& jmin, int& jmax,
-                   int& kmin, int& kmax ) const
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    getCells( const int cell, int& imin, int& imax, int& jmin, int& jmax,
+              int& kmin, int& kmax ) const
     {
         int i, j, k;
         grid.ijkBinIndex( cell, i, j, k );
 
         kmin = ( k - cell_range > 0 ) ? k - cell_range : 0;
-        kmax =
-            ( k + cell_range + 1 < grid._nz ) ? k + cell_range + 1 : grid._nz;
+        kmax = ( k + cell_range + 1 < grid._nx[2] ) ? k + cell_range + 1
+                                                    : grid._nx[2];
 
         jmin = ( j - cell_range > 0 ) ? j - cell_range : 0;
-        jmax =
-            ( j + cell_range + 1 < grid._ny ) ? j + cell_range + 1 : grid._ny;
+        jmax = ( j + cell_range + 1 < grid._nx[1] ) ? j + cell_range + 1
+                                                    : grid._nx[1];
 
         imin = ( i - cell_range > 0 ) ? i - cell_range : 0;
-        imax =
-            ( i + cell_range + 1 < grid._nx ) ? i + cell_range + 1 : grid._nx;
+        imax = ( i + cell_range + 1 < grid._nx[0] ) ? i + cell_range + 1
+                                                    : grid._nx[0];
+    }
+
+    //! Given a cell, get the index bounds of the cell stencil.
+    KOKKOS_INLINE_FUNCTION void
+    getCells( const int cell, Kokkos::Array<int, num_space_dim>& min,
+              Kokkos::Array<int, num_space_dim>& max ) const
+    {
+        Kokkos::Array<int, num_space_dim> ijk;
+        grid.ijkBinIndex( cell, ijk );
+
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+        {
+            min[d] = ( ijk[d] - cell_range > 0 ) ? ijk[d] - cell_range : 0;
+            max[d] = ( ijk[d] + cell_range + 1 < grid._nx[d] )
+                         ? ijk[d] + cell_range + 1
+                         : grid._nx[d];
+        }
     }
 };
 
