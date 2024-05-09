@@ -892,18 +892,16 @@ class SparseHalo
         \brief Pack sparse arrays at halo regions into a buffer
         \tparam ExecSpace execution space type
         \tparam SparseArrayType sparse array type
-        \tparam CountType counting number type
         \param exec_space execution space
         \param buffer buffer to store sparse array data and to communicate
         \param tile_steering Kokkos view to store halo tile keys
         \param sparse_array sparse array (all sparse grids on current rank)
         \param count number of halo grids to pack
     */
-    template <class ExecSpace, class SparseArrayType, class CountType>
+    template <class ExecSpace, class SparseArrayType>
     void packBuffer( const ExecSpace& exec_space, const buffer_view& buffer,
                      const steering_view& tile_steering,
-                     SparseArrayType& sparse_array,
-                     const CountType count ) const
+                     SparseArrayType& sparse_array, const int count ) const
     {
         Kokkos::parallel_for(
             "pack_spares_halo_buffer",
@@ -1137,7 +1135,6 @@ class SparseHalo
         \tparam ExecSpace execution space type
         \tparam SparseArrayType sparse array type
         \tparam SparseMapType sparse map type
-        \tparam CountType counting number type
         \param reduce_op reduce operation
         \param exec_space execution space
         \param buffer buffer to store sparse array data and to communicate
@@ -1147,12 +1144,12 @@ class SparseHalo
         \param count number of halo grids to unpack
     */
     template <class ReduceOp, class ExecSpace, class SparseArrayType,
-              class SparseMapType, class CountType>
+              class SparseMapType>
     void unpackBuffer( const ReduceOp& reduce_op, const ExecSpace& exec_space,
                        const buffer_view& buffer,
                        const steering_view& tile_steering,
                        const SparseArrayType& sparse_array, SparseMapType& map,
-                       const CountType count ) const
+                       const int count ) const
     {
         Kokkos::parallel_for(
             "unpack_spares_halo_buffer",
