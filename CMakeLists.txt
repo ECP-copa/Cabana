@@ -56,7 +56,7 @@ endif()
 
 # standard dependency macro
 macro(Cabana_add_dependency)
-  cmake_parse_arguments(CABANA_DEPENDENCY "" "PACKAGE;VERSION;COMPONENTS" "" ${ARGN})
+  cmake_parse_arguments(CABANA_DEPENDENCY "" "PACKAGE;VERSION" "COMPONENTS" ${ARGN})
   find_package( ${CABANA_DEPENDENCY_PACKAGE} ${CABANA_DEPENDENCY_VERSION} QUIET COMPONENTS ${CABANA_DEPENDENCY_COMPONENTS} )
   string(TOUPPER "${CABANA_DEPENDENCY_PACKAGE}" CABANA_DEPENDENCY_OPTION )
   option(
@@ -69,7 +69,13 @@ macro(Cabana_add_dependency)
 endmacro()
 
 # find MPI
-Cabana_add_dependency( PACKAGE MPI )
+if(Cabana_REQUIRE_HDF5)
+  # Workaround for using HDF5 C-bindings
+  enable_language(C)
+  Cabana_add_dependency( PACKAGE MPI COMPONENTS C CXX ) 
+else()
+  Cabana_add_dependency( PACKAGE MPI COMPONENTS CXX )
+endif()
 
 # find ArborX
 Cabana_add_dependency( PACKAGE ArborX )
