@@ -881,379 +881,378 @@ $(function() { codefold.init(0); });
 </div>
 <div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span> </div>
 <div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>    <span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ExecSpace, <span class="keyword">class</span> SparseArrayType, <span class="keyword">class</span> CountType&gt;</div>
-<div class="foldopen" id="foldopen00903" data-start="{" data-end="}">
-<div class="line"><a id="l00903" name="l00903"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ac905a4b8bfae8e4fb6e8bfe60c704cc5">  903</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ac905a4b8bfae8e4fb6e8bfe60c704cc5">packBuffer</a>( <span class="keyword">const</span> ExecSpace&amp; exec_space, <span class="keyword">const</span> <a class="code hl_typedef" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#adee005ea512fdbd9acb04d1546c006ef">buffer_view</a>&amp; buffer,</div>
-<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span>                     <span class="keyword">const</span> <a class="code hl_typedef" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a20aa8f28c2201f4689177ab548fc8cfb">steering_view</a>&amp; tile_steering,</div>
-<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span>                     SparseArrayType&amp; sparse_array,</div>
-<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span>                     <span class="keyword">const</span> CountType count )<span class="keyword"> const</span></div>
-<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span><span class="keyword">    </span>{</div>
-<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>        Kokkos::parallel_for(</div>
-<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>            <span class="stringliteral">&quot;pack_spares_halo_buffer&quot;</span>,</div>
-<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span>            Kokkos::RangePolicy&lt;ExecSpace&gt;( exec_space, 0, count ),</div>
-<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span>            KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i ) {</div>
-<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span>                <span class="keywordflow">if</span> ( tile_steering( i ) != invalid_key )</div>
-<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span>                {</div>
-<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span>                    <span class="keyword">const</span> <span class="keywordtype">int</span> buffer_idx = i * cell_num_per_tile;</div>
-<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span>                    <span class="keyword">auto</span> tile_key = tile_steering( i );</div>
-<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span>                    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> lcid = 0; lcid &lt; (int)cell_num_per_tile; ++lcid )</div>
-<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span>                    {</div>
-<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span>                        buffer( buffer_idx + lcid ) =</div>
-<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span>                            sparse_array.getTuple( tile_key, lcid );</div>
-<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span>                    }</div>
-<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span>                }</div>
-<div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span>            } );</div>
-<div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span>    }</div>
+<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ExecSpace, <span class="keyword">class</span> SparseArrayType&gt;</div>
+<div class="foldopen" id="foldopen00902" data-start="{" data-end="}">
+<div class="line"><a id="l00902" name="l00902"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ab6620d8dd5727c76997d56088bd63426">  902</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ab6620d8dd5727c76997d56088bd63426">packBuffer</a>( <span class="keyword">const</span> ExecSpace&amp; exec_space, <span class="keyword">const</span> <a class="code hl_typedef" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#adee005ea512fdbd9acb04d1546c006ef">buffer_view</a>&amp; buffer,</div>
+<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span>                     <span class="keyword">const</span> <a class="code hl_typedef" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a20aa8f28c2201f4689177ab548fc8cfb">steering_view</a>&amp; tile_steering,</div>
+<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span>                     SparseArrayType&amp; sparse_array, <span class="keyword">const</span> <span class="keywordtype">int</span> count )<span class="keyword"> const</span></div>
+<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span><span class="keyword">    </span>{</div>
+<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span>        Kokkos::parallel_for(</div>
+<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span>            <span class="stringliteral">&quot;pack_spares_halo_buffer&quot;</span>,</div>
+<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>            Kokkos::RangePolicy&lt;ExecSpace&gt;( exec_space, 0, count ),</div>
+<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>            KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i ) {</div>
+<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span>                <span class="keywordflow">if</span> ( tile_steering( i ) != invalid_key )</div>
+<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span>                {</div>
+<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span>                    <span class="keyword">const</span> <span class="keywordtype">int</span> buffer_idx = i * cell_num_per_tile;</div>
+<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span>                    <span class="keyword">auto</span> tile_key = tile_steering( i );</div>
+<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span>                    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> lcid = 0; lcid &lt; (int)cell_num_per_tile; ++lcid )</div>
+<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span>                    {</div>
+<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span>                        buffer( buffer_idx + lcid ) =</div>
+<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span>                            sparse_array.getTuple( tile_key, lcid );</div>
+<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span>                    }</div>
+<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span>                }</div>
+<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span>            } );</div>
+<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span>    }</div>
 </div>
-<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span> </div>
-<div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span>    <span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span>    KOKKOS_INLINE_FUNCTION <span class="keyword">static</span> <span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00929" data-start="{" data-end="}">
-<div class="line"><a id="l00929" name="l00929"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#aa72a4d7dd8733c99fffe6cd1e51cd8b5">  929</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#aa72a4d7dd8733c99fffe6cd1e51cd8b5">unpackOp</a>( <a class="code hl_struct" href="structCabana_1_1Grid_1_1ScatterReduce_1_1Sum.html">ScatterReduce::Sum</a>, <span class="keyword">const</span> T&amp; buffer_val, T&amp; array_val )</div>
-<div class="line"><a id="l00930" name="l00930"></a><span class="lineno">  930</span>    {</div>
-<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>        array_val += buffer_val;</div>
-<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span>    }</div>
+<div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span> </div>
+<div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span>    <span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span>    KOKKOS_INLINE_FUNCTION <span class="keyword">static</span> <span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00927" data-start="{" data-end="}">
+<div class="line"><a id="l00927" name="l00927"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#aa72a4d7dd8733c99fffe6cd1e51cd8b5">  927</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#aa72a4d7dd8733c99fffe6cd1e51cd8b5">unpackOp</a>( <a class="code hl_struct" href="structCabana_1_1Grid_1_1ScatterReduce_1_1Sum.html">ScatterReduce::Sum</a>, <span class="keyword">const</span> T&amp; buffer_val, T&amp; array_val )</div>
+<div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span>    {</div>
+<div class="line"><a id="l00929" name="l00929"></a><span class="lineno">  929</span>        array_val += buffer_val;</div>
+<div class="line"><a id="l00930" name="l00930"></a><span class="lineno">  930</span>    }</div>
 </div>
-<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span> </div>
-<div class="line"><a id="l00935" name="l00935"></a><span class="lineno">  935</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span>    KOKKOS_INLINE_FUNCTION <span class="keyword">static</span> <span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00937" data-start="{" data-end="}">
-<div class="line"><a id="l00937" name="l00937"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a05ef3fd7adff9a55c36979706c36f6f0">  937</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a05ef3fd7adff9a55c36979706c36f6f0">unpackOp</a>( <a class="code hl_struct" href="structCabana_1_1Grid_1_1ScatterReduce_1_1Min.html">ScatterReduce::Min</a>, <span class="keyword">const</span> T&amp; buffer_val, T&amp; array_val )</div>
-<div class="line"><a id="l00938" name="l00938"></a><span class="lineno">  938</span>    {</div>
-<div class="line"><a id="l00939" name="l00939"></a><span class="lineno">  939</span>        <span class="keywordflow">if</span> ( buffer_val &lt; array_val )</div>
-<div class="line"><a id="l00940" name="l00940"></a><span class="lineno">  940</span>            array_val = buffer_val;</div>
-<div class="line"><a id="l00941" name="l00941"></a><span class="lineno">  941</span>    }</div>
+<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span> </div>
+<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span>    KOKKOS_INLINE_FUNCTION <span class="keyword">static</span> <span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00935" data-start="{" data-end="}">
+<div class="line"><a id="l00935" name="l00935"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a05ef3fd7adff9a55c36979706c36f6f0">  935</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a05ef3fd7adff9a55c36979706c36f6f0">unpackOp</a>( <a class="code hl_struct" href="structCabana_1_1Grid_1_1ScatterReduce_1_1Min.html">ScatterReduce::Min</a>, <span class="keyword">const</span> T&amp; buffer_val, T&amp; array_val )</div>
+<div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span>    {</div>
+<div class="line"><a id="l00937" name="l00937"></a><span class="lineno">  937</span>        <span class="keywordflow">if</span> ( buffer_val &lt; array_val )</div>
+<div class="line"><a id="l00938" name="l00938"></a><span class="lineno">  938</span>            array_val = buffer_val;</div>
+<div class="line"><a id="l00939" name="l00939"></a><span class="lineno">  939</span>    }</div>
 </div>
-<div class="line"><a id="l00942" name="l00942"></a><span class="lineno">  942</span> </div>
-<div class="line"><a id="l00944" name="l00944"></a><span class="lineno">  944</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a id="l00945" name="l00945"></a><span class="lineno">  945</span>    KOKKOS_INLINE_FUNCTION <span class="keyword">static</span> <span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00946" data-start="{" data-end="}">
-<div class="line"><a id="l00946" name="l00946"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#aed6c3942db5ce79f4404cfd8f2dd8177">  946</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#aed6c3942db5ce79f4404cfd8f2dd8177">unpackOp</a>( <a class="code hl_struct" href="structCabana_1_1Grid_1_1ScatterReduce_1_1Max.html">ScatterReduce::Max</a>, <span class="keyword">const</span> T&amp; buffer_val, T&amp; array_val )</div>
-<div class="line"><a id="l00947" name="l00947"></a><span class="lineno">  947</span>    {</div>
-<div class="line"><a id="l00948" name="l00948"></a><span class="lineno">  948</span>        <span class="keywordflow">if</span> ( buffer_val &gt; array_val )</div>
-<div class="line"><a id="l00949" name="l00949"></a><span class="lineno">  949</span>            array_val = buffer_val;</div>
-<div class="line"><a id="l00950" name="l00950"></a><span class="lineno">  950</span>    }</div>
+<div class="line"><a id="l00940" name="l00940"></a><span class="lineno">  940</span> </div>
+<div class="line"><a id="l00942" name="l00942"></a><span class="lineno">  942</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a id="l00943" name="l00943"></a><span class="lineno">  943</span>    KOKKOS_INLINE_FUNCTION <span class="keyword">static</span> <span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00944" data-start="{" data-end="}">
+<div class="line"><a id="l00944" name="l00944"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#aed6c3942db5ce79f4404cfd8f2dd8177">  944</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#aed6c3942db5ce79f4404cfd8f2dd8177">unpackOp</a>( <a class="code hl_struct" href="structCabana_1_1Grid_1_1ScatterReduce_1_1Max.html">ScatterReduce::Max</a>, <span class="keyword">const</span> T&amp; buffer_val, T&amp; array_val )</div>
+<div class="line"><a id="l00945" name="l00945"></a><span class="lineno">  945</span>    {</div>
+<div class="line"><a id="l00946" name="l00946"></a><span class="lineno">  946</span>        <span class="keywordflow">if</span> ( buffer_val &gt; array_val )</div>
+<div class="line"><a id="l00947" name="l00947"></a><span class="lineno">  947</span>            array_val = buffer_val;</div>
+<div class="line"><a id="l00948" name="l00948"></a><span class="lineno">  948</span>    }</div>
 </div>
-<div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span> </div>
-<div class="line"><a id="l00953" name="l00953"></a><span class="lineno">  953</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span>    KOKKOS_INLINE_FUNCTION <span class="keyword">static</span> <span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00955" data-start="{" data-end="}">
-<div class="line"><a id="l00955" name="l00955"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a4335970e891a9d31a5d800b1540c0b0c">  955</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a4335970e891a9d31a5d800b1540c0b0c">unpackOp</a>( <a class="code hl_struct" href="structCabana_1_1Grid_1_1ScatterReduce_1_1Replace.html">ScatterReduce::Replace</a>, <span class="keyword">const</span> T&amp; buffer_val, T&amp; array_val )</div>
-<div class="line"><a id="l00956" name="l00956"></a><span class="lineno">  956</span>    {</div>
-<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span>        array_val = buffer_val;</div>
-<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span>    }</div>
+<div class="line"><a id="l00949" name="l00949"></a><span class="lineno">  949</span> </div>
+<div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a id="l00952" name="l00952"></a><span class="lineno">  952</span>    KOKKOS_INLINE_FUNCTION <span class="keyword">static</span> <span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00953" data-start="{" data-end="}">
+<div class="line"><a id="l00953" name="l00953"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a4335970e891a9d31a5d800b1540c0b0c">  953</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a4335970e891a9d31a5d800b1540c0b0c">unpackOp</a>( <a class="code hl_struct" href="structCabana_1_1Grid_1_1ScatterReduce_1_1Replace.html">ScatterReduce::Replace</a>, <span class="keyword">const</span> T&amp; buffer_val, T&amp; array_val )</div>
+<div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span>    {</div>
+<div class="line"><a id="l00955" name="l00955"></a><span class="lineno">  955</span>        array_val = buffer_val;</div>
+<div class="line"><a id="l00956" name="l00956"></a><span class="lineno">  956</span>    }</div>
 </div>
-<div class="line"><a id="l00959" name="l00959"></a><span class="lineno">  959</span> </div>
-<div class="line"><a id="l00960" name="l00960"></a><span class="lineno">  960</span>    <span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l00974" name="l00974"></a><span class="lineno">  974</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ReduceOp, std::<span class="keywordtype">size_t</span> N, std::<span class="keywordtype">size_t</span> M, <span class="keyword">class</span> SoAType&gt;</div>
-<div class="line"><a id="l00975" name="l00975"></a><span class="lineno">  975</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> std::enable_if_t&lt;3 == M, void&gt;</div>
-<div class="foldopen" id="foldopen00976" data-start="{" data-end="}">
-<div class="line"><a id="l00976" name="l00976"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a41dbb3106ef8173c2fc3c70932603c18">  976</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a41dbb3106ef8173c2fc3c70932603c18">unpackTupleMember</a>( <span class="keyword">const</span> ReduceOp&amp; reduce_op, <span class="keyword">const</span> <a class="code hl_struct" href="structCabana_1_1Tuple.html">tuple_type</a>&amp; src_tuple,</div>
-<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span>                       SoAType&amp; dst_soa, <span class="keyword">const</span> <span class="keywordtype">int</span> soa_idx,</div>
-<div class="line"><a id="l00978" name="l00978"></a><span class="lineno">  978</span>                       <span class="keyword">const</span> Kokkos::Array&lt;std::size_t, M&gt;&amp; extents,</div>
-<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span>                       <span class="keyword">const</span> std::integral_constant&lt;std::size_t, N&gt;,</div>
-<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span>                       <span class="keyword">const</span> std::integral_constant&lt;std::size_t, M&gt; )</div>
-<div class="line"><a id="l00981" name="l00981"></a><span class="lineno">  981</span>    {</div>
-<div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span>        <span class="keywordflow">for</span> ( std::size_t d0 = 0; d0 &lt; extents[0]; ++d0 )</div>
-<div class="line"><a id="l00983" name="l00983"></a><span class="lineno">  983</span>            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> d1 = 0; d1 &lt; extents[1]; ++d1 )</div>
-<div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span>                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> d2 = 0; d2 &lt; extents[2]; ++d2 )</div>
-<div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span>                {</div>
-<div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span>                    unpackOp( reduce_op,</div>
-<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span>                              Cabana::get&lt;N&gt;( src_tuple, d0, d1, d2 ),</div>
-<div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span>                              Cabana::get&lt;N&gt;( dst_soa, soa_idx, d0, d1, d2 ) );</div>
-<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span>                }</div>
-<div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span>    }</div>
+<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span> </div>
+<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span>    <span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ReduceOp, std::<span class="keywordtype">size_t</span> N, std::<span class="keywordtype">size_t</span> M, <span class="keyword">class</span> SoAType&gt;</div>
+<div class="line"><a id="l00973" name="l00973"></a><span class="lineno">  973</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> std::enable_if_t&lt;3 == M, void&gt;</div>
+<div class="foldopen" id="foldopen00974" data-start="{" data-end="}">
+<div class="line"><a id="l00974" name="l00974"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a41dbb3106ef8173c2fc3c70932603c18">  974</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a41dbb3106ef8173c2fc3c70932603c18">unpackTupleMember</a>( <span class="keyword">const</span> ReduceOp&amp; reduce_op, <span class="keyword">const</span> <a class="code hl_struct" href="structCabana_1_1Tuple.html">tuple_type</a>&amp; src_tuple,</div>
+<div class="line"><a id="l00975" name="l00975"></a><span class="lineno">  975</span>                       SoAType&amp; dst_soa, <span class="keyword">const</span> <span class="keywordtype">int</span> soa_idx,</div>
+<div class="line"><a id="l00976" name="l00976"></a><span class="lineno">  976</span>                       <span class="keyword">const</span> Kokkos::Array&lt;std::size_t, M&gt;&amp; extents,</div>
+<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span>                       <span class="keyword">const</span> std::integral_constant&lt;std::size_t, N&gt;,</div>
+<div class="line"><a id="l00978" name="l00978"></a><span class="lineno">  978</span>                       <span class="keyword">const</span> std::integral_constant&lt;std::size_t, M&gt; )</div>
+<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span>    {</div>
+<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span>        <span class="keywordflow">for</span> ( std::size_t d0 = 0; d0 &lt; extents[0]; ++d0 )</div>
+<div class="line"><a id="l00981" name="l00981"></a><span class="lineno">  981</span>            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> d1 = 0; d1 &lt; extents[1]; ++d1 )</div>
+<div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span>                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> d2 = 0; d2 &lt; extents[2]; ++d2 )</div>
+<div class="line"><a id="l00983" name="l00983"></a><span class="lineno">  983</span>                {</div>
+<div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span>                    unpackOp( reduce_op,</div>
+<div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span>                              Cabana::get&lt;N&gt;( src_tuple, d0, d1, d2 ),</div>
+<div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span>                              Cabana::get&lt;N&gt;( dst_soa, soa_idx, d0, d1, d2 ) );</div>
+<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span>                }</div>
+<div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span>    }</div>
 </div>
-<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span> </div>
-<div class="line"><a id="l01005" name="l01005"></a><span class="lineno"> 1005</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ReduceOp, std::<span class="keywordtype">size_t</span> N, std::<span class="keywordtype">size_t</span> M, <span class="keyword">class</span> SoAType&gt;</div>
-<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> std::enable_if_t&lt;2 == M, void&gt;</div>
-<div class="foldopen" id="foldopen01007" data-start="{" data-end="}">
-<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a11a7877f6aa505b9a063e7b8018a83fd"> 1007</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a11a7877f6aa505b9a063e7b8018a83fd">unpackTupleMember</a>( <span class="keyword">const</span> ReduceOp&amp; reduce_op, <span class="keyword">const</span> <a class="code hl_struct" href="structCabana_1_1Tuple.html">tuple_type</a>&amp; src_tuple,</div>
-<div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span>                       SoAType&amp; dst_soa, <span class="keyword">const</span> <span class="keywordtype">int</span> soa_idx,</div>
-<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"> 1009</span>                       <span class="keyword">const</span> Kokkos::Array&lt;std::size_t, M&gt;&amp; extents,</div>
-<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span>                       <span class="keyword">const</span> std::integral_constant&lt;std::size_t, N&gt;,</div>
-<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span>                       <span class="keyword">const</span> std::integral_constant&lt;std::size_t, M&gt; )</div>
-<div class="line"><a id="l01012" name="l01012"></a><span class="lineno"> 1012</span>    {</div>
-<div class="line"><a id="l01013" name="l01013"></a><span class="lineno"> 1013</span>        <span class="keywordflow">for</span> ( std::size_t d0 = 0; d0 &lt; extents[0]; ++d0 )</div>
-<div class="line"><a id="l01014" name="l01014"></a><span class="lineno"> 1014</span>            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> d1 = 0; d1 &lt; extents[1]; ++d1 )</div>
-<div class="line"><a id="l01015" name="l01015"></a><span class="lineno"> 1015</span>            {</div>
-<div class="line"><a id="l01016" name="l01016"></a><span class="lineno"> 1016</span>                unpackOp( reduce_op, Cabana::get&lt;N&gt;( src_tuple, d0, d1 ),</div>
-<div class="line"><a id="l01017" name="l01017"></a><span class="lineno"> 1017</span>                          Cabana::get&lt;N&gt;( dst_soa, soa_idx, d0, d1 ) );</div>
-<div class="line"><a id="l01018" name="l01018"></a><span class="lineno"> 1018</span>            }</div>
-<div class="line"><a id="l01019" name="l01019"></a><span class="lineno"> 1019</span>    }</div>
+<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span> </div>
+<div class="line"><a id="l01003" name="l01003"></a><span class="lineno"> 1003</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ReduceOp, std::<span class="keywordtype">size_t</span> N, std::<span class="keywordtype">size_t</span> M, <span class="keyword">class</span> SoAType&gt;</div>
+<div class="line"><a id="l01004" name="l01004"></a><span class="lineno"> 1004</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> std::enable_if_t&lt;2 == M, void&gt;</div>
+<div class="foldopen" id="foldopen01005" data-start="{" data-end="}">
+<div class="line"><a id="l01005" name="l01005"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a11a7877f6aa505b9a063e7b8018a83fd"> 1005</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a11a7877f6aa505b9a063e7b8018a83fd">unpackTupleMember</a>( <span class="keyword">const</span> ReduceOp&amp; reduce_op, <span class="keyword">const</span> <a class="code hl_struct" href="structCabana_1_1Tuple.html">tuple_type</a>&amp; src_tuple,</div>
+<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span>                       SoAType&amp; dst_soa, <span class="keyword">const</span> <span class="keywordtype">int</span> soa_idx,</div>
+<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"> 1007</span>                       <span class="keyword">const</span> Kokkos::Array&lt;std::size_t, M&gt;&amp; extents,</div>
+<div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span>                       <span class="keyword">const</span> std::integral_constant&lt;std::size_t, N&gt;,</div>
+<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"> 1009</span>                       <span class="keyword">const</span> std::integral_constant&lt;std::size_t, M&gt; )</div>
+<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span>    {</div>
+<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span>        <span class="keywordflow">for</span> ( std::size_t d0 = 0; d0 &lt; extents[0]; ++d0 )</div>
+<div class="line"><a id="l01012" name="l01012"></a><span class="lineno"> 1012</span>            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> d1 = 0; d1 &lt; extents[1]; ++d1 )</div>
+<div class="line"><a id="l01013" name="l01013"></a><span class="lineno"> 1013</span>            {</div>
+<div class="line"><a id="l01014" name="l01014"></a><span class="lineno"> 1014</span>                unpackOp( reduce_op, Cabana::get&lt;N&gt;( src_tuple, d0, d1 ),</div>
+<div class="line"><a id="l01015" name="l01015"></a><span class="lineno"> 1015</span>                          Cabana::get&lt;N&gt;( dst_soa, soa_idx, d0, d1 ) );</div>
+<div class="line"><a id="l01016" name="l01016"></a><span class="lineno"> 1016</span>            }</div>
+<div class="line"><a id="l01017" name="l01017"></a><span class="lineno"> 1017</span>    }</div>
 </div>
-<div class="line"><a id="l01020" name="l01020"></a><span class="lineno"> 1020</span> </div>
-<div class="line"><a id="l01034" name="l01034"></a><span class="lineno"> 1034</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ReduceOp, std::<span class="keywordtype">size_t</span> N, std::<span class="keywordtype">size_t</span> M, <span class="keyword">class</span> SoAType&gt;</div>
-<div class="line"><a id="l01035" name="l01035"></a><span class="lineno"> 1035</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> std::enable_if_t&lt;1 == M, void&gt;</div>
-<div class="foldopen" id="foldopen01036" data-start="{" data-end="}">
-<div class="line"><a id="l01036" name="l01036"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ae2b3bc1ebfcefbf57bbda99663fa5869"> 1036</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ae2b3bc1ebfcefbf57bbda99663fa5869">unpackTupleMember</a>( <span class="keyword">const</span> ReduceOp&amp; reduce_op, <span class="keyword">const</span> <a class="code hl_struct" href="structCabana_1_1Tuple.html">tuple_type</a>&amp; src_tuple,</div>
-<div class="line"><a id="l01037" name="l01037"></a><span class="lineno"> 1037</span>                       SoAType&amp; dst_soa, <span class="keyword">const</span> <span class="keywordtype">int</span> soa_idx,</div>
-<div class="line"><a id="l01038" name="l01038"></a><span class="lineno"> 1038</span>                       <span class="keyword">const</span> Kokkos::Array&lt;std::size_t, M&gt;&amp; extents,</div>
-<div class="line"><a id="l01039" name="l01039"></a><span class="lineno"> 1039</span>                       <span class="keyword">const</span> std::integral_constant&lt;std::size_t, N&gt;,</div>
-<div class="line"><a id="l01040" name="l01040"></a><span class="lineno"> 1040</span>                       <span class="keyword">const</span> std::integral_constant&lt;std::size_t, M&gt; )</div>
-<div class="line"><a id="l01041" name="l01041"></a><span class="lineno"> 1041</span>    {</div>
-<div class="line"><a id="l01042" name="l01042"></a><span class="lineno"> 1042</span>        <span class="keywordflow">for</span> ( std::size_t d0 = 0; d0 &lt; extents[0]; ++d0 )</div>
-<div class="line"><a id="l01043" name="l01043"></a><span class="lineno"> 1043</span>        {</div>
-<div class="line"><a id="l01044" name="l01044"></a><span class="lineno"> 1044</span>            unpackOp( reduce_op, Cabana::get&lt;N&gt;( src_tuple, d0 ),</div>
-<div class="line"><a id="l01045" name="l01045"></a><span class="lineno"> 1045</span>                      Cabana::get&lt;N&gt;( dst_soa, soa_idx, d0 ) );</div>
-<div class="line"><a id="l01046" name="l01046"></a><span class="lineno"> 1046</span>        }</div>
-<div class="line"><a id="l01047" name="l01047"></a><span class="lineno"> 1047</span>    }</div>
+<div class="line"><a id="l01018" name="l01018"></a><span class="lineno"> 1018</span> </div>
+<div class="line"><a id="l01032" name="l01032"></a><span class="lineno"> 1032</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ReduceOp, std::<span class="keywordtype">size_t</span> N, std::<span class="keywordtype">size_t</span> M, <span class="keyword">class</span> SoAType&gt;</div>
+<div class="line"><a id="l01033" name="l01033"></a><span class="lineno"> 1033</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> std::enable_if_t&lt;1 == M, void&gt;</div>
+<div class="foldopen" id="foldopen01034" data-start="{" data-end="}">
+<div class="line"><a id="l01034" name="l01034"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ae2b3bc1ebfcefbf57bbda99663fa5869"> 1034</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ae2b3bc1ebfcefbf57bbda99663fa5869">unpackTupleMember</a>( <span class="keyword">const</span> ReduceOp&amp; reduce_op, <span class="keyword">const</span> <a class="code hl_struct" href="structCabana_1_1Tuple.html">tuple_type</a>&amp; src_tuple,</div>
+<div class="line"><a id="l01035" name="l01035"></a><span class="lineno"> 1035</span>                       SoAType&amp; dst_soa, <span class="keyword">const</span> <span class="keywordtype">int</span> soa_idx,</div>
+<div class="line"><a id="l01036" name="l01036"></a><span class="lineno"> 1036</span>                       <span class="keyword">const</span> Kokkos::Array&lt;std::size_t, M&gt;&amp; extents,</div>
+<div class="line"><a id="l01037" name="l01037"></a><span class="lineno"> 1037</span>                       <span class="keyword">const</span> std::integral_constant&lt;std::size_t, N&gt;,</div>
+<div class="line"><a id="l01038" name="l01038"></a><span class="lineno"> 1038</span>                       <span class="keyword">const</span> std::integral_constant&lt;std::size_t, M&gt; )</div>
+<div class="line"><a id="l01039" name="l01039"></a><span class="lineno"> 1039</span>    {</div>
+<div class="line"><a id="l01040" name="l01040"></a><span class="lineno"> 1040</span>        <span class="keywordflow">for</span> ( std::size_t d0 = 0; d0 &lt; extents[0]; ++d0 )</div>
+<div class="line"><a id="l01041" name="l01041"></a><span class="lineno"> 1041</span>        {</div>
+<div class="line"><a id="l01042" name="l01042"></a><span class="lineno"> 1042</span>            unpackOp( reduce_op, Cabana::get&lt;N&gt;( src_tuple, d0 ),</div>
+<div class="line"><a id="l01043" name="l01043"></a><span class="lineno"> 1043</span>                      Cabana::get&lt;N&gt;( dst_soa, soa_idx, d0 ) );</div>
+<div class="line"><a id="l01044" name="l01044"></a><span class="lineno"> 1044</span>        }</div>
+<div class="line"><a id="l01045" name="l01045"></a><span class="lineno"> 1045</span>    }</div>
 </div>
-<div class="line"><a id="l01048" name="l01048"></a><span class="lineno"> 1048</span> </div>
-<div class="line"><a id="l01061" name="l01061"></a><span class="lineno"> 1061</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ReduceOp, std::<span class="keywordtype">size_t</span> N, std::<span class="keywordtype">size_t</span> M, <span class="keyword">class</span> SoAType&gt;</div>
-<div class="line"><a id="l01062" name="l01062"></a><span class="lineno"> 1062</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> std::enable_if_t&lt;0 == M, void&gt;</div>
-<div class="foldopen" id="foldopen01063" data-start="{" data-end="}">
-<div class="line"><a id="l01063" name="l01063"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a43ba27d5ad22ba54232c29cfc39fec0b"> 1063</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a43ba27d5ad22ba54232c29cfc39fec0b">unpackTupleMember</a>( <span class="keyword">const</span> ReduceOp&amp; reduce_op, <span class="keyword">const</span> <a class="code hl_struct" href="structCabana_1_1Tuple.html">tuple_type</a>&amp; src_tuple,</div>
-<div class="line"><a id="l01064" name="l01064"></a><span class="lineno"> 1064</span>                       SoAType&amp; dst_soa, <span class="keyword">const</span> <span class="keywordtype">int</span> soa_idx,</div>
-<div class="line"><a id="l01065" name="l01065"></a><span class="lineno"> 1065</span>                       <span class="keyword">const</span> Kokkos::Array&lt;std::size_t, M&gt;&amp;,</div>
-<div class="line"><a id="l01066" name="l01066"></a><span class="lineno"> 1066</span>                       <span class="keyword">const</span> std::integral_constant&lt;std::size_t, N&gt;,</div>
-<div class="line"><a id="l01067" name="l01067"></a><span class="lineno"> 1067</span>                       <span class="keyword">const</span> std::integral_constant&lt;std::size_t, M&gt; )</div>
-<div class="line"><a id="l01068" name="l01068"></a><span class="lineno"> 1068</span>    {</div>
-<div class="line"><a id="l01069" name="l01069"></a><span class="lineno"> 1069</span>        unpackOp( reduce_op, Cabana::get&lt;N&gt;( src_tuple ),</div>
-<div class="line"><a id="l01070" name="l01070"></a><span class="lineno"> 1070</span>                  Cabana::get&lt;N&gt;( dst_soa, soa_idx ) );</div>
-<div class="line"><a id="l01071" name="l01071"></a><span class="lineno"> 1071</span>    }</div>
+<div class="line"><a id="l01046" name="l01046"></a><span class="lineno"> 1046</span> </div>
+<div class="line"><a id="l01059" name="l01059"></a><span class="lineno"> 1059</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ReduceOp, std::<span class="keywordtype">size_t</span> N, std::<span class="keywordtype">size_t</span> M, <span class="keyword">class</span> SoAType&gt;</div>
+<div class="line"><a id="l01060" name="l01060"></a><span class="lineno"> 1060</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> std::enable_if_t&lt;0 == M, void&gt;</div>
+<div class="foldopen" id="foldopen01061" data-start="{" data-end="}">
+<div class="line"><a id="l01061" name="l01061"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a43ba27d5ad22ba54232c29cfc39fec0b"> 1061</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a43ba27d5ad22ba54232c29cfc39fec0b">unpackTupleMember</a>( <span class="keyword">const</span> ReduceOp&amp; reduce_op, <span class="keyword">const</span> <a class="code hl_struct" href="structCabana_1_1Tuple.html">tuple_type</a>&amp; src_tuple,</div>
+<div class="line"><a id="l01062" name="l01062"></a><span class="lineno"> 1062</span>                       SoAType&amp; dst_soa, <span class="keyword">const</span> <span class="keywordtype">int</span> soa_idx,</div>
+<div class="line"><a id="l01063" name="l01063"></a><span class="lineno"> 1063</span>                       <span class="keyword">const</span> Kokkos::Array&lt;std::size_t, M&gt;&amp;,</div>
+<div class="line"><a id="l01064" name="l01064"></a><span class="lineno"> 1064</span>                       <span class="keyword">const</span> std::integral_constant&lt;std::size_t, N&gt;,</div>
+<div class="line"><a id="l01065" name="l01065"></a><span class="lineno"> 1065</span>                       <span class="keyword">const</span> std::integral_constant&lt;std::size_t, M&gt; )</div>
+<div class="line"><a id="l01066" name="l01066"></a><span class="lineno"> 1066</span>    {</div>
+<div class="line"><a id="l01067" name="l01067"></a><span class="lineno"> 1067</span>        unpackOp( reduce_op, Cabana::get&lt;N&gt;( src_tuple ),</div>
+<div class="line"><a id="l01068" name="l01068"></a><span class="lineno"> 1068</span>                  Cabana::get&lt;N&gt;( dst_soa, soa_idx ) );</div>
+<div class="line"><a id="l01069" name="l01069"></a><span class="lineno"> 1069</span>    }</div>
 </div>
-<div class="line"><a id="l01072" name="l01072"></a><span class="lineno"> 1072</span> </div>
-<div class="line"><a id="l01082" name="l01082"></a><span class="lineno"> 1082</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ReduceOp, <span class="keyword">class</span> SoAType&gt;</div>
-<div class="line"><a id="l01083" name="l01083"></a><span class="lineno"> 1083</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> <span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01084" data-start="{" data-end="}">
-<div class="line"><a id="l01084" name="l01084"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a9aeac20ab5a7e0d5aa71f3497ea663b6"> 1084</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a9aeac20ab5a7e0d5aa71f3497ea663b6">unpackTuple</a>( <span class="keyword">const</span> ReduceOp&amp; reduce_op, <span class="keyword">const</span> <a class="code hl_struct" href="structCabana_1_1Tuple.html">tuple_type</a>&amp; src_tuple,</div>
-<div class="line"><a id="l01085" name="l01085"></a><span class="lineno"> 1085</span>                 SoAType&amp; dst_soa, <span class="keyword">const</span> <span class="keywordtype">int</span> soa_idx,</div>
-<div class="line"><a id="l01086" name="l01086"></a><span class="lineno"> 1086</span>                 <span class="keyword">const</span> std::integral_constant&lt;std::size_t, 0&gt; )</div>
-<div class="line"><a id="l01087" name="l01087"></a><span class="lineno"> 1087</span>    {</div>
-<div class="line"><a id="l01088" name="l01088"></a><span class="lineno"> 1088</span>        <span class="keyword">using </span>current_type = <a class="code hl_typedef" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a3c705c33bb342f4715c4ccb5a34e5d30">member_data_type&lt;0&gt;</a>;</div>
-<div class="line"><a id="l01089" name="l01089"></a><span class="lineno"> 1089</span>        <span class="keyword">auto</span> extents = compute_member_extents&lt;current_type&gt;();</div>
-<div class="line"><a id="l01090" name="l01090"></a><span class="lineno"> 1090</span>        unpackTupleMember(</div>
-<div class="line"><a id="l01091" name="l01091"></a><span class="lineno"> 1091</span>            reduce_op, src_tuple, dst_soa, soa_idx, extents,</div>
-<div class="line"><a id="l01092" name="l01092"></a><span class="lineno"> 1092</span>            std::integral_constant&lt;std::size_t, 0&gt;(),</div>
-<div class="line"><a id="l01093" name="l01093"></a><span class="lineno"> 1093</span>            std::integral_constant&lt;std::size_t,</div>
-<div class="line"><a id="l01094" name="l01094"></a><span class="lineno"> 1094</span>                                   std::rank&lt;current_type&gt;::value&gt;() );</div>
-<div class="line"><a id="l01095" name="l01095"></a><span class="lineno"> 1095</span>    }</div>
+<div class="line"><a id="l01070" name="l01070"></a><span class="lineno"> 1070</span> </div>
+<div class="line"><a id="l01080" name="l01080"></a><span class="lineno"> 1080</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ReduceOp, <span class="keyword">class</span> SoAType&gt;</div>
+<div class="line"><a id="l01081" name="l01081"></a><span class="lineno"> 1081</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> <span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01082" data-start="{" data-end="}">
+<div class="line"><a id="l01082" name="l01082"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a9aeac20ab5a7e0d5aa71f3497ea663b6"> 1082</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a9aeac20ab5a7e0d5aa71f3497ea663b6">unpackTuple</a>( <span class="keyword">const</span> ReduceOp&amp; reduce_op, <span class="keyword">const</span> <a class="code hl_struct" href="structCabana_1_1Tuple.html">tuple_type</a>&amp; src_tuple,</div>
+<div class="line"><a id="l01083" name="l01083"></a><span class="lineno"> 1083</span>                 SoAType&amp; dst_soa, <span class="keyword">const</span> <span class="keywordtype">int</span> soa_idx,</div>
+<div class="line"><a id="l01084" name="l01084"></a><span class="lineno"> 1084</span>                 <span class="keyword">const</span> std::integral_constant&lt;std::size_t, 0&gt; )</div>
+<div class="line"><a id="l01085" name="l01085"></a><span class="lineno"> 1085</span>    {</div>
+<div class="line"><a id="l01086" name="l01086"></a><span class="lineno"> 1086</span>        <span class="keyword">using </span>current_type = <a class="code hl_typedef" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a3c705c33bb342f4715c4ccb5a34e5d30">member_data_type&lt;0&gt;</a>;</div>
+<div class="line"><a id="l01087" name="l01087"></a><span class="lineno"> 1087</span>        <span class="keyword">auto</span> extents = compute_member_extents&lt;current_type&gt;();</div>
+<div class="line"><a id="l01088" name="l01088"></a><span class="lineno"> 1088</span>        unpackTupleMember(</div>
+<div class="line"><a id="l01089" name="l01089"></a><span class="lineno"> 1089</span>            reduce_op, src_tuple, dst_soa, soa_idx, extents,</div>
+<div class="line"><a id="l01090" name="l01090"></a><span class="lineno"> 1090</span>            std::integral_constant&lt;std::size_t, 0&gt;(),</div>
+<div class="line"><a id="l01091" name="l01091"></a><span class="lineno"> 1091</span>            std::integral_constant&lt;std::size_t,</div>
+<div class="line"><a id="l01092" name="l01092"></a><span class="lineno"> 1092</span>                                   std::rank&lt;current_type&gt;::value&gt;() );</div>
+<div class="line"><a id="l01093" name="l01093"></a><span class="lineno"> 1093</span>    }</div>
 </div>
-<div class="line"><a id="l01096" name="l01096"></a><span class="lineno"> 1096</span> </div>
-<div class="line"><a id="l01107" name="l01107"></a><span class="lineno"> 1107</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ReduceOp, std::<span class="keywordtype">size_t</span> N, <span class="keyword">class</span> SoAType&gt;</div>
-<div class="line"><a id="l01108" name="l01108"></a><span class="lineno"> 1108</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> <span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen01109" data-start="{" data-end="}">
-<div class="line"><a id="l01109" name="l01109"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ae36df4dfaccc333a9a7b4715b0443054"> 1109</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ae36df4dfaccc333a9a7b4715b0443054">unpackTuple</a>( <span class="keyword">const</span> ReduceOp&amp; reduce_op, <span class="keyword">const</span> <a class="code hl_struct" href="structCabana_1_1Tuple.html">tuple_type</a>&amp; src_tuple,</div>
-<div class="line"><a id="l01110" name="l01110"></a><span class="lineno"> 1110</span>                 SoAType&amp; dst_soa, <span class="keyword">const</span> <span class="keywordtype">int</span> soa_idx,</div>
-<div class="line"><a id="l01111" name="l01111"></a><span class="lineno"> 1111</span>                 <span class="keyword">const</span> std::integral_constant&lt;std::size_t, N&gt; )</div>
-<div class="line"><a id="l01112" name="l01112"></a><span class="lineno"> 1112</span>    {</div>
-<div class="line"><a id="l01113" name="l01113"></a><span class="lineno"> 1113</span>        <span class="keyword">using </span>current_type = <a class="code hl_typedef" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a3c705c33bb342f4715c4ccb5a34e5d30">member_data_type&lt;N&gt;</a>;</div>
-<div class="line"><a id="l01114" name="l01114"></a><span class="lineno"> 1114</span>        <span class="keyword">auto</span> extents = compute_member_extents&lt;current_type&gt;();</div>
-<div class="line"><a id="l01115" name="l01115"></a><span class="lineno"> 1115</span>        unpackTupleMember(</div>
-<div class="line"><a id="l01116" name="l01116"></a><span class="lineno"> 1116</span>            reduce_op, src_tuple, dst_soa, soa_idx, extents,</div>
-<div class="line"><a id="l01117" name="l01117"></a><span class="lineno"> 1117</span>            std::integral_constant&lt;std::size_t, N&gt;(),</div>
-<div class="line"><a id="l01118" name="l01118"></a><span class="lineno"> 1118</span>            std::integral_constant&lt;std::size_t,</div>
-<div class="line"><a id="l01119" name="l01119"></a><span class="lineno"> 1119</span>                                   std::rank&lt;current_type&gt;::value&gt;() );</div>
-<div class="line"><a id="l01120" name="l01120"></a><span class="lineno"> 1120</span> </div>
-<div class="line"><a id="l01121" name="l01121"></a><span class="lineno"> 1121</span>        <span class="keywordflow">if</span> ( N &gt; 1 )</div>
-<div class="line"><a id="l01122" name="l01122"></a><span class="lineno"> 1122</span>        {</div>
-<div class="line"><a id="l01123" name="l01123"></a><span class="lineno"> 1123</span>            <span class="comment">// recurcively unpack the next tuple element</span></div>
-<div class="line"><a id="l01124" name="l01124"></a><span class="lineno"> 1124</span>            unpackTuple( reduce_op, src_tuple, dst_soa, soa_idx,</div>
-<div class="line"><a id="l01125" name="l01125"></a><span class="lineno"> 1125</span>                         std::integral_constant&lt;std::size_t, N - 1&gt;() );</div>
-<div class="line"><a id="l01126" name="l01126"></a><span class="lineno"> 1126</span>        }</div>
-<div class="line"><a id="l01127" name="l01127"></a><span class="lineno"> 1127</span>        <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01128" name="l01128"></a><span class="lineno"> 1128</span>        {</div>
-<div class="line"><a id="l01129" name="l01129"></a><span class="lineno"> 1129</span>            unpackTuple( reduce_op, src_tuple, dst_soa, soa_idx,</div>
-<div class="line"><a id="l01130" name="l01130"></a><span class="lineno"> 1130</span>                         std::integral_constant&lt;std::size_t, 0&gt;() );</div>
-<div class="line"><a id="l01131" name="l01131"></a><span class="lineno"> 1131</span>        }</div>
-<div class="line"><a id="l01132" name="l01132"></a><span class="lineno"> 1132</span>    }</div>
+<div class="line"><a id="l01094" name="l01094"></a><span class="lineno"> 1094</span> </div>
+<div class="line"><a id="l01105" name="l01105"></a><span class="lineno"> 1105</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ReduceOp, std::<span class="keywordtype">size_t</span> N, <span class="keyword">class</span> SoAType&gt;</div>
+<div class="line"><a id="l01106" name="l01106"></a><span class="lineno"> 1106</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> <span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01107" data-start="{" data-end="}">
+<div class="line"><a id="l01107" name="l01107"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ae36df4dfaccc333a9a7b4715b0443054"> 1107</a></span>    <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ae36df4dfaccc333a9a7b4715b0443054">unpackTuple</a>( <span class="keyword">const</span> ReduceOp&amp; reduce_op, <span class="keyword">const</span> <a class="code hl_struct" href="structCabana_1_1Tuple.html">tuple_type</a>&amp; src_tuple,</div>
+<div class="line"><a id="l01108" name="l01108"></a><span class="lineno"> 1108</span>                 SoAType&amp; dst_soa, <span class="keyword">const</span> <span class="keywordtype">int</span> soa_idx,</div>
+<div class="line"><a id="l01109" name="l01109"></a><span class="lineno"> 1109</span>                 <span class="keyword">const</span> std::integral_constant&lt;std::size_t, N&gt; )</div>
+<div class="line"><a id="l01110" name="l01110"></a><span class="lineno"> 1110</span>    {</div>
+<div class="line"><a id="l01111" name="l01111"></a><span class="lineno"> 1111</span>        <span class="keyword">using </span>current_type = <a class="code hl_typedef" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a3c705c33bb342f4715c4ccb5a34e5d30">member_data_type&lt;N&gt;</a>;</div>
+<div class="line"><a id="l01112" name="l01112"></a><span class="lineno"> 1112</span>        <span class="keyword">auto</span> extents = compute_member_extents&lt;current_type&gt;();</div>
+<div class="line"><a id="l01113" name="l01113"></a><span class="lineno"> 1113</span>        unpackTupleMember(</div>
+<div class="line"><a id="l01114" name="l01114"></a><span class="lineno"> 1114</span>            reduce_op, src_tuple, dst_soa, soa_idx, extents,</div>
+<div class="line"><a id="l01115" name="l01115"></a><span class="lineno"> 1115</span>            std::integral_constant&lt;std::size_t, N&gt;(),</div>
+<div class="line"><a id="l01116" name="l01116"></a><span class="lineno"> 1116</span>            std::integral_constant&lt;std::size_t,</div>
+<div class="line"><a id="l01117" name="l01117"></a><span class="lineno"> 1117</span>                                   std::rank&lt;current_type&gt;::value&gt;() );</div>
+<div class="line"><a id="l01118" name="l01118"></a><span class="lineno"> 1118</span> </div>
+<div class="line"><a id="l01119" name="l01119"></a><span class="lineno"> 1119</span>        <span class="keywordflow">if</span> ( N &gt; 1 )</div>
+<div class="line"><a id="l01120" name="l01120"></a><span class="lineno"> 1120</span>        {</div>
+<div class="line"><a id="l01121" name="l01121"></a><span class="lineno"> 1121</span>            <span class="comment">// recurcively unpack the next tuple element</span></div>
+<div class="line"><a id="l01122" name="l01122"></a><span class="lineno"> 1122</span>            unpackTuple( reduce_op, src_tuple, dst_soa, soa_idx,</div>
+<div class="line"><a id="l01123" name="l01123"></a><span class="lineno"> 1123</span>                         std::integral_constant&lt;std::size_t, N - 1&gt;() );</div>
+<div class="line"><a id="l01124" name="l01124"></a><span class="lineno"> 1124</span>        }</div>
+<div class="line"><a id="l01125" name="l01125"></a><span class="lineno"> 1125</span>        <span class="keywordflow">else</span></div>
+<div class="line"><a id="l01126" name="l01126"></a><span class="lineno"> 1126</span>        {</div>
+<div class="line"><a id="l01127" name="l01127"></a><span class="lineno"> 1127</span>            unpackTuple( reduce_op, src_tuple, dst_soa, soa_idx,</div>
+<div class="line"><a id="l01128" name="l01128"></a><span class="lineno"> 1128</span>                         std::integral_constant&lt;std::size_t, 0&gt;() );</div>
+<div class="line"><a id="l01129" name="l01129"></a><span class="lineno"> 1129</span>        }</div>
+<div class="line"><a id="l01130" name="l01130"></a><span class="lineno"> 1130</span>    }</div>
 </div>
-<div class="line"><a id="l01133" name="l01133"></a><span class="lineno"> 1133</span> </div>
-<div class="line"><a id="l01149" name="l01149"></a><span class="lineno"> 1149</span>    <span class="keyword">template</span> &lt;<span class="keyword">class </span>ReduceOp, <span class="keyword">class </span>ExecSpace, <span class="keyword">class </span>SparseArrayType,</div>
-<div class="line"><a id="l01150" name="l01150"></a><span class="lineno"> 1150</span>              <span class="keyword">class </span>SparseMapType, <span class="keyword">class </span>CountType&gt;</div>
-<div class="foldopen" id="foldopen01151" data-start="{" data-end="}">
-<div class="line"><a id="l01151" name="l01151"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a38dc08768a3a8c2c5f363eed5e123500"> 1151</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a38dc08768a3a8c2c5f363eed5e123500">unpackBuffer</a>( <span class="keyword">const</span> ReduceOp&amp; reduce_op, <span class="keyword">const</span> ExecSpace&amp; exec_space,</div>
-<div class="line"><a id="l01152" name="l01152"></a><span class="lineno"> 1152</span>                       <span class="keyword">const</span> <a class="code hl_typedef" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#adee005ea512fdbd9acb04d1546c006ef">buffer_view</a>&amp; buffer,</div>
-<div class="line"><a id="l01153" name="l01153"></a><span class="lineno"> 1153</span>                       <span class="keyword">const</span> <a class="code hl_typedef" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a20aa8f28c2201f4689177ab548fc8cfb">steering_view</a>&amp; tile_steering,</div>
-<div class="line"><a id="l01154" name="l01154"></a><span class="lineno"> 1154</span>                       <span class="keyword">const</span> SparseArrayType&amp; sparse_array, SparseMapType&amp; map,</div>
-<div class="line"><a id="l01155" name="l01155"></a><span class="lineno"> 1155</span>                       <span class="keyword">const</span> CountType count )<span class="keyword"> const</span></div>
-<div class="line"><a id="l01156" name="l01156"></a><span class="lineno"> 1156</span><span class="keyword">    </span>{</div>
-<div class="line"><a id="l01157" name="l01157"></a><span class="lineno"> 1157</span>        Kokkos::parallel_for(</div>
-<div class="line"><a id="l01158" name="l01158"></a><span class="lineno"> 1158</span>            <span class="stringliteral">&quot;unpack_spares_halo_buffer&quot;</span>,</div>
-<div class="line"><a id="l01159" name="l01159"></a><span class="lineno"> 1159</span>            Kokkos::RangePolicy&lt;ExecSpace&gt;( exec_space, 0, count ),</div>
-<div class="line"><a id="l01160" name="l01160"></a><span class="lineno"> 1160</span>            KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i ) {</div>
-<div class="line"><a id="l01161" name="l01161"></a><span class="lineno"> 1161</span>                <span class="keywordflow">if</span> ( tile_steering( i ) != invalid_key )</div>
-<div class="line"><a id="l01162" name="l01162"></a><span class="lineno"> 1162</span>                {</div>
-<div class="line"><a id="l01163" name="l01163"></a><span class="lineno"> 1163</span>                    <span class="keyword">auto</span> tile_key = tile_steering( i );</div>
-<div class="line"><a id="l01164" name="l01164"></a><span class="lineno"> 1164</span>                    <span class="keywordflow">if</span> ( map.isValidKey( tile_key ) )</div>
-<div class="line"><a id="l01165" name="l01165"></a><span class="lineno"> 1165</span>                    {</div>
-<div class="line"><a id="l01166" name="l01166"></a><span class="lineno"> 1166</span>                        <span class="keywordtype">int</span> ti, tj, tk;</div>
-<div class="line"><a id="l01167" name="l01167"></a><span class="lineno"> 1167</span>                        map.key2ijk( tile_key, ti, tj, tk );</div>
-<div class="line"><a id="l01168" name="l01168"></a><span class="lineno"> 1168</span> </div>
-<div class="line"><a id="l01169" name="l01169"></a><span class="lineno"> 1169</span>                        <span class="keyword">auto</span> tile_id = map.queryTileFromTileKey( tile_key );</div>
-<div class="line"><a id="l01170" name="l01170"></a><span class="lineno"> 1170</span>                        <span class="keyword">const</span> <span class="keywordtype">int</span> buffer_idx = i * cell_num_per_tile;</div>
-<div class="line"><a id="l01171" name="l01171"></a><span class="lineno"> 1171</span>                        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> lcid = 0; lcid &lt; (int)cell_num_per_tile;</div>
-<div class="line"><a id="l01172" name="l01172"></a><span class="lineno"> 1172</span>                              ++lcid )</div>
-<div class="line"><a id="l01173" name="l01173"></a><span class="lineno"> 1173</span>                        {</div>
-<div class="line"><a id="l01174" name="l01174"></a><span class="lineno"> 1174</span>                            <span class="keyword">auto</span>&amp; tuple = buffer( buffer_idx + lcid );</div>
-<div class="line"><a id="l01175" name="l01175"></a><span class="lineno"> 1175</span>                            <span class="keyword">auto</span>&amp; data_access =</div>
-<div class="line"><a id="l01176" name="l01176"></a><span class="lineno"> 1176</span>                                sparse_array.accessTile( tile_id );</div>
-<div class="line"><a id="l01177" name="l01177"></a><span class="lineno"> 1177</span>                            unpackTuple(</div>
-<div class="line"><a id="l01178" name="l01178"></a><span class="lineno"> 1178</span>                                reduce_op, tuple, data_access, lcid,</div>
-<div class="line"><a id="l01179" name="l01179"></a><span class="lineno"> 1179</span>                                std::integral_constant&lt;std::size_t,</div>
-<div class="line"><a id="l01180" name="l01180"></a><span class="lineno"> 1180</span>                                                       member_num - 1&gt;() );</div>
-<div class="line"><a id="l01181" name="l01181"></a><span class="lineno"> 1181</span>                        }</div>
-<div class="line"><a id="l01182" name="l01182"></a><span class="lineno"> 1182</span>                    }</div>
-<div class="line"><a id="l01183" name="l01183"></a><span class="lineno"> 1183</span>                }</div>
-<div class="line"><a id="l01184" name="l01184"></a><span class="lineno"> 1184</span>            } );</div>
-<div class="line"><a id="l01185" name="l01185"></a><span class="lineno"> 1185</span>    }</div>
+<div class="line"><a id="l01131" name="l01131"></a><span class="lineno"> 1131</span> </div>
+<div class="line"><a id="l01146" name="l01146"></a><span class="lineno"> 1146</span>    <span class="keyword">template</span> &lt;<span class="keyword">class </span>ReduceOp, <span class="keyword">class </span>ExecSpace, <span class="keyword">class </span>SparseArrayType,</div>
+<div class="line"><a id="l01147" name="l01147"></a><span class="lineno"> 1147</span>              <span class="keyword">class </span>SparseMapType&gt;</div>
+<div class="foldopen" id="foldopen01148" data-start="{" data-end="}">
+<div class="line"><a id="l01148" name="l01148"></a><span class="lineno"><a class="line" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ac4c2a4cc5fa80c2c67e3c0c107e3dac8"> 1148</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ac4c2a4cc5fa80c2c67e3c0c107e3dac8">unpackBuffer</a>( <span class="keyword">const</span> ReduceOp&amp; reduce_op, <span class="keyword">const</span> ExecSpace&amp; exec_space,</div>
+<div class="line"><a id="l01149" name="l01149"></a><span class="lineno"> 1149</span>                       <span class="keyword">const</span> <a class="code hl_typedef" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#adee005ea512fdbd9acb04d1546c006ef">buffer_view</a>&amp; buffer,</div>
+<div class="line"><a id="l01150" name="l01150"></a><span class="lineno"> 1150</span>                       <span class="keyword">const</span> <a class="code hl_typedef" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a20aa8f28c2201f4689177ab548fc8cfb">steering_view</a>&amp; tile_steering,</div>
+<div class="line"><a id="l01151" name="l01151"></a><span class="lineno"> 1151</span>                       <span class="keyword">const</span> SparseArrayType&amp; sparse_array, SparseMapType&amp; map,</div>
+<div class="line"><a id="l01152" name="l01152"></a><span class="lineno"> 1152</span>                       <span class="keyword">const</span> <span class="keywordtype">int</span> count )<span class="keyword"> const</span></div>
+<div class="line"><a id="l01153" name="l01153"></a><span class="lineno"> 1153</span><span class="keyword">    </span>{</div>
+<div class="line"><a id="l01154" name="l01154"></a><span class="lineno"> 1154</span>        Kokkos::parallel_for(</div>
+<div class="line"><a id="l01155" name="l01155"></a><span class="lineno"> 1155</span>            <span class="stringliteral">&quot;unpack_spares_halo_buffer&quot;</span>,</div>
+<div class="line"><a id="l01156" name="l01156"></a><span class="lineno"> 1156</span>            Kokkos::RangePolicy&lt;ExecSpace&gt;( exec_space, 0, count ),</div>
+<div class="line"><a id="l01157" name="l01157"></a><span class="lineno"> 1157</span>            KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i ) {</div>
+<div class="line"><a id="l01158" name="l01158"></a><span class="lineno"> 1158</span>                <span class="keywordflow">if</span> ( tile_steering( i ) != invalid_key )</div>
+<div class="line"><a id="l01159" name="l01159"></a><span class="lineno"> 1159</span>                {</div>
+<div class="line"><a id="l01160" name="l01160"></a><span class="lineno"> 1160</span>                    <span class="keyword">auto</span> tile_key = tile_steering( i );</div>
+<div class="line"><a id="l01161" name="l01161"></a><span class="lineno"> 1161</span>                    <span class="keywordflow">if</span> ( map.isValidKey( tile_key ) )</div>
+<div class="line"><a id="l01162" name="l01162"></a><span class="lineno"> 1162</span>                    {</div>
+<div class="line"><a id="l01163" name="l01163"></a><span class="lineno"> 1163</span>                        <span class="keywordtype">int</span> ti, tj, tk;</div>
+<div class="line"><a id="l01164" name="l01164"></a><span class="lineno"> 1164</span>                        map.key2ijk( tile_key, ti, tj, tk );</div>
+<div class="line"><a id="l01165" name="l01165"></a><span class="lineno"> 1165</span> </div>
+<div class="line"><a id="l01166" name="l01166"></a><span class="lineno"> 1166</span>                        <span class="keyword">auto</span> tile_id = map.queryTileFromTileKey( tile_key );</div>
+<div class="line"><a id="l01167" name="l01167"></a><span class="lineno"> 1167</span>                        <span class="keyword">const</span> <span class="keywordtype">int</span> buffer_idx = i * cell_num_per_tile;</div>
+<div class="line"><a id="l01168" name="l01168"></a><span class="lineno"> 1168</span>                        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> lcid = 0; lcid &lt; (int)cell_num_per_tile;</div>
+<div class="line"><a id="l01169" name="l01169"></a><span class="lineno"> 1169</span>                              ++lcid )</div>
+<div class="line"><a id="l01170" name="l01170"></a><span class="lineno"> 1170</span>                        {</div>
+<div class="line"><a id="l01171" name="l01171"></a><span class="lineno"> 1171</span>                            <span class="keyword">auto</span>&amp; tuple = buffer( buffer_idx + lcid );</div>
+<div class="line"><a id="l01172" name="l01172"></a><span class="lineno"> 1172</span>                            <span class="keyword">auto</span>&amp; data_access =</div>
+<div class="line"><a id="l01173" name="l01173"></a><span class="lineno"> 1173</span>                                sparse_array.accessTile( tile_id );</div>
+<div class="line"><a id="l01174" name="l01174"></a><span class="lineno"> 1174</span>                            unpackTuple(</div>
+<div class="line"><a id="l01175" name="l01175"></a><span class="lineno"> 1175</span>                                reduce_op, tuple, data_access, lcid,</div>
+<div class="line"><a id="l01176" name="l01176"></a><span class="lineno"> 1176</span>                                std::integral_constant&lt;std::size_t,</div>
+<div class="line"><a id="l01177" name="l01177"></a><span class="lineno"> 1177</span>                                                       member_num - 1&gt;() );</div>
+<div class="line"><a id="l01178" name="l01178"></a><span class="lineno"> 1178</span>                        }</div>
+<div class="line"><a id="l01179" name="l01179"></a><span class="lineno"> 1179</span>                    }</div>
+<div class="line"><a id="l01180" name="l01180"></a><span class="lineno"> 1180</span>                }</div>
+<div class="line"><a id="l01181" name="l01181"></a><span class="lineno"> 1181</span>            } );</div>
+<div class="line"><a id="l01182" name="l01182"></a><span class="lineno"> 1182</span>    }</div>
 </div>
-<div class="line"><a id="l01186" name="l01186"></a><span class="lineno"> 1186</span> </div>
-<div class="line"><a id="l01187" name="l01187"></a><span class="lineno"> 1187</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l01188" name="l01188"></a><span class="lineno"> 1188</span>    <span class="comment">// These functions may be useful if added to Cabana_MemberType.hpp</span></div>
-<div class="line"><a id="l01189" name="l01189"></a><span class="lineno"> 1189</span>    <span class="comment">// compute member size</span></div>
-<div class="line"><a id="l01190" name="l01190"></a><span class="lineno"> 1190</span>    <span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> M&gt;</div>
-<div class="line"><a id="l01191" name="l01191"></a><span class="lineno"> 1191</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> std::size_t compute_member_size()</div>
-<div class="line"><a id="l01192" name="l01192"></a><span class="lineno"> 1192</span>    {</div>
-<div class="line"><a id="l01193" name="l01193"></a><span class="lineno"> 1193</span>        <span class="keywordflow">return</span> <span class="keyword">sizeof</span>( member_data_type&lt;M&gt; );</div>
-<div class="line"><a id="l01194" name="l01194"></a><span class="lineno"> 1194</span>    }</div>
+<div class="line"><a id="l01183" name="l01183"></a><span class="lineno"> 1183</span> </div>
+<div class="line"><a id="l01184" name="l01184"></a><span class="lineno"> 1184</span>  <span class="keyword">private</span>:</div>
+<div class="line"><a id="l01185" name="l01185"></a><span class="lineno"> 1185</span>    <span class="comment">// These functions may be useful if added to Cabana_MemberType.hpp</span></div>
+<div class="line"><a id="l01186" name="l01186"></a><span class="lineno"> 1186</span>    <span class="comment">// compute member size</span></div>
+<div class="line"><a id="l01187" name="l01187"></a><span class="lineno"> 1187</span>    <span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> M&gt;</div>
+<div class="line"><a id="l01188" name="l01188"></a><span class="lineno"> 1188</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> std::size_t compute_member_size()</div>
+<div class="line"><a id="l01189" name="l01189"></a><span class="lineno"> 1189</span>    {</div>
+<div class="line"><a id="l01190" name="l01190"></a><span class="lineno"> 1190</span>        <span class="keywordflow">return</span> <span class="keyword">sizeof</span>( member_data_type&lt;M&gt; );</div>
+<div class="line"><a id="l01191" name="l01191"></a><span class="lineno"> 1191</span>    }</div>
+<div class="line"><a id="l01192" name="l01192"></a><span class="lineno"> 1192</span> </div>
+<div class="line"><a id="l01193" name="l01193"></a><span class="lineno"> 1193</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Sequence&gt;</div>
+<div class="line"><a id="l01194" name="l01194"></a><span class="lineno"> 1194</span>    <span class="keyword">struct </span>compute_member_size_list_impl;</div>
 <div class="line"><a id="l01195" name="l01195"></a><span class="lineno"> 1195</span> </div>
-<div class="line"><a id="l01196" name="l01196"></a><span class="lineno"> 1196</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Sequence&gt;</div>
-<div class="line"><a id="l01197" name="l01197"></a><span class="lineno"> 1197</span>    <span class="keyword">struct </span>compute_member_size_list_impl;</div>
-<div class="line"><a id="l01198" name="l01198"></a><span class="lineno"> 1198</span> </div>
-<div class="line"><a id="l01199" name="l01199"></a><span class="lineno"> 1199</span>    <span class="keyword">template</span> &lt;std::size_t... Is&gt;</div>
-<div class="line"><a id="l01200" name="l01200"></a><span class="lineno"> 1200</span>    <span class="keyword">struct </span>compute_member_size_list_impl&lt;std::index_sequence&lt;Is...&gt;&gt;</div>
-<div class="line"><a id="l01201" name="l01201"></a><span class="lineno"> 1201</span>    {</div>
-<div class="line"><a id="l01202" name="l01202"></a><span class="lineno"> 1202</span>        std::array&lt;std::size_t, member_num&gt; operator()()</div>
-<div class="line"><a id="l01203" name="l01203"></a><span class="lineno"> 1203</span>        {</div>
-<div class="line"><a id="l01204" name="l01204"></a><span class="lineno"> 1204</span>            <span class="keywordflow">return</span> { compute_member_size&lt;Is&gt;()... };</div>
-<div class="line"><a id="l01205" name="l01205"></a><span class="lineno"> 1205</span>        }</div>
-<div class="line"><a id="l01206" name="l01206"></a><span class="lineno"> 1206</span>    };</div>
-<div class="line"><a id="l01207" name="l01207"></a><span class="lineno"> 1207</span> </div>
-<div class="line"><a id="l01208" name="l01208"></a><span class="lineno"> 1208</span>    <span class="keyword">template</span> &lt;std::size_t N = member_num,</div>
-<div class="line"><a id="l01209" name="l01209"></a><span class="lineno"> 1209</span>              <span class="keyword">typename</span> Indices = std::make_index_sequence&lt;N&gt;&gt;</div>
-<div class="line"><a id="l01210" name="l01210"></a><span class="lineno"> 1210</span>    std::array&lt;std::size_t, member_num&gt; compute_member_size_list()</div>
-<div class="line"><a id="l01211" name="l01211"></a><span class="lineno"> 1211</span>    {</div>
-<div class="line"><a id="l01212" name="l01212"></a><span class="lineno"> 1212</span>        compute_member_size_list_impl&lt;Indices&gt; op;</div>
-<div class="line"><a id="l01213" name="l01213"></a><span class="lineno"> 1213</span>        <span class="keywordflow">return</span> op();</div>
-<div class="line"><a id="l01214" name="l01214"></a><span class="lineno"> 1214</span>    }</div>
-<div class="line"><a id="l01215" name="l01215"></a><span class="lineno"> 1215</span> </div>
-<div class="line"><a id="l01216" name="l01216"></a><span class="lineno"> 1216</span>    <span class="comment">// member extent</span></div>
-<div class="line"><a id="l01217" name="l01217"></a><span class="lineno"> 1217</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Type, std::<span class="keywordtype">size_t</span> M&gt;</div>
-<div class="line"><a id="l01218" name="l01218"></a><span class="lineno"> 1218</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> <span class="keyword">constexpr</span> std::size_t</div>
-<div class="line"><a id="l01219" name="l01219"></a><span class="lineno"> 1219</span>    compute_one_member_extent()</div>
-<div class="line"><a id="l01220" name="l01220"></a><span class="lineno"> 1220</span>    {</div>
-<div class="line"><a id="l01221" name="l01221"></a><span class="lineno"> 1221</span>        <span class="keywordflow">return</span> std::extent&lt;Type, M&gt;::value;</div>
-<div class="line"><a id="l01222" name="l01222"></a><span class="lineno"> 1222</span>    }</div>
+<div class="line"><a id="l01196" name="l01196"></a><span class="lineno"> 1196</span>    <span class="keyword">template</span> &lt;std::size_t... Is&gt;</div>
+<div class="line"><a id="l01197" name="l01197"></a><span class="lineno"> 1197</span>    <span class="keyword">struct </span>compute_member_size_list_impl&lt;std::index_sequence&lt;Is...&gt;&gt;</div>
+<div class="line"><a id="l01198" name="l01198"></a><span class="lineno"> 1198</span>    {</div>
+<div class="line"><a id="l01199" name="l01199"></a><span class="lineno"> 1199</span>        std::array&lt;std::size_t, member_num&gt; operator()()</div>
+<div class="line"><a id="l01200" name="l01200"></a><span class="lineno"> 1200</span>        {</div>
+<div class="line"><a id="l01201" name="l01201"></a><span class="lineno"> 1201</span>            <span class="keywordflow">return</span> { compute_member_size&lt;Is&gt;()... };</div>
+<div class="line"><a id="l01202" name="l01202"></a><span class="lineno"> 1202</span>        }</div>
+<div class="line"><a id="l01203" name="l01203"></a><span class="lineno"> 1203</span>    };</div>
+<div class="line"><a id="l01204" name="l01204"></a><span class="lineno"> 1204</span> </div>
+<div class="line"><a id="l01205" name="l01205"></a><span class="lineno"> 1205</span>    <span class="keyword">template</span> &lt;std::size_t N = member_num,</div>
+<div class="line"><a id="l01206" name="l01206"></a><span class="lineno"> 1206</span>              <span class="keyword">typename</span> Indices = std::make_index_sequence&lt;N&gt;&gt;</div>
+<div class="line"><a id="l01207" name="l01207"></a><span class="lineno"> 1207</span>    std::array&lt;std::size_t, member_num&gt; compute_member_size_list()</div>
+<div class="line"><a id="l01208" name="l01208"></a><span class="lineno"> 1208</span>    {</div>
+<div class="line"><a id="l01209" name="l01209"></a><span class="lineno"> 1209</span>        compute_member_size_list_impl&lt;Indices&gt; op;</div>
+<div class="line"><a id="l01210" name="l01210"></a><span class="lineno"> 1210</span>        <span class="keywordflow">return</span> op();</div>
+<div class="line"><a id="l01211" name="l01211"></a><span class="lineno"> 1211</span>    }</div>
+<div class="line"><a id="l01212" name="l01212"></a><span class="lineno"> 1212</span> </div>
+<div class="line"><a id="l01213" name="l01213"></a><span class="lineno"> 1213</span>    <span class="comment">// member extent</span></div>
+<div class="line"><a id="l01214" name="l01214"></a><span class="lineno"> 1214</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Type, std::<span class="keywordtype">size_t</span> M&gt;</div>
+<div class="line"><a id="l01215" name="l01215"></a><span class="lineno"> 1215</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> <span class="keyword">constexpr</span> std::size_t</div>
+<div class="line"><a id="l01216" name="l01216"></a><span class="lineno"> 1216</span>    compute_one_member_extent()</div>
+<div class="line"><a id="l01217" name="l01217"></a><span class="lineno"> 1217</span>    {</div>
+<div class="line"><a id="l01218" name="l01218"></a><span class="lineno"> 1218</span>        <span class="keywordflow">return</span> std::extent&lt;Type, M&gt;::value;</div>
+<div class="line"><a id="l01219" name="l01219"></a><span class="lineno"> 1219</span>    }</div>
+<div class="line"><a id="l01220" name="l01220"></a><span class="lineno"> 1220</span> </div>
+<div class="line"><a id="l01221" name="l01221"></a><span class="lineno"> 1221</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> Type, std::<span class="keywordtype">size_t</span> M, <span class="keyword">typename</span> Sequence&gt;</div>
+<div class="line"><a id="l01222" name="l01222"></a><span class="lineno"> 1222</span>    <span class="keyword">struct </span>compute_member_extents_impl;</div>
 <div class="line"><a id="l01223" name="l01223"></a><span class="lineno"> 1223</span> </div>
-<div class="line"><a id="l01224" name="l01224"></a><span class="lineno"> 1224</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> Type, std::<span class="keywordtype">size_t</span> M, <span class="keyword">typename</span> Sequence&gt;</div>
-<div class="line"><a id="l01225" name="l01225"></a><span class="lineno"> 1225</span>    <span class="keyword">struct </span>compute_member_extents_impl;</div>
-<div class="line"><a id="l01226" name="l01226"></a><span class="lineno"> 1226</span> </div>
-<div class="line"><a id="l01227" name="l01227"></a><span class="lineno"> 1227</span>    <span class="keyword">template</span> &lt;<span class="keyword">class </span>Type, std::size_t M, std::size_t... Is&gt;</div>
-<div class="line"><a id="l01228" name="l01228"></a><span class="lineno"> 1228</span>    <span class="keyword">struct </span>compute_member_extents_impl&lt;Type, M, std::index_sequence&lt;Is...&gt;&gt;</div>
-<div class="line"><a id="l01229" name="l01229"></a><span class="lineno"> 1229</span>    {</div>
-<div class="line"><a id="l01230" name="l01230"></a><span class="lineno"> 1230</span>        KOKKOS_FORCEINLINE_FUNCTION</div>
-<div class="line"><a id="l01231" name="l01231"></a><span class="lineno"> 1231</span>        Kokkos::Array&lt;std::size_t, M&gt; operator()()</div>
-<div class="line"><a id="l01232" name="l01232"></a><span class="lineno"> 1232</span>        {</div>
-<div class="line"><a id="l01233" name="l01233"></a><span class="lineno"> 1233</span>            <span class="keywordflow">return</span> { compute_one_member_extent&lt;Type, Is&gt;()... };</div>
-<div class="line"><a id="l01234" name="l01234"></a><span class="lineno"> 1234</span>        }</div>
-<div class="line"><a id="l01235" name="l01235"></a><span class="lineno"> 1235</span>    };</div>
-<div class="line"><a id="l01236" name="l01236"></a><span class="lineno"> 1236</span> </div>
-<div class="line"><a id="l01237" name="l01237"></a><span class="lineno"> 1237</span>    template &lt;class Type, std::size_t M = std::rank&lt;Type&gt;::value,</div>
-<div class="line"><a id="l01238" name="l01238"></a><span class="lineno"> 1238</span>              <span class="keyword">typename</span> Indices = std::make_index_sequence&lt;M&gt;&gt;</div>
-<div class="line"><a id="l01239" name="l01239"></a><span class="lineno"> 1239</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> Kokkos::Array&lt;std::size_t, M&gt;</div>
-<div class="line"><a id="l01240" name="l01240"></a><span class="lineno"> 1240</span>    compute_member_extents()</div>
-<div class="line"><a id="l01241" name="l01241"></a><span class="lineno"> 1241</span>    {</div>
-<div class="line"><a id="l01242" name="l01242"></a><span class="lineno"> 1242</span>        compute_member_extents_impl&lt;Type, M, Indices&gt; op;</div>
-<div class="line"><a id="l01243" name="l01243"></a><span class="lineno"> 1243</span>        <span class="keywordflow">return</span> op();</div>
-<div class="line"><a id="l01244" name="l01244"></a><span class="lineno"> 1244</span>    }</div>
-<div class="line"><a id="l01245" name="l01245"></a><span class="lineno"> 1245</span> </div>
-<div class="line"><a id="l01246" name="l01246"></a><span class="lineno"> 1246</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l01247" name="l01247"></a><span class="lineno"> 1247</span>    <span class="comment">// Current MPI linear rank ID</span></div>
-<div class="line"><a id="l01248" name="l01248"></a><span class="lineno"> 1248</span>    <span class="keywordtype">int</span> _self_rank;</div>
-<div class="line"><a id="l01249" name="l01249"></a><span class="lineno"> 1249</span>    <span class="comment">// Hallo pattern</span></div>
-<div class="line"><a id="l01250" name="l01250"></a><span class="lineno"> 1250</span>    halo_pattern_type _pattern;</div>
-<div class="line"><a id="l01251" name="l01251"></a><span class="lineno"> 1251</span> </div>
-<div class="line"><a id="l01252" name="l01252"></a><span class="lineno"> 1252</span>    <span class="comment">// neighbor rank linear MPI rank IDs</span></div>
-<div class="line"><a id="l01253" name="l01253"></a><span class="lineno"> 1253</span>    std::vector&lt;int&gt; _neighbor_ranks;</div>
-<div class="line"><a id="l01254" name="l01254"></a><span class="lineno"> 1254</span>    <span class="comment">// valid neigber rank indices; valid means require data communication</span></div>
-<div class="line"><a id="l01255" name="l01255"></a><span class="lineno"> 1255</span>    std::vector&lt;std::array&lt;int, num_space_dim&gt;&gt; _valid_neighbor_ids;</div>
-<div class="line"><a id="l01256" name="l01256"></a><span class="lineno"> 1256</span>    <span class="comment">// sending tags</span></div>
-<div class="line"><a id="l01257" name="l01257"></a><span class="lineno"> 1257</span>    std::vector&lt;int&gt; _send_tags;</div>
-<div class="line"><a id="l01258" name="l01258"></a><span class="lineno"> 1258</span>    <span class="comment">// receiving tags</span></div>
-<div class="line"><a id="l01259" name="l01259"></a><span class="lineno"> 1259</span>    std::vector&lt;int&gt; _receive_tags;</div>
-<div class="line"><a id="l01260" name="l01260"></a><span class="lineno"> 1260</span> </div>
-<div class="line"><a id="l01261" name="l01261"></a><span class="lineno"> 1261</span>    <span class="comment">// owned view buffers</span></div>
-<div class="line"><a id="l01262" name="l01262"></a><span class="lineno"> 1262</span>    std::vector&lt;buffer_view&gt; _owned_buffers;</div>
-<div class="line"><a id="l01263" name="l01263"></a><span class="lineno"> 1263</span>    <span class="comment">// ghosted view buffers</span></div>
-<div class="line"><a id="l01264" name="l01264"></a><span class="lineno"> 1264</span>    std::vector&lt;buffer_view&gt; _ghosted_buffers;</div>
-<div class="line"><a id="l01265" name="l01265"></a><span class="lineno"> 1265</span> </div>
-<div class="line"><a id="l01266" name="l01266"></a><span class="lineno"> 1266</span>    <span class="comment">// owned tile key steerings</span></div>
-<div class="line"><a id="l01267" name="l01267"></a><span class="lineno"> 1267</span>    std::vector&lt;steering_view&gt; _owned_tile_steering;</div>
-<div class="line"><a id="l01268" name="l01268"></a><span class="lineno"> 1268</span>    <span class="comment">// key steering buffers (used to store valid keys get from neighbors)</span></div>
-<div class="line"><a id="l01269" name="l01269"></a><span class="lineno"> 1269</span>    std::vector&lt;steering_view&gt; _tmp_tile_steering;</div>
-<div class="line"><a id="l01270" name="l01270"></a><span class="lineno"> 1270</span>    <span class="comment">// ghosted tile key steerings</span></div>
-<div class="line"><a id="l01271" name="l01271"></a><span class="lineno"> 1271</span>    std::vector&lt;steering_view&gt; _ghosted_tile_steering;</div>
-<div class="line"><a id="l01272" name="l01272"></a><span class="lineno"> 1272</span> </div>
-<div class="line"><a id="l01273" name="l01273"></a><span class="lineno"> 1273</span>    <span class="comment">// valid halo grid counting on current rank (each element map to a neighbor)</span></div>
-<div class="line"><a id="l01274" name="l01274"></a><span class="lineno"> 1274</span>    std::vector&lt;counting_view&gt; _valid_counting;</div>
-<div class="line"><a id="l01275" name="l01275"></a><span class="lineno"> 1275</span>    <span class="comment">// valid halo grid counting on corresponding neighbor ranks</span></div>
-<div class="line"><a id="l01276" name="l01276"></a><span class="lineno"> 1276</span>    std::vector&lt;counting_view&gt; _neighbor_counting;</div>
-<div class="line"><a id="l01277" name="l01277"></a><span class="lineno"> 1277</span> </div>
-<div class="line"><a id="l01278" name="l01278"></a><span class="lineno"> 1278</span>    <span class="comment">// owned tile space</span></div>
-<div class="line"><a id="l01279" name="l01279"></a><span class="lineno"> 1279</span>    std::vector&lt;tile_index_space&gt; _owned_tile_spaces;</div>
-<div class="line"><a id="l01280" name="l01280"></a><span class="lineno"> 1280</span>    <span class="comment">// ghosted tile space</span></div>
-<div class="line"><a id="l01281" name="l01281"></a><span class="lineno"> 1281</span>    std::vector&lt;tile_index_space&gt; _ghosted_tile_spaces;</div>
-<div class="line"><a id="l01282" name="l01282"></a><span class="lineno"> 1282</span> </div>
-<div class="line"><a id="l01283" name="l01283"></a><span class="lineno"> 1283</span>    <span class="comment">// SoA member bytes num</span></div>
-<div class="line"><a id="l01284" name="l01284"></a><span class="lineno"> 1284</span>    Kokkos::Array&lt;std::size_t, member_num&gt; _soa_member_bytes;</div>
-<div class="line"><a id="l01285" name="l01285"></a><span class="lineno"> 1285</span>    <span class="comment">// SoA total bytes count</span></div>
-<div class="line"><a id="l01286" name="l01286"></a><span class="lineno"> 1286</span>    std::size_t _soa_total_bytes;</div>
-<div class="line"><a id="l01287" name="l01287"></a><span class="lineno"> 1287</span>};</div>
+<div class="line"><a id="l01224" name="l01224"></a><span class="lineno"> 1224</span>    <span class="keyword">template</span> &lt;<span class="keyword">class </span>Type, std::size_t M, std::size_t... Is&gt;</div>
+<div class="line"><a id="l01225" name="l01225"></a><span class="lineno"> 1225</span>    <span class="keyword">struct </span>compute_member_extents_impl&lt;Type, M, std::index_sequence&lt;Is...&gt;&gt;</div>
+<div class="line"><a id="l01226" name="l01226"></a><span class="lineno"> 1226</span>    {</div>
+<div class="line"><a id="l01227" name="l01227"></a><span class="lineno"> 1227</span>        KOKKOS_FORCEINLINE_FUNCTION</div>
+<div class="line"><a id="l01228" name="l01228"></a><span class="lineno"> 1228</span>        Kokkos::Array&lt;std::size_t, M&gt; operator()()</div>
+<div class="line"><a id="l01229" name="l01229"></a><span class="lineno"> 1229</span>        {</div>
+<div class="line"><a id="l01230" name="l01230"></a><span class="lineno"> 1230</span>            <span class="keywordflow">return</span> { compute_one_member_extent&lt;Type, Is&gt;()... };</div>
+<div class="line"><a id="l01231" name="l01231"></a><span class="lineno"> 1231</span>        }</div>
+<div class="line"><a id="l01232" name="l01232"></a><span class="lineno"> 1232</span>    };</div>
+<div class="line"><a id="l01233" name="l01233"></a><span class="lineno"> 1233</span> </div>
+<div class="line"><a id="l01234" name="l01234"></a><span class="lineno"> 1234</span>    template &lt;class Type, std::size_t M = std::rank&lt;Type&gt;::value,</div>
+<div class="line"><a id="l01235" name="l01235"></a><span class="lineno"> 1235</span>              <span class="keyword">typename</span> Indices = std::make_index_sequence&lt;M&gt;&gt;</div>
+<div class="line"><a id="l01236" name="l01236"></a><span class="lineno"> 1236</span>    KOKKOS_FORCEINLINE_FUNCTION <span class="keyword">static</span> Kokkos::Array&lt;std::size_t, M&gt;</div>
+<div class="line"><a id="l01237" name="l01237"></a><span class="lineno"> 1237</span>    compute_member_extents()</div>
+<div class="line"><a id="l01238" name="l01238"></a><span class="lineno"> 1238</span>    {</div>
+<div class="line"><a id="l01239" name="l01239"></a><span class="lineno"> 1239</span>        compute_member_extents_impl&lt;Type, M, Indices&gt; op;</div>
+<div class="line"><a id="l01240" name="l01240"></a><span class="lineno"> 1240</span>        <span class="keywordflow">return</span> op();</div>
+<div class="line"><a id="l01241" name="l01241"></a><span class="lineno"> 1241</span>    }</div>
+<div class="line"><a id="l01242" name="l01242"></a><span class="lineno"> 1242</span> </div>
+<div class="line"><a id="l01243" name="l01243"></a><span class="lineno"> 1243</span>  <span class="keyword">private</span>:</div>
+<div class="line"><a id="l01244" name="l01244"></a><span class="lineno"> 1244</span>    <span class="comment">// Current MPI linear rank ID</span></div>
+<div class="line"><a id="l01245" name="l01245"></a><span class="lineno"> 1245</span>    <span class="keywordtype">int</span> _self_rank;</div>
+<div class="line"><a id="l01246" name="l01246"></a><span class="lineno"> 1246</span>    <span class="comment">// Hallo pattern</span></div>
+<div class="line"><a id="l01247" name="l01247"></a><span class="lineno"> 1247</span>    halo_pattern_type _pattern;</div>
+<div class="line"><a id="l01248" name="l01248"></a><span class="lineno"> 1248</span> </div>
+<div class="line"><a id="l01249" name="l01249"></a><span class="lineno"> 1249</span>    <span class="comment">// neighbor rank linear MPI rank IDs</span></div>
+<div class="line"><a id="l01250" name="l01250"></a><span class="lineno"> 1250</span>    std::vector&lt;int&gt; _neighbor_ranks;</div>
+<div class="line"><a id="l01251" name="l01251"></a><span class="lineno"> 1251</span>    <span class="comment">// valid neigber rank indices; valid means require data communication</span></div>
+<div class="line"><a id="l01252" name="l01252"></a><span class="lineno"> 1252</span>    std::vector&lt;std::array&lt;int, num_space_dim&gt;&gt; _valid_neighbor_ids;</div>
+<div class="line"><a id="l01253" name="l01253"></a><span class="lineno"> 1253</span>    <span class="comment">// sending tags</span></div>
+<div class="line"><a id="l01254" name="l01254"></a><span class="lineno"> 1254</span>    std::vector&lt;int&gt; _send_tags;</div>
+<div class="line"><a id="l01255" name="l01255"></a><span class="lineno"> 1255</span>    <span class="comment">// receiving tags</span></div>
+<div class="line"><a id="l01256" name="l01256"></a><span class="lineno"> 1256</span>    std::vector&lt;int&gt; _receive_tags;</div>
+<div class="line"><a id="l01257" name="l01257"></a><span class="lineno"> 1257</span> </div>
+<div class="line"><a id="l01258" name="l01258"></a><span class="lineno"> 1258</span>    <span class="comment">// owned view buffers</span></div>
+<div class="line"><a id="l01259" name="l01259"></a><span class="lineno"> 1259</span>    std::vector&lt;buffer_view&gt; _owned_buffers;</div>
+<div class="line"><a id="l01260" name="l01260"></a><span class="lineno"> 1260</span>    <span class="comment">// ghosted view buffers</span></div>
+<div class="line"><a id="l01261" name="l01261"></a><span class="lineno"> 1261</span>    std::vector&lt;buffer_view&gt; _ghosted_buffers;</div>
+<div class="line"><a id="l01262" name="l01262"></a><span class="lineno"> 1262</span> </div>
+<div class="line"><a id="l01263" name="l01263"></a><span class="lineno"> 1263</span>    <span class="comment">// owned tile key steerings</span></div>
+<div class="line"><a id="l01264" name="l01264"></a><span class="lineno"> 1264</span>    std::vector&lt;steering_view&gt; _owned_tile_steering;</div>
+<div class="line"><a id="l01265" name="l01265"></a><span class="lineno"> 1265</span>    <span class="comment">// key steering buffers (used to store valid keys get from neighbors)</span></div>
+<div class="line"><a id="l01266" name="l01266"></a><span class="lineno"> 1266</span>    std::vector&lt;steering_view&gt; _tmp_tile_steering;</div>
+<div class="line"><a id="l01267" name="l01267"></a><span class="lineno"> 1267</span>    <span class="comment">// ghosted tile key steerings</span></div>
+<div class="line"><a id="l01268" name="l01268"></a><span class="lineno"> 1268</span>    std::vector&lt;steering_view&gt; _ghosted_tile_steering;</div>
+<div class="line"><a id="l01269" name="l01269"></a><span class="lineno"> 1269</span> </div>
+<div class="line"><a id="l01270" name="l01270"></a><span class="lineno"> 1270</span>    <span class="comment">// valid halo grid counting on current rank (each element map to a neighbor)</span></div>
+<div class="line"><a id="l01271" name="l01271"></a><span class="lineno"> 1271</span>    std::vector&lt;counting_view&gt; _valid_counting;</div>
+<div class="line"><a id="l01272" name="l01272"></a><span class="lineno"> 1272</span>    <span class="comment">// valid halo grid counting on corresponding neighbor ranks</span></div>
+<div class="line"><a id="l01273" name="l01273"></a><span class="lineno"> 1273</span>    std::vector&lt;counting_view&gt; _neighbor_counting;</div>
+<div class="line"><a id="l01274" name="l01274"></a><span class="lineno"> 1274</span> </div>
+<div class="line"><a id="l01275" name="l01275"></a><span class="lineno"> 1275</span>    <span class="comment">// owned tile space</span></div>
+<div class="line"><a id="l01276" name="l01276"></a><span class="lineno"> 1276</span>    std::vector&lt;tile_index_space&gt; _owned_tile_spaces;</div>
+<div class="line"><a id="l01277" name="l01277"></a><span class="lineno"> 1277</span>    <span class="comment">// ghosted tile space</span></div>
+<div class="line"><a id="l01278" name="l01278"></a><span class="lineno"> 1278</span>    std::vector&lt;tile_index_space&gt; _ghosted_tile_spaces;</div>
+<div class="line"><a id="l01279" name="l01279"></a><span class="lineno"> 1279</span> </div>
+<div class="line"><a id="l01280" name="l01280"></a><span class="lineno"> 1280</span>    <span class="comment">// SoA member bytes num</span></div>
+<div class="line"><a id="l01281" name="l01281"></a><span class="lineno"> 1281</span>    Kokkos::Array&lt;std::size_t, member_num&gt; _soa_member_bytes;</div>
+<div class="line"><a id="l01282" name="l01282"></a><span class="lineno"> 1282</span>    <span class="comment">// SoA total bytes count</span></div>
+<div class="line"><a id="l01283" name="l01283"></a><span class="lineno"> 1283</span>    std::size_t _soa_total_bytes;</div>
+<div class="line"><a id="l01284" name="l01284"></a><span class="lineno"> 1284</span>};</div>
 </div>
-<div class="line"><a id="l01288" name="l01288"></a><span class="lineno"> 1288</span> </div>
-<div class="line"><a id="l01289" name="l01289"></a><span class="lineno"> 1289</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l01290" name="l01290"></a><span class="lineno"> 1290</span><span class="comment">// Sparse halo creation.</span></div>
-<div class="line"><a id="l01291" name="l01291"></a><span class="lineno"> 1291</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l01297" name="l01297"></a><span class="lineno"> 1297</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>MemorySpace, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> cellBitsPerTileDim,</div>
-<div class="line"><a id="l01298" name="l01298"></a><span class="lineno"> 1298</span>          <span class="keyword">class </span>DataTypes, <span class="keyword">class </span>EntityType, <span class="keyword">class </span>MeshType,</div>
-<div class="line"><a id="l01299" name="l01299"></a><span class="lineno"> 1299</span>          <span class="keyword">class </span>SparseMapType, <span class="keyword">class </span>Pattern, <span class="keyword">typename</span> Value = int,</div>
-<div class="line"><a id="l01300" name="l01300"></a><span class="lineno"> 1300</span>          <span class="keyword">typename</span> Key = uint64_t&gt;</div>
-<div class="line"><a id="l01301" name="l01301"></a><span class="lineno"> 1301</span><span class="keyword">auto</span> createSparseHalo(</div>
-<div class="line"><a id="l01302" name="l01302"></a><span class="lineno"> 1302</span>    <span class="keyword">const</span> Pattern&amp; pattern,</div>
-<div class="line"><a id="l01303" name="l01303"></a><span class="lineno"> 1303</span>    <span class="keyword">const</span> std::shared_ptr&lt;SparseArray&lt;DataTypes, MemorySpace, EntityType,</div>
-<div class="line"><a id="l01304" name="l01304"></a><span class="lineno"> 1304</span>                                      MeshType, SparseMapType&gt;&gt;</div>
-<div class="line"><a id="l01305" name="l01305"></a><span class="lineno"> 1305</span>        array )</div>
-<div class="line"><a id="l01306" name="l01306"></a><span class="lineno"> 1306</span>{</div>
-<div class="line"><a id="l01307" name="l01307"></a><span class="lineno"> 1307</span>    <span class="keyword">using </span>array_type = SparseArray&lt;DataTypes, MemorySpace, EntityType, MeshType,</div>
-<div class="line"><a id="l01308" name="l01308"></a><span class="lineno"> 1308</span>                                   SparseMapType&gt;;</div>
-<div class="line"><a id="l01309" name="l01309"></a><span class="lineno"> 1309</span>    <span class="keyword">using </span>memory_space = <span class="keyword">typename</span> array_type::memory_space;</div>
-<div class="line"><a id="l01310" name="l01310"></a><span class="lineno"> 1310</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> std::size_t num_space_dim = array_type::num_space_dim;</div>
-<div class="line"><a id="l01311" name="l01311"></a><span class="lineno"> 1311</span>    <span class="keywordflow">return</span> std::make_shared&lt;</div>
-<div class="line"><a id="l01312" name="l01312"></a><span class="lineno"> 1312</span>        SparseHalo&lt;memory_space, DataTypes, EntityType, num_space_dim,</div>
-<div class="line"><a id="l01313" name="l01313"></a><span class="lineno"> 1313</span>                   cellBitsPerTileDim, Value, Key&gt;&gt;( pattern, array );</div>
-<div class="line"><a id="l01314" name="l01314"></a><span class="lineno"> 1314</span>}</div>
-<div class="line"><a id="l01315" name="l01315"></a><span class="lineno"> 1315</span> </div>
-<div class="line"><a id="l01316" name="l01316"></a><span class="lineno"> 1316</span>} <span class="comment">// namespace Experimental</span></div>
-<div class="line"><a id="l01317" name="l01317"></a><span class="lineno"> 1317</span>} <span class="comment">// namespace Grid</span></div>
-<div class="line"><a id="l01318" name="l01318"></a><span class="lineno"> 1318</span>} <span class="comment">// namespace Cabana</span></div>
-<div class="line"><a id="l01319" name="l01319"></a><span class="lineno"> 1319</span> </div>
-<div class="line"><a id="l01320" name="l01320"></a><span class="lineno"> 1320</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceCajita.html">Cajita</a></div>
-<div class="line"><a id="l01321" name="l01321"></a><span class="lineno"> 1321</span>{</div>
-<div class="line"><a id="l01322" name="l01322"></a><span class="lineno"> 1322</span><span class="keyword">namespace </span>Experimental</div>
-<div class="line"><a id="l01323" name="l01323"></a><span class="lineno"> 1323</span>{</div>
-<div class="line"><a id="l01325" name="l01325"></a><span class="lineno"> 1325</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>MemorySpace, <span class="keyword">class </span>DataTypes, <span class="keyword">class </span>EntityType,</div>
-<div class="line"><a id="l01326" name="l01326"></a><span class="lineno"> 1326</span>          std::size_t NumSpaceDim, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> cellBitsPerTileDim,</div>
-<div class="line"><a id="l01327" name="l01327"></a><span class="lineno"> 1327</span>          <span class="keyword">class </span>Value = int, <span class="keyword">class </span>Key = uint64_t&gt;</div>
-<div class="line"><a id="l01328" name="l01328"></a><span class="lineno"> 1328</span><span class="keyword">using </span>SparseHalo CAJITA_DEPRECATED =</div>
-<div class="line"><a id="l01329" name="l01329"></a><span class="lineno"> 1329</span>    <a class="code hl_class" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html">Cabana::Grid::Experimental::SparseHalo</a>&lt;MemorySpace, DataTypes, EntityType,</div>
-<div class="line"><a id="l01330" name="l01330"></a><span class="lineno"> 1330</span>                                           NumSpaceDim, cellBitsPerTileDim,</div>
-<div class="line"><a id="l01331" name="l01331"></a><span class="lineno"> 1331</span>                                           Value, Key&gt;;</div>
-<div class="line"><a id="l01332" name="l01332"></a><span class="lineno"> 1332</span> </div>
-<div class="line"><a id="l01333" name="l01333"></a><span class="lineno"> 1333</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>DeviceType, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> cellBitsPerTileDim,</div>
-<div class="line"><a id="l01334" name="l01334"></a><span class="lineno"> 1334</span>          <span class="keyword">class</span>... Args&gt;</div>
-<div class="line"><a id="l01335" name="l01335"></a><span class="lineno"> 1335</span>CAJITA_DEPRECATED <span class="keyword">auto</span> createSparseHalo( Args&amp;&amp;... args )</div>
-<div class="line"><a id="l01336" name="l01336"></a><span class="lineno"> 1336</span>{</div>
-<div class="line"><a id="l01337" name="l01337"></a><span class="lineno"> 1337</span>    <span class="keywordflow">return</span> Cabana::Grid::Experimental::createSparseHalo&lt;DeviceType,</div>
-<div class="line"><a id="l01338" name="l01338"></a><span class="lineno"> 1338</span>                                                        cellBitsPerTileDim&gt;(</div>
-<div class="line"><a id="l01339" name="l01339"></a><span class="lineno"> 1339</span>        std::forward&lt;Args&gt;( args )... );</div>
-<div class="line"><a id="l01340" name="l01340"></a><span class="lineno"> 1340</span>}</div>
-<div class="line"><a id="l01342" name="l01342"></a><span class="lineno"> 1342</span>} <span class="comment">// namespace Experimental</span></div>
-<div class="line"><a id="l01343" name="l01343"></a><span class="lineno"> 1343</span>} <span class="comment">// namespace Cajita</span></div>
-<div class="line"><a id="l01344" name="l01344"></a><span class="lineno"> 1344</span> </div>
-<div class="line"><a id="l01345" name="l01345"></a><span class="lineno"> 1345</span><span class="preprocessor">#endif </span><span class="comment">// CABANA_GRID_SPARSEHALO_HPP</span></div>
+<div class="line"><a id="l01285" name="l01285"></a><span class="lineno"> 1285</span> </div>
+<div class="line"><a id="l01286" name="l01286"></a><span class="lineno"> 1286</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l01287" name="l01287"></a><span class="lineno"> 1287</span><span class="comment">// Sparse halo creation.</span></div>
+<div class="line"><a id="l01288" name="l01288"></a><span class="lineno"> 1288</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l01294" name="l01294"></a><span class="lineno"> 1294</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>MemorySpace, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> cellBitsPerTileDim,</div>
+<div class="line"><a id="l01295" name="l01295"></a><span class="lineno"> 1295</span>          <span class="keyword">class </span>DataTypes, <span class="keyword">class </span>EntityType, <span class="keyword">class </span>MeshType,</div>
+<div class="line"><a id="l01296" name="l01296"></a><span class="lineno"> 1296</span>          <span class="keyword">class </span>SparseMapType, <span class="keyword">class </span>Pattern, <span class="keyword">typename</span> Value = int,</div>
+<div class="line"><a id="l01297" name="l01297"></a><span class="lineno"> 1297</span>          <span class="keyword">typename</span> Key = uint64_t&gt;</div>
+<div class="line"><a id="l01298" name="l01298"></a><span class="lineno"> 1298</span><span class="keyword">auto</span> createSparseHalo(</div>
+<div class="line"><a id="l01299" name="l01299"></a><span class="lineno"> 1299</span>    <span class="keyword">const</span> Pattern&amp; pattern,</div>
+<div class="line"><a id="l01300" name="l01300"></a><span class="lineno"> 1300</span>    <span class="keyword">const</span> std::shared_ptr&lt;SparseArray&lt;DataTypes, MemorySpace, EntityType,</div>
+<div class="line"><a id="l01301" name="l01301"></a><span class="lineno"> 1301</span>                                      MeshType, SparseMapType&gt;&gt;</div>
+<div class="line"><a id="l01302" name="l01302"></a><span class="lineno"> 1302</span>        array )</div>
+<div class="line"><a id="l01303" name="l01303"></a><span class="lineno"> 1303</span>{</div>
+<div class="line"><a id="l01304" name="l01304"></a><span class="lineno"> 1304</span>    <span class="keyword">using </span>array_type = SparseArray&lt;DataTypes, MemorySpace, EntityType, MeshType,</div>
+<div class="line"><a id="l01305" name="l01305"></a><span class="lineno"> 1305</span>                                   SparseMapType&gt;;</div>
+<div class="line"><a id="l01306" name="l01306"></a><span class="lineno"> 1306</span>    <span class="keyword">using </span>memory_space = <span class="keyword">typename</span> array_type::memory_space;</div>
+<div class="line"><a id="l01307" name="l01307"></a><span class="lineno"> 1307</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> std::size_t num_space_dim = array_type::num_space_dim;</div>
+<div class="line"><a id="l01308" name="l01308"></a><span class="lineno"> 1308</span>    <span class="keywordflow">return</span> std::make_shared&lt;</div>
+<div class="line"><a id="l01309" name="l01309"></a><span class="lineno"> 1309</span>        SparseHalo&lt;memory_space, DataTypes, EntityType, num_space_dim,</div>
+<div class="line"><a id="l01310" name="l01310"></a><span class="lineno"> 1310</span>                   cellBitsPerTileDim, Value, Key&gt;&gt;( pattern, array );</div>
+<div class="line"><a id="l01311" name="l01311"></a><span class="lineno"> 1311</span>}</div>
+<div class="line"><a id="l01312" name="l01312"></a><span class="lineno"> 1312</span> </div>
+<div class="line"><a id="l01313" name="l01313"></a><span class="lineno"> 1313</span>} <span class="comment">// namespace Experimental</span></div>
+<div class="line"><a id="l01314" name="l01314"></a><span class="lineno"> 1314</span>} <span class="comment">// namespace Grid</span></div>
+<div class="line"><a id="l01315" name="l01315"></a><span class="lineno"> 1315</span>} <span class="comment">// namespace Cabana</span></div>
+<div class="line"><a id="l01316" name="l01316"></a><span class="lineno"> 1316</span> </div>
+<div class="line"><a id="l01317" name="l01317"></a><span class="lineno"> 1317</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceCajita.html">Cajita</a></div>
+<div class="line"><a id="l01318" name="l01318"></a><span class="lineno"> 1318</span>{</div>
+<div class="line"><a id="l01319" name="l01319"></a><span class="lineno"> 1319</span><span class="keyword">namespace </span>Experimental</div>
+<div class="line"><a id="l01320" name="l01320"></a><span class="lineno"> 1320</span>{</div>
+<div class="line"><a id="l01322" name="l01322"></a><span class="lineno"> 1322</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>MemorySpace, <span class="keyword">class </span>DataTypes, <span class="keyword">class </span>EntityType,</div>
+<div class="line"><a id="l01323" name="l01323"></a><span class="lineno"> 1323</span>          std::size_t NumSpaceDim, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> cellBitsPerTileDim,</div>
+<div class="line"><a id="l01324" name="l01324"></a><span class="lineno"> 1324</span>          <span class="keyword">class </span>Value = int, <span class="keyword">class </span>Key = uint64_t&gt;</div>
+<div class="line"><a id="l01325" name="l01325"></a><span class="lineno"> 1325</span><span class="keyword">using </span>SparseHalo CAJITA_DEPRECATED =</div>
+<div class="line"><a id="l01326" name="l01326"></a><span class="lineno"> 1326</span>    <a class="code hl_class" href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html">Cabana::Grid::Experimental::SparseHalo</a>&lt;MemorySpace, DataTypes, EntityType,</div>
+<div class="line"><a id="l01327" name="l01327"></a><span class="lineno"> 1327</span>                                           NumSpaceDim, cellBitsPerTileDim,</div>
+<div class="line"><a id="l01328" name="l01328"></a><span class="lineno"> 1328</span>                                           Value, Key&gt;;</div>
+<div class="line"><a id="l01329" name="l01329"></a><span class="lineno"> 1329</span> </div>
+<div class="line"><a id="l01330" name="l01330"></a><span class="lineno"> 1330</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>DeviceType, <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> cellBitsPerTileDim,</div>
+<div class="line"><a id="l01331" name="l01331"></a><span class="lineno"> 1331</span>          <span class="keyword">class</span>... Args&gt;</div>
+<div class="line"><a id="l01332" name="l01332"></a><span class="lineno"> 1332</span>CAJITA_DEPRECATED <span class="keyword">auto</span> createSparseHalo( Args&amp;&amp;... args )</div>
+<div class="line"><a id="l01333" name="l01333"></a><span class="lineno"> 1333</span>{</div>
+<div class="line"><a id="l01334" name="l01334"></a><span class="lineno"> 1334</span>    <span class="keywordflow">return</span> Cabana::Grid::Experimental::createSparseHalo&lt;DeviceType,</div>
+<div class="line"><a id="l01335" name="l01335"></a><span class="lineno"> 1335</span>                                                        cellBitsPerTileDim&gt;(</div>
+<div class="line"><a id="l01336" name="l01336"></a><span class="lineno"> 1336</span>        std::forward&lt;Args&gt;( args )... );</div>
+<div class="line"><a id="l01337" name="l01337"></a><span class="lineno"> 1337</span>}</div>
+<div class="line"><a id="l01339" name="l01339"></a><span class="lineno"> 1339</span>} <span class="comment">// namespace Experimental</span></div>
+<div class="line"><a id="l01340" name="l01340"></a><span class="lineno"> 1340</span>} <span class="comment">// namespace Cajita</span></div>
+<div class="line"><a id="l01341" name="l01341"></a><span class="lineno"> 1341</span> </div>
+<div class="line"><a id="l01342" name="l01342"></a><span class="lineno"> 1342</span><span class="preprocessor">#endif </span><span class="comment">// CABANA_GRID_SPARSEHALO_HPP</span></div>
 <div class="ttc" id="aCabana__Grid__Halo_8hpp_html"><div class="ttname"><a href="Cabana__Grid__Halo_8hpp.html">Cabana_Grid_Halo.hpp</a></div><div class="ttdoc">Multi-node grid scatter/gather.</div></div>
 <div class="ttc" id="aCabana__Grid__SparseArray_8hpp_html"><div class="ttname"><a href="Cabana__Grid__SparseArray_8hpp.html">Cabana_Grid_SparseArray.hpp</a></div><div class="ttdoc">Sparse grid fields arrays using AoSoA.</div></div>
 <div class="ttc" id="aCabana__Grid__SparseIndexSpace_8hpp_html"><div class="ttname"><a href="Cabana__Grid__SparseIndexSpace_8hpp.html">Cabana_Grid_SparseIndexSpace.hpp</a></div><div class="ttdoc">Sparse grid mapping.</div></div>
@@ -1263,18 +1262,17 @@ $(function() { codefold.init(0); });
 <div class="ttc" id="aCabana__Tuple_8hpp_html"><div class="ttname"><a href="Cabana__Tuple_8hpp.html">Cabana_Tuple.hpp</a></div><div class="ttdoc">Tuple of single particle information to build AoSoA.</div></div>
 <div class="ttc" id="aCabana__Utils_8hpp_html"><div class="ttname"><a href="Cabana__Utils_8hpp.html">Cabana_Utils.hpp</a></div><div class="ttdoc">Cabana utilities.</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html">Cabana::Grid::Experimental::SparseHalo</a></div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:53</div></div>
-<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a05ef3fd7adff9a55c36979706c36f6f0"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a05ef3fd7adff9a55c36979706c36f6f0">Cabana::Grid::Experimental::SparseHalo::unpackOp</a></div><div class="ttdeci">static KOKKOS_INLINE_FUNCTION void unpackOp(ScatterReduce::Min, const T &amp;buffer_val, T &amp;array_val)</div><div class="ttdoc">Reduce an element into the buffer. Min reduction.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:937</div></div>
+<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a05ef3fd7adff9a55c36979706c36f6f0"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a05ef3fd7adff9a55c36979706c36f6f0">Cabana::Grid::Experimental::SparseHalo::unpackOp</a></div><div class="ttdeci">static KOKKOS_INLINE_FUNCTION void unpackOp(ScatterReduce::Min, const T &amp;buffer_val, T &amp;array_val)</div><div class="ttdoc">Reduce an element into the buffer. Min reduction.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:935</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a063fe877e39f21ba3137b17c024bf0ac"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a063fe877e39f21ba3137b17c024bf0ac">Cabana::Grid::Experimental::SparseHalo::gather</a></div><div class="ttdeci">void gather(const ExecSpace &amp;exec_space, SparseArrayType &amp;sparse_array, const bool is_neighbor_counting_collected=false) const</div><div class="ttdoc">Gather data into our ghosted share space from their owners.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:560</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a0dd24bee2466db38b3757b02716b2843"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a0dd24bee2466db38b3757b02716b2843">Cabana::Grid::Experimental::SparseHalo::aosoa_member_types</a></div><div class="ttdeci">DataTypes aosoa_member_types</div><div class="ttdoc">data members in AoSoA structure</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:77</div></div>
-<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a11a7877f6aa505b9a063e7b8018a83fd"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a11a7877f6aa505b9a063e7b8018a83fd">Cabana::Grid::Experimental::SparseHalo::unpackTupleMember</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION std::enable_if_t&lt; 2==M, void &gt; unpackTupleMember(const ReduceOp &amp;reduce_op, const tuple_type &amp;src_tuple, SoAType &amp;dst_soa, const int soa_idx, const Kokkos::Array&lt; std::size_t, M &gt; &amp;extents, const std::integral_constant&lt; std::size_t, N &gt;, const std::integral_constant&lt; std::size_t, M &gt;)</div><div class="ttdoc">Unpack a sparse arrays element (a tuple) in a buffer (for case tuple members with rank == 2)</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:1007</div></div>
+<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a11a7877f6aa505b9a063e7b8018a83fd"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a11a7877f6aa505b9a063e7b8018a83fd">Cabana::Grid::Experimental::SparseHalo::unpackTupleMember</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION std::enable_if_t&lt; 2==M, void &gt; unpackTupleMember(const ReduceOp &amp;reduce_op, const tuple_type &amp;src_tuple, SoAType &amp;dst_soa, const int soa_idx, const Kokkos::Array&lt; std::size_t, M &gt; &amp;extents, const std::integral_constant&lt; std::size_t, N &gt;, const std::integral_constant&lt; std::size_t, M &gt;)</div><div class="ttdoc">Unpack a sparse arrays element (a tuple) in a buffer (for case tuple members with rank == 2)</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:1005</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a20aa8f28c2201f4689177ab548fc8cfb"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a20aa8f28c2201f4689177ab548fc8cfb">Cabana::Grid::Experimental::SparseHalo::steering_view</a></div><div class="ttdeci">Kokkos::View&lt; key_type *, memory_space &gt; steering_view</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:98</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a21c10b47c3380102e3c80b878b3671c4"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a21c10b47c3380102e3c80b878b3671c4">Cabana::Grid::Experimental::SparseHalo::register_halo</a></div><div class="ttdeci">void register_halo(SparseMapType &amp;map)</div><div class="ttdoc">register valid halos (according to grid activation status in sparse map) in the steerings</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:334</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a29f8aad0e897cd2b25125a6826de095b"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a29f8aad0e897cd2b25125a6826de095b">Cabana::Grid::Experimental::SparseHalo::Index</a></div><div class="ttdeci">Index</div><div class="ttdoc">index (own or ghost)</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:104</div></div>
-<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a38dc08768a3a8c2c5f363eed5e123500"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a38dc08768a3a8c2c5f363eed5e123500">Cabana::Grid::Experimental::SparseHalo::unpackBuffer</a></div><div class="ttdeci">void unpackBuffer(const ReduceOp &amp;reduce_op, const ExecSpace &amp;exec_space, const buffer_view &amp;buffer, const steering_view &amp;tile_steering, const SparseArrayType &amp;sparse_array, SparseMapType &amp;map, const CountType count) const</div><div class="ttdoc">Unpack a sparse array communication buffer.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:1151</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a3c705c33bb342f4715c4ccb5a34e5d30"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a3c705c33bb342f4715c4ccb5a34e5d30">Cabana::Grid::Experimental::SparseHalo::member_data_type</a></div><div class="ttdeci">typename Cabana::MemberTypeAtIndex&lt; M, aosoa_member_types &gt;::type member_data_type</div><div class="ttdoc">AoSoA member data type.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:83</div></div>
-<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a41dbb3106ef8173c2fc3c70932603c18"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a41dbb3106ef8173c2fc3c70932603c18">Cabana::Grid::Experimental::SparseHalo::unpackTupleMember</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION std::enable_if_t&lt; 3==M, void &gt; unpackTupleMember(const ReduceOp &amp;reduce_op, const tuple_type &amp;src_tuple, SoAType &amp;dst_soa, const int soa_idx, const Kokkos::Array&lt; std::size_t, M &gt; &amp;extents, const std::integral_constant&lt; std::size_t, N &gt;, const std::integral_constant&lt; std::size_t, M &gt;)</div><div class="ttdoc">Unpack a sparse arrays element (a tuple) in a buffer (for case tuple members with rank == 3)</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:976</div></div>
-<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a4335970e891a9d31a5d800b1540c0b0c"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a4335970e891a9d31a5d800b1540c0b0c">Cabana::Grid::Experimental::SparseHalo::unpackOp</a></div><div class="ttdeci">static KOKKOS_INLINE_FUNCTION void unpackOp(ScatterReduce::Replace, const T &amp;buffer_val, T &amp;array_val)</div><div class="ttdoc">Reduce an element into the buffer. Replace reduction.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:955</div></div>
-<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a43ba27d5ad22ba54232c29cfc39fec0b"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a43ba27d5ad22ba54232c29cfc39fec0b">Cabana::Grid::Experimental::SparseHalo::unpackTupleMember</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION std::enable_if_t&lt; 0==M, void &gt; unpackTupleMember(const ReduceOp &amp;reduce_op, const tuple_type &amp;src_tuple, SoAType &amp;dst_soa, const int soa_idx, const Kokkos::Array&lt; std::size_t, M &gt; &amp;, const std::integral_constant&lt; std::size_t, N &gt;, const std::integral_constant&lt; std::size_t, M &gt;)</div><div class="ttdoc">Unpack a sparse arrays element (a tuple) in a buffer (for case tuple members with rank == 0)</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:1063</div></div>
+<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a41dbb3106ef8173c2fc3c70932603c18"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a41dbb3106ef8173c2fc3c70932603c18">Cabana::Grid::Experimental::SparseHalo::unpackTupleMember</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION std::enable_if_t&lt; 3==M, void &gt; unpackTupleMember(const ReduceOp &amp;reduce_op, const tuple_type &amp;src_tuple, SoAType &amp;dst_soa, const int soa_idx, const Kokkos::Array&lt; std::size_t, M &gt; &amp;extents, const std::integral_constant&lt; std::size_t, N &gt;, const std::integral_constant&lt; std::size_t, M &gt;)</div><div class="ttdoc">Unpack a sparse arrays element (a tuple) in a buffer (for case tuple members with rank == 3)</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:974</div></div>
+<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a4335970e891a9d31a5d800b1540c0b0c"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a4335970e891a9d31a5d800b1540c0b0c">Cabana::Grid::Experimental::SparseHalo::unpackOp</a></div><div class="ttdeci">static KOKKOS_INLINE_FUNCTION void unpackOp(ScatterReduce::Replace, const T &amp;buffer_val, T &amp;array_val)</div><div class="ttdoc">Reduce an element into the buffer. Replace reduction.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:953</div></div>
+<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a43ba27d5ad22ba54232c29cfc39fec0b"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a43ba27d5ad22ba54232c29cfc39fec0b">Cabana::Grid::Experimental::SparseHalo::unpackTupleMember</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION std::enable_if_t&lt; 0==M, void &gt; unpackTupleMember(const ReduceOp &amp;reduce_op, const tuple_type &amp;src_tuple, SoAType &amp;dst_soa, const int soa_idx, const Kokkos::Array&lt; std::size_t, M &gt; &amp;, const std::integral_constant&lt; std::size_t, N &gt;, const std::integral_constant&lt; std::size_t, M &gt;)</div><div class="ttdoc">Unpack a sparse arrays element (a tuple) in a buffer (for case tuple members with rank == 0)</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:1061</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a44ea1af92073388e8f6de0b47def606b"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a44ea1af92073388e8f6de0b47def606b">Cabana::Grid::Experimental::SparseHalo::updateTileSpace</a></div><div class="ttdeci">void updateTileSpace(const std::shared_ptr&lt; LocalGridType &gt; &amp;local_grid)</div><div class="ttdoc">update tile index space according to current partition</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:260</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a47864a58a44132ec9bfcc7fc6647eb8f"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a47864a58a44132ec9bfcc7fc6647eb8f">Cabana::Grid::Experimental::SparseHalo::scatter</a></div><div class="ttdeci">void scatter(const ExecSpace &amp;exec_space, const ReduceOp &amp;reduce_op, SparseArrayType &amp;sparse_array, const bool is_neighbor_counting_collected=false) const</div><div class="ttdoc">Scatter data from our ghosts to their owners using the given type of reduce operation.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:731</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a4a569ba6f225cbe72ebd0d4e6f3ca645"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a4a569ba6f225cbe72ebd0d4e6f3ca645">Cabana::Grid::Experimental::SparseHalo::gatherValidSendAndRecvRanks</a></div><div class="ttdeci">void gatherValidSendAndRecvRanks(MPI_Comm comm, std::vector&lt; int &gt; &amp;valid_sends, std::vector&lt; int &gt; &amp;valid_recvs, const bool is_neighbor_counting_collected=false) const</div><div class="ttdoc">collect all valid ranks for sparse grid gather operations</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:513</div></div>
@@ -1283,22 +1281,23 @@ $(function() { codefold.init(0); });
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a74def75cb71b9416099791f01cfeef91"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a74def75cb71b9416099791f01cfeef91">Cabana::Grid::Experimental::SparseHalo::SparseHalo</a></div><div class="ttdeci">SparseHalo(const halo_pattern_type pattern, const std::shared_ptr&lt; SparseArrayType &gt; &amp;sparse_array)</div><div class="ttdoc">constructor</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:123</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a7899e2f7b731ecef19cfeb9db6ba14d4"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a7899e2f7b731ecef19cfeb9db6ba14d4">Cabana::Grid::Experimental::SparseHalo::KeyValue</a></div><div class="ttdeci">KeyValue</div><div class="ttdoc">invalid key in sparse map</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:72</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a8a85e610d96eef07d0146ae3f9640a52"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a8a85e610d96eef07d0146ae3f9640a52">Cabana::Grid::Experimental::SparseHalo::key_type</a></div><div class="ttdeci">Key key_type</div><div class="ttdoc">key type in sparse map</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:69</div></div>
-<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a9aeac20ab5a7e0d5aa71f3497ea663b6"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a9aeac20ab5a7e0d5aa71f3497ea663b6">Cabana::Grid::Experimental::SparseHalo::unpackTuple</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION void unpackTuple(const ReduceOp &amp;reduce_op, const tuple_type &amp;src_tuple, SoAType &amp;dst_soa, const int soa_idx, const std::integral_constant&lt; std::size_t, 0 &gt;)</div><div class="ttdoc">Unpack a sparse arrays tuple for it's member with index 0.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:1084</div></div>
-<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_aa72a4d7dd8733c99fffe6cd1e51cd8b5"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#aa72a4d7dd8733c99fffe6cd1e51cd8b5">Cabana::Grid::Experimental::SparseHalo::unpackOp</a></div><div class="ttdeci">static KOKKOS_INLINE_FUNCTION void unpackOp(ScatterReduce::Sum, const T &amp;buffer_val, T &amp;array_val)</div><div class="ttdoc">Reduce an element into the buffer. Sum reduction.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:929</div></div>
+<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_a9aeac20ab5a7e0d5aa71f3497ea663b6"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a9aeac20ab5a7e0d5aa71f3497ea663b6">Cabana::Grid::Experimental::SparseHalo::unpackTuple</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION void unpackTuple(const ReduceOp &amp;reduce_op, const tuple_type &amp;src_tuple, SoAType &amp;dst_soa, const int soa_idx, const std::integral_constant&lt; std::size_t, 0 &gt;)</div><div class="ttdoc">Unpack a sparse arrays tuple for it's member with index 0.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:1082</div></div>
+<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_aa72a4d7dd8733c99fffe6cd1e51cd8b5"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#aa72a4d7dd8733c99fffe6cd1e51cd8b5">Cabana::Grid::Experimental::SparseHalo::unpackOp</a></div><div class="ttdeci">static KOKKOS_INLINE_FUNCTION void unpackOp(ScatterReduce::Sum, const T &amp;buffer_val, T &amp;array_val)</div><div class="ttdoc">Reduce an element into the buffer. Sum reduction.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:927</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_aad00adbd80abdfda2e57e6e8a1e82d74"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#aad00adbd80abdfda2e57e6e8a1e82d74">Cabana::Grid::Experimental::SparseHalo::getComm</a></div><div class="ttdeci">MPI_Comm getComm(const SparseArrayType sparse_array) const</div><div class="ttdoc">Get the communicator.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:212</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_aadf6ce3c5dadc8c41efe394683b65a2c"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#aadf6ce3c5dadc8c41efe394683b65a2c">Cabana::Grid::Experimental::SparseHalo::clear</a></div><div class="ttdeci">void clear(MPI_Comm comm)</div><div class="ttdoc">clear guiding information in sparse halo,</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:388</div></div>
+<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_ab6620d8dd5727c76997d56088bd63426"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ab6620d8dd5727c76997d56088bd63426">Cabana::Grid::Experimental::SparseHalo::packBuffer</a></div><div class="ttdeci">void packBuffer(const ExecSpace &amp;exec_space, const buffer_view &amp;buffer, const steering_view &amp;tile_steering, SparseArrayType &amp;sparse_array, const int count) const</div><div class="ttdoc">Pack sparse arrays at halo regions into a buffer.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:902</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_abd61546fec3a76c80f0e8bc64c1011db"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#abd61546fec3a76c80f0e8bc64c1011db">Cabana::Grid::Experimental::SparseHalo::counting_view</a></div><div class="ttdeci">Kokkos::View&lt; int[2], memory_space, Kokkos::MemoryTraits&lt; Kokkos::Atomic &gt; &gt; counting_view</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:112</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_abdec0a4be7c19fc6724d6beb3def28cb"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#abdec0a4be7c19fc6724d6beb3def28cb">Cabana::Grid::Experimental::SparseHalo::value_type</a></div><div class="ttdeci">Value value_type</div><div class="ttdoc">value type of entities on sparse grid</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:67</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_abf5e84d5a926275dfe2743d9514b875e"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#abf5e84d5a926275dfe2743d9514b875e">Cabana::Grid::Experimental::SparseHalo::collectNeighborCounting</a></div><div class="ttdeci">void collectNeighborCounting(MPI_Comm comm, const bool is_neighbor_counting_collected=false) const</div><div class="ttdoc">neighbor tile counting, communication needed only if the counting is non-zero</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:415</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_ac25ae7ddc9cf17d0cc9f911209c20c1e"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ac25ae7ddc9cf17d0cc9f911209c20c1e">Cabana::Grid::Experimental::SparseHalo::scatterValidSendAndRecvRanks</a></div><div class="ttdeci">void scatterValidSendAndRecvRanks(MPI_Comm comm, std::vector&lt; int &gt; &amp;valid_sends, std::vector&lt; int &gt; &amp;valid_recvs, const bool is_neighbor_counting_collected=false) const</div><div class="ttdoc">collect all valid ranks for sparse grid scatter operations</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:468</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_ac4b64da890c7ea16a8156d1545888a59"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ac4b64da890c7ea16a8156d1545888a59">Cabana::Grid::Experimental::SparseHalo::num_space_dim</a></div><div class="ttdeci">static constexpr std::size_t num_space_dim</div><div class="ttdoc">sparse array dimension number</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:56</div></div>
+<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_ac4c2a4cc5fa80c2c67e3c0c107e3dac8"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ac4c2a4cc5fa80c2c67e3c0c107e3dac8">Cabana::Grid::Experimental::SparseHalo::unpackBuffer</a></div><div class="ttdeci">void unpackBuffer(const ReduceOp &amp;reduce_op, const ExecSpace &amp;exec_space, const buffer_view &amp;buffer, const steering_view &amp;tile_steering, const SparseArrayType &amp;sparse_array, SparseMapType &amp;map, const int count) const</div><div class="ttdoc">Unpack a sparse array communication buffer.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:1148</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_ac5ffb0bd4753e9c4f8011e4b7ef0a750"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ac5ffb0bd4753e9c4f8011e4b7ef0a750">Cabana::Grid::Experimental::SparseHalo::buildCommData</a></div><div class="ttdeci">void buildCommData(DecompositionTag decomposition_tag, const std::shared_ptr&lt; LocalGridType &gt; &amp;local_grid, const std::array&lt; int, num_space_dim &gt; &amp;nid, std::vector&lt; buffer_view &gt; &amp;buffers, std::vector&lt; steering_view &gt; &amp;steering, std::vector&lt; tile_index_space &gt; &amp;spaces)</div><div class="ttdoc">Build communication data.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:229</div></div>
-<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_ac905a4b8bfae8e4fb6e8bfe60c704cc5"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ac905a4b8bfae8e4fb6e8bfe60c704cc5">Cabana::Grid::Experimental::SparseHalo::packBuffer</a></div><div class="ttdeci">void packBuffer(const ExecSpace &amp;exec_space, const buffer_view &amp;buffer, const steering_view &amp;tile_steering, SparseArrayType &amp;sparse_array, const CountType count) const</div><div class="ttdoc">Pack sparse arrays at halo regions into a buffer.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:903</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_adee005ea512fdbd9acb04d1546c006ef"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#adee005ea512fdbd9acb04d1546c006ef">Cabana::Grid::Experimental::SparseHalo::buffer_view</a></div><div class="ttdeci">Kokkos::View&lt; tuple_type *, memory_space &gt; buffer_view</div><div class="ttdoc">communication data buffer view type</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:95</div></div>
-<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_ae2b3bc1ebfcefbf57bbda99663fa5869"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ae2b3bc1ebfcefbf57bbda99663fa5869">Cabana::Grid::Experimental::SparseHalo::unpackTupleMember</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION std::enable_if_t&lt; 1==M, void &gt; unpackTupleMember(const ReduceOp &amp;reduce_op, const tuple_type &amp;src_tuple, SoAType &amp;dst_soa, const int soa_idx, const Kokkos::Array&lt; std::size_t, M &gt; &amp;extents, const std::integral_constant&lt; std::size_t, N &gt;, const std::integral_constant&lt; std::size_t, M &gt;)</div><div class="ttdoc">Unpack a sparse arrays element (a tuple) in a buffer (for case tuple members with rank == 1)</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:1036</div></div>
-<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_ae36df4dfaccc333a9a7b4715b0443054"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ae36df4dfaccc333a9a7b4715b0443054">Cabana::Grid::Experimental::SparseHalo::unpackTuple</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION void unpackTuple(const ReduceOp &amp;reduce_op, const tuple_type &amp;src_tuple, SoAType &amp;dst_soa, const int soa_idx, const std::integral_constant&lt; std::size_t, N &gt;)</div><div class="ttdoc">Unpack a sparse arrays tuple for all members when element ID!=0.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:1109</div></div>
+<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_ae2b3bc1ebfcefbf57bbda99663fa5869"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ae2b3bc1ebfcefbf57bbda99663fa5869">Cabana::Grid::Experimental::SparseHalo::unpackTupleMember</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION std::enable_if_t&lt; 1==M, void &gt; unpackTupleMember(const ReduceOp &amp;reduce_op, const tuple_type &amp;src_tuple, SoAType &amp;dst_soa, const int soa_idx, const Kokkos::Array&lt; std::size_t, M &gt; &amp;extents, const std::integral_constant&lt; std::size_t, N &gt;, const std::integral_constant&lt; std::size_t, M &gt;)</div><div class="ttdoc">Unpack a sparse arrays element (a tuple) in a buffer (for case tuple members with rank == 1)</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:1034</div></div>
+<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_ae36df4dfaccc333a9a7b4715b0443054"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#ae36df4dfaccc333a9a7b4715b0443054">Cabana::Grid::Experimental::SparseHalo::unpackTuple</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION void unpackTuple(const ReduceOp &amp;reduce_op, const tuple_type &amp;src_tuple, SoAType &amp;dst_soa, const int soa_idx, const std::integral_constant&lt; std::size_t, N &gt;)</div><div class="ttdoc">Unpack a sparse arrays tuple for all members when element ID!=0.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:1107</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_aeb96682e4c8e546d2cff1cc21e0e3f06"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#aeb96682e4c8e546d2cff1cc21e0e3f06">Cabana::Grid::Experimental::SparseHalo::memory_space</a></div><div class="ttdeci">MemorySpace memory_space</div><div class="ttdoc">memory space to store the sparse grid</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:59</div></div>
-<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_aed6c3942db5ce79f4404cfd8f2dd8177"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#aed6c3942db5ce79f4404cfd8f2dd8177">Cabana::Grid::Experimental::SparseHalo::unpackOp</a></div><div class="ttdeci">static KOKKOS_INLINE_FUNCTION void unpackOp(ScatterReduce::Max, const T &amp;buffer_val, T &amp;array_val)</div><div class="ttdoc">Reduce an element into the buffer. Max reduction.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:946</div></div>
+<div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_aed6c3942db5ce79f4404cfd8f2dd8177"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#aed6c3942db5ce79f4404cfd8f2dd8177">Cabana::Grid::Experimental::SparseHalo::unpackOp</a></div><div class="ttdeci">static KOKKOS_INLINE_FUNCTION void unpackOp(ScatterReduce::Max, const T &amp;buffer_val, T &amp;array_val)</div><div class="ttdoc">Reduce an element into the buffer. Max reduction.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:944</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_aeea91000b0ba3f493d69241b4f581e5a"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#aeea91000b0ba3f493d69241b4f581e5a">Cabana::Grid::Experimental::SparseHalo::cell_num_per_tile</a></div><div class="ttdeci">static constexpr unsigned long long cell_num_per_tile</div><div class="ttdoc">sparse grid hierarchy: cell # per dimension</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:91</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1Experimental_1_1SparseHalo_html_afb4e06ee0e7d95e311c1a2693efbe15d"><div class="ttname"><a href="classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#afb4e06ee0e7d95e311c1a2693efbe15d">Cabana::Grid::Experimental::SparseHalo::cell_bits_per_tile_dim</a></div><div class="ttdeci">static constexpr unsigned long long cell_bits_per_tile_dim</div><div class="ttdoc">sparse grid hierarchy: cell id bit# per dimension</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseHalo.hpp:88</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1NodeHaloPattern_html"><div class="ttname"><a href="classCabana_1_1Grid_1_1NodeHaloPattern.html">Cabana::Grid::NodeHaloPattern</a></div><div class="ttdef"><b>Definition</b> Cabana_Grid_Halo.hpp:77</div></div>

@@ -186,14 +186,14 @@ template&lt;class SparseArrayType &gt; </td></tr>
 <tr class="memitem:a47864a58a44132ec9bfcc7fc6647eb8f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a47864a58a44132ec9bfcc7fc6647eb8f">scatter</a> (const ExecSpace &amp;exec_space, const ReduceOp &amp;reduce_op, SparseArrayType &amp;sparse_array, const bool is_neighbor_counting_collected=false) const</td></tr>
 <tr class="memdesc:a47864a58a44132ec9bfcc7fc6647eb8f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1Scatter.html" title="Synchronously scatter data from the ghosts to the local decomposition of a slice using the halo rever...">Scatter</a> data from our ghosts to their owners using the given type of reduce operation.  <br /></td></tr>
 <tr class="separator:a47864a58a44132ec9bfcc7fc6647eb8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac905a4b8bfae8e4fb6e8bfe60c704cc5" id="r_ac905a4b8bfae8e4fb6e8bfe60c704cc5"><td class="memTemplParams" colspan="2">template&lt;class ExecSpace , class SparseArrayType , class CountType &gt; </td></tr>
-<tr class="memitem:ac905a4b8bfae8e4fb6e8bfe60c704cc5"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac905a4b8bfae8e4fb6e8bfe60c704cc5">packBuffer</a> (const ExecSpace &amp;exec_space, const <a class="el" href="#adee005ea512fdbd9acb04d1546c006ef">buffer_view</a> &amp;buffer, const <a class="el" href="#a20aa8f28c2201f4689177ab548fc8cfb">steering_view</a> &amp;tile_steering, SparseArrayType &amp;sparse_array, const CountType count) const</td></tr>
-<tr class="memdesc:ac905a4b8bfae8e4fb6e8bfe60c704cc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pack sparse arrays at halo regions into a buffer.  <br /></td></tr>
-<tr class="separator:ac905a4b8bfae8e4fb6e8bfe60c704cc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38dc08768a3a8c2c5f363eed5e123500" id="r_a38dc08768a3a8c2c5f363eed5e123500"><td class="memTemplParams" colspan="2">template&lt;class ReduceOp , class ExecSpace , class SparseArrayType , class SparseMapType , class CountType &gt; </td></tr>
-<tr class="memitem:a38dc08768a3a8c2c5f363eed5e123500"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a38dc08768a3a8c2c5f363eed5e123500">unpackBuffer</a> (const ReduceOp &amp;reduce_op, const ExecSpace &amp;exec_space, const <a class="el" href="#adee005ea512fdbd9acb04d1546c006ef">buffer_view</a> &amp;buffer, const <a class="el" href="#a20aa8f28c2201f4689177ab548fc8cfb">steering_view</a> &amp;tile_steering, const SparseArrayType &amp;sparse_array, SparseMapType &amp;map, const CountType count) const</td></tr>
-<tr class="memdesc:a38dc08768a3a8c2c5f363eed5e123500"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unpack a sparse array communication buffer.  <br /></td></tr>
-<tr class="separator:a38dc08768a3a8c2c5f363eed5e123500"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6620d8dd5727c76997d56088bd63426" id="r_ab6620d8dd5727c76997d56088bd63426"><td class="memTemplParams" colspan="2">template&lt;class ExecSpace , class SparseArrayType &gt; </td></tr>
+<tr class="memitem:ab6620d8dd5727c76997d56088bd63426"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab6620d8dd5727c76997d56088bd63426">packBuffer</a> (const ExecSpace &amp;exec_space, const <a class="el" href="#adee005ea512fdbd9acb04d1546c006ef">buffer_view</a> &amp;buffer, const <a class="el" href="#a20aa8f28c2201f4689177ab548fc8cfb">steering_view</a> &amp;tile_steering, SparseArrayType &amp;sparse_array, const int count) const</td></tr>
+<tr class="memdesc:ab6620d8dd5727c76997d56088bd63426"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pack sparse arrays at halo regions into a buffer.  <br /></td></tr>
+<tr class="separator:ab6620d8dd5727c76997d56088bd63426"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4c2a4cc5fa80c2c67e3c0c107e3dac8" id="r_ac4c2a4cc5fa80c2c67e3c0c107e3dac8"><td class="memTemplParams" colspan="2">template&lt;class ReduceOp , class ExecSpace , class SparseArrayType , class SparseMapType &gt; </td></tr>
+<tr class="memitem:ac4c2a4cc5fa80c2c67e3c0c107e3dac8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac4c2a4cc5fa80c2c67e3c0c107e3dac8">unpackBuffer</a> (const ReduceOp &amp;reduce_op, const ExecSpace &amp;exec_space, const <a class="el" href="#adee005ea512fdbd9acb04d1546c006ef">buffer_view</a> &amp;buffer, const <a class="el" href="#a20aa8f28c2201f4689177ab548fc8cfb">steering_view</a> &amp;tile_steering, const SparseArrayType &amp;sparse_array, SparseMapType &amp;map, const int count) const</td></tr>
+<tr class="memdesc:ac4c2a4cc5fa80c2c67e3c0c107e3dac8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unpack a sparse array communication buffer.  <br /></td></tr>
+<tr class="separator:ac4c2a4cc5fa80c2c67e3c0c107e3dac8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -651,15 +651,15 @@ template&lt;class MemorySpace , class DataTypes , class EntityType , std::size_t
 
 </div>
 </div>
-<a id="ac905a4b8bfae8e4fb6e8bfe60c704cc5" name="ac905a4b8bfae8e4fb6e8bfe60c704cc5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac905a4b8bfae8e4fb6e8bfe60c704cc5">&#9670;&#160;</a></span>packBuffer()</h2>
+<a id="ab6620d8dd5727c76997d56088bd63426" name="ab6620d8dd5727c76997d56088bd63426"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6620d8dd5727c76997d56088bd63426">&#9670;&#160;</a></span>packBuffer()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class MemorySpace , class DataTypes , class EntityType , std::size_t NumSpaceDim, unsigned long long cellBitsPerTileDim, typename Value  = int, typename Key  = uint64_t&gt; </div>
 <div class="memtemplate">
-template&lt;class ExecSpace , class SparseArrayType , class CountType &gt; </div>
+template&lt;class ExecSpace , class SparseArrayType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -687,7 +687,7 @@ template&lt;class ExecSpace , class SparseArrayType , class CountType &gt; </div
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const CountType</td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;) const</td>
+          <td class="paramtype">const int</td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -702,7 +702,6 @@ template&lt;class ExecSpace , class SparseArrayType , class CountType &gt; </div
   <table class="tparams">
     <tr><td class="paramname">ExecSpace</td><td>execution space type </td></tr>
     <tr><td class="paramname">SparseArrayType</td><td>sparse array type </td></tr>
-    <tr><td class="paramname">CountType</td><td>counting number type </td></tr>
   </table>
   </dd>
 </dl>
@@ -879,15 +878,15 @@ template&lt;class MemorySpace , class DataTypes , class EntityType , std::size_t
 
 </div>
 </div>
-<a id="a38dc08768a3a8c2c5f363eed5e123500" name="a38dc08768a3a8c2c5f363eed5e123500"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a38dc08768a3a8c2c5f363eed5e123500">&#9670;&#160;</a></span>unpackBuffer()</h2>
+<a id="ac4c2a4cc5fa80c2c67e3c0c107e3dac8" name="ac4c2a4cc5fa80c2c67e3c0c107e3dac8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4c2a4cc5fa80c2c67e3c0c107e3dac8">&#9670;&#160;</a></span>unpackBuffer()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class MemorySpace , class DataTypes , class EntityType , std::size_t NumSpaceDim, unsigned long long cellBitsPerTileDim, typename Value  = int, typename Key  = uint64_t&gt; </div>
 <div class="memtemplate">
-template&lt;class ReduceOp , class ExecSpace , class SparseArrayType , class SparseMapType , class CountType &gt; </div>
+template&lt;class ReduceOp , class ExecSpace , class SparseArrayType , class SparseMapType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -925,7 +924,7 @@ template&lt;class ReduceOp , class ExecSpace , class SparseArrayType , class Spa
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const CountType</td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;) const</td>
+          <td class="paramtype">const int</td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -942,7 +941,6 @@ template&lt;class ReduceOp , class ExecSpace , class SparseArrayType , class Spa
     <tr><td class="paramname">ExecSpace</td><td>execution space type </td></tr>
     <tr><td class="paramname">SparseArrayType</td><td>sparse array type </td></tr>
     <tr><td class="paramname">SparseMapType</td><td>sparse map type </td></tr>
-    <tr><td class="paramname">CountType</td><td>counting number type </td></tr>
   </table>
   </dd>
 </dl>
