@@ -817,14 +817,7 @@ class NeighborList<LinkedCellList<MemorySpace, Scalar>>
                     {
                         int particle_id = list.binOffset( i, j, k ) +
                                           ( neighbor_index - previous_count );
-                        if ( list.sorted() )
-                        {
-                            return particle_id + list.getParticleBegin();
-                        }
-                        else
-                        {
-                            return list.permutation( particle_id );
-                        }
+                        return list.getParticle( particle_id );
                     }
                     previous_count = total_count;
                 }
