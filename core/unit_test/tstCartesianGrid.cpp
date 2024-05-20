@@ -34,6 +34,8 @@ TEST( cabana_cartesian_grid, grid_test )
     EXPECT_EQ( nx, 7 );
     EXPECT_EQ( ny, 16 );
     EXPECT_EQ( nz, 10 );
+    auto total = grid.totalNumCells();
+    EXPECT_EQ( total, nx * ny * nz );
 
     double xp = -0.9;
     double yp = 1.4;

@@ -338,7 +338,7 @@ void testLinkedList()
     {
         auto begin = test_data.begin;
         auto end = test_data.end;
-        auto cell_list = Cabana::createLinkedCellList<TEST_MEMSPACE>(
+        auto cell_list = Cabana::createLinkedCellList(
             pos, begin, end, grid_delta, grid_min, grid_max,
             test_data.grid_delta[0], 1.0 );
         Cabana::permute( cell_list, test_data.aosoa );
@@ -351,7 +351,7 @@ void testLinkedList()
 
     // Now bin and permute all of the particles.
     {
-        auto cell_list = Cabana::createLinkedCellList<TEST_MEMSPACE>(
+        auto cell_list = Cabana::createLinkedCellList(
             pos, grid_delta, grid_min, grid_max, test_data.grid_delta[0] );
         Cabana::permute( cell_list, test_data.aosoa );
 
@@ -376,7 +376,7 @@ void testLinkedListSlice()
     {
         auto begin = test_data.begin;
         auto end = test_data.end;
-        auto cell_list = Cabana::createLinkedCellList<TEST_MEMSPACE>(
+        auto cell_list = Cabana::createLinkedCellList(
             pos, begin, end, grid_delta, grid_min, grid_max, grid_delta[0] );
         Cabana::permute( cell_list, pos );
 
@@ -387,7 +387,7 @@ void testLinkedListSlice()
     }
     // Now bin and permute all of the particles.
     {
-        auto cell_list = Cabana::createLinkedCellList<TEST_MEMSPACE>(
+        auto cell_list = Cabana::createLinkedCellList(
             pos, grid_delta, grid_min, grid_max, grid_delta[0] );
         Cabana::permute( cell_list, pos );
 
@@ -640,7 +640,7 @@ void testLinkedCellNeighborInterface()
     // Create the linked cell list.
     double grid_size = test_data.cell_size_ratio * test_data.test_radius;
     double grid_delta[3] = { grid_size, grid_size, grid_size };
-    auto nlist = Cabana::createLinkedCellList<TEST_MEMSPACE>(
+    auto nlist = Cabana::createLinkedCellList(
         positions, test_data.begin, test_data.end, grid_delta,
         test_data.grid_min, test_data.grid_max, test_data.test_radius,
         test_data.cell_size_ratio );
@@ -665,7 +665,7 @@ void testLinkedCellParallel()
     // Create the linked cell list.
     double grid_size = test_data.cell_size_ratio * test_data.test_radius;
     double grid_delta[3] = { grid_size, grid_size, grid_size };
-    auto nlist = Cabana::createLinkedCellList<TEST_MEMSPACE>(
+    auto nlist = Cabana::createLinkedCellList(
         positions, test_data.begin, test_data.end, grid_delta,
         test_data.grid_min, test_data.grid_max, test_data.test_radius,
         test_data.cell_size_ratio );
@@ -690,7 +690,7 @@ void testLinkedCellReduce()
     // Create the linked cell list.
     double grid_size = test_data.cell_size_ratio * test_data.test_radius;
     double grid_delta[3] = { grid_size, grid_size, grid_size };
-    auto nlist = Cabana::createLinkedCellList<TEST_MEMSPACE>(
+    auto nlist = Cabana::createLinkedCellList(
         positions, test_data.begin, test_data.end, grid_delta,
         test_data.grid_min, test_data.grid_max, test_data.test_radius,
         test_data.cell_size_ratio );

@@ -124,9 +124,11 @@ namespace Impl
 // Verlet List Builder
 //---------------------------------------------------------------------------//
 template <class DeviceType, class PositionSlice, class AlgorithmTag,
-          class LayoutTag, class BuildOpTag>
+          class LayoutTag, class BuildOpTag, std::size_t NumSpaceDim = 3>
 struct VerletListBuilder
 {
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
+
     // Types.
     using device = DeviceType;
     using PositionValueType = typename PositionSlice::value_type;
@@ -161,8 +163,8 @@ struct VerletListBuilder
                        const std::size_t end,
                        const PositionValueType neighborhood_radius,
                        const PositionValueType cell_size_ratio,
-                       const PositionValueType grid_min[3],
-                       const PositionValueType grid_max[3],
+                       const PositionValueType grid_min[num_space_dim],
+                       const PositionValueType grid_max[num_space_dim],
                        const std::size_t max_neigh )
         : pid_begin( begin )
         , pid_end( end )
@@ -186,10 +188,13 @@ struct VerletListBuilder
         // not just the requested range. This is because all particles are
         // treated as candidates for neighbors.
         double grid_size = cell_size_ratio * neighborhood_radius;
-        PositionValueType grid_delta[3] = { grid_size, grid_size, grid_size };
-        linked_cell_list = createLinkedCellList<memory_space>(
-            position, grid_delta, grid_min, grid_max, neighborhood_radius,
-            cell_size_ratio );
+        PositionValueType grid_delta[num_space_dim];
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+            grid_delta[d] = grid_size;
+
+        linked_cell_list =
+            createLinkedCellList( position, grid_delta, grid_min, grid_max,
+                                  neighborhood_radius, cell_size_ratio );
         bin_data_1d = linked_cell_list.binningData();
 
         // We will use the square of the distance for neighbor determination.
@@ -215,9 +220,9 @@ struct VerletListBuilder
         int cell = team.league_rank();
 
         // Get the stencil for this cell.
-        int imin, imax, jmin, jmax, kmin, kmax;
-        linked_cell_list.getStencilCells( cell, imin, imax, jmin, jmax, kmin,
-                                          kmax );
+        Kokkos::Array<int, num_space_dim> min;
+        Kokkos::Array<int, num_space_dim> max;
+        linked_cell_list.getStencilCells( cell, min, max );
 
         // Operate on the particles in the bin.
         std::size_t b_offset = bin_data_1d.binOffset( cell );
@@ -232,94 +237,132 @@ struct VerletListBuilder
                 if ( ( pid >= pid_begin ) && ( pid < pid_end ) )
                 {
                     // Cache the particle coordinates.
-                    double x_p = position( pid, 0 );
-                    double y_p = position( pid, 1 );
-                    double z_p = position( pid, 2 );
+                    Kokkos::Array<PositionValueType, num_space_dim> xp;
+                    for ( std::size_t d = 0; d < num_space_dim; ++d )
+                        xp[d] = position( pid, d );
 
                     // Loop over the cell stencil.
-                    int stencil_count = 0;
-                    for ( int i = imin; i < imax; ++i )
-                        for ( int j = jmin; j < jmax; ++j )
-                            for ( int k = kmin; k < kmax; ++k )
-                            {
-                                // See if we should actually check this box for
-                                // neighbors.
-                                if ( linked_cell_list.cellStencil()
-                                         .grid.minDistanceToPoint(
-                                             x_p, y_p, z_p, i, j, k ) <= rsqr )
-                                {
-                                    std::size_t n_offset =
-                                        linked_cell_list.binOffset( i, j, k );
-                                    std::size_t num_n =
-                                        linked_cell_list.binSize( i, j, k );
+                    int stencil_count =
+                        linkedcell_stencil_count( team, min, max, xp, pid );
 
-                                    // Check the particles in this bin to see if
-                                    // they are neighbors. If they are add to
-                                    // the count for this bin.
-                                    int cell_count = 0;
-                                    neighbor_reduce( team, pid, x_p, y_p, z_p,
-                                                     n_offset, num_n,
-                                                     cell_count, BuildOpTag() );
-                                    stencil_count += cell_count;
-                                }
-                            }
                     Kokkos::single( Kokkos::PerThread( team ), [&]()
                                     { _data.counts( pid ) = stencil_count; } );
                 }
             } );
     }
 
+    template <class TeamType, std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, int>
+    linkedcell_stencil_count( TeamType team, const Kokkos::Array<int, 3> min,
+                              const Kokkos::Array<int, 3> max,
+                              const Kokkos::Array<PositionValueType, 3> xp,
+                              const std::size_t pid ) const
+    {
+        int stencil_count = 0;
+        Kokkos::Array<int, 3> ijk;
+        for ( int i = min[0]; i < max[0]; ++i )
+            for ( int j = min[1]; j < max[1]; ++j )
+                for ( int k = min[2]; k < max[2]; ++k )
+                {
+                    ijk = { i, j, k };
+                    linkedcell_bin( team, ijk, xp, pid, stencil_count );
+                }
+        return stencil_count;
+    }
+
+    template <class TeamType, std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, int>
+    linkedcell_stencil_count( TeamType team, const Kokkos::Array<int, 2> min,
+                              const Kokkos::Array<int, 2> max,
+                              const Kokkos::Array<PositionValueType, 2> xp,
+                              const std::size_t pid ) const
+    {
+        int stencil_count = 0;
+        Kokkos::Array<int, 2> ij;
+        for ( int i = min[0]; i < max[0]; ++i )
+            for ( int j = min[1]; j < max[1]; ++j )
+            {
+                ij = { i, j };
+                linkedcell_bin( team, ij, xp, pid, stencil_count );
+            }
+        return stencil_count;
+    }
+
+    template <class TeamType>
+    KOKKOS_INLINE_FUNCTION void
+    linkedcell_bin( TeamType team, const Kokkos::Array<int, num_space_dim> ijk,
+                    const Kokkos::Array<PositionValueType, num_space_dim> xp,
+                    const std::size_t pid, int& stencil_count ) const
+    {
+        // See if we should actually check this box for neighbors.
+        if ( linked_cell_list.cellStencil().grid.minDistanceToPoint(
+                 xp, ijk ) <= rsqr )
+        {
+            std::size_t n_offset = linked_cell_list.binOffset( ijk );
+            std::size_t num_n = linked_cell_list.binSize( ijk );
+
+            // Check the particles in this bin to see if they are neighbors. If
+            // they are add to the count for this bin.
+            int cell_count = 0;
+            neighbor_reduce( team, pid, xp, n_offset, num_n, cell_count,
+                             BuildOpTag() );
+            stencil_count += cell_count;
+        }
+    }
+
     // Neighbor count team vector loop (only used for CSR lists).
     KOKKOS_INLINE_FUNCTION void
     neighbor_reduce( const typename CountNeighborsPolicy::member_type& team,
-                     const std::size_t pid, const double x_p, const double y_p,
-                     const double z_p, const int n_offset, const int num_n,
-                     int& cell_count, TeamVectorOpTag ) const
+                     const std::size_t pid,
+                     const Kokkos::Array<double, num_space_dim> xp,
+                     const int n_offset, const int num_n, int& cell_count,
+                     TeamVectorOpTag ) const
     {
         Kokkos::parallel_reduce(
             Kokkos::ThreadVectorRange( team, num_n ),
-            [&]( const int n, int& local_count ) {
-                neighbor_kernel( pid, x_p, y_p, z_p, n_offset, n, local_count );
-            },
+            [&]( const int n, int& local_count )
+            { neighbor_kernel( pid, xp, n_offset, n, local_count ); },
             cell_count );
     }
 
     // Neighbor count serial loop (only used for CSR lists).
     KOKKOS_INLINE_FUNCTION
     void neighbor_reduce( const typename CountNeighborsPolicy::member_type,
-                          const std::size_t pid, const double x_p,
-                          const double y_p, const double z_p,
+                          const std::size_t pid,
+                          const Kokkos::Array<double, num_space_dim> xp,
                           const int n_offset, const int num_n, int& cell_count,
                           TeamOpTag ) const
     {
         for ( int n = 0; n < num_n; n++ )
-            neighbor_kernel( pid, x_p, y_p, z_p, n_offset, n, cell_count );
+            neighbor_kernel( pid, xp, n_offset, n, cell_count );
     }
 
     // Neighbor count kernel
     KOKKOS_INLINE_FUNCTION
-    void neighbor_kernel( const int pid, const double x_p, const double y_p,
-                          const double z_p, const int n_offset, const int n,
+    void neighbor_kernel( const int pid,
+                          const Kokkos::Array<double, num_space_dim> xp,
+                          const int n_offset, const int n,
                           int& local_count ) const
     {
         //  Get the true id of the candidate  neighbor.
         std::size_t nid = linked_cell_list.permutation( n_offset + n );
 
         // Cache the candidate neighbor particle coordinates.
-        double x_n = position( nid, 0 );
-        double y_n = position( nid, 1 );
-        double z_n = position( nid, 2 );
+        Kokkos::Array<double, num_space_dim> xn;
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+            xn[d] = position( nid, d );
 
         // If this could be a valid neighbor, continue.
-        if ( NeighborDiscriminator<AlgorithmTag>::isValid(
-                 pid, x_p, y_p, z_p, nid, x_n, y_n, z_n ) )
+        if ( NeighborDiscriminator<AlgorithmTag>::isValid( pid, xp, nid, xn ) )
         {
             // Calculate the distance between the particle and its candidate
             // neighbor.
-            PositionValueType dx = x_p - x_n;
-            PositionValueType dy = y_p - y_n;
-            PositionValueType dz = z_p - z_n;
-            PositionValueType dist_sqr = dx * dx + dy * dy + dz * dz;
+            PositionValueType dist_sqr = 0.0;
+            for ( std::size_t d = 0; d < num_space_dim; ++d )
+            {
+                PositionValueType dx = xp[d] - xn[d];
+                dist_sqr += dx * dx;
+            }
 
             // If within the cutoff add to the count.
             if ( dist_sqr <= rsqr )
@@ -433,9 +476,9 @@ struct VerletListBuilder
         int cell = team.league_rank();
 
         // Get the stencil for this cell.
-        int imin, imax, jmin, jmax, kmin, kmax;
-        linked_cell_list.getStencilCells( cell, imin, imax, jmin, jmax, kmin,
-                                          kmax );
+        Kokkos::Array<int, num_space_dim> min;
+        Kokkos::Array<int, num_space_dim> max;
+        linked_cell_list.getStencilCells( cell, min, max );
 
         // Operate on the particles in the bin.
         std::size_t b_offset = bin_data_1d.binOffset( cell );
@@ -450,85 +493,114 @@ struct VerletListBuilder
                 if ( ( pid >= pid_begin ) && ( pid < pid_end ) )
                 {
                     // Cache the particle coordinates.
-                    double x_p = position( pid, 0 );
-                    double y_p = position( pid, 1 );
-                    double z_p = position( pid, 2 );
+                    Kokkos::Array<PositionValueType, num_space_dim> xp;
+                    for ( std::size_t d = 0; d < num_space_dim; ++d )
+                        xp[d] = position( pid, d );
 
-                    // Loop over the cell stencil.
-                    for ( int i = imin; i < imax; ++i )
-                        for ( int j = jmin; j < jmax; ++j )
-                            for ( int k = kmin; k < kmax; ++k )
-                            {
-                                // See if we should actually check this box for
-                                // neighbors.
-                                if ( linked_cell_list.cellStencil()
-                                         .grid.minDistanceToPoint(
-                                             x_p, y_p, z_p, i, j, k ) <= rsqr )
-                                {
-                                    // Check the particles in this bin to see if
-                                    // they are neighbors.
-                                    std::size_t n_offset =
-                                        linked_cell_list.binOffset( i, j, k );
-                                    int num_n =
-                                        linked_cell_list.binSize( i, j, k );
-                                    neighbor_for( team, pid, x_p, y_p, z_p,
-                                                  n_offset, num_n,
-                                                  BuildOpTag() );
-                                }
-                            }
+                    linkedcell_stencil_fill( team, min, max, xp, pid );
                 }
             } );
+    }
+
+    template <class TeamType, std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    linkedcell_stencil_fill( TeamType team, const Kokkos::Array<int, 3> min,
+                             const Kokkos::Array<int, 3> max,
+                             const Kokkos::Array<PositionValueType, 3> xp,
+                             const std::size_t pid ) const
+    {
+        Kokkos::Array<int, 3> ijk;
+        for ( int i = min[0]; i < max[0]; ++i )
+            for ( int j = min[1]; j < max[1]; ++j )
+                for ( int k = min[2]; k < max[2]; ++k )
+                {
+                    ijk = { i, j, k };
+                    linkedcell_bin( team, ijk, xp, pid );
+                }
+    }
+
+    template <class TeamType, std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
+    linkedcell_stencil_fill( TeamType team, const Kokkos::Array<int, 2> min,
+                             const Kokkos::Array<int, 2> max,
+                             const Kokkos::Array<PositionValueType, 2> xp,
+                             const std::size_t pid ) const
+    {
+        Kokkos::Array<int, 2> ij;
+        for ( int i = min[0]; i < max[0]; ++i )
+            for ( int j = min[1]; j < max[1]; ++j )
+            {
+                ij = { i, j };
+                linkedcell_bin( team, ij, xp, pid );
+            }
+    }
+
+    template <class TeamType>
+    KOKKOS_INLINE_FUNCTION void
+    linkedcell_bin( TeamType team, const Kokkos::Array<int, num_space_dim> ijk,
+                    const Kokkos::Array<PositionValueType, num_space_dim> xp,
+                    const std::size_t pid ) const
+    {
+        // See if we should actually check this box for neighbors.
+        if ( linked_cell_list.cellStencil().grid.minDistanceToPoint(
+                 xp, ijk ) <= rsqr )
+        {
+            // Check the particles in this bin to see if they are neighbors.
+            std::size_t n_offset = linked_cell_list.binOffset( ijk );
+            int num_n = linked_cell_list.binSize( ijk );
+            neighbor_for( team, pid, xp, n_offset, num_n, BuildOpTag() );
+        }
     }
 
     // Neighbor fill team vector loop.
     KOKKOS_INLINE_FUNCTION void
     neighbor_for( const typename FillNeighborsPolicy::member_type& team,
-                  const std::size_t pid, const double x_p, const double y_p,
-                  const double z_p, const int n_offset, const int num_n,
-                  TeamVectorOpTag ) const
+                  const std::size_t pid,
+                  const Kokkos::Array<double, num_space_dim> xp,
+                  const int n_offset, const int num_n, TeamVectorOpTag ) const
     {
-        Kokkos::parallel_for(
-            Kokkos::ThreadVectorRange( team, num_n ), [&]( const int n )
-            { neighbor_kernel( pid, x_p, y_p, z_p, n_offset, n ); } );
+        Kokkos::parallel_for( Kokkos::ThreadVectorRange( team, num_n ),
+                              [&]( const int n )
+                              { neighbor_kernel( pid, xp, n_offset, n ); } );
     }
 
     // Neighbor fill serial loop.
     KOKKOS_INLINE_FUNCTION
     void neighbor_for( const typename FillNeighborsPolicy::member_type team,
-                       const std::size_t pid, const double x_p,
-                       const double y_p, const double z_p, const int n_offset,
-                       const int num_n, TeamOpTag ) const
+                       const std::size_t pid,
+                       const Kokkos::Array<double, num_space_dim> xp,
+                       const int n_offset, const int num_n, TeamOpTag ) const
     {
         for ( int n = 0; n < num_n; n++ )
-            Kokkos::single(
-                Kokkos::PerThread( team ),
-                [&]() { neighbor_kernel( pid, x_p, y_p, z_p, n_offset, n ); } );
+            Kokkos::single( Kokkos::PerThread( team ), [&]()
+                            { neighbor_kernel( pid, xp, n_offset, n ); } );
     }
 
     // Neighbor fill kernel.
     KOKKOS_INLINE_FUNCTION
-    void neighbor_kernel( const int pid, const double x_p, const double y_p,
-                          const double z_p, const int n_offset,
-                          const int n ) const
+    void neighbor_kernel( const int pid,
+                          const Kokkos::Array<double, num_space_dim> xp,
+                          const int n_offset, const int n ) const
     {
         //  Get the true id of the candidate neighbor.
         std::size_t nid = linked_cell_list.permutation( n_offset + n );
 
         // Cache the candidate neighbor particle coordinates.
-        double x_n = position( nid, 0 );
-        double y_n = position( nid, 1 );
-        double z_n = position( nid, 2 );
+        Kokkos::Array<double, num_space_dim> xn;
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+            xn[d] = position( nid, d );
 
         // If this could be a valid neighbor, continue.
-        if ( NeighborDiscriminator<AlgorithmTag>::isValid(
-                 pid, x_p, y_p, z_p, nid, x_n, y_n, z_n ) )
+        if ( NeighborDiscriminator<AlgorithmTag>::isValid( pid, xp, nid, xn ) )
         {
             // Calculate the distance between the particle and its candidate
             // neighbor.
-            PositionValueType dx = x_p - x_n;
-            PositionValueType dy = y_p - y_n;
-            PositionValueType dz = z_p - z_n;
-            PositionValueType dist_sqr = dx * dx + dy * dy + dz * dz;
+            PositionValueType dist_sqr = 0.0;
+            for ( std::size_t d = 0; d < num_space_dim; ++d )
+            {
+                PositionValueType dx = xp[d] - xn[d];
+                dist_sqr += dx * dx;
+            }
 
             // If within the cutoff increment the neighbor count and add as a
             // neighbor at that index.
@@ -547,8 +619,8 @@ struct VerletListBuilder
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Neighbor list implementation based on binning particles on a 3d
-  Cartesian grid with cells of the same size as the interaction distance.
+  \brief Neighbor list implementation based on binning particles on a Cartesian
+  grid with cells of the same size as the interaction distance.
 
   \tparam MemorySpace The Kokkos memory space for storing the neighbor list.
 
@@ -564,11 +636,14 @@ struct VerletListBuilder
   distributed particles due to the use of a Cartesian grid.
 */
 template <class MemorySpace, class AlgorithmTag, class LayoutTag,
-          class BuildTag = TeamVectorOpTag>
+          class BuildTag = TeamVectorOpTag, std::size_t NumSpaceDim = 3>
 class VerletList
 {
   public:
     static_assert( Kokkos::is_memory_space<MemorySpace>::value, "" );
+
+    //! Spatial dimension.
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
 
     //! Kokkos memory space in which the neighbor list data resides.
     using memory_space = MemorySpace;
@@ -619,14 +694,15 @@ class VerletList
       whether or not they are in the range.
     */
     template <class PositionSlice>
-    VerletList( PositionSlice x, const std::size_t begin, const std::size_t end,
-                const typename PositionSlice::value_type neighborhood_radius,
-                const typename PositionSlice::value_type cell_size_ratio,
-                const typename PositionSlice::value_type grid_min[3],
-                const typename PositionSlice::value_type grid_max[3],
-                const std::size_t max_neigh = 0,
-                typename std::enable_if<( is_slice<PositionSlice>::value ),
-                                        int>::type* = 0 )
+    VerletList(
+        PositionSlice x, const std::size_t begin, const std::size_t end,
+        const typename PositionSlice::value_type neighborhood_radius,
+        const typename PositionSlice::value_type cell_size_ratio,
+        const typename PositionSlice::value_type grid_min[num_space_dim],
+        const typename PositionSlice::value_type grid_max[num_space_dim],
+        const std::size_t max_neigh = 0,
+        typename std::enable_if<( is_slice<PositionSlice>::value ),
+                                int>::type* = 0 )
     {
         build( x, begin, end, neighborhood_radius, cell_size_ratio, grid_min,
                grid_max, max_neigh );
@@ -637,12 +713,13 @@ class VerletList
       calculate the neighbor list.
     */
     template <class PositionSlice>
-    void build( PositionSlice x, const std::size_t begin, const std::size_t end,
-                const typename PositionSlice::value_type neighborhood_radius,
-                const typename PositionSlice::value_type cell_size_ratio,
-                const typename PositionSlice::value_type grid_min[3],
-                const typename PositionSlice::value_type grid_max[3],
-                const std::size_t max_neigh = 0 )
+    void
+    build( PositionSlice x, const std::size_t begin, const std::size_t end,
+           const typename PositionSlice::value_type neighborhood_radius,
+           const typename PositionSlice::value_type cell_size_ratio,
+           const typename PositionSlice::value_type grid_min[num_space_dim],
+           const typename PositionSlice::value_type grid_max[num_space_dim],
+           const std::size_t max_neigh = 0 )
     {
         // Use the default execution space.
         build( execution_space{}, x, begin, end, neighborhood_radius,
@@ -653,13 +730,14 @@ class VerletList
       calculate the neighbor list.
     */
     template <class PositionSlice, class ExecutionSpace>
-    void build( ExecutionSpace, PositionSlice x, const std::size_t begin,
-                const std::size_t end,
-                const typename PositionSlice::value_type neighborhood_radius,
-                const typename PositionSlice::value_type cell_size_ratio,
-                const typename PositionSlice::value_type grid_min[3],
-                const typename PositionSlice::value_type grid_max[3],
-                const std::size_t max_neigh = 0 )
+    void
+    build( ExecutionSpace, PositionSlice x, const std::size_t begin,
+           const std::size_t end,
+           const typename PositionSlice::value_type neighborhood_radius,
+           const typename PositionSlice::value_type cell_size_ratio,
+           const typename PositionSlice::value_type grid_min[num_space_dim],
+           const typename PositionSlice::value_type grid_max[num_space_dim],
+           const std::size_t max_neigh = 0 )
     {
         Kokkos::Profiling::ScopedRegion region( "Cabana::VerletList::build" );
 
@@ -673,7 +751,7 @@ class VerletList
         // Create a builder functor.
         using builder_type =
             Impl::VerletListBuilder<device_type, PositionSlice, AlgorithmTag,
-                                    LayoutTag, BuildTag>;
+                                    LayoutTag, BuildTag, num_space_dim>;
         builder_type builder( x, begin, end, neighborhood_radius,
                               cell_size_ratio, grid_min, grid_max, max_neigh );
 
