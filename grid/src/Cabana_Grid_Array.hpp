@@ -250,10 +250,10 @@ class Array
         std::conditional_t<2 == num_space_dim,
                            Kokkos::View<value_type***, Params...>, void>>;
 
-    //! Memory space.
+    //! Kokkos memory space.
     using memory_space = typename view_type::memory_space;
-    //! Default device type.
-    using device_type [[deprecated]] = typename memory_space::device_type;
+    static_assert( Kokkos::is_memory_space<memory_space>() );
+
     //! Default execution space.
     using execution_space = typename memory_space::execution_space;
 

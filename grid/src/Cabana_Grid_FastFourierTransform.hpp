@@ -159,20 +159,12 @@ class FastFourierTransform
     //! Scalar value type.
     using value_type = Scalar;
 
-    // FIXME: extracting the self type for backwards compatibility with previous
-    // template on DeviceType. Should simply be MemorySpace after next release.
     //! Kokkos memory space.
-    using memory_space = typename MemorySpace::memory_space;
-    // FIXME: replace warning with memory space assert after next release.
-    static_assert(
-        Cabana::Impl::deprecated( Kokkos::is_device<MemorySpace>() ) );
+    using memory_space = MemorySpace;
+    static_assert( Kokkos::is_memory_space<MemorySpace>() );
 
     //! Kokkos execution space.
     using execution_space = typename memory_space::execution_space;
-    //! Kokkos execution space.
-    using exec_space [[deprecated]] = execution_space;
-    //! Default Kokkos device type.
-    using device_type [[deprecated]] = typename memory_space::device_type;
 
     //! Spatial dimension.
     static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
@@ -486,20 +478,12 @@ class HeffteFastFourierTransform
     //! Scalar value type.
     using value_type = Scalar;
 
-    // FIXME: extracting the self type for backwards compatibility with previous
-    // template on DeviceType. Should simply be MemorySpace after next release.
     //! Kokkos memory space.
-    using memory_space = typename MemorySpace::memory_space;
-    // FIXME: replace warning with memory space assert after next release.
-    static_assert(
-        Cabana::Impl::deprecated( Kokkos::is_device<MemorySpace>() ) );
+    using memory_space = MemorySpace;
+    static_assert( Kokkos::is_memory_space<MemorySpace>() );
 
     //! Kokkos execution space.
     using execution_space = ExecSpace;
-    //! Kokkos execution space.
-    using exec_space [[deprecated]] = execution_space;
-    //! Default Kokkos device type.
-    using device_type [[deprecated]] = typename memory_space::device_type;
     //! FFT backend type.
     using backend_type = BackendType;
     //! Mesh type.
