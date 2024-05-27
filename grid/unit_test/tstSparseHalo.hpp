@@ -393,7 +393,7 @@ template <typename ReduceOp, typename EntityType>
 void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
 {
     using T = float;
-    // general senario and grid information
+    // general scenario and grid information
     constexpr int size_tile_per_dim = 16;
     constexpr int cell_per_tile_dim = 4;
     constexpr int cell_bits_per_tile_dim = 2;
@@ -478,7 +478,7 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
 
     // compute ground truth of each halo grids according to reduce-op type
     // the grid should have base value x assigned by the owner
-    // and every other ghosters assign 0.1x to the gird
+    // and every other ghosters assign 0.1x to the grid
     // x is a factor multiplied to different data members
     std::unordered_map<std::string, TestData> ground_truth;
     TestData base_values{ { 1.0, 10.0, 100.0 }, 0.1f };

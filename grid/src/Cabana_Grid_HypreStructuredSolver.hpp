@@ -29,6 +29,7 @@
 #include <HYPRE_struct_mv.h>
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Profiling_ScopedRegion.hpp>
 
 #include <array>
 #include <memory>
@@ -209,10 +210,12 @@ class HypreStructuredSolver
             checkHypreError( error );
         }
 
-        // Create the matrix.
+        // Create the matrix object. Must be done after the stencil is setup
         error = HYPRE_StructMatrixCreate( _comm, _grid, _stencil, &_A );
         checkHypreError( error );
         error = HYPRE_StructMatrixSetSymmetric( _A, is_symmetric );
+        checkHypreError( error );
+        error = HYPRE_StructMatrixInitialize( _A );
         checkHypreError( error );
     }
 
@@ -252,10 +255,6 @@ class HypreStructuredSolver
         // Spatial dimension.
         const std::size_t num_space_dim = Array_t::num_space_dim;
 
-        // Intialize the matrix for setting values.
-        auto error = HYPRE_StructMatrixInitialize( _A );
-        checkHypreError( error );
-
         // Copy the matrix entries into HYPRE. The HYPRE layout is fixed as
         // layout-right.
         auto owned_space = values.layout()->indexSpace( Own(), Local() );
@@ -275,7 +274,7 @@ class HypreStructuredSolver
         // Insert values into the HYPRE matrix.
         std::vector<HYPRE_Int> indices( _stencil_size );
         std::iota( indices.begin(), indices.end(), 0 );
-        error = HYPRE_StructMatrixSetBoxValues(
+        auto error = HYPRE_StructMatrixSetBoxValues(
             _A, _lower.data(), _upper.data(), indices.size(), indices.data(),
             a_values.data() );
         checkHypreError( error );
@@ -284,7 +283,7 @@ class HypreStructuredSolver
     }
 
     /*!
-      \brief Print the hypre matrix to ouput file
+      \brief Print the hypre matrix to output file
       \param prefix File prefix for where hypre output is written
     */
     void printMatrix( const char* prefix )
@@ -293,7 +292,7 @@ class HypreStructuredSolver
     }
 
     /*!
-      \brief Print the hypre LHS to ouput file
+      \brief Print the hypre LHS to output file
       \param prefix File prefix for where hypre output is written
     */
     void printLHS( const char* prefix )
@@ -302,7 +301,7 @@ class HypreStructuredSolver
     }
 
     /*!
-      \brief Print the hypre RHS to ouput file
+      \brief Print the hypre RHS to output file
       \param prefix File prefix for where hypre output is written
     */
     void printRHS( const char* prefix )
@@ -347,7 +346,8 @@ class HypreStructuredSolver
         if ( _is_preconditioner )
             throw std::logic_error( "Cannot call setup() on preconditioners" );
 
-        this->setupImpl( _A, _b, _x );
+        // FIXME: appears to be a memory issue in the call to this function
+        this->setupImpl();
     }
 
     /*!
@@ -358,7 +358,7 @@ class HypreStructuredSolver
     template <class Array_t>
     void solve( const Array_t& b, Array_t& x )
     {
-        Kokkos::Profiling::pushRegion(
+        Kokkos::Profiling::ScopedRegion region(
             "Cabana::Grid::HypreStructuredSolver::solve" );
 
         static_assert( is_array<Array_t>::value, "Must use an array" );
@@ -385,10 +385,6 @@ class HypreStructuredSolver
         // Spatial dimension.
         const std::size_t num_space_dim = Array_t::num_space_dim;
 
-        // Initialize the RHS.
-        auto error = HYPRE_StructVectorInitialize( _b );
-        checkHypreError( error );
-
         // Copy the RHS into HYPRE. The HYPRE layout is fixed as layout-right.
         auto owned_space = b.layout()->indexSpace( Own(), Local() );
         std::array<long, num_space_dim + 1> reorder_size;
@@ -405,14 +401,14 @@ class HypreStructuredSolver
         Kokkos::deep_copy( vector_values, b_subv );
 
         // Insert b values into the HYPRE vector.
-        error = HYPRE_StructVectorSetBoxValues(
+        auto error = HYPRE_StructVectorSetBoxValues(
             _b, _lower.data(), _upper.data(), vector_values.data() );
         checkHypreError( error );
         error = HYPRE_StructVectorAssemble( _b );
         checkHypreError( error );
 
         // Solve the problem
-        this->solveImpl( _A, _b, _x );
+        this->solveImpl();
 
         // Extract the solution from the LHS
         error = HYPRE_StructVectorGetBoxValues(
@@ -422,8 +418,6 @@ class HypreStructuredSolver
         // Copy the HYPRE solution to the LHS.
         auto x_subv = createSubview( x.view(), owned_space );
         Kokkos::deep_copy( x_subv, vector_values );
-
-        Kokkos::Profiling::popRegion();
     }
 
     //! Get the number of iterations taken on the last solve.
@@ -453,12 +447,10 @@ class HypreStructuredSolver
     virtual void setPrintLevelImpl( const int print_level ) = 0;
 
     //! Setup implementation.
-    virtual void setupImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                            HYPRE_StructVector x ) = 0;
+    virtual void setupImpl() = 0;
 
     //! Solver implementation.
-    virtual void solveImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                            HYPRE_StructVector x ) = 0;
+    virtual void solveImpl() = 0;
 
     //! Get the number of iterations taken on the last solve.
     virtual int getNumIterImpl() = 0;
@@ -486,6 +478,14 @@ class HypreStructuredSolver
         }
     }
 
+  protected:
+    //! Matrix for the problem Ax = b.
+    HYPRE_StructMatrix _A;
+    //! Forcing term for the problem Ax = b.
+    HYPRE_StructVector _b;
+    //! Solution to the problem Ax = b.
+    HYPRE_StructVector _x;
+
   private:
     MPI_Comm _comm;
     bool _is_preconditioner;
@@ -494,9 +494,6 @@ class HypreStructuredSolver
     std::vector<HYPRE_Int> _upper;
     HYPRE_StructStencil _stencil;
     unsigned _stencil_size;
-    HYPRE_StructMatrix _A;
-    HYPRE_StructVector _b;
-    HYPRE_StructVector _x;
     std::shared_ptr<HypreStructuredSolver<Scalar, EntityType, MemorySpace>>
         _preconditioner;
 };
@@ -509,12 +506,12 @@ class HypreStructPCG
 {
   public:
     //! Base HYPRE structured solver type.
-    using Base = HypreStructuredSolver<Scalar, EntityType, MemorySpace>;
+    using base_type = HypreStructuredSolver<Scalar, EntityType, MemorySpace>;
     //! Constructor
     template <class ArrayLayout_t>
     HypreStructPCG( const ArrayLayout_t& layout,
                     const bool is_preconditioner = false )
-        : Base( layout, is_preconditioner )
+        : base_type( layout, is_preconditioner )
     {
         if ( is_preconditioner )
             throw std::logic_error(
@@ -582,17 +579,15 @@ class HypreStructPCG
         this->checkHypreError( error );
     }
 
-    void setupImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void setupImpl() override
     {
-        auto error = HYPRE_StructPCGSetup( _solver, A, b, x );
+        auto error = HYPRE_StructPCGSetup( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
-    void solveImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void solveImpl() override
     {
-        auto error = HYPRE_StructPCGSolve( _solver, A, b, x );
+        auto error = HYPRE_StructPCGSolve( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
@@ -626,6 +621,9 @@ class HypreStructPCG
 
   private:
     HYPRE_StructSolver _solver;
+    using base_type::_A;
+    using base_type::_b;
+    using base_type::_x;
 };
 
 //---------------------------------------------------------------------------//
@@ -636,12 +634,12 @@ class HypreStructGMRES
 {
   public:
     //! Base HYPRE structured solver type.
-    using Base = HypreStructuredSolver<Scalar, EntityType, MemorySpace>;
+    using base_type = HypreStructuredSolver<Scalar, EntityType, MemorySpace>;
     //! Constructor
     template <class ArrayLayout_t>
     HypreStructGMRES( const ArrayLayout_t& layout,
                       const bool is_preconditioner = false )
-        : Base( layout, is_preconditioner )
+        : base_type( layout, is_preconditioner )
     {
         if ( is_preconditioner )
             throw std::logic_error(
@@ -706,17 +704,15 @@ class HypreStructGMRES
         this->checkHypreError( error );
     }
 
-    void setupImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void setupImpl() override
     {
-        auto error = HYPRE_StructGMRESSetup( _solver, A, b, x );
+        auto error = HYPRE_StructGMRESSetup( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
-    void solveImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void solveImpl() override
     {
-        auto error = HYPRE_StructGMRESSolve( _solver, A, b, x );
+        auto error = HYPRE_StructGMRESSolve( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
@@ -750,6 +746,9 @@ class HypreStructGMRES
 
   private:
     HYPRE_StructSolver _solver;
+    using base_type::_A;
+    using base_type::_b;
+    using base_type::_x;
 };
 
 //---------------------------------------------------------------------------//
@@ -760,12 +759,12 @@ class HypreStructBiCGSTAB
 {
   public:
     //! Base HYPRE structured solver type.
-    using Base = HypreStructuredSolver<Scalar, EntityType, MemorySpace>;
+    using base_type = HypreStructuredSolver<Scalar, EntityType, MemorySpace>;
     //! Constructor
     template <class ArrayLayout_t>
     HypreStructBiCGSTAB( const ArrayLayout_t& layout,
                          const bool is_preconditioner = false )
-        : Base( layout, is_preconditioner )
+        : base_type( layout, is_preconditioner )
     {
         if ( is_preconditioner )
             throw std::logic_error(
@@ -823,17 +822,15 @@ class HypreStructBiCGSTAB
         this->checkHypreError( error );
     }
 
-    void setupImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void setupImpl() override
     {
-        auto error = HYPRE_StructBiCGSTABSetup( _solver, A, b, x );
+        auto error = HYPRE_StructBiCGSTABSetup( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
-    void solveImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void solveImpl() override
     {
-        auto error = HYPRE_StructBiCGSTABSolve( _solver, A, b, x );
+        auto error = HYPRE_StructBiCGSTABSolve( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
@@ -867,6 +864,9 @@ class HypreStructBiCGSTAB
 
   private:
     HYPRE_StructSolver _solver;
+    using base_type::_A;
+    using base_type::_b;
+    using base_type::_x;
 };
 
 //---------------------------------------------------------------------------//
@@ -877,12 +877,12 @@ class HypreStructPFMG
 {
   public:
     //! Base HYPRE structured solver type.
-    using Base = HypreStructuredSolver<Scalar, EntityType, MemorySpace>;
+    using base_type = HypreStructuredSolver<Scalar, EntityType, MemorySpace>;
     //! Constructor
     template <class ArrayLayout_t>
     HypreStructPFMG( const ArrayLayout_t& layout,
                      const bool is_preconditioner = false )
-        : Base( layout, is_preconditioner )
+        : base_type( layout, is_preconditioner )
     {
         auto error = HYPRE_StructPFMGCreate(
             layout.localGrid()->globalGrid().comm(), &_solver );
@@ -1011,17 +1011,15 @@ class HypreStructPFMG
         this->checkHypreError( error );
     }
 
-    void setupImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void setupImpl() override
     {
-        auto error = HYPRE_StructPFMGSetup( _solver, A, b, x );
+        auto error = HYPRE_StructPFMGSetup( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
-    void solveImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void solveImpl() override
     {
-        auto error = HYPRE_StructPFMGSolve( _solver, A, b, x );
+        auto error = HYPRE_StructPFMGSolve( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
@@ -1051,6 +1049,9 @@ class HypreStructPFMG
 
   private:
     HYPRE_StructSolver _solver;
+    using base_type::_A;
+    using base_type::_b;
+    using base_type::_x;
 };
 
 //---------------------------------------------------------------------------//
@@ -1061,12 +1062,12 @@ class HypreStructSMG
 {
   public:
     //! Base HYPRE structured solver type.
-    using Base = HypreStructuredSolver<Scalar, EntityType, MemorySpace>;
+    using base_type = HypreStructuredSolver<Scalar, EntityType, MemorySpace>;
     //! Constructor
     template <class ArrayLayout_t>
     HypreStructSMG( const ArrayLayout_t& layout,
                     const bool is_preconditioner = false )
-        : Base( layout, is_preconditioner )
+        : base_type( layout, is_preconditioner )
     {
         auto error = HYPRE_StructSMGCreate(
             layout.localGrid()->globalGrid().comm(), &_solver );
@@ -1141,17 +1142,15 @@ class HypreStructSMG
         this->checkHypreError( error );
     }
 
-    void setupImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void setupImpl() override
     {
-        auto error = HYPRE_StructSMGSetup( _solver, A, b, x );
+        auto error = HYPRE_StructSMGSetup( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
-    void solveImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void solveImpl() override
     {
-        auto error = HYPRE_StructSMGSolve( _solver, A, b, x );
+        auto error = HYPRE_StructSMGSolve( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
@@ -1181,6 +1180,9 @@ class HypreStructSMG
 
   private:
     HYPRE_StructSolver _solver;
+    using base_type::_A;
+    using base_type::_b;
+    using base_type::_x;
 };
 
 //---------------------------------------------------------------------------//
@@ -1191,12 +1193,12 @@ class HypreStructJacobi
 {
   public:
     //! Base HYPRE structured solver type.
-    using Base = HypreStructuredSolver<Scalar, EntityType, MemorySpace>;
+    using base_type = HypreStructuredSolver<Scalar, EntityType, MemorySpace>;
     //! Constructor
     template <class ArrayLayout_t>
     HypreStructJacobi( const ArrayLayout_t& layout,
                        const bool is_preconditioner = false )
-        : Base( layout, is_preconditioner )
+        : base_type( layout, is_preconditioner )
     {
         auto error = HYPRE_StructJacobiCreate(
             layout.localGrid()->globalGrid().comm(), &_solver );
@@ -1239,17 +1241,15 @@ class HypreStructJacobi
         // The Jacobi solver does not support a print level.
     }
 
-    void setupImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void setupImpl() override
     {
-        auto error = HYPRE_StructJacobiSetup( _solver, A, b, x );
+        auto error = HYPRE_StructJacobiSetup( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
-    void solveImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
-                    HYPRE_StructVector x ) override
+    void solveImpl() override
     {
-        auto error = HYPRE_StructJacobiSolve( _solver, A, b, x );
+        auto error = HYPRE_StructJacobiSolve( _solver, _A, _b, _x );
         this->checkHypreError( error );
     }
 
@@ -1279,6 +1279,9 @@ class HypreStructJacobi
 
   private:
     HYPRE_StructSolver _solver;
+    using base_type::_A;
+    using base_type::_b;
+    using base_type::_x;
 };
 
 //---------------------------------------------------------------------------//
@@ -1289,12 +1292,12 @@ class HypreStructDiagonal
 {
   public:
     //! Base HYPRE structured solver type.
-    using Base = HypreStructuredSolver<Scalar, EntityType, MemorySpace>;
+    using base_type = HypreStructuredSolver<Scalar, EntityType, MemorySpace>;
     //! Constructor
     template <class ArrayLayout_t>
     HypreStructDiagonal( const ArrayLayout_t& layout,
                          const bool is_preconditioner = false )
-        : Base( layout, is_preconditioner )
+        : base_type( layout, is_preconditioner )
     {
         if ( !is_preconditioner )
             throw std::logic_error(
@@ -1330,15 +1333,13 @@ class HypreStructDiagonal
             "Diagonal preconditioner cannot be used as a solver" );
     }
 
-    void setupImpl( HYPRE_StructMatrix, HYPRE_StructVector,
-                    HYPRE_StructVector ) override
+    void setupImpl() override
     {
         throw std::logic_error(
             "Diagonal preconditioner cannot be used as a solver" );
     }
 
-    void solveImpl( HYPRE_StructMatrix, HYPRE_StructVector,
-                    HYPRE_StructVector ) override
+    void solveImpl() override
     {
         throw std::logic_error(
             "Diagonal preconditioner cannot be used as a solver" );

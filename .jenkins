@@ -56,12 +56,12 @@ pipeline {
                         }
                     }
                 }
-                stage('ROCM-4.5-HIPCC-DEBUG') {
+                stage('ROCM-5.2-HIPCC-DEBUG') {
                     agent {
                         dockerfile {
                             filename 'Dockerfile.hipcc'
                             dir 'docker'
-                            additionalBuildArgs '--build-arg BASE=rocm/dev-ubuntu-20.04:4.5-complete'
+                            additionalBuildArgs '--build-arg BASE=rocm/dev-ubuntu-20.04:5.2-complete'
                             args '-v /tmp/ccache.kokkos:/tmp/ccache --device=/dev/kfd --device=/dev/dri --security-opt seccomp=unconfined --group-add video --env HIP_VISIBLE_DEVICES=$HIP_VISIBLE_DEVICES'
                             label 'rocm-docker && vega && AMD_Radeon_Instinct_MI60'
                         }
@@ -108,12 +108,13 @@ pipeline {
                     steps {
                         sh 'ccache --zero-stats'
                         sh '''
+                            . /opt/intel/oneapi/setvars.sh --include-intel-llvm && \
                             rm -rf build && mkdir -p build && cd build && \
                             cmake \
                               -D CMAKE_BUILD_TYPE=Release \
-                              -D CMAKE_CXX_COMPILER=clang++ \
+                              -D CMAKE_CXX_COMPILER=${DPCPP} \
                               -D CMAKE_CXX_COMPILER_LAUNCHER=ccache \
-                              -D CMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic -Wno-unknown-cuda-version -fsycl -fsycl-targets=nvptx64-nvidia-cuda-sycldevice" \
+                              -D CMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic -Wno-unknown-cuda-version -Wno-sycl-target -fp-model=precise" \
                               -D CMAKE_PREFIX_PATH="$KOKKOS_DIR" \
                               -D MPIEXEC_MAX_NUMPROCS=1 \
                               -D MPIEXEC_PREFLAGS="--allow-run-as-root" \
@@ -124,10 +125,12 @@ pipeline {
                               -D Cabana_ENABLE_EXAMPLES=ON \
                               -D Cabana_ENABLE_CAJITA=ON \
                             .. && \
-                            make -j8 && \
-                            # Exclude current failing tests (core MPI and partial Cajita)
-                            ctest --output-on-failure -E "Cabana.*MPI|Cabana_Performance_Comm|Grid_IndexConversion|Grid_Halo|Grid_ParticleGridDistributor|Grid_Interpolation|Grid_BovWriter|valgrind"
+                            make -j8
                         '''
+                        sh '''
+                            . /opt/intel/oneapi/setvars.sh --include-intel-llvm && \
+                            cd build && \
+                            ctest --output-on-failure -E "Cabana.*MPI|Cabana.*Sort|Cabana_Performance_Comm|Grid_IndexConversion|Grid_Halo|Grid_ParticleGridDistributor|Grid_Interpolation|Grid_BovWriter|Grid_GlobalParticleComm|valgrind"                        '''
                     }
                     post {
                         always {

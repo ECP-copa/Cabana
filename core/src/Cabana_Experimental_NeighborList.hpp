@@ -18,6 +18,7 @@
 
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_Slice.hpp>
+#include <Cabana_Types.hpp> // is_accessible_from
 
 #include <ArborX.hpp>
 
@@ -69,6 +70,29 @@ auto makePredicates(
     return Impl::SubsliceAndRadius<stdcxx20::remove_cvref_t<Slice>>{
         std::forward<Slice>( slice ), first, last, radius };
 }
+
+template <typename ExecutionSpace, typename D, typename... P>
+typename Kokkos::View<D, P...>::non_const_value_type
+max_reduce( ExecutionSpace const& space, Kokkos::View<D, P...> const& v )
+{
+    using V = Kokkos::View<D, P...>;
+    static_assert( V::rank == 1 );
+    static_assert( Kokkos::is_execution_space<ExecutionSpace>::value );
+    static_assert(
+        is_accessible_from<typename V::memory_space, ExecutionSpace>::value );
+    using Ret = typename Kokkos::View<D, P...>::non_const_value_type;
+    Ret max_val;
+    Kokkos::parallel_reduce(
+        Kokkos::RangePolicy<ExecutionSpace>( space, 0, v.extent( 0 ) ),
+        KOKKOS_LAMBDA( int i, Ret& partial_max ) {
+            if ( v( i ) > partial_max )
+            {
+                partial_max = v( i );
+            }
+        },
+        Kokkos::Max<Ret>( max_val ) );
+    return max_val;
+}
 //! \endcond
 } // namespace Impl
 } // namespace Experimental
@@ -96,9 +120,12 @@ struct AccessTraits<Slice, PrimitivesTag,
     }
 };
 //! Neighbor access trait.
-template <typename SliceLike>
-struct AccessTraits<SliceLike, PredicatesTag>
+template <typename Slice>
+struct AccessTraits<Cabana::Experimental::Impl::SubsliceAndRadius<Slice>,
+                    PredicatesTag>
 {
+    //! Slice wrapper with partial range and radius information.
+    using SliceLike = Cabana::Experimental::Impl::SubsliceAndRadius<Slice>;
     //! Kokkos memory space.
     using memory_space = typename SliceLike::memory_space;
     //! Size type.
@@ -245,7 +272,7 @@ struct CrsGraph
     Kokkos::View<int*, MemorySpace> row_ptr;
     //! Neighbor offset shift.
     typename MemorySpace::size_type shift;
-    //! Total neighbors.
+    //! Total particles.
     typename MemorySpace::size_type total;
 };
 
@@ -368,7 +395,7 @@ struct Dense
     Kokkos::View<int**, MemorySpace> val;
     //! Neighbor offset shift.
     typename MemorySpace::size_type shift;
-    //! Total neighbors.
+    //! Total particles.
     typename MemorySpace::size_type total;
 };
 
@@ -413,7 +440,7 @@ auto make2DNeighborList( ExecutionSpace space, Tag,
         Impl::makePredicates( coordinate_slice, first, last, radius );
 
     auto const n_queries =
-        ArborX::AccessTraits<decltype( predicates ),
+        ArborX::AccessTraits<std::remove_const_t<decltype( predicates )>,
                              ArborX::PredicatesTag>::size( predicates );
 
     Kokkos::View<int**, memory_space> neighbors;
@@ -437,7 +464,7 @@ auto make2DNeighborList( ExecutionSpace space, Tag,
                                                             Tag>{ counts } );
     }
 
-    auto const max_neighbors = ArborX::max( space, counts );
+    auto const max_neighbors = Impl::max_reduce( space, counts );
     if ( max_neighbors <= buffer_size )
     {
         // NOTE We do not bother shrinking to eliminate the excess allocation.
@@ -536,6 +563,21 @@ class NeighborList<Experimental::CrsGraph<MemorySpace, Tag>>
   public:
     //! Kokkos memory space.
     using memory_space = MemorySpace;
+
+    //! Get the total number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static size_type totalNeighbor( crs_graph_type const& crs_graph )
+    {
+        return Impl::totalNeighbor( crs_graph, crs_graph.total );
+    }
+
+    //! Get the maximum number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static size_type maxNeighbor( crs_graph_type const& crs_graph )
+    {
+        return Impl::maxNeighbor( crs_graph, crs_graph.total );
+    }
+
     //! Get the number of neighbors for a given particle index.
     static KOKKOS_FUNCTION size_type
     numNeighbor( crs_graph_type const& crs_graph, size_type p )
@@ -568,6 +610,21 @@ class NeighborList<Experimental::Dense<MemorySpace, Tag>>
   public:
     //! Kokkos memory space.
     using memory_space = MemorySpace;
+
+    //! Get the total number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static size_type totalNeighbor( specialization_type const& d )
+    {
+        return Impl::totalNeighbor( d, d.total );
+    }
+
+    //! Get the maximum number of neighbors across all particles.
+    KOKKOS_INLINE_FUNCTION
+    static size_type maxNeighbor( specialization_type const& d )
+    {
+        return Impl::maxNeighbor( d, d.total );
+    }
+
     //! Get the number of neighbors for a given particle index.
     static KOKKOS_FUNCTION size_type numNeighbor( specialization_type const& d,
                                                   size_type p )

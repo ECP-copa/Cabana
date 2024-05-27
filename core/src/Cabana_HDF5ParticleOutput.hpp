@@ -29,8 +29,14 @@
 #define CABANA_HDF5PARTICLEOUTPUT_HPP
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Profiling_ScopedRegion.hpp>
 
 #include <hdf5.h>
+#ifdef H5_HAVE_SUBFILING_VFD
+#include "H5FDioc.h"       /* Private header for the IOC VFD */
+#include "H5FDsubfiling.h" /* Private header for the subfiling VFD */
+#endif
+
 #include <mpi.h>
 
 #include <fstream>
@@ -142,6 +148,26 @@ struct HDF5Config
 
     //! Cause all metadata for an object to be evicted from the cache
     bool evict_on_close = false;
+
+#ifdef H5_HAVE_SUBFILING_VFD
+
+    //! Use the subfiling file driver
+    bool subfiling = false;
+
+    // Optional subfiling file driver configuration parameters
+
+    //! Size (in bytes) of data stripes in subfiles
+    int64_t subfiling_stripe_size = H5FD_SUBFILING_DEFAULT_STRIPE_SIZE;
+
+    //! Target number of subfiles to use
+    int32_t subfiling_stripe_count = H5FD_SUBFILING_DEFAULT_STRIPE_COUNT;
+
+    //! The method to use for selecting MPI ranks to be I/O concentrators.
+    int subfiling_ioc_selection = SELECT_IOC_ONE_PER_NODE;
+
+    //! Number of I/O concentrator worker threads to use
+    int32_t subfiling_thread_pool_size = H5FD_IOC_DEFAULT_THREAD_POOL_SIZE;
+#endif
 };
 
 //! \cond Impl
@@ -233,6 +259,7 @@ void writeFields(
 {
     hid_t plist_id;
     hid_t dset_id;
+    hid_t dcpl_id;
     hid_t filespace_id;
     hid_t memspace_id;
 
@@ -261,8 +288,12 @@ void writeFields(
         HDF5Traits<typename SliceType::value_type>::type( &dtype, &precision );
 
     filespace_id = H5Screate_simple( 1, dimsf, NULL );
+
+    dcpl_id = H5Pcreate( H5P_DATASET_CREATE );
+    H5Pset_fill_time( dcpl_id, H5D_FILL_TIME_NEVER );
+
     dset_id = H5Dcreate( file_id, slice.label().c_str(), type_id, filespace_id,
-                         H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT );
+                         H5P_DEFAULT, dcpl_id, H5P_DEFAULT );
 
     H5Sselect_hyperslab( filespace_id, H5S_SELECT_SET, offset, NULL, count,
                          NULL );
@@ -278,6 +309,7 @@ void writeFields(
               host_view.data() );
 
     H5Pclose( plist_id );
+    H5Pclose( dcpl_id );
     H5Sclose( memspace_id );
     H5Dclose( dset_id );
     H5Sclose( filespace_id );
@@ -303,6 +335,7 @@ void writeFields(
 {
     hid_t plist_id;
     hid_t dset_id;
+    hid_t dcpl_id;
     hid_t filespace_id;
     hid_t memspace_id;
 
@@ -339,8 +372,12 @@ void writeFields(
         HDF5Traits<typename SliceType::value_type>::type( &dtype, &precision );
 
     filespace_id = H5Screate_simple( 2, dimsf, NULL );
+
+    dcpl_id = H5Pcreate( H5P_DATASET_CREATE );
+    H5Pset_fill_time( dcpl_id, H5D_FILL_TIME_NEVER );
+
     dset_id = H5Dcreate( file_id, slice.label().c_str(), type_id, filespace_id,
-                         H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT );
+                         H5P_DEFAULT, dcpl_id, H5P_DEFAULT );
 
     H5Sselect_hyperslab( filespace_id, H5S_SELECT_SET, offset, NULL, count,
                          NULL );
@@ -355,6 +392,7 @@ void writeFields(
               host_view.data() );
 
     H5Pclose( plist_id );
+    H5Pclose( dcpl_id );
     H5Sclose( memspace_id );
     H5Dclose( dset_id );
     H5Sclose( filespace_id );
@@ -380,6 +418,7 @@ void writeFields(
 {
     hid_t plist_id;
     hid_t dset_id;
+    hid_t dcpl_id;
     hid_t filespace_id;
     hid_t memspace_id;
 
@@ -420,8 +459,12 @@ void writeFields(
         HDF5Traits<typename SliceType::value_type>::type( &dtype, &precision );
 
     filespace_id = H5Screate_simple( 3, dimsf, NULL );
+
+    dcpl_id = H5Pcreate( H5P_DATASET_CREATE );
+    H5Pset_fill_time( dcpl_id, H5D_FILL_TIME_NEVER );
+
     dset_id = H5Dcreate( file_id, slice.label().c_str(), type_id, filespace_id,
-                         H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT );
+                         H5P_DEFAULT, dcpl_id, H5P_DEFAULT );
 
     H5Sselect_hyperslab( filespace_id, H5S_SELECT_SET, offset, NULL, count,
                          NULL );
@@ -436,6 +479,7 @@ void writeFields(
               host_view.data() );
 
     H5Pclose( plist_id );
+    H5Pclose( dcpl_id );
     H5Sclose( memspace_id );
     H5Dclose( dset_id );
     H5Sclose( filespace_id );
@@ -499,10 +543,11 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
                     const CoordSliceType& coords_slice,
                     FieldSliceTypes&&... fields )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::HDF5ParticleOutput" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::HDF5ParticleOutput" );
 
     hid_t plist_id;
     hid_t dset_id;
+    hid_t dcpl_id;
     hid_t file_id;
     hid_t filespace_id;
     hid_t memspace_id;
@@ -525,7 +570,6 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
     filename_xdmf << prefix << "_" << time_step_index << ".xmf";
 
     plist_id = H5Pcreate( H5P_FILE_ACCESS );
-    H5Pset_fapl_mpio( plist_id, comm, MPI_INFO_NULL );
     H5Pset_libver_bounds( plist_id, H5F_LIBVER_LATEST, H5F_LIBVER_LATEST );
 
 #if H5_VERSION_GE( 1, 10, 1 )
@@ -545,6 +589,68 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
 
     if ( h5_config.align )
         H5Pset_alignment( plist_id, h5_config.threshold, h5_config.alignment );
+
+#ifdef H5_HAVE_SUBFILING_VFD
+    if ( h5_config.subfiling )
+    {
+        H5FD_subfiling_config_t subfiling_config;
+        H5FD_ioc_config_t ioc_config;
+
+        H5FD_subfiling_config_t* subfiling_ptr = NULL;
+        H5FD_ioc_config_t* ioc_ptr = NULL;
+
+        // Get the default subfiling configuration parameters
+        hid_t fapl_id = H5I_INVALID_HID;
+
+        fapl_id = H5Pcreate( H5P_FILE_ACCESS );
+        H5Pget_fapl_subfiling( fapl_id, &subfiling_config );
+
+        if ( h5_config.subfiling_stripe_size !=
+             subfiling_config.shared_cfg.stripe_size )
+        {
+            subfiling_config.shared_cfg.stripe_size =
+                h5_config.subfiling_stripe_size;
+            if ( subfiling_ptr == NULL )
+                subfiling_ptr = &subfiling_config;
+        }
+        if ( h5_config.subfiling_stripe_count !=
+             subfiling_config.shared_cfg.stripe_count )
+        {
+            subfiling_config.shared_cfg.stripe_count =
+                h5_config.subfiling_stripe_count;
+            if ( subfiling_ptr == NULL )
+                subfiling_ptr = &subfiling_config;
+        }
+        if ( h5_config.subfiling_ioc_selection !=
+             (int)subfiling_config.shared_cfg.ioc_selection )
+        {
+            subfiling_config.shared_cfg.ioc_selection =
+                (H5FD_subfiling_ioc_select_t)h5_config.subfiling_ioc_selection;
+            if ( subfiling_ptr == NULL )
+                subfiling_ptr = &subfiling_config;
+        }
+        if ( h5_config.subfiling_thread_pool_size !=
+             H5FD_IOC_DEFAULT_THREAD_POOL_SIZE )
+        {
+            H5Pget_fapl_ioc( fapl_id, &ioc_config );
+            ioc_config.thread_pool_size = h5_config.subfiling_thread_pool_size;
+            if ( ioc_ptr == NULL )
+                ioc_ptr = &ioc_config;
+        }
+        H5Pclose( fapl_id );
+
+        H5Pset_mpi_params( plist_id, comm, MPI_INFO_NULL );
+
+        if ( ioc_ptr != NULL )
+            H5Pset_fapl_ioc( subfiling_config.ioc_fapl_id, ioc_ptr );
+
+        H5Pset_fapl_subfiling( plist_id, subfiling_ptr );
+    }
+    else
+#endif
+    {
+        H5Pset_fapl_mpio( plist_id, comm, MPI_INFO_NULL );
+    }
 
     file_id = H5Fcreate( filename_hdf5.str().c_str(), H5F_ACC_TRUNC,
                          H5P_DEFAULT, plist_id );
@@ -617,8 +723,11 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
     hid_t type_id = HDF5Traits<typename CoordSliceType::value_type>::type(
         &dtype, &precision );
 
+    dcpl_id = H5Pcreate( H5P_DATASET_CREATE );
+    H5Pset_fill_time( dcpl_id, H5D_FILL_TIME_NEVER );
+
     dset_id = H5Dcreate( file_id, coords_slice.label().c_str(), type_id,
-                         filespace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT );
+                         filespace_id, H5P_DEFAULT, dcpl_id, H5P_DEFAULT );
 
     H5Sselect_hyperslab( filespace_id, H5S_SELECT_SET, offset, NULL, count,
                          NULL );
@@ -628,6 +737,7 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
     H5Dclose( dset_id );
 
     H5Pclose( plist_id );
+    H5Pclose( dcpl_id );
     H5Sclose( filespace_id );
     H5Sclose( memspace_id );
 
@@ -649,8 +759,6 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
 
     if ( 0 == comm_rank )
         Impl::writeXdmfFooter( filename_xdmf.str().c_str() );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//
@@ -738,7 +846,7 @@ void readTimeStep( HDF5Config h5_config, const std::string& prefix,
                    const std::size_t n_local, const std::string& dataset_name,
                    double& time, FieldSliceType& field )
 {
-    Kokkos::Profiling::pushRegion( "Cabana::HDF5ParticleInput" );
+    Kokkos::Profiling::ScopedRegion region( "Cabana::HDF5ParticleInput" );
 
     hid_t plist_id;
     hid_t dset_id;
@@ -793,7 +901,7 @@ void readTimeStep( HDF5Config h5_config, const std::string& prefix,
     // Get the rank of the dataspace.
     ndims = H5Sget_simple_extent_ndims( filespace_id );
 
-    // Get the extents fo the file dataspace.
+    // Get the extents of the file dataspace.
     H5Sget_simple_extent_dims( filespace_id, dimsf, NULL );
 
     std::vector<int> all_offsets( comm_size );
@@ -834,8 +942,6 @@ void readTimeStep( HDF5Config h5_config, const std::string& prefix,
     H5Sclose( filespace_id );
     H5Dclose( dset_id );
     H5Fclose( file_id );
-
-    Kokkos::Profiling::popRegion();
 }
 
 //---------------------------------------------------------------------------//

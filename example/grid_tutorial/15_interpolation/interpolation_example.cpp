@@ -218,7 +218,7 @@ void interpolationExample()
      * particle maps to several grid points), which requires an underlying
      * Kokkos::ScatterView for the data being interpolated. Of note, a
      * thread-level interface provides methods to perform interpolations for a
-     * single particle datum to neighboring mesh entitites.
+     * single particle datum to neighboring mesh entities.
      *
      * Cabana::Grid also provides a convenience interface for defining
      * field-based P2G or G2P operators, by wrapping the thread-level
@@ -258,7 +258,7 @@ void interpolationExample()
     auto scalar_view = scalar_grid_field->view();
 
     // Print out a random grid point before value interpolation.
-    std::cout << "Invididual grid point at (5, 5):\n\tbefore "
+    std::cout << "Individual grid point at (5, 5):\n\tbefore "
                  "p2g::value interpolation: "
               << scalar_view( 5, 5, 0 );
 
@@ -282,7 +282,7 @@ void interpolationExample()
 
     // Print out before gradient interpolation.
     auto vector_view = vector_grid_field->view();
-    std::cout << "Invididual grid point at (5, 5):\n\tbefore "
+    std::cout << "Individual grid point at (5, 5):\n\tbefore "
                  "p2g::gradient interpolation: <";
     std::cout << vector_view( 5, 5, 0 ) << ", " << vector_view( 5, 5, 1 )
               << ">";
@@ -301,7 +301,7 @@ void interpolationExample()
     // Reset the grid to zero and print before divergence interpolation.
     Cabana::Grid::ArrayOp::assign( *vector_grid_field, 0.0,
                                    Cabana::Grid::Ghost() );
-    std::cout << "Invididual grid point at (5, 5):\n\tbefore "
+    std::cout << "Individual grid point at (5, 5):\n\tbefore "
                  "p2g::divergence interpolation: <";
     std::cout << vector_view( 5, 5, 0 ) << ", " << vector_view( 5, 5, 1 )
               << ">";
@@ -320,7 +320,7 @@ void interpolationExample()
     // Reset the grid to zero and print before vector value interpolation.
     Cabana::Grid::ArrayOp::assign( *vector_grid_field, 0.0,
                                    Cabana::Grid::Ghost() );
-    std::cout << "Invididual grid point at (5, 5, 5):\n\tbefore "
+    std::cout << "Individual grid point at (5, 5, 5):\n\tbefore "
                  "p2g::value interpolation: <";
     std::cout << vector_view( 5, 5, 0 ) << ", " << vector_view( 5, 5, 1 )
               << ">";

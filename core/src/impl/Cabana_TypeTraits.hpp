@@ -27,7 +27,7 @@ namespace Impl
 template <int N>
 struct IsPowerOfTwo
 {
-    static_assert( N > 0, "Vector length must be greather than 0" );
+    static_assert( N > 0, "Vector length must be greater than 0" );
     static constexpr bool value = ( ( N & ( N - 1 ) ) == 0 );
 };
 

@@ -173,7 +173,7 @@ class SparseHalo
                 // add neighbor to the list
                 _neighbor_ranks.push_back( rank );
                 // set the tag to use for sending data to this neighbor
-                // the corresponding neighbor will have the same recieving tag
+                // the corresponding neighbor will have the same receiving tag
                 _send_tags.push_back( neighbor_id( n ) );
                 // set the tag to use for receiving data from this neighbor
                 // the corresponding neighbor will have the same sending tag
@@ -276,7 +276,7 @@ class SparseHalo
             // well-prepared during construction/initialization)
             if ( rank == _neighbor_ranks[i] )
             {
-                // get shared tile index spcae from local grid
+                // get shared tile index space from local grid
                 _owned_tile_spaces.push_back(
                     local_grid
                         ->template sharedTileIndexSpace<cell_bits_per_tile_dim>(
@@ -492,7 +492,7 @@ class SparseHalo
             }
             // if the current owned share space and the neighbor's ghosted share
             // space is non-emty, the neighbor will send data to us and we need
-            // to recieve data accordingly
+            // to receive data accordingly
             if ( !( h_counting( Index::own ) == 0 ||
                     h_neighbor_counting( Index::ghost ) == 0 ) )
             {
@@ -547,7 +547,7 @@ class SparseHalo
 
     /*!
          \brief Gather data into our ghosted share space from their owners.
-         \tparam ExecSpace exectution space
+         \tparam ExecSpace execution space
          \tparam SparseArrayType sparse array type
          \tparam SparseMapType sparse map type
          \param exec_space execution space
@@ -578,7 +578,7 @@ class SparseHalo
         MPI_Barrier( comm );
 
         // ------------------------------------------------------------------
-        // communicate steering (array keys) for all valid sends and recieves
+        // communicate steering (array keys) for all valid sends and receives
         std::vector<MPI_Request> steering_requests(
             valid_recvs.size() + valid_sends.size(), MPI_REQUEST_NULL );
         const int mpi_tag_steering = 3214;
@@ -716,7 +716,7 @@ class SparseHalo
     /*!
         \brief Scatter data from our ghosts to their owners using the given type
      of reduce operation.
-        \tparam ExecSpace exectution space
+        \tparam ExecSpace execution space
         \tparam ReduceOp The type of reduction functor
         \tparam SparseArrayType sparse array type
         \tparam SparseMapType sparse map type
@@ -750,7 +750,7 @@ class SparseHalo
         MPI_Barrier( comm );
 
         // ------------------------------------------------------------------
-        // communicate steering (array keys) for all valid sends and recieves
+        // communicate steering (array keys) for all valid sends and receives
         std::vector<MPI_Request> steering_requests(
             valid_recvs.size() + valid_sends.size(), MPI_REQUEST_NULL );
         const int mpi_tag_steering = 214;
@@ -892,18 +892,16 @@ class SparseHalo
         \brief Pack sparse arrays at halo regions into a buffer
         \tparam ExecSpace execution space type
         \tparam SparseArrayType sparse array type
-        \tparam CountType counting number type
         \param exec_space execution space
         \param buffer buffer to store sparse array data and to communicate
         \param tile_steering Kokkos view to store halo tile keys
         \param sparse_array sparse array (all sparse grids on current rank)
         \param count number of halo grids to pack
     */
-    template <class ExecSpace, class SparseArrayType, class CountType>
+    template <class ExecSpace, class SparseArrayType>
     void packBuffer( const ExecSpace& exec_space, const buffer_view& buffer,
                      const steering_view& tile_steering,
-                     SparseArrayType& sparse_array,
-                     const CountType count ) const
+                     SparseArrayType& sparse_array, const int count ) const
     {
         Kokkos::parallel_for(
             "pack_spares_halo_buffer",
@@ -1137,7 +1135,6 @@ class SparseHalo
         \tparam ExecSpace execution space type
         \tparam SparseArrayType sparse array type
         \tparam SparseMapType sparse map type
-        \tparam CountType counting number type
         \param reduce_op reduce operation
         \param exec_space execution space
         \param buffer buffer to store sparse array data and to communicate
@@ -1147,12 +1144,12 @@ class SparseHalo
         \param count number of halo grids to unpack
     */
     template <class ReduceOp, class ExecSpace, class SparseArrayType,
-              class SparseMapType, class CountType>
+              class SparseMapType>
     void unpackBuffer( const ReduceOp& reduce_op, const ExecSpace& exec_space,
                        const buffer_view& buffer,
                        const steering_view& tile_steering,
                        const SparseArrayType& sparse_array, SparseMapType& map,
-                       const CountType count ) const
+                       const int count ) const
     {
         Kokkos::parallel_for(
             "unpack_spares_halo_buffer",
@@ -1255,7 +1252,7 @@ class SparseHalo
     std::vector<std::array<int, num_space_dim>> _valid_neighbor_ids;
     // sending tags
     std::vector<int> _send_tags;
-    // receiving tages
+    // receiving tags
     std::vector<int> _receive_tags;
 
     // owned view buffers

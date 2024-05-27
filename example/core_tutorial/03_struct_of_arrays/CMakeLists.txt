@@ -10,5 +10,5 @@
 ############################################################################
 
   add_executable(StructOfArrays soa_example.cpp)
-  target_link_libraries(StructOfArrays Core)
+  target_link_libraries(StructOfArrays Cabana::Core)
   add_test(NAME Core_tutorial_03 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:StructOfArrays>)

@@ -43,7 +43,7 @@ namespace Experimental
 /*!
   \brief Entity layout for sparse array data on the local sparse mesh.
 
-  \tparam DataTypes Array memeber types (Cabana::MemberTypes)
+  \tparam DataTypes Array member types (Cabana::MemberTypes)
   \tparam EntityType Array entity type: Cell, Node, Edge, or Face
   \tparam MeshType Mesh type: SparseMesh
   \tparam SparseMapType: sparse map type
@@ -63,7 +63,7 @@ class SparseArrayLayout
 
     //! Entity Type
     using entity_type = EntityType;
-    //! Array memeber types, such as Cabana::MemberTypes<double, float[3]>
+    //! Array member types, such as Cabana::MemberTypes<double, float[3]>
     using member_types = DataTypes;
 
     //! Abbreviation for Sparse Map Type
@@ -513,7 +513,7 @@ class SparseArray
 
     // ------------------------------------------------------------------------
     /*!
-      \brief Access element from cell IJK, access correponding element's
+      \brief Access element from cell IJK, access corresponding element's
       channels with extra indices
       \param cell_ijk Cell ID in each dimension
       \param ids Ids to access channels inside a data member/element
@@ -546,7 +546,7 @@ class SparseArray
 
     /*!
       \brief Access element in a hierarchical manner, from tile IJK and then
-      local cell IJK, access correponding element's channels with extra indices
+      local cell IJK, access corresponding element's channels with extra indices
       \param tile_ijk Tile ID in each dimension
       \param local_cell_ijk Local Cell ID in each dimension
       \param ids Ids to access channels inside a data member/element
@@ -584,7 +584,7 @@ class SparseArray
 
     /*!
       \brief Access element in a hierarchical manner, from 1D tile ID and then
-      local cell IJK, access correponding element's channels with extra indices
+      local cell IJK, access corresponding element's channels with extra indices
       \param tile_id the 1D Tile ID
       \param local_cell_ijk Local Cell ID in each dimension
       \param ids Ids to access channels inside a data member/element
@@ -621,7 +621,7 @@ class SparseArray
 
     /*!
       \brief Access element in a hierarchical manner, from 1D tile ID and then
-      1D local cell ID, access correponding element's channels with extra
+      1D local cell ID, access corresponding element's channels with extra
       indices
       \param tile_id the 1D Tile ID
       \param cell_id the 1D Local Cell ID
@@ -721,38 +721,32 @@ using SparseArrayLayout CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::SparseArrayLayout<DataTypes, EntityType,
                                                   MeshType, SparseMapType>;
 
-template <class DataTypes, class EntityType, class MeshType,
-          class SparseMapType>
-CAJITA_DEPRECATED auto createSparseArrayLayout(
-    const std::string label,
-    SparseArrayLayout<DataTypes, EntityType, MeshType, SparseMapType>& layout )
+template <class... Args>
+CAJITA_DEPRECATED auto createSparseArrayLayout( Args&&... args )
 {
-    return Cabana::Grid::Experimental::createSparseArrayLayout( label, layout );
+    return Cabana::Grid::Experimental::createSparseArrayLayout(
+        std::forward<Args>( args )... );
 }
 
 template <class T>
 using is_sparse_array_layout CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::is_sparse_array_layout<T>;
 
-template <class DataTypes, class DeviceType, class EntityType, class MeshType,
+template <class DataTypes, class MemorySpace, class EntityType, class MeshType,
           class SparseMapType>
 using SparseArray CAJITA_DEPRECATED =
-    Cabana::Grid::Experimental::SparseArray<DataTypes, DeviceType, EntityType,
+    Cabana::Grid::Experimental::SparseArray<DataTypes, MemorySpace, EntityType,
                                             MeshType, SparseMapType>;
 
 template <class T>
 using is_sparse_array CAJITA_DEPRECATED =
     Cabana::Grid::Experimental::is_sparse_array<T>;
 
-template <class DeviceType, class DataTypes, class EntityType, class MeshType,
-          class SparseMapType>
-CAJITA_DEPRECATED auto
-createSparseArray( const std::string label,
-                   SparseArray<DataTypes, DeviceType, EntityType, MeshType,
-                               SparseMapType>& layout )
+template <class MemorySpace, class... Args>
+CAJITA_DEPRECATED auto createSparseArray( Args&&... args )
 {
-    return Cabana::Grid::Experimental::createSparseArray<DeviceType>( label,
-                                                                      layout );
+    return Cabana::Grid::Experimental::createSparseArray<MemorySpace>(
+        std::forward<Args>( args )... );
 }
 //! \endcond
 } // namespace Experimental

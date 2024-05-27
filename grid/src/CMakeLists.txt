@@ -19,6 +19,7 @@ set(HEADERS_PUBLIC
   Cabana_Grid_GlobalGrid.hpp
   Cabana_Grid_GlobalGrid_impl.hpp
   Cabana_Grid_GlobalMesh.hpp
+  Cabana_Grid_GlobalParticleComm.hpp
   Cabana_Grid_Halo.hpp
   Cabana_Grid_IndexConversion.hpp
   Cabana_Grid_IndexSpace.hpp
@@ -26,7 +27,6 @@ set(HEADERS_PUBLIC
   Cabana_Grid_LocalGrid.hpp
   Cabana_Grid_LocalGrid_impl.hpp
   Cabana_Grid_LocalMesh.hpp
-  Cabana_Grid_ManualPartitioner.hpp
   Cabana_Grid_MpiTraits.hpp
   Cabana_Grid_Parallel.hpp
   Cabana_Grid_ParticleGridDistributor.hpp
@@ -42,7 +42,6 @@ set(HEADERS_PUBLIC
   Cabana_Grid_SparseLocalGrid_impl.hpp
   Cabana_Grid_Splines.hpp
   Cabana_Grid_Types.hpp
-  Cabana_Grid_UniformDimPartitioner.hpp
   )
 
 if(Cabana_ENABLE_HYPRE)
@@ -69,43 +68,45 @@ if(Cabana_ENABLE_SILO)
   list(APPEND HEADERS_PUBLIC Cabana_Grid_SiloParticleOutput.hpp)
 endif()
 
-add_library(Cajita INTERFACE)
-set_target_properties(Cajita PROPERTIES INTERFACE_COMPILE_FEATURES cxx_std_17)
+add_library(Grid INTERFACE)
+add_library(Cabana::Grid ALIAS Grid)
+
 ### FIXME: remove Cajita in next release.
-add_library(Cabana::Cajita ALIAS Cajita)
+add_library(Cajita INTERFACE)
+target_link_libraries(Cajita INTERFACE Grid)
 if(CMAKE_VERSION VERSION_GREATER 3.17)
   if(NOT Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS)
     set_property(TARGET Cajita PROPERTY DEPRECATION "NOTE: Cajita subpackage is now Grid. Link to Cabana::Grid. Cabana::Cajita will be removed in a future release.")
   endif()
 endif()
-add_library(Grid ALIAS Cajita)
-add_library(Cabana::Grid ALIAS Cajita)
 
-target_link_libraries(Cajita INTERFACE
+set_target_properties(Grid PROPERTIES INTERFACE_COMPILE_FEATURES cxx_std_17)
+
+target_link_libraries(Grid INTERFACE
   Cabana::Core
   Kokkos::kokkos
   MPI::MPI_CXX
   )
 
 if(Cabana_ENABLE_HYPRE)
-  target_link_libraries(Cajita INTERFACE HYPRE::HYPRE)
+  target_link_libraries(Grid INTERFACE HYPRE::HYPRE)
 endif()
 
 if(Cabana_ENABLE_HEFFTE)
-  target_link_libraries(Cajita INTERFACE Heffte::Heffte)
+  target_link_libraries(Grid INTERFACE Heffte::Heffte)
 endif()
 
 if(Cabana_ENABLE_ALL)
-    target_link_libraries(Cajita INTERFACE ALL::ALL)
+  target_link_libraries(Grid INTERFACE ALL::ALL)
 endif()
 
-target_include_directories(Cajita
+target_include_directories(Grid
   INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-install(TARGETS Cajita
+install(TARGETS Grid Cajita
   EXPORT Cabana_Targets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})

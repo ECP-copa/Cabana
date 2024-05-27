@@ -10,5 +10,5 @@
 ############################################################################
 
   add_executable(LinkedCellList linked_cell_list_example.cpp)
-  target_link_libraries(LinkedCellList Core)
+  target_link_libraries(LinkedCellList Cabana::Core)
   add_test(NAME Core_tutorial_08 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:LinkedCellList>)

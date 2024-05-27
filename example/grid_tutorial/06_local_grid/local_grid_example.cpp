@@ -161,7 +161,7 @@ void localGridExample()
     std::cout << "\n" << std::endl;
 
     /*
-      It is possible to convert between local and global indicies if needed in
+      It is possible to convert between local and global indices if needed in
       the IndexConversion namespace.
     */
 

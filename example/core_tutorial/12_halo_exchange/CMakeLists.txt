@@ -10,7 +10,7 @@
 ############################################################################
 
   add_executable(HaloExchange halo_exchange_example.cpp)
-  target_link_libraries(HaloExchange Core)
+  target_link_libraries(HaloExchange Cabana::Core)
   add_test(NAME Core_tutorial_12 COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG}
     ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:HaloExchange> ${MPIEXEC_POSTFLAGS})
   set_tests_properties(Core_tutorial_12 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

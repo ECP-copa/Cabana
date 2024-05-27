@@ -61,7 +61,7 @@ RUN OPENMPI_VERSION=4.0.2 && \
 ENV PATH=${OPENMPI_DIR}/bin:$PATH
 
 # Install Kokkos
-ARG KOKKOS_VERSION=3.7.02
+ARG KOKKOS_VERSION=4.1.00
 ENV KOKKOS_DIR=/opt/kokkos
 RUN KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz && \
     KOKKOS_ARCHIVE=kokkos-${KOKKOS_VERSION}.tar.gz && \
@@ -84,7 +84,7 @@ RUN KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz
 
 # Install ArborX
 ENV ARBORX_DIR=/opt/arborx
-RUN ARBORX_VERSION=4834bff44c23c9510c6ed93366638dcdf85ab217 && \
+RUN ARBORX_VERSION=v1.4 && \
     ARBORX_URL=https://github.com/arborx/ArborX/archive/${ARBORX_VERSION}.tar.gz && \
     ARBORX_ARCHIVE=arborx.tar.gz && \
     wget --quiet ${ARBORX_URL} --output-document=${ARBORX_ARCHIVE} && \
@@ -130,7 +130,7 @@ RUN FFTW_URL=http://www.fftw.org/fftw-${FFTW_VERSION}.tar.gz && \
 # Install heffte
 ARG HEFFTE_VERSION=2.3.0
 ENV HEFFTE_DIR=/opt/heffte
-RUN HEFFTE_URL=https://bitbucket.org/icl/heffte/get/v${HEFFTE_VERSION}.tar.gz && \
+RUN HEFFTE_URL=https://github.com/icl-utk-edu/heffte/archive/v${HEFFTE_VERSION}.tar.gz && \
     HEFFTE_ARCHIVE=heffte.tar.gz && \
     SCRATCH_DIR=/scratch && mkdir -p ${SCRATCH_DIR} && cd ${SCRATCH_DIR} && \
     wget --quiet ${HEFFTE_URL} --output-document=${HEFFTE_ARCHIVE} && \

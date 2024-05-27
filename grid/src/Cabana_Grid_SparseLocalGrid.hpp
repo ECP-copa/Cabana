@@ -237,7 +237,7 @@ class LocalGrid<SparseMesh<Scalar, NumSpaceDim>>
                               const std::array<int, num_space_dim>& off_ijk,
                               const int halo_width ) const;
 
-    // More genearl implementations for node and cell center indices
+    // More general implementations for node and cell center indices
     // Note: In Sparse grid, each cell considers the left-most node and its cell
     // center as belongings, i.e., Node and Cell share the same element-to-cell
     // mapping, thus sharse the same interface.

@@ -583,7 +583,7 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
     }
 
     /*!
-      \brief optimize the partition in three dimensions seperately
+      \brief optimize the partition in three dimensions separately
       \param is_changed label if the partition is changed after the optimization
       \param iter_seed seed number to choose the starting dimension of the
       optimization
@@ -636,7 +636,7 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
             // equal_start_point: register the beginning pos of potentially
             // equivalent partitions
             int equal_start_point = 1;
-            // last_point: the opimized position for the lask partition
+            // last_point: the optimized position for the lask partition
             int last_point = 0;
             // current_workload: the workload between [last_point, point_i)
             Kokkos::View<int*, memory_space> current_workload(

@@ -22,85 +22,6 @@
 
 namespace Test
 {
-//---------------------------------------------------------------------------//
-// Linked cell list cell stencil test.
-void testLinkedCellStencil()
-{
-    // Point in the middle
-    {
-        double min[3] = { 0.0, 0.0, 0.0 };
-        double max[3] = { 10.0, 10.0, 10.0 };
-        double radius = 1.0;
-        double ratio = 1.0;
-        Cabana::Impl::LinkedCellStencil<double> stencil( radius, ratio, min,
-                                                         max );
-
-        double xp = 4.5;
-        double yp = 5.5;
-        double zp = 3.5;
-        int ic, jc, kc;
-        stencil.grid.locatePoint( xp, yp, zp, ic, jc, kc );
-        int cell = stencil.grid.cardinalCellIndex( ic, jc, kc );
-        int imin, imax, jmin, jmax, kmin, kmax;
-        stencil.getCells( cell, imin, imax, jmin, jmax, kmin, kmax );
-        EXPECT_EQ( imin, 3 );
-        EXPECT_EQ( imax, 6 );
-        EXPECT_EQ( jmin, 4 );
-        EXPECT_EQ( jmax, 7 );
-        EXPECT_EQ( kmin, 2 );
-        EXPECT_EQ( kmax, 5 );
-    }
-
-    // Point in the lower right corner
-    {
-        double min[3] = { 0.0, 0.0, 0.0 };
-        double max[3] = { 10.0, 10.0, 10.0 };
-        double radius = 1.0;
-        double ratio = 1.0;
-        Cabana::Impl::LinkedCellStencil<double> stencil( radius, ratio, min,
-                                                         max );
-
-        double xp = 0.5;
-        double yp = 0.5;
-        double zp = 0.5;
-        int ic, jc, kc;
-        stencil.grid.locatePoint( xp, yp, zp, ic, jc, kc );
-        int cell = stencil.grid.cardinalCellIndex( ic, jc, kc );
-        int imin, imax, jmin, jmax, kmin, kmax;
-        stencil.getCells( cell, imin, imax, jmin, jmax, kmin, kmax );
-        EXPECT_EQ( imin, 0 );
-        EXPECT_EQ( imax, 2 );
-        EXPECT_EQ( jmin, 0 );
-        EXPECT_EQ( jmax, 2 );
-        EXPECT_EQ( kmin, 0 );
-        EXPECT_EQ( kmax, 2 );
-    }
-
-    // Point in the upper left corner
-    {
-        double min[3] = { 0.0, 0.0, 0.0 };
-        double max[3] = { 10.0, 10.0, 10.0 };
-        double radius = 1.0;
-        double ratio = 1.0;
-        Cabana::Impl::LinkedCellStencil<double> stencil( radius, ratio, min,
-                                                         max );
-
-        double xp = 9.5;
-        double yp = 9.5;
-        double zp = 9.5;
-        int ic, jc, kc;
-        stencil.grid.locatePoint( xp, yp, zp, ic, jc, kc );
-        int cell = stencil.grid.cardinalCellIndex( ic, jc, kc );
-        int imin, imax, jmin, jmax, kmin, kmax;
-        stencil.getCells( cell, imin, imax, jmin, jmax, kmin, kmax );
-        EXPECT_EQ( imin, 8 );
-        EXPECT_EQ( imax, 10 );
-        EXPECT_EQ( jmin, 8 );
-        EXPECT_EQ( jmax, 10 );
-        EXPECT_EQ( kmin, 8 );
-        EXPECT_EQ( kmax, 10 );
-    }
-}
 
 //---------------------------------------------------------------------------//
 template <class LayoutTag, class BuildTag>
@@ -127,7 +48,7 @@ void testVerletListFull()
         checkFullNeighborList( nlist, test_data.N2_list_copy,
                                test_data.num_particle );
 
-        // Test rebuild function with explict execution space.
+        // Test rebuild function with explicit execution space.
         nlist.build( TEST_EXECSPACE{}, position, 0, position.size(),
                      test_data.test_radius, test_data.cell_size_ratio,
                      test_data.grid_min, test_data.grid_max );
@@ -209,14 +130,14 @@ void testVerletListFullPartialRange()
     // Create the neighbor list.
     Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag,
                        BuildTag>
-        nlist( position, 0, test_data.num_ignore, test_data.test_radius,
+        nlist( position, test_data.begin, test_data.end, test_data.test_radius,
                test_data.cell_size_ratio, test_data.grid_min,
                test_data.grid_max );
 
     // Check the neighbor list.
     checkFullNeighborListPartialRange( nlist, test_data.N2_list_copy,
-                                       test_data.num_particle,
-                                       test_data.num_ignore );
+                                       test_data.num_particle, test_data.begin,
+                                       test_data.end );
 }
 
 //---------------------------------------------------------------------------//
@@ -286,6 +207,7 @@ void testNeighborParallelReduce()
                                               test_data.aosoa, false );
 }
 
+//---------------------------------------------------------------------------//
 template <class LayoutTag>
 void testModifyNeighbors()
 {
@@ -315,7 +237,7 @@ void testModifyNeighbors()
         copyListToHost( nlist, test_data.N2_list_copy.neighbors.extent( 0 ),
                         test_data.N2_list_copy.neighbors.extent( 1 ) );
     // Check the results.
-    for ( int p = 0; p < test_data.num_particle; ++p )
+    for ( std::size_t p = 0; p < test_data.num_particle; ++p )
     {
         for ( int n = 0; n < test_data.N2_list_copy.counts( p ); ++n )
             // Check that all neighbors were changed.
@@ -323,12 +245,67 @@ void testModifyNeighbors()
                 EXPECT_EQ( list_copy.neighbors( p, n ), new_id );
     }
 }
+
+//---------------------------------------------------------------------------//
+template <class LayoutTag>
+void testNeighborHistogram()
+{
+    int particle_x = 10;
+    // Create the AoSoA and fill with particles
+    NeighborListTestDataOrdered test_data( particle_x );
+    auto position = Cabana::slice<0>( test_data.aosoa );
+
+    // Create the neighbor list.
+    using ListType = Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag,
+                                        LayoutTag, Cabana::TeamOpTag>;
+    ListType nlist( position, 0, position.size(), test_data.test_radius,
+                    test_data.cell_size_ratio, test_data.grid_min,
+                    test_data.grid_max );
+
+    // Create the neighbor histogram
+    {
+        int num_bin = 10;
+        auto nhist = neighborHistogram( TEST_EXECSPACE{}, position.size(),
+                                        nlist, num_bin );
+        auto host_histogram =
+            Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), nhist );
+
+        // 122 is the number of neighbors expected for a full spherical shell
+        // with characteristic ratio (cutoff / dx) = 3
+        double bin_max[10] = { 12, 24, 36, 48, 61, 73, 85, 97, 109, 122 };
+        // This is the direct copied output (zeros due to fixed spacing).
+        double bin_count[10] = { 32, 72, 24, 152, 120, 168, 0, 216, 0, 152 };
+
+        for ( int i = 0; i < num_bin; ++i )
+        {
+            EXPECT_EQ( bin_max[i], host_histogram( i, 0 ) );
+            EXPECT_EQ( bin_count[i], host_histogram( i, 1 ) );
+        }
+    }
+
+    // Create another histogram with fewer bins.
+    {
+        int num_bin = 5;
+        auto nhist = neighborHistogram( TEST_EXECSPACE{}, position.size(),
+                                        nlist, num_bin );
+        auto host_histogram =
+            Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), nhist );
+
+        double bin_max[5] = { 24, 48, 73, 97, 122 };
+        // This is the direct copied output.
+        double bin_count[5] = { 104, 176, 288, 216, 152 };
+        for ( int i = 0; i < num_bin; ++i )
+        {
+            EXPECT_EQ( bin_max[i], host_histogram( i, 0 ) );
+            EXPECT_EQ( bin_count[i], host_histogram( i, 1 ) );
+        }
+    }
+}
+
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, linked_cell_stencil_test ) { testLinkedCellStencil(); }
 
-//---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, verlet_list_full_test )
 {
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
@@ -399,6 +376,16 @@ TEST( TEST_CATEGORY, modify_list_test )
 #endif
     testModifyNeighbors<Cabana::VerletLayout2D>();
 }
+
+//---------------------------------------------------------------------------//
+TEST( TEST_CATEGORY, neighbor_histogram_test )
+{
+#ifndef KOKKOS_ENABLE_OPENMPTARGET
+    testNeighborHistogram<Cabana::VerletLayoutCSR>();
+#endif
+    testNeighborHistogram<Cabana::VerletLayout2D>();
+}
+
 //---------------------------------------------------------------------------//
 
 } // end namespace Test

@@ -22,6 +22,7 @@
 #include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Profiling_ScopedRegion.hpp>
 
 #include <heffte_fft3d.h>
 
@@ -235,12 +236,10 @@ class FastFourierTransform
                   entity_type, mesh_type, memory_space, value_type>::value ),
             int>::type* = 0 )
     {
-        Kokkos::Profiling::pushRegion( "Cabana::FFT::forward" );
+        Kokkos::Profiling::ScopedRegion region( "Cabana::FFT::forward" );
 
         checkArrayDofs( x.layout()->dofsPerEntity() );
         static_cast<Derived*>( this )->forwardImpl( x, scaling );
-
-        Kokkos::Profiling::popRegion();
     }
 
     /*!
@@ -259,12 +258,10 @@ class FastFourierTransform
                   entity_type, mesh_type, memory_space, value_type>::value ),
             int>::type* = 0 )
     {
-        Kokkos::Profiling::pushRegion( "Cabana::FFT::reverse" );
+        Kokkos::Profiling::ScopedRegion region( "Cabana::FFT::reverse" );
 
         checkArrayDofs( x.layout()->dofsPerEntity() );
         static_cast<Derived*>( this )->reverseImpl( x, scaling );
-
-        Kokkos::Profiling::popRegion();
     }
 
     /*!
@@ -575,7 +572,7 @@ class HeffteFastFourierTransform
     /*!
       \brief Do a forward FFT.
       \param x The array on which to perform the forward transform.
-      \param ScaleType Method of scaling data.
+      \note ScaleType Method of scaling data.
     */
     template <class Array_t, class ScaleType>
     void forwardImpl( const Array_t& x, const ScaleType )
@@ -586,7 +583,7 @@ class HeffteFastFourierTransform
     /*!
      \brief Do a reverse FFT.
      \param x The array on which to perform the reverse transform
-     \param ScaleType Method of scaling data.
+     \note ScaleType Method of scaling data.
     */
     template <class Array_t, class ScaleType>
     void reverseImpl( const Array_t& x, const ScaleType )
@@ -654,7 +651,7 @@ class HeffteFastFourierTransform
 //---------------------------------------------------------------------------//
 // heFFTe creation
 //---------------------------------------------------------------------------//
-//! Creation function for heFFTe FFT with explict FFT backend.
+//! Creation function for heFFTe FFT with explicit FFT backend.
 //! \param exec_space Kokkos execution space
 //! \param layout FFT entity array
 //! \param params FFT parameters
@@ -684,7 +681,7 @@ auto createHeffteFastFourierTransform(
         exec_space, layout, params );
 }
 
-//! Creation function for heFFTe FFT with explict FFT backend and default
+//! Creation function for heFFTe FFT with explicit FFT backend and default
 //! parameters.
 //! \param exec_space Kokkos execution space
 //! \param layout FFT entity array
@@ -725,7 +722,7 @@ auto createHeffteFastFourierTransform(
         exec_space, layout );
 }
 
-//! Creation function for heFFTe FFT with explict FFT backend.
+//! Creation function for heFFTe FFT with explicit FFT backend.
 //! \param layout FFT entity array
 //! \param params FFT parameters
 template <class Scalar, class MemorySpace, class BackendType, class EntityType,
@@ -754,7 +751,7 @@ auto createHeffteFastFourierTransform(
         exec_space{}, layout, params );
 }
 
-//! Creation function for heFFTe FFT with explict FFT backend and default
+//! Creation function for heFFTe FFT with explicit FFT backend and default
 //! parameters.
 //! \param layout FFT entity array
 template <class Scalar, class MemorySpace, class BackendType, class EntityType,

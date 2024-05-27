@@ -16,6 +16,7 @@
 #include <mpi.h>
 
 #include <array>
+#include <iostream>
 #include <vector>
 
 //---------------------------------------------------------------------------//
@@ -182,8 +183,8 @@ int main( int argc, char* argv[] )
           The hypre solver capabilities used by Cabana must be initialized and
           finalized. HYPRE_Finalize() finalizes hypre. A call to
           HYPRE_Finalize() should not occur before all calls to hypre
-          capabilites are finished. This call is placed outside the hypre solver
-          function to ensure the hypre objects are out of scope
+          capabilities are finished. This call is placed outside the hypre
+          solver function to ensure the hypre objects are out of scope
         */
         HYPRE_Finalize();
     }

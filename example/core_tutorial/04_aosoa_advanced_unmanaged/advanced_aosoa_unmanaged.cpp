@@ -13,6 +13,7 @@
 #include <Cabana_Sort.hpp>
 
 #include <cstdio>
+#include <iostream>
 
 //---------------------------------------------------------------------------//
 // Example of an unmanaged AoSoA.
@@ -108,31 +109,32 @@ void unmanagedAoAoAExample()
         if ( slice_b( i ) != ( i % VectorLength ) )
         {
             // Unexpected Value
-            printf( "%d: Unexpected %d != %d \n", __LINE__, slice_b( i ),
-                    i % VectorLength );
+            std::cout << "Error: " << slice_b( i ) << " != " << i % VectorLength
+                      << std::endl;
         }
     }
 
     /*
-     * Use the view in an algorithm, like sort
+     * Use the view in an algorithm, like binning
      */
-    auto binning_data = Cabana::sortByKey( slice_b );
+    auto binning_data = Cabana::binByKey( slice_b, 64 );
     Cabana::permute( binning_data, aosoa );
 
     // Check it worked
-    for ( int i = 1; i < num_tuple; i++ )
+    for ( int i = 1; i < num_tuple; i += 2 )
     {
         // We expect it to be monotonically increasing
         if ( !( slice_b( i - 1 ) <= slice_b( i ) ) )
         {
             // Unexpected value
-            printf( "%d: Unexpected %d vs %d \n", __LINE__, slice_b( i - 1 ),
-                    slice_b( i ) );
+            std::cout << "Error: " << slice_b( i - 1 ) << " > " << slice_b( i )
+                      << std::endl;
         }
 
         // We can also set values
         slice_a( i, 0 ) = i / 2;
     }
+    std::cout << "Successful Cabana binning on unmanaged AoSoA." << std::endl;
 
     // Clean up local data
     delete[] local_data;

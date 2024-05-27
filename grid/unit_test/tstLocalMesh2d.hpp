@@ -24,6 +24,7 @@
 
 #include <array>
 #include <cmath>
+#include <iostream>
 #include <vector>
 
 using namespace Cabana::Grid;

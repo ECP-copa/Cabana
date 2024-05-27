@@ -15,7 +15,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(Cabana LANGUAGES CXX)
-set(PROJECT_VERSION "1.0-dev")
+set(PROJECT_VERSION "0.7.0-dev")
 
 # If the user doesn't provide a build type default to release
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CXX_FLAGS)
@@ -36,7 +36,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 # Dependencies
 #------------------------------------------------------------------------------#
 # find kokkos
-find_package(Kokkos 3.7 REQUIRED)
+find_package(Kokkos 4.1 REQUIRED)
 
 # set supported kokkos devices
 set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA HIP SYCL OPENMPTARGET)
@@ -56,7 +56,7 @@ endif()
 
 # standard dependency macro
 macro(Cabana_add_dependency)
-  cmake_parse_arguments(CABANA_DEPENDENCY "" "PACKAGE;VERSION;COMPONENTS" "" ${ARGN})
+  cmake_parse_arguments(CABANA_DEPENDENCY "" "PACKAGE;VERSION" "COMPONENTS" ${ARGN})
   find_package( ${CABANA_DEPENDENCY_PACKAGE} ${CABANA_DEPENDENCY_VERSION} QUIET COMPONENTS ${CABANA_DEPENDENCY_COMPONENTS} )
   string(TOUPPER "${CABANA_DEPENDENCY_PACKAGE}" CABANA_DEPENDENCY_OPTION )
   option(
@@ -69,7 +69,13 @@ macro(Cabana_add_dependency)
 endmacro()
 
 # find MPI
-Cabana_add_dependency( PACKAGE MPI )
+if(Cabana_REQUIRE_HDF5)
+  # Workaround for using HDF5 C-bindings
+  enable_language(C)
+  Cabana_add_dependency( PACKAGE MPI COMPONENTS C CXX ) 
+else()
+  Cabana_add_dependency( PACKAGE MPI COMPONENTS CXX )
+endif()
 
 # find ArborX
 Cabana_add_dependency( PACKAGE ArborX )
@@ -265,7 +271,7 @@ configure_file(cmake/Cabana.pc.cmakein Cabana.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Cabana.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 write_basic_package_version_file("CabanaConfigVersion.cmake"
-  VERSION ${PROJECT_VERSION} COMPATIBILITY ExactVersion)
+  VERSION ${PROJECT_VERSION} COMPATIBILITY SameMajorVersion)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CabanaConfig.cmakein
   ${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake @ONLY)

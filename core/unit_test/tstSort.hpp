@@ -510,7 +510,7 @@ void testBinBySliceDataOnly()
     auto bin_size_mirror =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), bin_size );
 
-    // Check the result of the sort. Make sure nothing moved execpt the
+    // Check the result of the sort. Make sure nothing moved except the
     // binning data.
     auto mirror =
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );

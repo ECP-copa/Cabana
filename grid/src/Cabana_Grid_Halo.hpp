@@ -23,6 +23,7 @@
 #include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Profiling_ScopedRegion.hpp>
 
 #include <mpi.h>
 
@@ -288,7 +289,7 @@ class Halo
     void gather( const ExecutionSpace& exec_space,
                  const ArrayTypes&... arrays ) const
     {
-        Kokkos::Profiling::pushRegion( "Cabana::Grid::gather" );
+        Kokkos::Profiling::ScopedRegion region( "Cabana::Grid::gather" );
 
         // Get the number of neighbors. Return if we have none.
         int num_n = _neighbor_ranks.size();
@@ -363,7 +364,6 @@ class Halo
 
         // Wait on send requests.
         MPI_Waitall( num_n, requests.data() + num_n, MPI_STATUSES_IGNORE );
-        Kokkos::Profiling::popRegion();
     }
 
     /*!
@@ -377,7 +377,7 @@ class Halo
     void scatter( const ExecutionSpace& exec_space, const ReduceOp& reduce_op,
                   const ArrayTypes&... arrays ) const
     {
-        Kokkos::Profiling::pushRegion( "Cabana::Grid::scatter" );
+        Kokkos::Profiling::ScopedRegion region( "Cabana::Grid::scatter" );
 
         // Get the number of neighbors. Return if we have none.
         int num_n = _neighbor_ranks.size();
@@ -450,7 +450,6 @@ class Halo
             // Wait on send requests.
             MPI_Waitall( num_n, requests.data() + num_n, MPI_STATUSES_IGNORE );
         }
-        Kokkos::Profiling::popRegion();
     }
 
   public:
@@ -912,7 +911,7 @@ class Halo
     // The tag we use for sending to each neighbor.
     std::vector<int> _send_tags;
 
-    // The tag we use for receiveing from each neighbor.
+    // The tag we use for receiving from each neighbor.
     std::vector<int> _receive_tags;
 
     // For each neighbor, send/receive buffers for data we own.
@@ -979,80 +978,6 @@ template <class ArrayT, class... Types>
 using ArrayPackMemorySpace CAJITA_DEPRECATED =
     Cabana::Grid::ArrayPackMemorySpace<ArrayT, Types...>;
 
-//---------------------------------------------------------------------------//
-// Backwards-compatible single array creation functions.
-//---------------------------------------------------------------------------//
-/*!
-  Array-like container adapter to hold layout and data information for
-  creating halos.
-
-  NOTE: This struct is only used in deprecated functions, but does not include
-  a deprecation tag to avoid nested deprecation warnings.
-*/
-template <class Scalar, class MemorySpace, class ArrayLayout>
-struct LayoutAdapter
-{
-    //! Scalar value type.
-    using value_type = Scalar;
-    //! Kokkos memory space.
-    using memory_space = MemorySpace;
-    //! Array layout.
-    const ArrayLayout& array_layout;
-    //! Get array layout.
-    const ArrayLayout* layout() const { return &array_layout; }
-};
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Create a halo with a layout.
-  \param layout The array layout to build the halo for.
-  \param pattern The pattern to build the halo from.
-  \param width Must be less than or equal to the width of the array
-  halo. Defaults to the width of the array halo.
-  \note The scalar type and memory space must be specified so the proper
-  buffers may be allocated. This means a halo constructed via this method is
-  only compatible with arrays that have the same scalar and memory space.
-*/
-template <class Scalar, class MemorySpace,
-          template <class, class> class LayoutType, class EntityType,
-          class MeshType, class Pattern>
-[[deprecated]] auto createHalo( const LayoutType<EntityType, MeshType>& layout,
-                                const Pattern& pattern, const int width = -1 )
-{
-    LayoutAdapter<Scalar, MemorySpace, LayoutType<EntityType, MeshType>>
-        adapter{ layout };
-    return createHalo( pattern, width, adapter );
-}
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Create a halo.
-  \param array The array to build the halo for.
-  \param pattern The pattern to build the halo from.
-  \param width Must be less than or equal to the width of the array
-  halo. Defaults to the width of the array halo.
-  \note The scalar type and memory space are specified via the input arrays so
-  the proper buffers may be allocated. This means a halo constructed via this
-  method is only compatible with arrays that have the same scalar and device
-  type as the input array.
-*/
-template <class Scalar,
-          template <class, class, class, class...> class ArrayType,
-          class EntityType, class MeshType, class Pattern, class... Params>
-[[deprecated]] auto
-createHalo( const ArrayType<Scalar, EntityType, MeshType, Params...>& array,
-            const Pattern& pattern, const int width = -1 )
-{
-    LayoutAdapter<Scalar,
-                  typename ArrayType<Scalar, EntityType, MeshType,
-                                     Params...>::memory_space,
-                  typename ArrayType<Scalar, EntityType, MeshType,
-                                     Params...>::array_layout>
-        adapter{ *array.layout() };
-    return createHalo( pattern, width, adapter );
-}
-//---------------------------------------------------------------------------//
-
 template <std::size_t NumSpaceDim>
 using HaloPattern CAJITA_DEPRECATED = Cabana::Grid::HaloPattern<NumSpaceDim>;
 template <std::size_t NumSpaceDim>
@@ -1061,11 +986,6 @@ using NodeHaloPattern CAJITA_DEPRECATED =
 template <std::size_t NumSpaceDim>
 using FaceHaloPattern CAJITA_DEPRECATED =
     Cabana::Grid::FaceHaloPattern<NumSpaceDim>;
-
-//! Full 3d halo with all 26 adjacent blocks. Backwards compatibility wrapper.
-class [[deprecated]] FullHaloPattern : public NodeHaloPattern<3>
-{
-};
 
 template <class MemorySpace>
 using Halo CAJITA_DEPRECATED = Cabana::Grid::Halo<MemorySpace>;
