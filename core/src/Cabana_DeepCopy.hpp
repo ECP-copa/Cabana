@@ -239,11 +239,11 @@ deep_copy( DstAoSoA& dst, const SrcAoSoA& src,
   \param dst The destination for the copied data.
   \param src The source of the copied data.
 s*/
-template <class DstMemorySpace, class SrcMemorySpace, int VectorLength,
-          class... FieldTags>
-inline void
-deep_copy( ParticleList<DstMemorySpace, VectorLength, FieldTags...>& dst,
-           const ParticleList<SrcMemorySpace, VectorLength, FieldTags...>& src )
+template <class DstMemorySpace, class SrcMemorySpace, int DstVectorLength,
+          int SrcVectorLength, class... FieldTags>
+inline void deep_copy(
+    ParticleList<DstMemorySpace, DstVectorLength, FieldTags...>& dst,
+    const ParticleList<SrcMemorySpace, SrcVectorLength, FieldTags...>& src )
 {
     // Copy particle data to new memory space.
     auto aosoa_src = src.aosoa();
