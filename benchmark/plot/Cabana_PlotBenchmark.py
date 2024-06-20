@@ -123,4 +123,4 @@ if __name__ == "__main__":
     ###
 
     createPlot(fig1, ax1, data,
-               speedup=speedup, backend_label=True)#, cpu_name="POWER9", gpu_name="V100")
+               speedup=speedup, backend_label=True)# cpu_name="EPYC", gpu_name="MI250X")
