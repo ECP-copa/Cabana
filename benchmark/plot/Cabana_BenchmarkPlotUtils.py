@@ -378,7 +378,8 @@ def createPlot(fig, ax, data: AllData, speedup=False, backend_label=True, cpu_na
     ax.set_yscale('log')
 
     fig.tight_layout()
-    plt.show()
 
     if dpi:
         plt.savefig(filename, dpi=dpi)
+    else:
+        plt.show()
