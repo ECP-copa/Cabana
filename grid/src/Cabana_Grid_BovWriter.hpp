@@ -267,7 +267,9 @@ void writeTimeStep( ExecutionSpace, const std::string& prefix,
     local_space_max.back() = owned_extents.back();
     IndexSpace<num_space_dim + 1> local_space( local_space_min,
                                                local_space_max );
-    auto owned_subview = createSubview( array.view(), local_space );
+
+    auto array_host = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace{}, array.view());
+    auto owned_subview = createSubview( array_host, local_space );
 
     std::array<long, num_space_dim + 1> reorder_space_size;
     for ( std::size_t d = 0; d < num_space_dim; ++d )
@@ -276,9 +278,11 @@ void writeTimeStep( ExecutionSpace, const std::string& prefix,
     }
     reorder_space_size.back() = owned_extents.back();
     IndexSpace<num_space_dim + 1> reorder_space( reorder_space_size );
-    auto owned_view = createView<value_type, Kokkos::LayoutRight, memory_space>(
+
+    auto owned_view = createView<value_type, Kokkos::LayoutRight, Kokkos::HostSpace>(
         array.label(), reorder_space );
-    reorderView( owned_view, owned_subview, reorder_space, ExecutionSpace() );
+
+    reorderView( owned_view, owned_subview, reorder_space, Kokkos::DefaultHostExecutionSpace{} );
 
     // Compose a data file name prefix.
     std::stringstream file_name;
