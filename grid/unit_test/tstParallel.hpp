@@ -394,6 +394,54 @@ void parallelMultiSpaceTest()
                         EXPECT_DOUBLE_EQ( 0.0, host_data_4d( i, j, k, l ) );
                     }
                 }
+
+    // 3D view
+    IndexSpace<3> is3_view_0( { 10, 10, 10 } );
+    IndexSpace<3> is3_view_1( { 1, 1, 1 }, { 4, 4, 4 } );
+    IndexSpace<3> is3_view_2( { 9, 9, 9 }, { 10, 10, 10 } );
+
+    auto data_3d_view =
+        createView<double, TEST_MEMSPACE>( "data_3d_view", is3_0 );
+    Kokkos::deep_copy( data_3d_view, 0.0 );
+
+    Kokkos::View<IndexSpace<3>*, TEST_MEMSPACE> index_view( "index_view", 2 );
+    Kokkos::parallel_for(
+        "initialize index view", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, 1 ),
+        KOKKOS_LAMBDA( const int ) {
+            index_view( 0 ) = is3_view_1;
+            index_view( 1 ) = is3_view_2;
+        } );
+
+    grid_parallel_for(
+        "multi_space_3d", TEST_EXECSPACE{}, index_view,
+        KOKKOS_LAMBDA( const int s, const int i, const int j, const int k ) {
+            if ( 0 == s )
+                data_3d_view( i, j, k ) = 1.0;
+            else if ( 1 == s )
+                data_3d_view( i, j, k ) = 2.0;
+        } );
+
+    auto host_data_3d_view = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace{}, data_3d_view );
+
+    for ( int i = 0; i < is3_view_0.extent( Dim::I ); ++i )
+        for ( int j = 0; j < is3_view_0.extent( Dim::J ); ++j )
+            for ( int k = 0; k < is3_view_0.extent( Dim::K ); ++k )
+            {
+                long idx[3] = { i, j, k };
+                if ( is3_view_1.inRange( idx ) )
+                {
+                    EXPECT_DOUBLE_EQ( 1.0, host_data_3d_view( i, j, k ) );
+                }
+                else if ( is3_view_2.inRange( idx ) )
+                {
+                    EXPECT_DOUBLE_EQ( 2.0, host_data_3d_view( i, j, k ) );
+                }
+                else
+                {
+                    EXPECT_DOUBLE_EQ( 0.0, host_data_3d_view( i, j, k ) );
+                }
+            }
 }
 
 //---------------------------------------------------------------------------//

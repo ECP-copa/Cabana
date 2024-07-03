@@ -409,6 +409,94 @@ grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
 }
 
 //---------------------------------------------------------------------------//
+/*!
+  \brief Execute a functor in parallel with a linear execution
+  policy specified by the set of given index spaces. 3D specialization.
+
+  \tparam FunctorType The functor type to execute.
+
+  \tparam ExecutionSpace The execution space type.
+
+  \tparam NumSpace The number of index spaces.
+
+  \param label Parallel region label.
+
+  \param exec_space An execution space instance.
+
+  \param index_spaces The set of index spaces over which to loop.
+
+  \param functor The functor to execute. Signature is f(space_id,i,j,k)
+  space_id is the index of the index space in index_spaces.
+ */
+template <class FunctorType, class ExecutionSpace, class ViewType>
+inline void
+grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
+                   const ViewType& index_spaces, const FunctorType& functor )
+{
+    Kokkos::Profiling::ScopedRegion region( "Cabana::Grid::grid_parallel_for" );
+
+    // Compute the total number of threads needed and the index space offsets
+    // via inclusive scan.
+    std::size_t NumSpace = index_spaces.extent( 0 );
+    int size = index_spaces( 0 ).size();
+
+    using memory_space = typename ExecutionSpace::memory_space;
+    Kokkos::View<int*, memory_space> exclusive_offsets( "exclusive_offsets",
+                                                        NumSpace );
+    Kokkos::View<int*, memory_space> inclusive_offsets( "inclusive_offsets",
+                                                        NumSpace );
+
+    auto exclusive_host = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), exclusive_offsets );
+    auto inclusive_host = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), inclusive_offsets );
+
+    exclusive_host( 0 ) = 0;
+    inclusive_host( 0 ) = size;
+    for ( std::size_t sp = 1; sp < NumSpace; ++sp )
+    {
+        size += index_spaces( sp ).size();
+        exclusive_host( sp ) =
+            exclusive_host( sp - 1 ) + index_spaces( sp - 1 ).size();
+        inclusive_host( sp ) =
+            inclusive_host( sp - 1 ) + index_spaces( sp ).size();
+    }
+
+    // Unroll the index spaces into a linear parallel for.
+    Kokkos::parallel_for(
+        label, Kokkos::RangePolicy<ExecutionSpace>( exec_space, 0, size ),
+        KOKKOS_LAMBDA( const int n ) {
+            // Get the index space id.
+            int s = -1;
+            for ( std::size_t sp = 0; sp < NumSpace; ++sp )
+            {
+                if ( n < inclusive_offsets( sp ) )
+                {
+                    s = sp;
+                    break;
+                }
+            }
+
+            // Linear id in index space.
+            int linear_id = n - exclusive_offsets( s );
+
+            // Compute entity id.
+            int extent_k = index_spaces( s ).extent( Dim::K );
+            int extent_jk = extent_k * index_spaces( s ).extent( Dim::J );
+            int i_base = linear_id / extent_jk;
+            int stride_j = extent_jk * i_base;
+            int j_base = ( linear_id - stride_j ) / extent_k;
+            int k_base = linear_id - extent_k * j_base - stride_j;
+
+            // Execute the user functor. Provide the index space id so they
+            // can discern which space they are in within the functor.
+            functor( s, i_base + index_spaces( s ).min( Dim::I ),
+                     j_base + index_spaces( s ).min( Dim::J ),
+                     k_base + index_spaces( s ).min( Dim::K ) );
+        } );
+}
+
+//---------------------------------------------------------------------------//
 // Grid Parallel Reduce
 //---------------------------------------------------------------------------//
 /*!
