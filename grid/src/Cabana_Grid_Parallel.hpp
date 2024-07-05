@@ -289,6 +289,7 @@ grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
     int size = index_spaces[0].size();
     Kokkos::Array<int, NumSpace> exclusive_offsets;
     Kokkos::Array<int, NumSpace> inclusive_offsets;
+
     exclusive_offsets[0] = 0;
     inclusive_offsets[0] = size;
     for ( std::size_t sp = 1; sp < NumSpace; ++sp )
@@ -437,8 +438,10 @@ grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
 
     // Compute the total number of threads needed and the index space offsets
     // via inclusive scan.
-    std::size_t NumSpace = index_spaces.extent( 0 );
-    int size = index_spaces( 0 ).size();
+    auto index_spaces_host = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), index_spaces );
+    std::size_t NumSpace = index_spaces_host.extent( 0 );
+    int size = index_spaces_host( 0 ).size();
 
     using memory_space = typename ExecutionSpace::memory_space;
     Kokkos::View<int*, memory_space> exclusive_offsets( "exclusive_offsets",
@@ -455,12 +458,15 @@ grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
     inclusive_host( 0 ) = size;
     for ( std::size_t sp = 1; sp < NumSpace; ++sp )
     {
-        size += index_spaces( sp ).size();
+        size += index_spaces_host( sp ).size();
         exclusive_host( sp ) =
-            exclusive_host( sp - 1 ) + index_spaces( sp - 1 ).size();
+            exclusive_host( sp - 1 ) + index_spaces_host( sp - 1 ).size();
         inclusive_host( sp ) =
-            inclusive_host( sp - 1 ) + index_spaces( sp ).size();
+            inclusive_host( sp - 1 ) + index_spaces_host( sp ).size();
     }
+
+    Kokkos::deep_copy( exclusive_offsets, exclusive_host );
+    Kokkos::deep_copy( inclusive_offsets, inclusive_host );
 
     // Unroll the index spaces into a linear parallel for.
     Kokkos::parallel_for(

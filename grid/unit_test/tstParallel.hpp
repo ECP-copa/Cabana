@@ -396,10 +396,6 @@ void parallelMultiSpaceTest()
                 }
 
     // 3D view
-    IndexSpace<3> is3_view_0( { 10, 10, 10 } );
-    IndexSpace<3> is3_view_1( { 1, 1, 1 }, { 4, 4, 4 } );
-    IndexSpace<3> is3_view_2( { 9, 9, 9 }, { 10, 10, 10 } );
-
     auto data_3d_view =
         createView<double, TEST_MEMSPACE>( "data_3d_view", is3_0 );
     Kokkos::deep_copy( data_3d_view, 0.0 );
@@ -408,8 +404,8 @@ void parallelMultiSpaceTest()
     Kokkos::parallel_for(
         "initialize index view", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, 1 ),
         KOKKOS_LAMBDA( const int ) {
-            index_view( 0 ) = is3_view_1;
-            index_view( 1 ) = is3_view_2;
+            index_view( 0 ) = is3_1;
+            index_view( 1 ) = is3_2;
         } );
 
     grid_parallel_for(
@@ -424,16 +420,16 @@ void parallelMultiSpaceTest()
     auto host_data_3d_view = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace{}, data_3d_view );
 
-    for ( int i = 0; i < is3_view_0.extent( Dim::I ); ++i )
-        for ( int j = 0; j < is3_view_0.extent( Dim::J ); ++j )
-            for ( int k = 0; k < is3_view_0.extent( Dim::K ); ++k )
+    for ( int i = 0; i < is3_0.extent( Dim::I ); ++i )
+        for ( int j = 0; j < is3_0.extent( Dim::J ); ++j )
+            for ( int k = 0; k < is3_0.extent( Dim::K ); ++k )
             {
                 long idx[3] = { i, j, k };
-                if ( is3_view_1.inRange( idx ) )
+                if ( is3_1.inRange( idx ) )
                 {
                     EXPECT_DOUBLE_EQ( 1.0, host_data_3d_view( i, j, k ) );
                 }
-                else if ( is3_view_2.inRange( idx ) )
+                else if ( is3_2.inRange( idx ) )
                 {
                     EXPECT_DOUBLE_EQ( 2.0, host_data_3d_view( i, j, k ) );
                 }
