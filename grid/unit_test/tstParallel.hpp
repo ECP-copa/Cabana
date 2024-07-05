@@ -395,21 +395,66 @@ void parallelMultiSpaceTest()
                     }
                 }
 
+    // 2D view
+    auto data_2d_view =
+        createView<double, TEST_MEMSPACE>( "data_2d_view", is2_0 );
+    Kokkos::deep_copy( data_2d_view, 0.0 );
+
+    Kokkos::View<IndexSpace<2>*, TEST_MEMSPACE> index_2d_view( "index_2d_view",
+                                                               2 );
+    Kokkos::parallel_for(
+        "initialize index view", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, 1 ),
+        KOKKOS_LAMBDA( const int ) {
+            index_2d_view( 0 ) = is2_1;
+            index_2d_view( 1 ) = is2_2;
+        } );
+
+    grid_parallel_for(
+        "multi_space_2d", TEST_EXECSPACE{}, index_2d_view,
+        KOKKOS_LAMBDA( const int s, const int i, const int j ) {
+            if ( 0 == s )
+                data_2d_view( i, j ) = 1.0;
+            else if ( 1 == s )
+                data_2d_view( i, j ) = 2.0;
+        } );
+
+    auto host_data_2d_view = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace{}, data_2d_view );
+
+    for ( int i = 0; i < is2_0.extent( Dim::I ); ++i )
+        for ( int j = 0; j < is2_0.extent( Dim::J ); ++j )
+        {
+            long idx[2] = { i, j };
+            if ( is2_1.inRange( idx ) )
+            {
+                EXPECT_DOUBLE_EQ( 1.0, host_data_2d_view( i, j ) );
+            }
+            else if ( is2_2.inRange( idx ) )
+            {
+                EXPECT_DOUBLE_EQ( 2.0, host_data_2d_view( i, j ) );
+            }
+            else
+            {
+                EXPECT_DOUBLE_EQ( 0.0, host_data_2d_view( i, j ) );
+            }
+        }
+
     // 3D view
     auto data_3d_view =
         createView<double, TEST_MEMSPACE>( "data_3d_view", is3_0 );
     Kokkos::deep_copy( data_3d_view, 0.0 );
 
-    Kokkos::View<IndexSpace<3>*, TEST_MEMSPACE> index_view( "index_view", 2 );
+    Kokkos::View<IndexSpace<3>*, TEST_MEMSPACE> index_3d_view( "index_3d_view",
+                                                               2 );
     Kokkos::parallel_for(
         "initialize index view", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, 1 ),
         KOKKOS_LAMBDA( const int ) {
-            index_view( 0 ) = is3_1;
-            index_view( 1 ) = is3_2;
+            index_3d_view( 0 ) = is3_1;
+            index_3d_view( 1 ) = is3_2;
         } );
 
     grid_parallel_for(
-        "multi_space_3d", TEST_EXECSPACE{}, index_view,
+        "multi_space_3d", TEST_EXECSPACE{}, index_3d_view,
         KOKKOS_LAMBDA( const int s, const int i, const int j, const int k ) {
             if ( 0 == s )
                 data_3d_view( i, j, k ) = 1.0;
@@ -438,6 +483,56 @@ void parallelMultiSpaceTest()
                     EXPECT_DOUBLE_EQ( 0.0, host_data_3d_view( i, j, k ) );
                 }
             }
+
+    // 4D view
+    auto data_4d_view =
+        createView<double, TEST_MEMSPACE>( "data_4d_view", is4_0 );
+    Kokkos::deep_copy( data_4d_view, 0.0 );
+
+    Kokkos::View<IndexSpace<4>*, TEST_MEMSPACE> index_4d_view( "index_4d_view",
+                                                               2 );
+    Kokkos::parallel_for(
+        "initialize index view", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, 1 ),
+        KOKKOS_LAMBDA( const int ) {
+            index_4d_view( 0 ) = is4_1;
+            index_4d_view( 1 ) = is4_2;
+        } );
+
+    grid_parallel_for(
+        "multi_space_4d", TEST_EXECSPACE{}, index_4d_view,
+        KOKKOS_LAMBDA( const int s, const int i, const int j, const int k,
+                       const int l ) {
+            if ( 0 == s )
+                data_4d_view( i, j, k, l ) = 1.0;
+            else if ( 1 == s )
+                data_4d_view( i, j, k, l ) = 2.0;
+        } );
+
+    auto host_data_4d_view = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace{}, data_4d_view );
+
+    for ( int i = 0; i < is4_0.extent( Dim::I ); ++i )
+        for ( int j = 0; j < is4_0.extent( Dim::J ); ++j )
+            for ( int k = 0; k < is4_0.extent( Dim::K ); ++k )
+                for ( int l = 0; l < is4_0.extent( 3 ); ++l )
+                {
+                    long idx[4] = { i, j, k, l };
+                    if ( is4_1.inRange( idx ) )
+                    {
+                        EXPECT_DOUBLE_EQ( 1.0,
+                                          host_data_4d_view( i, j, k, l ) );
+                    }
+                    else if ( is4_2.inRange( idx ) )
+                    {
+                        EXPECT_DOUBLE_EQ( 2.0,
+                                          host_data_4d_view( i, j, k, l ) );
+                    }
+                    else
+                    {
+                        EXPECT_DOUBLE_EQ( 0.0,
+                                          host_data_4d_view( i, j, k, l ) );
+                    }
+                }
 }
 
 //---------------------------------------------------------------------------//
