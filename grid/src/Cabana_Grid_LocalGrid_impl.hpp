@@ -95,7 +95,8 @@ LocalGrid<MeshType>::neighborRank( const int off_i, const int off_j ) const
 //---------------------------------------------------------------------------//
 // Get the index space for a given combination of decomposition, entity, and
 // index types.
-auto LocalGrid<MeshType>::zeroIndexSpace()
+template <class MeshType>
+auto LocalGrid<MeshType>::zeroIndexSpace() const
 {
     std::array<long, num_space_dim> zero_size;
     for ( std::size_t d = 0; d < num_space_dim; ++d )
@@ -103,7 +104,8 @@ auto LocalGrid<MeshType>::zeroIndexSpace()
     return IndexSpace<num_space_dim>( zero_size, zero_size );
 }
 
-auto LocalGrid<MeshType>::setupHaloWidth( const int halo_width )
+template <class MeshType>
+auto LocalGrid<MeshType>::setupHaloWidth( const int halo_width ) const
 {
     // If we got the default halo width of -1 this means we want to use the
     // default of the entire halo.
@@ -116,8 +118,9 @@ auto LocalGrid<MeshType>::setupHaloWidth( const int halo_width )
     return hw;
 }
 
-auto LocalGrid<MeshType>::checkOffsets(
-    const std::array<int, num_space_dim>& off_ijk )
+template <class MeshType>
+void LocalGrid<MeshType>::checkOffsets(
+    const std::array<int, num_space_dim>& off_ijk ) const
 {
     // Check that the offsets are valid.
     for ( std::size_t d = 0; d < num_space_dim; ++d )
@@ -236,6 +239,66 @@ LocalGrid<MeshType>::boundaryIndexSpace( DecompositionTag t1, EntityType t2,
 {
     std::array<int, 2> off_ijk = { off_i, off_j };
     return boundaryIndexSpace( t1, t2, off_ijk, halo_width );
+}
+
+//---------------------------------------------------------------------------//
+// Given the relative offsets of a boundary relative to this local grid's
+// indices get the set of local entity indices associated with that periodic
+// boundary in the given decomposition. Optionally provide a halo width for the
+// shared space. This halo width must be less than or equal to the halo width of
+// the local grid. The default behavior is to use the halo width of the local
+// grid. For example, if the Own decomposition is used, the interior entities
+// that would be affected by a periodic boundary operation are provided whereas
+// if the Ghost decomposition is used the halo entities on the boundary are
+// provided.
+template <class MeshType>
+template <class DecompositionTag, class EntityType>
+auto LocalGrid<MeshType>::periodicIndexSpace(
+    DecompositionTag t1, EntityType t2,
+    const std::array<int, num_space_dim>& off_ijk, const int halo_width ) const
+    -> IndexSpace<num_space_dim>
+{
+    auto hw = setupHaloWidth( halo_width );
+    checkOffsets( off_ijk );
+
+    // Check to see if this is a periodic neighbor. If not, return a boundary
+    // space of size 0 because there is no periodic boundary.
+    bool periodic_ijk = true;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+        if ( off_ijk[d] != 0 && !_global_grid->isPeriodic( d ) )
+            periodic_ijk = false;
+
+    if ( !periodic_ijk )
+    {
+        return zeroIndexSpace();
+    }
+
+    // Call the underlying implementation. Periodic index spaces are simply the
+    // subset of shared index spaces that are on periodic boundaries.
+    return sharedIndexSpaceImpl( t1, t2, off_ijk, hw );
+}
+
+template <class MeshType>
+template <class DecompositionTag, class EntityType, std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::periodicIndexSpace( DecompositionTag t1, EntityType t2,
+                                         const int off_i, const int off_j,
+                                         const int off_k,
+                                         const int halo_width ) const
+{
+    std::array<int, 3> off_ijk = { off_i, off_j, off_k };
+    return periodicIndexSpace( t1, t2, off_ijk, halo_width );
+}
+
+template <class MeshType>
+template <class DecompositionTag, class EntityType, std::size_t NSD>
+std::enable_if_t<2 == NSD, IndexSpace<2>>
+LocalGrid<MeshType>::periodicIndexSpace( DecompositionTag t1, EntityType t2,
+                                         const int off_i, const int off_j,
+                                         const int halo_width ) const
+{
+    std::array<int, 2> off_ijk = { off_i, off_j };
+    return periodicIndexSpace( t1, t2, off_ijk, halo_width );
 }
 
 //---------------------------------------------------------------------------//
