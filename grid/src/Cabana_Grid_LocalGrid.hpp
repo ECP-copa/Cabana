@@ -253,6 +253,10 @@ class LocalGrid
 
   private:
     // Helper functions
+    zeroIndexSpace();
+    setupHaloWidthImpl( const int halo_width );
+    checkOffsets( const std::array<int, num_space_dim>& off_ijk );
+
     template <class OwnedIndexSpace>
     auto getBound( OwnedIndexSpace owned_space, const int upper_lower,
                    const std::array<int, num_space_dim>& off_ijk,

@@ -95,6 +95,39 @@ LocalGrid<MeshType>::neighborRank( const int off_i, const int off_j ) const
 //---------------------------------------------------------------------------//
 // Get the index space for a given combination of decomposition, entity, and
 // index types.
+auto LocalGrid<MeshType>::zeroIndexSpace()
+{
+    std::array<long, num_space_dim> zero_size;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+        zero_size[d] = 0;
+    return IndexSpace<num_space_dim>( zero_size, zero_size );
+}
+
+auto LocalGrid<MeshType>::setupHaloWidth( const int halo_width )
+{
+    // If we got the default halo width of -1 this means we want to use the
+    // default of the entire halo.
+    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
+
+    // Check that the requested halo width is valid.
+    if ( hw > _halo_cell_width )
+        throw std::logic_error(
+            "Requested halo width larger than local grid halo" );
+    return hw;
+}
+
+auto LocalGrid<MeshType>::checkOffsets(
+    const std::array<int, num_space_dim>& off_ijk )
+{
+    // Check that the offsets are valid.
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+        if ( off_ijk[d] < -1 || 1 < off_ijk[d] )
+            throw std::logic_error( "Boundary indices out of bounds" );
+}
+
+//---------------------------------------------------------------------------//
+// Get the index space for a given combination of decomposition, entity, and
+// index types.
 template <class MeshType>
 template <class DecompositionTag, class EntityType, class IndexType>
 auto LocalGrid<MeshType>::indexSpace( DecompositionTag t1, EntityType t2,
@@ -118,28 +151,14 @@ auto LocalGrid<MeshType>::sharedIndexSpace(
     const std::array<int, num_space_dim>& off_ijk, const int halo_width ) const
     -> IndexSpace<num_space_dim>
 {
-    // If we got the default halo width of -1 this means we want to use the
-    // default of the entire halo.
-    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
-
-    // Check that the offsets are valid.
-    for ( std::size_t d = 0; d < num_space_dim; ++d )
-        if ( off_ijk[d] < -1 || 1 < off_ijk[d] )
-            throw std::logic_error( "Neighbor indices out of bounds" );
-
-    // Check that the requested halo width is valid.
-    if ( hw > _halo_cell_width )
-        throw std::logic_error(
-            "Requested halo width larger than local grid halo" );
+    auto hw = setupHaloWidth( halo_width );
+    checkOffsets( off_ijk );
 
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
     if ( neighborRank( off_ijk ) < 0 )
     {
-        std::array<long, num_space_dim> zero_size;
-        for ( std::size_t d = 0; d < num_space_dim; ++d )
-            zero_size[d] = 0;
-        return IndexSpace<num_space_dim>( zero_size, zero_size );
+        return zeroIndexSpace();
     }
 
     // Call the underlying implementation.
@@ -183,28 +202,14 @@ auto LocalGrid<MeshType>::boundaryIndexSpace(
     const std::array<int, num_space_dim>& off_ijk, const int halo_width ) const
     -> IndexSpace<num_space_dim>
 {
-    // If we got the default halo width of -1 this means we want to use the
-    // default of the entire halo.
-    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
-
-    // Check that the offsets are valid.
-    for ( std::size_t d = 0; d < num_space_dim; ++d )
-        if ( off_ijk[d] < -1 || 1 < off_ijk[d] )
-            throw std::logic_error( "Boundary indices out of bounds" );
-
-    // Check that the requested halo width is valid.
-    if ( hw > _halo_cell_width )
-        throw std::logic_error(
-            "Requested halo width larger than local grid halo" );
+    auto hw = setupHaloWidth( halo_width );
+    checkOffsets( off_ijk );
 
     // Check to see if this is not a communication neighbor. If it is, return
     // a boundary space of size 0 because there is no boundary.
     if ( neighborRank( off_ijk ) >= 0 )
     {
-        std::array<long, num_space_dim> zero_size;
-        for ( std::size_t d = 0; d < num_space_dim; ++d )
-            zero_size[d] = 0;
-        return IndexSpace<num_space_dim>( zero_size, zero_size );
+        return zeroIndexSpace();
     }
 
     return boundaryIndexSpaceImpl( t1, t2, off_ijk, hw );
