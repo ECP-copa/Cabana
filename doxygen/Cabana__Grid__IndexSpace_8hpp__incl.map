@@ -2,7 +2,7 @@
 <area shape="rect" id="Node000001" title="Logical grid indexing." alt="" coords="376,5,527,54"/>
 <area shape="rect" id="Node000002" href="$Cabana__Utils_8hpp.html" title="Cabana utilities." alt="" coords="107,102,234,132"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="376,56,232,100,231,95,375,51"/>
-<area shape="rect" id="Node000005" title=" " alt="" coords="258,102,387,132"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="258,102,386,132"/>
 <area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="417,57,358,95,355,91,414,52"/>
 <area shape="rect" id="Node000006" title=" " alt="" coords="411,102,492,132"/>
 <area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="454,55,454,86,449,86,449,55"/>
@@ -12,6 +12,6 @@
 <area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="501,52,582,92,580,97,498,57"/>
 <area shape="rect" id="Node000003" title=" " alt="" coords="5,180,181,209"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="158,134,120,171,116,167,154,130"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="205,180,291,209"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="204,180,291,209"/>
 <area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="187,130,224,167,221,171,183,134"/>
 </map>

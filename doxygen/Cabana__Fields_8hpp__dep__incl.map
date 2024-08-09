@@ -12,7 +12,7 @@
 <area shape="rect" id="Node000016" href="$Cabana__ParticleInit_8hpp.html" title="Particle creation utilities." alt="" coords="837,354,1010,403"/>
 <area shape="poly" id="edge28_Node000003_Node000016" title=" " alt="" coords="926,147,926,354,921,354,921,147"/>
 <area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="623,223,602,258,581,316,577,377,577,564,572,605,560,644,534,703,529,701,555,642,567,604,571,563,571,377,576,315,597,256,618,220"/>
-<area shape="rect" id="Node000005" href="$Cabana__Sort_8hpp.html" title="Sorting and binning built on Kokkos BinSort." alt="" coords="329,267,510,297"/>
+<area shape="rect" id="Node000005" href="$Cabana__Sort_8hpp.html" title="Sorting and binning built on Kokkos BinSort." alt="" coords="329,267,510,296"/>
 <area shape="poly" id="edge6_Node000004_Node000005" title=" " alt="" coords="591,218,457,269,455,264,589,213"/>
 <area shape="rect" id="Node000011" href="$Cabana__Grid__ParticleGridDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="612,257,805,306"/>
 <area shape="poly" id="edge21_Node000004_Node000011" title=" " alt="" coords="665,220,692,255,688,258,660,223"/>
@@ -22,7 +22,7 @@
 <area shape="rect" id="Node000009" href="$Cabana__NeighborList_8hpp.html" title="Neighbor list interface." alt="" coords="5,354,191,403"/>
 <area shape="poly" id="edge15_Node000005_Node000009" title=" " alt="" coords="358,304,179,356,178,351,356,299"/>
 <area shape="poly" id="edge9_Node000006_Node000002" title=" " alt="" coords="414,512,518,701,513,704,409,514"/>
-<area shape="rect" id="Node000007" href="$Cabana__Parallel_8hpp.html" title="SIMD and neighbor extension of Kokkos parallel iteration." alt="" coords="104,547,303,577"/>
+<area shape="rect" id="Node000007" href="$Cabana__Parallel_8hpp.html" title="SIMD and neighbor extension of Kokkos parallel iteration." alt="" coords="104,547,302,577"/>
 <area shape="poly" id="edge10_Node000006_Node000007" title=" " alt="" coords="326,508,236,549,234,544,324,504"/>
 <area shape="rect" id="Node000008" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="222,625,435,655"/>
 <area shape="poly" id="edge14_Node000006_Node000008" title=" " alt="" coords="379,515,337,625,332,624,374,513"/>
@@ -33,7 +33,7 @@
 <area shape="poly" id="edge18_Node000009_Node000006" title=" " alt="" coords="187,405,318,448,317,453,185,410"/>
 <area shape="poly" id="edge19_Node000009_Node000007" title=" " alt="" coords="70,417,58,437,50,458,48,479,55,498,68,514,85,526,124,544,121,549,82,531,65,517,50,501,43,479,45,456,53,434,65,414"/>
 <area shape="poly" id="edge20_Node000009_Node000008" title=" " alt="" coords="64,416,52,433,43,452,36,490,43,521,63,549,94,575,124,593,156,607,223,625,221,630,154,612,121,597,91,579,59,552,38,523,31,490,38,450,48,430,60,413"/>
-<area shape="rect" id="Node000010" href="$Cabana__Experimental__NeighborList_8hpp.html" title="ArborX tree&#45;based neighbor lists." alt="" coords="65,451,273,499"/>
+<area shape="rect" id="Node000010" href="$Cabana__Experimental__NeighborList_8hpp.html" title="ArborX tree&#45;based neighbor lists." alt="" coords="64,451,273,499"/>
 <area shape="poly" id="edge17_Node000009_Node000010" title=" " alt="" coords="127,413,153,448,149,452,122,417"/>
 <area shape="rect" id="Node000012" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="611,547,790,577"/>
 <area shape="poly" id="edge22_Node000011_Node000012" title=" " alt="" coords="674,319,662,336,653,355,646,382,646,409,656,464,675,511,694,546,689,548,671,514,651,465,640,409,641,381,647,353,657,334,670,316"/>

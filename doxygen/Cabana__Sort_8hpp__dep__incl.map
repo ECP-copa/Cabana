@@ -7,7 +7,7 @@
 <area shape="rect" id="Node000006" href="$Cabana__NeighborList_8hpp.html" title="Neighbor list interface." alt="" coords="247,83,433,132"/>
 <area shape="poly" id="edge9_Node000001_Node000006" title=" " alt="" coords="186,39,284,80,282,85,184,44"/>
 <area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="133,244,130,276,131,312,138,349,153,382,166,398,182,410,219,429,216,434,179,415,162,402,148,385,133,350,125,313,125,276,127,243"/>
-<area shape="rect" id="Node000004" href="$Cabana__Parallel_8hpp.html" title="SIMD and neighbor extension of Kokkos parallel iteration." alt="" coords="310,276,509,306"/>
+<area shape="rect" id="Node000004" href="$Cabana__Parallel_8hpp.html" title="SIMD and neighbor extension of Kokkos parallel iteration." alt="" coords="310,276,508,306"/>
 <area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="229,231,365,273,363,278,227,236"/>
 <area shape="rect" id="Node000005" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="163,354,376,384"/>
 <area shape="poly" id="edge8_Node000003_Node000005" title=" " alt="" coords="168,239,260,352,256,355,164,242"/>
@@ -18,6 +18,6 @@
 <area shape="poly" id="edge12_Node000006_Node000003" title=" " alt="" coords="277,141,189,182,187,177,274,136"/>
 <area shape="poly" id="edge13_Node000006_Node000004" title=" " alt="" coords="449,123,493,144,513,160,529,178,536,191,538,204,529,230,516,246,500,259,464,278,461,273,497,255,512,242,524,227,533,204,531,193,524,181,509,163,490,149,447,128"/>
 <area shape="poly" id="edge14_Node000006_Node000005" title=" " alt="" coords="315,146,297,181,284,229,276,278,272,353,267,353,271,277,279,228,292,179,310,143"/>
-<area shape="rect" id="Node000007" href="$Cabana__Experimental__NeighborList_8hpp.html" title="ArborX tree&#45;based neighbor lists." alt="" coords="307,180,515,228"/>
+<area shape="rect" id="Node000007" href="$Cabana__Experimental__NeighborList_8hpp.html" title="ArborX tree&#45;based neighbor lists." alt="" coords="306,180,515,228"/>
 <area shape="poly" id="edge11_Node000006_Node000007" title=" " alt="" coords="369,142,395,177,391,181,364,146"/>
 </map>

@@ -1,5 +1,5 @@
 <map id="Cabana::Grid::SparseDimPartitioner&lt; MemorySpace, CellPerTileDim, NumSpaceDim &gt;" name="Cabana::Grid::SparseDimPartitioner&lt; MemorySpace, CellPerTileDim, NumSpaceDim &gt;">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,102,249,170"/>
-<area shape="rect" id="Node000002" href="$classCabana_1_1Grid_1_1BlockPartitioner.html" title="Block partitioner base class." alt="" coords="22,5,232,54"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="130,70,130,102,124,102,124,70"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,83,249,151"/>
+<area shape="rect" id="Node000002" href="$classCabana_1_1Grid_1_1BlockPartitioner.html" title=" " alt="" coords="7,5,247,35"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="130,51,130,82,124,82,124,51"/>
 </map>

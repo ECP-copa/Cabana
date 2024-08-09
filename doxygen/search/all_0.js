@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['_5fa_0',['_a',['../structCabana_1_1Grid_1_1ArrayOp_1_1DotFunctor.html#a368f124bb95a445be1681ebc2cd9f9e1',1,'Cabana::Grid::ArrayOp::DotFunctor']]],
-  ['_5fa_1',['_A',['../classCabana_1_1Grid_1_1HypreSemiStructuredSolver.html#a4afc6f13c0ca38e4eeabdeaa3f13b18e',1,'Cabana::Grid::HypreSemiStructuredSolver::_A'],['../classCabana_1_1Grid_1_1HypreStructuredSolver.html#a22b084d76339e0d9724963d0a7d0ca6e',1,'Cabana::Grid::HypreStructuredSolver::_A']]],
+  ['_5fa_0',['_A',['../classCabana_1_1Grid_1_1HypreSemiStructuredSolver.html#a4afc6f13c0ca38e4eeabdeaa3f13b18e',1,'Cabana::Grid::HypreSemiStructuredSolver::_A'],['../classCabana_1_1Grid_1_1HypreStructuredSolver.html#a22b084d76339e0d9724963d0a7d0ca6e',1,'Cabana::Grid::HypreStructuredSolver::_A']]],
+  ['_5fa_1',['_a',['../structCabana_1_1Grid_1_1ArrayOp_1_1DotFunctor.html#a368f124bb95a445be1681ebc2cd9f9e1',1,'Cabana::Grid::ArrayOp::DotFunctor']]],
   ['_5faosoa_2',['_aosoa',['../classCabana_1_1ParticleList.html#a5accebd2601dd0ba0a089691900708bf',1,'Cabana::ParticleList::_aosoa'],['../classCabana_1_1Grid_1_1ParticleList.html#a5accebd2601dd0ba0a089691900708bf',1,'Cabana::Grid::ParticleList::_aosoa']]],
   ['_5fb_3',['_b',['../structCabana_1_1Grid_1_1ArrayOp_1_1DotFunctor.html#ac6e307e80b3379097a5db408f2bd6958',1,'Cabana::Grid::ArrayOp::DotFunctor::_b'],['../classCabana_1_1Grid_1_1HypreSemiStructuredSolver.html#adbbd6322f20742004b1d3559b338eb76',1,'Cabana::Grid::HypreSemiStructuredSolver::_b'],['../classCabana_1_1Grid_1_1HypreStructuredSolver.html#a26b2037622d52817fc40bc82499ce693',1,'Cabana::Grid::HypreStructuredSolver::_b']]],
   ['_5fcomm_5fdata_4',['_comm_data',['../classCabana_1_1CommunicationData.html#a3abbc9f6fd5aa2a95aa552bbb5cc619f',1,'Cabana::CommunicationData']]],

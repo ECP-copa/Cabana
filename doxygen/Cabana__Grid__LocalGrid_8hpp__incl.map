@@ -26,7 +26,7 @@
 <area shape="poly" id="edge24_Node000002_Node000011" title=" " alt="" coords="907,128,1010,134,1121,146,1219,166,1257,180,1284,197,1299,215,1309,236,1317,279,1312,280,1304,238,1295,218,1281,201,1255,185,1217,171,1120,151,1009,139,906,133"/>
 <area shape="rect" id="Node000014" href="$Cabana__Grid__Partitioner_8hpp.html" title="Multi&#45;node grid partitioner." alt="" coords="604,208,801,238"/>
 <area shape="poly" id="edge16_Node000002_Node000014" title=" " alt="" coords="793,144,731,200,728,196,790,140"/>
-<area shape="rect" id="Node000015" title=" " alt="" coords="707,295,763,325"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="706,295,763,325"/>
 <area shape="poly" id="edge25_Node000002_Node000015" title=" " alt="" coords="707,138,675,146,644,159,617,177,594,200,587,212,585,223,594,246,630,266,693,291,691,296,628,270,590,249,580,223,582,210,590,197,613,173,642,154,674,141,706,133"/>
 <area shape="rect" id="Node000016" href="$Cabana__Grid__GlobalGrid__impl_8hpp_source.html" title=" " alt="" coords="825,199,996,247"/>
 <area shape="poly" id="edge26_Node000002_Node000016" title=" " alt="" coords="824,140,875,186,872,190,820,144"/>
@@ -58,7 +58,7 @@
 <area shape="poly" id="edge31_Node000018_Node000005" title=" " alt="" coords="234,237,266,281,290,304,317,323,363,335,443,345,668,363,918,375,1119,382,1119,387,918,380,668,368,443,351,362,340,315,327,286,309,262,285,230,240"/>
 <area shape="poly" id="edge34_Node000018_Node000008" title=" " alt="" coords="265,236,421,291,419,297,263,241"/>
 <area shape="poly" id="edge33_Node000018_Node000017" title=" " alt="" coords="249,236,334,285,331,290,247,241"/>
-<area shape="rect" id="Node000019" title=" " alt="" coords="43,295,171,325"/>
+<area shape="rect" id="Node000019" title=" " alt="" coords="42,295,171,325"/>
 <area shape="poly" id="edge32_Node000018_Node000019" title=" " alt="" coords="206,240,140,288,137,284,203,236"/>
 <area shape="rect" id="Node000020" title=" " alt="" coords="195,295,253,325"/>
 <area shape="poly" id="edge35_Node000018_Node000020" title=" " alt="" coords="227,238,227,280,221,280,221,238"/>
