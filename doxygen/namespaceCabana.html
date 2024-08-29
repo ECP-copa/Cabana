@@ -355,10 +355,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a1932d2c9be351d64dfcb6e2d22fc68c8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a1932d2c9be351d64dfcb6e2d22fc68c8">deep_copy</a> (DstAoSoA &amp;dst, const SrcAoSoA &amp;src, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; DstAoSoA &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; SrcAoSoA &gt;::value)&gt;::type *=0)</td></tr>
 <tr class="memdesc:a1932d2c9be351d64dfcb6e2d22fc68c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deep copy data between compatible <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> objects.  <br /></td></tr>
 <tr class="separator:a1932d2c9be351d64dfcb6e2d22fc68c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a282d00b9649753ef39fef91b8c73141c" id="r_a282d00b9649753ef39fef91b8c73141c"><td class="memTemplParams" colspan="2">template&lt;class DstMemorySpace , class SrcMemorySpace , int VectorLength, class... FieldTags&gt; </td></tr>
-<tr class="memitem:a282d00b9649753ef39fef91b8c73141c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a282d00b9649753ef39fef91b8c73141c">deep_copy</a> (<a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; DstMemorySpace, VectorLength, FieldTags... &gt; &amp;dst, const <a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; SrcMemorySpace, VectorLength, FieldTags... &gt; &amp;src)</td></tr>
-<tr class="memdesc:a282d00b9649753ef39fef91b8c73141c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deep copy data between compatible <a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> objects.  <br /></td></tr>
-<tr class="separator:a282d00b9649753ef39fef91b8c73141c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae797717188eda2dbe524f73fd791f8c1" id="r_ae797717188eda2dbe524f73fd791f8c1"><td class="memTemplParams" colspan="2">template&lt;class DstMemorySpace , class SrcMemorySpace , int DstVectorLength, int SrcVectorLength, class... FieldTags&gt; </td></tr>
+<tr class="memitem:ae797717188eda2dbe524f73fd791f8c1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae797717188eda2dbe524f73fd791f8c1">deep_copy</a> (<a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; DstMemorySpace, DstVectorLength, FieldTags... &gt; &amp;dst, const <a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; SrcMemorySpace, SrcVectorLength, FieldTags... &gt; &amp;src)</td></tr>
+<tr class="memdesc:ae797717188eda2dbe524f73fd791f8c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deep copy data between compatible <a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> objects.  <br /></td></tr>
+<tr class="separator:ae797717188eda2dbe524f73fd791f8c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f82fe027dec446d5ff114b36e2a30be" id="r_a0f82fe027dec446d5ff114b36e2a30be"><td class="memTemplParams" colspan="2">template&lt;class AoSoA_t &gt; </td></tr>
 <tr class="memitem:a0f82fe027dec446d5ff114b36e2a30be"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a0f82fe027dec446d5ff114b36e2a30be">deep_copy</a> (AoSoA_t &amp;aosoa, const typename AoSoA_t::tuple_type &amp;tuple)</td></tr>
 <tr class="memdesc:a0f82fe027dec446d5ff114b36e2a30be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fill an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> with a tuple.  <br /></td></tr>
@@ -2300,13 +2300,13 @@ template&lt;class DstSlice , class SrcSlice &gt; </div>
 
 </div>
 </div>
-<a id="a282d00b9649753ef39fef91b8c73141c" name="a282d00b9649753ef39fef91b8c73141c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a282d00b9649753ef39fef91b8c73141c">&#9670;&#160;</a></span>deep_copy() <span class="overload">[4/5]</span></h2>
+<a id="ae797717188eda2dbe524f73fd791f8c1" name="ae797717188eda2dbe524f73fd791f8c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae797717188eda2dbe524f73fd791f8c1">&#9670;&#160;</a></span>deep_copy() <span class="overload">[4/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DstMemorySpace , class SrcMemorySpace , int VectorLength, class... FieldTags&gt; </div>
+template&lt;class DstMemorySpace , class SrcMemorySpace , int DstVectorLength, int SrcVectorLength, class... FieldTags&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -2314,12 +2314,12 @@ template&lt;class DstMemorySpace , class SrcMemorySpace , int VectorLength, clas
         <tr>
           <td class="memname">void Cabana::deep_copy </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; DstMemorySpace, VectorLength, FieldTags... &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>dst</em></span>, </td>
+          <td class="paramtype"><a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; DstMemorySpace, DstVectorLength, FieldTags... &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>dst</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; SrcMemorySpace, VectorLength, FieldTags... &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>src</em></span>&#160;)</td>
+          <td class="paramtype">const <a class="el" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt; SrcMemorySpace, SrcVectorLength, FieldTags... &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>src</em></span>&#160;)</td>
         </tr>
       </table>
   </td>

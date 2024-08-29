@@ -285,12 +285,12 @@ $(function(){ initResizable(false); });
 </div>
 <div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span> </div>
 <div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>DstMemorySpace, <span class="keyword">class </span>SrcMemorySpace, <span class="keywordtype">int</span> VectorLength,</div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>          <span class="keyword">class</span>... FieldTags&gt;</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span><span class="keyword">inline</span> <span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00245" data-start="{" data-end="}">
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a282d00b9649753ef39fef91b8c73141c">  245</a></span><a class="code hl_function" href="namespaceCabana.html#a1932d2c9be351d64dfcb6e2d22fc68c8">deep_copy</a>( <a class="code hl_class" href="classCabana_1_1ParticleList.html">ParticleList&lt;DstMemorySpace, VectorLength, FieldTags...&gt;</a>&amp; dst,</div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>           <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1ParticleList.html">ParticleList&lt;SrcMemorySpace, VectorLength, FieldTags...&gt;</a>&amp; src )</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>DstMemorySpace, <span class="keyword">class </span>SrcMemorySpace, <span class="keywordtype">int</span> DstVectorLength,</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>          <span class="keywordtype">int</span> SrcVectorLength, <span class="keyword">class</span>... FieldTags&gt;</div>
+<div class="foldopen" id="foldopen00244" data-start="{" data-end="}">
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno"><a class="line" href="namespaceCabana.html#ae797717188eda2dbe524f73fd791f8c1">  244</a></span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespaceCabana.html#a1932d2c9be351d64dfcb6e2d22fc68c8">deep_copy</a>(</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>    <a class="code hl_class" href="classCabana_1_1ParticleList.html">ParticleList&lt;DstMemorySpace, DstVectorLength, FieldTags...&gt;</a>&amp; dst,</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>    <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1ParticleList.html">ParticleList&lt;SrcMemorySpace, SrcVectorLength, FieldTags...&gt;</a>&amp; src )</div>
 <div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>{</div>
 <div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>    <span class="comment">// Copy particle data to new memory space.</span></div>
 <div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>    <span class="keyword">auto</span> aosoa_src = src.<a class="code hl_function" href="classCabana_1_1ParticleList.html#a763a62e6b0a4d5b6b7202b255a7e4d37">aosoa</a>();</div>
