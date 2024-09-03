@@ -84,7 +84,10 @@ class ParticleList
 
     /*!
       \brief Redistribute particles to new owning grids with explicit field.
-      \tparam PositionFieldTag Field tag for position data.
+      \param local_grid The local grid containing system bounds.
+      \param force_redistribute Whether to migrate particles within the halo
+      region immediately.
+       \note PositionFieldTag Field tag for position data.
       \return Whether the particles were actually redistributed.
     */
     template <class PositionFieldTag, class LocalGridType>
@@ -93,6 +96,26 @@ class ParticleList
     {
         return particleGridMigrate(
             local_grid, this->slice( PositionFieldTag() ), _aosoa,
+            local_grid.haloCellWidth(), force_redistribute );
+    }
+
+    /*!
+       \brief Redistribute particles to new owning grids with explicit field.
+       \param local_grid The local grid containing system bounds.
+       \param comm_space Memory space in which to create the Distributor and
+       communicate data.
+       \param force_redistribute Whether to migrate particles within the halo
+       region immediately.
+       \note PositionFieldTag Field tag for position data.
+       \return Whether the particles were actually redistributed.
+     */
+    template <class PositionFieldTag, class LocalGridType, class CommSpace>
+    bool redistribute( const LocalGridType& local_grid, PositionFieldTag,
+                       CommSpace comm_space,
+                       const bool force_redistribute = false )
+    {
+        return particleGridMigrate(
+            local_grid, this->slice( PositionFieldTag() ), _aosoa, comm_space,
             local_grid.haloCellWidth(), force_redistribute );
     }
 
