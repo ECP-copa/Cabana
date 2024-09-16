@@ -185,8 +185,8 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>            <span class="comment">// this to KJI from IJK to be consistent with HYPRE ordering. By</span></div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>            <span class="comment">// setting up the grid like this, HYPRE will then want layout-right</span></div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>            <span class="comment">// data indexed as (i,j,k) or (i,j,k,l) which will allow us to</span></div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>            <span class="comment">// directly use Kokkos::deep_copy to move data between Cajita arrays</span></div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>            <span class="comment">// and HYPRE data structures.</span></div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>            <span class="comment">// directly use Kokkos::deep_copy to move data between arrays and</span></div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>            <span class="comment">// HYPRE data structures.</span></div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>            <span class="keyword">auto</span> global_space = layout.indexSpace( <a class="code hl_struct" href="structCabana_1_1Grid_1_1Own.html">Own</a>(), <a class="code hl_struct" href="structCabana_1_1Grid_1_1Global.html">Global</a>() );</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>            _lower.resize( num_space_dim );</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>            _upper.resize( num_space_dim );</div>

@@ -1,5 +1,5 @@
 <map id="Cabana::Grid::ParticleList&lt; MemorySpace, VectorLength, FieldTags &gt;" name="Cabana::Grid::ParticleList&lt; MemorySpace, VectorLength, FieldTags &gt;">
-<area shape="rect" id="Node000001" title="List of particle fields stored in AoSoA with associated Cajita mesh." alt="" coords="5,121,223,189"/>
+<area shape="rect" id="Node000001" title="List of particle fields stored in AoSoA with associated mesh." alt="" coords="5,121,223,189"/>
 <area shape="rect" id="Node000002" href="$classCabana_1_1ParticleList.html" title=" " alt="" coords="5,5,223,73"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="117,88,117,120,111,120,111,88"/>
 </map>
