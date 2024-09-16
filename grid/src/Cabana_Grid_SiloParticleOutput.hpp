@@ -42,7 +42,7 @@ namespace SiloParticleOutput
 /*!
   \brief Write particle output in Silo format using mesh information.
   \param prefix Filename prefix.
-  \param global_grid Cajita global grid.
+  \param global_grid Global grid.
   \param time_step_index Current simulation step index.
   \param time Current simulation time.
   \param begin The first particle index to output.
@@ -75,7 +75,7 @@ void writePartialRangeTimeStep( const std::string& prefix,
 /*!
   \brief Write output in Silo format for all particles using mesh information.
   \param prefix Filename prefix.
-  \param global_grid Cajita global grid.
+  \param global_grid Global grid.
   \param time_step_index Current simulation step index.
   \param time Current simulation time.
   \param coords Particle coordinates.

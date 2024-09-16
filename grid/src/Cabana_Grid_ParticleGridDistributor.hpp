@@ -163,7 +163,7 @@ void getMigrateDestinations( const LocalGridType& local_grid,
 /*!
   \brief Check for the number of particles that must be communicated
 
-  \tparam LocalGridType Cajita LocalGrid type.
+  \tparam LocalGridType LocalGrid type.
   \tparam PositionSliceType Particle position type.
 
   \param local_grid The local grid containing periodicity and system bound
@@ -225,10 +225,10 @@ int migrateCount( const LocalGridType& local_grid,
 //---------------------------------------------------------------------------//
 /*!
   \brief Determine which data should be migrated from one uniquely-owned
-  decomposition to another uniquely-owned decomposition, using bounds of a
-  Cajita grid and taking periodic boundaries into account.
+  decomposition to another uniquely-owned decomposition, using bounds of the
+  grid and taking periodic boundaries into account.
 
-  \tparam LocalGridType Cajita LocalGrid type.
+  \tparam LocalGridType LocalGrid type.
   \tparam PositionSliceType Position type.
 
   \param local_grid The local grid containing periodicity and system bound
@@ -269,10 +269,10 @@ createParticleGridDistributor( const LocalGridType& local_grid,
 //---------------------------------------------------------------------------//
 /*!
   \brief Migrate data from one uniquely-owned decomposition to another
-  uniquely-owned decomposition, using the bounds and periodic boundaries of a
-  Cajita grid to determine which particles should be moved. In-place variant.
+  uniquely-owned decomposition, using the bounds and periodic boundaries of the
+  grid to determine which particles should be moved. In-place variant.
 
-  \tparam LocalGridType Cajita LocalGrid type.
+  \tparam LocalGridType LocalGrid type.
   \tparam ParticlePositions Particle position type.
   \tparam PositionContainer AoSoA type.
 
@@ -316,11 +316,11 @@ bool particleGridMigrate( const LocalGridType& local_grid,
 //---------------------------------------------------------------------------//
 /*!
   \brief Migrate data from one uniquely-owned decomposition to another
-  uniquely-owned decomposition, using the bounds and periodic boundaries of a
-  Cajita grid to determine which particles should be moved. Separate AoSoA
+  uniquely-owned decomposition, using the bounds and periodic boundaries of the
+  grid to determine which particles should be moved. Separate AoSoA
   variant.
 
-  \tparam LocalGridType Cajita LocalGrid type.
+  \tparam LocalGridType LocalGrid type.
   \tparam ParticlePositions Particle position type.
   \tparam ParticleContainer AoSoA type.
 
