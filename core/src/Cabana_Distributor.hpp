@@ -182,6 +182,9 @@ void distributeData(
     static_assert( is_accessible_from<typename Distributor_t::memory_space,
                                       ExecutionSpace>{},
                    "" );
+    static_assert( is_accessible_from<typename Distributor_t::memory_space,
+                                      typename AoSoA_t::memory_space>{},
+                   "" );
 
     // Get the MPI rank we are currently on.
     int my_rank = -1;
@@ -345,8 +348,18 @@ void migrate( ExecutionSpace exec_space, const Distributor_t& distributor,
         throw std::runtime_error(
             "Destination is the wrong size for migration!" );
 
+    // Enable cases where the communication happens in a different space than
+    // the particle data, e.g. device data communicated on the host.
+    using comm_space = typename Distributor_t::memory_space;
+    auto src_copy = Cabana::create_mirror_view_and_copy( comm_space{}, src );
+    auto dst_copy = Cabana::create_mirror_view_and_copy( comm_space{}, dst );
+
     // Move the data.
-    Impl::distributeData( exec_space, distributor, src, dst );
+    Impl::distributeData( exec_space, distributor, src_copy, dst_copy );
+
+    // Copy back, if needed.
+    using dst_space = typename AoSoA_t::memory_space;
+    dst = Cabana::create_mirror_view_and_copy( dst_space{}, dst_copy );
 }
 
 /*!
@@ -421,13 +434,23 @@ void migrate( ExecutionSpace exec_space, const Distributor_t& distributor,
     if ( dst_is_bigger )
         aosoa.resize( distributor.totalNumImport() );
 
+    // Enable cases where the communication happens in a different space than
+    // the particle data, e.g. device data communicated on the host.
+    using comm_space = typename Distributor_t::memory_space;
+    auto aosoa_copy =
+        Cabana::create_mirror_view_and_copy( comm_space{}, aosoa );
+
     // Move the data.
-    Impl::distributeData( exec_space, distributor, aosoa, aosoa );
+    Impl::distributeData( exec_space, distributor, aosoa_copy, aosoa_copy );
 
     // If the destination decomposition is smaller than the source
     // decomposition resize after we have moved the data.
     if ( !dst_is_bigger )
-        aosoa.resize( distributor.totalNumImport() );
+        aosoa_copy.resize( distributor.totalNumImport() );
+
+    // Copy back, if needed.
+    using aosoa_space = typename AoSoA_t::memory_space;
+    aosoa = Cabana::create_mirror_view_and_copy( aosoa_space{}, aosoa_copy );
 }
 
 /*!

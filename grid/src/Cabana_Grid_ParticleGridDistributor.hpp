@@ -234,13 +234,15 @@ int migrateCount( const LocalGridType& local_grid,
   \param local_grid The local grid containing periodicity and system bound
   information.
   \param positions The particle positions.
+  \note CommMemorySpace Memory space which may not be accessible from the
+  particle memory space with automatic copies within the Distributor.
 
   \return Distributor for later migration.
 */
-template <class LocalGridType, class PositionSliceType>
-Cabana::Distributor<typename PositionSliceType::memory_space>
-createParticleGridDistributor( const LocalGridType& local_grid,
-                               PositionSliceType& positions )
+template <class LocalGridType, class PositionSliceType, class CommMemorySpace>
+auto createParticleGridDistributor( const LocalGridType& local_grid,
+                                    PositionSliceType& positions,
+                                    CommMemorySpace )
 {
     using memory_space = typename PositionSliceType::memory_space;
 
@@ -261,9 +263,86 @@ createParticleGridDistributor( const LocalGridType& local_grid,
                                   positions );
 
     // Create the Cabana distributor.
-    Cabana::Distributor<memory_space> distributor(
-        local_grid.globalGrid().comm(), destinations, topology );
+    // Copy the destinations in case the space is not accessible.
+    auto destinations_copy =
+        Kokkos::create_mirror_view_and_copy( CommMemorySpace{}, destinations );
+    Cabana::Distributor<CommMemorySpace> distributor(
+        local_grid.globalGrid().comm(), destinations_copy, topology );
     return distributor;
+}
+
+/*!
+  \brief Determine which data should be migrated from one uniquely-owned
+  decomposition to another uniquely-owned decomposition, using bounds of the
+  grid and taking periodic boundaries into account.
+
+  \tparam LocalGridType LocalGrid type.
+  \tparam PositionSliceType Position type.
+
+  \param local_grid The local grid containing periodicity and system bound
+  information.
+  \param positions The particle positions.
+
+  \return Distributor for later migration.
+*/
+template <class LocalGridType, class PositionSliceType>
+auto createParticleGridDistributor( const LocalGridType& local_grid,
+                                    PositionSliceType& positions )
+{
+    using particle_space = typename PositionSliceType::memory_space;
+    return createParticleGridDistributor( local_grid, positions,
+                                          particle_space{} );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Migrate data from one uniquely-owned decomposition to another
+  uniquely-owned decomposition, using the bounds and periodic boundaries of the
+  grid to determine which particles should be moved. In-place variant.
+
+  \tparam LocalGridType LocalGrid type.
+  \tparam ParticlePositions Particle position type.
+  \tparam PositionContainer AoSoA type.
+
+  \param local_grid The local grid containing periodicity and system bounds.
+  \param positions Particle positions.
+  \param particles The particle AoSoA.
+  \param comm_space Memory space in which to create the Distributor and
+  communicate data.
+  \param min_halo_width Number of halo mesh widths to allow particles before
+  migrating.
+  \param force_migrate Migrate particles outside the local domain regardless of
+  ghosted halo.
+  \return Whether any particle migration occurred.
+*/
+template <class LocalGridType, class ParticlePositions, class ParticleContainer,
+          class CommSpace>
+bool particleGridMigrate( const LocalGridType& local_grid,
+                          const ParticlePositions& positions,
+                          ParticleContainer& particles, CommSpace comm_space,
+                          const int min_halo_width,
+                          const bool force_migrate = false )
+{
+    // When false, this option checks that any particles are nearly outside the
+    // ghosted halo region (outside the min_halo_width) before initiating
+    // migration. Otherwise, anything outside the local domain is migrated
+    // regardless of position in the halo.
+    if ( !force_migrate )
+    {
+        // Check to see if we need to communicate.
+        auto comm_count = migrateCount( local_grid, positions, min_halo_width );
+
+        // If we have no particles near the ghosted boundary, then exit.
+        if ( 0 == comm_count )
+            return false;
+    }
+
+    auto distributor =
+        createParticleGridDistributor( local_grid, positions, comm_space );
+
+    // Redistribute the particles.
+    migrate( distributor, particles );
+    return true;
 }
 
 //---------------------------------------------------------------------------//
@@ -292,25 +371,9 @@ bool particleGridMigrate( const LocalGridType& local_grid,
                           const int min_halo_width,
                           const bool force_migrate = false )
 {
-    // When false, this option checks that any particles are nearly outside the
-    // ghosted halo region (outside the min_halo_width) before initiating
-    // migration. Otherwise, anything outside the local domain is migrated
-    // regardless of position in the halo.
-    if ( !force_migrate )
-    {
-        // Check to see if we need to communicate.
-        auto comm_count = migrateCount( local_grid, positions, min_halo_width );
-
-        // If we have no particles near the ghosted boundary, then exit.
-        if ( 0 == comm_count )
-            return false;
-    }
-
-    auto distributor = createParticleGridDistributor( local_grid, positions );
-
-    // Redistribute the particles.
-    migrate( distributor, particles );
-    return true;
+    using memory_space = typename ParticlePositions::memory_space;
+    return particleGridMigrate( local_grid, positions, particles,
+                                memory_space{}, min_halo_width, force_migrate );
 }
 
 //---------------------------------------------------------------------------//
