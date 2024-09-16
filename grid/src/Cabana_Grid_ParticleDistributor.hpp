@@ -10,7 +10,7 @@
  ****************************************************************************/
 
 /*!
-  \file Cabana_Grid_ParticleGridDistributor.hpp
+  \file Cabana_Grid_ParticleDistributor.hpp
   \brief Multi-node particle redistribution using the grid halo.
 */
 #ifndef CABANA_PARTICLEGRIDDISTRIBUTOR_HPP
@@ -239,8 +239,8 @@ int migrateCount( const LocalGridType& local_grid,
 */
 template <class LocalGridType, class PositionSliceType>
 Cabana::Distributor<typename PositionSliceType::memory_space>
-createParticleGridDistributor( const LocalGridType& local_grid,
-                               PositionSliceType& positions )
+createParticleDistributor( const LocalGridType& local_grid,
+                           PositionSliceType& positions )
 {
     using memory_space = typename PositionSliceType::memory_space;
 
@@ -286,11 +286,10 @@ createParticleGridDistributor( const LocalGridType& local_grid,
   \return Whether any particle migration occurred.
 */
 template <class LocalGridType, class ParticlePositions, class ParticleContainer>
-bool particleGridMigrate( const LocalGridType& local_grid,
-                          const ParticlePositions& positions,
-                          ParticleContainer& particles,
-                          const int min_halo_width,
-                          const bool force_migrate = false )
+bool particleMigrate( const LocalGridType& local_grid,
+                      const ParticlePositions& positions,
+                      ParticleContainer& particles, const int min_halo_width,
+                      const bool force_migrate = false )
 {
     // When false, this option checks that any particles are nearly outside the
     // ghosted halo region (outside the min_halo_width) before initiating
@@ -306,7 +305,7 @@ bool particleGridMigrate( const LocalGridType& local_grid,
             return false;
     }
 
-    auto distributor = createParticleGridDistributor( local_grid, positions );
+    auto distributor = createParticleDistributor( local_grid, positions );
 
     // Redistribute the particles.
     migrate( distributor, particles );
@@ -335,12 +334,12 @@ bool particleGridMigrate( const LocalGridType& local_grid,
   \return Whether any particle migration occurred.
 */
 template <class LocalGridType, class ParticlePositions, class ParticleContainer>
-bool particleGridMigrate( const LocalGridType& local_grid,
-                          const ParticlePositions& positions,
-                          const ParticleContainer& src_particles,
-                          ParticleContainer& dst_particles,
-                          const int min_halo_width,
-                          const bool force_migrate = false )
+bool particleMigrate( const LocalGridType& local_grid,
+                      const ParticlePositions& positions,
+                      const ParticleContainer& src_particles,
+                      ParticleContainer& dst_particles,
+                      const int min_halo_width,
+                      const bool force_migrate = false )
 {
     // When false, this option checks that any particles are nearly outside the
     // ghosted halo region (outside the  min_halo_width) before initiating
@@ -359,7 +358,7 @@ bool particleGridMigrate( const LocalGridType& local_grid,
         }
     }
 
-    auto distributor = createParticleGridDistributor( local_grid, positions );
+    auto distributor = createParticleDistributor( local_grid, positions );
 
     // Resize as needed.
     dst_particles.resize( distributor.totalNumImport() );
@@ -368,6 +367,28 @@ bool particleGridMigrate( const LocalGridType& local_grid,
     migrate( distributor, src_particles, dst_particles );
     return true;
 }
+
+//! \cond Deprecated
+template <class... Args>
+[[deprecated( "Cabana::Grid::particleGridMigrate is now "
+              "Cabana::Grid::particleMigrate. This function wrapper will be "
+              "removed in a future release." )]] void
+particleGridMigrate( Args&&... args )
+{
+    return Cabana::Grid::particleMigrate( std::forward<Args>( args )... );
+}
+
+template <class... Args>
+[[deprecated(
+    "Cabana::Grid::createParticleGridDistributor is now "
+    "Cabana::Grid::createParticleDistributor. This function wrapper will be "
+    "removed in a future release." )]] void
+createParticleGridDistributor( Args&&... args )
+{
+    return Cabana::Grid::createParticleDistributor(
+        std::forward<Args>( args )... );
+}
+//! \endcond
 
 } // namespace Grid
 } // namespace Cabana

@@ -29,7 +29,7 @@ set(HEADERS_PUBLIC
   Cabana_Grid_LocalMesh.hpp
   Cabana_Grid_MpiTraits.hpp
   Cabana_Grid_Parallel.hpp
-  Cabana_Grid_ParticleGridDistributor.hpp
+  Cabana_Grid_ParticleDistributor.hpp
   Cabana_Grid_ParticleInit.hpp
   Cabana_Grid_ParticleList.hpp
   Cabana_Grid_Partitioner.hpp
