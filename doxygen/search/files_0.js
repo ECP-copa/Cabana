@@ -25,7 +25,7 @@ var searchData=
   ['cabana_5fgrid_5flocalmesh_2ehpp_22',['Cabana_Grid_LocalMesh.hpp',['../Cabana__Grid__LocalMesh_8hpp.html',1,'']]],
   ['cabana_5fgrid_5fmpitraits_2ehpp_23',['Cabana_Grid_MpiTraits.hpp',['../Cabana__Grid__MpiTraits_8hpp.html',1,'']]],
   ['cabana_5fgrid_5fparallel_2ehpp_24',['Cabana_Grid_Parallel.hpp',['../Cabana__Grid__Parallel_8hpp.html',1,'']]],
-  ['cabana_5fgrid_5fparticlegriddistributor_2ehpp_25',['Cabana_Grid_ParticleGridDistributor.hpp',['../Cabana__Grid__ParticleGridDistributor_8hpp.html',1,'']]],
+  ['cabana_5fgrid_5fparticledistributor_2ehpp_25',['Cabana_Grid_ParticleDistributor.hpp',['../Cabana__Grid__ParticleDistributor_8hpp.html',1,'']]],
   ['cabana_5fgrid_5fparticleinit_2ehpp_26',['Cabana_Grid_ParticleInit.hpp',['../Cabana__Grid__ParticleInit_8hpp.html',1,'']]],
   ['cabana_5fgrid_5fparticlelist_2ehpp_27',['Cabana_Grid_ParticleList.hpp',['../Cabana__Grid__ParticleList_8hpp.html',1,'']]],
   ['cabana_5fgrid_5fpartitioner_2ehpp_28',['Cabana_Grid_Partitioner.hpp',['../Cabana__Grid__Partitioner_8hpp.html',1,'']]],
