@@ -107,8 +107,8 @@ class HypreSemiStructuredSolver
             // this to KJI from IJK to be consistent with HYPRE ordering. By
             // setting up the grid like this, HYPRE will then want layout-right
             // data indexed as (i,j,k) or (i,j,k,l) which will allow us to
-            // directly use Kokkos::deep_copy to move data between Cajita arrays
-            // and HYPRE data structures.
+            // directly use Kokkos::deep_copy to move data between arrays and
+            // HYPRE data structures.
             auto global_space = layout.indexSpace( Own(), Global() );
             _lower.resize( num_space_dim );
             _upper.resize( num_space_dim );

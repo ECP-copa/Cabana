@@ -35,7 +35,7 @@ namespace Grid
 {
 
 //---------------------------------------------------------------------------//
-//! List of particle fields stored in AoSoA with associated Cajita mesh.
+//! List of particle fields stored in AoSoA with associated mesh.
 template <class MemorySpace, int VectorLength, class... FieldTags>
 class ParticleList
     : public Cabana::ParticleList<MemorySpace, VectorLength, FieldTags...>
