@@ -17,7 +17,7 @@
 #include <Cabana_Grid_GlobalMesh.hpp>
 #include <Cabana_Grid_LocalGrid.hpp>
 #include <Cabana_Grid_LocalMesh.hpp>
-#include <Cabana_Grid_ParticleGridDistributor.hpp>
+#include <Cabana_Grid_ParticleDistributor.hpp>
 #include <Cabana_Grid_Partitioner.hpp>
 #include <Cabana_Grid_Types.hpp>
 
@@ -52,7 +52,7 @@ void migrateTest( const GridType global_grid, const double cell_size,
     auto ghosted_cell_space = block->indexSpace(
         Cabana::Grid::Ghost(), Cabana::Grid::Cell(), Cabana::Grid::Local() );
     int num_particle = ghosted_cell_space.size();
-    using MemberTypes = Cabana::MemberTypes<double[2], int>;
+    using MemberTypes = Cabana::MemberTypes<double[3], int>;
     using ParticleContainer = Cabana::AoSoA<MemberTypes, Kokkos::HostSpace>;
     ParticleContainer particles( "particles", num_particle );
     auto coords = Cabana::slice<0>( particles, "coords" );
@@ -62,38 +62,46 @@ void migrateTest( const GridType global_grid, const double cell_size,
     // have them. Their ids should be equivalent to that of the rank they are
     // going to.
     int pid = 0;
-    for ( int nj = -1; nj < 2; ++nj )
-        for ( int ni = -1; ni < 2; ++ni )
-        {
-            auto neighbor_rank = block->neighborRank( ni, nj );
-            if ( neighbor_rank >= 0 )
+    for ( int nk = -1; nk < 2; ++nk )
+        for ( int nj = -1; nj < 2; ++nj )
+            for ( int ni = -1; ni < 2; ++ni )
             {
-                auto shared_space = block->sharedIndexSpace(
-                    Cabana::Grid::Ghost(), Cabana::Grid::Cell(), ni, nj );
-                for ( int j = shared_space.min( Dim::J );
-                      j < shared_space.max( Dim::J ); ++j )
-                    for ( int i = shared_space.min( Dim::I );
-                          i < shared_space.max( Dim::I ); ++i )
-                    {
-                        // Set the coordinates at the cell center.
-                        coords( pid, Dim::I ) =
-                            local_mesh.lowCorner( Cabana::Grid::Ghost(),
-                                                  Dim::I ) +
-                            ( i + 0.5 ) * cell_size;
-                        coords( pid, Dim::J ) =
-                            local_mesh.lowCorner( Cabana::Grid::Ghost(),
-                                                  Dim::J ) +
-                            ( j + 0.5 ) * cell_size;
+                auto neighbor_rank = block->neighborRank( ni, nj, nk );
+                if ( neighbor_rank >= 0 )
+                {
+                    auto shared_space = block->sharedIndexSpace(
+                        Cabana::Grid::Ghost(), Cabana::Grid::Cell(), ni, nj,
+                        nk );
+                    for ( int k = shared_space.min( Dim::K );
+                          k < shared_space.max( Dim::K ); ++k )
+                        for ( int j = shared_space.min( Dim::J );
+                              j < shared_space.max( Dim::J ); ++j )
+                            for ( int i = shared_space.min( Dim::I );
+                                  i < shared_space.max( Dim::I ); ++i )
+                            {
+                                // Set the coordinates at the cell center.
+                                coords( pid, Dim::I ) =
+                                    local_mesh.lowCorner( Cabana::Grid::Ghost(),
+                                                          Dim::I ) +
+                                    ( i + 0.5 ) * cell_size;
+                                coords( pid, Dim::J ) =
+                                    local_mesh.lowCorner( Cabana::Grid::Ghost(),
+                                                          Dim::J ) +
+                                    ( j + 0.5 ) * cell_size;
+                                coords( pid, Dim::K ) =
+                                    local_mesh.lowCorner( Cabana::Grid::Ghost(),
+                                                          Dim::K ) +
+                                    ( k + 0.5 ) * cell_size;
 
-                        // Set the linear ids as the linear rank of
-                        // the neighbor.
-                        linear_ids( pid ) = neighbor_rank;
+                                // Set the linear ids as the linear rank of
+                                // the neighbor.
+                                linear_ids( pid ) = neighbor_rank;
 
-                        // Increment the particle count.
-                        ++pid;
-                    }
+                                // Increment the particle count.
+                                ++pid;
+                            }
+                }
             }
-        }
     num_particle = pid;
     particles.resize( num_particle );
 
@@ -109,9 +117,8 @@ void migrateTest( const GridType global_grid, const double cell_size,
     // Redistribute the particle AoSoA in place.
     if ( test_type == 0 )
     {
-        Cabana::Grid::particleGridMigrate( *block, coords_mirror,
-                                           particles_mirror, test_halo_size,
-                                           force_comm );
+        Cabana::Grid::particleMigrate( *block, coords_mirror, particles_mirror,
+                                       test_halo_size, force_comm );
 
         // Copy back to check.
         particles = Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(),
@@ -122,9 +129,9 @@ void migrateTest( const GridType global_grid, const double cell_size,
     {
         auto particles_dst =
             Cabana::create_mirror_view( TEST_MEMSPACE(), particles_mirror );
-        Cabana::Grid::particleGridMigrate( *block, coords_mirror,
-                                           particles_mirror, particles_dst,
-                                           test_halo_size, force_comm );
+        Cabana::Grid::particleMigrate( *block, coords_mirror, particles_mirror,
+                                       particles_dst, test_halo_size,
+                                       force_comm );
         // Copy back to check.
         particles = Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(),
                                                          particles_dst );
@@ -137,12 +144,14 @@ void migrateTest( const GridType global_grid, const double cell_size,
     EXPECT_EQ( coords.size(), num_particle );
     EXPECT_EQ( linear_ids.size(), num_particle );
 
-    std::array<double, 2> local_low = {
+    std::array<double, 3> local_low = {
         local_mesh.lowCorner( Cabana::Grid::Own(), Dim::I ),
-        local_mesh.lowCorner( Cabana::Grid::Own(), Dim::J ) };
-    std::array<double, 2> local_high = {
+        local_mesh.lowCorner( Cabana::Grid::Own(), Dim::J ),
+        local_mesh.lowCorner( Cabana::Grid::Own(), Dim::K ) };
+    std::array<double, 3> local_high = {
         local_mesh.highCorner( Cabana::Grid::Own(), Dim::I ),
-        local_mesh.highCorner( Cabana::Grid::Own(), Dim::J ) };
+        local_mesh.highCorner( Cabana::Grid::Own(), Dim::J ),
+        local_mesh.highCorner( Cabana::Grid::Own(), Dim::K ) };
 
     for ( int p = 0; p < num_particle; ++p )
     {
@@ -155,7 +164,7 @@ void migrateTest( const GridType global_grid, const double cell_size,
             EXPECT_EQ( linear_ids( p ), global_grid->blockId() );
 
             // Check that all of the particles are now in the local domain.
-            for ( int d = 0; d < 2; ++d )
+            for ( int d = 0; d < 3; ++d )
             {
                 EXPECT_GE( coords( p, d ), local_low[d] );
                 EXPECT_LE( coords( p, d ), local_high[d] );
@@ -164,11 +173,11 @@ void migrateTest( const GridType global_grid, const double cell_size,
         else
         {
             // If nothing was outside the halo, nothing should have moved.
-            for ( int d = 0; d < 2; ++d )
+            for ( int d = 0; d < 3; ++d )
                 EXPECT_DOUBLE_EQ( coords( p, d ), coords_initial( p, d ) );
         }
     }
-}
+} // namespace Test
 
 //---------------------------------------------------------------------------//
 // The objective of this test is to check how the redistribution works when we
@@ -188,7 +197,7 @@ void localOnlyTest( const GridType global_grid, const double cell_size )
     auto owned_cell_space = block->indexSpace(
         Cabana::Grid::Own(), Cabana::Grid::Cell(), Cabana::Grid::Local() );
     int num_particle = owned_cell_space.size();
-    using MemberTypes = Cabana::MemberTypes<double[2], int>;
+    using MemberTypes = Cabana::MemberTypes<double[3], int>;
     using ParticleContainer = Cabana::AoSoA<MemberTypes, Kokkos::HostSpace>;
     ParticleContainer particles( "particles", num_particle );
     auto coords = Cabana::slice<0>( particles, "coords" );
@@ -196,23 +205,27 @@ void localOnlyTest( const GridType global_grid, const double cell_size )
 
     // Put particles in the center of every local cell.
     int pid = 0;
-    for ( int j = 0; j < owned_cell_space.extent( Dim::J ); ++j )
-        for ( int i = 0; i < owned_cell_space.extent( Dim::I ); ++i )
-        {
-            // Set the coordinates at the cell center.
-            coords( pid, Dim::I ) =
-                local_mesh.lowCorner( Cabana::Grid::Own(), Dim::I ) +
-                ( i + 0.5 ) * cell_size;
-            coords( pid, Dim::J ) =
-                local_mesh.lowCorner( Cabana::Grid::Own(), Dim::J ) +
-                ( j + 0.5 ) * cell_size;
+    for ( int k = 0; k < owned_cell_space.extent( Dim::K ); ++k )
+        for ( int j = 0; j < owned_cell_space.extent( Dim::J ); ++j )
+            for ( int i = 0; i < owned_cell_space.extent( Dim::I ); ++i )
+            {
+                // Set the coordinates at the cell center.
+                coords( pid, Dim::I ) =
+                    local_mesh.lowCorner( Cabana::Grid::Own(), Dim::I ) +
+                    ( i + 0.5 ) * cell_size;
+                coords( pid, Dim::J ) =
+                    local_mesh.lowCorner( Cabana::Grid::Own(), Dim::J ) +
+                    ( j + 0.5 ) * cell_size;
+                coords( pid, Dim::K ) =
+                    local_mesh.lowCorner( Cabana::Grid::Own(), Dim::K ) +
+                    ( k + 0.5 ) * cell_size;
 
-            // Set the linear rank
-            linear_ids( pid ) = global_grid->blockId();
+                // Set the linear rank
+                linear_ids( pid ) = global_grid->blockId();
 
-            // Increment the particle count.
-            ++pid;
-        }
+                // Increment the particle count.
+                ++pid;
+            }
 
     // Copy to the device space.
     auto particles_mirror =
@@ -220,8 +233,8 @@ void localOnlyTest( const GridType global_grid, const double cell_size )
 
     // Redistribute the particles.
     auto coords_mirror = Cabana::slice<0>( particles_mirror, "coords" );
-    Cabana::Grid::particleGridMigrate( *block, coords_mirror, particles_mirror,
-                                       0, true );
+    Cabana::Grid::particleMigrate( *block, coords_mirror, particles_mirror, 0,
+                                   true );
 
     // Copy back to check.
     particles = Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(),
@@ -240,12 +253,14 @@ void localOnlyTest( const GridType global_grid, const double cell_size )
     // Check that all of the particles are now in the local domain.
     double local_low[3] = {
         local_mesh.lowCorner( Cabana::Grid::Own(), Dim::I ),
-        local_mesh.lowCorner( Cabana::Grid::Own(), Dim::J ) };
+        local_mesh.lowCorner( Cabana::Grid::Own(), Dim::J ),
+        local_mesh.lowCorner( Cabana::Grid::Own(), Dim::K ) };
     double local_high[3] = {
         local_mesh.highCorner( Cabana::Grid::Own(), Dim::I ),
-        local_mesh.highCorner( Cabana::Grid::Own(), Dim::J ) };
+        local_mesh.highCorner( Cabana::Grid::Own(), Dim::J ),
+        local_mesh.highCorner( Cabana::Grid::Own(), Dim::K ) };
     for ( int p = 0; p < num_particle; ++p )
-        for ( int d = 0; d < 2; ++d )
+        for ( int d = 0; d < 3; ++d )
         {
             EXPECT_GE( coords( p, d ), local_low[d] );
             EXPECT_LE( coords( p, d ), local_high[d] );
@@ -267,21 +282,18 @@ void removeOutsideTest( const GridType global_grid )
         Cabana::Grid::createLocalMesh<Kokkos::HostSpace>( *block );
 
     // Allocate particles
-    auto owned_cell_space = block->indexSpace(
-        Cabana::Grid::Own(), Cabana::Grid::Cell(), Cabana::Grid::Local() );
-    int num_particle = owned_cell_space.size();
-    using MemberTypes = Cabana::MemberTypes<double[2], int>;
+    using MemberTypes = Cabana::MemberTypes<double[3], int>;
     using ParticleContainer = Cabana::AoSoA<MemberTypes, Kokkos::HostSpace>;
+    int num_particle = 0;
     ParticleContainer particles( "particles", num_particle );
-    auto coords = Cabana::slice<0>( particles, "coords" );
 
     // Put particles outside the global boundary in each direction of each
     // dimension.
     int pid = 0;
-    for ( int d = 0; d < 2; d++ )
+    for ( int d = 0; d < 3; d++ )
         for ( int dir = -1; dir < 2; dir += 2 )
         {
-            std::array<int, 2> plane = { 0, 0 };
+            std::array<int, 3> plane = { 0, 0, 0 };
             plane[d] = dir;
             auto boundary_space = block->boundaryIndexSpace(
                 Cabana::Grid::Ghost(), Cabana::Grid::Cell(), plane, -1 );
@@ -291,22 +303,25 @@ void removeOutsideTest( const GridType global_grid )
 
             // Iterate over the boundary index space to fill the surface in this
             // dimension.
-            for ( int j = boundary_space.min( Dim::J );
-                  j < boundary_space.max( Dim::J ); ++j )
-                for ( int i = boundary_space.min( Dim::I );
-                      i < boundary_space.max( Dim::I ); ++i )
-                {
-                    // Use the location of this cell to set the particle
-                    // position.
-                    int index[2] = { i, j };
-                    double cell_coord[2];
-                    local_mesh.coordinates( Cabana::Grid::Cell(), index,
-                                            cell_coord );
+            for ( int k = boundary_space.min( Dim::K );
+                  k < boundary_space.max( Dim::K ); ++k )
+                for ( int j = boundary_space.min( Dim::J );
+                      j < boundary_space.max( Dim::J ); ++j )
+                    for ( int i = boundary_space.min( Dim::I );
+                          i < boundary_space.max( Dim::I ); ++i )
+                    {
+                        // Use the location of this cell to set the particle
+                        // position.
+                        int index[3] = { i, j, k };
+                        double cell_coord[3];
+                        local_mesh.coordinates( Cabana::Grid::Cell(), index,
+                                                cell_coord );
 
-                    for ( int x = 0; x < 2; x++ )
-                        coords( pid, x ) = cell_coord[x];
-                    ++pid;
-                }
+                        for ( int x = 0; x < 3; x++ )
+                            coords( pid, x ) = cell_coord[x];
+                        // Increment the particle count.
+                        ++pid;
+                    }
         }
     particles.resize( pid );
 
@@ -319,23 +334,24 @@ void removeOutsideTest( const GridType global_grid )
 
     // Redistribute the particles.
     auto coords_mirror = Cabana::slice<0>( particles_mirror, "coords" );
-    Cabana::Grid::particleGridMigrate( *block, coords_mirror, particles_mirror,
-                                       0, true );
+    Cabana::Grid::particleMigrate( *block, coords_mirror, particles_mirror, 0,
+                                   true );
 
     // Check that all particles were removed.
     EXPECT_EQ( particles_mirror.size(), 0 );
 }
 
-auto createGrid( const Cabana::Grid::ManualBlockPartitioner<2>& partitioner,
-                 const std::array<bool, 2>& is_periodic,
+auto createGrid( const Cabana::Grid::ManualBlockPartitioner<3>& partitioner,
+                 const std::array<bool, 3>& is_periodic,
                  const double cell_size )
 {
     // Create the global grid.
-    std::array<int, 2> global_num_cell = { 24, 17 };
-    std::array<double, 2> global_low_corner = { 1.2, 3.3 };
-    std::array<double, 2> global_high_corner = {
+    std::array<int, 3> global_num_cell = { 18, 15, 9 };
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
+    std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
-        global_low_corner[1] + cell_size * global_num_cell[1] };
+        global_low_corner[1] + cell_size * global_num_cell[1],
+        global_low_corner[2] + cell_size * global_num_cell[2] };
     auto global_mesh = Cabana::Grid::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
     auto global_grid = Cabana::Grid::createGlobalGrid(
@@ -343,17 +359,17 @@ auto createGrid( const Cabana::Grid::ManualBlockPartitioner<2>& partitioner,
     return global_grid;
 }
 
-void testParticleGridMigrate( const bool periodic )
+void testParticleMigrate( const bool periodic )
 {
     // Let MPI compute the partitioning for this test.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
-    std::array<int, 2> ranks_per_dim = { 0, 0 };
-    MPI_Dims_create( comm_size, 2, ranks_per_dim.data() );
-    Cabana::Grid::ManualBlockPartitioner<2> partitioner( ranks_per_dim );
+    std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
+    MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
+    Cabana::Grid::ManualBlockPartitioner<3> partitioner( ranks_per_dim );
 
-    // Boundaries are not periodic.
-    std::array<bool, 2> is_periodic = { periodic, periodic };
+    // Every boundary is periodic
+    std::array<bool, 3> is_periodic = { periodic, periodic, periodic };
 
     // Create global grid.
     double cell_size = 0.23;
@@ -364,7 +380,7 @@ void testParticleGridMigrate( const bool periodic )
     for ( int i = 0; i < 3; i++ )
         // Test multiple minimum_halo_width
         for ( int j = 0; j < 3; j++ )
-            migrateTest( global_grid, cell_size, 1, j, false, 0 );
+            migrateTest( global_grid, cell_size, i, j, false, 0 );
 
     // Retest with separate destination AoSoA.
     migrateTest( global_grid, cell_size, 2, 2, true, 1 );
@@ -377,7 +393,19 @@ void testParticleGridMigrate( const bool periodic )
     if ( ranks_per_dim[0] != ranks_per_dim[1] )
     {
         std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-        partitioner = Cabana::Grid::ManualBlockPartitioner<2>( ranks_per_dim );
+        partitioner = Cabana::Grid::ManualBlockPartitioner<3>( ranks_per_dim );
+        migrateTest( global_grid, cell_size, 2, 2, true, 0 );
+    }
+    if ( ranks_per_dim[0] != ranks_per_dim[2] )
+    {
+        std::swap( ranks_per_dim[0], ranks_per_dim[2] );
+        partitioner = Cabana::Grid::ManualBlockPartitioner<3>( ranks_per_dim );
+        migrateTest( global_grid, cell_size, 2, 2, true, 0 );
+    }
+    if ( ranks_per_dim[1] != ranks_per_dim[2] )
+    {
+        std::swap( ranks_per_dim[1], ranks_per_dim[2] );
+        partitioner = Cabana::Grid::ManualBlockPartitioner<3>( ranks_per_dim );
         migrateTest( global_grid, cell_size, 2, 2, true, 0 );
     }
 }
@@ -385,10 +413,10 @@ void testParticleGridMigrate( const bool periodic )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, not_periodic_test ) { testParticleGridMigrate( false ); }
+TEST( TEST_CATEGORY, not_periodic_test ) { testParticleMigrate( false ); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, periodic_test ) { testParticleGridMigrate( true ); }
+TEST( TEST_CATEGORY, periodic_test ) { testParticleMigrate( true ); }
 
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, local_only_test )
@@ -396,12 +424,12 @@ TEST( TEST_CATEGORY, local_only_test )
     // Let MPI compute the partitioning for this test.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
-    std::array<int, 2> ranks_per_dim = { 0, 0 };
-    MPI_Dims_create( comm_size, 2, ranks_per_dim.data() );
-    Cabana::Grid::ManualBlockPartitioner<2> partitioner( ranks_per_dim );
+    std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
+    MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
+    Cabana::Grid::ManualBlockPartitioner<3> partitioner( ranks_per_dim );
 
     // Every boundary is periodic
-    std::array<bool, 2> is_periodic = { true, true };
+    std::array<bool, 3> is_periodic = { true, true, true };
 
     // Create global grid.
     double cell_size = 0.23;
@@ -417,12 +445,12 @@ TEST( TEST_CATEGORY, remove_outside_domain_test )
     // Let MPI compute the partitioning for this test.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
-    std::array<int, 2> ranks_per_dim = { 0, 0 };
-    MPI_Dims_create( comm_size, 2, ranks_per_dim.data() );
-    Cabana::Grid::ManualBlockPartitioner<2> partitioner( ranks_per_dim );
+    std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
+    MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
+    Cabana::Grid::ManualBlockPartitioner<3> partitioner( ranks_per_dim );
 
     // Every boundary is non-periodic.
-    std::array<bool, 2> is_periodic = { false, false };
+    std::array<bool, 3> is_periodic = { false, false, false };
 
     // Create global grid.
     double cell_size = 0.23;

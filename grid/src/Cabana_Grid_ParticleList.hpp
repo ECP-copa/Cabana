@@ -23,7 +23,7 @@
 #include <Cabana_Tuple.hpp>
 #include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
-#include <Cabana_Grid_ParticleGridDistributor.hpp>
+#include <Cabana_Grid_ParticleDistributor.hpp>
 
 #include <memory>
 #include <string>
@@ -91,9 +91,9 @@ class ParticleList
     bool redistribute( const LocalGridType& local_grid, PositionFieldTag,
                        const bool force_redistribute = false )
     {
-        return particleGridMigrate(
-            local_grid, this->slice( PositionFieldTag() ), _aosoa,
-            local_grid.haloCellWidth(), force_redistribute );
+        return particleMigrate( local_grid, this->slice( PositionFieldTag() ),
+                                _aosoa, local_grid.haloCellWidth(),
+                                force_redistribute );
     }
 
   protected:
