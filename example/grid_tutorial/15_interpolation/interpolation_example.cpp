@@ -130,6 +130,7 @@ void interpolationExample()
       This example is all in 2D.
     */
     using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
+    using MemorySpace = Kokkos::HostSpace;
 
     // Create the global mesh.
     std::array<double, 2> low_corner = { -1.2, 0.1 };
@@ -147,14 +148,13 @@ void interpolationExample()
     // Create a  grid local_grid.
     int halo_width = 1;
     auto local_grid = Cabana::Grid::createLocalGrid( global_grid, halo_width );
-    auto local_mesh =
-        Cabana::Grid::createLocalMesh<ExecutionSpace>( *local_grid );
+    auto local_mesh = Cabana::Grid::createLocalMesh<MemorySpace>( *local_grid );
 
     // Create a point in the center of every cell.
     auto cell_space = local_grid->indexSpace(
         Cabana::Grid::Own(), Cabana::Grid::Cell(), Cabana::Grid::Local() );
     int num_particles = cell_space.size();
-    Kokkos::View<double* [2], ExecutionSpace> particle_positions(
+    Kokkos::View<double* [2], MemorySpace> particle_positions(
         Kokkos::ViewAllocateWithoutInitializing( "positions" ), num_particles );
     Kokkos::parallel_for(
         "fill_positions", createExecutionPolicy( cell_space, ExecutionSpace() ),
@@ -176,7 +176,7 @@ void interpolationExample()
     // information on these functions.
     auto scalar_layout =
         Cabana::Grid::createArrayLayout( local_grid, 1, Cabana::Grid::Node() );
-    auto scalar_grid_field = Cabana::Grid::createArray<double, ExecutionSpace>(
+    auto scalar_grid_field = Cabana::Grid::createArray<double, MemorySpace>(
         "scalar_grid_field", scalar_layout );
 
     // Create a halo for scatter operations. This concept is discussed in more
@@ -187,24 +187,24 @@ void interpolationExample()
     // Create a vector field on the grid.
     auto vector_layout =
         Cabana::Grid::createArrayLayout( local_grid, 2, Cabana::Grid::Node() );
-    auto vector_grid_field = Cabana::Grid::createArray<double, ExecutionSpace>(
+    auto vector_grid_field = Cabana::Grid::createArray<double, MemorySpace>(
         "vector_grid_field", vector_layout );
     auto vector_halo = Cabana::Grid::createHalo(
         Cabana::Grid::NodeHaloPattern<2>(), halo_width, *vector_grid_field );
 
     // Simple Kokkos::Views may be used to represent particle data.
     // Create a scalar point field.
-    Kokkos::View<double*, ExecutionSpace> scalar_particle_field(
+    Kokkos::View<double*, MemorySpace> scalar_particle_field(
         Kokkos::ViewAllocateWithoutInitializing( "particle_scalar" ),
         num_particles );
 
     // Create a vector point field.
-    Kokkos::View<double* [2], ExecutionSpace> vector_particle_field(
+    Kokkos::View<double* [2], MemorySpace> vector_particle_field(
         Kokkos::ViewAllocateWithoutInitializing( "particle_vector" ),
         num_particles );
 
     // Create a tensor point field.
-    Kokkos::View<double* [2][2], ExecutionSpace> tensor_particle_field(
+    Kokkos::View<double* [2][2], MemorySpace> tensor_particle_field(
         Kokkos::ViewAllocateWithoutInitializing( "particle_tensor" ),
         num_particles );
 
@@ -350,8 +350,8 @@ void interpolationExample()
      * aggregated fields will be considered in a separate example.
      * ************************************************************************/
 
-    P2GExampleFunctor<Kokkos::View<double*, ExecutionSpace>,
-                      Kokkos::View<double* [2], ExecutionSpace>>
+    P2GExampleFunctor<Kokkos::View<double*, MemorySpace>,
+                      Kokkos::View<double* [2], MemorySpace>>
         example_p2g { scalar_particle_field, vector_particle_field };
     Cabana::Grid::p2g( example_p2g, particle_positions, num_particles,
                        Cabana::Grid::Spline<1>(), *scalar_halo,
@@ -455,8 +455,8 @@ void interpolationExample()
      * interpolation function, but is also useful when combined in fused kernel
      * operations.
      * *************************************************************************/
-    G2PExampleFunctor<Kokkos::View<double*, ExecutionSpace>,
-                      Kokkos::View<double* [2][2], ExecutionSpace>>
+    G2PExampleFunctor<Kokkos::View<double*, MemorySpace>,
+                      Kokkos::View<double* [2][2], MemorySpace>>
         example_g2p { scalar_particle_field, tensor_particle_field };
     Cabana::Grid::g2p( *vector_grid_field, *vector_halo, particle_positions,
                        num_particles, Cabana::Grid::Spline<1>(), example_g2p );

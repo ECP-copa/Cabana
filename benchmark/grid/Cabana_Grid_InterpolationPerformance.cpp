@@ -306,7 +306,7 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
 
             // Create a local grid and local mesh
             auto local_grid = createLocalGrid( global_grid, halo_width );
-            auto local_mesh = createLocalMesh<exec_space>( *local_grid );
+            auto local_mesh = createLocalMesh<memory_space>( *local_grid );
             auto owned_cells = local_grid->indexSpace( Own(), Cell(), Local() );
             int num_cells = owned_cells.size();
 

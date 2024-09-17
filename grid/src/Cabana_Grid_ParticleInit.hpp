@@ -79,7 +79,7 @@ int createParticles(
     using memory_space = typename ParticleListType::memory_space;
 
     // Create a local mesh.
-    auto local_mesh = createLocalMesh<ExecutionSpace>( local_grid );
+    auto local_mesh = createLocalMesh<memory_space>( local_grid );
 
     // Get the global grid.
     const auto& global_grid = local_grid.globalGrid();
@@ -232,8 +232,11 @@ void createParticles(
                               Kokkos::is_view<PositionType>::value ),
                             int>::type* = 0 )
 {
+    // Memory space.
+    using memory_space = typename PositionType::memory_space;
+
     // Create a local mesh.
-    auto local_mesh = createLocalMesh<ExecutionSpace>( local_grid );
+    auto local_mesh = createLocalMesh<memory_space>( local_grid );
 
     // Get the global grid.
     const auto& global_grid = local_grid.globalGrid();
@@ -360,7 +363,7 @@ int createParticles(
     using memory_space = typename ParticleListType::memory_space;
 
     // Create a local mesh.
-    auto local_mesh = createLocalMesh<ExecutionSpace>( local_grid );
+    auto local_mesh = createLocalMesh<memory_space>( local_grid );
 
     // Get the local set of owned cell indices.
     auto owned_cells = local_grid.indexSpace( Own(), Cell(), Local() );
@@ -515,8 +518,11 @@ void createParticles(
                               Kokkos::is_view<PositionType>::value ),
                             int>::type* = 0 )
 {
+    // Memory space.
+    using memory_space = typename PositionType::memory_space;
+
     // Create a local mesh.
-    auto local_mesh = createLocalMesh<ExecutionSpace>( local_grid );
+    auto local_mesh = createLocalMesh<memory_space>( local_grid );
 
     // Get the local set of owned cell indices.
     auto owned_cells = local_grid.indexSpace( Own(), Cell(), Local() );
