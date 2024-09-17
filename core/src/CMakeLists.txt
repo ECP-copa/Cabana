@@ -89,8 +89,12 @@ if(Cabana_ENABLE_SILO)
 endif()
 
 if(Cabana_ENABLE_HDF5)
-  # FIXME: replace with HDF5::HDF5 when requiring newer CMake
-  target_link_libraries(Core INTERFACE ${HDF5_LIBRARIES})
+  # FIXME: remove when requiring newer CMake
+  if(CMAKE_VERSION VERSION_LESS 3.26)
+    target_link_libraries(Core INTERFACE ${HDF5_LIBRARIES})
+  else()
+    target_link_libraries(Core INTERFACE HDF5::HDF5)
+  endif()
 endif()
 
 if(Cabana_ENABLE_MPI)
