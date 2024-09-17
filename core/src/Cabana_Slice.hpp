@@ -927,7 +927,7 @@ void copySliceToView( ViewType& view, const SliceType& slice,
 // Copy from View.
 //---------------------------------------------------------------------------//
 
-//! Copy from slice to View. Rank-0
+//! Copy from View to slice. Rank-0
 template <class ExecutionSpace, class SliceType, class ViewType>
 void copyViewToSlice(
     ExecutionSpace exec_space, SliceType& slice, const ViewType& view,
@@ -941,7 +941,7 @@ void copyViewToSlice(
         KOKKOS_LAMBDA( const int i ) { slice( i - begin ) = view( i ); } );
 }
 
-//! Copy from slice to View. Rank-1
+//! Copy from View to slice. Rank-1
 template <class ExecutionSpace, class SliceType, class ViewType>
 void copyViewToSlice(
     ExecutionSpace exec_space, SliceType& slice, const ViewType& view,
@@ -958,7 +958,7 @@ void copyViewToSlice(
         } );
 }
 
-//! Copy from slice to View. Rank-2
+//! Copy from View to slice. Rank-2
 template <class ExecutionSpace, class SliceType, class ViewType>
 void copyViewToSlice(
     ExecutionSpace exec_space, SliceType& slice, const ViewType& view,
@@ -976,13 +976,13 @@ void copyViewToSlice(
         } );
 }
 
-//! Copy from slice to View with default execution space.
+//! Copy from View to slice with default execution space.
 template <class ViewType, class SliceType>
-void copyViewToSlice( ViewType& view, const SliceType& slice,
+void copyViewToSlice( SliceType& slice, const ViewType& view,
                       const std::size_t begin, const std::size_t end )
 {
     using exec_space = typename SliceType::execution_space;
-    copyViewToSlice( exec_space{}, view, slice, begin, end );
+    copyViewToSlice( exec_space{}, slice, view, begin, end );
 }
 
 //! Check slice size (differs from Kokkos View).
@@ -1006,6 +1006,23 @@ void checkSize(
 }
 
 //---------------------------------------------------------------------------//
+
+//! Check slice size (differs from Kokkos View).
+template <class SliceType>
+auto size( SliceType slice,
+           typename std::enable_if<is_slice<SliceType>::value, int>::type* = 0 )
+{
+    return slice.size();
+}
+
+//! Check View size (differs from Slice).
+template <class ViewType>
+auto size(
+    ViewType view,
+    typename std::enable_if<Kokkos::is_view<ViewType>::value, int>::type* = 0 )
+{
+    return view.extent( 0 );
+}
 
 } // end namespace Cabana
 
