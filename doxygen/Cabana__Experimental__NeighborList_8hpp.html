@@ -220,11 +220,11 @@ Include dependency graph for Cabana_Experimental_NeighborList.hpp:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structArborX_1_1AccessTraits_3_01Slice_00_01PrimitivesTag_00_01std_1_1enable__if__t_3_01Cabana_1ef47a426a60af478dedbc9e4b5fcf150.html">ArborX::AccessTraits&lt; Slice, PrimitivesTag, std::enable_if_t&lt; Cabana::is_slice&lt; Slice &gt;{}&gt; &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor access trait for <a class="el" href="namespaceCabana.html" title="Core: particle data structures and algorithms.">Cabana</a> slice.  <a href="structArborX_1_1AccessTraits_3_01Slice_00_01PrimitivesTag_00_01std_1_1enable__if__t_3_01Cabana_1ef47a426a60af478dedbc9e4b5fcf150.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structArborX_1_1AccessTraits_3_01Positions_00_01PrimitivesTag_00_01std_1_1enable__if__t_3_01Caba7933ad1c8460f725b910333ad2155912.html">ArborX::AccessTraits&lt; Positions, PrimitivesTag, std::enable_if_t&lt; Cabana::is_slice&lt; Positions &gt;{}||Kokkos::is_view&lt; Positions &gt;{}&gt; &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor access trait for <a class="el" href="namespaceCabana.html" title="Core: particle data structures and algorithms.">Cabana</a> slice and/or Kokkos View.  <a href="structArborX_1_1AccessTraits_3_01Positions_00_01PrimitivesTag_00_01std_1_1enable__if__t_3_01Caba7933ad1c8460f725b910333ad2155912.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structArborX_1_1AccessTraits_3_01Cabana_1_1Experimental_1_1Impl_1_1SubsliceAndRadius_3_01Slice_01_4_00_01PredicatesTag_01_4.html">ArborX::AccessTraits&lt; Cabana::Experimental::Impl::SubsliceAndRadius&lt; Slice &gt;, PredicatesTag &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor access trait.  <a href="structArborX_1_1AccessTraits_3_01Cabana_1_1Experimental_1_1Impl_1_1SubsliceAndRadius_3_01Slice_01_4_00_01PredicatesTag_01_4.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structArborX_1_1AccessTraits_3_01Cabana_1_1Experimental_1_1Impl_1_1SubPositionsAndRadius_3_01Posaf575a813eeefa3e621d9c1ff9a6846b.html">ArborX::AccessTraits&lt; Cabana::Experimental::Impl::SubPositionsAndRadius&lt; Positions &gt;, PredicatesTag &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor access trait.  <a href="structArborX_1_1AccessTraits_3_01Cabana_1_1Experimental_1_1Impl_1_1SubPositionsAndRadius_3_01Posaf575a813eeefa3e621d9c1ff9a6846b.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1Experimental_1_1CrsGraph.html">Cabana::Experimental::CrsGraph&lt; MemorySpace, Tag &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">1d ArborX neighbor list storage layout.  <a href="structCabana_1_1Experimental_1_1CrsGraph.html#details">More...</a><br /></td></tr>
@@ -247,41 +247,41 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ae9fb23274b03bc38d833f63941450a67" id="r_ae9fb23274b03bc38d833f63941450a67"><td class="memTemplParams" colspan="2">template&lt;typename ExecutionSpace , typename <a class="el" href="classCabana_1_1Slice.html">Slice</a> , typename Tag &gt; </td></tr>
-<tr class="memitem:ae9fb23274b03bc38d833f63941450a67"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae9fb23274b03bc38d833f63941450a67">Cabana::Experimental::makeNeighborList</a> (ExecutionSpace space, Tag, <a class="el" href="classCabana_1_1Slice.html">Slice</a> const &amp;coordinate_slice, typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a> first, typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a> last, typename <a class="el" href="classCabana_1_1Slice.html#a3c0835a0b6b89996309d4c798a1bdb4b">Slice::value_type</a> radius, int buffer_size=0)</td></tr>
-<tr class="memdesc:ae9fb23274b03bc38d833f63941450a67"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor list implementation using ArborX for particles within the interaction distance with a 1D compressed layout for particles and neighbors.  <br /></td></tr>
-<tr class="separator:ae9fb23274b03bc38d833f63941450a67"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9e775b804d201982910b7fb0b4d29ac" id="r_ad9e775b804d201982910b7fb0b4d29ac"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="classCabana_1_1Slice.html">Slice</a> , typename Tag &gt; </td></tr>
-<tr class="memitem:ad9e775b804d201982910b7fb0b4d29ac"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ad9e775b804d201982910b7fb0b4d29ac">Cabana::Experimental::makeNeighborList</a> (Tag tag, <a class="el" href="classCabana_1_1Slice.html">Slice</a> const &amp;coordinate_slice, typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a> first, typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a> last, typename <a class="el" href="classCabana_1_1Slice.html#a3c0835a0b6b89996309d4c798a1bdb4b">Slice::value_type</a> radius, int buffer_size=0)</td></tr>
-<tr class="memdesc:ad9e775b804d201982910b7fb0b4d29ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor list implementation using ArborX for particles within the interaction distance with a 1D compressed layout for particles and neighbors.  <br /></td></tr>
-<tr class="separator:ad9e775b804d201982910b7fb0b4d29ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1f6282aa555939dd38463ed10f18304c" id="r_a1f6282aa555939dd38463ed10f18304c"><td class="memTemplParams" colspan="2">template&lt;typename DeviceType , typename <a class="el" href="classCabana_1_1Slice.html">Slice</a> , typename Tag &gt; </td></tr>
-<tr class="memitem:a1f6282aa555939dd38463ed10f18304c"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a1f6282aa555939dd38463ed10f18304c">Cabana::Experimental::makeNeighborList</a> (Tag tag, <a class="el" href="classCabana_1_1Slice.html">Slice</a> const &amp;coordinate_slice, typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a> first, typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a> last, typename <a class="el" href="classCabana_1_1Slice.html#a3c0835a0b6b89996309d4c798a1bdb4b">Slice::value_type</a> radius, int buffer_size=0)</td></tr>
-<tr class="memdesc:a1f6282aa555939dd38463ed10f18304c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor list implementation using ArborX for particles within the interaction distance with a 1D compressed layout for particles and neighbors.  <br /></td></tr>
-<tr class="separator:a1f6282aa555939dd38463ed10f18304c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62e93562312ce6719e3f8cab02f7f442" id="r_a62e93562312ce6719e3f8cab02f7f442"><td class="memTemplParams" colspan="2">template&lt;typename ExecutionSpace , typename <a class="el" href="classCabana_1_1Slice.html">Slice</a> , typename Tag &gt; </td></tr>
-<tr class="memitem:a62e93562312ce6719e3f8cab02f7f442"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a62e93562312ce6719e3f8cab02f7f442">Cabana::Experimental::make2DNeighborList</a> (ExecutionSpace space, Tag, <a class="el" href="classCabana_1_1Slice.html">Slice</a> const &amp;coordinate_slice, typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a> first, typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a> last, typename <a class="el" href="classCabana_1_1Slice.html#a3c0835a0b6b89996309d4c798a1bdb4b">Slice::value_type</a> radius, int buffer_size=0)</td></tr>
-<tr class="memdesc:a62e93562312ce6719e3f8cab02f7f442"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor list implementation using ArborX for particles within the interaction distance with a 2D layout for particles and neighbors.  <br /></td></tr>
-<tr class="separator:a62e93562312ce6719e3f8cab02f7f442"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85027822edbfd3efe98b6e91602316a2" id="r_a85027822edbfd3efe98b6e91602316a2"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="classCabana_1_1Slice.html">Slice</a> , typename Tag &gt; </td></tr>
-<tr class="memitem:a85027822edbfd3efe98b6e91602316a2"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a85027822edbfd3efe98b6e91602316a2">Cabana::Experimental::make2DNeighborList</a> (Tag tag, <a class="el" href="classCabana_1_1Slice.html">Slice</a> const &amp;coordinate_slice, typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a> first, typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a> last, typename <a class="el" href="classCabana_1_1Slice.html#a3c0835a0b6b89996309d4c798a1bdb4b">Slice::value_type</a> radius, int buffer_size=0)</td></tr>
-<tr class="memdesc:a85027822edbfd3efe98b6e91602316a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor list implementation using ArborX for particles within the interaction distance with a 2D layout for particles and neighbors.  <br /></td></tr>
-<tr class="separator:a85027822edbfd3efe98b6e91602316a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54c2c1cc2a4243e326f944b1901d1760" id="r_a54c2c1cc2a4243e326f944b1901d1760"><td class="memTemplParams" colspan="2">template&lt;typename DeviceType , typename <a class="el" href="classCabana_1_1Slice.html">Slice</a> , typename Tag &gt; </td></tr>
-<tr class="memitem:a54c2c1cc2a4243e326f944b1901d1760"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a54c2c1cc2a4243e326f944b1901d1760">Cabana::Experimental::make2DNeighborList</a> (Tag tag, <a class="el" href="classCabana_1_1Slice.html">Slice</a> const &amp;coordinate_slice, typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a> first, typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a> last, typename <a class="el" href="classCabana_1_1Slice.html#a3c0835a0b6b89996309d4c798a1bdb4b">Slice::value_type</a> radius, int buffer_size=0)</td></tr>
-<tr class="memdesc:a54c2c1cc2a4243e326f944b1901d1760"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor list implementation using ArborX for particles within the interaction distance with a 2D layout for particles and neighbors.  <br /></td></tr>
-<tr class="separator:a54c2c1cc2a4243e326f944b1901d1760"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8792caa6da4ed4525b11ff969fe334e4" id="r_a8792caa6da4ed4525b11ff969fe334e4"><td class="memTemplParams" colspan="2">template&lt;typename ExecutionSpace , typename Positions , typename Tag &gt; </td></tr>
+<tr class="memitem:a8792caa6da4ed4525b11ff969fe334e4"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a8792caa6da4ed4525b11ff969fe334e4">Cabana::Experimental::makeNeighborList</a> (ExecutionSpace space, Tag, Positions const &amp;positions, typename Positions::size_type first, typename Positions::size_type last, typename Positions::value_type radius, int buffer_size=0)</td></tr>
+<tr class="memdesc:a8792caa6da4ed4525b11ff969fe334e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor list implementation using ArborX for particles within the interaction distance with a 1D compressed layout for particles and neighbors.  <br /></td></tr>
+<tr class="separator:a8792caa6da4ed4525b11ff969fe334e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2927b5fa0527f3c2134765d67e6a62f1" id="r_a2927b5fa0527f3c2134765d67e6a62f1"><td class="memTemplParams" colspan="2">template&lt;typename Positions , typename Tag &gt; </td></tr>
+<tr class="memitem:a2927b5fa0527f3c2134765d67e6a62f1"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a2927b5fa0527f3c2134765d67e6a62f1">Cabana::Experimental::makeNeighborList</a> (Tag tag, Positions const &amp;positions, typename Positions::size_type first, typename Positions::size_type last, typename Positions::value_type radius, int buffer_size=0)</td></tr>
+<tr class="memdesc:a2927b5fa0527f3c2134765d67e6a62f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor list implementation using ArborX for particles within the interaction distance with a 1D compressed layout for particles and neighbors.  <br /></td></tr>
+<tr class="separator:a2927b5fa0527f3c2134765d67e6a62f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4664df229a76574c5a74f39ace47c6cd" id="r_a4664df229a76574c5a74f39ace47c6cd"><td class="memTemplParams" colspan="2">template&lt;typename DeviceType , typename Positions , typename Tag &gt; </td></tr>
+<tr class="memitem:a4664df229a76574c5a74f39ace47c6cd"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4664df229a76574c5a74f39ace47c6cd">Cabana::Experimental::makeNeighborList</a> (Tag tag, Positions const &amp;positions, typename Positions::size_type first, typename Positions::size_type last, typename Positions::value_type radius, int buffer_size=0)</td></tr>
+<tr class="memdesc:a4664df229a76574c5a74f39ace47c6cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor list implementation using ArborX for particles within the interaction distance with a 1D compressed layout for particles and neighbors.  <br /></td></tr>
+<tr class="separator:a4664df229a76574c5a74f39ace47c6cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac428f4a0d8aae7a170a33e5235c740a8" id="r_ac428f4a0d8aae7a170a33e5235c740a8"><td class="memTemplParams" colspan="2">template&lt;typename ExecutionSpace , typename Positions , typename Tag &gt; </td></tr>
+<tr class="memitem:ac428f4a0d8aae7a170a33e5235c740a8"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac428f4a0d8aae7a170a33e5235c740a8">Cabana::Experimental::make2DNeighborList</a> (ExecutionSpace space, Tag, Positions const &amp;positions, typename Positions::size_type first, typename Positions::size_type last, typename Positions::value_type radius, int buffer_size=0)</td></tr>
+<tr class="memdesc:ac428f4a0d8aae7a170a33e5235c740a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor list implementation using ArborX for particles within the interaction distance with a 2D layout for particles and neighbors.  <br /></td></tr>
+<tr class="separator:ac428f4a0d8aae7a170a33e5235c740a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d33e67c5a6a087b44c41b19830b19eb" id="r_a8d33e67c5a6a087b44c41b19830b19eb"><td class="memTemplParams" colspan="2">template&lt;typename Positions , typename Tag &gt; </td></tr>
+<tr class="memitem:a8d33e67c5a6a087b44c41b19830b19eb"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a8d33e67c5a6a087b44c41b19830b19eb">Cabana::Experimental::make2DNeighborList</a> (Tag tag, Positions const &amp;positions, typename Positions::size_type first, typename Positions::size_type last, typename Positions::value_type radius, int buffer_size=0)</td></tr>
+<tr class="memdesc:a8d33e67c5a6a087b44c41b19830b19eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor list implementation using ArborX for particles within the interaction distance with a 2D layout for particles and neighbors.  <br /></td></tr>
+<tr class="separator:a8d33e67c5a6a087b44c41b19830b19eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94e45bc278a37be735176b5d44393cb6" id="r_a94e45bc278a37be735176b5d44393cb6"><td class="memTemplParams" colspan="2">template&lt;typename DeviceType , typename Positions , typename Tag &gt; </td></tr>
+<tr class="memitem:a94e45bc278a37be735176b5d44393cb6"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a94e45bc278a37be735176b5d44393cb6">Cabana::Experimental::make2DNeighborList</a> (Tag tag, Positions const &amp;positions, typename Positions::size_type first, typename Positions::size_type last, typename Positions::value_type radius, int buffer_size=0)</td></tr>
+<tr class="memdesc:a94e45bc278a37be735176b5d44393cb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor list implementation using ArborX for particles within the interaction distance with a 2D layout for particles and neighbors.  <br /></td></tr>
+<tr class="separator:a94e45bc278a37be735176b5d44393cb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>ArborX tree-based neighbor lists. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a62e93562312ce6719e3f8cab02f7f442" name="a62e93562312ce6719e3f8cab02f7f442"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a62e93562312ce6719e3f8cab02f7f442">&#9670;&#160;</a></span>make2DNeighborList() <span class="overload">[1/3]</span></h2>
+<a id="ac428f4a0d8aae7a170a33e5235c740a8" name="ac428f4a0d8aae7a170a33e5235c740a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac428f4a0d8aae7a170a33e5235c740a8">&#9670;&#160;</a></span>make2DNeighborList() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename ExecutionSpace , typename Slice , typename Tag &gt; </div>
+template&lt;typename ExecutionSpace , typename Positions , typename Tag &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">auto Cabana::Experimental::make2DNeighborList </td>
@@ -296,22 +296,22 @@ template&lt;typename ExecutionSpace , typename Slice , typename Tag &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classCabana_1_1Slice.html">Slice</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>coordinate_slice</em></span>, </td>
+          <td class="paramtype">Positions const &amp;</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a></td>          <td class="paramname"><span class="paramname"><em>first</em></span>, </td>
+          <td class="paramtype">typename Positions::size_type</td>          <td class="paramname"><span class="paramname"><em>first</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a></td>          <td class="paramname"><span class="paramname"><em>last</em></span>, </td>
+          <td class="paramtype">typename Positions::size_type</td>          <td class="paramname"><span class="paramname"><em>last</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a3c0835a0b6b89996309d4c798a1bdb4b">Slice::value_type</a></td>          <td class="paramname"><span class="paramname"><em>radius</em></span>, </td>
+          <td class="paramtype">typename Positions::value_type</td>          <td class="paramname"><span class="paramname"><em>radius</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -325,7 +325,7 @@ template&lt;typename ExecutionSpace , typename Slice , typename Tag &gt; </div>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">ExecutionSpace</td><td>Kokkos execution space. </td></tr>
-    <tr><td class="paramname">Slice</td><td>The position slice type. </td></tr>
+    <tr><td class="paramname">Positions</td><td>The position type. </td></tr>
     <tr><td class="paramname">Tag</td><td>Tag indicating whether to build a full or half neighbor list.</td></tr>
   </table>
   </dd>
@@ -333,7 +333,7 @@ template&lt;typename ExecutionSpace , typename Slice , typename Tag &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">space</td><td>Kokkos execution space. </td></tr>
-    <tr><td class="paramname">coordinate_slice</td><td>The slice containing the particle positions. </td></tr>
+    <tr><td class="paramname">positions</td><td>The particle positions. </td></tr>
     <tr><td class="paramname">first</td><td>The beginning particle index to compute neighbors for. </td></tr>
     <tr><td class="paramname">last</td><td>The end particle index to compute neighbors for. </td></tr>
     <tr><td class="paramname">radius</td><td>The radius of the neighborhood. Particles within this radius are considered neighbors. </td></tr>
@@ -345,13 +345,13 @@ template&lt;typename ExecutionSpace , typename Slice , typename Tag &gt; </div>
 
 </div>
 </div>
-<a id="a85027822edbfd3efe98b6e91602316a2" name="a85027822edbfd3efe98b6e91602316a2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a85027822edbfd3efe98b6e91602316a2">&#9670;&#160;</a></span>make2DNeighborList() <span class="overload">[2/3]</span></h2>
+<a id="a8d33e67c5a6a087b44c41b19830b19eb" name="a8d33e67c5a6a087b44c41b19830b19eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d33e67c5a6a087b44c41b19830b19eb">&#9670;&#160;</a></span>make2DNeighborList() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Slice , typename Tag &gt; </div>
+template&lt;typename Positions , typename Tag &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">auto Cabana::Experimental::make2DNeighborList </td>
@@ -361,22 +361,22 @@ template&lt;typename Slice , typename Tag &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classCabana_1_1Slice.html">Slice</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>coordinate_slice</em></span>, </td>
+          <td class="paramtype">Positions const &amp;</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a></td>          <td class="paramname"><span class="paramname"><em>first</em></span>, </td>
+          <td class="paramtype">typename Positions::size_type</td>          <td class="paramname"><span class="paramname"><em>first</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a></td>          <td class="paramname"><span class="paramname"><em>last</em></span>, </td>
+          <td class="paramtype">typename Positions::size_type</td>          <td class="paramname"><span class="paramname"><em>last</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a3c0835a0b6b89996309d4c798a1bdb4b">Slice::value_type</a></td>          <td class="paramname"><span class="paramname"><em>radius</em></span>, </td>
+          <td class="paramtype">typename Positions::value_type</td>          <td class="paramname"><span class="paramname"><em>radius</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -389,7 +389,7 @@ template&lt;typename Slice , typename Tag &gt; </div>
 <p>Neighbor list implementation using ArborX for particles within the interaction distance with a 2D layout for particles and neighbors. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Slice</td><td>The position slice type. </td></tr>
+    <tr><td class="paramname">Positions</td><td>The position type. </td></tr>
     <tr><td class="paramname">Tag</td><td>Tag indicating whether to build a full or half neighbor list.</td></tr>
   </table>
   </dd>
@@ -397,7 +397,7 @@ template&lt;typename Slice , typename Tag &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tag</td><td>Tag indicating whether to build a full or half neighbor list. </td></tr>
-    <tr><td class="paramname">coordinate_slice</td><td>The slice containing the particle positions. </td></tr>
+    <tr><td class="paramname">positions</td><td>The particle positions. </td></tr>
     <tr><td class="paramname">first</td><td>The beginning particle index to compute neighbors for. </td></tr>
     <tr><td class="paramname">last</td><td>The end particle index to compute neighbors for. </td></tr>
     <tr><td class="paramname">radius</td><td>The radius of the neighborhood. Particles within this radius are considered neighbors. </td></tr>
@@ -409,13 +409,13 @@ template&lt;typename Slice , typename Tag &gt; </div>
 
 </div>
 </div>
-<a id="a54c2c1cc2a4243e326f944b1901d1760" name="a54c2c1cc2a4243e326f944b1901d1760"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a54c2c1cc2a4243e326f944b1901d1760">&#9670;&#160;</a></span>make2DNeighborList() <span class="overload">[3/3]</span></h2>
+<a id="a94e45bc278a37be735176b5d44393cb6" name="a94e45bc278a37be735176b5d44393cb6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94e45bc278a37be735176b5d44393cb6">&#9670;&#160;</a></span>make2DNeighborList() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DeviceType , typename Slice , typename Tag &gt; </div>
+template&lt;typename DeviceType , typename Positions , typename Tag &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">auto Cabana::Experimental::make2DNeighborList </td>
@@ -425,22 +425,22 @@ template&lt;typename DeviceType , typename Slice , typename Tag &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classCabana_1_1Slice.html">Slice</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>coordinate_slice</em></span>, </td>
+          <td class="paramtype">Positions const &amp;</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a></td>          <td class="paramname"><span class="paramname"><em>first</em></span>, </td>
+          <td class="paramtype">typename Positions::size_type</td>          <td class="paramname"><span class="paramname"><em>first</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a></td>          <td class="paramname"><span class="paramname"><em>last</em></span>, </td>
+          <td class="paramtype">typename Positions::size_type</td>          <td class="paramname"><span class="paramname"><em>last</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a3c0835a0b6b89996309d4c798a1bdb4b">Slice::value_type</a></td>          <td class="paramname"><span class="paramname"><em>radius</em></span>, </td>
+          <td class="paramtype">typename Positions::value_type</td>          <td class="paramname"><span class="paramname"><em>radius</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -454,7 +454,7 @@ template&lt;typename DeviceType , typename Slice , typename Tag &gt; </div>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">DeviceType</td><td>Kokkos device type. </td></tr>
-    <tr><td class="paramname">Slice</td><td>The position slice type. </td></tr>
+    <tr><td class="paramname">Positions</td><td>The position type. </td></tr>
     <tr><td class="paramname">Tag</td><td>Tag indicating whether to build a full or half neighbor list.</td></tr>
   </table>
   </dd>
@@ -462,7 +462,7 @@ template&lt;typename DeviceType , typename Slice , typename Tag &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tag</td><td>Tag indicating whether to build a full or half neighbor list. </td></tr>
-    <tr><td class="paramname">coordinate_slice</td><td>The slice containing the particle positions. </td></tr>
+    <tr><td class="paramname">positions</td><td>The particle positions. </td></tr>
     <tr><td class="paramname">first</td><td>The beginning particle index to compute neighbors for. </td></tr>
     <tr><td class="paramname">last</td><td>The end particle index to compute neighbors for. </td></tr>
     <tr><td class="paramname">radius</td><td>The radius of the neighborhood. Particles within this radius are considered neighbors. </td></tr>
@@ -474,13 +474,13 @@ template&lt;typename DeviceType , typename Slice , typename Tag &gt; </div>
 
 </div>
 </div>
-<a id="ae9fb23274b03bc38d833f63941450a67" name="ae9fb23274b03bc38d833f63941450a67"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae9fb23274b03bc38d833f63941450a67">&#9670;&#160;</a></span>makeNeighborList() <span class="overload">[1/3]</span></h2>
+<a id="a8792caa6da4ed4525b11ff969fe334e4" name="a8792caa6da4ed4525b11ff969fe334e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8792caa6da4ed4525b11ff969fe334e4">&#9670;&#160;</a></span>makeNeighborList() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename ExecutionSpace , typename Slice , typename Tag &gt; </div>
+template&lt;typename ExecutionSpace , typename Positions , typename Tag &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">auto Cabana::Experimental::makeNeighborList </td>
@@ -495,22 +495,22 @@ template&lt;typename ExecutionSpace , typename Slice , typename Tag &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classCabana_1_1Slice.html">Slice</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>coordinate_slice</em></span>, </td>
+          <td class="paramtype">Positions const &amp;</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a></td>          <td class="paramname"><span class="paramname"><em>first</em></span>, </td>
+          <td class="paramtype">typename Positions::size_type</td>          <td class="paramname"><span class="paramname"><em>first</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a></td>          <td class="paramname"><span class="paramname"><em>last</em></span>, </td>
+          <td class="paramtype">typename Positions::size_type</td>          <td class="paramname"><span class="paramname"><em>last</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a3c0835a0b6b89996309d4c798a1bdb4b">Slice::value_type</a></td>          <td class="paramname"><span class="paramname"><em>radius</em></span>, </td>
+          <td class="paramtype">typename Positions::value_type</td>          <td class="paramname"><span class="paramname"><em>radius</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -524,7 +524,7 @@ template&lt;typename ExecutionSpace , typename Slice , typename Tag &gt; </div>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">ExecutionSpace</td><td>Kokkos execution space. </td></tr>
-    <tr><td class="paramname">Slice</td><td>The position slice type. </td></tr>
+    <tr><td class="paramname">Positions</td><td>The position type. </td></tr>
     <tr><td class="paramname">AlgorithmTag</td><td>Tag indicating whether to build a full or half neighbor list.</td></tr>
   </table>
   </dd>
@@ -532,7 +532,7 @@ template&lt;typename ExecutionSpace , typename Slice , typename Tag &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">space</td><td>Kokkos execution space. </td></tr>
-    <tr><td class="paramname">coordinate_slice</td><td>The slice containing the particle positions. </td></tr>
+    <tr><td class="paramname">positions</td><td>The particle positions. </td></tr>
     <tr><td class="paramname">first</td><td>The beginning particle index to compute neighbors for. </td></tr>
     <tr><td class="paramname">last</td><td>The end particle index to compute neighbors for. </td></tr>
     <tr><td class="paramname">radius</td><td>The radius of the neighborhood. Particles within this radius are considered neighbors. </td></tr>
@@ -544,13 +544,13 @@ template&lt;typename ExecutionSpace , typename Slice , typename Tag &gt; </div>
 
 </div>
 </div>
-<a id="ad9e775b804d201982910b7fb0b4d29ac" name="ad9e775b804d201982910b7fb0b4d29ac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad9e775b804d201982910b7fb0b4d29ac">&#9670;&#160;</a></span>makeNeighborList() <span class="overload">[2/3]</span></h2>
+<a id="a2927b5fa0527f3c2134765d67e6a62f1" name="a2927b5fa0527f3c2134765d67e6a62f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2927b5fa0527f3c2134765d67e6a62f1">&#9670;&#160;</a></span>makeNeighborList() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Slice , typename Tag &gt; </div>
+template&lt;typename Positions , typename Tag &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">auto Cabana::Experimental::makeNeighborList </td>
@@ -560,22 +560,22 @@ template&lt;typename Slice , typename Tag &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classCabana_1_1Slice.html">Slice</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>coordinate_slice</em></span>, </td>
+          <td class="paramtype">Positions const &amp;</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a></td>          <td class="paramname"><span class="paramname"><em>first</em></span>, </td>
+          <td class="paramtype">typename Positions::size_type</td>          <td class="paramname"><span class="paramname"><em>first</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a></td>          <td class="paramname"><span class="paramname"><em>last</em></span>, </td>
+          <td class="paramtype">typename Positions::size_type</td>          <td class="paramname"><span class="paramname"><em>last</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a3c0835a0b6b89996309d4c798a1bdb4b">Slice::value_type</a></td>          <td class="paramname"><span class="paramname"><em>radius</em></span>, </td>
+          <td class="paramtype">typename Positions::value_type</td>          <td class="paramname"><span class="paramname"><em>radius</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -588,7 +588,7 @@ template&lt;typename Slice , typename Tag &gt; </div>
 <p>Neighbor list implementation using ArborX for particles within the interaction distance with a 1D compressed layout for particles and neighbors. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Slice</td><td>The position slice type. </td></tr>
+    <tr><td class="paramname">Positions</td><td>The position type. </td></tr>
     <tr><td class="paramname">Tag</td><td>Tag indicating whether to build a full or half neighbor list.</td></tr>
   </table>
   </dd>
@@ -596,7 +596,7 @@ template&lt;typename Slice , typename Tag &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tag</td><td>Tag indicating whether to build a full or half neighbor list. </td></tr>
-    <tr><td class="paramname">coordinate_slice</td><td>The slice containing the particle positions. </td></tr>
+    <tr><td class="paramname">positions</td><td>The containing the particle positions. </td></tr>
     <tr><td class="paramname">first</td><td>The beginning particle index to compute neighbors for. </td></tr>
     <tr><td class="paramname">last</td><td>The end particle index to compute neighbors for. </td></tr>
     <tr><td class="paramname">radius</td><td>The radius of the neighborhood. Particles within this radius are considered neighbors. </td></tr>
@@ -608,13 +608,13 @@ template&lt;typename Slice , typename Tag &gt; </div>
 
 </div>
 </div>
-<a id="a1f6282aa555939dd38463ed10f18304c" name="a1f6282aa555939dd38463ed10f18304c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1f6282aa555939dd38463ed10f18304c">&#9670;&#160;</a></span>makeNeighborList() <span class="overload">[3/3]</span></h2>
+<a id="a4664df229a76574c5a74f39ace47c6cd" name="a4664df229a76574c5a74f39ace47c6cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4664df229a76574c5a74f39ace47c6cd">&#9670;&#160;</a></span>makeNeighborList() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DeviceType , typename Slice , typename Tag &gt; </div>
+template&lt;typename DeviceType , typename Positions , typename Tag &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">auto Cabana::Experimental::makeNeighborList </td>
@@ -624,22 +624,22 @@ template&lt;typename DeviceType , typename Slice , typename Tag &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classCabana_1_1Slice.html">Slice</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>coordinate_slice</em></span>, </td>
+          <td class="paramtype">Positions const &amp;</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a></td>          <td class="paramname"><span class="paramname"><em>first</em></span>, </td>
+          <td class="paramtype">typename Positions::size_type</td>          <td class="paramname"><span class="paramname"><em>first</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a996e7d51bbbd05d7ae71dfdbd4f29104">Slice::size_type</a></td>          <td class="paramname"><span class="paramname"><em>last</em></span>, </td>
+          <td class="paramtype">typename Positions::size_type</td>          <td class="paramname"><span class="paramname"><em>last</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="classCabana_1_1Slice.html#a3c0835a0b6b89996309d4c798a1bdb4b">Slice::value_type</a></td>          <td class="paramname"><span class="paramname"><em>radius</em></span>, </td>
+          <td class="paramtype">typename Positions::value_type</td>          <td class="paramname"><span class="paramname"><em>radius</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -653,7 +653,7 @@ template&lt;typename DeviceType , typename Slice , typename Tag &gt; </div>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">DeviceType</td><td>Kokkos device type. </td></tr>
-    <tr><td class="paramname">Slice</td><td>The position slice type. </td></tr>
+    <tr><td class="paramname">Positions</td><td>The position type. </td></tr>
     <tr><td class="paramname">Tag</td><td>Tag indicating whether to build a full or half neighbor list.</td></tr>
   </table>
   </dd>
@@ -661,7 +661,7 @@ template&lt;typename DeviceType , typename Slice , typename Tag &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tag</td><td>Tag indicating whether to build a full or half neighbor list. </td></tr>
-    <tr><td class="paramname">coordinate_slice</td><td>The slice containing the particle positions. </td></tr>
+    <tr><td class="paramname">positions</td><td>The particle positions. </td></tr>
     <tr><td class="paramname">first</td><td>The beginning particle index to compute neighbors for. </td></tr>
     <tr><td class="paramname">last</td><td>The end particle index to compute neighbors for. </td></tr>
     <tr><td class="paramname">radius</td><td>The radius of the neighborhood. Particles within this radius are considered neighbors. </td></tr>

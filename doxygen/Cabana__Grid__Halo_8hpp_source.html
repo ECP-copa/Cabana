@@ -370,10 +370,10 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> n = 0; n &lt; num_n; ++n )</div>
 <div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>        {</div>
 <div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>            <span class="comment">// Only process this neighbor if there is work to do.</span></div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>            <span class="keywordflow">if</span> ( 0 &lt; _ghosted_buffers[n].size() )</div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>            <span class="keywordflow">if</span> ( 0 &lt; _ghosted_buffers[n].<a class="code hl_function" href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">size</a>() )</div>
 <div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>            {</div>
 <div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>                MPI_Irecv( _ghosted_buffers[n].data(),</div>
-<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>                           _ghosted_buffers[n].size(), MPI_BYTE,</div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>                           _ghosted_buffers[n].<a class="code hl_function" href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">size</a>(), MPI_BYTE,</div>
 <div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>                           _neighbor_ranks[n], mpi_tag + _receive_tags[n], comm,</div>
 <div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>                           &amp;requests[n] );</div>
 <div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>            }</div>
@@ -383,14 +383,14 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> n = 0; n &lt; num_n; ++n )</div>
 <div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>        {</div>
 <div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>            <span class="comment">// Only process this neighbor if there is work to do.</span></div>
-<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>            <span class="keywordflow">if</span> ( 0 &lt; _owned_buffers[n].size() )</div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>            <span class="keywordflow">if</span> ( 0 &lt; _owned_buffers[n].<a class="code hl_function" href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">size</a>() )</div>
 <div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>            {</div>
 <div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>                <span class="comment">// Pack the send buffer.</span></div>
 <div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>                <a class="code hl_function" href="classCabana_1_1Grid_1_1Halo.html#abf673533dcfbcf68535510b3a507433d">packBuffer</a>( exec_space, _owned_buffers[n], _owned_steering[n],</div>
 <div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>                            arrays.view()... );</div>
 <div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span> </div>
 <div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>                <span class="comment">// Post a send.</span></div>
-<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>                MPI_Isend( _owned_buffers[n].data(), _owned_buffers[n].size(),</div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>                MPI_Isend( _owned_buffers[n].data(), _owned_buffers[n].<a class="code hl_function" href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">size</a>(),</div>
 <div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>                           MPI_BYTE, _neighbor_ranks[n],</div>
 <div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>                           mpi_tag + _send_tags[n], comm,</div>
 <div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>                           &amp;requests[num_n + n] );</div>
@@ -453,9 +453,9 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> n = 0; n &lt; num_n; ++n )</div>
 <div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>        {</div>
 <div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>            <span class="comment">// Only process this neighbor if there is work to do.</span></div>
-<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>            <span class="keywordflow">if</span> ( 0 &lt; _owned_buffers[n].size() )</div>
+<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>            <span class="keywordflow">if</span> ( 0 &lt; _owned_buffers[n].<a class="code hl_function" href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">size</a>() )</div>
 <div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>            {</div>
-<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>                MPI_Irecv( _owned_buffers[n].data(), _owned_buffers[n].size(),</div>
+<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>                MPI_Irecv( _owned_buffers[n].data(), _owned_buffers[n].<a class="code hl_function" href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">size</a>(),</div>
 <div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>                           MPI_BYTE, _neighbor_ranks[n],</div>
 <div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>                           mpi_tag + _receive_tags[n], comm, &amp;requests[n] );</div>
 <div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>            }</div>
@@ -465,7 +465,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> n = 0; n &lt; num_n; ++n )</div>
 <div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>        {</div>
 <div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span>            <span class="comment">// Only process this neighbor if there is work to do.</span></div>
-<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span>            <span class="keywordflow">if</span> ( 0 &lt; _ghosted_buffers[n].size() )</div>
+<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span>            <span class="keywordflow">if</span> ( 0 &lt; _ghosted_buffers[n].<a class="code hl_function" href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">size</a>() )</div>
 <div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>            {</div>
 <div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span>                <span class="comment">// Pack the send buffer.</span></div>
 <div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span>                <a class="code hl_function" href="classCabana_1_1Grid_1_1Halo.html#abf673533dcfbcf68535510b3a507433d">packBuffer</a>( exec_space, _ghosted_buffers[n],</div>
@@ -473,7 +473,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span> </div>
 <div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>                <span class="comment">// Post a send.</span></div>
 <div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>                MPI_Isend( _ghosted_buffers[n].data(),</div>
-<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>                           _ghosted_buffers[n].size(), MPI_BYTE,</div>
+<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>                           _ghosted_buffers[n].<a class="code hl_function" href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">size</a>(), MPI_BYTE,</div>
 <div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>                           _neighbor_ranks[n], mpi_tag + _send_tags[n], comm,</div>
 <div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>                           &amp;requests[num_n + n] );</div>
 <div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>            }</div>
@@ -1115,6 +1115,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aclassCabana_1_1Grid_1_1IndexSpace_html"><div class="ttname"><a href="classCabana_1_1Grid_1_1IndexSpace.html">Cabana::Grid::IndexSpace</a></div><div class="ttdoc">Structured index space.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseIndexSpace.hpp:1128</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1NodeHaloPattern_html"><div class="ttname"><a href="classCabana_1_1Grid_1_1NodeHaloPattern.html">Cabana::Grid::NodeHaloPattern</a></div><div class="ttdef"><b>Definition</b> Cabana_Grid_Halo.hpp:77</div></div>
 <div class="ttc" id="anamespaceCabana_html"><div class="ttname"><a href="namespaceCabana.html">Cabana</a></div><div class="ttdoc">Core: particle data structures and algorithms.</div><div class="ttdef"><b>Definition</b> Cabana_AoSoA.hpp:36</div></div>
+<div class="ttc" id="anamespaceCabana_html_a38373e37aa5b7d04357323bcb20b249c"><div class="ttname"><a href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">Cabana::size</a></div><div class="ttdeci">auto size(SliceType slice, typename std::enable_if&lt; is_slice&lt; SliceType &gt;::value, int &gt;::type *=0)</div><div class="ttdoc">Check slice size (differs from Kokkos View).</div><div class="ttdef"><b>Definition</b> Cabana_Slice.hpp:1012</div></div>
 <div class="ttc" id="anamespaceCabana_html_a6eaaf4e113887600b1f87d8ca86cb787"><div class="ttname"><a href="namespaceCabana.html#a6eaaf4e113887600b1f87d8ca86cb787">Cabana::makeParameterPack</a></div><div class="ttdeci">ParameterPack&lt; Types... &gt; makeParameterPack(const Types &amp;... ts)</div><div class="ttdoc">Create a parameter pack.</div><div class="ttdef"><b>Definition</b> Cabana_ParameterPack.hpp:189</div></div>
 <div class="ttc" id="anamespaceCabana_html_adb4f420020f1eb963c2012491a90d259"><div class="ttname"><a href="namespaceCabana.html#adb4f420020f1eb963c2012491a90d259">Cabana::get</a></div><div class="ttdeci">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt; is_parameter_pack&lt; ParameterPack_t &gt;::value, typenameParameterPack_t::templatevalue_type&lt; N &gt; &amp; &gt;::type get(ParameterPack_t &amp;pp)</div><div class="ttdoc">Get an element from a parameter pack.</div><div class="ttdef"><b>Definition</b> Cabana_ParameterPack.hpp:129</div></div>
 <div class="ttc" id="anamespaceCajita_html"><div class="ttname"><a href="namespaceCajita.html">Cajita</a></div><div class="ttdoc">Cajita (deprecated): grid and particle-grid data structures and algorithms.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_Array.hpp:1127</div></div>

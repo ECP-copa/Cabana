@@ -129,20 +129,20 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>VerletList</b> ()</td></tr>
 <tr class="memdesc:a992a936a7289b867e413b941b273e085"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
 <tr class="separator:a992a936a7289b867e413b941b273e085"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2f8350cf0c3cefef9a4c3fd0cc31eb9" id="r_ae2f8350cf0c3cefef9a4c3fd0cc31eb9"><td class="memTemplParams" colspan="2">template&lt;class PositionSlice &gt; </td></tr>
-<tr class="memitem:ae2f8350cf0c3cefef9a4c3fd0cc31eb9"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae2f8350cf0c3cefef9a4c3fd0cc31eb9">VerletList</a> (PositionSlice x, const std::size_t begin, const std::size_t end, const typename PositionSlice::value_type neighborhood_radius, const typename PositionSlice::value_type cell_size_ratio, const typename PositionSlice::value_type grid_min[3], const typename PositionSlice::value_type grid_max[3], const std::size_t max_neigh=0, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionSlice &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:ae2f8350cf0c3cefef9a4c3fd0cc31eb9"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same...">VerletList</a> constructor. Given a list of particle positions and a neighborhood radius calculate the neighbor list.  <br /></td></tr>
-<tr class="separator:ae2f8350cf0c3cefef9a4c3fd0cc31eb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5cbcf0f2260c928346dbc3cc9ed3228" id="r_ac5cbcf0f2260c928346dbc3cc9ed3228"><td class="memTemplParams" colspan="2"><a id="ac5cbcf0f2260c928346dbc3cc9ed3228" name="ac5cbcf0f2260c928346dbc3cc9ed3228"></a>
-template&lt;class PositionSlice &gt; </td></tr>
-<tr class="memitem:ac5cbcf0f2260c928346dbc3cc9ed3228"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>build</b> (PositionSlice x, const std::size_t begin, const std::size_t end, const typename PositionSlice::value_type neighborhood_radius, const typename PositionSlice::value_type cell_size_ratio, const typename PositionSlice::value_type grid_min[3], const typename PositionSlice::value_type grid_max[3], const std::size_t max_neigh=0)</td></tr>
-<tr class="memdesc:ac5cbcf0f2260c928346dbc3cc9ed3228"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a list of particle positions and a neighborhood radius calculate the neighbor list. <br /></td></tr>
-<tr class="separator:ac5cbcf0f2260c928346dbc3cc9ed3228"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01978d70caaeffeff8deae1e2f494ab0" id="r_a01978d70caaeffeff8deae1e2f494ab0"><td class="memTemplParams" colspan="2"><a id="a01978d70caaeffeff8deae1e2f494ab0" name="a01978d70caaeffeff8deae1e2f494ab0"></a>
-template&lt;class PositionSlice , class ExecutionSpace &gt; </td></tr>
-<tr class="memitem:a01978d70caaeffeff8deae1e2f494ab0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>build</b> (ExecutionSpace, PositionSlice x, const std::size_t begin, const std::size_t end, const typename PositionSlice::value_type neighborhood_radius, const typename PositionSlice::value_type cell_size_ratio, const typename PositionSlice::value_type grid_min[3], const typename PositionSlice::value_type grid_max[3], const std::size_t max_neigh=0)</td></tr>
-<tr class="memdesc:a01978d70caaeffeff8deae1e2f494ab0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a list of particle positions and a neighborhood radius calculate the neighbor list. <br /></td></tr>
-<tr class="separator:a01978d70caaeffeff8deae1e2f494ab0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a255a0e4c3fa80324438145c795089c5d" id="r_a255a0e4c3fa80324438145c795089c5d"><td class="memTemplParams" colspan="2">template&lt;class PositionType &gt; </td></tr>
+<tr class="memitem:a255a0e4c3fa80324438145c795089c5d"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a255a0e4c3fa80324438145c795089c5d">VerletList</a> (PositionType x, const std::size_t begin, const std::size_t end, const typename PositionType::value_type neighborhood_radius, const typename PositionType::value_type cell_size_ratio, const typename PositionType::value_type grid_min[3], const typename PositionType::value_type grid_max[3], const std::size_t max_neigh=0, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a255a0e4c3fa80324438145c795089c5d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same...">VerletList</a> constructor. Given a list of particle positions and a neighborhood radius calculate the neighbor list.  <br /></td></tr>
+<tr class="separator:a255a0e4c3fa80324438145c795089c5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7f73a3f709e01744847e51e2fb62bbe" id="r_af7f73a3f709e01744847e51e2fb62bbe"><td class="memTemplParams" colspan="2"><a id="af7f73a3f709e01744847e51e2fb62bbe" name="af7f73a3f709e01744847e51e2fb62bbe"></a>
+template&lt;class PositionType &gt; </td></tr>
+<tr class="memitem:af7f73a3f709e01744847e51e2fb62bbe"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>build</b> (PositionType x, const std::size_t begin, const std::size_t end, const typename PositionType::value_type neighborhood_radius, const typename PositionType::value_type cell_size_ratio, const typename PositionType::value_type grid_min[3], const typename PositionType::value_type grid_max[3], const std::size_t max_neigh=0, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:af7f73a3f709e01744847e51e2fb62bbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a list of particle positions and a neighborhood radius calculate the neighbor list. <br /></td></tr>
+<tr class="separator:af7f73a3f709e01744847e51e2fb62bbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65a6445be63f29300b2942e4a694c73c" id="r_a65a6445be63f29300b2942e4a694c73c"><td class="memTemplParams" colspan="2"><a id="a65a6445be63f29300b2942e4a694c73c" name="a65a6445be63f29300b2942e4a694c73c"></a>
+template&lt;class PositionType , class ExecutionSpace &gt; </td></tr>
+<tr class="memitem:a65a6445be63f29300b2942e4a694c73c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>build</b> (ExecutionSpace, PositionType x, const std::size_t begin, const std::size_t end, const typename PositionType::value_type neighborhood_radius, const typename PositionType::value_type cell_size_ratio, const typename PositionType::value_type grid_min[3], const typename PositionType::value_type grid_max[3], const std::size_t max_neigh=0, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a65a6445be63f29300b2942e4a694c73c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a list of particle positions and a neighborhood radius calculate the neighbor list. <br /></td></tr>
+<tr class="separator:a65a6445be63f29300b2942e4a694c73c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ec325de6150d9f2e5a71175924970b7" id="r_a3ec325de6150d9f2e5a71175924970b7"><td class="memItemLeft" align="right" valign="top"><a id="a3ec325de6150d9f2e5a71175924970b7" name="a3ec325de6150d9f2e5a71175924970b7"></a>
 KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><b>setNeighbor</b> (const std::size_t particle_index, const std::size_t neighbor_index, const int new_index) const</td></tr>
 <tr class="memdesc:a3ec325de6150d9f2e5a71175924970b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Modify a neighbor in the list; for example, mark it as a broken bond. <br /></td></tr>
@@ -169,15 +169,15 @@ class Cabana::VerletList&lt; MemorySpace, AlgorithmTag, LayoutTag, BuildTag &gt;
 </dl>
 <p>Neighbor list implementation most appropriate for somewhat regularly distributed particles due to the use of a Cartesian grid. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ae2f8350cf0c3cefef9a4c3fd0cc31eb9" name="ae2f8350cf0c3cefef9a4c3fd0cc31eb9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2f8350cf0c3cefef9a4c3fd0cc31eb9">&#9670;&#160;</a></span>VerletList()</h2>
+<a id="a255a0e4c3fa80324438145c795089c5d" name="a255a0e4c3fa80324438145c795089c5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a255a0e4c3fa80324438145c795089c5d">&#9670;&#160;</a></span>VerletList()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class MemorySpace , class AlgorithmTag , class LayoutTag , class BuildTag  = TeamVectorOpTag&gt; </div>
 <div class="memtemplate">
-template&lt;class PositionSlice &gt; </div>
+template&lt;class PositionType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -185,7 +185,7 @@ template&lt;class PositionSlice &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classCabana_1_1VerletList.html">Cabana::VerletList</a>&lt; MemorySpace, AlgorithmTag, LayoutTag, BuildTag &gt;::VerletList </td>
           <td>(</td>
-          <td class="paramtype">PositionSlice</td>          <td class="paramname"><span class="paramname"><em>x</em></span>, </td>
+          <td class="paramtype">PositionType</td>          <td class="paramname"><span class="paramname"><em>x</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -200,22 +200,22 @@ template&lt;class PositionSlice &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const typename PositionSlice::value_type</td>          <td class="paramname"><span class="paramname"><em>neighborhood_radius</em></span>, </td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>neighborhood_radius</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const typename PositionSlice::value_type</td>          <td class="paramname"><span class="paramname"><em>cell_size_ratio</em></span>, </td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>cell_size_ratio</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const typename PositionSlice::value_type</td>          <td class="paramname"><span class="paramname"><em>grid_min</em></span>[3], </td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>grid_min</em></span>[3], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const typename PositionSlice::value_type</td>          <td class="paramname"><span class="paramname"><em>grid_max</em></span>[3], </td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>grid_max</em></span>[3], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -225,7 +225,7 @@ template&lt;class PositionSlice &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionSlice &gt;::value), int &gt;::type *</td>          <td class="paramname"><span class="paramname"><em></em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>&#160;)</td>
+          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *</td>          <td class="paramname"><span class="paramname"><em></em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -238,7 +238,7 @@ template&lt;class PositionSlice &gt; </div>
 <p><a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same...">VerletList</a> constructor. Given a list of particle positions and a neighborhood radius calculate the neighbor list. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">x</td><td>The slice containing the particle positions</td></tr>
+    <tr><td class="paramname">x</td><td>The particle positions</td></tr>
     <tr><td class="paramname">begin</td><td>The beginning particle index to compute neighbors for.</td></tr>
     <tr><td class="paramname">end</td><td>The end particle index to compute neighbors for.</td></tr>
     <tr><td class="paramname">neighborhood_radius</td><td>The radius of the neighborhood. Particles within this radius are considered neighbors. This is effectively the grid cell size in each dimension.</td></tr>

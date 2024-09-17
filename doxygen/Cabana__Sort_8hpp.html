@@ -320,6 +320,10 @@ template&lt;class KeyViewType , class ExecutionSpace  = typename KeyViewType::ex
 <tr class="memitem:ab44a65c22331c71ed7cee721a41c54fc"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ab44a65c22331c71ed7cee721a41c54fc">Cabana::permute</a> (const BinningDataType &amp;binning_data, SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, typename std::enable_if&lt;(is_binning_data&lt; BinningDataType &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
 <tr class="memdesc:ab44a65c22331c71ed7cee721a41c54fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given binning data permute a slice.  <br /></td></tr>
 <tr class="separator:ab44a65c22331c71ed7cee721a41c54fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f34189fb341f3228569a06d7a259766" id="r_a7f34189fb341f3228569a06d7a259766"><td class="memTemplParams" colspan="2">template&lt;class BinningDataType , class ViewType , class DeviceType  = typename BinningDataType::device_type&gt; </td></tr>
+<tr class="memitem:a7f34189fb341f3228569a06d7a259766"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a7f34189fb341f3228569a06d7a259766">Cabana::permute</a> (const BinningDataType &amp;binning_data, ViewType &amp;view, typename std::enable_if&lt;(is_binning_data&lt; BinningDataType &gt;::value &amp;&amp;Kokkos::is_view&lt; ViewType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a7f34189fb341f3228569a06d7a259766"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given binning data permute a View.  <br /></td></tr>
+<tr class="separator:a7f34189fb341f3228569a06d7a259766"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Sorting and binning built on Kokkos BinSort. </p>

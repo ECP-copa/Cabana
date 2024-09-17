@@ -423,30 +423,26 @@ Functions</h2></td></tr>
 <tr class="memitem:aa8eb6aa8da865a5ff9c1a86f1ba0a281"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aa8eb6aa8da865a5ff9c1a86f1ba0a281">scatter</a> (const HaloType &amp;halo, SliceType &amp;<a class="el" href="#aa14f30ab334c57448b204fc9b304289a">slice</a>, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__halo.html">is_halo</a>&lt; HaloType &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
 <tr class="memdesc:aa8eb6aa8da865a5ff9c1a86f1ba0a281"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously scatter data from the ghosts to the local decomposition of a slice using the halo reverse communication plan. This is a multiply-owned to uniquely owned communication.  <br /></td></tr>
 <tr class="separator:aa8eb6aa8da865a5ff9c1a86f1ba0a281"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6690a33f8a83213fea4e77418b39d72a" id="r_a6690a33f8a83213fea4e77418b39d72a"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace , class SliceType , class Scalar &gt; </td></tr>
-<tr class="memitem:a6690a33f8a83213fea4e77418b39d72a"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a6690a33f8a83213fea4e77418b39d72a">createLinkedCellList</a> (SliceType positions, const Scalar grid_delta[3], const Scalar grid_min[3], const Scalar grid_max[3])</td></tr>
-<tr class="memdesc:a6690a33f8a83213fea4e77418b39d72a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list.  <br /></td></tr>
-<tr class="separator:a6690a33f8a83213fea4e77418b39d72a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c30913939028315cf640ae6d73e5a49" id="r_a7c30913939028315cf640ae6d73e5a49"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace , class SliceType , class Scalar &gt; </td></tr>
-<tr class="memitem:a7c30913939028315cf640ae6d73e5a49"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a7c30913939028315cf640ae6d73e5a49">createLinkedCellList</a> (SliceType positions, const std::size_t begin, const std::size_t end, const Scalar grid_delta[3], const Scalar grid_min[3], const Scalar grid_max[3])</td></tr>
-<tr class="memdesc:a7c30913939028315cf640ae6d73e5a49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list with partial range.  <br /></td></tr>
-<tr class="separator:a7c30913939028315cf640ae6d73e5a49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a968f935557aea9491874353db539740d" id="r_a968f935557aea9491874353db539740d"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace , class SliceType , class Scalar &gt; </td></tr>
-<tr class="memitem:a968f935557aea9491874353db539740d"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a968f935557aea9491874353db539740d">createLinkedCellList</a> (SliceType positions, const Scalar grid_delta[3], const Scalar grid_min[3], const Scalar grid_max[3], const Scalar neighborhood_radius, const Scalar cell_size_ratio=1.0)</td></tr>
-<tr class="memdesc:a968f935557aea9491874353db539740d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list with custom cutoff radius and cell ratio.  <br /></td></tr>
-<tr class="separator:a968f935557aea9491874353db539740d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a513e8f7f67c5bda228b26b5de2ddf12a" id="r_a513e8f7f67c5bda228b26b5de2ddf12a"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace , class SliceType , class Scalar &gt; </td></tr>
-<tr class="memitem:a513e8f7f67c5bda228b26b5de2ddf12a"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a513e8f7f67c5bda228b26b5de2ddf12a">createLinkedCellList</a> (SliceType positions, const std::size_t begin, const std::size_t end, const Scalar grid_delta[3], const Scalar grid_min[3], const Scalar grid_max[3], const Scalar neighborhood_radius, const Scalar cell_size_ratio=1.0)</td></tr>
-<tr class="memdesc:a513e8f7f67c5bda228b26b5de2ddf12a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list with partial range and custom cutoff radius and/or cell ratio.  <br /></td></tr>
-<tr class="separator:a513e8f7f67c5bda228b26b5de2ddf12a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad098552958554108ac89587a7214e8d6" id="r_ad098552958554108ac89587a7214e8d6"><td class="memTemplParams" colspan="2">template&lt;class LinkedCellListType , class AoSoA_t &gt; </td></tr>
-<tr class="memitem:ad098552958554108ac89587a7214e8d6"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ad098552958554108ac89587a7214e8d6">permute</a> (LinkedCellListType &amp;linked_cell_list, AoSoA_t &amp;aosoa, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__linked__cell__list.html">is_linked_cell_list</a>&lt; LinkedCellListType &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; AoSoA_t &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:ad098552958554108ac89587a7214e8d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a linked cell list permute an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>.  <br /></td></tr>
-<tr class="separator:ad098552958554108ac89587a7214e8d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a706699f49d97a7d6576f904015bb7b79" id="r_a706699f49d97a7d6576f904015bb7b79"><td class="memTemplParams" colspan="2">template&lt;class LinkedCellListType , class SliceType &gt; </td></tr>
-<tr class="memitem:a706699f49d97a7d6576f904015bb7b79"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a706699f49d97a7d6576f904015bb7b79">permute</a> (LinkedCellListType &amp;linked_cell_list, SliceType &amp;<a class="el" href="#aa14f30ab334c57448b204fc9b304289a">slice</a>, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__linked__cell__list.html">is_linked_cell_list</a>&lt; LinkedCellListType &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:a706699f49d97a7d6576f904015bb7b79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a linked cell list permute a slice.  <br /></td></tr>
-<tr class="separator:a706699f49d97a7d6576f904015bb7b79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa9f8296e63d71349605eefe595566cb0" id="r_aa9f8296e63d71349605eefe595566cb0"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace , class PositionType , class Scalar &gt; </td></tr>
+<tr class="memitem:aa9f8296e63d71349605eefe595566cb0"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aa9f8296e63d71349605eefe595566cb0">createLinkedCellList</a> (PositionType positions, const Scalar grid_delta[3], const Scalar grid_min[3], const Scalar grid_max[3])</td></tr>
+<tr class="memdesc:aa9f8296e63d71349605eefe595566cb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list.  <br /></td></tr>
+<tr class="separator:aa9f8296e63d71349605eefe595566cb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a9d685569944ce88df681e248f8a1f1" id="r_a4a9d685569944ce88df681e248f8a1f1"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace , class PositionType , class Scalar &gt; </td></tr>
+<tr class="memitem:a4a9d685569944ce88df681e248f8a1f1"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4a9d685569944ce88df681e248f8a1f1">createLinkedCellList</a> (PositionType positions, const std::size_t begin, const std::size_t end, const Scalar grid_delta[3], const Scalar grid_min[3], const Scalar grid_max[3])</td></tr>
+<tr class="memdesc:a4a9d685569944ce88df681e248f8a1f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list with partial range.  <br /></td></tr>
+<tr class="separator:a4a9d685569944ce88df681e248f8a1f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d37f04afefe54d1c1dcaa484997528a" id="r_a7d37f04afefe54d1c1dcaa484997528a"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace , class PositionType , class Scalar &gt; </td></tr>
+<tr class="memitem:a7d37f04afefe54d1c1dcaa484997528a"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a7d37f04afefe54d1c1dcaa484997528a">createLinkedCellList</a> (PositionType positions, const Scalar grid_delta[3], const Scalar grid_min[3], const Scalar grid_max[3], const Scalar neighborhood_radius, const Scalar cell_size_ratio=1.0)</td></tr>
+<tr class="memdesc:a7d37f04afefe54d1c1dcaa484997528a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list with custom cutoff radius and cell ratio.  <br /></td></tr>
+<tr class="separator:a7d37f04afefe54d1c1dcaa484997528a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0815e834d6b2f97b2df628996a53490f" id="r_a0815e834d6b2f97b2df628996a53490f"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace , class PositionType , class Scalar &gt; </td></tr>
+<tr class="memitem:a0815e834d6b2f97b2df628996a53490f"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a0815e834d6b2f97b2df628996a53490f">createLinkedCellList</a> (PositionType positions, const std::size_t begin, const std::size_t end, const Scalar grid_delta[3], const Scalar grid_min[3], const Scalar grid_max[3], const Scalar neighborhood_radius, const Scalar cell_size_ratio=1.0)</td></tr>
+<tr class="memdesc:a0815e834d6b2f97b2df628996a53490f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list with partial range and custom cutoff radius and/or cell ratio.  <br /></td></tr>
+<tr class="separator:a0815e834d6b2f97b2df628996a53490f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a718a56e3bd90ee4e6b80095fd15a9db7" id="r_a718a56e3bd90ee4e6b80095fd15a9db7"><td class="memTemplParams" colspan="2">template&lt;class LinkedCellListType , class PositionType &gt; </td></tr>
+<tr class="memitem:a718a56e3bd90ee4e6b80095fd15a9db7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a718a56e3bd90ee4e6b80095fd15a9db7">permute</a> (LinkedCellListType &amp;linked_cell_list, PositionType &amp;positions, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__linked__cell__list.html">is_linked_cell_list</a>&lt; LinkedCellListType &gt;::value &amp;&amp;(<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; PositionType &gt;::value||<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value)), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a718a56e3bd90ee4e6b80095fd15a9db7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a linked cell list permute positions.  <br /></td></tr>
+<tr class="separator:a718a56e3bd90ee4e6b80095fd15a9db7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70cddd6233e137bfbe2ca4773e565e5d" id="r_a70cddd6233e137bfbe2ca4773e565e5d"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class ListType &gt; </td></tr>
 <tr class="memitem:a70cddd6233e137bfbe2ca4773e565e5d"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::View&lt; int *[2], typename ListType::memory_space &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a70cddd6233e137bfbe2ca4773e565e5d">neighborHistogram</a> (ExecutionSpace exec_space, const std::size_t num_particles, const ListType &amp;list, const int num_bin)</td></tr>
 <tr class="memdesc:a70cddd6233e137bfbe2ca4773e565e5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a histogram of neighbors per particle.  <br /></td></tr>
@@ -617,33 +613,43 @@ template&lt;class ViewType , class SliceType &gt; </td></tr>
 <tr class="memitem:a44bc1515cae7d5da7248006fdf113849" id="r_a44bc1515cae7d5da7248006fdf113849"><td class="memTemplParams" colspan="2"><a id="a44bc1515cae7d5da7248006fdf113849" name="a44bc1515cae7d5da7248006fdf113849"></a>
 template&lt;class ExecutionSpace , class SliceType , class ViewType &gt; </td></tr>
 <tr class="memitem:a44bc1515cae7d5da7248006fdf113849"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>copyViewToSlice</b> (ExecutionSpace exec_space, SliceType &amp;<a class="el" href="#aa14f30ab334c57448b204fc9b304289a">slice</a>, const ViewType &amp;view, const std::size_t begin, const std::size_t end, typename std::enable_if&lt; 2==SliceType::kokkos_view::traits::dimension::rank, int * &gt;::type=0)</td></tr>
-<tr class="memdesc:a44bc1515cae7d5da7248006fdf113849"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from slice to View. Rank-0. <br /></td></tr>
+<tr class="memdesc:a44bc1515cae7d5da7248006fdf113849"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from View to slice. Rank-0. <br /></td></tr>
 <tr class="separator:a44bc1515cae7d5da7248006fdf113849"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae0938a572be03d7c205d58f9e81caf3" id="r_aae0938a572be03d7c205d58f9e81caf3"><td class="memTemplParams" colspan="2"><a id="aae0938a572be03d7c205d58f9e81caf3" name="aae0938a572be03d7c205d58f9e81caf3"></a>
 template&lt;class ExecutionSpace , class SliceType , class ViewType &gt; </td></tr>
 <tr class="memitem:aae0938a572be03d7c205d58f9e81caf3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>copyViewToSlice</b> (ExecutionSpace exec_space, SliceType &amp;<a class="el" href="#aa14f30ab334c57448b204fc9b304289a">slice</a>, const ViewType &amp;view, const std::size_t begin, const std::size_t end, typename std::enable_if&lt; 3==SliceType::kokkos_view::traits::dimension::rank, int * &gt;::type=0)</td></tr>
-<tr class="memdesc:aae0938a572be03d7c205d58f9e81caf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from slice to View. Rank-1. <br /></td></tr>
+<tr class="memdesc:aae0938a572be03d7c205d58f9e81caf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from View to slice. Rank-1. <br /></td></tr>
 <tr class="separator:aae0938a572be03d7c205d58f9e81caf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea3f27002f8056b1d72b94aa2301ba5e" id="r_aea3f27002f8056b1d72b94aa2301ba5e"><td class="memTemplParams" colspan="2"><a id="aea3f27002f8056b1d72b94aa2301ba5e" name="aea3f27002f8056b1d72b94aa2301ba5e"></a>
 template&lt;class ExecutionSpace , class SliceType , class ViewType &gt; </td></tr>
 <tr class="memitem:aea3f27002f8056b1d72b94aa2301ba5e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>copyViewToSlice</b> (ExecutionSpace exec_space, SliceType &amp;<a class="el" href="#aa14f30ab334c57448b204fc9b304289a">slice</a>, const ViewType &amp;view, const std::size_t begin, const std::size_t end, typename std::enable_if&lt; 4==SliceType::kokkos_view::traits::dimension::rank, int * &gt;::type=0)</td></tr>
-<tr class="memdesc:aea3f27002f8056b1d72b94aa2301ba5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from slice to View. Rank-2. <br /></td></tr>
+<tr class="memdesc:aea3f27002f8056b1d72b94aa2301ba5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from View to slice. Rank-2. <br /></td></tr>
 <tr class="separator:aea3f27002f8056b1d72b94aa2301ba5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4e71e536095b8fc903bc357a66abd4e" id="r_aa4e71e536095b8fc903bc357a66abd4e"><td class="memTemplParams" colspan="2"><a id="aa4e71e536095b8fc903bc357a66abd4e" name="aa4e71e536095b8fc903bc357a66abd4e"></a>
+<tr class="memitem:a9bcaaa26544a4e172541847a82995876" id="r_a9bcaaa26544a4e172541847a82995876"><td class="memTemplParams" colspan="2"><a id="a9bcaaa26544a4e172541847a82995876" name="a9bcaaa26544a4e172541847a82995876"></a>
 template&lt;class ViewType , class SliceType &gt; </td></tr>
-<tr class="memitem:aa4e71e536095b8fc903bc357a66abd4e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>copyViewToSlice</b> (ViewType &amp;view, const SliceType &amp;<a class="el" href="#aa14f30ab334c57448b204fc9b304289a">slice</a>, const std::size_t begin, const std::size_t end)</td></tr>
-<tr class="memdesc:aa4e71e536095b8fc903bc357a66abd4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from slice to View with default execution space. <br /></td></tr>
-<tr class="separator:aa4e71e536095b8fc903bc357a66abd4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9bcaaa26544a4e172541847a82995876"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>copyViewToSlice</b> (SliceType &amp;<a class="el" href="#aa14f30ab334c57448b204fc9b304289a">slice</a>, const ViewType &amp;view, const std::size_t begin, const std::size_t end)</td></tr>
+<tr class="memdesc:a9bcaaa26544a4e172541847a82995876"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from View to slice with default execution space. <br /></td></tr>
+<tr class="separator:a9bcaaa26544a4e172541847a82995876"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae0f231f2743761433164d02ce538341c" id="r_ae0f231f2743761433164d02ce538341c"><td class="memTemplParams" colspan="2"><a id="ae0f231f2743761433164d02ce538341c" name="ae0f231f2743761433164d02ce538341c"></a>
 template&lt;class SliceType &gt; </td></tr>
-<tr class="memitem:ae0f231f2743761433164d02ce538341c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>checkSize</b> (SliceType <a class="el" href="#aa14f30ab334c57448b204fc9b304289a">slice</a>, const std::size_t size, typename std::enable_if&lt; <a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value, int &gt;::type *=0)</td></tr>
+<tr class="memitem:ae0f231f2743761433164d02ce538341c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>checkSize</b> (SliceType <a class="el" href="#aa14f30ab334c57448b204fc9b304289a">slice</a>, const std::size_t <a class="el" href="#a38373e37aa5b7d04357323bcb20b249c">size</a>, typename std::enable_if&lt; <a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value, int &gt;::type *=0)</td></tr>
 <tr class="memdesc:ae0f231f2743761433164d02ce538341c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check slice size (differs from Kokkos View). <br /></td></tr>
 <tr class="separator:ae0f231f2743761433164d02ce538341c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1950445268d5bdacd831883349a68456" id="r_a1950445268d5bdacd831883349a68456"><td class="memTemplParams" colspan="2"><a id="a1950445268d5bdacd831883349a68456" name="a1950445268d5bdacd831883349a68456"></a>
 template&lt;class ViewType &gt; </td></tr>
-<tr class="memitem:a1950445268d5bdacd831883349a68456"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>checkSize</b> (ViewType view, const std::size_t size, typename std::enable_if&lt; Kokkos::is_view&lt; ViewType &gt;::value, int &gt;::type *=0)</td></tr>
+<tr class="memitem:a1950445268d5bdacd831883349a68456"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>checkSize</b> (ViewType view, const std::size_t <a class="el" href="#a38373e37aa5b7d04357323bcb20b249c">size</a>, typename std::enable_if&lt; Kokkos::is_view&lt; ViewType &gt;::value, int &gt;::type *=0)</td></tr>
 <tr class="memdesc:a1950445268d5bdacd831883349a68456"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check View size (differs from <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a>). <br /></td></tr>
 <tr class="separator:a1950445268d5bdacd831883349a68456"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38373e37aa5b7d04357323bcb20b249c" id="r_a38373e37aa5b7d04357323bcb20b249c"><td class="memTemplParams" colspan="2"><a id="a38373e37aa5b7d04357323bcb20b249c" name="a38373e37aa5b7d04357323bcb20b249c"></a>
+template&lt;class SliceType &gt; </td></tr>
+<tr class="memitem:a38373e37aa5b7d04357323bcb20b249c"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>size</b> (SliceType <a class="el" href="#aa14f30ab334c57448b204fc9b304289a">slice</a>, typename std::enable_if&lt; <a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value, int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a38373e37aa5b7d04357323bcb20b249c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check slice size (differs from Kokkos View). <br /></td></tr>
+<tr class="separator:a38373e37aa5b7d04357323bcb20b249c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84d5740a31ba48910d2a247684ab669a" id="r_a84d5740a31ba48910d2a247684ab669a"><td class="memTemplParams" colspan="2"><a id="a84d5740a31ba48910d2a247684ab669a" name="a84d5740a31ba48910d2a247684ab669a"></a>
+template&lt;class ViewType &gt; </td></tr>
+<tr class="memitem:a84d5740a31ba48910d2a247684ab669a"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>size</b> (ViewType view, typename std::enable_if&lt; Kokkos::is_view&lt; ViewType &gt;::value, int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a84d5740a31ba48910d2a247684ab669a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check View size (differs from <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a>). <br /></td></tr>
+<tr class="separator:a84d5740a31ba48910d2a247684ab669a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85294bbc93aca84a04e821c0ed46e84e" id="r_a85294bbc93aca84a04e821c0ed46e84e"><td class="memTemplParams" colspan="2"><a id="a85294bbc93aca84a04e821c0ed46e84e" name="a85294bbc93aca84a04e821c0ed46e84e"></a>
 template&lt;std::size_t M, class SoA_t &gt; </td></tr>
 <tr class="memitem:a85294bbc93aca84a04e821c0ed46e84e"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt; <a class="el" href="structCabana_1_1is__soa.html">is_soa</a>&lt; SoA_t &gt;::value, typenameSoA_t::templatemember_reference_type&lt; M &gt; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (SoA_t &amp;soa, const std::size_t a)</td></tr>
@@ -740,6 +746,10 @@ template&lt;std::size_t M, class SoA_t &gt; </td></tr>
 <tr class="memitem:ab44a65c22331c71ed7cee721a41c54fc"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab44a65c22331c71ed7cee721a41c54fc">permute</a> (const BinningDataType &amp;binning_data, SliceType &amp;<a class="el" href="#aa14f30ab334c57448b204fc9b304289a">slice</a>, typename std::enable_if&lt;(is_binning_data&lt; BinningDataType &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
 <tr class="memdesc:ab44a65c22331c71ed7cee721a41c54fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given binning data permute a slice.  <br /></td></tr>
 <tr class="separator:ab44a65c22331c71ed7cee721a41c54fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f34189fb341f3228569a06d7a259766" id="r_a7f34189fb341f3228569a06d7a259766"><td class="memTemplParams" colspan="2">template&lt;class BinningDataType , class ViewType , class DeviceType  = typename BinningDataType::device_type&gt; </td></tr>
+<tr class="memitem:a7f34189fb341f3228569a06d7a259766"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a7f34189fb341f3228569a06d7a259766">permute</a> (const BinningDataType &amp;binning_data, ViewType &amp;view, typename std::enable_if&lt;(is_binning_data&lt; BinningDataType &gt;::value &amp;&amp;Kokkos::is_view&lt; ViewType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a7f34189fb341f3228569a06d7a259766"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given binning data permute a View.  <br /></td></tr>
+<tr class="separator:a7f34189fb341f3228569a06d7a259766"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e9c5039bd9d6602e2b586eadb908623" id="r_a7e9c5039bd9d6602e2b586eadb908623"><td class="memTemplParams" colspan="2"><a id="a7e9c5039bd9d6602e2b586eadb908623" name="a7e9c5039bd9d6602e2b586eadb908623"></a>
 template&lt;std::size_t M, class Tuple_t &gt; </td></tr>
 <tr class="memitem:a7e9c5039bd9d6602e2b586eadb908623"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt; <a class="el" href="structCabana_1_1is__tuple.html">is_tuple</a>&lt; Tuple_t &gt;::value, typenameTuple_t::templatemember_reference_type&lt; M &gt; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (Tuple_t &amp;tp)</td></tr>
@@ -1394,18 +1404,18 @@ template&lt;class HaloType , class ParticleDataType &gt; </div>
 
 </div>
 </div>
-<a id="a6690a33f8a83213fea4e77418b39d72a" name="a6690a33f8a83213fea4e77418b39d72a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6690a33f8a83213fea4e77418b39d72a">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[1/4]</span></h2>
+<a id="aa9f8296e63d71349605eefe595566cb0" name="aa9f8296e63d71349605eefe595566cb0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa9f8296e63d71349605eefe595566cb0">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace , class SliceType , class Scalar &gt; </div>
+template&lt;class MemorySpace , class PositionType , class Scalar &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">auto Cabana::createLinkedCellList </td>
           <td>(</td>
-          <td class="paramtype">SliceType</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
+          <td class="paramtype">PositionType</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1430,18 +1440,18 @@ template&lt;class MemorySpace , class SliceType , class Scalar &gt; </div>
 
 </div>
 </div>
-<a id="a968f935557aea9491874353db539740d" name="a968f935557aea9491874353db539740d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a968f935557aea9491874353db539740d">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[2/4]</span></h2>
+<a id="a7d37f04afefe54d1c1dcaa484997528a" name="a7d37f04afefe54d1c1dcaa484997528a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d37f04afefe54d1c1dcaa484997528a">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace , class SliceType , class Scalar &gt; </div>
+template&lt;class MemorySpace , class PositionType , class Scalar &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">auto Cabana::createLinkedCellList </td>
           <td>(</td>
-          <td class="paramtype">SliceType</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
+          <td class="paramtype">PositionType</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1476,18 +1486,18 @@ template&lt;class MemorySpace , class SliceType , class Scalar &gt; </div>
 
 </div>
 </div>
-<a id="a7c30913939028315cf640ae6d73e5a49" name="a7c30913939028315cf640ae6d73e5a49"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7c30913939028315cf640ae6d73e5a49">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[3/4]</span></h2>
+<a id="a4a9d685569944ce88df681e248f8a1f1" name="a4a9d685569944ce88df681e248f8a1f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a9d685569944ce88df681e248f8a1f1">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace , class SliceType , class Scalar &gt; </div>
+template&lt;class MemorySpace , class PositionType , class Scalar &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">auto Cabana::createLinkedCellList </td>
           <td>(</td>
-          <td class="paramtype">SliceType</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
+          <td class="paramtype">PositionType</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1522,18 +1532,18 @@ template&lt;class MemorySpace , class SliceType , class Scalar &gt; </div>
 
 </div>
 </div>
-<a id="a513e8f7f67c5bda228b26b5de2ddf12a" name="a513e8f7f67c5bda228b26b5de2ddf12a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a513e8f7f67c5bda228b26b5de2ddf12a">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[4/4]</span></h2>
+<a id="a0815e834d6b2f97b2df628996a53490f" name="a0815e834d6b2f97b2df628996a53490f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0815e834d6b2f97b2df628996a53490f">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace , class SliceType , class Scalar &gt; </div>
+template&lt;class MemorySpace , class PositionType , class Scalar &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">auto Cabana::createLinkedCellList </td>
           <td>(</td>
-          <td class="paramtype">SliceType</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
+          <td class="paramtype">PositionType</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -4315,13 +4325,57 @@ template&lt;class BinningDataType , class SliceType , class ExecutionSpace  = ty
 
 </div>
 </div>
-<a id="ad098552958554108ac89587a7214e8d6" name="ad098552958554108ac89587a7214e8d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad098552958554108ac89587a7214e8d6">&#9670;&#160;</a></span>permute() <span class="overload">[3/4]</span></h2>
+<a id="a7f34189fb341f3228569a06d7a259766" name="a7f34189fb341f3228569a06d7a259766"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f34189fb341f3228569a06d7a259766">&#9670;&#160;</a></span>permute() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class LinkedCellListType , class AoSoA_t &gt; </div>
+template&lt;class BinningDataType , class ViewType , class DeviceType  = typename BinningDataType::device_type&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cabana::permute </td>
+          <td>(</td>
+          <td class="paramtype">const BinningDataType &amp;</td>          <td class="paramname"><span class="paramname"><em>binning_data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ViewType &amp;</td>          <td class="paramname"><span class="paramname"><em>view</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename std::enable_if&lt;(is_binning_data&lt; BinningDataType &gt;::value &amp;&amp;Kokkos::is_view&lt; ViewType &gt;::value), int &gt;::type *</td>          <td class="paramname"><span class="paramname"><em></em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Given binning data permute a View. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">BinningDataType</td><td>The binning data type.</td></tr>
+    <tr><td class="paramname">ViewType</td><td>The view type.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">binning_data</td><td>The binning data.</td></tr>
+    <tr><td class="paramname">view</td><td>The view to permute. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a718a56e3bd90ee4e6b80095fd15a9db7" name="a718a56e3bd90ee4e6b80095fd15a9db7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a718a56e3bd90ee4e6b80095fd15a9db7">&#9670;&#160;</a></span>permute() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class LinkedCellListType , class PositionType &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void Cabana::permute </td>
@@ -4331,72 +4385,28 @@ template&lt;class LinkedCellListType , class AoSoA_t &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">AoSoA_t &amp;</td>          <td class="paramname"><span class="paramname"><em>aosoa</em></span>, </td>
+          <td class="paramtype">PositionType &amp;</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__linked__cell__list.html">is_linked_cell_list</a>&lt; LinkedCellListType &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; AoSoA_t &gt;::value), int &gt;::type *</td>          <td class="paramname"><span class="paramname"><em></em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>&#160;)</td>
+          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__linked__cell__list.html">is_linked_cell_list</a>&lt; LinkedCellListType &gt;::value &amp;&amp;(<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; PositionType &gt;::value||<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value)), int &gt;::type *</td>          <td class="paramname"><span class="paramname"><em></em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Given a linked cell list permute an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. </p>
+<p>Given a linked cell list permute positions. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">LinkedCellListType</td><td>The linked cell list type.</td></tr>
-    <tr><td class="paramname">AoSoA_t</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> type.</td></tr>
+    <tr><td class="paramname">PositionType</td><td>Positions type (<a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> or <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a> or Kokkos::View).</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">linked_cell_list</td><td>The linked cell list to permute the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> with.</td></tr>
-    <tr><td class="paramname">aosoa</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> to permute. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a706699f49d97a7d6576f904015bb7b79" name="a706699f49d97a7d6576f904015bb7b79"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a706699f49d97a7d6576f904015bb7b79">&#9670;&#160;</a></span>permute() <span class="overload">[4/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class LinkedCellListType , class SliceType &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void Cabana::permute </td>
-          <td>(</td>
-          <td class="paramtype">LinkedCellListType &amp;</td>          <td class="paramname"><span class="paramname"><em>linked_cell_list</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">SliceType &amp;</td>          <td class="paramname"><span class="paramname"><em>slice</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__linked__cell__list.html">is_linked_cell_list</a>&lt; LinkedCellListType &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *</td>          <td class="paramname"><span class="paramname"><em></em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Given a linked cell list permute a slice. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">LinkedCellListType</td><td>The linked cell list type.</td></tr>
-    <tr><td class="paramname">SliceType</td><td>The slice type.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">linked_cell_list</td><td>The linked cell list to permute the slice with.</td></tr>
-    <tr><td class="paramname">slice</td><td>The slice to permute. </td></tr>
+    <tr><td class="paramname">linked_cell_list</td><td>The linked cell list to permute the positions with.</td></tr>
+    <tr><td class="paramname">positions</td><td>Positions to permute. </td></tr>
   </table>
   </dd>
 </dl>

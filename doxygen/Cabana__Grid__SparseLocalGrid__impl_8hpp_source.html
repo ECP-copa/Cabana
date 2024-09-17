@@ -329,13 +329,13 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>    -&gt; IndexSpace&lt;num_space_dim&gt;</div>
 <div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>{</div>
 <div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>    <span class="comment">// Compute the size.</span></div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>    std::array&lt;long, num_space_dim&gt; size;</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>    std::array&lt;long, num_space_dim&gt; <a class="code hl_function" href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">size</a>;</div>
 <div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>    <span class="keywordflow">for</span> ( std::size_t d = 0; d &lt; num_space_dim; ++d )</div>
 <div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>    {</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>        size[d] = totalNumCell( d );</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>        <a class="code hl_function" href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">size</a>[d] = totalNumCell( d );</div>
 <div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>    }</div>
 <div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span> </div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>    <span class="keywordflow">return</span> IndexSpace&lt;num_space_dim&gt;( size );</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>    <span class="keywordflow">return</span> IndexSpace&lt;num_space_dim&gt;( <a class="code hl_function" href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">size</a> );</div>
 <div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>}</div>
 <div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span> </div>
 <div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
@@ -689,6 +689,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aclassCabana_1_1Grid_1_1LocalGrid_html"><div class="ttname"><a href="classCabana_1_1Grid_1_1LocalGrid.html">Cabana::Grid::LocalGrid</a></div><div class="ttdoc">Local logical grid.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_LocalGrid.hpp:40</div></div>
 <div class="ttc" id="aclassCabana_1_1Grid_1_1TileIndexSpace_html"><div class="ttname"><a href="classCabana_1_1Grid_1_1TileIndexSpace.html">Cabana::Grid::TileIndexSpace</a></div><div class="ttdoc">Index space with tile as unit; _min and _max forms the tile range. Note this is for sparse grid only,...</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseIndexSpace.hpp:1138</div></div>
 <div class="ttc" id="anamespaceCabana_html"><div class="ttname"><a href="namespaceCabana.html">Cabana</a></div><div class="ttdoc">Core: particle data structures and algorithms.</div><div class="ttdef"><b>Definition</b> Cabana_AoSoA.hpp:36</div></div>
+<div class="ttc" id="anamespaceCabana_html_a38373e37aa5b7d04357323bcb20b249c"><div class="ttname"><a href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">Cabana::size</a></div><div class="ttdeci">auto size(SliceType slice, typename std::enable_if&lt; is_slice&lt; SliceType &gt;::value, int &gt;::type *=0)</div><div class="ttdoc">Check slice size (differs from Kokkos View).</div><div class="ttdef"><b>Definition</b> Cabana_Slice.hpp:1012</div></div>
 <div class="ttc" id="anamespaceGrid_html"><div class="ttname"><a href="namespaceGrid.html">Grid</a></div><div class="ttdoc">Grid and particle-grid data structures and algorithms.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
