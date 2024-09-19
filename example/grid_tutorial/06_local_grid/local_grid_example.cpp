@@ -224,6 +224,23 @@ void localGridExample()
               << std::endl;
 
     /*
+      The directions which are shared along periodic edges of the simulation
+      domain constitute the periodic index spaces. These are the complement of
+      the boundary index space (periodic vs open system boundaries) and are a
+      subset of the shared index spaces (any periodic boundary is shared with
+      another rank, even if it is a self neighbor).
+    */
+    auto ghost_periodic_cell_space = local_grid->periodicIndexSpace(
+        Cabana::Grid::Ghost(), Cabana::Grid::Cell(), -1, 0, 1 );
+    std::cout << "Periodic index space (Ghost, Cell):\nMin: ";
+    for ( int d = 0; d < 3; ++d )
+        std::cout << ghost_periodic_cell_space.min( d ) << " ";
+    std::cout << "\nMax: ";
+    for ( int d = 0; d < 3; ++d )
+        std::cout << ghost_periodic_cell_space.max( d ) << " ";
+    std::cout << "\n" << std::endl;
+
+    /*
       We now create a partially non-periodic global grid to highlight some
       details of the local grid boundary index spaces.
     */
