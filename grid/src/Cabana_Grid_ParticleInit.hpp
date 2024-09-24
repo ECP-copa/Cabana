@@ -43,6 +43,63 @@ namespace Cabana
 {
 namespace Grid
 {
+// Filter out empty particles that weren't created.
+template <class CreationView, class ParticleAoSoA, class ExecutionSpace>
+void filterEmpties( const ExecutionSpace& exec_space,
+                    const int local_num_create,
+                    const int previous_num_particles,
+                    const CreationView& particle_created,
+                    ParticleAoSoA& particles, const bool shrink_to_fit = true )
+{
+    using memory_space = typename CreationView::memory_space;
+
+    // Determine the empty particle positions in the compaction zone.
+    int num_particles = particles.size();
+    // This View is either empty indices to be filled or the created particle
+    // indices, depending on the ratio of allocated space to the number
+    // created.
+    Kokkos::View<int*, memory_space> indices(
+        Kokkos::ViewAllocateWithoutInitializing( "empty_or_filled" ),
+        std::min( num_particles - previous_num_particles - local_num_create,
+                  local_num_create ) );
+
+    Kokkos::parallel_scan(
+        "Picasso::ParticleInit::FindEmpty",
+        Kokkos::RangePolicy<ExecutionSpace>( exec_space, 0, local_num_create ),
+        KOKKOS_LAMBDA( const int i, int& count, const bool final_pass ) {
+            if ( !particle_created( i ) )
+            {
+                if ( final_pass )
+                {
+                    indices( count ) = i + previous_num_particles;
+                }
+                ++count;
+            }
+        } );
+    Kokkos::fence();
+
+    // Compact the list so the it only has real particles.
+    int new_num_particles = previous_num_particles + local_num_create;
+    Kokkos::parallel_scan(
+        "Picasso::ParticleInit::RemoveEmpty",
+        Kokkos::RangePolicy<ExecutionSpace>( exec_space, new_num_particles,
+                                             num_particles ),
+        KOKKOS_LAMBDA( const int i, int& count, const bool final_pass ) {
+            if ( particle_created( i - previous_num_particles ) )
+            {
+                if ( final_pass )
+                {
+                    particles.setTuple( indices( count ),
+                                        particles.getTuple( i ) );
+                }
+                ++count;
+            }
+        } );
+    particles.resize( new_num_particles );
+    if ( shrink_to_fit )
+        particles.shrinkToFit();
+}
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Initialize a random number of particles in each cell given an
@@ -94,22 +151,21 @@ int createParticles(
     rnd_type pool;
     pool.init( local_seed, owned_cells.size() );
 
-    // Get the aosoa.
-    auto& aosoa = particle_list.aosoa();
-
     // Allocate enough space for the case the particles consume the entire
     // local grid.
     int num_particles = particles_per_cell * owned_cells.size();
-    aosoa.resize( previous_num_particles + num_particles );
+    particle_list.resize( previous_num_particles + num_particles );
 
-    // Creation count (start from previous).
-    auto count = Kokkos::View<int*, memory_space>( "particle_count", 1 );
-    Kokkos::deep_copy( count, previous_num_particles );
+    // Creation status.
+    Kokkos::View<bool*, memory_space> particle_created(
+        Kokkos::ViewAllocateWithoutInitializing( "particle_created" ),
+        num_particles );
 
     // Initialize particles.
-    grid_parallel_for(
+    int local_num_create = 0;
+    grid_parallel_reduce(
         "Cabana::Grid::ParticleInit::Random", exec_space, owned_cells,
-        KOKKOS_LAMBDA( const int i, const int j, const int k ) {
+        KOKKOS_LAMBDA( const int i, const int j, const int k, int& count ) {
             // Compute the owned local cell id.
             int i_own = i - owned_cells.min( Dim::I );
             int j_own = j - owned_cells.min( Dim::J );
@@ -141,10 +197,6 @@ int createParticles(
             // Create particles.
             for ( int p = 0; p < particles_per_cell; ++p )
             {
-                // Local particle id.
-                int pid =
-                    previous_num_particles + cell_id * particles_per_cell + p;
-
                 // Select a random point in the cell for the particle
                 // location. These coordinates are logical.
                 for ( int d = 0; d < 3; ++d )
@@ -153,26 +205,32 @@ int createParticles(
                         rand, low_coords[d], high_coords[d] );
                 }
 
+                // Local particle id.
+                int pid = cell_id * particles_per_cell + p;
+                int new_pid = previous_num_particles + pid;
+
                 // Create a new particle with the given logical coordinates.
-                auto particle = particle_list.getParticle( pid );
-                bool created = create_functor( pid, px, pv, particle );
+                auto particle = particle_list.getParticle( new_pid );
+                particle_created( pid ) =
+                    create_functor( new_pid, px, pv, particle );
 
                 // If we created a new particle insert it into the list.
-                if ( created )
+                if ( particle_created( pid ) )
                 {
-                    auto c = Kokkos::atomic_fetch_add( &count( 0 ), 1 );
-                    particle_list.setParticle( particle, c );
+                    particle_list.setParticle( particle, new_pid );
+                    count++;
                 }
             }
-        } );
+        },
+        local_num_create );
     Kokkos::fence();
 
-    auto count_host =
-        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), count );
-    aosoa.resize( count_host( 0 ) );
-    if ( shrink_to_fit )
-        aosoa.shrinkToFit();
-    return count_host( 0 );
+    // Filter empties.
+    auto& aosoa = particle_list.aosoa();
+    filterEmpties( exec_space, local_num_create, previous_num_particles,
+                   particle_created, aosoa, shrink_to_fit );
+
+    return particle_list.size();
 }
 
 /*!
@@ -365,23 +423,22 @@ int createParticles(
     // Get the local set of owned cell indices.
     auto owned_cells = local_grid.indexSpace( Own(), Cell(), Local() );
 
-    // Get the aosoa.
-    auto& aosoa = particle_list.aosoa();
-
     // Allocate enough space for particles fill the entire local grid.
     int particles_per_cell = particles_per_cell_dim * particles_per_cell_dim *
                              particles_per_cell_dim;
     int num_particles = particles_per_cell * owned_cells.size();
-    aosoa.resize( previous_num_particles + num_particles );
+    particle_list.resize( previous_num_particles + num_particles );
 
-    // Creation count (start from previous).
-    auto count = Kokkos::View<int*, memory_space>( "particle_count", 1 );
-    Kokkos::deep_copy( count, previous_num_particles );
+    // Creation status.
+    Kokkos::View<bool*, memory_space> particle_created(
+        Kokkos::ViewAllocateWithoutInitializing( "particle_created" ),
+        num_particles );
 
     // Initialize particles.
-    grid_parallel_for(
+    int local_num_create = 0;
+    grid_parallel_reduce(
         "Cabana::Grid::ParticleInit::Uniform", exec_space, owned_cells,
-        KOKKOS_LAMBDA( const int i, const int j, const int k ) {
+        KOKKOS_LAMBDA( const int i, const int j, const int k, int& count ) {
             // Compute the owned local cell id.
             int i_own = i - owned_cells.min( Dim::I );
             int j_own = j - owned_cells.min( Dim::J );
@@ -420,12 +477,6 @@ int createParticles(
                 for ( int jp = 0; jp < particles_per_cell_dim; ++jp )
                     for ( int kp = 0; kp < particles_per_cell_dim; ++kp )
                     {
-                        // Local particle id.
-                        int pid = previous_num_particles +
-                                  cell_id * particles_per_cell + ip +
-                                  particles_per_cell_dim *
-                                      ( jp + particles_per_cell_dim * kp );
-
                         // Set the particle position in logical coordinates.
                         px[Dim::I] = 0.5 * spacing[Dim::I] +
                                      ip * spacing[Dim::I] + low_coords[Dim::I];
@@ -434,29 +485,35 @@ int createParticles(
                         px[Dim::K] = 0.5 * spacing[Dim::K] +
                                      kp * spacing[Dim::K] + low_coords[Dim::K];
 
+                        // Local particle id.
+                        int pid = cell_id * particles_per_cell + ip +
+                                  particles_per_cell_dim *
+                                      ( jp + particles_per_cell_dim * kp );
+                        int new_pid = previous_num_particles + pid;
+
                         // Create a new particle with the given logical
                         // coordinates.
-                        auto particle = particle_list.getParticle( pid );
-                        bool created = create_functor( pid, px, pv, particle );
+                        auto particle = particle_list.getParticle( new_pid );
+                        particle_created( pid ) =
+                            create_functor( new_pid, px, pv, particle );
 
                         // If we created a new particle insert it into the list.
-                        if ( created )
+                        if ( particle_created( pid ) )
                         {
-                            // TODO: replace atomic with fill (use pid directly)
-                            // and filter of empty list entries.
-                            auto c = Kokkos::atomic_fetch_add( &count( 0 ), 1 );
-                            particle_list.setParticle( particle, c );
+                            particle_list.setParticle( particle, new_pid );
+                            count++;
                         }
                     }
-        } );
+        },
+        local_num_create );
     Kokkos::fence();
 
-    auto count_host =
-        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), count );
-    aosoa.resize( count_host( 0 ) );
-    if ( shrink_to_fit )
-        aosoa.shrinkToFit();
-    return count_host( 0 );
+    // Filter empties.
+    auto& aosoa = particle_list.aosoa();
+    filterEmpties( exec_space, local_num_create, previous_num_particles,
+                   particle_created, aosoa, shrink_to_fit );
+
+    return particle_list.size();
 }
 
 /*!
@@ -584,7 +641,6 @@ void createParticles(
         } );
 }
 
-//---------------------------------------------------------------------------//
 /*!
   \brief Initialize a uniform number of particles in each cell.
 
