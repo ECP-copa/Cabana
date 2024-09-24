@@ -236,9 +236,9 @@ void test3( const bool use_topology )
     int mpi_tag = 1030;
     MPI_Request request;
     MPI_Irecv( inverse_steering.data(), inverse_steering.size(),
-               MPI_UNSIGNED_LONG_LONG, inverse_rank, mpi_tag, MPI_COMM_WORLD,
+               MPI_UNSIGNED_LONG, inverse_rank, mpi_tag, MPI_COMM_WORLD,
                &request );
-    MPI_Send( my_steering.data(), my_steering.size(), MPI_UNSIGNED_LONG_LONG,
+    MPI_Send( my_steering.data(), my_steering.size(), MPI_UNSIGNED_LONG,
               inverse_rank, mpi_tag, MPI_COMM_WORLD );
     MPI_Status status;
     MPI_Wait( &request, &status );
