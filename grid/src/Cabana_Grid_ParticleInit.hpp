@@ -31,6 +31,7 @@
 #include <Cabana_Grid_ParticleList.hpp>
 
 #include <Cabana_ParticleInit.hpp>
+#include <Cabana_Remove.hpp>
 #include <Cabana_Slice.hpp>
 #include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
@@ -43,63 +44,6 @@ namespace Cabana
 {
 namespace Grid
 {
-// Filter out empty particles that weren't created.
-template <class CreationView, class ParticleAoSoA, class ExecutionSpace>
-void filterEmpties( const ExecutionSpace& exec_space,
-                    const int local_num_create,
-                    const int previous_num_particles,
-                    const CreationView& particle_created,
-                    ParticleAoSoA& particles, const bool shrink_to_fit = true )
-{
-    using memory_space = typename CreationView::memory_space;
-
-    // Determine the empty particle positions in the compaction zone.
-    int num_particles = particles.size();
-    // This View is either empty indices to be filled or the created particle
-    // indices, depending on the ratio of allocated space to the number
-    // created.
-    Kokkos::View<int*, memory_space> indices(
-        Kokkos::ViewAllocateWithoutInitializing( "empty_or_filled" ),
-        std::min( num_particles - previous_num_particles - local_num_create,
-                  local_num_create ) );
-
-    Kokkos::parallel_scan(
-        "Picasso::ParticleInit::FindEmpty",
-        Kokkos::RangePolicy<ExecutionSpace>( exec_space, 0, local_num_create ),
-        KOKKOS_LAMBDA( const int i, int& count, const bool final_pass ) {
-            if ( !particle_created( i ) )
-            {
-                if ( final_pass )
-                {
-                    indices( count ) = i + previous_num_particles;
-                }
-                ++count;
-            }
-        } );
-    Kokkos::fence();
-
-    // Compact the list so the it only has real particles.
-    int new_num_particles = previous_num_particles + local_num_create;
-    Kokkos::parallel_scan(
-        "Picasso::ParticleInit::RemoveEmpty",
-        Kokkos::RangePolicy<ExecutionSpace>( exec_space, new_num_particles,
-                                             num_particles ),
-        KOKKOS_LAMBDA( const int i, int& count, const bool final_pass ) {
-            if ( particle_created( i - previous_num_particles ) )
-            {
-                if ( final_pass )
-                {
-                    particles.setTuple( indices( count ),
-                                        particles.getTuple( i ) );
-                }
-                ++count;
-            }
-        } );
-    particles.resize( new_num_particles );
-    if ( shrink_to_fit )
-        particles.shrinkToFit();
-}
-
 //---------------------------------------------------------------------------//
 /*!
   \brief Initialize a random number of particles in each cell given an
@@ -227,8 +171,8 @@ int createParticles(
 
     // Filter empties.
     auto& aosoa = particle_list.aosoa();
-    filterEmpties( exec_space, local_num_create, previous_num_particles,
-                   particle_created, aosoa, shrink_to_fit );
+    remove( exec_space, local_num_create, particle_created, aosoa,
+            previous_num_particles, shrink_to_fit );
 
     return particle_list.size();
 }
@@ -510,8 +454,8 @@ int createParticles(
 
     // Filter empties.
     auto& aosoa = particle_list.aosoa();
-    filterEmpties( exec_space, local_num_create, previous_num_particles,
-                   particle_created, aosoa, shrink_to_fit );
+    remove( exec_space, local_num_create, particle_created, aosoa,
+            previous_num_particles, shrink_to_fit );
 
     return particle_list.size();
 }
