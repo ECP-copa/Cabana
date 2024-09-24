@@ -24,6 +24,7 @@ set(HEADERS_PUBLIC
   Cabana_ParameterPack.hpp
   Cabana_ParticleInit.hpp
   Cabana_ParticleList.hpp
+  Cabana_Remove.hpp
   Cabana_Slice.hpp
   Cabana_SoA.hpp
   Cabana_Sort.hpp
