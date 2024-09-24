@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: arborx/ArborX
-          ref: master
+          ref: v1.7
           path: arborx
       - name: Build arborx
         working-directory: arborx
