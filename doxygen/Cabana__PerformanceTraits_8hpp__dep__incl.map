@@ -1,68 +1,72 @@
 <map id="core/src/impl/Cabana_PerformanceTraits.hpp" name="core/src/impl/Cabana_PerformanceTraits.hpp">
-<area shape="rect" id="Node000001" title="Default settings for execution spaces." alt="" coords="895,5,1065,54"/>
-<area shape="rect" id="Node000002" href="$Cabana__AoSoA_8hpp.html" title="Array&#45;of&#45;Struct&#45;of&#45;Arrays particle data structure." alt="" coords="882,102,1078,132"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="983,70,983,101,977,101,977,70"/>
-<area shape="rect" id="Node000003" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="244,799,428,829"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="867,129,624,151,340,186,211,208,105,233,64,247,33,261,14,276,8,290,8,660,14,696,31,725,57,749,89,768,126,783,166,793,244,806,243,811,165,799,125,788,87,773,53,753,27,728,9,697,3,660,3,289,10,272,30,256,62,242,103,228,210,203,339,181,624,146,867,124"/>
-<area shape="rect" id="Node000004" href="$Cabana__DeepCopy_8hpp.html" title="AoSoA and slice extensions for Kokkos deep copy and mirrors." alt="" coords="499,276,717,306"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="868,130,787,149,746,163,708,182,679,204,654,230,619,277,614,274,649,226,675,200,705,177,744,158,785,144,867,125"/>
-<area shape="rect" id="Node000005" href="$Cabana__Sort_8hpp.html" title="Sorting and binning built on Kokkos BinSort." alt="" coords="98,364,278,393"/>
-<area shape="poly" id="edge39_Node000002_Node000005" title=" " alt="" coords="868,135,760,154,647,182,518,228,394,280,216,365,213,361,392,275,516,223,646,177,759,149,867,130"/>
-<area shape="rect" id="Node000014" href="$Cabana__Grid__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="1040,451,1192,499"/>
-<area shape="poly" id="edge40_Node000002_Node000014" title=" " alt="" coords="1061,134,1118,154,1179,183,1234,223,1258,247,1278,275,1295,309,1301,340,1295,371,1278,404,1261,424,1240,440,1193,461,1191,457,1237,436,1258,420,1274,401,1290,369,1296,340,1290,311,1274,278,1254,251,1231,227,1176,187,1116,159,1059,139"/>
-<area shape="rect" id="Node000016" href="$Cabana__Distributor_8hpp.html" title="Multi&#45;node particle redistribution." alt="" coords="1045,276,1264,306"/>
-<area shape="poly" id="edge27_Node000002_Node000016" title=" " alt="" coords="1007,141,1143,274,1139,278,1003,145"/>
-<area shape="rect" id="Node000018" href="$Cabana__Halo_8hpp.html" title="Multi&#45;node particle scatter/gather." alt="" coords="1389,189,1571,219"/>
-<area shape="poly" id="edge31_Node000002_Node000018" title=" " alt="" coords="1093,132,1371,177,1416,186,1415,191,1370,182,1092,137"/>
-<area shape="rect" id="Node000019" href="$Cabana__ParticleList_8hpp.html" title="Application&#45;level particle storage and single particle access." alt="" coords="719,180,892,228"/>
-<area shape="poly" id="edge32_Node000002_Node000019" title=" " alt="" coords="938,141,855,181,853,177,936,136"/>
-<area shape="rect" id="Node000021" href="$Cabana__Grid__SparseArray_8hpp.html" title="Sparse grid fields arrays using AoSoA." alt="" coords="1318,451,1469,499"/>
-<area shape="poly" id="edge41_Node000002_Node000021" title=" " alt="" coords="1093,130,1159,148,1191,161,1221,177,1258,205,1289,239,1316,277,1339,316,1372,392,1390,449,1385,451,1367,394,1334,319,1312,280,1285,243,1254,209,1219,182,1189,166,1157,153,1092,135"/>
-<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="634,316,657,346,681,384,699,427,707,473,707,660,705,682,699,702,678,735,647,762,608,782,564,796,517,806,428,815,428,810,517,801,562,791,606,777,644,757,674,732,694,700,699,681,701,660,701,474,694,429,676,386,653,349,630,320"/>
-<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="524,312,259,365,258,360,523,307"/>
-<area shape="rect" id="Node000011" href="$Cabana__Grid__ParticleDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="842,354,1008,403"/>
-<area shape="poly" id="edge20_Node000004_Node000011" title=" " alt="" coords="676,308,842,352,841,357,675,313"/>
-<area shape="poly" id="edge6_Node000005_Node000003" title=" " alt="" coords="159,405,127,435,94,474,69,520,61,545,59,570,59,660,63,690,76,715,96,737,121,755,181,782,245,799,243,804,179,787,118,760,92,741,72,718,58,691,53,660,53,570,56,544,64,518,90,471,123,431,156,401"/>
-<area shape="rect" id="Node000006" href="$Cabana__LinkedCellList_8hpp.html" title="Linked cell list binning (spatial sorting) and neighbor iteration." alt="" coords="93,547,283,596"/>
-<area shape="poly" id="edge7_Node000005_Node000006" title=" " alt="" coords="191,409,191,547,185,547,185,409"/>
-<area shape="rect" id="Node000009" href="$Cabana__NeighborList_8hpp.html" title="Neighbor list interface." alt="" coords="253,451,438,499"/>
-<area shape="poly" id="edge14_Node000005_Node000009" title=" " alt="" coords="226,399,308,448,305,453,223,404"/>
-<area shape="poly" id="edge8_Node000006_Node000003" title=" " alt="" coords="178,611,171,644,169,677,174,702,188,725,210,749,249,777,291,796,288,801,246,782,206,753,183,728,169,704,164,677,165,644,173,610"/>
-<area shape="rect" id="Node000007" href="$Cabana__Parallel_8hpp.html" title="SIMD and neighbor extension of Kokkos parallel iteration." alt="" coords="194,644,392,674"/>
-<area shape="poly" id="edge9_Node000006_Node000007" title=" " alt="" coords="231,604,277,641,274,645,228,608"/>
-<area shape="rect" id="Node000008" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="229,722,443,751"/>
-<area shape="poly" id="edge13_Node000006_Node000008" title=" " alt="" coords="178,611,176,643,178,658,185,672,198,688,215,701,254,719,252,724,212,705,195,692,180,675,173,660,170,643,173,611"/>
-<area shape="poly" id="edge10_Node000007_Node000003" title=" " alt="" coords="256,685,237,699,222,715,216,733,220,750,232,765,247,778,283,797,281,801,245,783,228,769,215,752,210,732,218,713,233,695,252,680"/>
-<area shape="poly" id="edge11_Node000007_Node000008" title=" " alt="" coords="311,686,330,720,326,722,306,689"/>
-<area shape="poly" id="edge12_Node000008_Node000003" title=" " alt="" coords="339,767,339,799,333,799,333,767"/>
-<area shape="poly" id="edge15_Node000009_Node000003" title=" " alt="" coords="381,509,420,558,455,620,467,653,473,687,470,721,457,753,444,769,427,783,391,801,389,797,425,778,440,765,452,750,465,720,467,688,462,655,451,622,415,561,377,513"/>
-<area shape="poly" id="edge17_Node000009_Node000006" title=" " alt="" coords="294,510,229,549,226,545,292,505"/>
-<area shape="poly" id="edge18_Node000009_Node000007" title=" " alt="" coords="337,515,300,644,295,643,332,513"/>
-<area shape="poly" id="edge19_Node000009_Node000008" title=" " alt="" coords="365,513,399,600,409,643,409,661,406,675,386,703,362,723,358,719,383,699,402,673,404,660,403,644,394,602,360,515"/>
-<area shape="rect" id="Node000010" href="$Cabana__Experimental__NeighborList_8hpp.html" title="ArborX tree&#45;based neighbor lists." alt="" coords="458,547,667,596"/>
-<area shape="poly" id="edge16_Node000009_Node000010" title=" " alt="" coords="415,503,509,544,507,549,413,508"/>
-<area shape="rect" id="Node000012" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="1165,644,1344,674"/>
-<area shape="poly" id="edge21_Node000011_Node000012" title=" " alt="" coords="957,414,980,450,994,492,998,528,1006,561,1015,577,1030,594,1060,616,1094,632,1130,643,1165,650,1164,655,1128,648,1092,637,1057,621,1026,598,1011,580,1001,563,993,529,989,493,975,452,952,416"/>
-<area shape="poly" id="edge23_Node000011_Node000014" title=" " alt="" coords="988,407,1070,448,1067,453,985,412"/>
-<area shape="rect" id="Node000013" href="$Cajita_8hpp_source.html" title=" " alt="" coords="1188,722,1322,751"/>
-<area shape="poly" id="edge22_Node000012_Node000013" title=" " alt="" coords="1257,690,1257,721,1252,721,1252,690"/>
-<area shape="poly" id="edge24_Node000014_Node000012" title=" " alt="" coords="1166,507,1206,546,1223,571,1236,598,1253,643,1248,644,1231,600,1218,573,1202,549,1163,511"/>
-<area shape="rect" id="Node000015" href="$Cabana__Grid__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="1040,547,1192,596"/>
-<area shape="poly" id="edge25_Node000014_Node000015" title=" " alt="" coords="1119,515,1119,547,1113,547,1113,515"/>
-<area shape="poly" id="edge26_Node000015_Node000012" title=" " alt="" coords="1169,602,1233,641,1230,646,1166,606"/>
-<area shape="poly" id="edge30_Node000016_Node000011" title=" " alt="" coords="1103,314,990,356,989,351,1101,309"/>
-<area shape="rect" id="Node000017" href="$Cabana__Grid__GlobalParticleComm_8hpp.html" title="Global particle communication." alt="" coords="1083,354,1264,403"/>
-<area shape="poly" id="edge28_Node000016_Node000017" title=" " alt="" coords="1164,321,1171,353,1166,354,1158,322"/>
-<area shape="poly" id="edge29_Node000017_Node000012" title=" " alt="" coords="1193,416,1206,450,1224,498,1239,547,1256,643,1250,644,1233,548,1219,499,1202,452,1188,418"/>
-<area shape="poly" id="edge33_Node000019_Node000003" title=" " alt="" coords="790,243,768,305,760,341,757,377,757,660,753,693,740,716,719,735,691,754,644,772,577,787,429,807,428,802,576,782,642,767,688,749,716,731,736,713,748,691,752,660,752,377,755,340,763,304,785,242"/>
-<area shape="poly" id="edge34_Node000019_Node000004" title=" " alt="" coords="737,237,642,278,640,273,735,232"/>
-<area shape="poly" id="edge38_Node000019_Node000014" title=" " alt="" coords="861,234,939,286,1022,352,1068,402,1103,449,1098,452,1064,406,1018,356,936,290,858,239"/>
-<area shape="rect" id="Node000020" href="$Cabana__ParticleInit_8hpp.html" title="Particle creation utilities." alt="" coords="792,451,965,499"/>
-<area shape="poly" id="edge35_Node000019_Node000020" title=" " alt="" coords="808,244,813,319,821,361,833,402,846,427,861,449,857,452,841,429,828,404,816,362,808,319,802,244"/>
-<area shape="poly" id="edge36_Node000020_Node000003" title=" " alt="" coords="879,515,870,570,852,635,839,668,822,700,801,729,775,753,749,768,714,780,624,797,522,808,428,813,428,808,522,803,623,792,713,775,747,763,772,749,797,725,817,697,834,666,847,633,865,569,873,514"/>
-<area shape="poly" id="edge37_Node000020_Node000015" title=" " alt="" coords="953,503,1058,544,1056,549,951,508"/>
-<area shape="poly" id="edge42_Node000021_Node000012" title=" " alt="" coords="1368,513,1267,645,1263,642,1364,510"/>
-<area shape="rect" id="Node000022" href="$Cabana__Grid__SparseHalo_8hpp_source.html" title=" " alt="" coords="1368,547,1520,596"/>
-<area shape="poly" id="edge43_Node000021_Node000022" title=" " alt="" coords="1415,512,1434,545,1429,548,1411,514"/>
-<area shape="poly" id="edge44_Node000022_Node000012" title=" " alt="" coords="1379,605,1287,646,1285,641,1376,600"/>
+<area shape="rect" id="Node000001" title="Default settings for execution spaces." alt="" coords="714,5,884,54"/>
+<area shape="rect" id="Node000002" href="$Cabana__AoSoA_8hpp.html" title="Array&#45;of&#45;Struct&#45;of&#45;Arrays particle data structure." alt="" coords="701,102,896,132"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="801,70,801,101,796,101,796,70"/>
+<area shape="rect" id="Node000003" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="146,799,329,829"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="686,122,487,132,375,142,264,158,164,179,82,208,51,226,28,245,13,266,8,290,8,660,12,687,24,711,41,732,64,750,117,778,171,796,169,801,115,783,61,755,38,736,19,714,7,689,3,660,3,290,8,264,24,241,48,221,80,203,162,174,263,152,374,137,487,126,686,117"/>
+<area shape="rect" id="Node000004" href="$Cabana__DeepCopy_8hpp.html" title="AoSoA and slice extensions for Kokkos deep copy and mirrors." alt="" coords="419,276,637,306"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="744,140,701,159,657,182,592,232,543,278,540,274,588,228,655,177,698,154,742,135"/>
+<area shape="rect" id="Node000005" href="$Cabana__Remove_8hpp.html" title="Remove particles (without using MPI)" alt="" coords="208,364,413,393"/>
+<area shape="poly" id="edge41_Node000002_Node000005" title=" " alt="" coords="723,139,652,160,570,190,486,229,408,278,359,324,324,365,320,361,355,320,405,274,484,224,568,185,650,155,721,134"/>
+<area shape="rect" id="Node000006" href="$Cabana__Sort_8hpp.html" title="Sorting and binning built on Kokkos BinSort." alt="" coords="438,364,618,393"/>
+<area shape="poly" id="edge42_Node000002_Node000006" title=" " alt="" coords="754,141,726,159,702,181,691,198,684,213,678,244,671,274,664,291,651,308,632,326,610,342,567,365,564,361,607,338,629,322,647,304,659,288,666,273,672,242,679,212,686,195,698,178,723,155,751,137"/>
+<area shape="rect" id="Node000015" href="$Cabana__Grid__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="1034,451,1185,499"/>
+<area shape="poly" id="edge43_Node000002_Node000015" title=" " alt="" coords="863,135,914,156,971,186,1025,225,1049,249,1069,275,1091,320,1104,369,1110,414,1112,450,1107,450,1105,415,1099,370,1086,322,1064,278,1045,252,1021,229,968,190,912,161,861,140"/>
+<area shape="rect" id="Node000017" href="$Cabana__Distributor_8hpp.html" title="Multi&#45;node particle redistribution." alt="" coords="836,276,1055,306"/>
+<area shape="poly" id="edge29_Node000002_Node000017" title=" " alt="" coords="846,137,874,155,899,178,916,203,930,229,945,275,940,277,925,231,912,205,895,181,871,159,843,141"/>
+<area shape="rect" id="Node000019" href="$Cabana__Halo_8hpp.html" title="Multi&#45;node particle scatter/gather." alt="" coords="1436,189,1618,219"/>
+<area shape="poly" id="edge33_Node000002_Node000019" title=" " alt="" coords="912,123,1146,143,1418,177,1466,186,1465,191,1417,182,1145,149,911,128"/>
+<area shape="rect" id="Node000020" href="$Cabana__ParticleList_8hpp.html" title="Application&#45;level particle storage and single particle access." alt="" coords="712,180,885,228"/>
+<area shape="poly" id="edge34_Node000002_Node000020" title=" " alt="" coords="801,147,801,179,796,179,796,147"/>
+<area shape="rect" id="Node000022" href="$Cabana__Grid__SparseArray_8hpp.html" title="Sparse grid fields arrays using AoSoA." alt="" coords="1323,451,1474,499"/>
+<area shape="poly" id="edge44_Node000002_Node000022" title=" " alt="" coords="912,129,1024,153,1087,171,1151,194,1214,224,1273,259,1328,302,1375,352,1389,376,1397,402,1402,450,1397,451,1392,403,1384,378,1371,356,1325,306,1270,264,1211,228,1149,199,1085,176,1023,158,911,134"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="403,303,300,321,247,336,197,356,144,379,100,399,83,411,70,427,62,447,59,474,59,660,62,685,73,708,88,729,107,747,153,776,197,796,195,801,150,781,104,751,84,732,68,711,57,687,53,660,53,474,56,446,65,424,79,407,97,394,142,374,195,352,246,331,299,316,403,298"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="479,315,348,365,346,360,477,310"/>
+<area shape="poly" id="edge7_Node000004_Node000006" title=" " alt="" coords="531,322,531,363,525,363,525,322"/>
+<area shape="rect" id="Node000012" href="$Cabana__Grid__ParticleDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="876,354,1042,403"/>
+<area shape="poly" id="edge22_Node000004_Node000012" title=" " alt="" coords="615,307,875,358,874,363,614,312"/>
+<area shape="poly" id="edge6_Node000005_Node000003" title=" " alt="" coords="225,401,179,421,159,435,141,452,121,480,112,506,109,534,109,570,109,660,111,687,115,708,125,728,141,750,171,777,205,797,202,801,168,781,137,753,120,730,110,710,105,688,104,660,104,570,104,534,106,505,116,478,137,449,155,431,177,417,223,396"/>
+<area shape="poly" id="edge8_Node000006_Node000003" title=" " alt="" coords="465,401,373,432,272,473,228,497,192,521,168,546,162,558,160,571,160,660,167,701,185,740,206,773,226,797,222,801,202,776,180,743,162,703,155,660,155,570,157,557,164,543,189,517,225,492,270,469,371,427,464,396"/>
+<area shape="rect" id="Node000007" href="$Cabana__LinkedCellList_8hpp.html" title="Linked cell list binning (spatial sorting) and neighbor iteration." alt="" coords="251,547,440,596"/>
+<area shape="poly" id="edge9_Node000006_Node000007" title=" " alt="" coords="490,404,456,426,425,453,386,502,359,548,355,545,382,499,421,449,453,421,487,399"/>
+<area shape="rect" id="Node000010" href="$Cabana__NeighborList_8hpp.html" title="Neighbor list interface." alt="" coords="435,451,621,499"/>
+<area shape="poly" id="edge16_Node000006_Node000010" title=" " alt="" coords="531,409,531,450,525,450,525,409"/>
+<area shape="poly" id="edge10_Node000007_Node000003" title=" " alt="" coords="274,606,252,624,236,645,227,665,223,686,222,729,227,769,235,798,230,800,222,770,216,730,217,685,222,663,231,643,249,620,271,602"/>
+<area shape="rect" id="Node000008" href="$Cabana__Parallel_8hpp.html" title="SIMD and neighbor extension of Kokkos parallel iteration." alt="" coords="245,644,443,674"/>
+<area shape="poly" id="edge11_Node000007_Node000008" title=" " alt="" coords="347,612,347,643,342,643,342,612"/>
+<area shape="rect" id="Node000009" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="323,722,536,751"/>
+<area shape="poly" id="edge15_Node000007_Node000009" title=" " alt="" coords="418,602,440,620,457,643,462,664,459,686,442,723,437,720,454,685,457,664,452,645,436,624,415,607"/>
+<area shape="poly" id="edge12_Node000008_Node000003" title=" " alt="" coords="328,688,249,800,245,797,323,685"/>
+<area shape="poly" id="edge13_Node000008_Node000009" title=" " alt="" coords="373,682,415,719,412,723,370,686"/>
+<area shape="poly" id="edge14_Node000009_Node000003" title=" " alt="" coords="380,760,274,801,272,796,378,755"/>
+<area shape="poly" id="edge17_Node000010_Node000003" title=" " alt="" coords="548,513,566,565,579,628,581,662,577,694,567,725,550,753,536,765,515,776,460,792,395,803,330,810,329,805,394,798,459,786,513,771,533,761,546,750,562,723,572,693,575,661,574,629,561,566,543,515"/>
+<area shape="poly" id="edge19_Node000010_Node000007" title=" " alt="" coords="470,509,392,549,390,544,468,504"/>
+<area shape="poly" id="edge20_Node000010_Node000008" title=" " alt="" coords="513,515,488,557,454,598,417,626,379,646,377,641,414,621,450,594,483,554,508,512"/>
+<area shape="poly" id="edge21_Node000010_Node000009" title=" " alt="" coords="525,515,508,591,494,633,477,675,461,701,444,723,440,719,457,698,472,672,489,632,502,589,519,514"/>
+<area shape="rect" id="Node000011" href="$Cabana__Experimental__NeighborList_8hpp.html" title="ArborX tree&#45;based neighbor lists." alt="" coords="616,547,824,596"/>
+<area shape="poly" id="edge18_Node000010_Node000011" title=" " alt="" coords="591,504,673,544,671,549,588,509"/>
+<area shape="rect" id="Node000013" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="1158,644,1338,674"/>
+<area shape="poly" id="edge23_Node000012_Node000013" title=" " alt="" coords="968,417,990,518,1006,564,1023,594,1053,617,1087,633,1123,644,1159,651,1158,656,1122,649,1085,638,1050,621,1019,598,1001,567,985,519,963,419"/>
+<area shape="poly" id="edge25_Node000012_Node000015" title=" " alt="" coords="1011,409,1073,448,1070,452,1008,413"/>
+<area shape="rect" id="Node000014" href="$Cajita_8hpp_source.html" title=" " alt="" coords="1181,722,1315,751"/>
+<area shape="poly" id="edge24_Node000013_Node000014" title=" " alt="" coords="1251,690,1251,721,1245,721,1245,690"/>
+<area shape="poly" id="edge26_Node000015_Node000013" title=" " alt="" coords="1160,507,1199,546,1216,571,1229,598,1246,643,1241,644,1224,600,1211,573,1195,549,1156,511"/>
+<area shape="rect" id="Node000016" href="$Cabana__Grid__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="1034,547,1185,596"/>
+<area shape="poly" id="edge27_Node000015_Node000016" title=" " alt="" coords="1112,515,1112,547,1107,547,1107,515"/>
+<area shape="poly" id="edge28_Node000016_Node000013" title=" " alt="" coords="1162,602,1226,641,1223,646,1159,606"/>
+<area shape="poly" id="edge32_Node000017_Node000012" title=" " alt="" coords="953,321,958,353,952,354,947,322"/>
+<area shape="rect" id="Node000018" href="$Cabana__Grid__GlobalParticleComm_8hpp.html" title="Global particle communication." alt="" coords="1180,354,1361,403"/>
+<area shape="poly" id="edge30_Node000017_Node000018" title=" " alt="" coords="1015,308,1181,351,1180,356,1014,313"/>
+<area shape="poly" id="edge31_Node000018_Node000013" title=" " alt="" coords="1270,418,1252,644,1246,643,1265,418"/>
+<area shape="poly" id="edge35_Node000020_Node000003" title=" " alt="" coords="786,244,770,297,758,362,755,397,757,432,764,466,776,498,789,514,806,521,823,529,838,546,846,572,838,597,817,629,793,658,736,706,670,743,599,771,526,791,455,804,330,816,329,810,454,799,525,786,597,766,668,738,733,701,789,654,813,626,834,595,841,572,834,549,820,533,804,526,786,518,771,501,758,467,752,432,750,397,752,361,765,295,781,242"/>
+<area shape="poly" id="edge36_Node000020_Node000004" title=" " alt="" coords="709,236,574,278,572,273,708,231"/>
+<area shape="poly" id="edge40_Node000020_Node000015" title=" " alt="" coords="901,218,1000,242,1041,257,1068,274,1084,294,1096,317,1110,365,1115,412,1114,450,1109,450,1109,412,1105,366,1091,319,1080,297,1065,278,1039,262,999,247,899,224"/>
+<area shape="rect" id="Node000021" href="$Cabana__ParticleInit_8hpp.html" title="Particle creation utilities." alt="" coords="786,451,958,499"/>
+<area shape="poly" id="edge37_Node000020_Node000021" title=" " alt="" coords="811,243,827,305,868,450,863,451,821,307,805,244"/>
+<area shape="poly" id="edge38_Node000021_Node000003" title=" " alt="" coords="890,513,906,566,917,630,917,663,912,696,901,726,882,753,854,768,803,779,655,797,482,808,330,813,330,808,482,802,654,792,802,774,852,763,878,749,896,724,907,694,911,663,911,630,901,567,885,515"/>
+<area shape="poly" id="edge39_Node000021_Node000016" title=" " alt="" coords="946,503,1051,544,1049,549,944,508"/>
+<area shape="poly" id="edge45_Node000022_Node000013" title=" " alt="" coords="1372,513,1262,645,1257,642,1368,510"/>
+<area shape="rect" id="Node000023" href="$Cabana__Grid__SparseHalo_8hpp_source.html" title=" " alt="" coords="1362,547,1513,596"/>
+<area shape="poly" id="edge46_Node000022_Node000023" title=" " alt="" coords="1416,513,1430,546,1425,548,1412,515"/>
+<area shape="poly" id="edge47_Node000023_Node000013" title=" " alt="" coords="1372,605,1281,646,1279,641,1370,600"/>
 </map>

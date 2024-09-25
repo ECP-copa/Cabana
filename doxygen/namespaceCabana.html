@@ -590,6 +590,10 @@ template&lt;class FieldTag , class... FieldTags, class... IndexTypes, int Vector
 <tr class="memitem:accbf302d54f1080dc3fbb2fe74f69bdb"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#accbf302d54f1080dc3fbb2fe74f69bdb">createParticleList</a> (const std::string &amp;label, <a class="el" href="structCabana_1_1ParticleTraits.html">ParticleTraits</a>&lt; FieldTags... &gt;)</td></tr>
 <tr class="memdesc:accbf302d54f1080dc3fbb2fe74f69bdb"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1ParticleList.html" title="List of particle fields stored in AoSoA.">ParticleList</a> creation function with default vector length.  <br /></td></tr>
 <tr class="separator:accbf302d54f1080dc3fbb2fe74f69bdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4a8672095ebecba36332e0b0ea60f94" id="r_af4a8672095ebecba36332e0b0ea60f94"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class KeepView , class ParticleAoSoA &gt; </td></tr>
+<tr class="memitem:af4a8672095ebecba36332e0b0ea60f94"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#af4a8672095ebecba36332e0b0ea60f94">remove</a> (const ExecutionSpace &amp;exec_space, const int num_keep, const KeepView &amp;keep_particle, ParticleAoSoA &amp;particles, const int num_particles_ignore=0, const bool shrink_to_fit=true)</td></tr>
+<tr class="memdesc:af4a8672095ebecba36332e0b0ea60f94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Filter out empty/unneeded particles.  <br /></td></tr>
+<tr class="separator:af4a8672095ebecba36332e0b0ea60f94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a55f062f7dc8d19daf0c5b3830c04c51e" id="r_a55f062f7dc8d19daf0c5b3830c04c51e"><td class="memTemplParams" colspan="2"><a id="a55f062f7dc8d19daf0c5b3830c04c51e" name="a55f062f7dc8d19daf0c5b3830c04c51e"></a>
 template&lt;class ExecutionSpace , class ViewType , class SliceType &gt; </td></tr>
 <tr class="memitem:a55f062f7dc8d19daf0c5b3830c04c51e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>copySliceToView</b> (ExecutionSpace exec_space, ViewType &amp;view, const SliceType &amp;<a class="el" href="#aa14f30ab334c57448b204fc9b304289a">slice</a>, const std::size_t begin, const std::size_t end, typename std::enable_if&lt; 2==SliceType::kokkos_view::traits::dimension::rank, int * &gt;::type=0)</td></tr>
@@ -4407,6 +4411,62 @@ template&lt;class LinkedCellListType , class PositionType &gt; </div>
   <table class="params">
     <tr><td class="paramname">linked_cell_list</td><td>The linked cell list to permute the positions with.</td></tr>
     <tr><td class="paramname">positions</td><td>Positions to permute. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="af4a8672095ebecba36332e0b0ea60f94" name="af4a8672095ebecba36332e0b0ea60f94"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4a8672095ebecba36332e0b0ea60f94">&#9670;&#160;</a></span>remove()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ExecutionSpace , class KeepView , class ParticleAoSoA &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cabana::remove </td>
+          <td>(</td>
+          <td class="paramtype">const ExecutionSpace &amp;</td>          <td class="paramname"><span class="paramname"><em>exec_space</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int</td>          <td class="paramname"><span class="paramname"><em>num_keep</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const KeepView &amp;</td>          <td class="paramname"><span class="paramname"><em>keep_particle</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ParticleAoSoA &amp;</td>          <td class="paramname"><span class="paramname"><em>particles</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int</td>          <td class="paramname"><span class="paramname"><em>num_particles_ignore</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>shrink_to_fit</em></span><span class="paramdefsep"> = </span><span class="paramdefval">true</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Filter out empty/unneeded particles. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">exec_space</td><td>Kokkos execution space. </td></tr>
+    <tr><td class="paramname">num_keep</td><td>The total number of particles in the compaction section to keep. </td></tr>
+    <tr><td class="paramname">num_particles_ignore</td><td>The number of particles to ignore (which precede those which may be kept/removed). </td></tr>
+    <tr><td class="paramname">keep_particle</td><td>Boolean Kokkos View of particles to keep (true) or remove (false). </td></tr>
+    <tr><td class="paramname">particles</td><td>The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> containing particles. </td></tr>
+    <tr><td class="paramname">shrink_to_fit</td><td>Whether to remove additional <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> capacity or not. </td></tr>
   </table>
   </dd>
 </dl>
