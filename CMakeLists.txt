@@ -15,7 +15,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(Cabana LANGUAGES CXX)
-set(PROJECT_VERSION "0.7.0-dev")
+set(PROJECT_VERSION "0.7.0")
 
 # If the user doesn't provide a build type default to release
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CXX_FLAGS)
