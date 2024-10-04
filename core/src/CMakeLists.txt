@@ -67,15 +67,6 @@ set(HEADERS_IMPL
 add_library(Core INTERFACE)
 add_library(Cabana::Core ALIAS Core)
 
-### FIXME: remove cabanacore in next release.
-add_library(cabanacore INTERFACE)
-target_link_libraries(cabanacore INTERFACE Core)
-if(CMAKE_VERSION VERSION_GREATER 3.17)
-  if(NOT Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS)
-    set_property(TARGET cabanacore PROPERTY DEPRECATION "NOTE: cabanacore subpackage is now Core. Link to Cabana::Core. Cabana::cabanacore will be removed in a future release.")
-  endif()
-endif()
-
 # Require minimum of C++17
 set_target_properties(Core PROPERTIES INTERFACE_COMPILE_FEATURES cxx_std_17)
 
@@ -113,7 +104,7 @@ if(Cabana_ENABLE_HDF5)
   )
 endif()
 
-install(TARGETS Core cabanacore
+install(TARGETS Core
   EXPORT Cabana_Targets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})

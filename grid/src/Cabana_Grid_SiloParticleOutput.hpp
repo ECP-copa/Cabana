@@ -21,7 +21,6 @@
 
 #include <Cabana_SiloParticleOutput.hpp>
 #include <Cabana_Slice.hpp>
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 
@@ -95,30 +94,5 @@ void writeTimeStep( const std::string& prefix,
 } // namespace Experimental
 } // namespace Grid
 } // namespace Cabana
-
-namespace Cajita
-{
-namespace Experimental
-{
-namespace SiloParticleOutput
-{
-//! \cond Deprecated
-template <class... Args>
-CAJITA_DEPRECATED void writePartialRangeTimeStep( Args&&... args )
-{
-    Cabana::Grid::Experimental::SiloParticleOutput::writePartialRangeTimeStep(
-        std::forward<Args>( args )... );
-}
-
-template <class... Args>
-CAJITA_DEPRECATED void writeTimeStep( Args&&... args )
-{
-    Cabana::Grid::Experimental::SiloParticleOutput::writeTimeStep(
-        std::forward<Args>( args )... );
-}
-//! \endcond
-} // namespace SiloParticleOutput
-} // namespace Experimental
-} // namespace Cajita
 
 #endif // CABANA_GRID_SILOPARTICLEOUTPUT_HPP

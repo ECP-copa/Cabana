@@ -13,7 +13,6 @@ configure_file(Cabana_Grid_Config.hpp.in Cabana_Grid_Config.hpp)
 
 set(HEADERS_PUBLIC
   Cabana_Grid.hpp
-  Cajita.hpp # FIXME: remove in next release
   Cabana_Grid_Array.hpp
   Cabana_Grid_BovWriter.hpp
   Cabana_Grid_GlobalGrid.hpp
@@ -71,15 +70,6 @@ endif()
 add_library(Grid INTERFACE)
 add_library(Cabana::Grid ALIAS Grid)
 
-### FIXME: remove Cajita in next release.
-add_library(Cajita INTERFACE)
-target_link_libraries(Cajita INTERFACE Grid)
-if(CMAKE_VERSION VERSION_GREATER 3.17)
-  if(NOT Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS)
-    set_property(TARGET Cajita PROPERTY DEPRECATION "NOTE: Cajita subpackage is now Grid. Link to Cabana::Grid. Cabana::Cajita will be removed in a future release.")
-  endif()
-endif()
-
 set_target_properties(Grid PROPERTIES INTERFACE_COMPILE_FEATURES cxx_std_17)
 
 target_link_libraries(Grid INTERFACE
@@ -106,7 +96,7 @@ target_include_directories(Grid
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-install(TARGETS Grid Cajita
+install(TARGETS Grid
   EXPORT Cabana_Targets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})

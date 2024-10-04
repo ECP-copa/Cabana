@@ -21,7 +21,6 @@
 #include <Cabana_ParticleList.hpp>
 #include <Cabana_SoA.hpp>
 #include <Cabana_Tuple.hpp>
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Cabana_Grid_ParticleDistributor.hpp>
 
@@ -151,33 +150,5 @@ auto createParticleList( const std::string& label,
 
 } // namespace Grid
 } // namespace Cabana
-
-namespace Cajita
-{
-//! \cond Deprecated
-template <class MemorySpace, int VectorLength, class... FieldTags>
-using ParticleList CAJITA_DEPRECATED =
-    Cabana::Grid::ParticleList<MemorySpace, VectorLength, FieldTags...>;
-
-template <class T>
-using is_particle_list CAJITA_DEPRECATED = Cabana::Grid::is_particle_list<T>;
-
-// MemorySpace and VectorLength cannot be deduced.
-template <class MemorySpace, int VectorLength, class... Args>
-CAJITA_DEPRECATED auto createParticleList( Args&&... args )
-{
-    return Cabana::Grid::createParticleList<MemorySpace, VectorLength>(
-        std::forward<Args>( args )... );
-}
-
-// MemorySpace cannot be deduced.
-template <class MemorySpace, class... Args>
-CAJITA_DEPRECATED auto createParticleList( Args&&... args )
-{
-    return Cabana::Grid::createParticleList<MemorySpace>(
-        std::forward<Args>( args )... );
-}
-//! \endcond
-} // namespace Cajita
 
 #endif // end CABANA_GRID_PARTICLELIST_HPP

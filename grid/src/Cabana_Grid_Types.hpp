@@ -16,8 +16,6 @@
 #ifndef CABANA_GRID_TYPES_HPP
 #define CABANA_GRID_TYPES_HPP
 
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
-
 #include <type_traits>
 
 namespace Cabana
@@ -352,51 +350,5 @@ struct isSparseMesh<const SparseMesh<Scalar, NumSpaceDim>>
 //---------------------------------------------------------------------------//
 } // namespace Grid
 } // namespace Cabana
-
-namespace Cajita
-{
-//! \cond Deprecated
-using Dim CAJITA_DEPRECATED = Cabana::Grid::Dim;
-using Own CAJITA_DEPRECATED = Cabana::Grid::Own;
-using Ghost CAJITA_DEPRECATED = Cabana::Grid::Ghost;
-using Local CAJITA_DEPRECATED = Cabana::Grid::Local;
-using Global CAJITA_DEPRECATED = Cabana::Grid::Global;
-using Cell CAJITA_DEPRECATED = Cabana::Grid::Cell;
-using Node CAJITA_DEPRECATED = Cabana::Grid::Node;
-
-template <int D>
-using Face CAJITA_DEPRECATED = Cabana::Grid::Face<D>;
-template <int D>
-using Edge CAJITA_DEPRECATED = Cabana::Grid::Edge<D>;
-
-template <class T>
-using isCell CAJITA_DEPRECATED = Cabana::Grid::isCell<T>;
-template <class T>
-using isNode CAJITA_DEPRECATED = Cabana::Grid::isNode<T>;
-template <class T>
-using isFace CAJITA_DEPRECATED = Cabana::Grid::isFace<T>;
-template <class T>
-using isEdge CAJITA_DEPRECATED = Cabana::Grid::isEdge<T>;
-
-template <class Scalar, std::size_t NumSpaceDim = 3>
-using UniformMesh CAJITA_DEPRECATED =
-    Cabana::Grid::UniformMesh<Scalar, NumSpaceDim>;
-template <class Scalar, std::size_t NumSpaceDim = 3>
-using NonUniformMesh CAJITA_DEPRECATED =
-    Cabana::Grid::NonUniformMesh<Scalar, NumSpaceDim>;
-template <class Scalar, std::size_t NumSpaceDim = 3>
-using SparseMesh CAJITA_DEPRECATED =
-    Cabana::Grid::SparseMesh<Scalar, NumSpaceDim>;
-
-template <class T>
-using isMeshType CAJITA_DEPRECATED = Cabana::Grid::isMeshType<T>;
-template <class T>
-using isUniformMesh CAJITA_DEPRECATED = Cabana::Grid::isUniformMesh<T>;
-template <class T>
-using isNonUniformMesh CAJITA_DEPRECATED = Cabana::Grid::isNonUniformMesh<T>;
-template <class T>
-using isSparseMesh CAJITA_DEPRECATED = Cabana::Grid::isSparseMesh<T>;
-//! \endcond
-} // namespace Cajita
 
 #endif // CABANA_GRID_TYPES_HPP

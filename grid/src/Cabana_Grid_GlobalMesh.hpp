@@ -17,7 +17,6 @@
 #define CABANA_GRID_GLOBALMESH_HPP
 
 #include <Cabana_Grid_Types.hpp>
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <array>
 #include <cmath>
@@ -487,34 +486,5 @@ createNonUniformGlobalMesh( const std::vector<Scalar>& i_edges,
 
 } // namespace Grid
 } // namespace Cabana
-
-namespace Cajita
-{
-//! \cond Deprecated
-template <class MeshType>
-using GlobalMesh CAJITA_DEPRECATED = Cabana::Grid::GlobalMesh<MeshType>;
-
-template <class... Args>
-CAJITA_DEPRECATED auto createUniformGlobalMesh( Args&&... args )
-{
-    return Cabana::Grid::createUniformGlobalMesh(
-        std::forward<Args>( args )... );
-}
-
-template <class... Args>
-CAJITA_DEPRECATED auto createNonUniformGlobalMesh( Args&&... args )
-{
-    return Cabana::Grid::createNonUniformGlobalMesh(
-        std::forward<Args>( args )... );
-}
-
-template <class... Args>
-CAJITA_DEPRECATED auto createSparseGlobalMesh( Args&&... args )
-{
-    return Cabana::Grid::createSparseGlobalMesh(
-        std::forward<Args>( args )... );
-}
-//! \endcond
-} // namespace Cajita
 
 #endif // end CABANA_GRID_GLOBALMESH_HPP
