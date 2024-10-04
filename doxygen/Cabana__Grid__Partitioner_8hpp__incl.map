@@ -1,15 +1,9 @@
 <map id="grid/src/Cabana_Grid_Partitioner.hpp" name="grid/src/Cabana_Grid_Partitioner.hpp">
-<area shape="rect" id="Node000001" title="Multi&#45;node grid partitioner." alt="" coords="255,5,406,54"/>
-<area shape="rect" id="Node000002" href="$Cabana__Utils_8hpp.html" title="Cabana utilities." alt="" coords="107,102,234,132"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="287,57,212,97,209,92,285,52"/>
-<area shape="rect" id="Node000005" title=" " alt="" coords="258,102,312,132"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="320,56,302,89,297,87,315,53"/>
-<area shape="rect" id="Node000006" title=" " alt="" coords="336,102,418,132"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="346,53,364,87,360,90,341,56"/>
-<area shape="rect" id="Node000007" title=" " alt="" coords="442,102,498,132"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="371,52,435,91,433,96,368,57"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="5,180,181,209"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="158,134,120,171,116,167,154,130"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="204,180,291,209"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="187,130,224,167,221,171,183,134"/>
+<area shape="rect" id="Node000001" title="Multi&#45;node grid partitioner." alt="" coords="48,5,200,54"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,102,59,132"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="100,57,60,93,57,89,97,53"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="83,102,165,132"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="127,55,127,86,121,86,121,55"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="189,102,246,132"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="152,53,192,89,189,93,148,57"/>
 </map>

@@ -6,18 +6,16 @@
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="229,63,267,99,263,103,226,67"/>
 <area shape="rect" id="Node000004" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="199,295,379,325"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="199,154,27,201,20,212,18,223,20,234,27,246,53,263,95,278,199,297,198,302,94,283,51,268,23,249,15,236,12,223,15,210,23,197,198,149"/>
-<area shape="rect" id="Node000006" href="$Cabana__Grid__BovWriter_8hpp.html" title="Brick of values (BOV) grid output." alt="" coords="37,199,189,247"/>
-<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="233,161,158,201,156,196,230,156"/>
-<area shape="rect" id="Node000007" href="$Cabana__Grid__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="213,199,365,247"/>
-<area shape="poly" id="edge7_Node000003_Node000007" title=" " alt="" coords="292,166,292,198,286,198,286,166"/>
-<area shape="rect" id="Node000008" href="$Cabana__Grid__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="389,199,610,247"/>
-<area shape="poly" id="edge9_Node000003_Node000008" title=" " alt="" coords="356,155,448,196,446,201,354,160"/>
-<area shape="rect" id="Node000009" href="$Cabana__Grid__SparseHalo_8hpp_source.html" title=" " alt="" coords="635,199,786,247"/>
-<area shape="poly" id="edge11_Node000003_Node000009" title=" " alt="" coords="380,143,623,196,635,199,633,204,622,201,379,148"/>
-<area shape="rect" id="Node000005" href="$Cajita_8hpp_source.html" title=" " alt="" coords="222,373,356,403"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="292,341,292,372,286,372,286,341"/>
-<area shape="poly" id="edge6_Node000006_Node000004" title=" " alt="" coords="177,252,261,292,258,297,175,257"/>
-<area shape="poly" id="edge8_Node000007_Node000004" title=" " alt="" coords="292,263,292,295,286,295,286,263"/>
-<area shape="poly" id="edge10_Node000008_Node000004" title=" " alt="" coords="428,256,325,297,323,292,426,251"/>
-<area shape="poly" id="edge12_Node000009_Node000004" title=" " alt="" coords="620,250,376,297,375,292,619,245"/>
+<area shape="rect" id="Node000005" href="$Cabana__Grid__BovWriter_8hpp.html" title="Brick of values (BOV) grid output." alt="" coords="37,199,189,247"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="233,161,158,201,156,196,230,156"/>
+<area shape="rect" id="Node000006" href="$Cabana__Grid__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="213,199,365,247"/>
+<area shape="poly" id="edge6_Node000003_Node000006" title=" " alt="" coords="292,166,292,198,286,198,286,166"/>
+<area shape="rect" id="Node000007" href="$Cabana__Grid__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="389,199,610,247"/>
+<area shape="poly" id="edge8_Node000003_Node000007" title=" " alt="" coords="356,155,448,196,446,201,354,160"/>
+<area shape="rect" id="Node000008" href="$Cabana__Grid__SparseHalo_8hpp_source.html" title=" " alt="" coords="635,199,786,247"/>
+<area shape="poly" id="edge10_Node000003_Node000008" title=" " alt="" coords="380,143,623,196,635,199,633,204,622,201,379,148"/>
+<area shape="poly" id="edge5_Node000005_Node000004" title=" " alt="" coords="177,252,261,292,258,297,175,257"/>
+<area shape="poly" id="edge7_Node000006_Node000004" title=" " alt="" coords="292,263,292,295,286,295,286,263"/>
+<area shape="poly" id="edge9_Node000007_Node000004" title=" " alt="" coords="428,256,325,297,323,292,426,251"/>
+<area shape="poly" id="edge11_Node000008_Node000004" title=" " alt="" coords="620,250,376,297,375,292,619,245"/>
 </map>

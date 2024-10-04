@@ -2,21 +2,19 @@
 <area shape="rect" id="Node000001" title="Multi&#45;node communication patterns." alt="" coords="160,5,383,54"/>
 <area shape="rect" id="Node000002" href="$Cabana__Distributor_8hpp.html" title="Multi&#45;node particle redistribution." alt="" coords="50,102,269,132"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="230,66,180,103,177,99,227,62"/>
-<area shape="rect" id="Node000009" href="$Cabana__Halo_8hpp.html" title="Multi&#45;node particle scatter/gather." alt="" coords="294,102,476,132"/>
-<area shape="poly" id="edge11_Node000001_Node000009" title=" " alt="" coords="316,61,367,99,364,103,313,65"/>
+<area shape="rect" id="Node000008" href="$Cabana__Halo_8hpp.html" title="Multi&#45;node particle scatter/gather." alt="" coords="294,102,476,132"/>
+<area shape="poly" id="edge10_Node000001_Node000008" title=" " alt="" coords="316,61,367,99,364,103,313,65"/>
 <area shape="rect" id="Node000003" href="$Cabana__Grid__GlobalParticleComm_8hpp.html" title="Global particle communication." alt="" coords="5,276,186,325"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="147,147,131,181,115,232,103,277,98,275,110,230,126,179,142,144"/>
-<area shape="rect" id="Node000006" href="$Cabana__Grid__ParticleDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="140,180,307,228"/>
-<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="181,143,208,177,204,181,177,146"/>
+<area shape="rect" id="Node000005" href="$Cabana__Grid__ParticleDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="140,180,307,228"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="181,143,208,177,204,181,177,146"/>
 <area shape="rect" id="Node000004" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="159,470,338,499"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="127,335,239,468,235,471,123,339"/>
-<area shape="rect" id="Node000005" href="$Cajita_8hpp_source.html" title=" " alt="" coords="182,547,316,577"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="252,515,252,547,246,547,246,515"/>
-<area shape="poly" id="edge6_Node000006_Node000004" title=" " alt="" coords="230,243,250,469,245,470,224,244"/>
-<area shape="rect" id="Node000007" href="$Cabana__Grid__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="261,276,412,325"/>
-<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="265,236,310,274,307,278,261,240"/>
-<area shape="poly" id="edge8_Node000007_Node000004" title=" " alt="" coords="319,340,302,374,257,470,253,468,297,372,315,338"/>
-<area shape="rect" id="Node000008" href="$Cabana__Grid__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="312,373,463,422"/>
-<area shape="poly" id="edge9_Node000007_Node000008" title=" " alt="" coords="359,337,377,371,372,374,354,340"/>
-<area shape="poly" id="edge10_Node000008_Node000004" title=" " alt="" coords="338,432,273,471,271,467,335,428"/>
+<area shape="poly" id="edge5_Node000005_Node000004" title=" " alt="" coords="230,243,250,469,245,470,224,244"/>
+<area shape="rect" id="Node000006" href="$Cabana__Grid__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="261,276,412,325"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="265,236,310,274,307,278,261,240"/>
+<area shape="poly" id="edge7_Node000006_Node000004" title=" " alt="" coords="319,340,302,374,257,470,253,468,297,372,315,338"/>
+<area shape="rect" id="Node000007" href="$Cabana__Grid__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="312,373,463,422"/>
+<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="359,337,377,371,372,374,354,340"/>
+<area shape="poly" id="edge9_Node000007_Node000004" title=" " alt="" coords="338,432,273,471,271,467,335,428"/>
 </map>

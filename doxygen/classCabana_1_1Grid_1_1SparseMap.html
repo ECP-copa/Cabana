@@ -944,7 +944,7 @@ template&lt;typename MemorySpace , unsigned long long CellPerTileDim = 4, <a cla
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
 <div class="line">        <a class="code hl_variable" href="#af1156b299c3278895b1a2d10df0833f9">cell_bits_per_tile_dim</a> + <a class="code hl_variable" href="#af1156b299c3278895b1a2d10df0833f9">cell_bits_per_tile_dim</a> +</div>
 <div class="line">        <a class="code hl_variable" href="#af1156b299c3278895b1a2d10df0833f9">cell_bits_per_tile_dim</a></div>
-<div class="ttc" id="aclassCabana_1_1Grid_1_1SparseMap_html_af1156b299c3278895b1a2d10df0833f9"><div class="ttname"><a href="#af1156b299c3278895b1a2d10df0833f9">Cabana::Grid::SparseMap::cell_bits_per_tile_dim</a></div><div class="ttdeci">static constexpr unsigned long long cell_bits_per_tile_dim</div><div class="ttdoc">Number of bits (per dimension) needed to index the cells inside a tile.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseIndexSpace.hpp:418</div></div>
+<div class="ttc" id="aclassCabana_1_1Grid_1_1SparseMap_html_af1156b299c3278895b1a2d10df0833f9"><div class="ttname"><a href="#af1156b299c3278895b1a2d10df0833f9">Cabana::Grid::SparseMap::cell_bits_per_tile_dim</a></div><div class="ttdeci">static constexpr unsigned long long cell_bits_per_tile_dim</div><div class="ttdoc">Number of bits (per dimension) needed to index the cells inside a tile.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseIndexSpace.hpp:417</div></div>
 </div><!-- fragment -->
 <p>Number of bits (total) needed to index the cells inside a tile. </p>
 
@@ -973,7 +973,7 @@ template&lt;typename MemorySpace , unsigned long long CellPerTileDim = 4, <a cla
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
 <div class="line">        <a class="code hl_function" href="Cabana__Grid__SparseIndexSpace_8hpp.html#a167a0b60c0014bb46dff893549d3215b">bitCount</a>( CellPerTileDim )</div>
-<div class="ttc" id="aCabana__Grid__SparseIndexSpace_8hpp_html_a167a0b60c0014bb46dff893549d3215b"><div class="ttname"><a href="Cabana__Grid__SparseIndexSpace_8hpp.html#a167a0b60c0014bb46dff893549d3215b">Cabana::Grid::bitCount</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION constexpr Integer bitCount(Integer input_int) noexcept</div><div class="ttdoc">(Host/Device) Compute the lease bit number needed to index input integer</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseIndexSpace.hpp:81</div></div>
+<div class="ttc" id="aCabana__Grid__SparseIndexSpace_8hpp_html_a167a0b60c0014bb46dff893549d3215b"><div class="ttname"><a href="Cabana__Grid__SparseIndexSpace_8hpp.html#a167a0b60c0014bb46dff893549d3215b">Cabana::Grid::bitCount</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION constexpr Integer bitCount(Integer input_int) noexcept</div><div class="ttdoc">(Host/Device) Compute the lease bit number needed to index input integer</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseIndexSpace.hpp:80</div></div>
 </div><!-- fragment -->
 <p>Number of bits (per dimension) needed to index the cells inside a tile. </p>
 
@@ -1002,7 +1002,7 @@ template&lt;typename MemorySpace , unsigned long long CellPerTileDim = 4, <a cla
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
 <div class="line">        ( 1 &lt;&lt; <a class="code hl_variable" href="#a38e152aaf64ba927e5f7b826dfc96719">cell_bits_per_tile</a> ) - 1</div>
-<div class="ttc" id="aclassCabana_1_1Grid_1_1SparseMap_html_a38e152aaf64ba927e5f7b826dfc96719"><div class="ttname"><a href="#a38e152aaf64ba927e5f7b826dfc96719">Cabana::Grid::SparseMap::cell_bits_per_tile</a></div><div class="ttdeci">static constexpr unsigned long long cell_bits_per_tile</div><div class="ttdoc">Number of bits (total) needed to index the cells inside a tile.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseIndexSpace.hpp:429</div></div>
+<div class="ttc" id="aclassCabana_1_1Grid_1_1SparseMap_html_a38e152aaf64ba927e5f7b826dfc96719"><div class="ttname"><a href="#a38e152aaf64ba927e5f7b826dfc96719">Cabana::Grid::SparseMap::cell_bits_per_tile</a></div><div class="ttdeci">static constexpr unsigned long long cell_bits_per_tile</div><div class="ttdoc">Number of bits (total) needed to index the cells inside a tile.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseIndexSpace.hpp:428</div></div>
 </div><!-- fragment -->
 <p><a class="el" href="structCabana_1_1Grid_1_1Cell.html" title="Mesh cell tag.">Cell</a> mask (combine all dimensions dimension) </p>
 
@@ -1058,7 +1058,7 @@ template&lt;typename MemorySpace , unsigned long long CellPerTileDim = 4, <a cla
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
 <div class="line">        <a class="code hl_variable" href="#a63e05b0b01c60ed3897ceea77ab38df4">cell_num_per_tile_dim</a> * <a class="code hl_variable" href="#a63e05b0b01c60ed3897ceea77ab38df4">cell_num_per_tile_dim</a> * <a class="code hl_variable" href="#a63e05b0b01c60ed3897ceea77ab38df4">cell_num_per_tile_dim</a></div>
-<div class="ttc" id="aclassCabana_1_1Grid_1_1SparseMap_html_a63e05b0b01c60ed3897ceea77ab38df4"><div class="ttname"><a href="#a63e05b0b01c60ed3897ceea77ab38df4">Cabana::Grid::SparseMap::cell_num_per_tile_dim</a></div><div class="ttdeci">static constexpr unsigned long long cell_num_per_tile_dim</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseIndexSpace.hpp:422</div></div>
+<div class="ttc" id="aclassCabana_1_1Grid_1_1SparseMap_html_a63e05b0b01c60ed3897ceea77ab38df4"><div class="ttname"><a href="#a63e05b0b01c60ed3897ceea77ab38df4">Cabana::Grid::SparseMap::cell_num_per_tile_dim</a></div><div class="ttdeci">static constexpr unsigned long long cell_num_per_tile_dim</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseIndexSpace.hpp:421</div></div>
 </div><!-- fragment -->
 <p>Number of cells (total) inside each tile. </p>
 

@@ -1,26 +1,20 @@
 <map id="grid/src/Cabana_Grid_GlobalMesh.hpp" name="grid/src/Cabana_Grid_GlobalMesh.hpp">
-<area shape="rect" id="Node000001" title="Global mesh." alt="" coords="351,5,502,54"/>
-<area shape="rect" id="Node000002" href="$Cabana__Grid__Types_8hpp.html" title="Grid type tags." alt="" coords="75,102,244,132"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="353,57,219,99,218,94,351,52"/>
-<area shape="rect" id="Node000003" href="$Cabana__Utils_8hpp.html" title="Cabana utilities." alt="" coords="31,180,158,209"/>
-<area shape="poly" id="edge6_Node000001_Node000003" title=" " alt="" coords="350,37,270,45,184,57,110,77,82,89,64,104,58,118,59,134,75,166,71,169,54,135,53,117,60,100,80,85,108,72,183,52,269,39,350,32"/>
-<area shape="rect" id="Node000005" title=" " alt="" coords="204,257,291,287"/>
-<area shape="poly" id="edge12_Node000001_Node000005" title=" " alt="" coords="371,57,338,77,310,104,288,138,272,175,254,243,249,241,267,173,283,135,306,100,335,73,368,52"/>
-<area shape="rect" id="Node000006" title=" " alt="" coords="320,102,373,132"/>
-<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="406,56,372,92,368,89,402,53"/>
-<area shape="rect" id="Node000007" title=" " alt="" coords="397,102,456,132"/>
-<area shape="poly" id="edge8_Node000001_Node000007" title=" " alt="" coords="429,55,429,86,424,86,424,55"/>
-<area shape="rect" id="Node000008" title=" " alt="" coords="480,102,533,132"/>
-<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="451,53,485,89,481,92,447,56"/>
-<area shape="rect" id="Node000009" title=" " alt="" coords="557,102,632,132"/>
-<area shape="poly" id="edge10_Node000001_Node000009" title=" " alt="" coords="474,52,554,92,552,97,472,57"/>
-<area shape="rect" id="Node000010" title=" " alt="" coords="655,102,736,132"/>
-<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="503,52,641,95,639,101,501,57"/>
-<area shape="rect" id="Node000011" title=" " alt="" coords="761,102,822,132"/>
-<area shape="poly" id="edge13_Node000001_Node000011" title=" " alt="" coords="503,43,614,67,747,99,745,104,613,72,502,48"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="149,134,119,169,115,166,145,131"/>
-<area shape="poly" id="edge5_Node000002_Node000005" title=" " alt="" coords="170,131,234,243,230,245,165,134"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="5,257,181,287"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="97,210,96,242,91,241,91,210"/>
-<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="124,208,206,248,204,252,122,212"/>
+<area shape="rect" id="Node000001" title="Global mesh." alt="" coords="321,5,472,54"/>
+<area shape="rect" id="Node000002" href="$Cabana__Grid__Types_8hpp.html" title="Grid type tags." alt="" coords="5,102,175,132"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="321,55,156,100,155,95,320,49"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="108,180,194,209"/>
+<area shape="poly" id="edge8_Node000001_Node000003" title=" " alt="" coords="330,57,284,78,240,104,203,136,173,169,169,166,199,132,236,100,281,73,328,52"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="250,102,303,132"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="365,57,311,95,308,90,362,52"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="327,102,386,132"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="388,56,372,89,368,86,383,53"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="410,102,463,132"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="410,53,426,86,421,89,405,56"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="488,102,562,132"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="434,52,492,91,489,95,431,57"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="585,102,667,132"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="461,52,574,94,572,99,460,57"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="691,102,753,132"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="473,46,677,99,675,104,472,51"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="104,131,132,166,128,169,99,134"/>
 </map>

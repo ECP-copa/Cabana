@@ -2,20 +2,18 @@
 <area shape="rect" id="Node000001" title="Sparse grid mapping." alt="" coords="51,5,219,54"/>
 <area shape="rect" id="Node000002" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="140,392,319,422"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="106,67,63,124,43,159,25,196,13,234,8,272,13,309,30,342,52,365,79,381,109,392,140,399,139,404,108,397,77,385,49,369,26,346,8,310,3,272,7,233,20,194,38,157,59,121,101,64"/>
-<area shape="rect" id="Node000004" href="$Cabana__Grid__SparseArray_8hpp.html" title="Sparse grid fields arrays using AoSoA." alt="" coords="91,199,242,247"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="144,69,165,198,160,199,138,69"/>
-<area shape="rect" id="Node000005" href="$Cabana__Grid__SparseHalo_8hpp_source.html" title=" " alt="" coords="40,295,192,344"/>
-<area shape="poly" id="edge9_Node000001_Node000005" title=" " alt="" coords="116,69,99,106,85,151,77,199,81,247,90,272,102,294,98,296,85,274,76,248,72,199,80,149,94,104,111,67"/>
-<area shape="rect" id="Node000006" href="$Cabana__Grid__SparseDimPartitioner_8hpp.html" title="Multi&#45;node sparse grid partitioner." alt="" coords="318,199,504,247"/>
-<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="235,48,290,69,340,100,362,122,381,148,405,197,400,199,376,151,358,126,337,104,287,74,233,53"/>
-<area shape="rect" id="Node000007" href="$Cabana__Grid__SparseLocalGrid_8hpp.html" title="Sparse Local grid and related implementations." alt="" coords="172,102,327,151"/>
-<area shape="poly" id="edge10_Node000001_Node000007" title=" " alt="" coords="176,62,222,99,219,103,173,66"/>
-<area shape="rect" id="Node000003" href="$Cajita_8hpp_source.html" title=" " alt="" coords="162,470,297,499"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="232,438,232,469,227,469,227,438"/>
-<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="191,260,207,294,222,347,230,391,225,392,216,349,202,296,186,262"/>
-<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="149,262,131,296,126,293,145,260"/>
-<area shape="poly" id="edge6_Node000005_Node000002" title=" " alt="" coords="161,351,212,389,209,393,158,355"/>
-<area shape="poly" id="edge8_Node000006_Node000002" title=" " alt="" coords="382,261,301,346,247,394,244,390,297,342,378,257"/>
-<area shape="poly" id="edge11_Node000007_Node000002" title=" " alt="" coords="255,166,257,199,257,248,247,330,235,392,230,391,241,329,252,247,252,199,250,166"/>
-<area shape="poly" id="edge12_Node000007_Node000004" title=" " alt="" coords="221,164,189,200,185,196,217,161"/>
+<area shape="rect" id="Node000003" href="$Cabana__Grid__SparseArray_8hpp.html" title="Sparse grid fields arrays using AoSoA." alt="" coords="91,199,242,247"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="144,69,165,198,160,199,138,69"/>
+<area shape="rect" id="Node000004" href="$Cabana__Grid__SparseHalo_8hpp_source.html" title=" " alt="" coords="40,295,192,344"/>
+<area shape="poly" id="edge8_Node000001_Node000004" title=" " alt="" coords="116,69,99,106,85,151,77,199,81,247,90,272,102,294,98,296,85,274,76,248,72,199,80,149,94,104,111,67"/>
+<area shape="rect" id="Node000005" href="$Cabana__Grid__SparseDimPartitioner_8hpp.html" title="Multi&#45;node sparse grid partitioner." alt="" coords="318,199,504,247"/>
+<area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="235,48,290,69,340,100,362,122,381,148,405,197,400,199,376,151,358,126,337,104,287,74,233,53"/>
+<area shape="rect" id="Node000006" href="$Cabana__Grid__SparseLocalGrid_8hpp.html" title="Sparse Local grid and related implementations." alt="" coords="172,102,327,151"/>
+<area shape="poly" id="edge9_Node000001_Node000006" title=" " alt="" coords="176,62,222,99,219,103,173,66"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="191,260,207,294,222,347,230,391,225,392,216,349,202,296,186,262"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="149,262,131,296,126,293,145,260"/>
+<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="161,351,212,389,209,393,158,355"/>
+<area shape="poly" id="edge7_Node000005_Node000002" title=" " alt="" coords="382,261,301,346,247,394,244,390,297,342,378,257"/>
+<area shape="poly" id="edge10_Node000006_Node000002" title=" " alt="" coords="255,166,257,199,257,248,247,330,235,392,230,391,241,329,252,247,252,199,250,166"/>
+<area shape="poly" id="edge11_Node000006_Node000003" title=" " alt="" coords="221,164,189,200,185,196,217,161"/>
 </map>

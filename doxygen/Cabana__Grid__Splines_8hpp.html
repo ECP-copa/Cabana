@@ -100,7 +100,6 @@ $(function(){ initResizable(false); });
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;<a class="el" href="Cabana__Grid__LocalMesh_8hpp_source.html">Cabana_Grid_LocalMesh.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="Cabana__Grid__Types_8hpp_source.html">Cabana_Grid_Types.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="Cabana__Utils_8hpp_source.html">Cabana_Utils.hpp</a>&gt;</code><br />
 <code>#include &lt;Kokkos_Core.hpp&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -108,80 +107,74 @@ Include dependency graph for Cabana_Grid_Splines.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="Cabana__Grid__Splines_8hpp__incl.png" border="0" usemap="#agrid_2src_2Cabana__Grid__Splines_8hpp" alt=""/></div>
 <map name="agrid_2src_2Cabana__Grid__Splines_8hpp" id="agrid_2src_2Cabana__Grid__Splines_8hpp">
-<area shape="rect" title="Spline functions." alt="" coords="5,5,157,54"/>
-<area shape="rect" href="Cabana__Grid__LocalMesh_8hpp.html" title="Local mesh." alt="" coords="523,102,722,132"/>
-<area shape="poly" title=" " alt="" coords="157,40,518,96,517,102,156,45"/>
-<area shape="rect" href="Cabana__Grid__Types_8hpp.html" title="Grid type tags." alt="" coords="170,451,339,480"/>
-<area shape="poly" title=" " alt="" coords="93,53,246,435,241,437,88,55"/>
-<area shape="rect" href="Cabana__Utils_8hpp.html" title="Cabana utilities." alt="" coords="649,528,777,558"/>
-<area shape="poly" title=" " alt="" coords="84,55,84,193,84,379,89,414,103,439,127,459,160,478,197,493,248,506,376,523,515,533,634,538,634,543,514,539,376,529,247,511,195,498,157,483,124,463,99,443,84,416,78,380,78,193,78,55"/>
-<area shape="rect" title=" " alt="" coords="211,606,298,636"/>
-<area shape="poly" title=" " alt="" coords="71,55,46,117,37,155,33,193,33,467,37,494,49,518,67,540,90,558,143,586,197,604,195,609,141,591,87,562,63,543,45,521,32,496,28,467,28,193,32,154,41,115,66,53"/>
-<area shape="rect" title=" " alt="" coords="1709,364,1837,393"/>
-<area shape="poly" title=" " alt="" coords="157,31,513,45,1005,73,1250,93,1465,117,1629,145,1685,161,1721,177,1739,194,1753,215,1771,261,1778,308,1778,348,1773,348,1772,309,1766,262,1749,217,1735,198,1718,182,1683,166,1628,150,1464,122,1249,98,1005,79,512,50,157,36"/>
-<area shape="rect" href="Cabana__Grid__LocalGrid_8hpp.html" title="Local grid." alt="" coords="527,180,718,209"/>
-<area shape="poly" title=" " alt="" coords="625,132,625,164,620,164,620,132"/>
-<area shape="poly" title=" " alt="" coords="572,135,517,153,454,180,389,215,331,259,309,282,296,302,276,355,265,396,259,435,254,435,259,395,270,353,291,300,305,278,327,255,386,211,452,175,515,148,570,130"/>
-<area shape="poly" title=" " alt="" coords="722,121,981,138,1138,151,1295,169,1441,190,1561,215,1607,229,1643,244,1666,261,1674,280,1674,380,1669,416,1653,440,1629,455,1598,464,1525,471,1485,475,1444,483,1388,494,1314,504,1134,521,793,541,792,536,1133,516,1313,499,1387,489,1443,478,1484,470,1524,466,1597,459,1627,451,1649,436,1664,414,1669,379,1669,281,1662,265,1640,249,1606,234,1559,220,1440,195,1295,174,1137,157,981,143,722,126"/>
-<area shape="poly" title=" " alt="" coords="722,115,968,117,1271,126,1416,133,1542,144,1637,159,1670,167,1692,178,1714,206,1736,252,1768,348,1763,350,1731,254,1710,209,1689,182,1668,172,1636,164,1541,149,1416,139,1271,131,968,123,722,121"/>
-<area shape="rect" href="Cabana__Grid__GlobalGrid_8hpp.html" title="Global grid." alt="" coords="660,267,859,296"/>
-<area shape="poly" title=" " alt="" coords="646,208,725,256,723,261,644,212"/>
-<area shape="poly" title=" " alt="" coords="527,206,452,224,416,239,383,259,341,300,307,349,282,397,266,437,261,435,278,395,303,346,336,297,379,255,414,235,451,219,526,201"/>
-<area shape="poly" title=" " alt="" coords="718,192,935,193,1196,201,1320,209,1426,220,1505,235,1532,244,1548,255,1571,290,1576,324,1566,358,1545,390,1515,419,1477,445,1436,466,1392,483,1341,495,1274,506,1109,523,793,542,792,536,1109,518,1273,501,1340,490,1391,478,1434,461,1475,440,1511,415,1541,386,1561,356,1570,324,1566,292,1544,259,1529,249,1503,240,1425,225,1319,214,1196,206,935,199,718,198"/>
-<area shape="poly" title=" " alt="" coords="526,203,479,210,428,221,378,237,330,260,268,299,224,337,190,385,161,451,156,472,158,491,173,531,199,566,227,594,223,598,195,569,168,533,152,493,151,471,156,450,186,382,220,334,265,295,328,255,376,232,427,216,478,205,526,198"/>
-<area shape="rect" title=" " alt="" coords="1189,451,1242,480"/>
-<area shape="poly" title=" " alt="" coords="719,192,930,194,1184,202,1304,209,1407,220,1483,235,1509,245,1526,256,1534,271,1536,291,1528,337,1512,380,1496,404,1468,426,1441,439,1414,445,1387,447,1329,446,1296,447,1258,454,1257,448,1295,442,1329,440,1387,441,1414,440,1439,434,1465,421,1492,401,1507,377,1523,336,1531,291,1529,273,1522,259,1507,249,1482,241,1406,226,1303,215,1184,207,930,199,718,198"/>
-<area shape="rect" title=" " alt="" coords="449,451,524,480"/>
-<area shape="poly" title=" " alt="" coords="626,210,621,256,613,283,599,308,585,320,570,327,540,331,512,336,500,343,489,355,480,374,477,395,481,435,476,436,472,395,475,373,484,353,496,339,510,331,539,326,569,322,582,316,595,304,608,281,616,255,620,210"/>
-<area shape="rect" title=" " alt="" coords="364,451,425,480"/>
-<area shape="poly" title=" " alt="" coords="527,203,495,210,464,221,436,237,412,259,399,279,391,301,383,349,384,396,390,435,385,436,379,397,377,349,385,300,395,277,408,256,433,233,462,216,493,205,526,197"/>
-<area shape="rect" href="Cabana__Grid__IndexSpace_8hpp.html" title="Logical grid indexing." alt="" coords="1307,267,1511,296"/>
-<area shape="poly" title=" " alt="" coords="719,204,1292,265,1291,270,718,209"/>
-<area shape="rect" href="Cabana__Grid__LocalGrid__impl_8hpp_source.html" title=" " alt="" coords="422,257,585,306"/>
-<area shape="poly" title=" " alt="" coords="604,212,551,250,548,246,601,208"/>
-<area shape="rect" href="Cabana__Grid__GlobalMesh_8hpp.html" title="Global mesh." alt="" coords="574,364,780,393"/>
-<area shape="poly" title=" " alt="" coords="749,299,701,354,697,350,745,295"/>
-<area shape="poly" title=" " alt="" coords="691,300,594,324,487,357,381,402,294,446,291,441,379,397,485,351,592,318,690,295"/>
-<area shape="poly" title=" " alt="" coords="698,300,617,324,584,340,564,356,555,378,555,401,565,424,581,446,626,486,674,518,671,522,623,491,577,450,560,426,550,402,549,377,560,352,582,335,616,319,697,295"/>
-<area shape="poly" title=" " alt="" coords="860,280,970,283,1090,294,1146,303,1195,316,1235,332,1262,352,1271,374,1268,397,1256,420,1242,440,1237,437,1252,417,1262,396,1266,375,1258,356,1232,337,1193,321,1145,309,1089,300,970,289,860,285"/>
-<area shape="poly" title=" " alt="" coords="684,300,587,324,547,339,520,356,507,374,498,394,490,436,485,434,493,392,503,371,517,352,544,335,586,319,683,295"/>
-<area shape="rect" href="Cabana__Grid__Partitioner_8hpp.html" title="Multi&#45;node grid partitioner." alt="" coords="1050,364,1248,393"/>
-<area shape="poly" title=" " alt="" coords="819,294,1077,357,1075,362,817,300"/>
-<area shape="rect" title=" " alt="" coords="1002,451,1058,480"/>
-<area shape="poly" title=" " alt="" coords="861,292,928,313,961,330,990,352,1005,371,1016,392,1029,434,1024,436,1011,394,1000,374,986,356,958,335,926,318,859,297"/>
-<area shape="rect" href="Cabana__Grid__GlobalGrid__impl_8hpp_source.html" title=" " alt="" coords="805,354,976,403"/>
-<area shape="poly" title=" " alt="" coords="781,295,847,343,844,347,777,299"/>
-<area shape="poly" title=" " alt="" coords="607,396,340,450,339,444,606,391"/>
-<area shape="poly" title=" " alt="" coords="683,393,709,513,704,514,677,394"/>
-<area shape="poly" title=" " alt="" coords="661,396,607,436,537,483,411,551,302,602,300,597,408,546,534,478,604,432,658,392"/>
-<area shape="poly" title=" " alt="" coords="745,391,793,400,1007,433,1174,456,1173,461,1006,439,793,405,744,396"/>
-<area shape="rect" title=" " alt="" coords="733,451,792,480"/>
-<area shape="poly" title=" " alt="" coords="693,392,740,438,736,442,689,396"/>
-<area shape="rect" title=" " alt="" coords="817,451,870,480"/>
-<area shape="poly" title=" " alt="" coords="706,391,804,441,802,446,704,396"/>
-<area shape="poly" title=" " alt="" coords="646,396,532,447,530,442,644,391"/>
-<area shape="rect" title=" " alt="" coords="896,451,978,480"/>
-<area shape="poly" title=" " alt="" coords="721,391,883,444,881,449,720,396"/>
-<area shape="poly" title=" " alt="" coords="629,396,441,452,439,447,627,391"/>
-<area shape="poly" title=" " alt="" coords="340,478,635,526,634,532,339,483"/>
-<area shape="poly" title=" " alt="" coords="257,481,257,590,252,590,252,481"/>
-<area shape="rect" title=" " alt="" coords="625,606,801,636"/>
-<area shape="poly" title=" " alt="" coords="716,559,716,590,710,590,710,559"/>
-<area shape="poly" title=" " alt="" coords="649,558,313,613,312,607,648,552"/>
-<area shape="poly" title=" " alt="" coords="1145,395,1117,439,1097,463,1072,483,1021,502,949,517,793,538,792,532,948,512,1020,497,1069,478,1093,459,1113,436,1140,392"/>
-<area shape="poly" title=" " alt="" coords="1162,392,1198,437,1193,440,1158,395"/>
-<area shape="poly" title=" " alt="" coords="1115,396,987,447,985,442,1113,391"/>
-<area shape="poly" title=" " alt="" coords="1131,396,1064,444,1061,439,1128,391"/>
-<area shape="poly" title=" " alt="" coords="856,405,798,444,795,440,853,401"/>
-<area shape="poly" title=" " alt="" coords="880,404,861,438,856,436,875,402"/>
-<area shape="rect" title=" " alt="" coords="1267,451,1348,480"/>
-<area shape="poly" title=" " alt="" coords="977,393,1253,448,1251,453,976,398"/>
-<area shape="poly" title=" " alt="" coords="1413,297,1414,334,1410,385,1395,438,1381,462,1363,483,1332,496,1278,507,1122,524,944,536,792,542,792,537,944,530,1122,519,1277,502,1330,491,1359,478,1377,459,1390,436,1405,384,1409,334,1408,297"/>
-<area shape="poly" title=" " alt="" coords="1401,299,1361,347,1305,405,1253,444,1250,440,1302,401,1357,344,1397,295"/>
-<area shape="poly" title=" " alt="" coords="1438,295,1470,318,1485,334,1497,353,1505,379,1504,391,1496,404,1469,431,1435,448,1399,459,1364,465,1364,460,1398,454,1433,444,1466,426,1492,401,1498,390,1500,379,1492,355,1481,338,1467,322,1435,299"/>
-<area shape="poly" title=" " alt="" coords="1464,294,1705,357,1703,362,1463,300"/>
-<area shape="rect" title=" " alt="" coords="1424,364,1482,393"/>
-<area shape="poly" title=" " alt="" coords="1418,296,1442,348,1438,350,1413,298"/>
+<area shape="rect" title="Spline functions." alt="" coords="14,5,165,54"/>
+<area shape="rect" href="Cabana__Grid__LocalMesh_8hpp.html" title="Local mesh." alt="" coords="177,102,375,132"/>
+<area shape="poly" title=" " alt="" coords="142,52,232,93,230,98,140,57"/>
+<area shape="rect" href="Cabana__Grid__Types_8hpp.html" title="Grid type tags." alt="" coords="153,451,322,480"/>
+<area shape="poly" title=" " alt="" coords="84,55,68,117,61,155,59,193,59,283,63,321,75,348,95,373,123,401,153,424,186,442,183,446,150,428,120,405,91,376,70,351,58,322,53,283,53,193,56,154,62,116,79,54"/>
+<area shape="rect" title=" " alt="" coords="516,528,602,558"/>
+<area shape="poly" title=" " alt="" coords="70,56,50,82,30,116,14,153,8,193,8,380,11,404,19,421,31,435,48,445,91,461,141,478,188,495,236,508,335,527,426,536,500,540,500,545,426,542,334,532,235,514,186,500,139,483,89,466,46,450,28,439,14,424,6,405,3,380,3,193,9,152,25,113,46,79,66,53"/>
+<area shape="rect" title=" " alt="" coords="144,364,272,393"/>
+<area shape="poly" title=" " alt="" coords="100,53,201,348,196,349,95,55"/>
+<area shape="rect" href="Cabana__Grid__LocalGrid_8hpp.html" title="Local grid." alt="" coords="680,180,872,209"/>
+<area shape="poly" title=" " alt="" coords="370,130,667,174,667,179,370,135"/>
+<area shape="poly" title=" " alt="" coords="265,134,235,170,197,222,161,286,146,320,135,355,129,379,129,389,134,401,154,424,180,441,177,446,151,428,130,404,124,391,123,379,129,353,141,318,156,283,193,219,231,166,261,130"/>
+<area shape="rect" href="Cabana__Utils_8hpp.html" title="Cabana utilities." alt="" coords="347,364,474,393"/>
+<area shape="poly" title=" " alt="" coords="280,131,297,209,313,258,337,305,357,330,381,352,377,356,353,334,332,307,309,260,292,210,275,132"/>
+<area shape="poly" title=" " alt="" coords="268,134,255,155,242,181,229,225,221,271,212,348,207,348,215,270,224,224,238,179,250,153,264,131"/>
+<area shape="rect" href="Cabana__Grid__GlobalGrid_8hpp.html" title="Global grid." alt="" coords="848,267,1048,296"/>
+<area shape="poly" title=" " alt="" coords="806,208,907,257,905,262,804,212"/>
+<area shape="poly" title=" " alt="" coords="680,200,585,206,484,216,395,233,361,245,336,259,321,275,311,291,304,324,301,361,296,382,286,404,262,440,257,437,282,401,291,380,295,360,299,323,307,289,317,272,333,255,358,240,394,228,483,211,585,200,680,195"/>
+<area shape="poly" title=" " alt="" coords="872,193,995,196,1147,204,1309,219,1464,243,1534,260,1595,279,1647,302,1686,329,1711,360,1717,378,1718,397,1715,416,1706,437,1672,482,1656,490,1625,496,1523,508,1215,526,872,538,618,543,617,538,872,532,1214,521,1522,503,1624,491,1654,485,1669,478,1701,435,1709,415,1713,396,1711,379,1706,363,1682,333,1644,307,1593,284,1532,265,1463,248,1308,224,1146,209,995,202,872,199"/>
+<area shape="rect" title=" " alt="" coords="769,451,823,480"/>
+<area shape="poly" title=" " alt="" coords="780,210,796,435,791,435,774,210"/>
+<area shape="rect" title=" " alt="" coords="1499,451,1573,480"/>
+<area shape="poly" title=" " alt="" coords="872,198,1045,213,1146,225,1249,241,1346,261,1433,286,1502,316,1529,333,1549,352,1559,372,1561,395,1551,437,1546,436,1555,394,1554,374,1545,356,1526,337,1500,321,1431,291,1345,266,1248,246,1145,230,1044,218,872,204"/>
+<area shape="rect" title=" " alt="" coords="1597,451,1659,480"/>
+<area shape="poly" title=" " alt="" coords="872,197,1166,216,1314,232,1374,243,1419,255,1468,273,1504,291,1536,316,1573,352,1601,394,1621,435,1616,437,1597,396,1569,356,1533,320,1501,296,1466,278,1418,260,1373,248,1313,238,1166,221,872,202"/>
+<area shape="rect" href="Cabana__Grid__IndexSpace_8hpp.html" title="Logical grid indexing." alt="" coords="347,267,552,296"/>
+<area shape="poly" title=" " alt="" coords="722,213,519,265,518,260,721,207"/>
+<area shape="rect" href="Cabana__Grid__LocalGrid__impl_8hpp_source.html" title=" " alt="" coords="576,257,739,306"/>
+<area shape="poly" title=" " alt="" coords="758,212,704,250,701,246,755,208"/>
+<area shape="rect" href="Cabana__Grid__GlobalMesh_8hpp.html" title="Global mesh." alt="" coords="1301,364,1507,393"/>
+<area shape="poly" title=" " alt="" coords="1017,294,1322,357,1320,362,1016,300"/>
+<area shape="poly" title=" " alt="" coords="910,300,761,350,569,405,449,431,338,451,337,446,448,426,567,400,760,345,908,294"/>
+<area shape="poly" title=" " alt="" coords="928,299,895,324,862,356,833,397,811,438,806,435,828,395,858,352,892,320,925,295"/>
+<area shape="poly" title=" " alt="" coords="1049,286,1183,296,1329,311,1453,329,1496,340,1520,352,1534,371,1541,392,1543,435,1537,435,1535,393,1529,373,1517,356,1494,345,1452,334,1329,316,1182,302,1048,292"/>
+<area shape="rect" href="Cabana__Grid__Partitioner_8hpp.html" title="Multi&#45;node grid partitioner." alt="" coords="884,364,1081,393"/>
+<area shape="poly" title=" " alt="" coords="956,296,975,348,970,350,951,298"/>
+<area shape="rect" title=" " alt="" coords="904,451,960,480"/>
+<area shape="poly" title=" " alt="" coords="926,299,897,323,884,338,874,355,868,378,874,402,886,422,902,439,898,442,882,425,870,404,863,378,870,353,880,335,894,319,923,295"/>
+<area shape="rect" href="Cabana__Grid__GlobalGrid__impl_8hpp_source.html" title=" " alt="" coords="1105,354,1276,403"/>
+<area shape="poly" title=" " alt="" coords="985,295,1117,346,1115,351,983,300"/>
+<area shape="poly" title=" " alt="" coords="1342,396,1288,405,1145,421,1023,429,815,434,605,436,483,442,338,453,338,448,482,437,605,431,814,429,1023,424,1145,415,1288,400,1341,391"/>
+<area shape="poly" title=" " alt="" coords="1401,395,1375,440,1355,464,1331,483,1289,495,1216,506,1014,523,791,536,617,543,617,537,791,530,1013,518,1216,501,1287,490,1328,478,1352,460,1371,437,1396,392"/>
+<area shape="poly" title=" " alt="" coords="1338,396,1288,405,1091,431,892,453,839,461,838,455,892,448,1090,426,1288,400,1337,391"/>
+<area shape="rect" title=" " alt="" coords="1258,451,1318,480"/>
+<area shape="poly" title=" " alt="" coords="1386,396,1321,444,1318,439,1383,391"/>
+<area shape="rect" title=" " alt="" coords="1172,451,1225,480"/>
+<area shape="poly" title=" " alt="" coords="1371,396,1241,450,1239,445,1369,391"/>
+<area shape="poly" title=" " alt="" coords="1427,391,1503,440,1500,444,1424,396"/>
+<area shape="rect" title=" " alt="" coords="991,451,1073,480"/>
+<area shape="poly" title=" " alt="" coords="1342,396,1088,454,1087,449,1341,391"/>
+<area shape="poly" title=" " alt="" coords="1442,391,1583,445,1582,450,1441,396"/>
+<area shape="poly" title=" " alt="" coords="298,478,501,526,500,531,297,484"/>
+<area shape="poly" title=" " alt="" coords="953,396,838,448,836,443,950,391"/>
+<area shape="poly" title=" " alt="" coords="993,392,1019,436,1014,439,989,395"/>
+<area shape="poly" title=" " alt="" coords="977,395,950,439,946,436,972,392"/>
+<area shape="poly" title=" " alt="" coords="1220,401,1262,438,1259,442,1216,405"/>
+<area shape="poly" title=" " alt="" coords="1196,403,1199,435,1193,435,1190,403"/>
+<area shape="rect" title=" " alt="" coords="641,451,722,480"/>
+<area shape="poly" title=" " alt="" coords="1105,403,1094,405,1000,421,926,431,758,453,737,457,737,451,757,448,925,426,999,416,1093,400,1104,398"/>
+<area shape="poly" title=" " alt="" coords="487,295,547,320,615,352,696,397,764,440,761,444,693,402,612,356,545,325,485,300"/>
+<area shape="poly" title=" " alt="" coords="478,295,522,320,570,352,620,396,661,437,657,441,616,400,566,356,519,324,476,299"/>
+<area shape="poly" title=" " alt="" coords="446,298,425,350,420,348,441,296"/>
+<area shape="poly" title=" " alt="" coords="414,300,259,360,257,355,412,295"/>
+<area shape="rect" title=" " alt="" coords="498,364,555,393"/>
+<area shape="poly" title=" " alt="" coords="463,295,508,350,504,353,459,299"/>
+<area shape="poly" title=" " alt="" coords="452,391,496,414,517,430,536,449,551,480,559,512,554,513,546,482,531,452,514,434,493,419,450,396"/>
+<area shape="rect" title=" " alt="" coords="346,451,521,480"/>
+<area shape="poly" title=" " alt="" coords="417,393,428,435,423,437,412,394"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -194,8 +187,6 @@ This graph shows which files directly or indirectly include this file:</div>
 <area shape="poly" title=" " alt="" coords="78,69,67,103,63,126,67,150,76,175,88,197,83,200,71,178,62,151,58,126,62,101,73,67"/>
 <area shape="rect" href="Cabana__Grid__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="77,102,228,151"/>
 <area shape="poly" title=" " alt="" coords="119,66,140,100,136,103,115,69"/>
-<area shape="rect" href="Cajita_8hpp_source.html" title=" " alt="" coords="28,276,162,306"/>
-<area shape="poly" title=" " alt="" coords="98,244,98,276,92,276,92,244"/>
 <area shape="poly" title=" " alt="" coords="130,165,107,200,102,197,126,162"/>
 </map>
 </div>
@@ -260,9 +251,6 @@ Classes</h2></td></tr>
 Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceCabana.html">Cabana</a></td></tr>
 <tr class="memdesc:namespaceCabana"><td class="mdescLeft">&#160;</td><td class="mdescRight">Core: particle data structures and algorithms. <br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceCajita.html">Cajita</a></td></tr>
-<tr class="memdesc:namespaceCajita"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceCajita.html" title="Cajita (deprecated): grid and particle-grid data structures and algorithms.">Cajita</a> (deprecated): grid and particle-grid data structures and algorithms. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>

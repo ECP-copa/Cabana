@@ -2,86 +2,84 @@
 <area shape="rect" id="Node000001" title="Multi&#45;node grid partitioner." alt="" coords="1836,5,1988,54"/>
 <area shape="rect" id="Node000002" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="726,682,906,712"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1821,33,1377,36,1080,44,771,59,480,82,350,98,236,116,141,138,69,163,43,176,23,191,12,206,8,222,8,514,11,553,21,583,41,608,72,632,107,644,170,654,349,672,552,683,726,690,726,695,552,689,348,677,169,660,106,649,69,636,37,612,17,586,6,554,3,514,3,221,7,204,20,187,40,172,67,158,140,133,235,111,350,93,479,77,771,54,1080,39,1377,31,1821,28"/>
-<area shape="rect" id="Node000004" href="$Cabana__Grid__GlobalGrid_8hpp.html" title="Global grid." alt="" coords="1836,102,1988,151"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="1915,69,1915,101,1909,101,1909,69"/>
-<area shape="rect" id="Node000026" href="$Cabana__Grid__SparseDimPartitioner_8hpp.html" title="Multi&#45;node sparse grid partitioner." alt="" coords="2174,102,2360,151"/>
-<area shape="poly" id="edge58_Node000001_Node000026" title=" " alt="" coords="2004,52,2178,99,2177,104,2002,58"/>
-<area shape="rect" id="Node000003" href="$Cajita_8hpp_source.html" title=" " alt="" coords="749,760,883,789"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="819,728,819,759,813,759,813,728"/>
-<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="1948,160,2008,226,2072,306,2098,347,2117,384,2125,416,2123,430,2118,442,2064,507,2009,552,1952,580,1892,596,1826,606,1756,613,1678,621,1591,637,1498,655,1402,669,1212,688,1040,696,906,699,906,694,1040,691,1211,682,1401,664,1497,649,1590,631,1677,616,1755,607,1826,601,1891,591,1950,575,2007,547,2061,503,2114,439,2118,429,2119,417,2112,386,2093,349,2067,309,2004,229,1944,164"/>
-<area shape="rect" id="Node000005" href="$Cabana__Grid__HypreSemiStructuredSolver_8hpp.html" title="HYPRE semi&#45;structured solver interface." alt="" coords="1649,392,1874,441"/>
-<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="1895,166,1776,393,1771,390,1890,163"/>
-<area shape="rect" id="Node000006" href="$Cabana__Grid__HypreStructuredSolver_8hpp.html" title="HYPRE structured solver interface." alt="" coords="1429,392,1624,441"/>
-<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="1870,162,1560,394,1557,389,1867,158"/>
-<area shape="rect" id="Node000007" href="$Cabana__Grid__LoadBalancer_8hpp.html" title="Load Balancer." alt="" coords="2051,199,2202,247"/>
-<area shape="poly" id="edge7_Node000004_Node000007" title=" " alt="" coords="1981,155,2074,196,2072,201,1978,160"/>
-<area shape="rect" id="Node000008" href="$Cabana__Grid__LocalGrid_8hpp.html" title="Local grid." alt="" coords="1095,199,1246,247"/>
-<area shape="poly" id="edge8_Node000004_Node000008" title=" " alt="" coords="1821,142,1247,215,1247,209,1820,137"/>
-<area shape="rect" id="Node000014" href="$Cabana__Grid__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="1273,489,1495,537"/>
-<area shape="poly" id="edge51_Node000004_Node000014" title=" " alt="" coords="1925,166,1936,226,1939,300,1935,339,1926,377,1910,412,1887,443,1857,462,1814,475,1762,482,1705,485,1593,487,1507,491,1495,493,1495,488,1506,486,1593,482,1705,480,1762,477,1813,470,1855,457,1884,439,1906,409,1921,375,1930,338,1933,300,1930,227,1920,167"/>
-<area shape="rect" id="Node000018" href="$Cabana__Grid__ParticleDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="269,392,435,441"/>
-<area shape="poly" id="edge50_Node000004_Node000018" title=" " alt="" coords="1821,129,1512,133,1310,140,1096,153,885,174,692,204,606,223,531,245,467,269,418,297,396,318,380,343,360,392,355,390,375,340,392,314,414,293,465,265,529,240,605,218,691,199,884,169,1095,148,1309,135,1511,127,1821,124"/>
-<area shape="rect" id="Node000023" href="$Cabana__Grid__SiloParticleOutput_8hpp.html" title="Write particle output using the Silo format." alt="" coords="2226,199,2392,247"/>
-<area shape="poly" id="edge52_Node000004_Node000023" title=" " alt="" coords="2003,146,2215,196,2226,199,2225,204,2214,201,2002,151"/>
-<area shape="rect" id="Node000024" href="$Cabana__Grid__SparseLocalGrid_8hpp.html" title="Sparse Local grid and related implementations." alt="" coords="1949,392,2104,441"/>
-<area shape="poly" id="edge53_Node000004_Node000024" title=" " alt="" coords="1929,164,2020,391,2015,393,1925,166"/>
-<area shape="poly" id="edge9_Node000008_Node000002" title=" " alt="" coords="1079,230,896,239,669,253,451,272,362,284,294,298,226,312,172,323,148,332,126,346,104,366,84,393,59,443,51,471,49,500,53,531,65,564,87,597,119,632,150,645,206,657,371,674,562,685,726,691,726,696,561,691,371,680,205,662,148,650,116,636,82,601,60,566,48,532,43,500,46,470,54,441,79,391,100,362,122,342,145,328,170,318,225,307,293,293,361,279,450,267,668,248,895,234,1079,225"/>
-<area shape="poly" id="edge28_Node000008_Node000005" title=" " alt="" coords="1262,241,1358,264,1459,293,1595,342,1709,389,1707,394,1593,347,1458,298,1356,269,1261,246"/>
-<area shape="poly" id="edge29_Node000008_Node000006" title=" " alt="" coords="1262,237,1338,259,1376,274,1412,293,1443,315,1470,341,1512,390,1508,393,1466,345,1439,319,1409,298,1374,279,1336,264,1261,242"/>
-<area shape="rect" id="Node000009" href="$Cabana__Grid__Array_8hpp.html" title="Grid field arrays." alt="" coords="1095,295,1246,344"/>
-<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="1173,263,1173,295,1168,295,1168,263"/>
-<area shape="poly" id="edge49_Node000008_Node000014" title=" " alt="" coords="1222,254,1292,312,1327,349,1356,391,1375,441,1384,488,1379,489,1370,443,1351,393,1323,353,1289,316,1219,259"/>
-<area shape="rect" id="Node000016" href="$Cabana__Grid__LocalMesh_8hpp.html" title="Local mesh." alt="" coords="504,295,656,344"/>
-<area shape="poly" id="edge30_Node000008_Node000016" title=" " alt="" coords="1080,241,657,309,656,304,1079,236"/>
-<area shape="poly" id="edge48_Node000008_Node000018" title=" " alt="" coords="1080,230,935,237,765,250,605,269,541,282,493,298,457,318,424,343,373,394,369,390,420,339,454,313,491,293,540,277,605,264,764,244,935,232,1079,225"/>
-<area shape="rect" id="Node000022" href="$Cabana__Grid__Parallel_8hpp.html" title="Logical grid extension of Kokkos parallel iteration." alt="" coords="94,392,245,441"/>
-<area shape="poly" id="edge44_Node000008_Node000022" title=" " alt="" coords="1080,232,729,255,547,274,473,286,417,298,358,318,301,343,208,394,206,389,299,339,356,313,415,293,472,280,547,269,729,250,1079,226"/>
-<area shape="poly" id="edge11_Node000009_Node000002" title=" " alt="" coords="1136,357,1040,443,1012,466,986,491,892,600,828,683,824,680,888,596,982,487,1009,462,1037,439,1132,353"/>
-<area shape="poly" id="edge24_Node000009_Node000005" title=" " alt="" coords="1263,331,1636,389,1649,391,1648,397,1636,395,1262,337"/>
-<area shape="poly" id="edge25_Node000009_Node000006" title=" " alt="" coords="1262,342,1438,389,1437,394,1260,347"/>
-<area shape="rect" id="Node000010" href="$Cabana__Grid__BovWriter_8hpp.html" title="Brick of values (BOV) grid output." alt="" coords="996,489,1148,537"/>
-<area shape="poly" id="edge12_Node000009_Node000010" title=" " alt="" coords="1154,359,1087,489,1082,487,1149,356"/>
-<area shape="rect" id="Node000011" href="$Cabana__Grid__FastFourierTransform_8hpp.html" title="Fast Fourier transforms." alt="" coords="837,392,1027,441"/>
-<area shape="poly" id="edge14_Node000009_Node000011" title=" " alt="" coords="1098,353,993,394,991,389,1096,348"/>
-<area shape="rect" id="Node000012" href="$Cabana__Grid__Halo_8hpp.html" title="Multi&#45;node grid scatter/gather." alt="" coords="1152,392,1304,441"/>
-<area shape="poly" id="edge15_Node000009_Node000012" title=" " alt="" coords="1195,356,1216,390,1211,393,1190,359"/>
-<area shape="rect" id="Node000013" href="$Cabana__Grid__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="740,489,892,537"/>
-<area shape="poly" id="edge26_Node000009_Node000013" title=" " alt="" coords="1080,330,1007,339,931,352,867,370,843,381,827,394,815,415,810,440,813,488,808,488,805,440,810,413,823,390,841,377,865,365,930,346,1006,333,1079,325"/>
-<area shape="poly" id="edge27_Node000009_Node000014" title=" " alt="" coords="1254,348,1288,367,1318,390,1338,413,1355,439,1378,487,1373,489,1350,442,1334,416,1314,394,1285,371,1252,353"/>
-<area shape="poly" id="edge13_Node000010_Node000002" title=" " alt="" coords="1053,552,1021,595,979,636,928,665,876,684,874,679,926,660,976,632,1017,592,1049,549"/>
-<area shape="poly" id="edge16_Node000012_Node000002" title=" " alt="" coords="1215,456,1192,498,1162,539,1128,573,1098,597,1021,636,950,664,882,684,880,679,948,659,1019,632,1095,592,1124,569,1158,536,1188,495,1210,454"/>
-<area shape="poly" id="edge17_Node000012_Node000010" title=" " alt="" coords="1178,451,1112,490,1110,486,1175,447"/>
-<area shape="poly" id="edge18_Node000012_Node000013" title=" " alt="" coords="1138,441,893,497,892,492,1137,436"/>
-<area shape="poly" id="edge20_Node000012_Node000014" title=" " alt="" coords="1281,447,1346,486,1344,490,1278,451"/>
-<area shape="rect" id="Node000015" href="$Cabana__Grid__SparseHalo_8hpp_source.html" title=" " alt="" coords="1274,585,1425,634"/>
-<area shape="poly" id="edge22_Node000012_Node000015" title=" " alt="" coords="1235,455,1245,496,1264,536,1286,562,1312,583,1309,587,1282,566,1259,539,1240,498,1230,457"/>
-<area shape="poly" id="edge19_Node000013_Node000002" title=" " alt="" coords="819,552,819,682,813,682,813,552"/>
-<area shape="poly" id="edge21_Node000014_Node000002" title=" " alt="" coords="1327,547,1263,587,1236,614,1224,625,1205,636,1129,664,1050,682,974,693,906,698,906,692,973,687,1049,677,1128,659,1203,632,1220,621,1232,610,1260,583,1324,543"/>
-<area shape="poly" id="edge23_Node000015_Node000002" title=" " alt="" coords="1259,636,1255,637,1069,667,907,688,906,683,1069,662,1254,631,1258,631"/>
-<area shape="poly" id="edge31_Node000016_Node000002" title=" " alt="" coords="560,359,547,399,546,420,551,440,572,482,601,522,633,559,668,591,737,645,792,679,789,684,734,649,665,595,629,562,597,526,568,485,545,442,541,420,542,398,555,357"/>
-<area shape="poly" id="edge34_Node000016_Node000013" title=" " alt="" coords="658,348,693,367,726,390,750,413,772,439,805,487,800,490,768,442,746,417,722,394,690,372,655,353"/>
-<area shape="rect" id="Node000017" href="$Cabana__Grid__GlobalParticleComm_8hpp.html" title="Global particle communication." alt="" coords="434,585,614,634"/>
-<area shape="poly" id="edge32_Node000016_Node000017" title=" " alt="" coords="534,356,518,373,506,393,498,418,494,444,496,497,505,546,517,584,512,586,500,547,491,498,489,444,493,417,502,391,514,370,530,353"/>
-<area shape="poly" id="edge35_Node000016_Node000018" title=" " alt="" coords="510,353,410,394,408,389,508,348"/>
-<area shape="rect" id="Node000021" href="$Cabana__Grid__Splines_8hpp.html" title="Spline functions." alt="" coords="560,392,712,441"/>
-<area shape="poly" id="edge41_Node000016_Node000021" title=" " alt="" coords="604,356,624,390,620,393,599,358"/>
-<area shape="poly" id="edge33_Node000017_Node000002" title=" " alt="" coords="621,636,768,679,766,684,619,641"/>
-<area shape="poly" id="edge36_Node000018_Node000002" title=" " alt="" coords="364,455,395,562,411,608,423,632,444,645,474,656,553,673,642,684,726,690,726,695,641,689,552,678,473,661,442,650,419,636,406,610,390,563,359,456"/>
-<area shape="rect" id="Node000019" href="$Cabana__Grid__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="207,489,358,537"/>
-<area shape="poly" id="edge37_Node000018_Node000019" title=" " alt="" coords="328,455,302,490,298,486,324,451"/>
-<area shape="poly" id="edge38_Node000019_Node000002" title=" " alt="" coords="304,549,335,594,355,615,379,632,405,643,441,653,532,669,633,681,726,688,726,693,632,686,531,675,440,658,403,648,376,636,352,619,331,597,299,552"/>
-<area shape="rect" id="Node000020" href="$Cabana__Grid__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="156,585,308,634"/>
-<area shape="poly" id="edge39_Node000019_Node000020" title=" " alt="" coords="265,552,247,586,242,583,261,550"/>
-<area shape="poly" id="edge40_Node000020_Node000002" title=" " alt="" coords="324,631,327,631,541,664,726,685,725,690,541,669,326,637,323,636"/>
-<area shape="poly" id="edge42_Node000021_Node000002" title=" " alt="" coords="661,452,809,680,805,683,657,455"/>
-<area shape="poly" id="edge43_Node000021_Node000013" title=" " alt="" coords="696,446,772,486,770,491,693,450"/>
-<area shape="poly" id="edge45_Node000022_Node000002" title=" " alt="" coords="152,456,136,497,124,544,123,568,126,592,133,613,146,632,174,646,227,658,384,676,567,686,726,691,726,697,567,691,384,681,226,663,172,651,142,636,128,615,120,593,118,569,119,544,131,495,147,454"/>
-<area shape="poly" id="edge47_Node000022_Node000014" title=" " alt="" coords="261,438,397,456,513,467,711,473,908,474,1024,478,1160,486,1273,497,1273,502,1160,491,1024,483,908,479,710,479,512,472,396,462,260,444"/>
-<area shape="poly" id="edge46_Node000022_Node000020" title=" " alt="" coords="177,455,185,495,197,536,220,584,215,586,192,538,180,496,172,457"/>
-<area shape="poly" id="edge54_Node000024_Node000002" title=" " alt="" coords="1970,450,1881,494,1765,545,1633,596,1497,637,1417,654,1335,667,1173,686,1025,695,906,698,906,693,1024,690,1172,681,1335,662,1416,648,1495,631,1631,591,1763,540,1879,489,1968,446"/>
-<area shape="rect" id="Node000025" href="$Cabana__Grid__SparseArray_8hpp.html" title="Sparse grid fields arrays using AoSoA." alt="" coords="1519,489,1670,537"/>
-<area shape="poly" id="edge55_Node000024_Node000025" title=" " alt="" coords="1935,443,1931,443,1671,499,1670,494,1930,438,1933,437"/>
-<area shape="poly" id="edge56_Node000025_Node000002" title=" " alt="" coords="1564,550,1508,597,1474,619,1438,636,1394,650,1336,661,1192,678,1038,689,906,695,906,690,1038,684,1192,672,1335,655,1393,644,1436,632,1472,614,1505,592,1560,546"/>
-<area shape="poly" id="edge57_Node000025_Node000015" title=" " alt="" coords="1520,546,1412,587,1410,582,1518,541"/>
-<area shape="poly" id="edge59_Node000026_Node000002" title=" " alt="" coords="2355,156,2383,174,2406,197,2424,227,2432,254,2432,318,2432,515,2428,530,2418,544,2379,569,2319,591,2240,610,2145,627,2037,641,1795,664,1538,680,1288,690,906,698,906,692,1287,684,1537,674,1795,659,2037,636,2144,621,2239,605,2317,586,2377,564,2414,540,2424,527,2427,514,2427,318,2426,255,2419,229,2402,200,2379,178,2352,160"/>
+<area shape="rect" id="Node000003" href="$Cabana__Grid__GlobalGrid_8hpp.html" title="Global grid." alt="" coords="1836,102,1988,151"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="1915,69,1915,101,1909,101,1909,69"/>
+<area shape="rect" id="Node000025" href="$Cabana__Grid__SparseDimPartitioner_8hpp.html" title="Multi&#45;node sparse grid partitioner." alt="" coords="2174,102,2360,151"/>
+<area shape="poly" id="edge57_Node000001_Node000025" title=" " alt="" coords="2004,52,2178,99,2177,104,2002,58"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="1948,160,2008,226,2072,306,2098,347,2117,384,2125,416,2123,430,2118,442,2064,507,2009,552,1952,580,1892,596,1826,606,1756,613,1678,621,1591,637,1498,655,1402,669,1212,688,1040,696,906,699,906,694,1040,691,1211,682,1401,664,1497,649,1590,631,1677,616,1755,607,1826,601,1891,591,1950,575,2007,547,2061,503,2114,439,2118,429,2119,417,2112,386,2093,349,2067,309,2004,229,1944,164"/>
+<area shape="rect" id="Node000004" href="$Cabana__Grid__HypreSemiStructuredSolver_8hpp.html" title="HYPRE semi&#45;structured solver interface." alt="" coords="1649,392,1874,441"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="1895,166,1776,393,1771,390,1890,163"/>
+<area shape="rect" id="Node000005" href="$Cabana__Grid__HypreStructuredSolver_8hpp.html" title="HYPRE structured solver interface." alt="" coords="1429,392,1624,441"/>
+<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="1870,162,1560,394,1557,389,1867,158"/>
+<area shape="rect" id="Node000006" href="$Cabana__Grid__LoadBalancer_8hpp.html" title="Load Balancer." alt="" coords="2051,199,2202,247"/>
+<area shape="poly" id="edge6_Node000003_Node000006" title=" " alt="" coords="1981,155,2074,196,2072,201,1978,160"/>
+<area shape="rect" id="Node000007" href="$Cabana__Grid__LocalGrid_8hpp.html" title="Local grid." alt="" coords="1095,199,1246,247"/>
+<area shape="poly" id="edge7_Node000003_Node000007" title=" " alt="" coords="1821,142,1247,215,1247,209,1820,137"/>
+<area shape="rect" id="Node000013" href="$Cabana__Grid__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="1273,489,1495,537"/>
+<area shape="poly" id="edge50_Node000003_Node000013" title=" " alt="" coords="1925,166,1936,226,1939,300,1935,339,1926,377,1910,412,1887,443,1857,462,1814,475,1762,482,1705,485,1593,487,1507,491,1495,493,1495,488,1506,486,1593,482,1705,480,1762,477,1813,470,1855,457,1884,439,1906,409,1921,375,1930,338,1933,300,1930,227,1920,167"/>
+<area shape="rect" id="Node000017" href="$Cabana__Grid__ParticleDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="269,392,435,441"/>
+<area shape="poly" id="edge49_Node000003_Node000017" title=" " alt="" coords="1821,129,1512,133,1310,140,1096,153,885,174,692,204,606,223,531,245,467,269,418,297,396,318,380,343,360,392,355,390,375,340,392,314,414,293,465,265,529,240,605,218,691,199,884,169,1095,148,1309,135,1511,127,1821,124"/>
+<area shape="rect" id="Node000022" href="$Cabana__Grid__SiloParticleOutput_8hpp.html" title="Write particle output using the Silo format." alt="" coords="2226,199,2392,247"/>
+<area shape="poly" id="edge51_Node000003_Node000022" title=" " alt="" coords="2003,146,2215,196,2226,199,2225,204,2214,201,2002,151"/>
+<area shape="rect" id="Node000023" href="$Cabana__Grid__SparseLocalGrid_8hpp.html" title="Sparse Local grid and related implementations." alt="" coords="1949,392,2104,441"/>
+<area shape="poly" id="edge52_Node000003_Node000023" title=" " alt="" coords="1929,164,2020,391,2015,393,1925,166"/>
+<area shape="poly" id="edge8_Node000007_Node000002" title=" " alt="" coords="1079,230,896,239,669,253,451,272,362,284,294,298,226,312,172,323,148,332,126,346,104,366,84,393,59,443,51,471,49,500,53,531,65,564,87,597,119,632,150,645,206,657,371,674,562,685,726,691,726,696,561,691,371,680,205,662,148,650,116,636,82,601,60,566,48,532,43,500,46,470,54,441,79,391,100,362,122,342,145,328,170,318,225,307,293,293,361,279,450,267,668,248,895,234,1079,225"/>
+<area shape="poly" id="edge27_Node000007_Node000004" title=" " alt="" coords="1262,241,1358,264,1459,293,1595,342,1709,389,1707,394,1593,347,1458,298,1356,269,1261,246"/>
+<area shape="poly" id="edge28_Node000007_Node000005" title=" " alt="" coords="1262,237,1338,259,1376,274,1412,293,1443,315,1470,341,1512,390,1508,393,1466,345,1439,319,1409,298,1374,279,1336,264,1261,242"/>
+<area shape="rect" id="Node000008" href="$Cabana__Grid__Array_8hpp.html" title="Grid field arrays." alt="" coords="1095,295,1246,344"/>
+<area shape="poly" id="edge9_Node000007_Node000008" title=" " alt="" coords="1173,263,1173,295,1168,295,1168,263"/>
+<area shape="poly" id="edge48_Node000007_Node000013" title=" " alt="" coords="1222,254,1292,312,1327,349,1356,391,1375,441,1384,488,1379,489,1370,443,1351,393,1323,353,1289,316,1219,259"/>
+<area shape="rect" id="Node000015" href="$Cabana__Grid__LocalMesh_8hpp.html" title="Local mesh." alt="" coords="504,295,656,344"/>
+<area shape="poly" id="edge29_Node000007_Node000015" title=" " alt="" coords="1080,241,657,309,656,304,1079,236"/>
+<area shape="poly" id="edge47_Node000007_Node000017" title=" " alt="" coords="1080,230,935,237,765,250,605,269,541,282,493,298,457,318,424,343,373,394,369,390,420,339,454,313,491,293,540,277,605,264,764,244,935,232,1079,225"/>
+<area shape="rect" id="Node000021" href="$Cabana__Grid__Parallel_8hpp.html" title="Logical grid extension of Kokkos parallel iteration." alt="" coords="94,392,245,441"/>
+<area shape="poly" id="edge43_Node000007_Node000021" title=" " alt="" coords="1080,232,729,255,547,274,473,286,417,298,358,318,301,343,208,394,206,389,299,339,356,313,415,293,472,280,547,269,729,250,1079,226"/>
+<area shape="poly" id="edge10_Node000008_Node000002" title=" " alt="" coords="1136,357,1040,443,1012,466,986,491,892,600,828,683,824,680,888,596,982,487,1009,462,1037,439,1132,353"/>
+<area shape="poly" id="edge23_Node000008_Node000004" title=" " alt="" coords="1263,331,1636,389,1649,391,1648,397,1636,395,1262,337"/>
+<area shape="poly" id="edge24_Node000008_Node000005" title=" " alt="" coords="1262,342,1438,389,1437,394,1260,347"/>
+<area shape="rect" id="Node000009" href="$Cabana__Grid__BovWriter_8hpp.html" title="Brick of values (BOV) grid output." alt="" coords="996,489,1148,537"/>
+<area shape="poly" id="edge11_Node000008_Node000009" title=" " alt="" coords="1154,359,1087,489,1082,487,1149,356"/>
+<area shape="rect" id="Node000010" href="$Cabana__Grid__FastFourierTransform_8hpp.html" title="Fast Fourier transforms." alt="" coords="837,392,1027,441"/>
+<area shape="poly" id="edge13_Node000008_Node000010" title=" " alt="" coords="1098,353,993,394,991,389,1096,348"/>
+<area shape="rect" id="Node000011" href="$Cabana__Grid__Halo_8hpp.html" title="Multi&#45;node grid scatter/gather." alt="" coords="1152,392,1304,441"/>
+<area shape="poly" id="edge14_Node000008_Node000011" title=" " alt="" coords="1195,356,1216,390,1211,393,1190,359"/>
+<area shape="rect" id="Node000012" href="$Cabana__Grid__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="740,489,892,537"/>
+<area shape="poly" id="edge25_Node000008_Node000012" title=" " alt="" coords="1080,330,1007,339,931,352,867,370,843,381,827,394,815,415,810,440,813,488,808,488,805,440,810,413,823,390,841,377,865,365,930,346,1006,333,1079,325"/>
+<area shape="poly" id="edge26_Node000008_Node000013" title=" " alt="" coords="1254,348,1288,367,1318,390,1338,413,1355,439,1378,487,1373,489,1350,442,1334,416,1314,394,1285,371,1252,353"/>
+<area shape="poly" id="edge12_Node000009_Node000002" title=" " alt="" coords="1053,552,1021,595,979,636,928,665,876,684,874,679,926,660,976,632,1017,592,1049,549"/>
+<area shape="poly" id="edge15_Node000011_Node000002" title=" " alt="" coords="1215,456,1192,498,1162,539,1128,573,1098,597,1021,636,950,664,882,684,880,679,948,659,1019,632,1095,592,1124,569,1158,536,1188,495,1210,454"/>
+<area shape="poly" id="edge16_Node000011_Node000009" title=" " alt="" coords="1178,451,1112,490,1110,486,1175,447"/>
+<area shape="poly" id="edge17_Node000011_Node000012" title=" " alt="" coords="1138,441,893,497,892,492,1137,436"/>
+<area shape="poly" id="edge19_Node000011_Node000013" title=" " alt="" coords="1281,447,1346,486,1344,490,1278,451"/>
+<area shape="rect" id="Node000014" href="$Cabana__Grid__SparseHalo_8hpp_source.html" title=" " alt="" coords="1274,585,1425,634"/>
+<area shape="poly" id="edge21_Node000011_Node000014" title=" " alt="" coords="1235,455,1245,496,1264,536,1286,562,1312,583,1309,587,1282,566,1259,539,1240,498,1230,457"/>
+<area shape="poly" id="edge18_Node000012_Node000002" title=" " alt="" coords="819,552,819,682,813,682,813,552"/>
+<area shape="poly" id="edge20_Node000013_Node000002" title=" " alt="" coords="1327,547,1263,587,1236,614,1224,625,1205,636,1129,664,1050,682,974,693,906,698,906,692,973,687,1049,677,1128,659,1203,632,1220,621,1232,610,1260,583,1324,543"/>
+<area shape="poly" id="edge22_Node000014_Node000002" title=" " alt="" coords="1259,636,1255,637,1069,667,907,688,906,683,1069,662,1254,631,1258,631"/>
+<area shape="poly" id="edge30_Node000015_Node000002" title=" " alt="" coords="560,359,547,399,546,420,551,440,572,482,601,522,633,559,668,591,737,645,792,679,789,684,734,649,665,595,629,562,597,526,568,485,545,442,541,420,542,398,555,357"/>
+<area shape="poly" id="edge33_Node000015_Node000012" title=" " alt="" coords="658,348,693,367,726,390,750,413,772,439,805,487,800,490,768,442,746,417,722,394,690,372,655,353"/>
+<area shape="rect" id="Node000016" href="$Cabana__Grid__GlobalParticleComm_8hpp.html" title="Global particle communication." alt="" coords="434,585,614,634"/>
+<area shape="poly" id="edge31_Node000015_Node000016" title=" " alt="" coords="534,356,518,373,506,393,498,418,494,444,496,497,505,546,517,584,512,586,500,547,491,498,489,444,493,417,502,391,514,370,530,353"/>
+<area shape="poly" id="edge34_Node000015_Node000017" title=" " alt="" coords="510,353,410,394,408,389,508,348"/>
+<area shape="rect" id="Node000020" href="$Cabana__Grid__Splines_8hpp.html" title="Spline functions." alt="" coords="560,392,712,441"/>
+<area shape="poly" id="edge40_Node000015_Node000020" title=" " alt="" coords="604,356,624,390,620,393,599,358"/>
+<area shape="poly" id="edge32_Node000016_Node000002" title=" " alt="" coords="621,636,768,679,766,684,619,641"/>
+<area shape="poly" id="edge35_Node000017_Node000002" title=" " alt="" coords="364,455,395,562,411,608,423,632,444,645,474,656,553,673,642,684,726,690,726,695,641,689,552,678,473,661,442,650,419,636,406,610,390,563,359,456"/>
+<area shape="rect" id="Node000018" href="$Cabana__Grid__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="207,489,358,537"/>
+<area shape="poly" id="edge36_Node000017_Node000018" title=" " alt="" coords="328,455,302,490,298,486,324,451"/>
+<area shape="poly" id="edge37_Node000018_Node000002" title=" " alt="" coords="304,549,335,594,355,615,379,632,405,643,441,653,532,669,633,681,726,688,726,693,632,686,531,675,440,658,403,648,376,636,352,619,331,597,299,552"/>
+<area shape="rect" id="Node000019" href="$Cabana__Grid__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="156,585,308,634"/>
+<area shape="poly" id="edge38_Node000018_Node000019" title=" " alt="" coords="265,552,247,586,242,583,261,550"/>
+<area shape="poly" id="edge39_Node000019_Node000002" title=" " alt="" coords="324,631,327,631,541,664,726,685,725,690,541,669,326,637,323,636"/>
+<area shape="poly" id="edge41_Node000020_Node000002" title=" " alt="" coords="661,452,809,680,805,683,657,455"/>
+<area shape="poly" id="edge42_Node000020_Node000012" title=" " alt="" coords="696,446,772,486,770,491,693,450"/>
+<area shape="poly" id="edge44_Node000021_Node000002" title=" " alt="" coords="152,456,136,497,124,544,123,568,126,592,133,613,146,632,174,646,227,658,384,676,567,686,726,691,726,697,567,691,384,681,226,663,172,651,142,636,128,615,120,593,118,569,119,544,131,495,147,454"/>
+<area shape="poly" id="edge46_Node000021_Node000013" title=" " alt="" coords="261,438,397,456,513,467,711,473,908,474,1024,478,1160,486,1273,497,1273,502,1160,491,1024,483,908,479,710,479,512,472,396,462,260,444"/>
+<area shape="poly" id="edge45_Node000021_Node000019" title=" " alt="" coords="177,455,185,495,197,536,220,584,215,586,192,538,180,496,172,457"/>
+<area shape="poly" id="edge53_Node000023_Node000002" title=" " alt="" coords="1970,450,1881,494,1765,545,1633,596,1497,637,1417,654,1335,667,1173,686,1025,695,906,698,906,693,1024,690,1172,681,1335,662,1416,648,1495,631,1631,591,1763,540,1879,489,1968,446"/>
+<area shape="rect" id="Node000024" href="$Cabana__Grid__SparseArray_8hpp.html" title="Sparse grid fields arrays using AoSoA." alt="" coords="1519,489,1670,537"/>
+<area shape="poly" id="edge54_Node000023_Node000024" title=" " alt="" coords="1935,443,1931,443,1671,499,1670,494,1930,438,1933,437"/>
+<area shape="poly" id="edge55_Node000024_Node000002" title=" " alt="" coords="1564,550,1508,597,1474,619,1438,636,1394,650,1336,661,1192,678,1038,689,906,695,906,690,1038,684,1192,672,1335,655,1393,644,1436,632,1472,614,1505,592,1560,546"/>
+<area shape="poly" id="edge56_Node000024_Node000014" title=" " alt="" coords="1520,546,1412,587,1410,582,1518,541"/>
+<area shape="poly" id="edge58_Node000025_Node000002" title=" " alt="" coords="2355,156,2383,174,2406,197,2424,227,2432,254,2432,318,2432,515,2428,530,2418,544,2379,569,2319,591,2240,610,2145,627,2037,641,1795,664,1538,680,1288,690,906,698,906,692,1287,684,1537,674,1795,659,2037,636,2144,621,2239,605,2317,586,2377,564,2414,540,2424,527,2427,514,2427,318,2426,255,2419,229,2402,200,2379,178,2352,160"/>
 </map>
