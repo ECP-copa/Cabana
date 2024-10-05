@@ -258,9 +258,6 @@ endif()
 ##---------------------------------------------------------------------------##
 ## Package Configuration
 ##---------------------------------------------------------------------------##
-configure_file(cmake/Cabana.pc.cmakein Cabana.pc @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Cabana.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-
 write_basic_package_version_file("CabanaConfigVersion.cmake"
   VERSION ${PROJECT_VERSION} COMPATIBILITY SameMajorVersion)
 
