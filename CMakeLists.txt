@@ -28,6 +28,7 @@ option(CMAKE_VERBOSE_MAKEFILE "Generate verbose Makefiles" OFF)
 
 # use gnu standard install directories
 include(GNUInstallDirs)
+set(Cabana_INSTALL_PACKAGEDIR "${CMAKE_INSTALL_DATADIR}/cmake/Cabana" CACHE PATH "Install location of CMake target files")
 
 # point to cmake modules
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -97,7 +98,7 @@ Cabana_add_dependency( PACKAGE SILO )
 if(SILO_FOUND)
   install(FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindSILO.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana )
+    DESTINATION ${Cabana_INSTALL_PACKAGEDIR} )
 endif()
 
 # find HDF5 (XDMF)
@@ -268,7 +269,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CabanaConfig.cmakein
   ${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake @ONLY)
 
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake" "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfigVersion.cmake"
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana)
+  DESTINATION ${Cabana_INSTALL_PACKAGEDIR})
 
 ##---------------------------------------------------------------------------##
 ## Clang Format
