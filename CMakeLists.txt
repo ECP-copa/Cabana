@@ -79,7 +79,7 @@ if(Cabana_REQUIRE_HDF5)
 else()
   Cabana_add_dependency( PACKAGE MPI COMPONENTS CXX )
 endif()
-set_package_properties(MPI PROPERTIES TYPE RECOMMENDED PURPOSE "Used for parallization")
+set_package_properties(MPI PROPERTIES TYPE RECOMMENDED PURPOSE "Used for parallelization")
 
 # find ArborX
 Cabana_add_dependency( PACKAGE ArborX )
