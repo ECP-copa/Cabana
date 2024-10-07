@@ -30,6 +30,8 @@ option(CMAKE_VERBOSE_MAKEFILE "Generate verbose Makefiles" OFF)
 include(GNUInstallDirs)
 set(Cabana_INSTALL_PACKAGEDIR "${CMAKE_INSTALL_DATADIR}/cmake/Cabana" CACHE PATH "Install location of CMake target files")
 
+include(FeatureSummary)
+
 # point to cmake modules
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -77,12 +79,15 @@ if(Cabana_REQUIRE_HDF5)
 else()
   Cabana_add_dependency( PACKAGE MPI COMPONENTS CXX )
 endif()
+set_package_properties(MPI PROPERTIES TYPE RECOMMENDED PURPOSE "Used for parallization")
 
 # find ArborX
 Cabana_add_dependency( PACKAGE ArborX )
+set_package_properties(ArborX PROPERTIES TYPE OPTIONAL PURPOSE "Used in neighbor search")
 
 # find ALL
 Cabana_add_dependency( PACKAGE ALL )
+set_package_properties(ALL PROPERTIES TYPE OPTIONAL PURPOSE "Used for load balancing")
 
 # find Clang Format
 find_package( CLANG_FORMAT 14 )
@@ -92,9 +97,11 @@ Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.1 )
 
 # find heffte
 Cabana_add_dependency( PACKAGE Heffte VERSION 2.3.0 )
+set_package_properties(Heffte PROPERTIES TYPE OPTIONAL PURPOSE "Used for fft calculations")
 
 # find Silo
 Cabana_add_dependency( PACKAGE SILO )
+set_package_properties(SILO PROPERTIES TYPE OPTIONAL PURPOSE "Used for I/O")
 if(SILO_FOUND)
   install(FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindSILO.cmake
@@ -118,6 +125,7 @@ if(CMAKE_VERSION VERSION_LESS 3.26)
 else()
   Cabana_add_dependency( PACKAGE HDF5 COMPONENTS C )
 endif()
+set_package_properties(HDF5 PROPERTIES TYPE RECOMMENDED PURPOSE "Used for I/O")
 
 if(Cabana_ENABLE_HDF5)
   if(NOT Cabana_ENABLE_MPI)
@@ -237,6 +245,7 @@ endif()
 add_subdirectory(core)
 
 option(Cabana_ENABLE_GRID "Build grid and particle-grid capabilities" ${Cabana_ENABLE_MPI})
+add_feature_info(Cabana_ENABLE_GRID Cabana_ENABLE_GRID "Build grid and particle-grid capabilities (needs MPI)")
 if(Cabana_ENABLE_GRID)
   if(MPI_FOUND)
     add_subdirectory(grid)
@@ -277,3 +286,5 @@ if(CLANG_FORMAT_FOUND)
     COMMAND ${CLANG_FORMAT_EXECUTABLE} -i -style=file ${FORMAT_SOURCES}
     DEPENDS ${FORMAT_SOURCES})
 endif()
+
+feature_summary(INCLUDE_QUIET_PACKAGES WHAT ALL)
