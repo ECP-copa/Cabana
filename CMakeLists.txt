@@ -79,7 +79,7 @@ if(Cabana_REQUIRE_HDF5)
 else()
   Cabana_add_dependency( PACKAGE MPI COMPONENTS CXX )
 endif()
-set_package_properties(MPI PROPERTIES TYPE RECOMMENDED PURPOSE "Used for parallelization")
+set_package_properties(MPI PROPERTIES TYPE RECOMMENDED PURPOSE "Used for distributed parallelization")
 
 # find ArborX
 Cabana_add_dependency( PACKAGE ArborX )
@@ -94,6 +94,8 @@ find_package( CLANG_FORMAT 14 )
 
 # find hypre
 Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.1 )
+set_package_properties(HYPRE PROPERTIES TYPE OPTIONAL PURPOSE "Used for structured solves")
+
 # find heffte
 Cabana_add_dependency( PACKAGE Heffte VERSION 2.3.0 )
 set_package_properties(Heffte PROPERTIES TYPE OPTIONAL PURPOSE "Used for fft calculations")
@@ -124,7 +126,7 @@ if(CMAKE_VERSION VERSION_LESS 3.26)
 else()
   Cabana_add_dependency( PACKAGE HDF5 COMPONENTS C )
 endif()
-set_package_properties(HDF5 PROPERTIES TYPE RECOMMENDED PURPOSE "Used for I/O")
+set_package_properties(HDF5 PROPERTIES TYPE OPTIONAL PURPOSE "Used for I/O")
 
 if(Cabana_ENABLE_HDF5)
   if(NOT Cabana_ENABLE_MPI)
