@@ -94,7 +94,6 @@ find_package( CLANG_FORMAT 14 )
 
 # find hypre
 Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.1 )
-
 # find heffte
 Cabana_add_dependency( PACKAGE Heffte VERSION 2.3.0 )
 set_package_properties(Heffte PROPERTIES TYPE OPTIONAL PURPOSE "Used for fft calculations")
