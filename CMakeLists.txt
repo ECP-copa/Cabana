@@ -83,7 +83,7 @@ set_package_properties(MPI PROPERTIES TYPE RECOMMENDED PURPOSE "Used for distrib
 
 # find ArborX
 Cabana_add_dependency( PACKAGE ArborX )
-set_package_properties(ArborX PROPERTIES TYPE OPTIONAL PURPOSE "Used in neighbor search")
+set_package_properties(ArborX PROPERTIES TYPE OPTIONAL PURPOSE "Used for neighbor search")
 
 # find ALL
 Cabana_add_dependency( PACKAGE ALL )
@@ -218,6 +218,7 @@ MESSAGE(STATUS "Cabana Revision = '${Cabana_GIT_COMMIT_HASH}'")
 #------------------------------------------------------------------------------#
 # enable unit tests
 option(Cabana_ENABLE_TESTING "Build tests" OFF)
+add_feature_info(Tests Cabana_ENABLE_TESTING "Build unit tests (requires GTest)")
 if(Cabana_ENABLE_TESTING)
   find_package(GTest 1.10 REQUIRED)
   # Workaround for FindGTest module in CMake older than 3.20
@@ -246,7 +247,7 @@ endif()
 add_subdirectory(core)
 
 option(Cabana_ENABLE_GRID "Build grid and particle-grid capabilities" ${Cabana_ENABLE_MPI})
-add_feature_info(Cabana_ENABLE_GRID Cabana_ENABLE_GRID "Build grid and particle-grid capabilities (needs MPI)")
+add_feature_info(Grid Cabana_ENABLE_GRID "Build grid and particle-grid capabilities (needs MPI)")
 if(Cabana_ENABLE_GRID)
   if(MPI_FOUND)
     add_subdirectory(grid)
@@ -255,13 +256,15 @@ if(Cabana_ENABLE_GRID)
   endif()
 endif()
 
-option(Cabana_ENABLE_EXAMPLES "Build examples" OFF)
+option(Cabana_ENABLE_EXAMPLES "Build tutorial examples" OFF)
+add_feature_info(Examples Cabana_ENABLE_EXAMPLES "Build tutorial examples")
 if(Cabana_ENABLE_EXAMPLES)
   add_subdirectory(example)
 endif()
 
 # enable performance tests
 option(Cabana_ENABLE_PERFORMANCE_TESTING "Build Performance Tests" OFF)
+add_feature_info(PerformanceTests Cabana_ENABLE_PERFORMANCE_TESTING "Build performance benchmarks and tests")
 if(Cabana_ENABLE_PERFORMANCE_TESTING)
   add_subdirectory(benchmark)
 endif()
