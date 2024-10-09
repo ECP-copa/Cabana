@@ -33,11 +33,14 @@ namespace Cabana
 //---------------------------------------------------------------------------//
 //! Stencil of cells surrounding each cell.
 
-template <class Scalar>
+template <class Scalar, std::size_t NumSpaceDim = 3>
 struct LinkedCellStencil
 {
+    //! Spatial dimension.
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
+
     //! Background grid.
-    Impl::CartesianGrid<Scalar> grid;
+    Impl::CartesianGrid<Scalar, num_space_dim> grid;
     //! Maximum cells per dimension.
     int max_cells_dir;
     //! Maximum total cells.
@@ -50,37 +53,58 @@ struct LinkedCellStencil
 
     //! Constructor
     LinkedCellStencil( const Scalar neighborhood_radius,
-                       const Scalar cell_size_ratio, const Scalar grid_min[3],
-                       const Scalar grid_max[3] )
+                       const Scalar cell_size_ratio,
+                       const Scalar grid_min[num_space_dim],
+                       const Scalar grid_max[num_space_dim] )
     {
         Scalar dx = neighborhood_radius * cell_size_ratio;
-        grid = Impl::CartesianGrid<Scalar>(
-            grid_min[0], grid_min[1], grid_min[2], grid_max[0], grid_max[1],
-            grid_max[2], dx, dx, dx );
+        Scalar grid_dx[num_space_dim];
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+            grid_dx[d] = dx;
+        grid = Impl::CartesianGrid<Scalar, num_space_dim>( grid_min, grid_max,
+                                                           grid_dx );
         cell_range = std::ceil( 1 / cell_size_ratio );
         max_cells_dir = 2 * cell_range + 1;
         max_cells = max_cells_dir * max_cells_dir * max_cells_dir;
     }
 
     //! Given a cell, get the index bounds of the cell stencil.
-    KOKKOS_INLINE_FUNCTION
-    void getCells( const int cell, int& imin, int& imax, int& jmin, int& jmax,
-                   int& kmin, int& kmax ) const
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    getCells( const int cell, int& imin, int& imax, int& jmin, int& jmax,
+              int& kmin, int& kmax ) const
     {
         int i, j, k;
         grid.ijkBinIndex( cell, i, j, k );
 
         kmin = ( k - cell_range > 0 ) ? k - cell_range : 0;
-        kmax =
-            ( k + cell_range + 1 < grid._nz ) ? k + cell_range + 1 : grid._nz;
+        kmax = ( k + cell_range + 1 < grid._nx[2] ) ? k + cell_range + 1
+                                                    : grid._nx[2];
 
         jmin = ( j - cell_range > 0 ) ? j - cell_range : 0;
-        jmax =
-            ( j + cell_range + 1 < grid._ny ) ? j + cell_range + 1 : grid._ny;
+        jmax = ( j + cell_range + 1 < grid._nx[1] ) ? j + cell_range + 1
+                                                    : grid._nx[1];
 
         imin = ( i - cell_range > 0 ) ? i - cell_range : 0;
-        imax =
-            ( i + cell_range + 1 < grid._nx ) ? i + cell_range + 1 : grid._nx;
+        imax = ( i + cell_range + 1 < grid._nx[0] ) ? i + cell_range + 1
+                                                    : grid._nx[0];
+    }
+
+    //! Given a cell, get the index bounds of the cell stencil.
+    KOKKOS_INLINE_FUNCTION void
+    getCells( const int cell, Kokkos::Array<int, num_space_dim>& min,
+              Kokkos::Array<int, num_space_dim>& max ) const
+    {
+        Kokkos::Array<int, num_space_dim> ijk;
+        grid.ijkBinIndex( cell, ijk );
+
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+        {
+            min[d] = ( ijk[d] - cell_range > 0 ) ? ijk[d] - cell_range : 0;
+            max[d] = ( ijk[d] + cell_range + 1 < grid._nx[d] )
+                         ? ijk[d] + cell_range + 1
+                         : grid._nx[d];
+        }
     }
 };
 
@@ -90,7 +114,7 @@ struct LinkedCellStencil
   operation on a 3d regular Cartesian grid.
   \note Defaults to double precision for backwards compatibility.
 */
-template <class MemorySpace, class Scalar = double>
+template <class MemorySpace, class Scalar = double, std::size_t NumSpaceDim = 3>
 class LinkedCellList
 {
   public:
@@ -115,7 +139,10 @@ class LinkedCellList
     //! Offset view type.
     using OffsetView = Kokkos::View<size_type*, memory_space>;
     //! Stencil type.
-    using stencil_type = Cabana::LinkedCellStencil<Scalar>;
+    using stencil_type = Cabana::LinkedCellStencil<Scalar, NumSpaceDim>;
+
+    //! Spatial dimension.
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
 
     /*!
       \brief Default constructor.
@@ -134,16 +161,15 @@ class LinkedCellList
     */
     template <class PositionType>
     LinkedCellList(
-        PositionType positions, const Scalar grid_delta[3],
-        const Scalar grid_min[3], const Scalar grid_max[3],
+        PositionType positions, const Scalar grid_delta[num_space_dim],
+        const Scalar grid_min[num_space_dim],
+        const Scalar grid_max[num_space_dim],
         typename std::enable_if<( is_slice<PositionType>::value ||
                                   Kokkos::is_view<PositionType>::value ),
                                 int>::type* = 0 )
         : _begin( 0 )
         , _end( size( positions ) )
-        , _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
-                 grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
-                 grid_delta[2] )
+        , _grid( grid_min, grid_max, grid_delta )
         , _cell_stencil( grid_delta[0], 1.0, grid_min, grid_max )
         , _sorted( false )
     {
@@ -171,16 +197,15 @@ class LinkedCellList
     template <class PositionType>
     LinkedCellList(
         PositionType positions, const std::size_t begin, const std::size_t end,
-        const Scalar grid_delta[3], const Scalar grid_min[3],
-        const Scalar grid_max[3],
+        const Scalar grid_delta[num_space_dim],
+        const Scalar grid_min[num_space_dim],
+        const Scalar grid_max[num_space_dim],
         typename std::enable_if<( is_slice<PositionType>::value ||
                                   Kokkos::is_view<PositionType>::value ),
                                 int>::type* = 0 )
         : _begin( begin )
         , _end( end )
-        , _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
-                 grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
-                 grid_delta[2] )
+        , _grid( grid_min, grid_max, grid_delta )
         , _cell_stencil( grid_delta[0], 1.0, grid_min, grid_max )
         , _sorted( false )
     {
@@ -202,17 +227,16 @@ class LinkedCellList
     */
     template <class PositionType>
     LinkedCellList(
-        PositionType positions, const Scalar grid_delta[3],
-        const Scalar grid_min[3], const Scalar grid_max[3],
-        const Scalar neighborhood_radius, const Scalar cell_size_ratio = 1,
+        PositionType positions, const Scalar grid_delta[num_space_dim],
+        const Scalar grid_min[num_space_dim],
+        const Scalar grid_max[num_space_dim], const Scalar neighborhood_radius,
+        const Scalar cell_size_ratio = 1,
         typename std::enable_if<( is_slice<PositionType>::value ||
                                   Kokkos::is_view<PositionType>::value ),
                                 int>::type* = 0 )
         : _begin( 0 )
         , _end( size( positions ) )
-        , _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
-                 grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
-                 grid_delta[2] )
+        , _grid( grid_min, grid_max, grid_delta )
         , _cell_stencil( neighborhood_radius, cell_size_ratio, grid_min,
                          grid_max )
         , _sorted( false )
@@ -243,17 +267,16 @@ class LinkedCellList
     template <class PositionType>
     LinkedCellList(
         PositionType positions, const std::size_t begin, const std::size_t end,
-        const Scalar grid_delta[3], const Scalar grid_min[3],
-        const Scalar grid_max[3], const Scalar neighborhood_radius,
+        const Scalar grid_delta[num_space_dim],
+        const Scalar grid_min[num_space_dim],
+        const Scalar grid_max[num_space_dim], const Scalar neighborhood_radius,
         const Scalar cell_size_ratio = 1,
         typename std::enable_if<( is_slice<PositionType>::value ||
                                   Kokkos::is_view<PositionType>::value ),
                                 int>::type* = 0 )
         : _begin( begin )
         , _end( end )
-        , _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
-                 grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
-                 grid_delta[2] )
+        , _grid( grid_min, grid_max, grid_delta )
         , _cell_stencil( neighborhood_radius, cell_size_ratio, grid_min,
                          grid_max )
         , _sorted( false )
@@ -306,6 +329,21 @@ class LinkedCellList
     }
 
     /*!
+      \brief Given the ijk index of a bin get its cardinal index.
+      \param ijk The bin indices in (x,y,z).
+      \return The cardinal bin index.
+
+      Note that the Kokkos sort orders the bins such that the i index moves
+      the slowest and the k index mvoes the fastest.
+    */
+    KOKKOS_INLINE_FUNCTION
+    size_type
+    cardinalBinIndex( const Kokkos::Array<int, num_space_dim>& ijk ) const
+    {
+        return _grid.cardinalCellIndex( ijk );
+    }
+
+    /*!
       \brief Given the cardinal index of a bin get its ijk indices.
       \param cardinal The cardinal bin index.
       \param i The i bin index (x).
@@ -319,6 +357,32 @@ class LinkedCellList
     void ijkBinIndex( const int cardinal, int& i, int& j, int& k ) const
     {
         _grid.ijkBinIndex( cardinal, i, j, k );
+    }
+
+    /*!
+      \brief Given the cardinal index of a bin get its ijk indices.
+      \param cardinal The cardinal bin index.
+      \param ijk The bin indices in (x,y,z).
+
+      Note that the Kokkos sort orders the bins such that the i index moves
+      the slowest and the k index mvoes the fastest.
+    */
+    KOKKOS_INLINE_FUNCTION
+    void ijkBinIndex( const int cardinal,
+                      Kokkos::Array<int, num_space_dim>& ijk ) const
+    {
+        _grid.ijkBinIndex( cardinal, ijk );
+    }
+
+    /*!
+      \brief Given a bin get the number of particles it contains.
+      \param ijk The bin indices in (x,y,z).
+      \return The number of particles in the bin.
+    */
+    KOKKOS_INLINE_FUNCTION
+    int binSize( const Kokkos::Array<int, num_space_dim> ijk ) const
+    {
+        return _bin_data.binSize( cardinalBinIndex( ijk ) );
     }
 
     /*!
@@ -345,6 +409,17 @@ class LinkedCellList
     size_type binOffset( const int i, const int j, const int k ) const
     {
         return _bin_data.binOffset( cardinalBinIndex( i, j, k ) );
+    }
+
+    /*!
+      \brief Given a bin get the particle index at which it sorts.
+      \param ijk The bin indices in (x,y,z).
+      \return The starting particle index of the bin.
+    */
+    KOKKOS_INLINE_FUNCTION
+    size_type binOffset( const Kokkos::Array<int, num_space_dim> ijk ) const
+    {
+        return _bin_data.binOffset( cardinalBinIndex( ijk ) );
     }
 
     /*!
@@ -435,11 +510,13 @@ class LinkedCellList
         auto counts_sv = Kokkos::Experimental::create_scatter_view( _counts );
         auto cell_count = KOKKOS_LAMBDA( const std::size_t p )
         {
-            int i, j, k;
-            grid.locatePoint( positions( p, 0 ), positions( p, 1 ),
-                              positions( p, 2 ), i, j, k );
+            Kokkos::Array<int, num_space_dim> ijk;
+            Kokkos::Array<Scalar, num_space_dim> pos;
+            for ( std::size_t d = 0; d < num_space_dim; ++d )
+                pos[d] = positions( p, d );
+            grid.locatePoint( pos, ijk );
             auto counts_data = counts_sv.access();
-            counts_data( grid.cardinalCellIndex( i, j, k ) ) += 1;
+            counts_data( grid.cardinalCellIndex( ijk ) ) += 1;
         };
         Kokkos::parallel_for( "Cabana::LinkedCellList::build::cell_count",
                               particle_range, cell_count );
@@ -465,10 +542,12 @@ class LinkedCellList
         // Compute the permutation vector.
         auto create_permute = KOKKOS_LAMBDA( const std::size_t p )
         {
-            int i, j, k;
-            grid.locatePoint( positions( p, 0 ), positions( p, 1 ),
-                              positions( p, 2 ), i, j, k );
-            auto cell_id = grid.cardinalCellIndex( i, j, k );
+            Kokkos::Array<int, num_space_dim> ijk;
+            Kokkos::Array<Scalar, num_space_dim> pos;
+            for ( std::size_t d = 0; d < num_space_dim; ++d )
+                pos[d] = positions( p, d );
+            grid.locatePoint( pos, ijk );
+            auto cell_id = grid.cardinalCellIndex( ijk );
             int c = Kokkos::atomic_fetch_add( &counts( cell_id ), 1 );
             permutes( offsets( cell_id ) + c ) = p;
         };
@@ -551,10 +630,10 @@ class LinkedCellList
     */
     KOKKOS_FUNCTION void operator()( const int i ) const
     {
-        int bin_ijk[3];
-        ijkBinIndex( i, bin_ijk[0], bin_ijk[1], bin_ijk[2] );
-        auto offset = binOffset( bin_ijk[0], bin_ijk[1], bin_ijk[2] );
-        auto size = binSize( bin_ijk[0], bin_ijk[1], bin_ijk[2] );
+        Kokkos::Array<int, num_space_dim> bin_ijk;
+        ijkBinIndex( i, bin_ijk );
+        auto offset = binOffset( bin_ijk );
+        auto size = binSize( bin_ijk );
         for ( size_t p = offset; p < offset + size; ++p )
         {
             if ( _sorted )
@@ -591,6 +670,17 @@ class LinkedCellList
     }
 
     /*!
+      \brief Get the cell indices for the stencil about cell
+    */
+    KOKKOS_INLINE_FUNCTION
+    void getStencilCells( const int cell,
+                          Kokkos::Array<int, num_space_dim>& min,
+                          Kokkos::Array<int, num_space_dim>& max ) const
+    {
+        _cell_stencil.getCells( cell, min, max );
+    }
+
+    /*!
       \brief Get a candidate neighbor particle at a given binned offset.
       \param offset Particle offset in the binned layout.
     */
@@ -611,7 +701,7 @@ class LinkedCellList
 
     // Building the linked cell.
     BinningData<MemorySpace> _bin_data;
-    Impl::CartesianGrid<Scalar> _grid;
+    Impl::CartesianGrid<Scalar, num_space_dim> _grid;
 
     CountView _counts;
     OffsetView _offsets;
@@ -646,24 +736,33 @@ class LinkedCellList
   \brief Creation function for linked cell list.
   \return LinkedCellList.
 */
-template <class MemorySpace, class PositionType, class Scalar>
-auto createLinkedCellList( PositionType positions, const Scalar grid_delta[3],
-                           const Scalar grid_min[3], const Scalar grid_max[3] )
+template <std::size_t NumSpaceDim, class PositionType>
+auto createLinkedCellList(
+    PositionType positions,
+    const typename PositionType::value_type grid_delta[NumSpaceDim],
+    const typename PositionType::value_type grid_min[NumSpaceDim],
+    const typename PositionType::value_type grid_max[NumSpaceDim] )
 {
-    return LinkedCellList<MemorySpace, Scalar>( positions, grid_delta, grid_min,
-                                                grid_max );
+    using memory_space = typename PositionType::memory_space;
+    using scalar_type = typename PositionType::value_type;
+    return LinkedCellList<memory_space, scalar_type, NumSpaceDim>(
+        positions, grid_delta, grid_min, grid_max );
 }
 
 /*!
   \brief Creation function for linked cell list with partial range.
   \return LinkedCellList.
 */
-template <class MemorySpace, class PositionType, class Scalar>
-auto createLinkedCellList( PositionType positions, const std::size_t begin,
-                           const std::size_t end, const Scalar grid_delta[3],
-                           const Scalar grid_min[3], const Scalar grid_max[3] )
+template <std::size_t NumSpaceDim, class PositionType>
+auto createLinkedCellList(
+    PositionType positions, const std::size_t begin, const std::size_t end,
+    const typename PositionType::value_type grid_delta[NumSpaceDim],
+    const typename PositionType::value_type grid_min[NumSpaceDim],
+    const typename PositionType::value_type grid_max[NumSpaceDim] )
 {
-    return LinkedCellList<MemorySpace, Scalar>(
+    using memory_space = typename PositionType::memory_space;
+    using scalar_type = typename PositionType::value_type;
+    return LinkedCellList<memory_space, scalar_type, NumSpaceDim>(
         positions, begin, end, grid_delta, grid_min, grid_max );
 }
 
@@ -672,15 +771,20 @@ auto createLinkedCellList( PositionType positions, const std::size_t begin,
   cell ratio.
   \return LinkedCellList.
 */
-template <class MemorySpace, class PositionType, class Scalar>
-auto createLinkedCellList( PositionType positions, const Scalar grid_delta[3],
-                           const Scalar grid_min[3], const Scalar grid_max[3],
-                           const Scalar neighborhood_radius,
-                           const Scalar cell_size_ratio = 1.0 )
+template <std::size_t NumSpaceDim, class PositionType>
+auto createLinkedCellList(
+    PositionType positions,
+    const typename PositionType::value_type grid_delta[NumSpaceDim],
+    const typename PositionType::value_type grid_min[NumSpaceDim],
+    const typename PositionType::value_type grid_max[NumSpaceDim],
+    const typename PositionType::value_type neighborhood_radius,
+    const typename PositionType::value_type cell_size_ratio = 1.0 )
 {
-    return LinkedCellList<MemorySpace, Scalar>( positions, grid_delta, grid_min,
-                                                grid_max, neighborhood_radius,
-                                                cell_size_ratio );
+    using memory_space = typename PositionType::memory_space;
+    using scalar_type = typename PositionType::value_type;
+    return LinkedCellList<memory_space, scalar_type, NumSpaceDim>(
+        positions, grid_delta, grid_min, grid_max, neighborhood_radius,
+        cell_size_ratio );
 }
 
 /*!
@@ -688,14 +792,18 @@ auto createLinkedCellList( PositionType positions, const Scalar grid_delta[3],
   cutoff radius and/or cell ratio.
   \return LinkedCellList.
 */
-template <class MemorySpace, class PositionType, class Scalar>
-auto createLinkedCellList( PositionType positions, const std::size_t begin,
-                           const std::size_t end, const Scalar grid_delta[3],
-                           const Scalar grid_min[3], const Scalar grid_max[3],
-                           const Scalar neighborhood_radius,
-                           const Scalar cell_size_ratio = 1.0 )
+template <std::size_t NumSpaceDim, class PositionType>
+auto createLinkedCellList(
+    PositionType positions, const std::size_t begin, const std::size_t end,
+    const typename PositionType::value_type grid_delta[NumSpaceDim],
+    const typename PositionType::value_type grid_min[NumSpaceDim],
+    const typename PositionType::value_type grid_max[NumSpaceDim],
+    const typename PositionType::value_type neighborhood_radius,
+    const typename PositionType::value_type cell_size_ratio = 1.0 )
 {
-    return LinkedCellList<MemorySpace, Scalar>(
+    using memory_space = typename PositionType::memory_space;
+    using scalar_type = typename PositionType::value_type;
+    return LinkedCellList<memory_space, scalar_type, NumSpaceDim>(
         positions, begin, end, grid_delta, grid_min, grid_max,
         neighborhood_radius, cell_size_ratio );
 }
@@ -707,8 +815,8 @@ struct is_linked_cell_list_impl : public std::false_type
 {
 };
 
-template <typename MemorySpace, typename Scalar>
-struct is_linked_cell_list_impl<LinkedCellList<MemorySpace, Scalar>>
+template <typename MemorySpace, typename Scalar, std::size_t Dim>
+struct is_linked_cell_list_impl<LinkedCellList<MemorySpace, Scalar, Dim>>
     : public std::true_type
 {
 };
@@ -752,82 +860,153 @@ void permute(
 
 //---------------------------------------------------------------------------//
 //! LinkedCellList NeighborList interface.
-template <class MemorySpace, typename Scalar>
-class NeighborList<LinkedCellList<MemorySpace, Scalar>>
+template <class MemorySpace, typename Scalar, std::size_t NumSpaceDim>
+class NeighborList<LinkedCellList<MemorySpace, Scalar, NumSpaceDim>>
 {
   public:
     //! Kokkos memory space.
     using memory_space = MemorySpace;
     //! Neighbor list type.
-    using list_type = LinkedCellList<MemorySpace, Scalar>;
+    using list_type = LinkedCellList<MemorySpace, Scalar, NumSpaceDim>;
+    //! Spatial dimension
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
 
     //! Get the maximum number of neighbors per particle.
     KOKKOS_INLINE_FUNCTION static std::size_t
     totalNeighbor( const list_type& list )
     {
-        return Impl::totalNeighbor( list, list.numParticles() );
+        std::size_t total_n = 0;
+        // Sum neighbors across all particles.
+        for ( std::size_t p = list.getParticleBegin();
+              p < list.getParticleEnd(); p++ )
+            total_n += numNeighbor( list, p );
+        return total_n;
     }
 
     //! Get the maximum number of neighbors across all particles.
     KOKKOS_INLINE_FUNCTION
     static std::size_t maxNeighbor( const list_type& list )
     {
-        return Impl::maxNeighbor( list, list.numParticles() );
+        std::size_t max_n = 0;
+        for ( std::size_t p = list.getParticleBegin();
+              p < list.getParticleEnd(); p++ )
+            if ( numNeighbor( list, p ) > max_n )
+                max_n = numNeighbor( list, p );
+        return max_n;
     }
 
     //! Get the number of neighbors for a given particle index.
-    KOKKOS_INLINE_FUNCTION static std::size_t
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION static std::enable_if_t<3 == NSD, std::size_t>
     numNeighbor( const list_type& list, const std::size_t particle_index )
     {
         int total_count = 0;
-        int imin, imax, jmin, jmax, kmin, kmax;
-        list.getStencilCells( list.getParticleBin( particle_index ), imin, imax,
-                              jmin, jmax, kmin, kmax );
+        Kokkos::Array<int, 3> min;
+        Kokkos::Array<int, 3> max;
+        list.getStencilCells( list.getParticleBin( particle_index ), min, max );
 
-        // Loop over the cell stencil.
-        for ( int i = imin; i < imax; ++i )
-            for ( int j = jmin; j < jmax; ++j )
-                for ( int k = kmin; k < kmax; ++k )
+        Kokkos::Array<int, 3> ijk;
+        for ( int i = min[0]; i < max[0]; ++i )
+            for ( int j = min[1]; j < max[1]; ++j )
+                for ( int k = min[2]; k < max[2]; ++k )
                 {
-                    total_count += list.binSize( i, j, k );
+                    ijk = { i, j, k };
+                    total_count += list.binSize( ijk );
                 }
+
+        return total_count;
+    }
+
+    //! Get the number of neighbors for a given particle index.
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION static std::enable_if_t<2 == NSD, std::size_t>
+    numNeighbor( const list_type& list, const std::size_t particle_index )
+    {
+        int total_count = 0;
+        Kokkos::Array<int, 2> min;
+        Kokkos::Array<int, 2> max;
+        list.getStencilCells( list.getParticleBin( particle_index ), min, max );
+
+        Kokkos::Array<int, 2> ij;
+        for ( int i = min[0]; i < max[0]; ++i )
+            for ( int j = min[1]; j < max[1]; ++j )
+            {
+                ij = { i, j };
+                total_count += list.binSize( ij );
+            }
+
         return total_count;
     }
 
     //! Get the id for a neighbor for a given particle index and the index of
     //! the neighbor relative to the particle.
-    KOKKOS_INLINE_FUNCTION static std::size_t
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION static std::enable_if_t<3 == NSD, std::size_t>
     getNeighbor( const list_type& list, const std::size_t particle_index,
                  const std::size_t neighbor_index )
     {
         std::size_t total_count = 0;
         std::size_t previous_count = 0;
-        int imin, imax, jmin, jmax, kmin, kmax;
-        list.getStencilCells( list.getParticleBin( particle_index ), imin, imax,
-                              jmin, jmax, kmin, kmax );
+        Kokkos::Array<int, 3> min;
+        Kokkos::Array<int, 3> max;
+        list.getStencilCells( list.getParticleBin( particle_index ), min, max );
 
-        // Loop over the cell stencil.
-        for ( int i = imin; i < imax; ++i )
-            for ( int j = jmin; j < jmax; ++j )
-                for ( int k = kmin; k < kmax; ++k )
+        Kokkos::Array<int, 3> ijk;
+        for ( int i = min[0]; i < max[0]; ++i )
+            for ( int j = min[1]; j < max[1]; ++j )
+                for ( int k = min[2]; k < max[2]; ++k )
                 {
-                    total_count += list.binSize( i, j, k );
+                    ijk = { i, j, k };
+
+                    total_count += list.binSize( ijk );
                     // This neighbor is in this bin.
                     if ( total_count > neighbor_index )
                     {
-                        int particle_id = list.binOffset( i, j, k ) +
+                        int particle_id = list.binOffset( ijk ) +
                                           ( neighbor_index - previous_count );
-                        if ( list.sorted() )
-                        {
-                            return particle_id + list.getParticleBegin();
-                        }
-                        else
-                        {
-                            return list.permutation( particle_id );
-                        }
+                        return list.getParticle( particle_id );
                     }
+                    // Update previous to all bins so far.
                     previous_count = total_count;
                 }
+
+        assert( total_count <= totalNeighbor( list ) );
+
+        // Should never make it to this point.
+        return 0;
+    }
+
+    //! Get the id for a neighbor for a given particle index and the index of
+    //! the neighbor relative to the particle.
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION static std::enable_if_t<2 == NSD, std::size_t>
+    getNeighbor( const list_type& list, const std::size_t particle_index,
+                 const std::size_t neighbor_index )
+    {
+        std::size_t total_count = 0;
+        std::size_t previous_count = 0;
+        Kokkos::Array<int, 2> min;
+        Kokkos::Array<int, 2> max;
+        list.getStencilCells( list.getParticleBin( particle_index ), min, max );
+
+        // Loop over the cell stencil.
+        Kokkos::Array<int, 2> ij;
+        for ( int i = min[0]; i < max[0]; ++i )
+            for ( int j = min[1]; j < max[1]; ++j )
+            {
+                ij = { i, j };
+
+                total_count += list.binSize( ij );
+                // This neighbor is in this bin.
+                if ( total_count > neighbor_index )
+                {
+                    int particle_id = list.binOffset( ij ) +
+                                      ( neighbor_index - previous_count );
+                    return list.getParticle( particle_id );
+                }
+                // Update previous to all bins so far.
+                previous_count = total_count;
+            }
 
         assert( total_count <= totalNeighbor( list ) );
 

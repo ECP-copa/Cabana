@@ -85,7 +85,7 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
             // in cells the size of the smallest cutoff distance.
             double cutoff = cutoff_ratios.front();
             double sort_delta[3] = { cutoff, cutoff, cutoff };
-            auto linked_cell_list = Cabana::createLinkedCellList<memory_space>(
+            auto linked_cell_list = Cabana::createLinkedCellList<3>(
                 x, sort_delta, grid_min, grid_max );
             Cabana::permute( linked_cell_list, aosoas[p] );
         }

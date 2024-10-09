@@ -114,17 +114,29 @@ struct AccessTraits<Positions, PrimitivesTag,
     using memory_space = typename Positions::memory_space;
     //! Size type.
     using size_type = typename Positions::size_type;
+    //! Spatial dimension.
+    static constexpr std::size_t num_space_dim = 3;
     //! Get number of particles.
     static KOKKOS_FUNCTION size_type size( Positions const& x )
     {
         return Cabana::size( x );
     }
     //! Get the particle at the index.
-    static KOKKOS_FUNCTION Point get( Positions const& x, size_type i )
+    template <std::size_t NSD = num_space_dim>
+    static KOKKOS_FUNCTION std::enable_if_t<3 == NSD, Point>
+    get( Positions const& x, size_type i )
     {
         return { static_cast<float>( x( i, 0 ) ),
                  static_cast<float>( x( i, 1 ) ),
                  static_cast<float>( x( i, 2 ) ) };
+    }
+    //! Get the particle at the index.
+    template <std::size_t NSD = num_space_dim>
+    static KOKKOS_FUNCTION std::enable_if_t<2 == NSD, Point>
+    get( Positions const& x, size_type i )
+    {
+        return { static_cast<float>( x( i, 0 ) ),
+                 static_cast<float>( x( i, 1 ) ) };
     }
 };
 //! Neighbor access trait.

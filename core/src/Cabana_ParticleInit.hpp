@@ -200,15 +200,16 @@ int createParticles( InitRandom tag, const InitFunctor& create_functor,
   already in the container (and should be unchanged).
   \param seed Optional random seed for generating particles.
 */
-template <class ExecutionSpace, class PositionType, class ArrayType>
-void createParticles(
-    InitRandom, ExecutionSpace exec_space, PositionType& positions,
-    const std::size_t num_particles, const ArrayType box_min,
-    const ArrayType box_max, const std::size_t previous_num_particles = 0,
-    const uint64_t seed = 342343901,
-    typename std::enable_if<( is_slice<PositionType>::value ||
-                              Kokkos::is_view<PositionType>::value ),
-                            int>::type* = 0 )
+template <std::size_t Dim, class ExecutionSpace, class PositionType,
+          class ArrayType>
+void create( InitRandom, ExecutionSpace exec_space, PositionType& positions,
+             const std::size_t num_particles, const ArrayType box_min,
+             const ArrayType box_max,
+             const std::size_t previous_num_particles = 0,
+             const uint64_t seed = 342343901,
+             typename std::enable_if<( is_slice<PositionType>::value ||
+                                       Kokkos::is_view<PositionType>::value ),
+                                     int>::type* = 0 )
 {
     // Ensure correct space for the particles (View or Slice).
     checkSize( positions, num_particles + previous_num_particles );
@@ -223,7 +224,7 @@ void createParticles(
     auto random_coord_op = KOKKOS_LAMBDA( const int p )
     {
         auto gen = pool.get_state();
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < Dim; ++d )
             positions( p, d ) = Kokkos::rand<RandomType, double>::draw(
                 gen, kokkos_min[d], kokkos_max[d] );
         pool.free_state( gen );
@@ -234,6 +235,20 @@ void createParticles(
         previous_num_particles + num_particles );
     Kokkos::parallel_for( exec_policy, random_coord_op );
     Kokkos::fence();
+}
+
+// for existing 3d createParticles function
+template <class ExecutionSpace, class PositionType, class ArrayType>
+void createParticles(
+    InitRandom tag, ExecutionSpace exec_space, PositionType& positions,
+    const std::size_t num_particles, const ArrayType box_min,
+    const ArrayType box_max, const std::size_t previous_num_particles = 0,
+    const uint64_t seed = 342343901,
+    typename std::enable_if<( is_slice<PositionType>::value ||
+                              Kokkos::is_view<PositionType>::value ),
+                            int>::type* = 0 )
+{
+    create<3>( tag, exec_space, positions, num_particles, box_min, box_max );
 }
 
 /*!
@@ -248,6 +263,22 @@ void createParticles(
   already in the container (and should be unchanged).
   \param seed Optional random seed for generating particles.
 */
+template <std::size_t Dim, class PositionType, class ArrayType>
+void create( InitRandom tag, PositionType& positions,
+             const std::size_t num_particles, const ArrayType box_min,
+             const ArrayType box_max,
+             const std::size_t previous_num_particles = 0,
+             const uint64_t seed = 342343901,
+             typename std::enable_if<( is_slice<PositionType>::value ||
+                                       Kokkos::is_view<PositionType>::value ),
+                                     int>::type* = 0 )
+{
+    using exec_space = typename PositionType::execution_space;
+    create<Dim>( tag, exec_space{}, positions, num_particles, box_min, box_max,
+                 previous_num_particles, seed );
+}
+
+// for existing 3d createParticles function
 template <class PositionType, class ArrayType>
 void createParticles(
     InitRandom tag, PositionType& positions, const std::size_t num_particles,
@@ -259,8 +290,8 @@ void createParticles(
                             int>::type* = 0 )
 {
     using exec_space = typename PositionType::execution_space;
-    createParticles( tag, exec_space{}, positions, num_particles, box_min,
-                     box_max, previous_num_particles, seed );
+    create<3>( tag, exec_space{}, positions, num_particles, box_min, box_max,
+               previous_num_particles, seed );
 }
 
 //---------------------------------------------------------------------------//

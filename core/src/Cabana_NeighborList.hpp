@@ -67,6 +67,22 @@ class NeighborDiscriminator<FullNeighborTag>
       not neighbor itself (i.e. the particle index "p" is not the same as the
       neighbor index "n").
     */
+    template <std::size_t NumSpaceDim>
+    KOKKOS_INLINE_FUNCTION static bool
+    isValid( const std::size_t p, const Kokkos::Array<double, NumSpaceDim>,
+             const std::size_t n, const Kokkos::Array<double, NumSpaceDim> )
+    {
+        return ( p != n );
+    }
+
+    /*!
+      \brief Check whether neighbor pair is valid.
+
+      Full neighbor lists count and store the neighbors of all particles. The
+      only criteria for a potentially valid neighbor is that the particle does
+      not neighbor itself (i.e. the particle index "p" is not the same as the
+      neighbor index "n").
+    */
     KOKKOS_INLINE_FUNCTION
     static bool isValid( const std::size_t p, const double, const double,
                          const double, const std::size_t n, const double,
@@ -81,6 +97,29 @@ template <>
 class NeighborDiscriminator<HalfNeighborTag>
 {
   public:
+    /*!
+      \brief Check whether neighbor pair is valid.
+
+      Half neighbor lists only store half of the neighbors be eliminating
+      duplicate pairs such that the fact that particle "p" neighbors particle
+      "n" is stored in the list but "n" neighboring "p" is not stored but rather
+      implied. We discriminate by only storing neighbors whose coordinates are
+      greater in the x direction. If they are the same then the y direction is
+      checked next and finally the z direction if the y coordinates are the
+      same.
+    */
+    template <std::size_t NumSpaceDim>
+    KOKKOS_INLINE_FUNCTION static bool
+    isValid( const std::size_t p, const Kokkos::Array<double, NumSpaceDim> xp,
+             const std::size_t n, const Kokkos::Array<double, NumSpaceDim> xn )
+    {
+        return ( ( p != n ) &&
+                 ( ( xn[0] > xp[0] ) ||
+                   ( ( xn[0] == xp[0] ) &&
+                     ( ( xn[1] > xp[1] ) ||
+                       ( ( xn[1] == xp[1] ) && ( xn[2] > xp[2] ) ) ) ) ) );
+    }
+
     /*!
       \brief Check whether neighbor pair is valid.
 
