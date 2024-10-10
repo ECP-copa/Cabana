@@ -21,7 +21,7 @@
 namespace Test
 {
 
-TEST( cabana_index, index_test )
+TEST( Index, Test )
 {
     auto aosoa_idx_s = Cabana::Impl::Index<16>::s( 40 );
     auto aosoa_idx_i = Cabana::Impl::Index<16>::a( 40 );

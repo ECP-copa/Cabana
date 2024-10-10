@@ -595,35 +595,35 @@ void testTopology()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, comm_plan_test_1 ) { test1( true ); }
+TEST( CommPlan, Test1 ) { test1( true ); }
 
-TEST( TEST_CATEGORY, comm_plan_test_2 ) { test2( true ); }
+TEST( CommPlan, Test2 ) { test2( true ); }
 
-TEST( TEST_CATEGORY, comm_plan_test_3 ) { test3( true ); }
+TEST( CommPlan, Test3 ) { test3( true ); }
 
-TEST( TEST_CATEGORY, comm_plan_test_4 ) { test4( true ); }
+TEST( CommPlan, Test4 ) { test4( true ); }
 
-TEST( TEST_CATEGORY, comm_plan_test_5 ) { test5( true ); }
+TEST( CommPlan, Test5 ) { test5( true ); }
 
-TEST( TEST_CATEGORY, comm_plan_test_6 ) { test6( true ); }
+TEST( CommPlan, Test6 ) { test6( true ); }
 
-TEST( TEST_CATEGORY, comm_plan_test_7 ) { test7( true ); }
+TEST( CommPlan, Test7 ) { test7( true ); }
 
-TEST( TEST_CATEGORY, comm_plan_test_1_no_topo ) { test1( false ); }
+TEST( CommPlan, Test1NoTopo ) { test1( false ); }
 
-TEST( TEST_CATEGORY, comm_plan_test_2_no_topo ) { test2( false ); }
+TEST( CommPlan, Test2NoTopo ) { test2( false ); }
 
-TEST( TEST_CATEGORY, comm_plan_test_3_no_topo ) { test3( false ); }
+TEST( CommPlan, Test3NoTopo ) { test3( false ); }
 
-TEST( TEST_CATEGORY, comm_plan_test_4_no_topo ) { test4( false ); }
+TEST( CommPlan, Test4NoTopo ) { test4( false ); }
 
-TEST( TEST_CATEGORY, comm_plan_test_5_no_topo ) { test5( false ); }
+TEST( CommPlan, Test5NoTopo ) { test5( false ); }
 
-TEST( TEST_CATEGORY, comm_plan_test_6_no_topo ) { test6( false ); }
+TEST( CommPlan, Test6NoTopo ) { test6( false ); }
 
-TEST( TEST_CATEGORY, comm_plan_test_7_no_topo ) { test7( false ); }
+TEST( CommPlan, Test7NoTopo ) { test7( false ); }
 
-TEST( TEST_CATEGORY, comm_plan_test_topology ) { testTopology(); }
+TEST( CommPlan, TestTopology ) { testTopology(); }
 
 //---------------------------------------------------------------------------//
 

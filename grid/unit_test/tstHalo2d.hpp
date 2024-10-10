@@ -378,7 +378,7 @@ void scatterReduceTest( const ReduceFunc& reduce )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, not_periodic_test )
+TEST( Halo, NonPeriodic2d )
 {
     // Let MPI compute the partitioning for this test.
     int comm_size;
@@ -403,7 +403,7 @@ TEST( TEST_CATEGORY, not_periodic_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, periodic_test )
+TEST( Halo, Periodic2d )
 {
     // Let MPI compute the partitioning for this test.
     int comm_size;
@@ -429,19 +429,13 @@ TEST( TEST_CATEGORY, periodic_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, scatter_reduce_max_test )
-{
-    scatterReduceTest( ScatterReduce::Max() );
-}
+TEST( Halo, ScatterReduceMax2d ) { scatterReduceTest( ScatterReduce::Max() ); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, scatter_reduce_min_test )
-{
-    scatterReduceTest( ScatterReduce::Min() );
-}
+TEST( Halo, ScatterReduceMin2d ) { scatterReduceTest( ScatterReduce::Min() ); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, scatter_reduce_replace_test )
+TEST( Halo, ScatterReduceReplace2d )
 {
     scatterReduceTest( ScatterReduce::Replace() );
 }

@@ -335,8 +335,7 @@ void testNeighborHistogram()
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-
-TEST( TEST_CATEGORY, verlet_list_full_test )
+TEST( VerletList, Full )
 {
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testVerletListFull<Cabana::VerletLayoutCSR, Cabana::TeamOpTag>();
@@ -350,7 +349,7 @@ TEST( TEST_CATEGORY, verlet_list_full_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, verlet_list_half_test )
+TEST( VerletList, Half )
 {
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testVerletListHalf<Cabana::VerletLayoutCSR, Cabana::TeamOpTag>();
@@ -364,7 +363,7 @@ TEST( TEST_CATEGORY, verlet_list_half_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, verlet_list_full_range_test )
+TEST( VerletList, FullRange )
 {
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testVerletListFullPartialRange<Cabana::VerletLayoutCSR,
@@ -381,7 +380,7 @@ TEST( TEST_CATEGORY, verlet_list_full_range_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, parallel_for_test )
+TEST( VerletList, ParallelFor )
 {
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testNeighborParallelFor<Cabana::VerletLayoutCSR>();
@@ -390,7 +389,7 @@ TEST( TEST_CATEGORY, parallel_for_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, parallel_reduce_test )
+TEST( VerletList, ParallelReduce )
 {
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testNeighborParallelReduce<Cabana::VerletLayoutCSR>();
@@ -399,7 +398,7 @@ TEST( TEST_CATEGORY, parallel_reduce_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, modify_list_test )
+TEST( VerletList, ModifyList )
 {
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testModifyNeighbors<Cabana::VerletLayoutCSR>();
@@ -408,7 +407,7 @@ TEST( TEST_CATEGORY, modify_list_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, neighbor_histogram_test )
+TEST( VerletList, NeighborHistogram )
 {
 #ifndef KOKKOS_ENABLE_OPENMPTARGET
     testNeighborHistogram<Cabana::VerletLayoutCSR>();

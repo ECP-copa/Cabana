@@ -487,13 +487,13 @@ void arrayBoundaryTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( array, array_test )
+TEST( Array, 3d )
 {
     layoutTest();
     arrayTest();
     arrayOpTest();
 }
-TEST( array, array_boundary_test )
+TEST( Array, Boundary3d )
 {
     arrayBoundaryTest<Own, Cell>();
     arrayBoundaryTest<Own, Node>();

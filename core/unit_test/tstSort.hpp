@@ -710,31 +710,25 @@ void testSortByKeySlice()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, sort_by_key_test ) { testSortByKey(); }
+TEST( Sort, SortByKey ) { testSortByKey(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, bin_by_key_test ) { testBinByKey(); }
+TEST( Sort, BinByKey ) { testBinByKey(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, sort_by_member_test ) { testSortBySlice(); }
+TEST( Sort, SortByMember ) { testSortBySlice(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, sort_by_member_data_only_test )
-{
-    testSortBySliceDataOnly();
-}
+TEST( Sort, SortByMemberDataOnly ) { testSortBySliceDataOnly(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, bin_by_member_test ) { testBinBySlice(); }
+TEST( Sort, BinByMember ) { testBinBySlice(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, bin_by_member_data_only_test )
-{
-    testBinBySliceDataOnly();
-}
+TEST( Sort, BinByMemberDataOnly ) { testBinBySliceDataOnly(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, sort_by_key_slice_test ) { testSortByKeySlice(); }
+TEST( Sort, SortByKeySlice ) { testSortByKeySlice(); }
 
 //---------------------------------------------------------------------------//
 

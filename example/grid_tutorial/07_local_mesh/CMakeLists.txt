@@ -11,5 +11,5 @@
 
 add_executable(LocalMesh local_mesh_example.cpp)
 target_link_libraries(LocalMesh Cabana::Grid)
-add_test(NAME Grid_tutorial_07 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:LocalMesh> ${MPIEXEC_POSTFLAGS})
-set_tests_properties(Grid_tutorial_07 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
+add_test(NAME Cabana_Grid_Tutorial_07 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:LocalMesh> ${MPIEXEC_POSTFLAGS})
+set_tests_properties(Cabana_Grid_Tutorial_07 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

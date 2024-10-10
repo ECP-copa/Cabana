@@ -347,9 +347,9 @@ void writeTest2d()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, write_test_3d ) { writeTest3d(); }
+TEST( Bov, Write3d ) { writeTest3d(); }
 
-TEST( TEST_CATEGORY, write_test_2d ) { writeTest2d(); }
+TEST( Bov, Write2d ) { writeTest2d(); }
 
 //---------------------------------------------------------------------------//
 

@@ -11,5 +11,5 @@
 
 add_executable(GlobalGrid global_grid_example.cpp)
 target_link_libraries(GlobalGrid Cabana::Grid)
-add_test(NAME Grid_tutorial_04 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:GlobalGrid> ${MPIEXEC_POSTFLAGS})
-set_tests_properties(Grid_tutorial_04 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
+add_test(NAME Cabana_Grid_Tutorial_04 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:GlobalGrid> ${MPIEXEC_POSTFLAGS})
+set_tests_properties(Cabana_Grid_Tutorial_04 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

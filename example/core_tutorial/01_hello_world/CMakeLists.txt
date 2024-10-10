@@ -19,4 +19,4 @@ endif()
 
 add_executable(HelloWorld hello_world.cpp)
 target_link_libraries(HelloWorld Cabana::Core)
-add_test(NAME Core_tutorial_01 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:HelloWorld>)
+add_test(NAME Cabana_Core_Tutorial_01 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:HelloWorld>)

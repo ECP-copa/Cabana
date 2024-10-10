@@ -770,23 +770,21 @@ void testLinkedListView()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, linked_cell_stencil_test ) { testLinkedCellStencil(); }
+//---------------------------------------------------------------------------//
+TEST( LinkedCellList, Stencil ) { testLinkedCellStencil(); }
 
-TEST( TEST_CATEGORY, linked_list_test ) { testLinkedList(); }
+TEST( LinkedCellList, AoSoA ) { testLinkedList(); }
 
-TEST( TEST_CATEGORY, linked_list_slice_test ) { testLinkedListSlice(); }
+TEST( LinkedCellList, Slice ) { testLinkedListSlice(); }
 
-TEST( TEST_CATEGORY, linked_list_neighbor_test )
-{
-    testLinkedCellNeighborInterface();
-}
+TEST( LinkedCellList, Neighbor ) { testLinkedCellNeighborInterface(); }
 
-TEST( TEST_CATEGORY, linked_list_parallel_test ) { testLinkedCellParallel(); }
+TEST( LinkedCellList, ParallelFor ) { testLinkedCellParallel(); }
 
-TEST( TEST_CATEGORY, linked_list_reduce_test ) { testLinkedCellReduce(); }
+TEST( LinkedCellList, ParallelReduce ) { testLinkedCellReduce(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, linked_list_view_test ) { testLinkedListView(); }
+TEST( LinkedCellList, linked_list_view_test ) { testLinkedListView(); }
 
 //---------------------------------------------------------------------------//
 

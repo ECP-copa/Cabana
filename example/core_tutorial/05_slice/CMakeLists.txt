@@ -11,4 +11,4 @@
 
   add_executable(Slice slice_example.cpp)
   target_link_libraries(Slice Cabana::Core)
-  add_test(NAME Core_tutorial_05 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:Slice>)
+  add_test(NAME Cabana_Core_Tutorial_05 COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:Slice>)

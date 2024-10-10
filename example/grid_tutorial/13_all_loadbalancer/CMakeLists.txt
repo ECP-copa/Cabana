@@ -11,5 +11,5 @@
 
 add_executable(Loadbalancer loadbalancer_example.cpp)
 target_link_libraries(Loadbalancer Cabana::Grid)
-add_test(NAME Grid_tutorial_13 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:Loadbalancer> ${MPIEXEC_POSTFLAGS})
-set_tests_properties(Grid_tutorial_13 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
+add_test(NAME Cabana_Grid_Tutorial_13 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:Loadbalancer> ${MPIEXEC_POSTFLAGS})
+set_tests_properties(Cabana_Grid_Tutorial_13 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

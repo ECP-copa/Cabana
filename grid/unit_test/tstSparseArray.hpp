@@ -604,13 +604,13 @@ void full_occupy_test( EntityType entity )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( sparse_array, 3d_sparse_array_sparse_occupy )
+TEST( SparseArray, SparseOccupation )
 {
     sparse_array_test( 100, Node() );
     sparse_array_test( 20, Cell() );
 }
 
-TEST( sparse_array, 3d_sparse_array_full_occupy )
+TEST( SparseArray, FullOccupation )
 {
     full_occupy_test( Node() );
     full_occupy_test( Cell() );

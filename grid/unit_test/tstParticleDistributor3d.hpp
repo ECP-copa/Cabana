@@ -413,13 +413,13 @@ void testParticleMigrate( const bool periodic )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, not_periodic_test ) { testParticleMigrate( false ); }
+TEST( ParticleDistributor, NonPeriodic3d ) { testParticleMigrate( false ); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, periodic_test ) { testParticleMigrate( true ); }
+TEST( ParticleDistributor, Periodic3d ) { testParticleMigrate( true ); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, local_only_test )
+TEST( ParticleDistributor, LocalOnly3d )
 {
     // Let MPI compute the partitioning for this test.
     int comm_size;
@@ -440,7 +440,7 @@ TEST( TEST_CATEGORY, local_only_test )
 //---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, remove_outside_domain_test )
+TEST( ParticleDistributor, RemoveOutsideDomain3d )
 {
     // Let MPI compute the partitioning for this test.
     int comm_size;
