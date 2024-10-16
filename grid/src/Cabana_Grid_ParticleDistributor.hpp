@@ -371,7 +371,7 @@ bool particleMigrate( const LocalGridType& local_grid,
 template <class... Args>
 [[deprecated( "Cabana::Grid::particleGridMigrate is now "
               "Cabana::Grid::particleMigrate. This function wrapper will be "
-              "removed in a future release." )]] void
+              "removed in a future release." )]] auto
 particleGridMigrate( Args&&... args )
 {
     return Cabana::Grid::particleMigrate( std::forward<Args>( args )... );
@@ -381,7 +381,7 @@ template <class... Args>
 [[deprecated(
     "Cabana::Grid::createParticleGridDistributor is now "
     "Cabana::Grid::createParticleDistributor. This function wrapper will be "
-    "removed in a future release." )]] void
+    "removed in a future release." )]] auto
 createParticleGridDistributor( Args&&... args )
 {
     return Cabana::Grid::createParticleDistributor(
