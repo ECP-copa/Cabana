@@ -505,6 +505,8 @@ class Slice
     static_assert( Impl::IsVectorLengthValid<VectorLength>::value,
                    "Vector length must be valid" );
 
+    //! Slice data type.
+    using data_type = DataType;
     //! Slice type.
     using slice_type =
         Slice<DataType, MemorySpace, MemoryAccessType, VectorLength, Stride>;
@@ -860,6 +862,16 @@ template <class T>
 struct is_slice : public is_slice_impl<typename std::remove_cv<T>::type>::type
 {
 };
+
+//---------------------------------------------------------------------------//
+// Slice/View member data size.
+//---------------------------------------------------------------------------//
+//! Get c-array dimension.
+template <typename T, std::size_t N>
+constexpr std::size_t arraySize( const T ( & )[N] )
+{
+    return N;
+}
 
 //---------------------------------------------------------------------------//
 // Copy to View.

@@ -105,11 +105,11 @@ void linkedCellListExample()
       exercise, try adding both start and end (int) inputs to define a subset
       range of particles to permute:
 
-      auto cell_list = Cabana::createLinkedCellList<MemorySpace>(
+      auto cell_list = Cabana::createLinkedCellList(
           positions, start, end, grid_delta, grid_min, grid_max );
      */
-    auto cell_list = Cabana::createLinkedCellList<MemorySpace>(
-        positions, grid_delta, grid_min, grid_max );
+    auto cell_list = Cabana::createLinkedCellList( positions, grid_delta,
+                                                   grid_min, grid_max );
 
     /*
       Now permute the AoSoA (i.e. reorder the data) using the linked cell list.
