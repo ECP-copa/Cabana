@@ -393,7 +393,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span><span class="keyword">template</span> &lt;<span class="keyword">class</span>... Args&gt;</div>
 <div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>[[deprecated( <span class="stringliteral">&quot;Cabana::Grid::particleGridMigrate is now &quot;</span></div>
 <div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>              <span class="stringliteral">&quot;Cabana::Grid::particleMigrate. This function wrapper will be &quot;</span></div>
-<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>              <span class="stringliteral">&quot;removed in a future release.&quot;</span> )]] <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>              <span class="stringliteral">&quot;removed in a future release.&quot;</span> )]] <span class="keyword">auto</span></div>
 <div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>particleGridMigrate( Args&amp;&amp;... args )</div>
 <div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>{</div>
 <div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>    <span class="keywordflow">return</span> Cabana::Grid::particleMigrate( std::forward&lt;Args&gt;( args )... );</div>
@@ -403,7 +403,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>[[deprecated(</div>
 <div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>    <span class="stringliteral">&quot;Cabana::Grid::createParticleGridDistributor is now &quot;</span></div>
 <div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>    <span class="stringliteral">&quot;Cabana::Grid::createParticleDistributor. This function wrapper will be &quot;</span></div>
-<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>    <span class="stringliteral">&quot;removed in a future release.&quot;</span> )]] <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>    <span class="stringliteral">&quot;removed in a future release.&quot;</span> )]] <span class="keyword">auto</span></div>
 <div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>createParticleGridDistributor( Args&amp;&amp;... args )</div>
 <div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>{</div>
 <div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>    <span class="keywordflow">return</span> Cabana::Grid::createParticleDistributor(</div>
