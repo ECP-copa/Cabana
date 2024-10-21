@@ -1050,214 +1050,208 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l01283" name="l01283"></a><span class="lineno"> 1283</span>                    <span class="comment">// neighbors.</span></div>
 <div class="line"><a id="l01284" name="l01284"></a><span class="lineno"> 1284</span>                    <span class="keyword">auto</span> offset = _list.binOffset( gi, gj, gk );</div>
 <div class="line"><a id="l01285" name="l01285"></a><span class="lineno"> 1285</span>                    <span class="keyword">auto</span> <a class="code hl_function" href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">size</a> = _list.binSize( gi, gj, gk );</div>
-<div class="line"><a id="l01286" name="l01286"></a><span class="lineno"> 1286</span>                    <span class="keywordflow">for</span> ( std::size_t j = offset; j &lt; offset + <a class="code hl_function" href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">size</a>; ++j )</div>
+<div class="line"><a id="l01286" name="l01286"></a><span class="lineno"> 1286</span>                    <span class="keywordflow">for</span> ( std::size_t n = offset; n &lt; offset + <a class="code hl_function" href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">size</a>; ++n )</div>
 <div class="line"><a id="l01287" name="l01287"></a><span class="lineno"> 1287</span>                    {</div>
 <div class="line"><a id="l01288" name="l01288"></a><span class="lineno"> 1288</span>                        <span class="comment">// Get the true id of the candidate neighbor.</span></div>
-<div class="line"><a id="l01289" name="l01289"></a><span class="lineno"> 1289</span>                        std::size_t jj;</div>
-<div class="line"><a id="l01290" name="l01290"></a><span class="lineno"> 1290</span>                        <span class="keywordflow">if</span> ( !_list.sorted() )</div>
-<div class="line"><a id="l01291" name="l01291"></a><span class="lineno"> 1291</span>                            jj = _list.permutation( j );</div>
-<div class="line"><a id="l01292" name="l01292"></a><span class="lineno"> 1292</span>                        <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01293" name="l01293"></a><span class="lineno"> 1293</span>                            jj = j + _begin;</div>
-<div class="line"><a id="l01294" name="l01294"></a><span class="lineno"> 1294</span>                        <span class="comment">// Avoid self interactions (dummy position args).</span></div>
-<div class="line"><a id="l01295" name="l01295"></a><span class="lineno"> 1295</span>                        <span class="keywordflow">if</span> ( _discriminator.isValid( i, 0, 0, 0, jj, 0, 0, 0 ) )</div>
-<div class="line"><a id="l01296" name="l01296"></a><span class="lineno"> 1296</span>                        {</div>
-<div class="line"><a id="l01297" name="l01297"></a><span class="lineno"> 1297</span>                            Impl::functorTagDispatch&lt;WorkTag&gt;( _functor, i, jj,</div>
-<div class="line"><a id="l01298" name="l01298"></a><span class="lineno"> 1298</span>                                                               ival );</div>
-<div class="line"><a id="l01299" name="l01299"></a><span class="lineno"> 1299</span>                        }</div>
-<div class="line"><a id="l01300" name="l01300"></a><span class="lineno"> 1300</span>                    }</div>
-<div class="line"><a id="l01301" name="l01301"></a><span class="lineno"> 1301</span>                }</div>
-<div class="line"><a id="l01302" name="l01302"></a><span class="lineno"> 1302</span>    }</div>
-<div class="line"><a id="l01303" name="l01303"></a><span class="lineno"> 1303</span> </div>
-<div class="line"><a id="l01305" name="l01305"></a><span class="lineno"> 1305</span>    KOKKOS_FUNCTION <span class="keywordtype">void</span> operator()( TeamOpTag,</div>
-<div class="line"><a id="l01306" name="l01306"></a><span class="lineno"> 1306</span>                                     <span class="keyword">const</span> <span class="keyword">typename</span> Policy::member_type&amp; team,</div>
-<div class="line"><a id="l01307" name="l01307"></a><span class="lineno"> 1307</span>                                     ReduceType&amp; ival )<span class="keyword"> const</span></div>
-<div class="line"><a id="l01308" name="l01308"></a><span class="lineno"> 1308</span><span class="keyword">    </span>{</div>
-<div class="line"><a id="l01309" name="l01309"></a><span class="lineno"> 1309</span>        index_type i = team.league_rank() + _begin;</div>
-<div class="line"><a id="l01310" name="l01310"></a><span class="lineno"> 1310</span>        <span class="keywordtype">int</span> imin, imax, jmin, jmax, kmin, kmax;</div>
-<div class="line"><a id="l01311" name="l01311"></a><span class="lineno"> 1311</span>        _list.getStencilCells( _list.getParticleBin( i ), imin, imax, jmin,</div>
-<div class="line"><a id="l01312" name="l01312"></a><span class="lineno"> 1312</span>                               jmax, kmin, kmax );</div>
-<div class="line"><a id="l01313" name="l01313"></a><span class="lineno"> 1313</span> </div>
-<div class="line"><a id="l01314" name="l01314"></a><span class="lineno"> 1314</span>        <span class="comment">// Loop over the cell stencil.</span></div>
-<div class="line"><a id="l01315" name="l01315"></a><span class="lineno"> 1315</span>        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> gi = imin; gi &lt; imax; ++gi )</div>
-<div class="line"><a id="l01316" name="l01316"></a><span class="lineno"> 1316</span>            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> gj = jmin; gj &lt; jmax; ++gj )</div>
-<div class="line"><a id="l01317" name="l01317"></a><span class="lineno"> 1317</span>                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> gk = kmin; gk &lt; kmax; ++gk )</div>
-<div class="line"><a id="l01318" name="l01318"></a><span class="lineno"> 1318</span>                {</div>
-<div class="line"><a id="l01319" name="l01319"></a><span class="lineno"> 1319</span>                    <span class="comment">// Check the particles in this bin to see if they</span></div>
-<div class="line"><a id="l01320" name="l01320"></a><span class="lineno"> 1320</span>                    <span class="comment">// are neighbors.</span></div>
-<div class="line"><a id="l01321" name="l01321"></a><span class="lineno"> 1321</span>                    <span class="keyword">auto</span> offset = _list.binOffset( gi, gj, gk );</div>
-<div class="line"><a id="l01322" name="l01322"></a><span class="lineno"> 1322</span>                    <span class="keyword">auto</span> <a class="code hl_function" href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">size</a> = _list.binSize( gi, gj, gk );</div>
-<div class="line"><a id="l01323" name="l01323"></a><span class="lineno"> 1323</span>                    Kokkos::parallel_for(</div>
-<div class="line"><a id="l01324" name="l01324"></a><span class="lineno"> 1324</span>                        Kokkos::TeamThreadRange( team, offset, offset + size ),</div>
-<div class="line"><a id="l01325" name="l01325"></a><span class="lineno"> 1325</span>                        [&amp;]( <span class="keyword">const</span> index_type j )</div>
-<div class="line"><a id="l01326" name="l01326"></a><span class="lineno"> 1326</span>                        {</div>
-<div class="line"><a id="l01327" name="l01327"></a><span class="lineno"> 1327</span>                            <span class="comment">// Get the true id of the candidate neighbor.</span></div>
-<div class="line"><a id="l01328" name="l01328"></a><span class="lineno"> 1328</span>                            std::size_t jj;</div>
-<div class="line"><a id="l01329" name="l01329"></a><span class="lineno"> 1329</span>                            <span class="keywordflow">if</span> ( !_list.sorted() )</div>
-<div class="line"><a id="l01330" name="l01330"></a><span class="lineno"> 1330</span>                                jj = _list.permutation( j );</div>
-<div class="line"><a id="l01331" name="l01331"></a><span class="lineno"> 1331</span>                            <span class="keywordflow">else</span></div>
-<div class="line"><a id="l01332" name="l01332"></a><span class="lineno"> 1332</span>                                jj = j + _begin;</div>
-<div class="line"><a id="l01333" name="l01333"></a><span class="lineno"> 1333</span>                            <span class="comment">// Avoid self interactions (dummy position args).</span></div>
-<div class="line"><a id="l01334" name="l01334"></a><span class="lineno"> 1334</span>                            <span class="keywordflow">if</span> ( _discriminator.isValid( i, 0, 0, 0, jj, 0, 0,</div>
-<div class="line"><a id="l01335" name="l01335"></a><span class="lineno"> 1335</span>                                                         0 ) )</div>
-<div class="line"><a id="l01336" name="l01336"></a><span class="lineno"> 1336</span>                            {</div>
-<div class="line"><a id="l01337" name="l01337"></a><span class="lineno"> 1337</span>                                Impl::functorTagDispatch&lt;WorkTag&gt;( _functor, i,</div>
-<div class="line"><a id="l01338" name="l01338"></a><span class="lineno"> 1338</span>                                                                   jj, ival );</div>
-<div class="line"><a id="l01339" name="l01339"></a><span class="lineno"> 1339</span>                            }</div>
-<div class="line"><a id="l01340" name="l01340"></a><span class="lineno"> 1340</span>                        } );</div>
-<div class="line"><a id="l01341" name="l01341"></a><span class="lineno"> 1341</span>                }</div>
-<div class="line"><a id="l01342" name="l01342"></a><span class="lineno"> 1342</span>    };</div>
-<div class="line"><a id="l01343" name="l01343"></a><span class="lineno"> 1343</span>};</div>
-<div class="line"><a id="l01345" name="l01345"></a><span class="lineno"> 1345</span>} <span class="comment">// namespace Impl</span></div>
-<div class="line"><a id="l01346" name="l01346"></a><span class="lineno"> 1346</span> </div>
-<div class="line"><a id="l01347" name="l01347"></a><span class="lineno"> 1347</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l01386" name="l01386"></a><span class="lineno"> 1386</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>FunctorType, <span class="keyword">class </span>LinkedCellType, <span class="keyword">class</span>... ExecParameters&gt;</div>
-<div class="foldopen" id="foldopen01387" data-start="{" data-end="}">
-<div class="line"><a id="l01387" name="l01387"></a><span class="lineno"><a class="line" href="namespaceCabana.html#ad9f630b4b7e635dc521ad68b849140b6"> 1387</a></span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespaceCabana.html#a24b18535ed149bb8aa6c8e4217c0dff9">neighbor_parallel_for</a>(</div>
-<div class="line"><a id="l01388" name="l01388"></a><span class="lineno"> 1388</span>    <span class="keyword">const</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;&amp; exec_policy,</div>
-<div class="line"><a id="l01389" name="l01389"></a><span class="lineno"> 1389</span>    <span class="keyword">const</span> FunctorType&amp; functor, <span class="keyword">const</span> LinkedCellType&amp; list,</div>
-<div class="line"><a id="l01390" name="l01390"></a><span class="lineno"> 1390</span>    <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1FirstNeighborsTag.html">FirstNeighborsTag</a>, <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1SerialOpTag.html">SerialOpTag</a>, <span class="keyword">const</span> std::string&amp; str = <span class="stringliteral">&quot;&quot;</span>,</div>
-<div class="line"><a id="l01391" name="l01391"></a><span class="lineno"> 1391</span>    <span class="keyword">typename</span> std::enable_if&lt;( <a class="code hl_struct" href="structCabana_1_1is__linked__cell__list.html">is_linked_cell_list&lt;LinkedCellType&gt;::value</a> ),</div>
-<div class="line"><a id="l01392" name="l01392"></a><span class="lineno"> 1392</span>                            <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
-<div class="line"><a id="l01393" name="l01393"></a><span class="lineno"> 1393</span>{</div>
-<div class="line"><a id="l01394" name="l01394"></a><span class="lineno"> 1394</span>    <span class="keyword">using </span>work_tag = <span class="keyword">typename</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;::work_tag;</div>
-<div class="line"><a id="l01395" name="l01395"></a><span class="lineno"> 1395</span>    <span class="keyword">using </span>execution_space =</div>
-<div class="line"><a id="l01396" name="l01396"></a><span class="lineno"> 1396</span>        <span class="keyword">typename</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;::execution_space;</div>
-<div class="line"><a id="l01397" name="l01397"></a><span class="lineno"> 1397</span> </div>
-<div class="line"><a id="l01398" name="l01398"></a><span class="lineno"> 1398</span>    <span class="keyword">using </span>memory_space = <span class="keyword">typename</span> LinkedCellType::memory_space;</div>
+<div class="line"><a id="l01289" name="l01289"></a><span class="lineno"> 1289</span>                        <span class="keyword">auto</span> j = _list.getParticle( n );</div>
+<div class="line"><a id="l01290" name="l01290"></a><span class="lineno"> 1290</span> </div>
+<div class="line"><a id="l01291" name="l01291"></a><span class="lineno"> 1291</span>                        <span class="comment">// Avoid self interactions (dummy position args).</span></div>
+<div class="line"><a id="l01292" name="l01292"></a><span class="lineno"> 1292</span>                        <span class="keywordflow">if</span> ( _discriminator.isValid( i, 0, 0, 0, j, 0, 0, 0 ) )</div>
+<div class="line"><a id="l01293" name="l01293"></a><span class="lineno"> 1293</span>                        {</div>
+<div class="line"><a id="l01294" name="l01294"></a><span class="lineno"> 1294</span>                            Impl::functorTagDispatch&lt;WorkTag&gt;( _functor, i, j,</div>
+<div class="line"><a id="l01295" name="l01295"></a><span class="lineno"> 1295</span>                                                               ival );</div>
+<div class="line"><a id="l01296" name="l01296"></a><span class="lineno"> 1296</span>                        }</div>
+<div class="line"><a id="l01297" name="l01297"></a><span class="lineno"> 1297</span>                    }</div>
+<div class="line"><a id="l01298" name="l01298"></a><span class="lineno"> 1298</span>                }</div>
+<div class="line"><a id="l01299" name="l01299"></a><span class="lineno"> 1299</span>    }</div>
+<div class="line"><a id="l01300" name="l01300"></a><span class="lineno"> 1300</span> </div>
+<div class="line"><a id="l01302" name="l01302"></a><span class="lineno"> 1302</span>    KOKKOS_FUNCTION <span class="keywordtype">void</span> operator()( TeamOpTag,</div>
+<div class="line"><a id="l01303" name="l01303"></a><span class="lineno"> 1303</span>                                     <span class="keyword">const</span> <span class="keyword">typename</span> Policy::member_type&amp; team,</div>
+<div class="line"><a id="l01304" name="l01304"></a><span class="lineno"> 1304</span>                                     ReduceType&amp; ival )<span class="keyword"> const</span></div>
+<div class="line"><a id="l01305" name="l01305"></a><span class="lineno"> 1305</span><span class="keyword">    </span>{</div>
+<div class="line"><a id="l01306" name="l01306"></a><span class="lineno"> 1306</span>        index_type i = team.league_rank() + _begin;</div>
+<div class="line"><a id="l01307" name="l01307"></a><span class="lineno"> 1307</span>        <span class="keywordtype">int</span> imin, imax, jmin, jmax, kmin, kmax;</div>
+<div class="line"><a id="l01308" name="l01308"></a><span class="lineno"> 1308</span>        _list.getStencilCells( _list.getParticleBin( i ), imin, imax, jmin,</div>
+<div class="line"><a id="l01309" name="l01309"></a><span class="lineno"> 1309</span>                               jmax, kmin, kmax );</div>
+<div class="line"><a id="l01310" name="l01310"></a><span class="lineno"> 1310</span> </div>
+<div class="line"><a id="l01311" name="l01311"></a><span class="lineno"> 1311</span>        <span class="comment">// Loop over the cell stencil.</span></div>
+<div class="line"><a id="l01312" name="l01312"></a><span class="lineno"> 1312</span>        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> gi = imin; gi &lt; imax; ++gi )</div>
+<div class="line"><a id="l01313" name="l01313"></a><span class="lineno"> 1313</span>            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> gj = jmin; gj &lt; jmax; ++gj )</div>
+<div class="line"><a id="l01314" name="l01314"></a><span class="lineno"> 1314</span>                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> gk = kmin; gk &lt; kmax; ++gk )</div>
+<div class="line"><a id="l01315" name="l01315"></a><span class="lineno"> 1315</span>                {</div>
+<div class="line"><a id="l01316" name="l01316"></a><span class="lineno"> 1316</span>                    <span class="comment">// Check the particles in this bin to see if they</span></div>
+<div class="line"><a id="l01317" name="l01317"></a><span class="lineno"> 1317</span>                    <span class="comment">// are neighbors.</span></div>
+<div class="line"><a id="l01318" name="l01318"></a><span class="lineno"> 1318</span>                    <span class="keyword">auto</span> offset = _list.binOffset( gi, gj, gk );</div>
+<div class="line"><a id="l01319" name="l01319"></a><span class="lineno"> 1319</span>                    <span class="keyword">auto</span> <a class="code hl_function" href="namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c">size</a> = _list.binSize( gi, gj, gk );</div>
+<div class="line"><a id="l01320" name="l01320"></a><span class="lineno"> 1320</span>                    Kokkos::parallel_for(</div>
+<div class="line"><a id="l01321" name="l01321"></a><span class="lineno"> 1321</span>                        Kokkos::TeamThreadRange( team, offset, offset + size ),</div>
+<div class="line"><a id="l01322" name="l01322"></a><span class="lineno"> 1322</span>                        [&amp;]( <span class="keyword">const</span> index_type n )</div>
+<div class="line"><a id="l01323" name="l01323"></a><span class="lineno"> 1323</span>                        {</div>
+<div class="line"><a id="l01324" name="l01324"></a><span class="lineno"> 1324</span>                            <span class="comment">// Get the true id of the candidate neighbor.</span></div>
+<div class="line"><a id="l01325" name="l01325"></a><span class="lineno"> 1325</span>                            <span class="keyword">auto</span> j = _list.getParticle( n );</div>
+<div class="line"><a id="l01326" name="l01326"></a><span class="lineno"> 1326</span> </div>
+<div class="line"><a id="l01327" name="l01327"></a><span class="lineno"> 1327</span>                            <span class="comment">// Avoid self interactions (dummy position args).</span></div>
+<div class="line"><a id="l01328" name="l01328"></a><span class="lineno"> 1328</span>                            <span class="keywordflow">if</span> ( _discriminator.isValid( i, 0, 0, 0, j, 0, 0,</div>
+<div class="line"><a id="l01329" name="l01329"></a><span class="lineno"> 1329</span>                                                         0 ) )</div>
+<div class="line"><a id="l01330" name="l01330"></a><span class="lineno"> 1330</span>                            {</div>
+<div class="line"><a id="l01331" name="l01331"></a><span class="lineno"> 1331</span>                                Impl::functorTagDispatch&lt;WorkTag&gt;( _functor, i,</div>
+<div class="line"><a id="l01332" name="l01332"></a><span class="lineno"> 1332</span>                                                                   j, ival );</div>
+<div class="line"><a id="l01333" name="l01333"></a><span class="lineno"> 1333</span>                            }</div>
+<div class="line"><a id="l01334" name="l01334"></a><span class="lineno"> 1334</span>                        } );</div>
+<div class="line"><a id="l01335" name="l01335"></a><span class="lineno"> 1335</span>                }</div>
+<div class="line"><a id="l01336" name="l01336"></a><span class="lineno"> 1336</span>    };</div>
+<div class="line"><a id="l01337" name="l01337"></a><span class="lineno"> 1337</span>};</div>
+<div class="line"><a id="l01339" name="l01339"></a><span class="lineno"> 1339</span>} <span class="comment">// namespace Impl</span></div>
+<div class="line"><a id="l01340" name="l01340"></a><span class="lineno"> 1340</span> </div>
+<div class="line"><a id="l01341" name="l01341"></a><span class="lineno"> 1341</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l01380" name="l01380"></a><span class="lineno"> 1380</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>FunctorType, <span class="keyword">class </span>LinkedCellType, <span class="keyword">class</span>... ExecParameters&gt;</div>
+<div class="foldopen" id="foldopen01381" data-start="{" data-end="}">
+<div class="line"><a id="l01381" name="l01381"></a><span class="lineno"><a class="line" href="namespaceCabana.html#ad9f630b4b7e635dc521ad68b849140b6"> 1381</a></span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespaceCabana.html#a24b18535ed149bb8aa6c8e4217c0dff9">neighbor_parallel_for</a>(</div>
+<div class="line"><a id="l01382" name="l01382"></a><span class="lineno"> 1382</span>    <span class="keyword">const</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;&amp; exec_policy,</div>
+<div class="line"><a id="l01383" name="l01383"></a><span class="lineno"> 1383</span>    <span class="keyword">const</span> FunctorType&amp; functor, <span class="keyword">const</span> LinkedCellType&amp; list,</div>
+<div class="line"><a id="l01384" name="l01384"></a><span class="lineno"> 1384</span>    <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1FirstNeighborsTag.html">FirstNeighborsTag</a>, <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1SerialOpTag.html">SerialOpTag</a>, <span class="keyword">const</span> std::string&amp; str = <span class="stringliteral">&quot;&quot;</span>,</div>
+<div class="line"><a id="l01385" name="l01385"></a><span class="lineno"> 1385</span>    <span class="keyword">typename</span> std::enable_if&lt;( <a class="code hl_struct" href="structCabana_1_1is__linked__cell__list.html">is_linked_cell_list&lt;LinkedCellType&gt;::value</a> ),</div>
+<div class="line"><a id="l01386" name="l01386"></a><span class="lineno"> 1386</span>                            <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
+<div class="line"><a id="l01387" name="l01387"></a><span class="lineno"> 1387</span>{</div>
+<div class="line"><a id="l01388" name="l01388"></a><span class="lineno"> 1388</span>    <span class="keyword">using </span>work_tag = <span class="keyword">typename</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;::work_tag;</div>
+<div class="line"><a id="l01389" name="l01389"></a><span class="lineno"> 1389</span>    <span class="keyword">using </span>execution_space =</div>
+<div class="line"><a id="l01390" name="l01390"></a><span class="lineno"> 1390</span>        <span class="keyword">typename</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;::execution_space;</div>
+<div class="line"><a id="l01391" name="l01391"></a><span class="lineno"> 1391</span> </div>
+<div class="line"><a id="l01392" name="l01392"></a><span class="lineno"> 1392</span>    <span class="keyword">using </span>memory_space = <span class="keyword">typename</span> LinkedCellType::memory_space;</div>
+<div class="line"><a id="l01393" name="l01393"></a><span class="lineno"> 1393</span> </div>
+<div class="line"><a id="l01394" name="l01394"></a><span class="lineno"> 1394</span>    <span class="keyword">auto</span> begin = exec_policy.begin();</div>
+<div class="line"><a id="l01395" name="l01395"></a><span class="lineno"> 1395</span>    <span class="keyword">auto</span> end = exec_policy.end();</div>
+<div class="line"><a id="l01396" name="l01396"></a><span class="lineno"> 1396</span>    <span class="comment">// Cannot iterate over range that was not binned.</span></div>
+<div class="line"><a id="l01397" name="l01397"></a><span class="lineno"> 1397</span>    assert( begin == list.getParticleBegin() );</div>
+<div class="line"><a id="l01398" name="l01398"></a><span class="lineno"> 1398</span>    assert( end == list.getParticleEnd() );</div>
 <div class="line"><a id="l01399" name="l01399"></a><span class="lineno"> 1399</span> </div>
-<div class="line"><a id="l01400" name="l01400"></a><span class="lineno"> 1400</span>    <span class="keyword">auto</span> begin = exec_policy.begin();</div>
-<div class="line"><a id="l01401" name="l01401"></a><span class="lineno"> 1401</span>    <span class="keyword">auto</span> end = exec_policy.end();</div>
-<div class="line"><a id="l01402" name="l01402"></a><span class="lineno"> 1402</span>    <span class="comment">// Cannot iterate over range that was not binned.</span></div>
-<div class="line"><a id="l01403" name="l01403"></a><span class="lineno"> 1403</span>    assert( begin == list.getParticleBegin() );</div>
-<div class="line"><a id="l01404" name="l01404"></a><span class="lineno"> 1404</span>    assert( end == list.getParticleEnd() );</div>
+<div class="line"><a id="l01400" name="l01400"></a><span class="lineno"> 1400</span>    <span class="keyword">using </span>linear_policy_type =</div>
+<div class="line"><a id="l01401" name="l01401"></a><span class="lineno"> 1401</span>        Kokkos::RangePolicy&lt;SerialOpTag, execution_space&gt;;</div>
+<div class="line"><a id="l01402" name="l01402"></a><span class="lineno"> 1402</span>    linear_policy_type linear_exec_policy( begin, end );</div>
+<div class="line"><a id="l01403" name="l01403"></a><span class="lineno"> 1403</span> </div>
+<div class="line"><a id="l01404" name="l01404"></a><span class="lineno"> 1404</span>    <span class="keyword">static_assert</span>( <a class="code hl_struct" href="structCabana_1_1is__accessible__from.html">is_accessible_from&lt;memory_space, execution_space&gt;</a>{}, <span class="stringliteral">&quot;&quot;</span> );</div>
 <div class="line"><a id="l01405" name="l01405"></a><span class="lineno"> 1405</span> </div>
-<div class="line"><a id="l01406" name="l01406"></a><span class="lineno"> 1406</span>    <span class="keyword">using </span>linear_policy_type =</div>
-<div class="line"><a id="l01407" name="l01407"></a><span class="lineno"> 1407</span>        Kokkos::RangePolicy&lt;SerialOpTag, execution_space&gt;;</div>
-<div class="line"><a id="l01408" name="l01408"></a><span class="lineno"> 1408</span>    linear_policy_type linear_exec_policy( begin, end );</div>
-<div class="line"><a id="l01409" name="l01409"></a><span class="lineno"> 1409</span> </div>
-<div class="line"><a id="l01410" name="l01410"></a><span class="lineno"> 1410</span>    <span class="keyword">static_assert</span>( <a class="code hl_struct" href="structCabana_1_1is__accessible__from.html">is_accessible_from&lt;memory_space, execution_space&gt;</a>{}, <span class="stringliteral">&quot;&quot;</span> );</div>
+<div class="line"><a id="l01406" name="l01406"></a><span class="lineno"> 1406</span>    Impl::LinkedCellParallelFor&lt;work_tag, FunctorType, linear_policy_type,</div>
+<div class="line"><a id="l01407" name="l01407"></a><span class="lineno"> 1407</span>                                LinkedCellType,</div>
+<div class="line"><a id="l01408" name="l01408"></a><span class="lineno"> 1408</span>                                <span class="keyword">typename</span> LinkedCellType::CountView&gt;</div>
+<div class="line"><a id="l01409" name="l01409"></a><span class="lineno"> 1409</span>        lcl_par( str, linear_exec_policy, functor, list, exec_policy.begin() );</div>
+<div class="line"><a id="l01410" name="l01410"></a><span class="lineno"> 1410</span>}</div>
+</div>
 <div class="line"><a id="l01411" name="l01411"></a><span class="lineno"> 1411</span> </div>
-<div class="line"><a id="l01412" name="l01412"></a><span class="lineno"> 1412</span>    Impl::LinkedCellParallelFor&lt;work_tag, FunctorType, linear_policy_type,</div>
-<div class="line"><a id="l01413" name="l01413"></a><span class="lineno"> 1413</span>                                LinkedCellType,</div>
-<div class="line"><a id="l01414" name="l01414"></a><span class="lineno"> 1414</span>                                <span class="keyword">typename</span> LinkedCellType::CountView&gt;</div>
-<div class="line"><a id="l01415" name="l01415"></a><span class="lineno"> 1415</span>        lcl_par( str, linear_exec_policy, functor, list, exec_policy.begin() );</div>
-<div class="line"><a id="l01416" name="l01416"></a><span class="lineno"> 1416</span>}</div>
-</div>
-<div class="line"><a id="l01417" name="l01417"></a><span class="lineno"> 1417</span> </div>
-<div class="line"><a id="l01418" name="l01418"></a><span class="lineno"> 1418</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l01440" name="l01440"></a><span class="lineno"> 1440</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>FunctorType, <span class="keyword">class </span>LinkedCellType, <span class="keyword">class</span>... ExecParameters&gt;</div>
-<div class="foldopen" id="foldopen01441" data-start="{" data-end="}">
-<div class="line"><a id="l01441" name="l01441"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a47fa816fbb9649b98b6765cbb9603e0b"> 1441</a></span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespaceCabana.html#a24b18535ed149bb8aa6c8e4217c0dff9">neighbor_parallel_for</a>(</div>
-<div class="line"><a id="l01442" name="l01442"></a><span class="lineno"> 1442</span>    <span class="keyword">const</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;&amp; exec_policy,</div>
-<div class="line"><a id="l01443" name="l01443"></a><span class="lineno"> 1443</span>    <span class="keyword">const</span> FunctorType&amp; functor, <span class="keyword">const</span> LinkedCellType&amp; list,</div>
-<div class="line"><a id="l01444" name="l01444"></a><span class="lineno"> 1444</span>    <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1FirstNeighborsTag.html">FirstNeighborsTag</a>, <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1TeamOpTag.html">TeamOpTag</a>, <span class="keyword">const</span> std::string&amp; str = <span class="stringliteral">&quot;&quot;</span>,</div>
-<div class="line"><a id="l01445" name="l01445"></a><span class="lineno"> 1445</span>    <span class="keyword">typename</span> std::enable_if&lt;( <a class="code hl_struct" href="structCabana_1_1is__linked__cell__list.html">is_linked_cell_list&lt;LinkedCellType&gt;::value</a> ),</div>
-<div class="line"><a id="l01446" name="l01446"></a><span class="lineno"> 1446</span>                            <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
-<div class="line"><a id="l01447" name="l01447"></a><span class="lineno"> 1447</span>{</div>
-<div class="line"><a id="l01448" name="l01448"></a><span class="lineno"> 1448</span>    <span class="keyword">using </span>work_tag = <span class="keyword">typename</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;::work_tag;</div>
-<div class="line"><a id="l01449" name="l01449"></a><span class="lineno"> 1449</span>    <span class="keyword">using </span>execution_space =</div>
-<div class="line"><a id="l01450" name="l01450"></a><span class="lineno"> 1450</span>        <span class="keyword">typename</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;::execution_space;</div>
+<div class="line"><a id="l01412" name="l01412"></a><span class="lineno"> 1412</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l01434" name="l01434"></a><span class="lineno"> 1434</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>FunctorType, <span class="keyword">class </span>LinkedCellType, <span class="keyword">class</span>... ExecParameters&gt;</div>
+<div class="foldopen" id="foldopen01435" data-start="{" data-end="}">
+<div class="line"><a id="l01435" name="l01435"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a47fa816fbb9649b98b6765cbb9603e0b"> 1435</a></span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespaceCabana.html#a24b18535ed149bb8aa6c8e4217c0dff9">neighbor_parallel_for</a>(</div>
+<div class="line"><a id="l01436" name="l01436"></a><span class="lineno"> 1436</span>    <span class="keyword">const</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;&amp; exec_policy,</div>
+<div class="line"><a id="l01437" name="l01437"></a><span class="lineno"> 1437</span>    <span class="keyword">const</span> FunctorType&amp; functor, <span class="keyword">const</span> LinkedCellType&amp; list,</div>
+<div class="line"><a id="l01438" name="l01438"></a><span class="lineno"> 1438</span>    <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1FirstNeighborsTag.html">FirstNeighborsTag</a>, <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1TeamOpTag.html">TeamOpTag</a>, <span class="keyword">const</span> std::string&amp; str = <span class="stringliteral">&quot;&quot;</span>,</div>
+<div class="line"><a id="l01439" name="l01439"></a><span class="lineno"> 1439</span>    <span class="keyword">typename</span> std::enable_if&lt;( <a class="code hl_struct" href="structCabana_1_1is__linked__cell__list.html">is_linked_cell_list&lt;LinkedCellType&gt;::value</a> ),</div>
+<div class="line"><a id="l01440" name="l01440"></a><span class="lineno"> 1440</span>                            <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
+<div class="line"><a id="l01441" name="l01441"></a><span class="lineno"> 1441</span>{</div>
+<div class="line"><a id="l01442" name="l01442"></a><span class="lineno"> 1442</span>    <span class="keyword">using </span>work_tag = <span class="keyword">typename</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;::work_tag;</div>
+<div class="line"><a id="l01443" name="l01443"></a><span class="lineno"> 1443</span>    <span class="keyword">using </span>execution_space =</div>
+<div class="line"><a id="l01444" name="l01444"></a><span class="lineno"> 1444</span>        <span class="keyword">typename</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;::execution_space;</div>
+<div class="line"><a id="l01445" name="l01445"></a><span class="lineno"> 1445</span> </div>
+<div class="line"><a id="l01446" name="l01446"></a><span class="lineno"> 1446</span>    <span class="keyword">using </span>team_policy_type =</div>
+<div class="line"><a id="l01447" name="l01447"></a><span class="lineno"> 1447</span>        Kokkos::TeamPolicy&lt;<a class="code hl_class" href="classCabana_1_1TeamOpTag.html">TeamOpTag</a>, execution_space,</div>
+<div class="line"><a id="l01448" name="l01448"></a><span class="lineno"> 1448</span>                           Kokkos::Schedule&lt;Kokkos::Dynamic&gt;&gt;;</div>
+<div class="line"><a id="l01449" name="l01449"></a><span class="lineno"> 1449</span>    team_policy_type team_policy( exec_policy.end() - exec_policy.begin(),</div>
+<div class="line"><a id="l01450" name="l01450"></a><span class="lineno"> 1450</span>                                  Kokkos::AUTO );</div>
 <div class="line"><a id="l01451" name="l01451"></a><span class="lineno"> 1451</span> </div>
-<div class="line"><a id="l01452" name="l01452"></a><span class="lineno"> 1452</span>    <span class="keyword">using </span>team_policy_type =</div>
-<div class="line"><a id="l01453" name="l01453"></a><span class="lineno"> 1453</span>        Kokkos::TeamPolicy&lt;<a class="code hl_class" href="classCabana_1_1TeamOpTag.html">TeamOpTag</a>, execution_space,</div>
-<div class="line"><a id="l01454" name="l01454"></a><span class="lineno"> 1454</span>                           Kokkos::Schedule&lt;Kokkos::Dynamic&gt;&gt;;</div>
-<div class="line"><a id="l01455" name="l01455"></a><span class="lineno"> 1455</span>    team_policy_type team_policy( exec_policy.end() - exec_policy.begin(),</div>
-<div class="line"><a id="l01456" name="l01456"></a><span class="lineno"> 1456</span>                                  Kokkos::AUTO );</div>
-<div class="line"><a id="l01457" name="l01457"></a><span class="lineno"> 1457</span> </div>
-<div class="line"><a id="l01458" name="l01458"></a><span class="lineno"> 1458</span>    <span class="keyword">using </span>memory_space = <span class="keyword">typename</span> LinkedCellType::memory_space;</div>
+<div class="line"><a id="l01452" name="l01452"></a><span class="lineno"> 1452</span>    <span class="keyword">using </span>memory_space = <span class="keyword">typename</span> LinkedCellType::memory_space;</div>
+<div class="line"><a id="l01453" name="l01453"></a><span class="lineno"> 1453</span> </div>
+<div class="line"><a id="l01454" name="l01454"></a><span class="lineno"> 1454</span>    <span class="keyword">static_assert</span>( <a class="code hl_struct" href="structCabana_1_1is__accessible__from.html">is_accessible_from&lt;memory_space, execution_space&gt;</a>{}, <span class="stringliteral">&quot;&quot;</span> );</div>
+<div class="line"><a id="l01455" name="l01455"></a><span class="lineno"> 1455</span> </div>
+<div class="line"><a id="l01456" name="l01456"></a><span class="lineno"> 1456</span>    <span class="comment">// Cannot iterate over range that was not binned.</span></div>
+<div class="line"><a id="l01457" name="l01457"></a><span class="lineno"> 1457</span>    assert( exec_policy.begin() == list.getParticleBegin() );</div>
+<div class="line"><a id="l01458" name="l01458"></a><span class="lineno"> 1458</span>    assert( exec_policy.end() == list.getParticleEnd() );</div>
 <div class="line"><a id="l01459" name="l01459"></a><span class="lineno"> 1459</span> </div>
-<div class="line"><a id="l01460" name="l01460"></a><span class="lineno"> 1460</span>    <span class="keyword">static_assert</span>( <a class="code hl_struct" href="structCabana_1_1is__accessible__from.html">is_accessible_from&lt;memory_space, execution_space&gt;</a>{}, <span class="stringliteral">&quot;&quot;</span> );</div>
-<div class="line"><a id="l01461" name="l01461"></a><span class="lineno"> 1461</span> </div>
-<div class="line"><a id="l01462" name="l01462"></a><span class="lineno"> 1462</span>    <span class="comment">// Cannot iterate over range that was not binned.</span></div>
-<div class="line"><a id="l01463" name="l01463"></a><span class="lineno"> 1463</span>    assert( exec_policy.begin() == list.getParticleBegin() );</div>
-<div class="line"><a id="l01464" name="l01464"></a><span class="lineno"> 1464</span>    assert( exec_policy.end() == list.getParticleEnd() );</div>
+<div class="line"><a id="l01460" name="l01460"></a><span class="lineno"> 1460</span>    Impl::LinkedCellParallelFor&lt;work_tag, FunctorType, team_policy_type,</div>
+<div class="line"><a id="l01461" name="l01461"></a><span class="lineno"> 1461</span>                                LinkedCellType,</div>
+<div class="line"><a id="l01462" name="l01462"></a><span class="lineno"> 1462</span>                                <span class="keyword">typename</span> LinkedCellType::CountView&gt;</div>
+<div class="line"><a id="l01463" name="l01463"></a><span class="lineno"> 1463</span>        lcl_par( str, team_policy, functor, list, exec_policy.begin() );</div>
+<div class="line"><a id="l01464" name="l01464"></a><span class="lineno"> 1464</span>}</div>
+</div>
 <div class="line"><a id="l01465" name="l01465"></a><span class="lineno"> 1465</span> </div>
-<div class="line"><a id="l01466" name="l01466"></a><span class="lineno"> 1466</span>    Impl::LinkedCellParallelFor&lt;work_tag, FunctorType, team_policy_type,</div>
-<div class="line"><a id="l01467" name="l01467"></a><span class="lineno"> 1467</span>                                LinkedCellType,</div>
-<div class="line"><a id="l01468" name="l01468"></a><span class="lineno"> 1468</span>                                <span class="keyword">typename</span> LinkedCellType::CountView&gt;</div>
-<div class="line"><a id="l01469" name="l01469"></a><span class="lineno"> 1469</span>        lcl_par( str, team_policy, functor, list, exec_policy.begin() );</div>
-<div class="line"><a id="l01470" name="l01470"></a><span class="lineno"> 1470</span>}</div>
-</div>
-<div class="line"><a id="l01471" name="l01471"></a><span class="lineno"> 1471</span> </div>
-<div class="line"><a id="l01472" name="l01472"></a><span class="lineno"> 1472</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l01511" name="l01511"></a><span class="lineno"> 1511</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>FunctorType, <span class="keyword">class </span>LinkedCellType, <span class="keyword">class </span>ReduceType,</div>
-<div class="line"><a id="l01512" name="l01512"></a><span class="lineno"> 1512</span>          <span class="keyword">class</span>... ExecParameters&gt;</div>
-<div class="foldopen" id="foldopen01513" data-start="{" data-end="}">
-<div class="line"><a id="l01513" name="l01513"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a29d6d642d6860adcd8a0f37f9c740b89"> 1513</a></span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespaceCabana.html#a5394edf96f28ccd3f77d88044c1cf46a">neighbor_parallel_reduce</a>(</div>
-<div class="line"><a id="l01514" name="l01514"></a><span class="lineno"> 1514</span>    <span class="keyword">const</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;&amp; exec_policy,</div>
-<div class="line"><a id="l01515" name="l01515"></a><span class="lineno"> 1515</span>    <span class="keyword">const</span> FunctorType&amp; functor, <span class="keyword">const</span> LinkedCellType&amp; list,</div>
-<div class="line"><a id="l01516" name="l01516"></a><span class="lineno"> 1516</span>    <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1FirstNeighborsTag.html">FirstNeighborsTag</a>, <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1SerialOpTag.html">SerialOpTag</a>, ReduceType&amp; reduce_val,</div>
-<div class="line"><a id="l01517" name="l01517"></a><span class="lineno"> 1517</span>    <span class="keyword">const</span> std::string&amp; str = <span class="stringliteral">&quot;&quot;</span>,</div>
-<div class="line"><a id="l01518" name="l01518"></a><span class="lineno"> 1518</span>    <span class="keyword">typename</span> std::enable_if&lt;( <a class="code hl_struct" href="structCabana_1_1is__linked__cell__list.html">is_linked_cell_list&lt;LinkedCellType&gt;::value</a> ),</div>
-<div class="line"><a id="l01519" name="l01519"></a><span class="lineno"> 1519</span>                            <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
-<div class="line"><a id="l01520" name="l01520"></a><span class="lineno"> 1520</span>{</div>
-<div class="line"><a id="l01521" name="l01521"></a><span class="lineno"> 1521</span>    <span class="keyword">using </span>work_tag = <span class="keyword">typename</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;::work_tag;</div>
-<div class="line"><a id="l01522" name="l01522"></a><span class="lineno"> 1522</span>    <span class="keyword">using </span>execution_space =</div>
-<div class="line"><a id="l01523" name="l01523"></a><span class="lineno"> 1523</span>        <span class="keyword">typename</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;::execution_space;</div>
-<div class="line"><a id="l01524" name="l01524"></a><span class="lineno"> 1524</span> </div>
-<div class="line"><a id="l01525" name="l01525"></a><span class="lineno"> 1525</span>    <span class="keyword">using </span>memory_space = <span class="keyword">typename</span> LinkedCellType::memory_space;</div>
+<div class="line"><a id="l01466" name="l01466"></a><span class="lineno"> 1466</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l01505" name="l01505"></a><span class="lineno"> 1505</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>FunctorType, <span class="keyword">class </span>LinkedCellType, <span class="keyword">class </span>ReduceType,</div>
+<div class="line"><a id="l01506" name="l01506"></a><span class="lineno"> 1506</span>          <span class="keyword">class</span>... ExecParameters&gt;</div>
+<div class="foldopen" id="foldopen01507" data-start="{" data-end="}">
+<div class="line"><a id="l01507" name="l01507"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a29d6d642d6860adcd8a0f37f9c740b89"> 1507</a></span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespaceCabana.html#a5394edf96f28ccd3f77d88044c1cf46a">neighbor_parallel_reduce</a>(</div>
+<div class="line"><a id="l01508" name="l01508"></a><span class="lineno"> 1508</span>    <span class="keyword">const</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;&amp; exec_policy,</div>
+<div class="line"><a id="l01509" name="l01509"></a><span class="lineno"> 1509</span>    <span class="keyword">const</span> FunctorType&amp; functor, <span class="keyword">const</span> LinkedCellType&amp; list,</div>
+<div class="line"><a id="l01510" name="l01510"></a><span class="lineno"> 1510</span>    <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1FirstNeighborsTag.html">FirstNeighborsTag</a>, <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1SerialOpTag.html">SerialOpTag</a>, ReduceType&amp; reduce_val,</div>
+<div class="line"><a id="l01511" name="l01511"></a><span class="lineno"> 1511</span>    <span class="keyword">const</span> std::string&amp; str = <span class="stringliteral">&quot;&quot;</span>,</div>
+<div class="line"><a id="l01512" name="l01512"></a><span class="lineno"> 1512</span>    <span class="keyword">typename</span> std::enable_if&lt;( <a class="code hl_struct" href="structCabana_1_1is__linked__cell__list.html">is_linked_cell_list&lt;LinkedCellType&gt;::value</a> ),</div>
+<div class="line"><a id="l01513" name="l01513"></a><span class="lineno"> 1513</span>                            <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
+<div class="line"><a id="l01514" name="l01514"></a><span class="lineno"> 1514</span>{</div>
+<div class="line"><a id="l01515" name="l01515"></a><span class="lineno"> 1515</span>    <span class="keyword">using </span>work_tag = <span class="keyword">typename</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;::work_tag;</div>
+<div class="line"><a id="l01516" name="l01516"></a><span class="lineno"> 1516</span>    <span class="keyword">using </span>execution_space =</div>
+<div class="line"><a id="l01517" name="l01517"></a><span class="lineno"> 1517</span>        <span class="keyword">typename</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;::execution_space;</div>
+<div class="line"><a id="l01518" name="l01518"></a><span class="lineno"> 1518</span> </div>
+<div class="line"><a id="l01519" name="l01519"></a><span class="lineno"> 1519</span>    <span class="keyword">using </span>memory_space = <span class="keyword">typename</span> LinkedCellType::memory_space;</div>
+<div class="line"><a id="l01520" name="l01520"></a><span class="lineno"> 1520</span> </div>
+<div class="line"><a id="l01521" name="l01521"></a><span class="lineno"> 1521</span>    <span class="keyword">auto</span> begin = exec_policy.begin();</div>
+<div class="line"><a id="l01522" name="l01522"></a><span class="lineno"> 1522</span>    <span class="keyword">auto</span> end = exec_policy.end();</div>
+<div class="line"><a id="l01523" name="l01523"></a><span class="lineno"> 1523</span>    <span class="comment">// Cannot iterate over range that was not binned.</span></div>
+<div class="line"><a id="l01524" name="l01524"></a><span class="lineno"> 1524</span>    assert( begin == list.getParticleBegin() );</div>
+<div class="line"><a id="l01525" name="l01525"></a><span class="lineno"> 1525</span>    assert( end == list.getParticleEnd() );</div>
 <div class="line"><a id="l01526" name="l01526"></a><span class="lineno"> 1526</span> </div>
-<div class="line"><a id="l01527" name="l01527"></a><span class="lineno"> 1527</span>    <span class="keyword">auto</span> begin = exec_policy.begin();</div>
-<div class="line"><a id="l01528" name="l01528"></a><span class="lineno"> 1528</span>    <span class="keyword">auto</span> end = exec_policy.end();</div>
-<div class="line"><a id="l01529" name="l01529"></a><span class="lineno"> 1529</span>    <span class="comment">// Cannot iterate over range that was not binned.</span></div>
-<div class="line"><a id="l01530" name="l01530"></a><span class="lineno"> 1530</span>    assert( begin == list.getParticleBegin() );</div>
-<div class="line"><a id="l01531" name="l01531"></a><span class="lineno"> 1531</span>    assert( end == list.getParticleEnd() );</div>
+<div class="line"><a id="l01527" name="l01527"></a><span class="lineno"> 1527</span>    <span class="keyword">using </span>linear_policy_type =</div>
+<div class="line"><a id="l01528" name="l01528"></a><span class="lineno"> 1528</span>        Kokkos::RangePolicy&lt;SerialOpTag, execution_space&gt;;</div>
+<div class="line"><a id="l01529" name="l01529"></a><span class="lineno"> 1529</span>    linear_policy_type linear_exec_policy( begin, end );</div>
+<div class="line"><a id="l01530" name="l01530"></a><span class="lineno"> 1530</span> </div>
+<div class="line"><a id="l01531" name="l01531"></a><span class="lineno"> 1531</span>    <span class="keyword">static_assert</span>( <a class="code hl_struct" href="structCabana_1_1is__accessible__from.html">is_accessible_from&lt;memory_space, execution_space&gt;</a>{}, <span class="stringliteral">&quot;&quot;</span> );</div>
 <div class="line"><a id="l01532" name="l01532"></a><span class="lineno"> 1532</span> </div>
-<div class="line"><a id="l01533" name="l01533"></a><span class="lineno"> 1533</span>    <span class="keyword">using </span>linear_policy_type =</div>
-<div class="line"><a id="l01534" name="l01534"></a><span class="lineno"> 1534</span>        Kokkos::RangePolicy&lt;SerialOpTag, execution_space&gt;;</div>
-<div class="line"><a id="l01535" name="l01535"></a><span class="lineno"> 1535</span>    linear_policy_type linear_exec_policy( begin, end );</div>
-<div class="line"><a id="l01536" name="l01536"></a><span class="lineno"> 1536</span> </div>
-<div class="line"><a id="l01537" name="l01537"></a><span class="lineno"> 1537</span>    <span class="keyword">static_assert</span>( <a class="code hl_struct" href="structCabana_1_1is__accessible__from.html">is_accessible_from&lt;memory_space, execution_space&gt;</a>{}, <span class="stringliteral">&quot;&quot;</span> );</div>
-<div class="line"><a id="l01538" name="l01538"></a><span class="lineno"> 1538</span> </div>
-<div class="line"><a id="l01539" name="l01539"></a><span class="lineno"> 1539</span>    Impl::LinkedCellParallelReduce&lt;</div>
-<div class="line"><a id="l01540" name="l01540"></a><span class="lineno"> 1540</span>        work_tag, FunctorType, linear_policy_type, LinkedCellType,</div>
-<div class="line"><a id="l01541" name="l01541"></a><span class="lineno"> 1541</span>        <span class="keyword">typename</span> LinkedCellType::CountView, ReduceType&gt;</div>
-<div class="line"><a id="l01542" name="l01542"></a><span class="lineno"> 1542</span>        lcl_par( str, linear_exec_policy, functor, list, reduce_val,</div>
-<div class="line"><a id="l01543" name="l01543"></a><span class="lineno"> 1543</span>                 exec_policy.begin() );</div>
-<div class="line"><a id="l01544" name="l01544"></a><span class="lineno"> 1544</span>}</div>
+<div class="line"><a id="l01533" name="l01533"></a><span class="lineno"> 1533</span>    Impl::LinkedCellParallelReduce&lt;</div>
+<div class="line"><a id="l01534" name="l01534"></a><span class="lineno"> 1534</span>        work_tag, FunctorType, linear_policy_type, LinkedCellType,</div>
+<div class="line"><a id="l01535" name="l01535"></a><span class="lineno"> 1535</span>        <span class="keyword">typename</span> LinkedCellType::CountView, ReduceType&gt;</div>
+<div class="line"><a id="l01536" name="l01536"></a><span class="lineno"> 1536</span>        lcl_par( str, linear_exec_policy, functor, list, reduce_val,</div>
+<div class="line"><a id="l01537" name="l01537"></a><span class="lineno"> 1537</span>                 exec_policy.begin() );</div>
+<div class="line"><a id="l01538" name="l01538"></a><span class="lineno"> 1538</span>}</div>
 </div>
-<div class="line"><a id="l01545" name="l01545"></a><span class="lineno"> 1545</span> </div>
-<div class="line"><a id="l01546" name="l01546"></a><span class="lineno"> 1546</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l01568" name="l01568"></a><span class="lineno"> 1568</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>FunctorType, <span class="keyword">class </span>LinkedCellType, <span class="keyword">class </span>ReduceType,</div>
-<div class="line"><a id="l01569" name="l01569"></a><span class="lineno"> 1569</span>          <span class="keyword">class</span>... ExecParameters&gt;</div>
-<div class="foldopen" id="foldopen01570" data-start="{" data-end="}">
-<div class="line"><a id="l01570" name="l01570"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a507a2bc4113be499490095b0d956e922"> 1570</a></span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespaceCabana.html#a5394edf96f28ccd3f77d88044c1cf46a">neighbor_parallel_reduce</a>(</div>
-<div class="line"><a id="l01571" name="l01571"></a><span class="lineno"> 1571</span>    <span class="keyword">const</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;&amp; exec_policy,</div>
-<div class="line"><a id="l01572" name="l01572"></a><span class="lineno"> 1572</span>    <span class="keyword">const</span> FunctorType&amp; functor, <span class="keyword">const</span> LinkedCellType&amp; list,</div>
-<div class="line"><a id="l01573" name="l01573"></a><span class="lineno"> 1573</span>    <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1FirstNeighborsTag.html">FirstNeighborsTag</a>, <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1TeamOpTag.html">TeamOpTag</a>, ReduceType&amp; reduce_val,</div>
-<div class="line"><a id="l01574" name="l01574"></a><span class="lineno"> 1574</span>    <span class="keyword">const</span> std::string&amp; str = <span class="stringliteral">&quot;&quot;</span>,</div>
-<div class="line"><a id="l01575" name="l01575"></a><span class="lineno"> 1575</span>    <span class="keyword">typename</span> std::enable_if&lt;( <a class="code hl_struct" href="structCabana_1_1is__linked__cell__list.html">is_linked_cell_list&lt;LinkedCellType&gt;::value</a> ),</div>
-<div class="line"><a id="l01576" name="l01576"></a><span class="lineno"> 1576</span>                            <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
-<div class="line"><a id="l01577" name="l01577"></a><span class="lineno"> 1577</span>{</div>
-<div class="line"><a id="l01578" name="l01578"></a><span class="lineno"> 1578</span>    <span class="keyword">using </span>work_tag = <span class="keyword">typename</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;::work_tag;</div>
-<div class="line"><a id="l01579" name="l01579"></a><span class="lineno"> 1579</span>    <span class="keyword">using </span>execution_space =</div>
-<div class="line"><a id="l01580" name="l01580"></a><span class="lineno"> 1580</span>        <span class="keyword">typename</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;::execution_space;</div>
+<div class="line"><a id="l01539" name="l01539"></a><span class="lineno"> 1539</span> </div>
+<div class="line"><a id="l01540" name="l01540"></a><span class="lineno"> 1540</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l01562" name="l01562"></a><span class="lineno"> 1562</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>FunctorType, <span class="keyword">class </span>LinkedCellType, <span class="keyword">class </span>ReduceType,</div>
+<div class="line"><a id="l01563" name="l01563"></a><span class="lineno"> 1563</span>          <span class="keyword">class</span>... ExecParameters&gt;</div>
+<div class="foldopen" id="foldopen01564" data-start="{" data-end="}">
+<div class="line"><a id="l01564" name="l01564"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a507a2bc4113be499490095b0d956e922"> 1564</a></span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespaceCabana.html#a5394edf96f28ccd3f77d88044c1cf46a">neighbor_parallel_reduce</a>(</div>
+<div class="line"><a id="l01565" name="l01565"></a><span class="lineno"> 1565</span>    <span class="keyword">const</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;&amp; exec_policy,</div>
+<div class="line"><a id="l01566" name="l01566"></a><span class="lineno"> 1566</span>    <span class="keyword">const</span> FunctorType&amp; functor, <span class="keyword">const</span> LinkedCellType&amp; list,</div>
+<div class="line"><a id="l01567" name="l01567"></a><span class="lineno"> 1567</span>    <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1FirstNeighborsTag.html">FirstNeighborsTag</a>, <span class="keyword">const</span> <a class="code hl_class" href="classCabana_1_1TeamOpTag.html">TeamOpTag</a>, ReduceType&amp; reduce_val,</div>
+<div class="line"><a id="l01568" name="l01568"></a><span class="lineno"> 1568</span>    <span class="keyword">const</span> std::string&amp; str = <span class="stringliteral">&quot;&quot;</span>,</div>
+<div class="line"><a id="l01569" name="l01569"></a><span class="lineno"> 1569</span>    <span class="keyword">typename</span> std::enable_if&lt;( <a class="code hl_struct" href="structCabana_1_1is__linked__cell__list.html">is_linked_cell_list&lt;LinkedCellType&gt;::value</a> ),</div>
+<div class="line"><a id="l01570" name="l01570"></a><span class="lineno"> 1570</span>                            <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
+<div class="line"><a id="l01571" name="l01571"></a><span class="lineno"> 1571</span>{</div>
+<div class="line"><a id="l01572" name="l01572"></a><span class="lineno"> 1572</span>    <span class="keyword">using </span>work_tag = <span class="keyword">typename</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;::work_tag;</div>
+<div class="line"><a id="l01573" name="l01573"></a><span class="lineno"> 1573</span>    <span class="keyword">using </span>execution_space =</div>
+<div class="line"><a id="l01574" name="l01574"></a><span class="lineno"> 1574</span>        <span class="keyword">typename</span> Kokkos::RangePolicy&lt;ExecParameters...&gt;::execution_space;</div>
+<div class="line"><a id="l01575" name="l01575"></a><span class="lineno"> 1575</span> </div>
+<div class="line"><a id="l01576" name="l01576"></a><span class="lineno"> 1576</span>    <span class="keyword">using </span>team_policy_type =</div>
+<div class="line"><a id="l01577" name="l01577"></a><span class="lineno"> 1577</span>        Kokkos::TeamPolicy&lt;<a class="code hl_class" href="classCabana_1_1TeamOpTag.html">TeamOpTag</a>, execution_space,</div>
+<div class="line"><a id="l01578" name="l01578"></a><span class="lineno"> 1578</span>                           Kokkos::Schedule&lt;Kokkos::Dynamic&gt;&gt;;</div>
+<div class="line"><a id="l01579" name="l01579"></a><span class="lineno"> 1579</span>    team_policy_type team_policy( exec_policy.end() - exec_policy.begin(),</div>
+<div class="line"><a id="l01580" name="l01580"></a><span class="lineno"> 1580</span>                                  Kokkos::AUTO );</div>
 <div class="line"><a id="l01581" name="l01581"></a><span class="lineno"> 1581</span> </div>
-<div class="line"><a id="l01582" name="l01582"></a><span class="lineno"> 1582</span>    <span class="keyword">using </span>team_policy_type =</div>
-<div class="line"><a id="l01583" name="l01583"></a><span class="lineno"> 1583</span>        Kokkos::TeamPolicy&lt;<a class="code hl_class" href="classCabana_1_1TeamOpTag.html">TeamOpTag</a>, execution_space,</div>
-<div class="line"><a id="l01584" name="l01584"></a><span class="lineno"> 1584</span>                           Kokkos::Schedule&lt;Kokkos::Dynamic&gt;&gt;;</div>
-<div class="line"><a id="l01585" name="l01585"></a><span class="lineno"> 1585</span>    team_policy_type team_policy( exec_policy.end() - exec_policy.begin(),</div>
-<div class="line"><a id="l01586" name="l01586"></a><span class="lineno"> 1586</span>                                  Kokkos::AUTO );</div>
-<div class="line"><a id="l01587" name="l01587"></a><span class="lineno"> 1587</span> </div>
-<div class="line"><a id="l01588" name="l01588"></a><span class="lineno"> 1588</span>    <span class="keyword">using </span>memory_space = <span class="keyword">typename</span> LinkedCellType::memory_space;</div>
+<div class="line"><a id="l01582" name="l01582"></a><span class="lineno"> 1582</span>    <span class="keyword">using </span>memory_space = <span class="keyword">typename</span> LinkedCellType::memory_space;</div>
+<div class="line"><a id="l01583" name="l01583"></a><span class="lineno"> 1583</span> </div>
+<div class="line"><a id="l01584" name="l01584"></a><span class="lineno"> 1584</span>    <span class="keyword">static_assert</span>( <a class="code hl_struct" href="structCabana_1_1is__accessible__from.html">is_accessible_from&lt;memory_space, execution_space&gt;</a>{}, <span class="stringliteral">&quot;&quot;</span> );</div>
+<div class="line"><a id="l01585" name="l01585"></a><span class="lineno"> 1585</span> </div>
+<div class="line"><a id="l01586" name="l01586"></a><span class="lineno"> 1586</span>    <span class="comment">// Cannot iterate over range that was not binned.</span></div>
+<div class="line"><a id="l01587" name="l01587"></a><span class="lineno"> 1587</span>    assert( exec_policy.begin() == list.getParticleBegin() );</div>
+<div class="line"><a id="l01588" name="l01588"></a><span class="lineno"> 1588</span>    assert( exec_policy.end() == list.getParticleEnd() );</div>
 <div class="line"><a id="l01589" name="l01589"></a><span class="lineno"> 1589</span> </div>
-<div class="line"><a id="l01590" name="l01590"></a><span class="lineno"> 1590</span>    <span class="keyword">static_assert</span>( <a class="code hl_struct" href="structCabana_1_1is__accessible__from.html">is_accessible_from&lt;memory_space, execution_space&gt;</a>{}, <span class="stringliteral">&quot;&quot;</span> );</div>
-<div class="line"><a id="l01591" name="l01591"></a><span class="lineno"> 1591</span> </div>
-<div class="line"><a id="l01592" name="l01592"></a><span class="lineno"> 1592</span>    <span class="comment">// Cannot iterate over range that was not binned.</span></div>
-<div class="line"><a id="l01593" name="l01593"></a><span class="lineno"> 1593</span>    assert( exec_policy.begin() == list.getParticleBegin() );</div>
-<div class="line"><a id="l01594" name="l01594"></a><span class="lineno"> 1594</span>    assert( exec_policy.end() == list.getParticleEnd() );</div>
-<div class="line"><a id="l01595" name="l01595"></a><span class="lineno"> 1595</span> </div>
-<div class="line"><a id="l01596" name="l01596"></a><span class="lineno"> 1596</span>    Impl::LinkedCellParallelReduce&lt;</div>
-<div class="line"><a id="l01597" name="l01597"></a><span class="lineno"> 1597</span>        work_tag, FunctorType, team_policy_type, LinkedCellType,</div>
-<div class="line"><a id="l01598" name="l01598"></a><span class="lineno"> 1598</span>        <span class="keyword">typename</span> LinkedCellType::CountView, ReduceType&gt;</div>
-<div class="line"><a id="l01599" name="l01599"></a><span class="lineno"> 1599</span>        lcl_par( str, team_policy, functor, list, reduce_val,</div>
-<div class="line"><a id="l01600" name="l01600"></a><span class="lineno"> 1600</span>                 exec_policy.begin() );</div>
-<div class="line"><a id="l01601" name="l01601"></a><span class="lineno"> 1601</span>}</div>
+<div class="line"><a id="l01590" name="l01590"></a><span class="lineno"> 1590</span>    Impl::LinkedCellParallelReduce&lt;</div>
+<div class="line"><a id="l01591" name="l01591"></a><span class="lineno"> 1591</span>        work_tag, FunctorType, team_policy_type, LinkedCellType,</div>
+<div class="line"><a id="l01592" name="l01592"></a><span class="lineno"> 1592</span>        <span class="keyword">typename</span> LinkedCellType::CountView, ReduceType&gt;</div>
+<div class="line"><a id="l01593" name="l01593"></a><span class="lineno"> 1593</span>        lcl_par( str, team_policy, functor, list, reduce_val,</div>
+<div class="line"><a id="l01594" name="l01594"></a><span class="lineno"> 1594</span>                 exec_policy.begin() );</div>
+<div class="line"><a id="l01595" name="l01595"></a><span class="lineno"> 1595</span>}</div>
 </div>
-<div class="line"><a id="l01602" name="l01602"></a><span class="lineno"> 1602</span> </div>
-<div class="line"><a id="l01603" name="l01603"></a><span class="lineno"> 1603</span>} <span class="comment">// end namespace Cabana</span></div>
-<div class="line"><a id="l01604" name="l01604"></a><span class="lineno"> 1604</span> </div>
-<div class="line"><a id="l01605" name="l01605"></a><span class="lineno"> 1605</span><span class="preprocessor">#endif </span><span class="comment">// end CABANA_PARALLEL_HPP</span></div>
+<div class="line"><a id="l01596" name="l01596"></a><span class="lineno"> 1596</span> </div>
+<div class="line"><a id="l01597" name="l01597"></a><span class="lineno"> 1597</span>} <span class="comment">// end namespace Cabana</span></div>
+<div class="line"><a id="l01598" name="l01598"></a><span class="lineno"> 1598</span> </div>
+<div class="line"><a id="l01599" name="l01599"></a><span class="lineno"> 1599</span><span class="preprocessor">#endif </span><span class="comment">// end CABANA_PARALLEL_HPP</span></div>
 <div class="ttc" id="aCabana__ExecutionPolicy_8hpp_html"><div class="ttname"><a href="Cabana__ExecutionPolicy_8hpp.html">Cabana_ExecutionPolicy.hpp</a></div><div class="ttdoc">SIMD execution policy.</div></div>
 <div class="ttc" id="aCabana__LinkedCellList_8hpp_html"><div class="ttname"><a href="Cabana__LinkedCellList_8hpp.html">Cabana_LinkedCellList.hpp</a></div><div class="ttdoc">Linked cell list binning (spatial sorting) and neighbor iteration.</div></div>
 <div class="ttc" id="aCabana__NeighborList_8hpp_html"><div class="ttname"><a href="Cabana__NeighborList_8hpp.html">Cabana_NeighborList.hpp</a></div><div class="ttdoc">Neighbor list interface.</div></div>
