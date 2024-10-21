@@ -1283,18 +1283,15 @@ struct LinkedCellParallelReduce
                     // neighbors.
                     auto offset = _list.binOffset( gi, gj, gk );
                     auto size = _list.binSize( gi, gj, gk );
-                    for ( std::size_t j = offset; j < offset + size; ++j )
+                    for ( std::size_t n = offset; n < offset + size; ++n )
                     {
                         // Get the true id of the candidate neighbor.
-                        std::size_t jj;
-                        if ( !_list.sorted() )
-                            jj = _list.permutation( j );
-                        else
-                            jj = j + _begin;
+                        auto j = _list.getParticle( n );
+
                         // Avoid self interactions (dummy position args).
-                        if ( _discriminator.isValid( i, 0, 0, 0, jj, 0, 0, 0 ) )
+                        if ( _discriminator.isValid( i, 0, 0, 0, j, 0, 0, 0 ) )
                         {
-                            Impl::functorTagDispatch<WorkTag>( _functor, i, jj,
+                            Impl::functorTagDispatch<WorkTag>( _functor, i, j,
                                                                ival );
                         }
                     }
@@ -1322,20 +1319,17 @@ struct LinkedCellParallelReduce
                     auto size = _list.binSize( gi, gj, gk );
                     Kokkos::parallel_for(
                         Kokkos::TeamThreadRange( team, offset, offset + size ),
-                        [&]( const index_type j )
+                        [&]( const index_type n )
                         {
                             // Get the true id of the candidate neighbor.
-                            std::size_t jj;
-                            if ( !_list.sorted() )
-                                jj = _list.permutation( j );
-                            else
-                                jj = j + _begin;
+                            auto j = _list.getParticle( n );
+
                             // Avoid self interactions (dummy position args).
-                            if ( _discriminator.isValid( i, 0, 0, 0, jj, 0, 0,
+                            if ( _discriminator.isValid( i, 0, 0, 0, j, 0, 0,
                                                          0 ) )
                             {
                                 Impl::functorTagDispatch<WorkTag>( _functor, i,
-                                                                   jj, ival );
+                                                                   j, ival );
                             }
                         } );
                 }

@@ -761,18 +761,29 @@ class NeighborList<LinkedCellList<MemorySpace, Scalar>>
     //! Neighbor list type.
     using list_type = LinkedCellList<MemorySpace, Scalar>;
 
-    //! Get the maximum number of neighbors per particle.
+    //! Get the total number of neighbors across all particles.
     KOKKOS_INLINE_FUNCTION static std::size_t
     totalNeighbor( const list_type& list )
     {
-        return Impl::totalNeighbor( list, list.numParticles() );
+        std::size_t total_n = 0;
+        // Sum neighbors across all particles in range.
+        for ( std::size_t p = list.getParticleBegin();
+              p < list.getParticleEnd(); p++ )
+            total_n += numNeighbor( list, p );
+        return total_n;
     }
 
-    //! Get the maximum number of neighbors across all particles.
+    //! Get the maximum number of neighbors per particles.
     KOKKOS_INLINE_FUNCTION
     static std::size_t maxNeighbor( const list_type& list )
     {
-        return Impl::maxNeighbor( list, list.numParticles() );
+        std::size_t max_n = 0;
+        // Max neighbors across all particles in range.
+        for ( std::size_t p = list.getParticleBegin();
+              p < list.getParticleEnd(); p++ )
+            if ( numNeighbor( list, p ) > max_n )
+                max_n = numNeighbor( list, p );
+        return max_n;
     }
 
     //! Get the number of neighbors for a given particle index.
@@ -817,14 +828,7 @@ class NeighborList<LinkedCellList<MemorySpace, Scalar>>
                     {
                         int particle_id = list.binOffset( i, j, k ) +
                                           ( neighbor_index - previous_count );
-                        if ( list.sorted() )
-                        {
-                            return particle_id + list.getParticleBegin();
-                        }
-                        else
-                        {
-                            return list.permutation( particle_id );
-                        }
+                        return list.getParticle( particle_id );
                     }
                     previous_count = total_count;
                 }
