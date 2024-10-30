@@ -39,7 +39,7 @@ void calculateFFT( bool use_default, bool use_params,
     Experimental::FastFourierTransformParams params;
 
     // Set MPI communication
-    params.setAllToAll( true );
+    params.setAlltoAll( Cabana::Grid::Experimental::FFTCommPattern::alltoallv );
 
     // Set data exchange type (false uses slab decomposition)
     params.setPencils( true );

@@ -19,8 +19,6 @@
 #include <Cabana_Grid_Array.hpp>
 #include <Cabana_Grid_Types.hpp>
 
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
-
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Profiling_ScopedRegion.hpp>
 
@@ -98,13 +96,24 @@ struct is_matching_array<
 {
 };
 
+/*!
+  \brief Choices of heFFTe MPI communication patterns
+*/
+enum class FFTCommPattern : unsigned int
+{
+    alltoallv = 0u,
+    p2p = 1u,
+    alltoall = 2u,
+    p2p_plined = 3u
+};
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Parameters controlling details for fast Fourier transforms.
 */
 class FastFourierTransformParams
 {
-    bool alltoall = true;
+    FFTCommPattern FFTcomm = FFTCommPattern::alltoallv;
     bool pencils = true;
     bool reorder = true;
 
@@ -113,7 +122,18 @@ class FastFourierTransformParams
       \brief Set MPI communication strategy.
       \param value Use all to all MPI communication.
     */
-    void setAllToAll( bool value ) { alltoall = value; }
+    void setAlltoAll( FFTCommPattern value ) { FFTcomm = value; }
+    /*!
+      \brief Set MPI communication strategy.
+      \param value Use all to all MPI communication.
+    */
+    void setAlltoAll( bool value )
+    {
+        if ( value )
+            FFTcomm = FFTCommPattern::alltoallv;
+        else
+            FFTcomm = FFTCommPattern::p2p;
+    }
     /*!
       \brief Set data exchange type (pencil or slab).
       \param value Use pencil (true) or slab (false) decomposition.
@@ -129,7 +149,7 @@ class FastFourierTransformParams
       \brief Get MPI communication strategy.
       \return Using AllToAll or not.
     */
-    bool getAllToAll() const { return alltoall; }
+    FFTCommPattern getAlltoAll() const { return FFTcomm; }
     /*!
       \brief Get data exchange type (pencil or slab).
       \return Using pencil (true) or slab (false) decomposition.
@@ -538,12 +558,26 @@ class HeffteFastFourierTransform
 
         heffte::plan_options heffte_params =
             heffte::default_options<heffte_backend_type>();
-        // TODO: use all three heffte options for algorithm
-        bool alltoall = params.getAllToAll();
-        if ( alltoall )
-            heffte_params.algorithm = heffte::reshape_algorithm::alltoallv;
-        else
+        auto FFTcomm = params.getAlltoAll();
+        switch ( FFTcomm )
+        {
+        case Cabana::Grid::Experimental::FFTCommPattern::p2p:
             heffte_params.algorithm = heffte::reshape_algorithm::p2p;
+            break;
+        case Cabana::Grid::Experimental::FFTCommPattern::alltoallv:
+            heffte_params.algorithm = heffte::reshape_algorithm::alltoallv;
+            break;
+        case Cabana::Grid::Experimental::FFTCommPattern::alltoall:
+            heffte_params.algorithm = heffte::reshape_algorithm::alltoall;
+            break;
+        case Cabana::Grid::Experimental::FFTCommPattern::p2p_plined:
+            heffte_params.algorithm = heffte::reshape_algorithm::p2p_plined;
+            break;
+        default:
+            heffte_params.algorithm = heffte::reshape_algorithm::alltoallv;
+            break;
+        }
+
         heffte_params.use_pencils = params.getPencils();
         heffte_params.use_reorder = params.getReorder();
 
@@ -698,8 +732,7 @@ auto createHeffteFastFourierTransform(
     const heffte::plan_options heffte_params =
         heffte::default_options<heffte_backend_type>();
     FastFourierTransformParams params;
-    // TODO: set appropriate default for AllToAll
-    params.setAllToAll( true );
+    params.setAlltoAll( FFTCommPattern::alltoallv );
     params.setPencils( heffte_params.use_pencils );
     params.setReorder( heffte_params.use_reorder );
 
