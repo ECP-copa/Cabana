@@ -31,41 +31,39 @@ namespace Cabana
   keep.
   \param num_particles_ignore The number of particles to ignore (which precede
   those which may be kept/removed).
-  \param keep_particle Boolean Kokkos View of particles to keep (true) or remove
-  (false).
-  \param particles The AoSoA containing particles.
-  \param shrink_to_fit Whether to remove additional AoSoA capacity or not.
+  \param remove_particle Boolean Kokkos View of particles to remove (true) or
+  keep (false). \param particles The AoSoA containing particles. \param
+  shrink_to_fit Whether to remove additional AoSoA capacity or not.
 */
 template <class ExecutionSpace, class KeepView, class ParticleAoSoA>
 void remove( const ExecutionSpace& exec_space, const int num_keep,
-             const KeepView& keep_particle, ParticleAoSoA& particles,
+             const KeepView& remove_particle, ParticleAoSoA& particles,
              const int num_particles_ignore = 0,
              const bool shrink_to_fit = true )
 {
     using memory_space = typename KeepView::memory_space;
 
-    // Determine the empty particle positions in the compaction zone.
     int num_particles = particles.size();
-    // This View is either empty indices to be filled or the created particle
-    // indices, depending on the ratio of allocated space to the number
-    // created.
+    int new_num_particles = num_particles_ignore + num_keep;
+
+    // Determine the keep particle positions in the compaction zone.
     Kokkos::View<int*, memory_space> indices(
         Kokkos::ViewAllocateWithoutInitializing( "empty_or_filled" ),
-        std::min( num_particles - num_particles_ignore - num_keep, num_keep ) );
+        num_keep );
 
-    int new_num_particles = num_particles_ignore + num_keep;
     // parallel_scan will break if not keeping any particles.
     if ( num_keep > 0 )
     {
         Kokkos::parallel_scan(
             "Cabana::remove::FindEmpty",
-            Kokkos::RangePolicy<ExecutionSpace>( exec_space, 0, num_keep ),
+            Kokkos::RangePolicy<ExecutionSpace>(
+                exec_space, num_particles_ignore, num_particles ),
             KOKKOS_LAMBDA( const int i, int& count, const bool final_pass ) {
-                if ( !keep_particle( i ) )
+                if ( !remove_particle( i ) )
                 {
                     if ( final_pass )
                     {
-                        indices( count ) = i + num_particles_ignore;
+                        indices( count ) = i;
                     }
                     ++count;
                 }
@@ -75,10 +73,10 @@ void remove( const ExecutionSpace& exec_space, const int num_keep,
         // Compact the list so the it only has real particles.
         Kokkos::parallel_scan(
             "Cabana::remove::RemoveEmpty",
-            Kokkos::RangePolicy<ExecutionSpace>( exec_space, new_num_particles,
-                                                 num_particles ),
+            Kokkos::RangePolicy<ExecutionSpace>(
+                exec_space, num_particles_ignore, num_particles ),
             KOKKOS_LAMBDA( const int i, int& count, const bool final_pass ) {
-                if ( keep_particle( i - num_particles_ignore ) )
+                if ( !remove_particle( i ) )
                 {
                     if ( final_pass )
                     {
