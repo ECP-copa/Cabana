@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['index_0',['Index',['../classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a29f8aad0e897cd2b25125a6826de095b',1,'Cabana::Grid::Experimental::SparseHalo']]]
+  ['hashtypes_0',['HashTypes',['../Cabana__Grid__SparseIndexSpace_8hpp.html#ae8d025b453cfd55aa537eebc54a7992f',1,'Cabana::Grid']]]
 ];

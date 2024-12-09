@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['hashtypes_0',['HashTypes',['../Cabana__Grid__SparseIndexSpace_8hpp.html#ae8d025b453cfd55aa537eebc54a7992f',1,'Cabana::Grid']]]
+  ['fftcommpattern_0',['FFTCommPattern',['../Cabana__Grid__FastFourierTransform_8hpp.html#aae3cd95c90c3006b596b231709d286b6',1,'Cabana::Grid::Experimental']]]
 ];
