@@ -104,9 +104,15 @@ void fastFourierTransformHeffteExample()
     */
     Cabana::Grid::Experimental::FastFourierTransformParams params;
 
-    // Set communication to use all-to-all MPI communication.
-    // Set this option to false for point-to-point communication
-    params.setAllToAll( true );
+    // Set this option to Cabana::Grid::Experimental::FFTCommPattern::alltoallv
+    // or true use all-to-all communication with padding
+    // Set this option to Cabana::Grid::Experimental::FFTCommPattern::p2p or
+    // false for point-to-point communication
+    // Set this option to Cabana::Grid::Experimental::FFTCommPattern::alltoall
+    // for all-to-all communication without padding
+    // Set this option to Cabana::Grid::Experimental::FFTCommPattern::p2p_plined
+    // for pipelined point-to-point communication
+    params.setAlltoAll( Cabana::Grid::Experimental::FFTCommPattern::alltoallv );
 
     // Set data exchange type to use pencil decomposition
     // Set this option to false to use slab decomposition
