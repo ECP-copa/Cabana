@@ -113,8 +113,10 @@ void writeTest3d()
         node_halo->gather( TEST_EXECSPACE(), *node_field );
 
         // Write the fields to a file.
-        Experimental::BovWriter::writeTimeStep( 302, 3.43, *cell_field );
-        Experimental::BovWriter::writeTimeStep( 1972, 12.457, *node_field );
+        Experimental::BovWriter::writeTimeStep( "grid_cell_field_3d", 302, 3.43,
+                                                *cell_field );
+        Experimental::BovWriter::writeTimeStep( "grid_node_field_3d", 1972,
+                                                12.457, *node_field );
     }
     // Read the data back in on rank 0 and make sure it is OK.
     int rank;
@@ -270,8 +272,10 @@ void writeTest2d()
         node_halo->gather( TEST_EXECSPACE(), *node_field );
 
         // Write the fields to a file.
-        Experimental::BovWriter::writeTimeStep( 302, 3.43, *cell_field );
-        Experimental::BovWriter::writeTimeStep( 1972, 12.457, *node_field );
+        Experimental::BovWriter::writeTimeStep( "grid_cell_field_2d", 302, 3.43,
+                                                *cell_field );
+        Experimental::BovWriter::writeTimeStep( "grid_node_field_2d", 1972,
+                                                12.457, *node_field );
     }
     // Read the data back in on rank 0 and make sure it is OK.
     int rank;

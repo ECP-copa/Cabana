@@ -19,7 +19,6 @@
 #include <Cabana_LinkedCellList.hpp>
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_Parallel.hpp>
-#include <impl/Cabana_CartesianGrid.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Profiling_ScopedRegion.hpp>
@@ -115,103 +114,11 @@ struct VerletListData<MemorySpace, VerletLayout2D>
 
 //---------------------------------------------------------------------------//
 
+//---------------------------------------------------------------------------//
+
 namespace Impl
 {
 //! \cond Impl
-
-//---------------------------------------------------------------------------//
-// Neighborhood discriminator.
-template <class Tag>
-class NeighborDiscriminator;
-
-// Full list specialization.
-template <>
-class NeighborDiscriminator<FullNeighborTag>
-{
-  public:
-    // Full neighbor lists count and store the neighbors of all
-    // particles. The only criteria for a potentially valid neighbor is
-    // that the particle does not neighbor itself (i.e. the particle index
-    // "p" is not the same as the neighbor index "n").
-    KOKKOS_INLINE_FUNCTION
-    static bool isValid( const std::size_t p, const double, const double,
-                         const double, const std::size_t n, const double,
-                         const double, const double )
-    {
-        return ( p != n );
-    }
-};
-
-// Half list specialization.
-template <>
-class NeighborDiscriminator<HalfNeighborTag>
-{
-  public:
-    // Half neighbor lists only store half of the neighbors be eliminating
-    // duplicate pairs such that the fact that particle "p" neighbors
-    // particle "n" is stored in the list but "n" neighboring "p" is not
-    // stored but rather implied. We discriminate by only storing neighbors
-    // who's coordinates are greater in the x direction. If they are the same
-    // then the y direction is checked next and finally the z direction if the
-    // y coordinates are the same.
-    KOKKOS_INLINE_FUNCTION
-    static bool isValid( const std::size_t p, const double xp, const double yp,
-                         const double zp, const std::size_t n, const double xn,
-                         const double yn, const double zn )
-    {
-        return ( ( p != n ) &&
-                 ( ( xn > xp ) ||
-                   ( ( xn == xp ) &&
-                     ( ( yn > yp ) || ( ( yn == yp ) && ( zn > zp ) ) ) ) ) );
-    }
-};
-
-//---------------------------------------------------------------------------//
-// Cell stencil.
-template <class Scalar>
-struct LinkedCellStencil
-{
-    Scalar rsqr;
-    CartesianGrid<double> grid;
-    int max_cells_dir;
-    int max_cells;
-    int cell_range;
-
-    LinkedCellStencil( const Scalar neighborhood_radius,
-                       const Scalar cell_size_ratio, const Scalar grid_min[3],
-                       const Scalar grid_max[3] )
-        : rsqr( neighborhood_radius * neighborhood_radius )
-    {
-        Scalar dx = neighborhood_radius * cell_size_ratio;
-        grid = CartesianGrid<double>( grid_min[0], grid_min[1], grid_min[2],
-                                      grid_max[0], grid_max[1], grid_max[2], dx,
-                                      dx, dx );
-        cell_range = std::ceil( 1 / cell_size_ratio );
-        max_cells_dir = 2 * cell_range + 1;
-        max_cells = max_cells_dir * max_cells_dir * max_cells_dir;
-    }
-
-    // Given a cell, get the index bounds of the cell stencil.
-    KOKKOS_INLINE_FUNCTION
-    void getCells( const int cell, int& imin, int& imax, int& jmin, int& jmax,
-                   int& kmin, int& kmax ) const
-    {
-        int i, j, k;
-        grid.ijkBinIndex( cell, i, j, k );
-
-        kmin = ( k - cell_range > 0 ) ? k - cell_range : 0;
-        kmax =
-            ( k + cell_range + 1 < grid._nz ) ? k + cell_range + 1 : grid._nz;
-
-        jmin = ( j - cell_range > 0 ) ? j - cell_range : 0;
-        jmax =
-            ( j + cell_range + 1 < grid._ny ) ? j + cell_range + 1 : grid._ny;
-
-        imin = ( i - cell_range > 0 ) ? i - cell_range : 0;
-        imax =
-            ( i + cell_range + 1 < grid._nx ) ? i + cell_range + 1 : grid._nx;
-    }
-};
 
 //---------------------------------------------------------------------------//
 // Verlet List Builder
@@ -240,10 +147,7 @@ struct VerletListBuilder
 
     // Binning Data.
     BinningData<memory_space> bin_data_1d;
-    LinkedCellList<memory_space> linked_cell_list;
-
-    // Cell stencil.
-    LinkedCellStencil<PositionValueType> cell_stencil;
+    LinkedCellList<memory_space, PositionValueType> linked_cell_list;
 
     // Check to count or refill.
     bool refill;
@@ -262,8 +166,6 @@ struct VerletListBuilder
                        const std::size_t max_neigh )
         : pid_begin( begin )
         , pid_end( end )
-        , cell_stencil( neighborhood_radius, cell_size_ratio, grid_min,
-                        grid_max )
         , alloc_n( max_neigh )
     {
         count = true;
@@ -285,8 +187,9 @@ struct VerletListBuilder
         // treated as candidates for neighbors.
         double grid_size = cell_size_ratio * neighborhood_radius;
         PositionValueType grid_delta[3] = { grid_size, grid_size, grid_size };
-        linked_cell_list = LinkedCellList<memory_space>( position, grid_delta,
-                                                         grid_min, grid_max );
+        linked_cell_list = createLinkedCellList<memory_space>(
+            position, grid_delta, grid_min, grid_max, neighborhood_radius,
+            cell_size_ratio );
         bin_data_1d = linked_cell_list.binningData();
 
         // We will use the square of the distance for neighbor determination.
@@ -313,7 +216,8 @@ struct VerletListBuilder
 
         // Get the stencil for this cell.
         int imin, imax, jmin, jmax, kmin, kmax;
-        cell_stencil.getCells( cell, imin, imax, jmin, jmax, kmin, kmax );
+        linked_cell_list.getStencilCells( cell, imin, imax, jmin, jmax, kmin,
+                                          kmax );
 
         // Operate on the particles in the bin.
         std::size_t b_offset = bin_data_1d.binOffset( cell );
@@ -340,8 +244,9 @@ struct VerletListBuilder
                             {
                                 // See if we should actually check this box for
                                 // neighbors.
-                                if ( cell_stencil.grid.minDistanceToPoint(
-                                         x_p, y_p, z_p, i, j, k ) <= rsqr )
+                                if ( linked_cell_list.cellStencil()
+                                         .grid.minDistanceToPoint(
+                                             x_p, y_p, z_p, i, j, k ) <= rsqr )
                                 {
                                     std::size_t n_offset =
                                         linked_cell_list.binOffset( i, j, k );
@@ -529,7 +434,8 @@ struct VerletListBuilder
 
         // Get the stencil for this cell.
         int imin, imax, jmin, jmax, kmin, kmax;
-        cell_stencil.getCells( cell, imin, imax, jmin, jmax, kmin, kmax );
+        linked_cell_list.getStencilCells( cell, imin, imax, jmin, jmax, kmin,
+                                          kmax );
 
         // Operate on the particles in the bin.
         std::size_t b_offset = bin_data_1d.binOffset( cell );
@@ -555,8 +461,9 @@ struct VerletListBuilder
                             {
                                 // See if we should actually check this box for
                                 // neighbors.
-                                if ( cell_stencil.grid.minDistanceToPoint(
-                                         x_p, y_p, z_p, i, j, k ) <= rsqr )
+                                if ( linked_cell_list.cellStencil()
+                                         .grid.minDistanceToPoint(
+                                             x_p, y_p, z_p, i, j, k ) <= rsqr )
                                 {
                                     // Check the particles in this bin to see if
                                     // they are neighbors.
