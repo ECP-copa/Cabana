@@ -429,7 +429,7 @@ void splineEvaluationTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( splines, eval_test )
+TEST( Splines, Eval2d )
 {
     // Check with default data members on spline data.
     splineEvaluationTest<void>();

@@ -19,7 +19,7 @@
 namespace Test
 {
 
-TEST( cabana_cartesian_grid, grid_test )
+TEST( CartesianGrid, Test )
 {
     double min[3] = { -1.0, -0.5, -0.6 };
     double max[3] = { 2.5, 1.5, 1.9 };

@@ -17,6 +17,6 @@ if(EXISTS ${HDF5_BIN_DIR}/h5fuse.sh)
 elseif(EXISTS ${HDF5_BIN_DIR}/h5fuse)
   file(COPY ${HDF5_BIN_DIR}/h5fuse DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endif()
-add_test(NAME Core_tutorial_13_subfiling COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG}
+add_test(NAME Cabana_Core_Tutorial_13_subfiling COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG}
   ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:AdvancedHDF5Output> ${MPIEXEC_POSTFLAGS})
-set_tests_properties(Core_tutorial_13_subfiling PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
+set_tests_properties(Cabana_Core_Tutorial_13_subfiling PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

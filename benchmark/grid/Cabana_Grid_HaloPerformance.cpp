@@ -214,13 +214,13 @@ int main( int argc, char* argv[] )
     // Don't run twice on the CPU if only host enabled.
     if ( !std::is_same<device_type, host_device_type>{} )
     {
-        performanceTest<device_type>( file, partitioner,
-                                      grid_sizes_per_dim_per_rank, "device_",
-                                      halo_widths, MPI_COMM_WORLD );
+        performanceTest<device_type>(
+            file, partitioner, grid_sizes_per_dim_per_rank, "device_device_",
+            halo_widths, MPI_COMM_WORLD );
     }
-    performanceTest<host_device_type>( file, partitioner,
-                                       grid_sizes_per_dim_per_rank, "host_",
-                                       halo_widths, MPI_COMM_WORLD );
+    performanceTest<host_device_type>(
+        file, partitioner, grid_sizes_per_dim_per_rank, "host_host_",
+        halo_widths, MPI_COMM_WORLD );
 
     // Finalize
     Kokkos::finalize();

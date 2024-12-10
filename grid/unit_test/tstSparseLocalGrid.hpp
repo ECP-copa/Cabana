@@ -469,7 +469,7 @@ void sparseLocalGridTest( EntityType t2 )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( sparse_local_grid, 3d_sprase_local_grid )
+TEST( SparseLocalGrid, Test )
 {
     // Currently, periodic BC is not supported in Sparse Grid
     sparseLocalGridTest( Cell() );

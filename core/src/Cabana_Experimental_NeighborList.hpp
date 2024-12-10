@@ -46,29 +46,33 @@ using remove_cvref_t = typename remove_cvref<T>::type;
 namespace Impl
 {
 
-template <typename Slice,
-          typename = std::enable_if_t<Cabana::is_slice<Slice>::value>>
-struct SubsliceAndRadius
+template <typename Positions,
+          typename = std::enable_if_t<Cabana::is_slice<Positions>::value ||
+                                      Kokkos::is_view_v<Positions>>>
+struct SubPositionsAndRadius
 {
-    using slice_type = Slice;
-    using memory_space = typename Slice::memory_space;
-    Slice slice;
-    using size_type = typename Slice::size_type;
+    using positions_type = Positions;
+    using memory_space = typename Positions::memory_space;
+    Positions data;
+    using size_type = typename Positions::size_type;
     size_type first;
     size_type last;
-    using value_type = typename Slice::value_type;
+    using value_type = typename Positions::value_type;
     value_type radius;
 };
 
-template <typename Slice, typename = std::enable_if_t<Cabana::is_slice<
-                              std::remove_reference_t<Slice>>::value>>
+template <typename Positions,
+          typename = std::enable_if_t<
+              Cabana::is_slice<std::remove_reference_t<Positions>>::value ||
+              Kokkos::is_view_v<Positions>>>
 auto makePredicates(
-    Slice&& slice, typename stdcxx20::remove_cvref_t<Slice>::size_type first,
-    typename stdcxx20::remove_cvref_t<Slice>::size_type last,
-    typename stdcxx20::remove_cvref_t<Slice>::value_type radius )
+    Positions&& positions,
+    typename stdcxx20::remove_cvref_t<Positions>::size_type first,
+    typename stdcxx20::remove_cvref_t<Positions>::size_type last,
+    typename stdcxx20::remove_cvref_t<Positions>::value_type radius )
 {
-    return Impl::SubsliceAndRadius<stdcxx20::remove_cvref_t<Slice>>{
-        std::forward<Slice>( slice ), first, last, radius };
+    return Impl::SubPositionsAndRadius<stdcxx20::remove_cvref_t<Positions>>{
+        std::forward<Positions>( positions ), first, last, radius };
 }
 
 template <typename ExecutionSpace, typename D, typename... P>
@@ -100,19 +104,23 @@ max_reduce( ExecutionSpace const& space, Kokkos::View<D, P...> const& v )
 
 namespace ArborX
 {
-//! Neighbor access trait for Cabana slice.
-template <typename Slice>
-struct AccessTraits<Slice, PrimitivesTag,
-                    std::enable_if_t<Cabana::is_slice<Slice>{}>>
+//! Neighbor access trait for Cabana slice and/or Kokkos View.
+template <typename Positions>
+struct AccessTraits<Positions, PrimitivesTag,
+                    std::enable_if_t<Cabana::is_slice<Positions>{} ||
+                                     Kokkos::is_view<Positions>{}>>
 {
     //! Kokkos memory space.
-    using memory_space = typename Slice::memory_space;
+    using memory_space = typename Positions::memory_space;
     //! Size type.
-    using size_type = typename Slice::size_type;
-    //! Get number of particles in the slice.
-    static KOKKOS_FUNCTION size_type size( Slice const& x ) { return x.size(); }
+    using size_type = typename Positions::size_type;
+    //! Get number of particles.
+    static KOKKOS_FUNCTION size_type size( Positions const& x )
+    {
+        return Cabana::size( x );
+    }
     //! Get the particle at the index.
-    static KOKKOS_FUNCTION Point get( Slice const& x, size_type i )
+    static KOKKOS_FUNCTION Point get( Positions const& x, size_type i )
     {
         return { static_cast<float>( x( i, 0 ) ),
                  static_cast<float>( x( i, 1 ) ),
@@ -120,28 +128,29 @@ struct AccessTraits<Slice, PrimitivesTag,
     }
 };
 //! Neighbor access trait.
-template <typename Slice>
-struct AccessTraits<Cabana::Experimental::Impl::SubsliceAndRadius<Slice>,
-                    PredicatesTag>
+template <typename Positions>
+struct AccessTraits<
+    Cabana::Experimental::Impl::SubPositionsAndRadius<Positions>, PredicatesTag>
 {
-    //! Slice wrapper with partial range and radius information.
-    using SliceLike = Cabana::Experimental::Impl::SubsliceAndRadius<Slice>;
+    //! Position wrapper with partial range and radius information.
+    using PositionLike =
+        Cabana::Experimental::Impl::SubPositionsAndRadius<Positions>;
     //! Kokkos memory space.
-    using memory_space = typename SliceLike::memory_space;
+    using memory_space = typename PositionLike::memory_space;
     //! Size type.
-    using size_type = typename SliceLike::size_type;
+    using size_type = typename PositionLike::size_type;
     //! Get number of particles.
-    static KOKKOS_FUNCTION size_type size( SliceLike const& x )
+    static KOKKOS_FUNCTION size_type size( PositionLike const& x )
     {
         return x.last - x.first;
     }
     //! Get the particle at the index.
-    static KOKKOS_FUNCTION auto get( SliceLike const& x, size_type i )
+    static KOKKOS_FUNCTION auto get( PositionLike const& x, size_type i )
     {
         assert( i < size( x ) );
         auto const point =
-            AccessTraits<typename SliceLike::slice_type, PrimitivesTag>::get(
-                x.slice, x.first + i );
+            AccessTraits<typename PositionLike::positions_type,
+                         PrimitivesTag>::get( x.data, x.first + i );
         return attach( intersects( Sphere{ point, x.radius } ), (int)i );
     }
 };
@@ -282,12 +291,12 @@ struct CrsGraph
   interaction distance with a 1D compressed layout for particles and neighbors.
 
   \tparam ExecutionSpace Kokkos execution space.
-  \tparam Slice The position slice type.
+  \tparam Positions The position type.
   \tparam AlgorithmTag Tag indicating whether to build a full or half neighbor
   list.
 
   \param space Kokkos execution space.
-  \param coordinate_slice The slice containing the particle positions.
+  \param positions The particle positions.
   \param first The beginning particle index to compute neighbors for.
   \param last The end particle index to compute neighbors for.
   \param radius The radius of the neighborhood. Particles within this radius are
@@ -297,26 +306,27 @@ struct CrsGraph
   Neighbor list implementation most appropriate for highly varying particle
   densities.
 */
-template <typename ExecutionSpace, typename Slice, typename Tag>
-auto makeNeighborList( ExecutionSpace space, Tag, Slice const& coordinate_slice,
-                       typename Slice::size_type first,
-                       typename Slice::size_type last,
-                       typename Slice::value_type radius, int buffer_size = 0 )
+template <typename ExecutionSpace, typename Positions, typename Tag>
+auto makeNeighborList( ExecutionSpace space, Tag, Positions const& positions,
+                       typename Positions::size_type first,
+                       typename Positions::size_type last,
+                       typename Positions::value_type radius,
+                       int buffer_size = 0 )
 {
     assert( buffer_size >= 0 );
     assert( last >= first );
-    assert( last <= coordinate_slice.size() );
+    assert( last <= positions.size() );
 
-    using memory_space = typename Slice::memory_space;
+    using memory_space = typename Positions::memory_space;
 
-    ArborX::BVH<memory_space> bvh( space, coordinate_slice );
+    ArborX::BVH<memory_space> bvh( space, positions );
 
     Kokkos::View<int*, memory_space> indices(
         Kokkos::view_alloc( "indices", Kokkos::WithoutInitializing ), 0 );
     Kokkos::View<int*, memory_space> offset(
         Kokkos::view_alloc( "offset", Kokkos::WithoutInitializing ), 0 );
     bvh.query(
-        space, Impl::makePredicates( coordinate_slice, first, last, radius ),
+        space, Impl::makePredicates( positions, first, last, radius ),
         Impl::NeighborDiscriminatorCallback<Tag>{}, indices, offset,
         ArborX::Experimental::TraversalPolicy().setBufferSize( buffer_size ) );
 
@@ -328,11 +338,11 @@ auto makeNeighborList( ExecutionSpace space, Tag, Slice const& coordinate_slice,
   \brief Neighbor list implementation using ArborX for particles within the
   interaction distance with a 1D compressed layout for particles and neighbors.
 
-  \tparam Slice The position slice type.
+  \tparam Positions The position type.
   \tparam Tag Tag indicating whether to build a full or half neighbor list.
 
   \param tag Tag indicating whether to build a full or half neighbor list.
-  \param coordinate_slice The slice containing the particle positions.
+  \param positions The containing the particle positions.
   \param first The beginning particle index to compute neighbors for.
   \param last The end particle index to compute neighbors for.
   \param radius The radius of the neighborhood. Particles within this radius are
@@ -342,14 +352,15 @@ auto makeNeighborList( ExecutionSpace space, Tag, Slice const& coordinate_slice,
   Neighbor list implementation most appropriate for highly varying particle
   densities.
 */
-template <typename Slice, typename Tag>
-auto makeNeighborList( Tag tag, Slice const& coordinate_slice,
-                       typename Slice::size_type first,
-                       typename Slice::size_type last,
-                       typename Slice::value_type radius, int buffer_size = 0 )
+template <typename Positions, typename Tag>
+auto makeNeighborList( Tag tag, Positions const& positions,
+                       typename Positions::size_type first,
+                       typename Positions::size_type last,
+                       typename Positions::value_type radius,
+                       int buffer_size = 0 )
 {
-    typename Slice::execution_space space{};
-    return makeNeighborList( space, tag, coordinate_slice, first, last, radius,
+    typename Positions::execution_space space{};
+    return makeNeighborList( space, tag, positions, first, last, radius,
                              buffer_size );
 }
 
@@ -358,11 +369,11 @@ auto makeNeighborList( Tag tag, Slice const& coordinate_slice,
   interaction distance with a 1D compressed layout for particles and neighbors.
 
   \tparam DeviceType Kokkos device type.
-  \tparam Slice The position slice type.
+  \tparam Positions The position type.
   \tparam Tag Tag indicating whether to build a full or half neighbor list.
 
   \param tag Tag indicating whether to build a full or half neighbor list.
-  \param coordinate_slice The slice containing the particle positions.
+  \param positions The particle positions.
   \param first The beginning particle index to compute neighbors for.
   \param last The end particle index to compute neighbors for.
   \param radius The radius of the neighborhood. Particles within this radius are
@@ -372,16 +383,16 @@ auto makeNeighborList( Tag tag, Slice const& coordinate_slice,
   Neighbor list implementation most appropriate for highly varying particle
   densities.
 */
-template <typename DeviceType, typename Slice, typename Tag>
-[[deprecated]] auto makeNeighborList( Tag tag, Slice const& coordinate_slice,
-                                      typename Slice::size_type first,
-                                      typename Slice::size_type last,
-                                      typename Slice::value_type radius,
+template <typename DeviceType, typename Positions, typename Tag>
+[[deprecated]] auto makeNeighborList( Tag tag, Positions const& positions,
+                                      typename Positions::size_type first,
+                                      typename Positions::size_type last,
+                                      typename Positions::value_type radius,
                                       int buffer_size = 0 )
 {
     using exec_space = typename DeviceType::execution_space;
-    return makeNeighborList( exec_space{}, tag, coordinate_slice, first, last,
-                             radius, buffer_size );
+    return makeNeighborList( exec_space{}, tag, positions, first, last, radius,
+                             buffer_size );
 }
 
 //---------------------------------------------------------------------------//
@@ -405,11 +416,11 @@ struct Dense
   interaction distance with a 2D layout for particles and neighbors.
 
   \tparam ExecutionSpace Kokkos execution space.
-  \tparam Slice The position slice type.
+  \tparam Positions The position type.
   \tparam Tag Tag indicating whether to build a full or half neighbor list.
 
   \param space Kokkos execution space.
-  \param coordinate_slice The slice containing the particle positions.
+  \param positions The particle positions.
   \param first The beginning particle index to compute neighbors for.
   \param last The end particle index to compute neighbors for.
   \param radius The radius of the neighborhood. Particles within this radius are
@@ -420,24 +431,23 @@ struct Dense
   Neighbor list implementation most appropriate for highly varying particle
   densities.
 */
-template <typename ExecutionSpace, typename Slice, typename Tag>
-auto make2DNeighborList( ExecutionSpace space, Tag,
-                         Slice const& coordinate_slice,
-                         typename Slice::size_type first,
-                         typename Slice::size_type last,
-                         typename Slice::value_type radius,
+template <typename ExecutionSpace, typename Positions, typename Tag>
+auto make2DNeighborList( ExecutionSpace space, Tag, Positions const& positions,
+                         typename Positions::size_type first,
+                         typename Positions::size_type last,
+                         typename Positions::value_type radius,
                          int buffer_size = 0 )
 {
     assert( buffer_size >= 0 );
     assert( last >= first );
-    assert( last <= coordinate_slice.size() );
+    assert( last <= positions.size() );
 
-    using memory_space = typename Slice::memory_space;
+    using memory_space = typename Positions::memory_space;
 
-    ArborX::BVH<memory_space> bvh( space, coordinate_slice );
+    ArborX::BVH<memory_space> bvh( space, positions );
 
     auto const predicates =
-        Impl::makePredicates( coordinate_slice, first, last, radius );
+        Impl::makePredicates( positions, first, last, radius );
 
     auto const n_queries =
         ArborX::AccessTraits<std::remove_const_t<decltype( predicates )>,
@@ -490,11 +500,11 @@ auto make2DNeighborList( ExecutionSpace space, Tag,
   \brief Neighbor list implementation using ArborX for particles within the
   interaction distance with a 2D layout for particles and neighbors.
 
-  \tparam Slice The position slice type.
+  \tparam Positions The position type.
   \tparam Tag Tag indicating whether to build a full or half neighbor list.
 
   \param tag Tag indicating whether to build a full or half neighbor list.
-  \param coordinate_slice The slice containing the particle positions.
+  \param positions The particle positions.
   \param first The beginning particle index to compute neighbors for.
   \param last The end particle index to compute neighbors for.
   \param radius The radius of the neighborhood. Particles within this radius are
@@ -505,15 +515,15 @@ auto make2DNeighborList( ExecutionSpace space, Tag,
   Neighbor list implementation most appropriate for highly varying particle
   densities.
 */
-template <typename Slice, typename Tag>
-auto make2DNeighborList( Tag tag, Slice const& coordinate_slice,
-                         typename Slice::size_type first,
-                         typename Slice::size_type last,
-                         typename Slice::value_type radius,
+template <typename Positions, typename Tag>
+auto make2DNeighborList( Tag tag, Positions const& positions,
+                         typename Positions::size_type first,
+                         typename Positions::size_type last,
+                         typename Positions::value_type radius,
                          int buffer_size = 0 )
 {
-    using exec_space = typename Slice::execution_space;
-    return make2DNeighborList( exec_space{}, tag, coordinate_slice, first, last,
+    using exec_space = typename Positions::execution_space;
+    return make2DNeighborList( exec_space{}, tag, positions, first, last,
                                radius, buffer_size );
 }
 
@@ -522,11 +532,11 @@ auto make2DNeighborList( Tag tag, Slice const& coordinate_slice,
   interaction distance with a 2D layout for particles and neighbors.
 
   \tparam DeviceType Kokkos device type.
-  \tparam Slice The position slice type.
+  \tparam Positions The position type.
   \tparam Tag Tag indicating whether to build a full or half neighbor list.
 
   \param tag Tag indicating whether to build a full or half neighbor list.
-  \param coordinate_slice The slice containing the particle positions.
+  \param positions The particle positions.
   \param first The beginning particle index to compute neighbors for.
   \param last The end particle index to compute neighbors for.
   \param radius The radius of the neighborhood. Particles within this radius are
@@ -537,15 +547,15 @@ auto make2DNeighborList( Tag tag, Slice const& coordinate_slice,
   Neighbor list implementation most appropriate for highly varying particle
   densities.
 */
-template <typename DeviceType, typename Slice, typename Tag>
-[[deprecated]] auto make2DNeighborList( Tag tag, Slice const& coordinate_slice,
-                                        typename Slice::size_type first,
-                                        typename Slice::size_type last,
-                                        typename Slice::value_type radius,
+template <typename DeviceType, typename Positions, typename Tag>
+[[deprecated]] auto make2DNeighborList( Tag tag, Positions const& positions,
+                                        typename Positions::size_type first,
+                                        typename Positions::size_type last,
+                                        typename Positions::value_type radius,
                                         int buffer_size = 0 )
 {
     using exec_space = typename DeviceType::execution_space;
-    return make2DNeighborList( exec_space{}, tag, coordinate_slice, first, last,
+    return make2DNeighborList( exec_space{}, tag, positions, first, last,
                                radius, buffer_size );
 }
 

@@ -183,20 +183,14 @@ void testRandomCreationParticleList( const int multiplier = 1 )
                           host_positions );
 }
 
-TEST( TEST_CATEGORY, random_particle_creation_slice_test )
-{
-    testRandomCreationSlice();
-}
-TEST( TEST_CATEGORY, random_particle_creation_particlelist_test )
+TEST( ParticleInit, RandomSlice ) { testRandomCreationSlice(); }
+TEST( ParticleInit, RandomParticleList )
 {
     testRandomCreationParticleListMinDistance();
     testRandomCreationParticleList();
 }
-TEST( TEST_CATEGORY, multiple_random_particle_creation_slice_test )
-{
-    testRandomCreationSlice( 3 );
-}
-TEST( TEST_CATEGORY, multiple_random_particle_creation_particlelist_test )
+TEST( ParticleInit, MultipleRandomSlice ) { testRandomCreationSlice( 3 ); }
+TEST( ParticleInit, MultipleRandomParticleList )
 {
     testRandomCreationParticleListMinDistance( 3 );
     testRandomCreationParticleList( 3 );

@@ -586,26 +586,26 @@ void testHaloBuffers( TestTag tag, const bool use_topology )
 // RUN TESTS
 //---------------------------------------------------------------------------//
 // test without collisions (each ghost is unique)
-TEST( TEST_CATEGORY, halo_test_unique )
+TEST( Halo, Unique )
 {
     testHalo( UniqueTestTag{}, true );
     testHaloBuffers( UniqueTestTag{}, true );
 }
 
-TEST( TEST_CATEGORY, halo_test_unique_no_topo )
+TEST( Halo, UniqueNoTopo )
 {
     testHalo( UniqueTestTag{}, false );
     testHaloBuffers( UniqueTestTag{}, false );
 }
 
 // tests with collisions (each ghost is duplicated on all ranks)
-TEST( TEST_CATEGORY, halo_test_all )
+TEST( Halo, All )
 {
     testHalo( AllTestTag{}, true );
     testHaloBuffers( AllTestTag{}, false );
 }
 
-TEST( TEST_CATEGORY, halo_test_all_no_topo )
+TEST( Halo, AllNoTopo )
 {
     testHalo( AllTestTag{}, false );
     testHaloBuffers( AllTestTag{}, false );

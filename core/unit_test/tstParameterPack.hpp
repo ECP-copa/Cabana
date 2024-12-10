@@ -55,9 +55,9 @@ void emptyTest() { std::ignore = Cabana::makeParameterPack(); }
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, parameter_pack_capture ) { captureTest(); }
+TEST( ParameterPack, Capture ) { captureTest(); }
 
-TEST( TEST_CATEGORY, parameter_pack_empty ) { emptyTest(); }
+TEST( ParameterPack, Empty ) { emptyTest(); }
 
 //---------------------------------------------------------------------------//
 

@@ -223,32 +223,32 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( semi_structured_solver, pcg_none_test )
+TEST( HypreSemiStructuredSolver, PCGnone )
 {
     poissonTest( "PCG", "none", TEST_MEMSPACE{} );
 }
 
-TEST( semi_structured_solver, gmres_none_test )
+TEST( HypreSemiStructuredSolver, GMRESnone )
 {
     poissonTest( "GMRES", "none", TEST_MEMSPACE{} );
 }
 
-TEST( semi_structured_solver, bicgstab_none_test )
+TEST( HypreSemiStructuredSolver, BiCGSTABnone )
 {
     poissonTest( "BiCGSTAB", "none", TEST_MEMSPACE{} );
 }
 
-TEST( semi_structured_solver, pcg_diag_test )
+TEST( HypreSemiStructuredSolver, PCGdiag )
 {
     poissonTest( "PCG", "Diagonal", TEST_MEMSPACE{} );
 }
 
-TEST( semi_structured_solver, gmres_diag_test )
+TEST( HypreSemiStructuredSolver, GMRESdiag )
 {
     poissonTest( "GMRES", "Diagonal", TEST_MEMSPACE{} );
 }
 
-TEST( semi_structured_solver, bicgstab_diag_test )
+TEST( HypreSemiStructuredSolver, BiCGSTABdiag )
 {
     poissonTest( "BiCGSTAB", "Diagonal", TEST_MEMSPACE{} );
 }

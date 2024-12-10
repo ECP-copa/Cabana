@@ -1,5 +1,35 @@
 # Change Log
 
+## 0.7.0
+
+**New Features**
+ - Support for neighbor iteration without stored neighbors (`LinkedCellList` binning used within `neighbor_parallel_for`)
+ - Global particle communication based on the grid: `Grid::GlobalParticleComm`
+ - Added particle removal (without MPI): `remove`
+ - Added neighbor list histograms
+ - Added interfaces for total and maximum neighbors
+
+**Bug Fixes and Improvements**
+- Added support for `Kokkos::View` in neighbor lists and spatial binning
+- Performance benchmark and benchmark plotting improvements
+- Fixed memory leaks in HYPRE solver interfaces
+- Updated ArborX neighbor interface for compatibility with newest versions
+- Added subfiling support for HDF5 particle output
+
+**Minimum dependency version updates**
+- Kokkos minimum 4.1 (previously 3.7)
+
+## 0.6.1
+
+## Bug fixes
+- Sets accurate CMake project version
+- Allows compatibility with `SameMajorVersion` for downstream CMake projects
+- Guard against including HDF5 directories if HDF5 is not enabled
+- Include `<iostream>` where it's used
+- Improve warnings for previous `cabanacore` and `Cajita` targets and simplify new `Core` and `Grid` targets
+- Fix for heFFTe integer overflow with large system sizes
+- Fix use of deprecated code in Cajita deprecation wrappers
+
 ## 0.6.0
 
 **New Features**

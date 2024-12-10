@@ -16,8 +16,6 @@
 #ifndef CABANA_GRID_PARTITIONER_HPP
 #define CABANA_GRID_PARTITIONER_HPP
 
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
-
 #include <array>
 #include <stdexcept>
 
@@ -485,22 +483,5 @@ class DimBlockPartitioner : public BlockPartitioner<NumSpaceDim>
 
 } // namespace Grid
 } // namespace Cabana
-
-namespace Cajita
-{
-//! \cond Deprecated
-template <std::size_t NumSpaceDim>
-using BlockPartitioner CAJITA_DEPRECATED =
-    Cabana::Grid::BlockPartitioner<NumSpaceDim>;
-
-template <std::size_t NumSpaceDim>
-using DimBlockPartitioner CAJITA_DEPRECATED =
-    Cabana::Grid::DimBlockPartitioner<NumSpaceDim>;
-
-template <std::size_t NumSpaceDim>
-using ManualBlockPartitioner CAJITA_DEPRECATED =
-    Cabana::Grid::ManualBlockPartitioner<NumSpaceDim>;
-//! \endcond
-} // namespace Cajita
 
 #endif // end CABANA_GRID_PARTITIONER_HPP

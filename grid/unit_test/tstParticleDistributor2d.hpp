@@ -17,7 +17,7 @@
 #include <Cabana_Grid_GlobalMesh.hpp>
 #include <Cabana_Grid_LocalGrid.hpp>
 #include <Cabana_Grid_LocalMesh.hpp>
-#include <Cabana_Grid_ParticleGridDistributor.hpp>
+#include <Cabana_Grid_ParticleDistributor.hpp>
 #include <Cabana_Grid_Partitioner.hpp>
 #include <Cabana_Grid_Types.hpp>
 
@@ -109,9 +109,8 @@ void migrateTest( const GridType global_grid, const double cell_size,
     // Redistribute the particle AoSoA in place.
     if ( test_type == 0 )
     {
-        Cabana::Grid::particleGridMigrate( *block, coords_mirror,
-                                           particles_mirror, test_halo_size,
-                                           force_comm );
+        Cabana::Grid::particleMigrate( *block, coords_mirror, particles_mirror,
+                                       test_halo_size, force_comm );
 
         // Copy back to check.
         particles = Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(),
@@ -122,9 +121,9 @@ void migrateTest( const GridType global_grid, const double cell_size,
     {
         auto particles_dst =
             Cabana::create_mirror_view( TEST_MEMSPACE(), particles_mirror );
-        Cabana::Grid::particleGridMigrate( *block, coords_mirror,
-                                           particles_mirror, particles_dst,
-                                           test_halo_size, force_comm );
+        Cabana::Grid::particleMigrate( *block, coords_mirror, particles_mirror,
+                                       particles_dst, test_halo_size,
+                                       force_comm );
         // Copy back to check.
         particles = Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(),
                                                          particles_dst );
@@ -220,8 +219,8 @@ void localOnlyTest( const GridType global_grid, const double cell_size )
 
     // Redistribute the particles.
     auto coords_mirror = Cabana::slice<0>( particles_mirror, "coords" );
-    Cabana::Grid::particleGridMigrate( *block, coords_mirror, particles_mirror,
-                                       0, true );
+    Cabana::Grid::particleMigrate( *block, coords_mirror, particles_mirror, 0,
+                                   true );
 
     // Copy back to check.
     particles = Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(),
@@ -319,8 +318,8 @@ void removeOutsideTest( const GridType global_grid )
 
     // Redistribute the particles.
     auto coords_mirror = Cabana::slice<0>( particles_mirror, "coords" );
-    Cabana::Grid::particleGridMigrate( *block, coords_mirror, particles_mirror,
-                                       0, true );
+    Cabana::Grid::particleMigrate( *block, coords_mirror, particles_mirror, 0,
+                                   true );
 
     // Check that all particles were removed.
     EXPECT_EQ( particles_mirror.size(), 0 );
@@ -343,7 +342,7 @@ auto createGrid( const Cabana::Grid::ManualBlockPartitioner<2>& partitioner,
     return global_grid;
 }
 
-void testParticleGridMigrate( const bool periodic )
+void testParticleMigrate( const bool periodic )
 {
     // Let MPI compute the partitioning for this test.
     int comm_size;
@@ -385,13 +384,13 @@ void testParticleGridMigrate( const bool periodic )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, not_periodic_test ) { testParticleGridMigrate( false ); }
+TEST( ParticleDistributor, NonPeriodic2d ) { testParticleMigrate( false ); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, periodic_test ) { testParticleGridMigrate( true ); }
+TEST( ParticleDistributor, Periodic2d ) { testParticleMigrate( true ); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, local_only_test )
+TEST( ParticleDistributor, LocalOnly2d )
 {
     // Let MPI compute the partitioning for this test.
     int comm_size;
@@ -412,7 +411,7 @@ TEST( TEST_CATEGORY, local_only_test )
 //---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, remove_outside_domain_test )
+TEST( ParticleDistributor, RemoveOutsideDomain2d )
 {
     // Let MPI compute the partitioning for this test.
     int comm_size;

@@ -29,17 +29,17 @@ target_link_libraries(CommPerformance Cabana::Core)
 endif()
 
 if(Cabana_ENABLE_TESTING)
-  add_test(NAME Cabana_Performance_BinSort COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:BinSortPerformance> sort_output.txt)
+  add_test(NAME Cabana_Core_Performance_BinSort COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:BinSortPerformance> sort_output.txt)
 
-  add_test(NAME Cabana_Performance_NeighborVerlet COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:NeighborVerletPerformance> verlet_output.txt)
+  add_test(NAME Cabana_Core_Performance_NeighborVerlet COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:NeighborVerletPerformance> verlet_output.txt)
 
   if(Cabana_ENABLE_ARBORX)
-    add_test(NAME Cabana_Performance_NeighborArborX COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:NeighborArborXPerformance> arborx_output.txt)
+    add_test(NAME Cabana_Core_Performance_NeighborArborX COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:NeighborArborXPerformance> arborx_output.txt)
   endif()
 
-  add_test(NAME Cabana_Performance_LinkedCell COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:LinkedCellPerformance> lcl_output.txt)
+  add_test(NAME Cabana_Core_Performance_LinkedCell COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:LinkedCellPerformance> lcl_output.txt)
 
   if(Cabana_ENABLE_MPI)
-    add_test(NAME Cabana_Performance_Comm COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:CommPerformance> comm_output.txt)
+    add_test(NAME Cabana_Core_Performance_Comm COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:CommPerformance> comm_output.txt)
   endif()
 endif()

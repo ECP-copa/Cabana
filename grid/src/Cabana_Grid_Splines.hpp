@@ -18,7 +18,6 @@
 
 #include <Cabana_Grid_LocalMesh.hpp>
 #include <Cabana_Grid_Types.hpp>
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 
@@ -861,52 +860,5 @@ KOKKOS_INLINE_FUNCTION void evaluateSpline(
 
 } // namespace Grid
 } // namespace Cabana
-
-namespace Cajita
-{
-//! \cond Deprecated
-template <int Order>
-using Spline CAJITA_DEPRECATED = Cabana::Grid::Spline<Order>;
-
-using SplinePhysicalCellSize CAJITA_DEPRECATED =
-    Cabana::Grid::SplinePhysicalCellSize;
-using SplineLogicalPosition CAJITA_DEPRECATED =
-    Cabana::Grid::SplineLogicalPosition;
-using SplinePhysicalDistance CAJITA_DEPRECATED =
-    Cabana::Grid::SplinePhysicalDistance;
-using SplineWeightValues CAJITA_DEPRECATED = Cabana::Grid::SplineWeightValues;
-using SplineWeightPhysicalGradients CAJITA_DEPRECATED =
-    Cabana::Grid::SplineWeightPhysicalGradients;
-
-template <class... DataTags>
-using SplineDataMemberTypes CAJITA_DEPRECATED =
-    Cabana::Grid::SplineDataMemberTypes<DataTags...>;
-
-template <class T, class SplineDataMemberTypes_t>
-using has_spline_tag CAJITA_DEPRECATED =
-    Cabana::Grid::has_spline_tag<T, SplineDataMemberTypes_t>;
-
-template <class Scalar, int Order, std::size_t NumSpaceDim, class Tag>
-using SplineDataMember CAJITA_DEPRECATED =
-    Cabana::Grid::SplineDataMember<Scalar, Order, NumSpaceDim, Tag>;
-
-template <class Scalar, int Order, std::size_t NumSpaceDim, class EntityType,
-          class Tags = void>
-using SplineData CAJITA_DEPRECATED =
-    Cabana::Grid::SplineData<Scalar, Order, NumSpaceDim, EntityType, Tags>;
-
-template <class... Args>
-CAJITA_DEPRECATED void KOKKOS_INLINE_FUNCTION setSplineData( Args&&... args )
-{
-    return Cabana::Grid::setSplineData( std::forward<Args>( args )... );
-}
-
-template <class... Args>
-CAJITA_DEPRECATED void KOKKOS_INLINE_FUNCTION evaluateSpline( Args&&... args )
-{
-    return Cabana::Grid::evaluateSpline( std::forward<Args>( args )... );
-}
-//! \endcond
-} // namespace Cajita
 
 #endif // end CABANA_GRID_SPLINES_HPP

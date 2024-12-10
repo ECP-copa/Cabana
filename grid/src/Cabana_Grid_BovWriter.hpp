@@ -21,7 +21,6 @@
 #include <Cabana_Grid_IndexSpace.hpp>
 #include <Cabana_Grid_MpiTraits.hpp>
 #include <Cabana_Grid_Types.hpp>
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 
@@ -461,44 +460,5 @@ void writeTimeStep( const int time_step_index, const double time,
 } // end namespace Experimental
 } // namespace Grid
 } // namespace Cabana
-
-namespace Cajita
-{
-namespace Experimental
-{
-namespace BovWriter
-{
-//! \cond Deprecated
-template <typename T>
-using BovFormat CAJITA_DEPRECATED =
-    Cabana::Grid::Experimental::BovWriter::BovFormat<T>;
-template <typename T>
-using BovCentering CAJITA_DEPRECATED =
-    Cabana::Grid::Experimental::BovWriter::BovCentering<T>;
-
-template <class... Args>
-CAJITA_DEPRECATED void createSubarray( Args&&... args )
-{
-    return Cabana::Grid::Experimental::BovWriter::createSubarray(
-        std::forward<Args>( args )... );
-}
-
-template <class... Args>
-CAJITA_DEPRECATED auto reorderView( Args&&... args )
-{
-    return Cabana::Grid::Experimental::BovWriter::reorderView(
-        std::forward<Args>( args )... );
-}
-
-template <class... Args>
-CAJITA_DEPRECATED auto writeTimeStep( Args&&... args )
-{
-    return Cabana::Grid::Experimental::BovWriter::writeTimeStep(
-        std::forward<Args>( args )... );
-}
-//! \endcond
-} // namespace BovWriter
-} // namespace Experimental
-} // namespace Cajita
 
 #endif // end CABANA_GRID_BOVWRITER_HPP

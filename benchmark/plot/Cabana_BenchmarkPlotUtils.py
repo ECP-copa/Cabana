@@ -19,14 +19,25 @@ from copy import deepcopy
 class DataDescription:
     def __init__(self, label):
         #Example: serial_neigh_iteration_3_1
+        #         host_host_halo_gather_0
         self.label = label
         details = label.split("_")
-        self.backend = details[0].strip()
-        self.type = details[1].strip()
-        self.category = details[2].strip()
+        index = 1
+        # MPI has two backends
+        if "host_host" in label or "device_device" in label or "host_device" in label:
+            self.backend = "_".join(details[0:2]).strip()
+            index += 1
+        else:
+            self.backend = details[0].strip()
+        self.type = details[index].strip()
+
+        index += 1
+        self.category = details[index].strip()
         if self.category == "iteration": self.category = "iterate"
+
+        index += 1
         self.params = []
-        for p in details[3:]:
+        for p in details[index:]:
             self.params.append(p.strip())
 
 # Header description for one series of runs with MPI.
@@ -38,21 +49,9 @@ class DataDescriptionMPI(DataDescription):
         details = label.split("_")
         self.backend = "_".join(details[0:2]).strip()
         self.type = details[2].strip()
+        # This is the only difference that still requires this separate class.
         self.category = details[-1].strip()
         self.params = details[3:-1]
-
-# Header description for one series of runs for p2g/g2p.
-class DataDescriptionInterpolation(DataDescription):
-    # Purposely not calling base __init__
-    def __init__(self, label):
-        #Example: device_p2g_scalar_value_16
-        self.label = label
-        details = label.split("_")
-        self.backend = details[0].strip()
-        self.type = "interpolation"
-        self.category = details[1].strip()
-        self.params = ["_".join(details[2:4]).strip()]
-        self.size = details[-1]
 
 # Create a header description to compare results against.
 class ManualDataDescription:
@@ -112,22 +111,10 @@ class DataPointGrid(DataPoint):
         self.size = int(float(results[1]))
         self._initTimeResults(results[2:])
 
-# Single p2g/g2p result (single line in results file).
-class DataPointInterpolation(DataPoint):
-    # Purposely not calling base __init__
-    def __init__(self, description, line):
-        # Deep copy necessary because unique parameters are used per result (ppc)
-        self.description = deepcopy(description)
-
-        #ppc min max ave
-        self.line = line
-        results = line.split()
-        self.size = int(float(description.size))
-        self._initTimeResults(results[1:])
-        self.description.params.append(results[0])
-
 # All performance results from multiple files.
 class AllData:
+    mpi = False
+
     def __init__(self, filelist, grid=False):
         self.grid = grid
         self.results = []
@@ -213,13 +200,15 @@ class AllData:
 
 # All MPI performance results from multiple files.
 class AllDataMPI(AllData):
+    mpi = True
+
     def _endOfFile(self, l):
         return l >= self.total
 
     def _readFile(self, filename):
         with open(filename) as f:
             txt = f.readlines()
-        size = int(txt[4].split()[-1])
+        size = int(txt[5].split()[-1])
 
         l = 8
         self.total = len(txt[l:])
@@ -237,8 +226,10 @@ class AllDataMPI(AllData):
             else:
                 l += 1
 
-# All MPI performance results from multiple files.
+# All Grid performance results from multiple files.
 class AllDataGrid(AllData):
+    mpi = True
+
     def _endOfFile(self, l):
         return l > self.total
 
@@ -251,6 +242,7 @@ class AllDataGrid(AllData):
         while not self._endOfFile(l):
             if self._emptyLine(txt[l]):
                 l += 1
+                print(txt[l])
                 description = DataDescription(txt[l])
             elif self._headerLine(txt[l]):
                 l += 1
@@ -262,16 +254,7 @@ class AllDataGrid(AllData):
             else:
                 l += 1
 
-# All p2g/g2p performance results from multiple files.
-class AllDataInterpolation(AllData):
-    def _getDescription(self, line):
-        return DataDescriptionInterpolation(line)
-
-    def _getData(self, descr, line):
-        return DataPointInterpolation(descr, line)
-
 # All performance results for a single set of parameters.
-# FIXME: this may need to be sorted for plotting.
 class AllSizesSingleResult:
     def __init__(self, all_data: AllData, descr: ManualDataDescription):
         self.times = np.array([])
@@ -280,6 +263,11 @@ class AllSizesSingleResult:
             if self._compareAll(d.description, descr):
                 self.sizes = np.append(self.sizes, d.size)
                 self.times = np.append(self.times, d.ave)
+
+    def sort(self):
+        indices = np.argsort(self.sizes)
+        self.sizes = self.sizes[indices]
+        self.times = self.times[indices]
 
     def _compareAll(self, data_description, check):
         if data_description.backend == check.backend and data_description.category == check.category and data_description.type == check.type and data_description.params == check.params:
@@ -293,23 +281,22 @@ def getData(filelist):
         txt = f.read()
     if "Cabana Comm" in txt:
         return AllDataMPI(filelist)
-    # FIXME: Cajita backwards compatibility
-    elif ("Cajita Halo" in txt or "Cajita FFT" in txt or 
-          "Cabana::Grid Halo" in txt or "Cabana::Grid FFT" in txt):
+    elif ("Cabana::Grid " in txt):
         return AllDataGrid(filelist, grid=True)
-    elif "g2p" in txt:
-        return AllDataInterpolation(filelist, grid=True)
 
     return AllData(filelist)
 
-# Return separate data for the first two files only.
-def getSeparateData(filelist):
+# Return separate data for the first and last N files.
+def getSeparateData(filelist, split_index = -1):
     if len(filelist) < 2:
         exit("Separate data requires at least two files.")
-    split_index = 1
-    for f, fname in enumerate(filelist):
-        if fname.split("_")[:-1] != filelist[0].split("_")[:-1]:
-            split_index = f
+    if len(filelist) % 2 != 0:
+        exit("Cannot compare odd number of files.")
+    # By default (without manual user input) search for a change in file names.
+    if split_index == -1:
+        for f, fname in enumerate(filelist):
+            if fname.split("_")[:-1] != filelist[0].split("_")[:-1]:
+                split_index = f
     data1 = getData(filelist[:split_index])
     data2 = getData(filelist[split_index:])
     return data1, data2
@@ -339,12 +326,11 @@ def getLegend(data: AllData, cpu_name, gpu_name, backend_label):
     if backend_label:
         backends = data.getAllBackends()
         for backend in data.getAllBackends():
-            # FIXME: backwards compatibility
             if "_host" in backend and "host_host" not in backend:
                 legend.append(Line2D([0], [0], color="k", lw=2, linestyle= "-.", label=cpu_name+" CPU"))
-            elif "host" in backend or "serial" in backend or "openmp" in backend:
+            elif "host" in backend:
                 legend.append(Line2D([0], [0], color="k", lw=2, linestyle= "--", label=cpu_name+" CPU"))
-            elif "device" in backend or "cuda" in backend or "hip" in backend:
+            elif "device" in backend:
                 legend.append(Line2D([0], [0], color="k", lw=2, linestyle="-", label=gpu_name+" GPU"))
 
     colors = getColors(data)
@@ -357,16 +343,15 @@ def getLegend(data: AllData, cpu_name, gpu_name, backend_label):
 def plotResults(ax, x, y, backend, color):
     linewidth = 2
     dash = "-"
-    # FIXME: backwards compatibility
     if "_host" in backend and "host_host" not in backend:
         dash = "-."
-    elif "host" in backend or "serial" in backend or "openmp" in backend:
+    elif "host" in backend:
         dash = "--"
 
     ax.plot(x, y, color=color, lw=linewidth, marker='o', linestyle=dash)
 
 # Add plot labels and show/save.
-def createPlot(fig, ax, data: AllData, speedup=False, backend_label=True, cpu_name="", gpu_name=""):
+def createPlot(fig, ax, data: AllData, speedup=False, backend_label=True, cpu_name="", gpu_name="", filename="Cabana_Benchmark.png", dpi=0):
     if speedup:
         min_max = data.minMaxSize()
         if data.grid: min_max = min_max**3
@@ -378,8 +363,11 @@ def createPlot(fig, ax, data: AllData, speedup=False, backend_label=True, cpu_na
         ax.set_ylabel("Speedup")
     else:
         ax.set_ylabel("Time (seconds)")
-    if data.grid:
-        ax.set_xlabel("Number of grid points")
+
+    if data.grid: # Always uses MPI
+        ax.set_xlabel("Number of grid points per rank")
+    elif data.mpi:
+        ax.set_xlabel("Number of particles per rank")
     else:
         ax.set_xlabel("Number of particles")
 
@@ -389,5 +377,8 @@ def createPlot(fig, ax, data: AllData, speedup=False, backend_label=True, cpu_na
     ax.set_yscale('log')
 
     fig.tight_layout()
-    plt.show()
-    #plt.savefig("Cabana_Benchmark.png", dpi=300)
+
+    if dpi:
+        plt.savefig(filename, dpi=dpi)
+    else:
+        plt.show()

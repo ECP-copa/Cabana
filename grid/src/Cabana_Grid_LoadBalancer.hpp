@@ -18,7 +18,6 @@
 
 #include <Cabana_Grid_GlobalGrid.hpp>
 #include <Cabana_Grid_Types.hpp>
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Profiling_ScopedRegion.hpp>
@@ -311,24 +310,5 @@ createLoadBalancer(
 } // namespace Cabana
 
 //---------------------------------------------------------------------------//
-
-namespace Cajita
-{
-//! \cond Deprecated
-namespace Experimental
-{
-template <class MeshType>
-using LoadBalancer CAJITA_DEPRECATED =
-    Cabana::Grid::Experimental::LoadBalancer<MeshType>;
-
-template <class... Args>
-CAJITA_DEPRECATED auto createLoadBalancer( Args&&... args )
-{
-    return Cabana::Grid::Experimental::createLoadBalancer(
-        std::forward<Args>( args )... );
-}
-//! \endcond
-} // namespace Experimental
-} // namespace Cajita
 
 #endif // end CABANA_GRID_LOADBALANCER_HPP

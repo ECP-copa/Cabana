@@ -15,7 +15,7 @@ from  matplotlib import pyplot as plt
 from Cabana_BenchmarkPlotUtils import *
 
 # Plot all results in a list of files.
-def plotAll(ax, data):
+def plotAll(ax, data, sort=False):
     color_dict = getColors(data)
     for backend in data.getAllBackends():
         for cat in data.getAllCategories():
@@ -23,6 +23,8 @@ def plotAll(ax, data):
                 for param in data.getAllParams():
                     desc = ManualDataDescription(backend, type, cat, param)
                     result = AllSizesSingleResult(data, desc)
+                    if sort:
+                        result.sort()
 
                     sizes = scaleSizes(result.sizes, data.grid)
                     plotResults(ax, sizes, result.times, backend, color_dict[cat])
@@ -45,8 +47,30 @@ def plotCompareHostDevice(ax, data, compare="host"):
                     num_2 = len(result2.times)
                     max = num_1 if num_1 < num_2 else num_2
 
-                    sizes = scaleSizes(result.sizes, data.grid)
-                    speedup = result2.times / result.times
+                    sizes = scaleSizes(result.sizes[:max], data.grid)
+                    speedup = result2.times[:max] / result.times[:max]
+                    plotResults(ax, sizes, speedup, backend, color_dict[cat])
+    return True
+
+# Compare host and device results from a list of files.
+def plotCompare(ax, data, compare=["buffer"]):
+    color_dict = getColors(data)
+    for backend in data.getAllBackends():
+        if "host" in backend: continue
+        for cat in data.getAllCategories():
+            for type in data.getAllTypes():
+                for param in data.getAllParams():
+                    desc = ManualDataDescription(backend, type, cat, compare+param)
+                    result = AllSizesSingleResult(data, desc)
+                    desc2 = ManualDataDescription(backend, type, cat, param)
+                    result2 = AllSizesSingleResult(data, desc2)
+
+                    num_1 = len(result.times)
+                    num_2 = len(result2.times)
+                    max = num_1 if num_1 < num_2 else num_2
+
+                    sizes = scaleSizes(result.sizes[:max], data.grid)
+                    speedup = result2.times[:max] / result.times[:max]
                     plotResults(ax, sizes, speedup, backend, color_dict[cat])
     return True
 
@@ -91,11 +115,12 @@ if __name__ == "__main__":
     data = getData(filelist)
 
     speedup = plotAll(ax1, data)
-    #speedup = plotCompareHostDevice(ax1, data, "serial")
+    #speedup = plotCompareHostDevice(ax1, data)
+    #speedup = plotCompare(ax1, data)
 
     #data, data_f2 = getSeparateData(filelist)
-    #speedup = plotCompareFiles(ax1, data, data_f2, ["cuda_host", "cudauvm_cudauvm", "hip_host"])
+    #speedup = plotCompareFiles(ax1, data, data_f2)
     ###
 
     createPlot(fig1, ax1, data,
-               speedup=speedup, backend_label=True)#, cpu_name="POWER9", gpu_name="V100")
+               speedup=speedup, backend_label=True)# cpu_name="EPYC", gpu_name="MI250X")

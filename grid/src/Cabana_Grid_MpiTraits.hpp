@@ -16,8 +16,6 @@
 #ifndef CABANA_GRID_MPITRAITS_HPP
 #define CABANA_GRID_MPITRAITS_HPP
 
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
-
 #include <Kokkos_Core.hpp>
 
 #include <mpi.h>
@@ -77,13 +75,5 @@ struct MpiTraits<double>
 
 } // namespace Grid
 } // namespace Cabana
-
-namespace Cajita
-{
-//! \cond Deprecated
-template <class T>
-using MpiTraits CAJITA_DEPRECATED = Cabana::Grid::MpiTraits<T>;
-//! \endcond
-} // namespace Cajita
 
 #endif // end CABANA_GRID_MPITRAITS_HPP

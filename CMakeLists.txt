@@ -15,7 +15,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(Cabana LANGUAGES CXX)
-set(PROJECT_VERSION "0.7.0-dev")
+set(PROJECT_VERSION "0.8.0-dev")
 
 # If the user doesn't provide a build type default to release
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CXX_FLAGS)
@@ -28,6 +28,9 @@ option(CMAKE_VERBOSE_MAKEFILE "Generate verbose Makefiles" OFF)
 
 # use gnu standard install directories
 include(GNUInstallDirs)
+set(Cabana_INSTALL_PACKAGEDIR "${CMAKE_INSTALL_DATADIR}/cmake/Cabana" CACHE PATH "Install location of CMake target files")
+
+include(FeatureSummary)
 
 # point to cmake modules
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -76,28 +79,40 @@ if(Cabana_REQUIRE_HDF5)
 else()
   Cabana_add_dependency( PACKAGE MPI COMPONENTS CXX )
 endif()
+set_package_properties(MPI PROPERTIES TYPE RECOMMENDED PURPOSE "Used for distributed parallelization")
 
 # find ArborX
 Cabana_add_dependency( PACKAGE ArborX )
+set_package_properties(ArborX PROPERTIES TYPE OPTIONAL PURPOSE "Used for neighbor search")
 
 # find ALL
 Cabana_add_dependency( PACKAGE ALL )
+set_package_properties(ALL PROPERTIES TYPE OPTIONAL PURPOSE "Used for load balancing")
 
 # find Clang Format
 find_package( CLANG_FORMAT 14 )
 
 # find hypre
 Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.1 )
+set_package_properties(HYPRE PROPERTIES TYPE OPTIONAL PURPOSE "Used for structured solves")
 
 # find heffte
 Cabana_add_dependency( PACKAGE Heffte VERSION 2.3.0 )
+set_package_properties(Heffte PROPERTIES TYPE OPTIONAL PURPOSE "Used for fft calculations")
+if(HEFFTE_FOUND)
+  # ensure at least one host backend is enabled
+  if(NOT Heffte_ENABLE_FFTW AND NOT Heffte_ENABLE_MKL)
+    message(FATAL_ERROR "Cabana heFFTe support requires at least one host backend (FFTW or MKL).")
+  endif()
+endif()
 
 # find Silo
 Cabana_add_dependency( PACKAGE SILO )
+set_package_properties(SILO PROPERTIES TYPE OPTIONAL PURPOSE "Used for I/O")
 if(SILO_FOUND)
   install(FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindSILO.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana )
+    DESTINATION ${Cabana_INSTALL_PACKAGEDIR} )
 endif()
 
 # find HDF5 (XDMF)
@@ -117,6 +132,7 @@ if(CMAKE_VERSION VERSION_LESS 3.26)
 else()
   Cabana_add_dependency( PACKAGE HDF5 COMPONENTS C )
 endif()
+set_package_properties(HDF5 PROPERTIES TYPE OPTIONAL PURPOSE "Used for I/O")
 
 if(Cabana_ENABLE_HDF5)
   if(NOT Cabana_ENABLE_MPI)
@@ -127,7 +143,8 @@ if(Cabana_ENABLE_HDF5)
   LIST(APPEND CMAKE_REQUIRED_INCLUDES ${HDF5_INCLUDE_DIRS})
   check_symbol_exists(H5_HAVE_PARALLEL "H5pubconf.h" HDF5_IS_PARALLEL)
   if(NOT HDF5_IS_PARALLEL)
-    message(FATAL_ERROR "Cabana HDF5 support requires parallel HDF5.")
+    set(Cabana_ENABLE_HDF5 OFF)
+    message(WARNING "Cabana HDF5 support requires parallel HDF5.")
   endif()
 endif()
 
@@ -207,6 +224,7 @@ MESSAGE(STATUS "Cabana Revision = '${Cabana_GIT_COMMIT_HASH}'")
 #------------------------------------------------------------------------------#
 # enable unit tests
 option(Cabana_ENABLE_TESTING "Build tests" OFF)
+add_feature_info(Tests Cabana_ENABLE_TESTING "Build unit tests (requires GTest)")
 if(Cabana_ENABLE_TESTING)
   find_package(GTest 1.10 REQUIRED)
   # Workaround for FindGTest module in CMake older than 3.20
@@ -235,16 +253,7 @@ endif()
 add_subdirectory(core)
 
 option(Cabana_ENABLE_GRID "Build grid and particle-grid capabilities" ${Cabana_ENABLE_MPI})
-### FIXME: remove in next release.
-option(Cabana_ENABLE_CAJITA "Build grid and particle-grid capabilities" OFF)
-option(Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS "Do not warn about Cajita deprecation." OFF)
-if (Cabana_ENABLE_CAJITA)
-  if (NOT Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS)
-    message(DEPRECATION "Option Cabana_ENABLE_CAJITA is deprecated, replaced by Cabana_ENABLE_GRID")
-  endif()
-  set(Cabana_ENABLE_GRID ON)
-endif()
-
+add_feature_info(Grid Cabana_ENABLE_GRID "Build grid and particle-grid capabilities (needs MPI)")
 if(Cabana_ENABLE_GRID)
   if(MPI_FOUND)
     add_subdirectory(grid)
@@ -253,13 +262,15 @@ if(Cabana_ENABLE_GRID)
   endif()
 endif()
 
-option(Cabana_ENABLE_EXAMPLES "Build examples" OFF)
+option(Cabana_ENABLE_EXAMPLES "Build tutorial examples" OFF)
+add_feature_info(Examples Cabana_ENABLE_EXAMPLES "Build tutorial examples")
 if(Cabana_ENABLE_EXAMPLES)
   add_subdirectory(example)
 endif()
 
 # enable performance tests
 option(Cabana_ENABLE_PERFORMANCE_TESTING "Build Performance Tests" OFF)
+add_feature_info(PerformanceTests Cabana_ENABLE_PERFORMANCE_TESTING "Build performance benchmarks and tests")
 if(Cabana_ENABLE_PERFORMANCE_TESTING)
   add_subdirectory(benchmark)
 endif()
@@ -267,9 +278,6 @@ endif()
 ##---------------------------------------------------------------------------##
 ## Package Configuration
 ##---------------------------------------------------------------------------##
-configure_file(cmake/Cabana.pc.cmakein Cabana.pc @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Cabana.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-
 write_basic_package_version_file("CabanaConfigVersion.cmake"
   VERSION ${PROJECT_VERSION} COMPATIBILITY SameMajorVersion)
 
@@ -277,7 +285,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CabanaConfig.cmakein
   ${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake @ONLY)
 
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake" "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfigVersion.cmake"
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana)
+  DESTINATION ${Cabana_INSTALL_PACKAGEDIR})
 
 ##---------------------------------------------------------------------------##
 ## Clang Format
@@ -288,3 +296,5 @@ if(CLANG_FORMAT_FOUND)
     COMMAND ${CLANG_FORMAT_EXECUTABLE} -i -style=file ${FORMAT_SOURCES}
     DEPENDS ${FORMAT_SOURCES})
 endif()
+
+feature_summary(INCLUDE_QUIET_PACKAGES WHAT ALL)

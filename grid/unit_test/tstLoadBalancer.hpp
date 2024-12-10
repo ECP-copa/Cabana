@@ -497,23 +497,11 @@ void lbTest2dMinSizeArray()
 }
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( load_balancer, 3d_lb_test ) { lbTest3d(); }
-TEST( load_balancer, 3d_lb_test_min_domain_size_scalar )
-{
-    lbTest3dMinSizeScalar();
-}
-TEST( load_balancer, 3d_lb_test_min_domain_size_array )
-{
-    lbTest3dMinSizeArray();
-}
-TEST( load_balancer, 2d_lb_test ) { lbTest2d(); }
-TEST( load_balancer, 2d_lb_test_min_domain_size_scalar )
-{
-    lbTest2dMinSizeScalar();
-}
-TEST( load_balancer, 2d_lb_test_min_domain_size_array )
-{
-    lbTest2dMinSizeArray();
-}
+TEST( AllLoadBalancer, 3d ) { lbTest3d(); }
+TEST( AllLoadBalancer, MinDomainScalar3d ) { lbTest3dMinSizeScalar(); }
+TEST( AllLoadBalancer, MinDomainArray3d ) { lbTest3dMinSizeArray(); }
+TEST( AllLoadBalancer, 2d ) { lbTest2d(); }
+TEST( AllLoadBalancer, MinDomainScalar2d ) { lbTest2dMinSizeScalar(); }
+TEST( AllLoadBalancer, MinDomainArray2d ) { lbTest2dMinSizeArray(); }
 //---------------------------------------------------------------------------//
 } // end namespace Test

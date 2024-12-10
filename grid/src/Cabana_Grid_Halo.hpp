@@ -20,7 +20,6 @@
 #include <Cabana_Grid_IndexSpace.hpp>
 
 #include <Cabana_ParameterPack.hpp>
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Profiling_ScopedRegion.hpp>
@@ -958,56 +957,5 @@ auto createHalo( const Pattern& pattern, const int width,
 
 } // namespace Grid
 } // namespace Cabana
-
-namespace Cajita
-{
-//! \cond Deprecated
-template <std::size_t NumSpaceDim>
-using HaloPattern CAJITA_DEPRECATED = Cabana::Grid::HaloPattern<NumSpaceDim>;
-template <std::size_t NumSpaceDim>
-using NodeHaloPattern CAJITA_DEPRECATED =
-    Cabana::Grid::NodeHaloPattern<NumSpaceDim>;
-template <std::size_t NumSpaceDim>
-using FaceHaloPattern CAJITA_DEPRECATED =
-    Cabana::Grid::FaceHaloPattern<NumSpaceDim>;
-
-template <class MemorySpace>
-using Halo CAJITA_DEPRECATED = Cabana::Grid::Halo<MemorySpace>;
-
-template <class ArrayT, class... Types>
-using ArrayPackMemorySpace CAJITA_DEPRECATED =
-    Cabana::Grid::ArrayPackMemorySpace<ArrayT, Types...>;
-
-template <std::size_t NumSpaceDim>
-using HaloPattern CAJITA_DEPRECATED = Cabana::Grid::HaloPattern<NumSpaceDim>;
-template <std::size_t NumSpaceDim>
-using NodeHaloPattern CAJITA_DEPRECATED =
-    Cabana::Grid::NodeHaloPattern<NumSpaceDim>;
-template <std::size_t NumSpaceDim>
-using FaceHaloPattern CAJITA_DEPRECATED =
-    Cabana::Grid::FaceHaloPattern<NumSpaceDim>;
-
-template <class MemorySpace>
-using Halo CAJITA_DEPRECATED = Cabana::Grid::Halo<MemorySpace>;
-
-template <class ArrayT, class... Types>
-using ArrayPackMemorySpace CAJITA_DEPRECATED =
-    Cabana::Grid::ArrayPackMemorySpace<ArrayT, Types...>;
-
-template <class... Args>
-CAJITA_DEPRECATED auto createHalo( Args&&... args )
-{
-    return Cabana::Grid::createHalo( std::forward<Args>( args )... );
-}
-
-namespace ScatterReduce
-{
-using Sum CAJITA_DEPRECATED = Cabana::Grid::ScatterReduce::Sum;
-using Min CAJITA_DEPRECATED = Cabana::Grid::ScatterReduce::Min;
-using Max CAJITA_DEPRECATED = Cabana::Grid::ScatterReduce::Max;
-using Replace CAJITA_DEPRECATED = Cabana::Grid::ScatterReduce::Replace;
-} // namespace ScatterReduce
-//! \endcond
-} // namespace Cajita
 
 #endif // end CABANA_GRID_HALO_HPP
