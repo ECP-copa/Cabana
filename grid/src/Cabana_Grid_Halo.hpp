@@ -26,7 +26,10 @@
 #include <Kokkos_Profiling_ScopedRegion.hpp>
 
 #include <mpi.h>
+// TODO conditional define Kokkos COMM
+// #include "KokkosComm/KokkosComm.hpp"
 
+#include <iostream>
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -184,6 +187,29 @@ struct Replace
 
 } // end namespace ScatterReduce
 
+// temp Comm Space object
+class DefaultCommSpace
+{
+public:
+  // For Method 3 below
+  constexpr static bool isCommSpace() {return true;}
+};
+
+class MPI : public DefaultCommSpace
+{
+
+};
+
+class KokkosComm : public DefaultCommSpace
+{
+
+};
+
+class HPE : public DefaultCommSpace
+{
+
+};
+
 //---------------------------------------------------------------------------//
 // Halo
 // ---------------------------------------------------------------------------//
@@ -197,12 +223,13 @@ struct Replace
   communicator and halo size. The arrays must also reside in the same memory
   space. These requirements are checked at construction.
 */
-template <class MemorySpace>
+template <class MemorySpace, class CommSpace=DefaultCommSpace>
 class Halo
 {
-  public:
-    //! Memory space.
-    using memory_space = MemorySpace;
+public:
+  //! Memory space.
+  using memory_space = MemorySpace;
+  using comm_space = CommSpace;
 
     /*!
       \brief Constructor.
@@ -287,7 +314,7 @@ class Halo
     */
     template <class ExecutionSpace, class... ArrayTypes>
     void gather( const ExecutionSpace& exec_space,
-                 const ArrayTypes&... arrays ) const
+                 const ArrayTypes&... arrays ) const requires std::is_same_v<comm_space, DefaultCommSpace>
     {
         Kokkos::Profiling::ScopedRegion region( "Cabana::Grid::gather" );
 
@@ -343,6 +370,7 @@ class Halo
         {
             // Get the next buffer to unpack.
             int unpack_index = MPI_UNDEFINED;
+	    
             MPI_Waitany( num_n, requests.data(), &unpack_index,
                          MPI_STATUS_IGNORE );
 
@@ -365,6 +393,88 @@ class Halo
         // Wait on send requests.
         MPI_Waitall( num_n, requests.data() + num_n, MPI_STATUSES_IGNORE );
     }
+
+  template <class ExecutionSpace, class... ArrayTypes>
+  void gather( const ExecutionSpace& exec_space,
+	       const ArrayTypes&... arrays ) const requires std::is_same_v<comm_space, KokkosComm>
+  {
+    std::cout << "MPI" << std::endl;
+    Kokkos::Profiling::ScopedRegion region( "Cabana::Grid::gather" );
+    
+    // Get the number of neighbors. Return if we have none.
+    int num_n = _neighbor_ranks.size();
+    if ( 0 == num_n )
+      return;
+
+    // Get the MPI communicator.
+    auto comm = getComm( arrays... );
+
+    // Allocate requests.
+    std::vector<MPI_Request> requests( 2 * num_n, MPI_REQUEST_NULL );
+    
+    // Pick a tag to use for communication. This object has its own
+    // communication space so any tag will do.
+    const int mpi_tag = 1234;
+
+    // Post receives.
+    for ( int n = 0; n < num_n; ++n )
+      {
+	// Only process this neighbor if there is work to do.
+	if ( 0 < _ghosted_buffers[n].size() )
+	  {
+	    MPI_Irecv( _ghosted_buffers[n].data(),
+		       _ghosted_buffers[n].size(), MPI_BYTE,
+		       _neighbor_ranks[n], mpi_tag + _receive_tags[n], comm,
+		       &requests[n] );
+	  }
+      }
+    
+    // Pack send buffers and post sends.
+    for ( int n = 0; n < num_n; ++n )
+      {
+	// Only process this neighbor if there is work to do.
+	if ( 0 < _owned_buffers[n].size() )
+	  {
+	    // Pack the send buffer.
+	    packBuffer( exec_space, _owned_buffers[n], _owned_steering[n],
+			arrays.view()... );
+
+	    // Post a send.
+	    MPI_Isend( _owned_buffers[n].data(), _owned_buffers[n].size(),
+		       MPI_BYTE, _neighbor_ranks[n],
+		       mpi_tag + _send_tags[n], comm,
+		       &requests[num_n + n] );
+	  }
+      }
+    
+    // Unpack receive buffers.
+    bool unpack_complete = false;
+    while ( !unpack_complete )
+      {
+	// Get the next buffer to unpack.
+	int unpack_index = MPI_UNDEFINED;
+	MPI_Waitany( num_n, requests.data(), &unpack_index,
+		     MPI_STATUS_IGNORE );
+
+	// If there are no more buffers to unpack we are done.
+	if ( MPI_UNDEFINED == unpack_index )
+	  {
+	    unpack_complete = true;
+	  }
+	
+	// Otherwise unpack the next buffer.
+	else
+	  {
+	    unpackBuffer( ScatterReduce::Replace(), exec_space,
+			  _ghosted_buffers[unpack_index],
+			  _ghosted_steering[unpack_index],
+			  arrays.view()... );
+	  }
+      }
+
+    // Wait on send requests.
+    MPI_Waitall( num_n, requests.data() + num_n, MPI_STATUSES_IGNORE );
+  }
 
     /*!
       \brief Scatter data from our ghosts to their owners using the given type
