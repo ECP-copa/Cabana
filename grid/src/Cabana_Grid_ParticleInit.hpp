@@ -32,7 +32,6 @@
 
 #include <Cabana_ParticleInit.hpp>
 #include <Cabana_Slice.hpp>
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Random.hpp>
@@ -612,16 +611,5 @@ void createParticles(
 }
 } // namespace Grid
 } // namespace Cabana
-
-namespace Cajita
-{
-//! \cond Deprecated
-template <class... Args>
-CAJITA_DEPRECATED auto createParticles( Args&&... args )
-{
-    return Cabana::Grid::createParticles( std::forward<Args>( args )... );
-}
-//! \endcond
-} // namespace Cajita
 
 #endif

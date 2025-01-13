@@ -483,36 +483,4 @@ IndexSpace<N + 1> appendDimension( const IndexSpace<N>& index_space,
 } // namespace Grid
 } // namespace Cabana
 
-namespace Cajita
-{
-//! \cond Deprecated
-template <long N>
-using IndexSpace CAJITA_DEPRECATED = Cabana::Grid::IndexSpace<N>;
-
-template <typename... Args>
-CAJITA_DEPRECATED auto createExecutionPolicy( Args&&... args )
-{
-    return Cabana::Grid::createExecutionPolicy( std::forward<Args>( args )... );
-}
-
-template <typename... Args>
-CAJITA_DEPRECATED auto createView( Args&&... args )
-{
-    return Cabana::Grid::createView( std::forward<Args>( args )... );
-}
-
-template <class... Args>
-CAJITA_DEPRECATED auto createSubview( Args&&... args )
-{
-    return Cabana::Grid::createSubview( std::forward<Args>( args )... );
-}
-
-template <class... Args>
-CAJITA_DEPRECATED auto appendDimension( Args&&... args )
-{
-    return Cabana::Grid::appendDimension( std::forward<Args>( args )... );
-}
-//! \endcond
-} // namespace Cajita
-
 #endif // end CABANA_GRID_INDEXSPACE_HPP

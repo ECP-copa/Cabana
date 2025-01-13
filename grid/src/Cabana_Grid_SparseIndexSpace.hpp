@@ -22,7 +22,6 @@
 
 #include <Cabana_Grid_GlobalMesh.hpp>
 #include <Cabana_Grid_IndexSpace.hpp>
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_UnorderedMap.hpp>
@@ -1219,82 +1218,5 @@ class TileIndexSpace : public IndexSpace<N>
 
 } // namespace Grid
 } // namespace Cabana
-
-namespace Cajita
-{
-//! \cond Deprecated
-using HashTypes CAJITA_DEPRECATED = Cabana::Grid::HashTypes;
-
-template <class... Args>
-CAJITA_DEPRECATED KOKKOS_INLINE_FUNCTION constexpr auto
-bitLength( Args&&... args ) noexcept
-{
-    return Cabana::Grid::bitLength( std::forward<Args>( args )... );
-}
-template <class... Args>
-CAJITA_DEPRECATED KOKKOS_INLINE_FUNCTION constexpr auto
-bitCount( Args&&... args ) noexcept
-{
-    return Cabana::Grid::bitCount( std::forward<Args>( args )... );
-}
-template <class... Args>
-CAJITA_DEPRECATED KOKKOS_INLINE_FUNCTION constexpr auto
-binaryReverse( Args&&... args )
-{
-    return Cabana::Grid::binaryReverse( std::forward<Args>( args )... );
-}
-template <class... Args>
-CAJITA_DEPRECATED KOKKOS_INLINE_FUNCTION constexpr auto
-countLeadingZeros( Args&&... args )
-{
-    return Cabana::Grid::countLeadingZeros( std::forward<Args>( args )... );
-}
-template <class... Args>
-CAJITA_DEPRECATED KOKKOS_INLINE_FUNCTION constexpr auto
-bitPack( Args&&... args )
-{
-    return Cabana::Grid::bitPack( std::forward<Args>( args )... );
-}
-template <class... Args>
-CAJITA_DEPRECATED KOKKOS_INLINE_FUNCTION constexpr auto
-bitSpread( Args&&... args )
-{
-    return Cabana::Grid::bitSpread( std::forward<Args>( args )... );
-}
-
-template <int CBits, int CNumPerDim, int CNumPerTile>
-using TileMap CAJITA_DEPRECATED =
-    Cabana::Grid::TileMap<CBits, CNumPerDim, CNumPerTile>;
-
-template <int CBits, int CNumPerDim, int CNumPerTile>
-using TileMap CAJITA_DEPRECATED =
-    Cabana::Grid::TileMap<CBits, CNumPerDim, CNumPerTile>;
-
-template <class MemorySpace, unsigned long long CBits,
-          unsigned long long CNumPerDim, unsigned long long CNumPerTile,
-          Cabana::Grid::HashTypes Hash, class Key, class Value>
-using BlockMap CAJITA_DEPRECATED =
-    Cabana::Grid::BlockMap<MemorySpace, CBits, CNumPerDim, CNumPerTile, Hash,
-                           Key, Value>;
-
-template <class MemorySpace, unsigned long long CellPerTileDim = 4,
-          Cabana::Grid::HashTypes Hash = Cabana::Grid::HashTypes::Naive,
-          class Key = uint64_t, class Value = uint64_t>
-using SparseMap CAJITA_DEPRECATED =
-    Cabana::Grid::SparseMap<MemorySpace, CellPerTileDim, Hash, Key, Value>;
-
-// MemorySpace cannot be deduced.
-template <class MemorySpace, class... Args>
-CAJITA_DEPRECATED auto createSparseMap( Args&&... args )
-{
-    return Cabana::Grid::createSparseMap<MemorySpace>(
-        std::forward<Args>( args )... );
-}
-
-template <std::size_t N, unsigned long long cellBitsPerTileDim>
-using TileIndexSpace CAJITA_DEPRECATED =
-    Cabana::Grid::TileIndexSpace<N, cellBitsPerTileDim>;
-//! \endcond
-} // namespace Cajita
 
 #endif ///< !CABANA_GRID_SPARSE_INDEXSPACE_HPP

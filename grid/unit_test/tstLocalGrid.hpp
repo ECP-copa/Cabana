@@ -3342,19 +3342,19 @@ void mutabilityTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( local_grid, 3d_api_test )
+TEST( LocalGrid, 3d )
 {
     periodicTest3d();
     notPeriodicTest3d();
 }
 
-TEST( local_grid, 2d_api_test )
+TEST( LocalGrid, 2d )
 {
     periodicTest2d();
     notPeriodicTest2d();
 }
 
-TEST( local_grid, mutability_test ) { mutabilityTest(); }
+TEST( LocalGrid, Mutability ) { mutabilityTest(); }
 
 //---------------------------------------------------------------------------//
 

@@ -641,7 +641,7 @@ void haloScatterAndGatherTest( ReduceOp reduce_op, EntityType entity )
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, sparse_halo_scatter_and_gather_sum )
+TEST( SparseHalo, ScatterGatherSum )
 {
     haloScatterAndGatherTest( ScatterReduce::Sum(), Node() );
 }
@@ -649,7 +649,7 @@ TEST( TEST_CATEGORY, sparse_halo_scatter_and_gather_sum )
 // TODO: test min/max
 // no need to check replace op since it is already called and tested inside
 // SparseHalo::gather(...)"
-// TEST( TEST_CATEGORY, sparse_halo_scatter_and_gather_max ) {}
-// TEST( TEST_CATEGORY, sparse_halo_scatter_and_gather_min ) {}
+// TEST( SparseHalo, ScatterGatherMax ) {}
+// TEST( SparseHalo, ScatterGatherMin ) {}
 
 }; // end namespace Test

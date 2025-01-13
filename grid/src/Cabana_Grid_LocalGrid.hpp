@@ -19,7 +19,6 @@
 #include <Cabana_Grid_GlobalGrid.hpp>
 #include <Cabana_Grid_IndexSpace.hpp>
 #include <Cabana_Grid_Types.hpp>
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <array>
 #include <memory>
@@ -616,20 +615,6 @@ createLocalGrid( const std::shared_ptr<GlobalGrid<MeshType>>& global_grid,
 
 } // namespace Grid
 } // namespace Cabana
-
-namespace Cajita
-{
-//! \cond Deprecated
-template <class MeshType>
-using LocalGrid CAJITA_DEPRECATED = Cabana::Grid::LocalGrid<MeshType>;
-
-template <class... Args>
-CAJITA_DEPRECATED auto createLocalGrid( Args&&... args )
-{
-    return Cabana::Grid::createLocalGrid( std::forward<Args>( args )... );
-}
-//! \endcond
-} // namespace Cajita
 
 //---------------------------------------------------------------------------//
 // Template implementations

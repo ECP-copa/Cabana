@@ -347,13 +347,13 @@ void atomicAccessTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, api_test ) { apiTest(); }
+TEST( Slice, API ) { apiTest(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, random_access_test ) { randomAccessTest(); }
+TEST( Slice, RandomAccess ) { randomAccessTest(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, atomic_access_test ) { atomicAccessTest(); }
+TEST( Slice, AtomicAccess ) { atomicAccessTest(); }
 
 //---------------------------------------------------------------------------//
 

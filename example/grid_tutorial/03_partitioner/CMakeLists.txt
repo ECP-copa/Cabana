@@ -11,5 +11,5 @@
 
 add_executable(Partitioner partitioner_example.cpp)
 target_link_libraries(Partitioner Cabana::Grid)
-add_test(NAME Grid_tutorial_03 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:Partitioner> ${MPIEXEC_POSTFLAGS})
-set_tests_properties(Grid_tutorial_03 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
+add_test(NAME Cabana_Grid_Tutorial_03 COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:Partitioner> ${MPIEXEC_POSTFLAGS})
+set_tests_properties(Cabana_Grid_Tutorial_03 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

@@ -203,10 +203,12 @@ int main( int argc, char* argv[] )
     if ( argc > 2 )
         run_type = argv[2];
     std::vector<int> problem_sizes = { 1000, 10000 };
+    std::vector<int> host_problem_sizes = problem_sizes;
     std::vector<int> num_bins = { 10, 100, 1000, 10000 };
     if ( run_type == "large" )
     {
         problem_sizes = { 1000, 10000, 100000, 1000000, 10000000 };
+        host_problem_sizes = { 1000, 10000, 100000 };
         num_bins = { 10, 100, 1000, 10000, 100000, 1000000, 10000000 };
     }
 
@@ -227,7 +229,8 @@ int main( int argc, char* argv[] )
         performanceTest<device_type>( file, "device_", problem_sizes,
                                       num_bins );
     }
-    performanceTest<host_device_type>( file, "host_", problem_sizes, num_bins );
+    performanceTest<host_device_type>( file, "host_", host_problem_sizes,
+                                       num_bins );
 
     // Close the output file on rank 0.
     file.close();

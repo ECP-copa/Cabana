@@ -27,6 +27,7 @@ set(SERIAL_TESTS
   ParameterPack
   ParticleInit
   ParticleList
+  Remove
   Slice
   Sort
   Tuple

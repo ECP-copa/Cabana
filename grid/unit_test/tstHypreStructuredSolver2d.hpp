@@ -210,52 +210,52 @@ poissonTest( const std::string& solver_type, const std::string& precond_type,
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( structured_solver, pcg_none_test )
+TEST( HypreStructuredSolver, PCGnone2d )
 {
     poissonTest( "PCG", "none", TEST_MEMSPACE{} );
 }
 
-TEST( structured_solver, gmres_none_test )
+TEST( HypreStructuredSolver, GMRESnone2d )
 {
     poissonTest( "GMRES", "none", TEST_MEMSPACE{} );
 }
 
-TEST( structured_solver, bicgstab_none_test )
+TEST( HypreStructuredSolver, BiCGSTABnone2d )
 {
     poissonTest( "BiCGSTAB", "none", TEST_MEMSPACE{} );
 }
 
-TEST( structured_solver, pfmg_none_test )
+TEST( HypreStructuredSolver, PFMGnone2d )
 {
     poissonTest( "PFMG", "none", TEST_MEMSPACE{} );
 }
 
-TEST( structured_solver, pcg_diag_test )
+TEST( HypreStructuredSolver, PCGdiag2d )
 {
     poissonTest( "PCG", "Diagonal", TEST_MEMSPACE{} );
 }
 
-TEST( structured_solver, gmres_diag_test )
+TEST( HypreStructuredSolver, GMRESdiag2d )
 {
     poissonTest( "GMRES", "Diagonal", TEST_MEMSPACE{} );
 }
 
-TEST( structured_solver, bicgstab_diag_test )
+TEST( HypreStructuredSolver, BiCGSTABdiag2d )
 {
     poissonTest( "BiCGSTAB", "Diagonal", TEST_MEMSPACE{} );
 }
 
-TEST( structured_solver, pcg_jacobi_test )
+TEST( HypreStructuredSolver, PCGjacobi2d )
 {
     poissonTest( "PCG", "Jacobi", TEST_MEMSPACE{} );
 }
 
-TEST( structured_solver, gmres_jacobi_test )
+TEST( HypreStructuredSolver, GMRESjacobi2d )
 {
     poissonTest( "GMRES", "Jacobi", TEST_MEMSPACE{} );
 }
 
-TEST( structured_solver, bicgstab_jacobi_test )
+TEST( HypreStructuredSolver, BiCGSTABjacobi2d )
 {
     poissonTest( "BiCGSTAB", "Jacobi", TEST_MEMSPACE{} );
 }

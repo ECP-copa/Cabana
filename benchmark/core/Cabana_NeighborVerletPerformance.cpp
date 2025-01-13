@@ -39,6 +39,8 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
     using LayoutTag = Cabana::VerletLayout2D;
     using BuildTag = Cabana::TeamVectorOpTag;
     using IterTag = Cabana::SerialOpTag;
+    using neigh_type =
+        Cabana::VerletList<memory_space, ListTag, LayoutTag, BuildTag>;
 
     // Declare problem sizes.
     int num_problem_size = problem_sizes.size();
@@ -139,11 +141,9 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                     // Create the neighbor list.
                     double cutoff = cutoff_ratios[c0];
                     create_timer.start( pid );
-                    Cabana::VerletList<memory_space, ListTag, LayoutTag,
-                                       BuildTag>
-                        nlist( Cabana::slice<0>( aosoas[p], "position" ), 0,
-                               num_p, cutoff, cell_ratios[c1], grid_min,
-                               grid_max );
+                    neigh_type nlist( Cabana::slice<0>( aosoas[p], "position" ),
+                                      0, num_p, cutoff, cell_ratios[c1],
+                                      grid_min, grid_max );
                     create_timer.stop( pid );
 
                     // Iterate through the neighbor list.
@@ -157,39 +157,31 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                     // Print neighbor statistics once per system.
                     if ( t == 0 )
                     {
-                        Kokkos::MinMaxScalar<int> min_max;
-                        Kokkos::MinMax<int> reducer( min_max );
-                        auto const& nlist_data_count =
-                            nlist._data.counts; // capture just the view
+                        std::size_t max_neigh;
+                        Kokkos::Max<std::size_t> max_reducer( max_neigh );
+                        std::size_t min_neigh;
+                        Kokkos::Min<std::size_t> min_reducer( min_neigh );
+                        std::size_t total_neigh;
+                        Kokkos::Sum<std::size_t> total_reducer( total_neigh );
                         Kokkos::parallel_reduce(
-                            "Cabana::countMinMax", policy,
-                            KOKKOS_LAMBDA(
-                                const int p,
-                                Kokkos::MinMaxScalar<int>& local_minmax ) {
-                                auto const val = nlist_data_count( p );
-                                if ( val < local_minmax.min_val )
-                                {
-                                    local_minmax.min_val = val;
-                                }
-                                if ( val > local_minmax.max_val )
-                                {
-                                    local_minmax.max_val = val;
-                                }
+                            "Cabana::Benchmark::countNeighbors", policy,
+                            KOKKOS_LAMBDA( const int p, std::size_t& min,
+                                           std::size_t& max,
+                                           std::size_t& sum ) {
+                                auto const val = Cabana::NeighborList<
+                                    neigh_type>::numNeighbor( nlist, p );
+                                if ( val < min )
+                                    min = val;
+                                if ( val > max )
+                                    max = val;
+                                sum += val;
                             },
-                            reducer );
+                            min_reducer, max_reducer, total_reducer );
                         Kokkos::fence();
-                        std::cout << "List min neighbors: " << min_max.min_val
+                        std::cout << "List min neighbors: " << min_neigh
                                   << std::endl;
-                        std::cout << "List max neighbors: " << min_max.max_val
+                        std::cout << "List max neighbors: " << max_neigh
                                   << std::endl;
-                        int total_neigh = 0;
-                        Kokkos::parallel_reduce(
-                            "Cabana::countSum", policy,
-                            KOKKOS_LAMBDA( const int p, int& nsum ) {
-                                nsum += nlist._data.counts( p );
-                            },
-                            total_neigh );
-                        Kokkos::fence();
                         std::cout
                             << "List avg neighbors: " << total_neigh / num_p
                             << std::endl;
@@ -232,11 +224,13 @@ int main( int argc, char* argv[] )
     if ( argc > 2 )
         run_type = argv[2];
     std::vector<int> problem_sizes = { 100, 1000 };
+    std::vector<int> host_problem_sizes = problem_sizes;
     std::vector<double> cutoff_ratios = { 2.0, 3.0 };
     std::vector<double> cell_ratios = { 1.0 };
     if ( run_type == "large" )
     {
-        problem_sizes = { 1000, 10000, 100000, 1000000 };
+        problem_sizes = { 1000, 10000, 100000, 1000000, 10000000 };
+        host_problem_sizes = { 1000, 10000, 100000 };
         cutoff_ratios = { 3.0, 4.0, 5.0 };
         cell_ratios = { 1.0 };
     }
@@ -258,7 +252,7 @@ int main( int argc, char* argv[] )
         performanceTest<device_type>( file, "device_", problem_sizes,
                                       cutoff_ratios, cell_ratios );
     }
-    performanceTest<host_device_type>( file, "host_", problem_sizes,
+    performanceTest<host_device_type>( file, "host_", host_problem_sizes,
                                        cutoff_ratios, cell_ratios );
 
     // Close the output file on rank 0.

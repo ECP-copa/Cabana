@@ -11,4 +11,4 @@
 
   add_executable(ArborXList arborx_neighborlist_example.cpp)
   target_link_libraries(ArborXList Cabana::Core)
-  add_test(NAME Core_tutorial_09_arborx COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:ArborXList>)
+  add_test(NAME Cabana_Core_Tutorial_09_arborx COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:ArborXList>)

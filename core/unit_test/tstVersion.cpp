@@ -21,7 +21,7 @@
 namespace Test
 {
 
-TEST( cabana_version, version_test )
+TEST( Version, Test )
 {
     auto const version_id = Cabana::version();
     EXPECT_TRUE( !version_id.empty() );

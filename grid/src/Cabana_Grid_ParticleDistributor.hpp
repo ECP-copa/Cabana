@@ -10,7 +10,7 @@
  ****************************************************************************/
 
 /*!
-  \file Cabana_Grid_ParticleGridDistributor.hpp
+  \file Cabana_Grid_ParticleDistributor.hpp
   \brief Multi-node particle redistribution using the grid halo.
 */
 #ifndef CABANA_PARTICLEGRIDDISTRIBUTOR_HPP
@@ -18,7 +18,6 @@
 
 #include <Cabana_DeepCopy.hpp>
 #include <Cabana_Distributor.hpp>
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
 #include <Cabana_Grid_GlobalGrid.hpp>
 #include <Cabana_Grid_GlobalMesh.hpp>
@@ -163,7 +162,7 @@ void getMigrateDestinations( const LocalGridType& local_grid,
 /*!
   \brief Check for the number of particles that must be communicated
 
-  \tparam LocalGridType Cajita LocalGrid type.
+  \tparam LocalGridType LocalGrid type.
   \tparam PositionSliceType Particle position type.
 
   \param local_grid The local grid containing periodicity and system bound
@@ -225,10 +224,10 @@ int migrateCount( const LocalGridType& local_grid,
 //---------------------------------------------------------------------------//
 /*!
   \brief Determine which data should be migrated from one uniquely-owned
-  decomposition to another uniquely-owned decomposition, using bounds of a
-  Cajita grid and taking periodic boundaries into account.
+  decomposition to another uniquely-owned decomposition, using bounds of the
+  grid and taking periodic boundaries into account.
 
-  \tparam LocalGridType Cajita LocalGrid type.
+  \tparam LocalGridType LocalGrid type.
   \tparam PositionSliceType Position type.
 
   \param local_grid The local grid containing periodicity and system bound
@@ -239,8 +238,8 @@ int migrateCount( const LocalGridType& local_grid,
 */
 template <class LocalGridType, class PositionSliceType>
 Cabana::Distributor<typename PositionSliceType::memory_space>
-createParticleGridDistributor( const LocalGridType& local_grid,
-                               PositionSliceType& positions )
+createParticleDistributor( const LocalGridType& local_grid,
+                           PositionSliceType& positions )
 {
     using memory_space = typename PositionSliceType::memory_space;
 
@@ -269,10 +268,10 @@ createParticleGridDistributor( const LocalGridType& local_grid,
 //---------------------------------------------------------------------------//
 /*!
   \brief Migrate data from one uniquely-owned decomposition to another
-  uniquely-owned decomposition, using the bounds and periodic boundaries of a
-  Cajita grid to determine which particles should be moved. In-place variant.
+  uniquely-owned decomposition, using the bounds and periodic boundaries of the
+  grid to determine which particles should be moved. In-place variant.
 
-  \tparam LocalGridType Cajita LocalGrid type.
+  \tparam LocalGridType LocalGrid type.
   \tparam ParticlePositions Particle position type.
   \tparam PositionContainer AoSoA type.
 
@@ -286,11 +285,10 @@ createParticleGridDistributor( const LocalGridType& local_grid,
   \return Whether any particle migration occurred.
 */
 template <class LocalGridType, class ParticlePositions, class ParticleContainer>
-bool particleGridMigrate( const LocalGridType& local_grid,
-                          const ParticlePositions& positions,
-                          ParticleContainer& particles,
-                          const int min_halo_width,
-                          const bool force_migrate = false )
+bool particleMigrate( const LocalGridType& local_grid,
+                      const ParticlePositions& positions,
+                      ParticleContainer& particles, const int min_halo_width,
+                      const bool force_migrate = false )
 {
     // When false, this option checks that any particles are nearly outside the
     // ghosted halo region (outside the min_halo_width) before initiating
@@ -306,7 +304,7 @@ bool particleGridMigrate( const LocalGridType& local_grid,
             return false;
     }
 
-    auto distributor = createParticleGridDistributor( local_grid, positions );
+    auto distributor = createParticleDistributor( local_grid, positions );
 
     // Redistribute the particles.
     migrate( distributor, particles );
@@ -316,11 +314,11 @@ bool particleGridMigrate( const LocalGridType& local_grid,
 //---------------------------------------------------------------------------//
 /*!
   \brief Migrate data from one uniquely-owned decomposition to another
-  uniquely-owned decomposition, using the bounds and periodic boundaries of a
-  Cajita grid to determine which particles should be moved. Separate AoSoA
+  uniquely-owned decomposition, using the bounds and periodic boundaries of the
+  grid to determine which particles should be moved. Separate AoSoA
   variant.
 
-  \tparam LocalGridType Cajita LocalGrid type.
+  \tparam LocalGridType LocalGrid type.
   \tparam ParticlePositions Particle position type.
   \tparam ParticleContainer AoSoA type.
 
@@ -335,12 +333,12 @@ bool particleGridMigrate( const LocalGridType& local_grid,
   \return Whether any particle migration occurred.
 */
 template <class LocalGridType, class ParticlePositions, class ParticleContainer>
-bool particleGridMigrate( const LocalGridType& local_grid,
-                          const ParticlePositions& positions,
-                          const ParticleContainer& src_particles,
-                          ParticleContainer& dst_particles,
-                          const int min_halo_width,
-                          const bool force_migrate = false )
+bool particleMigrate( const LocalGridType& local_grid,
+                      const ParticlePositions& positions,
+                      const ParticleContainer& src_particles,
+                      ParticleContainer& dst_particles,
+                      const int min_halo_width,
+                      const bool force_migrate = false )
 {
     // When false, this option checks that any particles are nearly outside the
     // ghosted halo region (outside the  min_halo_width) before initiating
@@ -359,7 +357,7 @@ bool particleGridMigrate( const LocalGridType& local_grid,
         }
     }
 
-    auto distributor = createParticleGridDistributor( local_grid, positions );
+    auto distributor = createParticleDistributor( local_grid, positions );
 
     // Resize as needed.
     dst_particles.resize( distributor.totalNumImport() );
@@ -369,35 +367,29 @@ bool particleGridMigrate( const LocalGridType& local_grid,
     return true;
 }
 
-} // namespace Grid
-} // namespace Cabana
-
-namespace Cajita
-{
 //! \cond Deprecated
 template <class... Args>
-CAJITA_DEPRECATED void migrateCount( Args&&... args )
+[[deprecated( "Cabana::Grid::particleGridMigrate is now "
+              "Cabana::Grid::particleMigrate. This function wrapper will be "
+              "removed in a future release." )]] auto
+particleGridMigrate( Args&&... args )
 {
-    return Cabana::Grid::migrateCount( std::forward<Args>( args )... );
-}
-template <class... Args>
-CAJITA_DEPRECATED auto getTopology( Args&&... args )
-{
-    return Cabana::Grid::getTopology( std::forward<Args>( args )... );
-}
-template <class... Args>
-CAJITA_DEPRECATED auto createParticleGridDistributor( Args&&... args )
-{
-    return Cabana::Grid::createParticleGridDistributor(
-        std::forward<Args>( args )... );
+    return Cabana::Grid::particleMigrate( std::forward<Args>( args )... );
 }
 
 template <class... Args>
-CAJITA_DEPRECATED auto particleGridMigrate( Args&&... args )
+[[deprecated(
+    "Cabana::Grid::createParticleGridDistributor is now "
+    "Cabana::Grid::createParticleDistributor. This function wrapper will be "
+    "removed in a future release." )]] auto
+createParticleGridDistributor( Args&&... args )
 {
-    return Cabana::Grid::particleGridMigrate( std::forward<Args>( args )... );
+    return Cabana::Grid::createParticleDistributor(
+        std::forward<Args>( args )... );
 }
 //! \endcond
-} // namespace Cajita
+
+} // namespace Grid
+} // namespace Cabana
 
 #endif // end CABANA_PARTICLEGRIDDISTRIBUTOR_HPP

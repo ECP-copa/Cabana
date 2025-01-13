@@ -507,7 +507,7 @@ void irregularTest2d( const std::array<int, 2>& ranks_per_dim )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( mesh, periodic_uniform_test )
+TEST( LocalMesh, PeriodicUniform2d )
 {
     std::array<bool, 2> is_dim_periodic = { true, true };
 
@@ -529,7 +529,7 @@ TEST( mesh, periodic_uniform_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST( mesh, periodic_non_uniform_test )
+TEST( LocalMesh, PeriodicNonUniform2d )
 {
     std::array<bool, 2> is_dim_periodic = { true, true };
 
@@ -551,7 +551,7 @@ TEST( mesh, periodic_non_uniform_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST( mesh, non_periodic_uniform_test )
+TEST( LocalMesh, NonPeriodicUniform2d )
 {
     std::array<bool, 2> is_dim_periodic = { false, false };
 
@@ -573,7 +573,7 @@ TEST( mesh, non_periodic_uniform_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST( mesh, non_periodic_non_uniform_test )
+TEST( LocalMesh, NonPeriodicNonUniform2d )
 {
     std::array<bool, 2> is_dim_periodic = { false, false };
 
@@ -595,7 +595,7 @@ TEST( mesh, non_periodic_non_uniform_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST( mesh, irregular_non_uniform_test )
+TEST( LocalMesh, IrregularNonUniform2d )
 {
     // Let MPI compute the partitioning for this test.
     int comm_size;

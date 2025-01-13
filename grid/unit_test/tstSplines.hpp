@@ -22,7 +22,7 @@ namespace Test
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-TEST( cajita_splines, zero_spline_test )
+TEST( Splines, Zero )
 {
     // Check partition of unity for the quadratic spline.
     double xp = -1.4;
@@ -81,7 +81,7 @@ TEST( cajita_splines, zero_spline_test )
     EXPECT_FLOAT_EQ( field_grad, 0.0 );
 }
 
-TEST( cajita_splines, linear_spline_test )
+TEST( Splines, Linear )
 {
     // Check partition of unity for the linear spline.
     double xp = -1.4;
@@ -143,7 +143,7 @@ TEST( cajita_splines, linear_spline_test )
     EXPECT_FLOAT_EQ( field_grad, grid_deriv( xp ) );
 }
 
-TEST( cajita_splines, quadratic_spline_test )
+TEST( Splines, Quadratic )
 {
     // Check partition of unity for the quadratic spline.
     double xp = -1.4;
@@ -211,7 +211,7 @@ TEST( cajita_splines, quadratic_spline_test )
     EXPECT_FLOAT_EQ( field_grad, grid_deriv( xp ) );
 }
 
-TEST( cajita_splines, cubic_spline_test )
+TEST( Splines, Cubic )
 {
     // Check partition of unity for the cubic spline.
     double xp = -1.4;

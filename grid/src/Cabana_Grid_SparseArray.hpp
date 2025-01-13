@@ -710,46 +710,4 @@ auto createSparseArray(
 } // namespace Grid
 } // namespace Cabana
 
-namespace Cajita
-{
-namespace Experimental
-{
-//! \cond Deprecated
-template <class DataTypes, class EntityType, class MeshType,
-          class SparseMapType>
-using SparseArrayLayout CAJITA_DEPRECATED =
-    Cabana::Grid::Experimental::SparseArrayLayout<DataTypes, EntityType,
-                                                  MeshType, SparseMapType>;
-
-template <class... Args>
-CAJITA_DEPRECATED auto createSparseArrayLayout( Args&&... args )
-{
-    return Cabana::Grid::Experimental::createSparseArrayLayout(
-        std::forward<Args>( args )... );
-}
-
-template <class T>
-using is_sparse_array_layout CAJITA_DEPRECATED =
-    Cabana::Grid::Experimental::is_sparse_array_layout<T>;
-
-template <class DataTypes, class MemorySpace, class EntityType, class MeshType,
-          class SparseMapType>
-using SparseArray CAJITA_DEPRECATED =
-    Cabana::Grid::Experimental::SparseArray<DataTypes, MemorySpace, EntityType,
-                                            MeshType, SparseMapType>;
-
-template <class T>
-using is_sparse_array CAJITA_DEPRECATED =
-    Cabana::Grid::Experimental::is_sparse_array<T>;
-
-template <class MemorySpace, class... Args>
-CAJITA_DEPRECATED auto createSparseArray( Args&&... args )
-{
-    return Cabana::Grid::Experimental::createSparseArray<MemorySpace>(
-        std::forward<Args>( args )... );
-}
-//! \endcond
-} // namespace Experimental
-} // end namespace Cajita
-
 #endif // CABANA_GRID_SPARSE_ARRAY_HPP

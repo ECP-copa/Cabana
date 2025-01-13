@@ -37,13 +37,11 @@ deprecated( std::true_type )
     return true;
 }
 
-// Custom warning for switch from Cajita to Grid.
-#ifdef Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS
-#define CAJITA_DEPRECATED
+// Custom warning.
+#ifdef Cabana_DISABLE_DEPRECATION_WARNINGS
+#define CABANA_DEPRECATED
 #else
-#define CAJITA_DEPRECATED                                                      \
-    [[deprecated( "Cajita is now Cabana::Grid. The Cajita namespace will be "  \
-                  "removed in a future release." )]]
+#define CABANA_DEPRECATED [[deprecated( "Cabana deprecation." )]]
 #endif
 
 //! \endcond

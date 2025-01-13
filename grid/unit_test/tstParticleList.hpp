@@ -26,7 +26,7 @@ namespace Test
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, particle_test )
+TEST( ParticleList, Test )
 {
     // Create the global mesh.
     std::array<double, 3> low_corner = { -1.2, 0.1, 1.1 };

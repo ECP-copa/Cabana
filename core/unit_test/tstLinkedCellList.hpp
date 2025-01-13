@@ -707,22 +707,84 @@ void testLinkedCellReduce()
 }
 
 //---------------------------------------------------------------------------//
-// RUN TESTS
-//---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, linked_cell_stencil_test ) { testLinkedCellStencil(); }
-
-TEST( TEST_CATEGORY, linked_list_test ) { testLinkedList(); }
-
-TEST( TEST_CATEGORY, linked_list_slice_test ) { testLinkedListSlice(); }
-
-TEST( TEST_CATEGORY, linked_list_neighbor_test )
+void testLinkedListView()
 {
-    testLinkedCellNeighborInterface();
+    LCLTestData test_data;
+    auto grid_delta = test_data.grid_delta;
+    auto grid_min = test_data.grid_min;
+    auto grid_max = test_data.grid_max;
+    auto slice = Cabana::slice<LCLTestData::Position>( test_data.aosoa );
+
+    // Copy manually into a View.
+    Kokkos::View<double**, TEST_MEMSPACE> view( "positions", slice.size(), 3 );
+    copySliceToView( view, slice, 0, slice.size() );
+
+    // Bin the particles in the grid and permute only the position slice.
+    // First do this by only operating on a subset of the particles.
+    {
+        auto begin = test_data.begin;
+        auto end = test_data.end;
+        Cabana::LinkedCellList<TEST_MEMSPACE> cell_list(
+            view, begin, end, grid_delta, grid_min, grid_max );
+        Cabana::permute( cell_list, view );
+
+        // Copy manually back into the AoSoA to check values.
+        copyViewToSlice( slice, view, 0, slice.size() );
+
+        copyListToHost( test_data, cell_list );
+
+        checkBins( test_data, cell_list );
+        checkLinkedCell( test_data, begin, end, false );
+    }
+    // Now bin and permute all of the particles.
+    {
+        Cabana::LinkedCellList<TEST_MEMSPACE> cell_list( view, grid_delta,
+                                                         grid_min, grid_max );
+
+        // Copy manually into a View.
+        Kokkos::View<double**, TEST_MEMSPACE> view( "positions", slice.size(),
+                                                    3 );
+        copySliceToView( view, slice, 0, slice.size() );
+
+        Cabana::permute( cell_list, view );
+
+        copyListToHost( test_data, cell_list );
+
+        checkBins( test_data, cell_list );
+        checkLinkedCell( test_data, 0, test_data.num_p, false );
+
+        // Rebuild and make sure nothing changed.
+        cell_list.build( view );
+        Cabana::permute( cell_list, view );
+
+        // Copy manually back into the AoSoA to check values.
+        copyViewToSlice( slice, view, 0, slice.size() );
+
+        copyListToHost( test_data, cell_list );
+
+        checkBins( test_data, cell_list );
+        checkLinkedCell( test_data, 0, test_data.num_p, false );
+    }
 }
 
-TEST( TEST_CATEGORY, linked_list_parallel_test ) { testLinkedCellParallel(); }
+//---------------------------------------------------------------------------//
+// RUN TESTS
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+TEST( LinkedCellList, Stencil ) { testLinkedCellStencil(); }
 
-TEST( TEST_CATEGORY, linked_list_reduce_test ) { testLinkedCellReduce(); }
+TEST( LinkedCellList, AoSoA ) { testLinkedList(); }
+
+TEST( LinkedCellList, Slice ) { testLinkedListSlice(); }
+
+TEST( LinkedCellList, Neighbor ) { testLinkedCellNeighborInterface(); }
+
+TEST( LinkedCellList, ParallelFor ) { testLinkedCellParallel(); }
+
+TEST( LinkedCellList, ParallelReduce ) { testLinkedCellReduce(); }
+
+//---------------------------------------------------------------------------//
+TEST( LinkedCellList, linked_list_view_test ) { testLinkedListView(); }
 
 //---------------------------------------------------------------------------//
 

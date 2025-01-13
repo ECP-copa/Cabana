@@ -19,6 +19,65 @@ namespace Test
 {
 
 //---------------------------------------------------------------------------//
+// Fields.
+struct CommRank : Cabana::Field::Scalar<int>
+{
+    static std::string label() { return "comm_rank"; }
+};
+
+struct Mass : Cabana::Field::Scalar<double>
+{
+    static std::string label() { return "amss"; }
+};
+
+struct Velocity : Cabana::Field::Vector<float, 3>
+{
+    static std::string label() { return "foo"; }
+};
+
+struct Deformation : Cabana::Field::Matrix<double, 3, 3>
+{
+    static std::string label() { return "bar"; }
+};
+
+//---------------------------------------------------------------------------//
+// Check the data given a set of values.
+template <class ParticleListType>
+void checkParticleListMembers( ParticleListType dst_plist, const float fval,
+                               const double dval, const int ival )
+{
+    auto mirror =
+        Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), dst_plist );
+
+    auto px = mirror.slice( Cabana::Field::Position<3>() );
+    auto pr = mirror.slice( CommRank() );
+    auto pm = mirror.slice( Mass() );
+    auto pv = mirror.slice( Velocity() );
+    auto pf = mirror.slice( Deformation() );
+
+    for ( std::size_t p = 0; p < mirror.size(); ++p )
+    {
+        // Positon, Velocity
+        for ( int i = 0; i < 3; ++i )
+        {
+            EXPECT_DOUBLE_EQ( px( p, i ), dval * i );
+            EXPECT_FLOAT_EQ( pv( p, i ), fval * i );
+        }
+
+        // CommRank
+        EXPECT_EQ( pr( p ), ival );
+
+        // Mass.
+        EXPECT_DOUBLE_EQ( pm( p ), dval );
+
+        // Deformation
+        for ( int i = 0; i < 3; ++i )
+            for ( int j = 0; j < 3; ++j )
+                EXPECT_DOUBLE_EQ( pf( p, i, j ), dval * ( i + j ) );
+    }
+}
+
+//---------------------------------------------------------------------------//
 // Check the data given a set of values.
 template <class aosoa_type>
 void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
@@ -60,7 +119,7 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
 // Perform a deep copy test.
 template <class DstMemorySpace, class SrcMemorySpace, int DstVectorLength,
           int SrcVectorLength>
-void testDeepCopy()
+void testAoSoADeepCopy()
 {
     // Data dimensions.
     const int dim_1 = 3;
@@ -134,6 +193,95 @@ void testDeepCopy()
 
     // Check values.
     checkDataMembers( dst_aosoa_2, fval, dval, ival, dim_1, dim_2, dim_3 );
+}
+
+//---------------------------------------------------------------------------//
+
+// Perform a deep copy test.
+template <class DstMemorySpace, class SrcMemorySpace, int DstVectorLength,
+          int SrcVectorLength>
+void testParticleListDeepCopy()
+{
+    // Declare data types.
+    auto fields = Cabana::ParticleTraits<Cabana::Field::Position<3>, CommRank,
+                                         Mass, Velocity, Deformation>();
+
+    // Create ParticleList
+    auto dst_plist =
+        Cabana::createParticleList<DstMemorySpace, DstVectorLength>(
+            "dst_plist", fields );
+    auto src_plist =
+        Cabana::createParticleList<SrcMemorySpace, SrcVectorLength>(
+            "src_plist", fields );
+
+    // Resize ParticleList
+    int num_p = 357;
+    auto& src_aosoa = src_plist.aosoa();
+    auto& dst_aosoa = dst_plist.aosoa();
+    src_aosoa.resize( num_p );
+    dst_aosoa.resize( num_p );
+
+    // Initialize data
+    float fval = 3.4;
+    double dval = 1.23;
+    int ival = 2;
+    auto px = src_plist.slice( Cabana::Field::Position<3>() );
+    auto pr = src_plist.slice( CommRank() );
+    auto pm = src_plist.slice( Mass() );
+    auto pv = src_plist.slice( Velocity() );
+    auto pf = src_plist.slice( Deformation() );
+
+    Kokkos::parallel_for(
+        "initialize",
+        Kokkos::RangePolicy<typename SrcMemorySpace::execution_space>( 0,
+                                                                       num_p ),
+        KOKKOS_LAMBDA( const int p ) {
+            // Positon, Velocity
+            for ( int i = 0; i < 3; ++i )
+            {
+                px( p, i ) = dval * i;
+                pv( p, i ) = fval * i;
+            }
+
+            // CommRank
+            pr( p ) = ival;
+
+            // Mass.
+            pm( p ) = dval;
+
+            // Deformation
+            for ( int i = 0; i < 3; ++i )
+                for ( int j = 0; j < 3; ++j )
+                    pf( p, i, j ) = dval * ( i + j );
+        } );
+    Kokkos::fence();
+
+    // Deep copy
+    Cabana::deep_copy( dst_plist, src_plist );
+
+    // Check values.
+    checkParticleListMembers( dst_plist, fval, dval, ival );
+
+    // Create a second ParticleList and deep copy by slice.
+    auto dst_plist2 =
+        Cabana::createParticleList<DstMemorySpace, DstVectorLength>(
+            "dst_plist", fields );
+    auto& dst_aosoa2 = dst_plist2.aosoa();
+    dst_aosoa2.resize( num_p );
+    auto dst_px = dst_plist2.slice( Cabana::Field::Position<3>() );
+    auto dst_pr = dst_plist2.slice( CommRank() );
+    auto dst_pm = dst_plist2.slice( Mass() );
+    auto dst_pv = dst_plist2.slice( Velocity() );
+    auto dst_pf = dst_plist2.slice( Deformation() );
+
+    Cabana::deep_copy( dst_px, px );
+    Cabana::deep_copy( dst_pr, pr );
+    Cabana::deep_copy( dst_pm, pm );
+    Cabana::deep_copy( dst_pv, pv );
+    Cabana::deep_copy( dst_pf, pf );
+
+    // Check values.
+    checkParticleListMembers( dst_plist2, fval, dval, ival );
 }
 
 //---------------------------------------------------------------------------//
@@ -295,36 +443,42 @@ void testAssign()
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, deep_copy_to_host_same_layout_test )
+TEST( DeepCopy, ToHostSameLayout )
 {
-    testDeepCopy<Kokkos::HostSpace, TEST_MEMSPACE, 16, 16>();
+    testAoSoADeepCopy<Kokkos::HostSpace, TEST_MEMSPACE, 16, 16>();
+    testParticleListDeepCopy<Kokkos::HostSpace, TEST_MEMSPACE, 16, 16>();
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, deep_copy_from_host_same_layout_test )
+TEST( DeepCopy, FromHostSameLayout )
 {
-    testDeepCopy<TEST_MEMSPACE, Kokkos::HostSpace, 16, 16>();
+    testAoSoADeepCopy<TEST_MEMSPACE, Kokkos::HostSpace, 16, 16>();
+    testParticleListDeepCopy<TEST_MEMSPACE, Kokkos::HostSpace, 16, 16>();
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, deep_copy_to_host_different_layout_test )
+TEST( DeepCopy, ToHostDifferentLayout )
 {
-    testDeepCopy<Kokkos::HostSpace, TEST_MEMSPACE, 16, 32>();
-    testDeepCopy<Kokkos::HostSpace, TEST_MEMSPACE, 64, 8>();
+    testAoSoADeepCopy<Kokkos::HostSpace, TEST_MEMSPACE, 16, 32>();
+    testAoSoADeepCopy<Kokkos::HostSpace, TEST_MEMSPACE, 64, 8>();
+    testParticleListDeepCopy<Kokkos::HostSpace, TEST_MEMSPACE, 16, 32>();
+    testParticleListDeepCopy<Kokkos::HostSpace, TEST_MEMSPACE, 64, 8>();
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, deep_copy_from_host_different_layout_test )
+TEST( DeepCopy, FromHostDifferentLayout )
 {
-    testDeepCopy<TEST_MEMSPACE, Kokkos::HostSpace, 64, 8>();
-    testDeepCopy<TEST_MEMSPACE, Kokkos::HostSpace, 16, 32>();
+    testAoSoADeepCopy<TEST_MEMSPACE, Kokkos::HostSpace, 64, 8>();
+    testAoSoADeepCopy<TEST_MEMSPACE, Kokkos::HostSpace, 16, 32>();
+    testParticleListDeepCopy<TEST_MEMSPACE, Kokkos::HostSpace, 64, 8>();
+    testParticleListDeepCopy<TEST_MEMSPACE, Kokkos::HostSpace, 16, 32>();
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, mirror_test ) { testMirror(); }
+TEST( DeepCopy, Mirror ) { testMirror(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, assign_test ) { testAssign(); }
+TEST( DeepCopy, Assign ) { testAssign(); }
 
 //---------------------------------------------------------------------------//
 

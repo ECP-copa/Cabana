@@ -24,6 +24,7 @@ set(HEADERS_PUBLIC
   Cabana_ParameterPack.hpp
   Cabana_ParticleInit.hpp
   Cabana_ParticleList.hpp
+  Cabana_Remove.hpp
   Cabana_Slice.hpp
   Cabana_SoA.hpp
   Cabana_Sort.hpp
@@ -66,15 +67,6 @@ set(HEADERS_IMPL
 add_library(Core INTERFACE)
 add_library(Cabana::Core ALIAS Core)
 
-### FIXME: remove cabanacore in next release.
-add_library(cabanacore INTERFACE)
-target_link_libraries(cabanacore INTERFACE Core)
-if(CMAKE_VERSION VERSION_GREATER 3.17)
-  if(NOT Cabana_DISABLE_CAJITA_DEPRECATION_WARNINGS)
-    set_property(TARGET cabanacore PROPERTY DEPRECATION "NOTE: cabanacore subpackage is now Core. Link to Cabana::Core. Cabana::cabanacore will be removed in a future release.")
-  endif()
-endif()
-
 # Require minimum of C++17
 set_target_properties(Core PROPERTIES INTERFACE_COMPILE_FEATURES cxx_std_17)
 
@@ -89,8 +81,12 @@ if(Cabana_ENABLE_SILO)
 endif()
 
 if(Cabana_ENABLE_HDF5)
-  # FIXME: replace with HDF5::HDF5 when requiring newer CMake
-  target_link_libraries(Core INTERFACE ${HDF5_LIBRARIES})
+  # FIXME: remove when requiring newer CMake
+  if(CMAKE_VERSION VERSION_LESS 3.26)
+    target_link_libraries(Core INTERFACE ${HDF5_LIBRARIES})
+  else()
+    target_link_libraries(Core INTERFACE HDF5::HDF5)
+  endif()
 endif()
 
 if(Cabana_ENABLE_MPI)
@@ -108,7 +104,7 @@ if(Cabana_ENABLE_HDF5)
   )
 endif()
 
-install(TARGETS Core cabanacore
+install(TARGETS Core
   EXPORT Cabana_Targets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
@@ -116,7 +112,7 @@ install(TARGETS Core cabanacore
 install(EXPORT Cabana_Targets
   FILE Cabana_Targets.cmake
   NAMESPACE Cabana::
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana)
+  DESTINATION ${Cabana_INSTALL_PACKAGEDIR})
 
 install(FILES ${HEADERS_PUBLIC} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 

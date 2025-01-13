@@ -23,7 +23,7 @@ namespace Test
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, particle_test )
+TEST( ParticleList, Particle )
 {
     auto fields = Cabana::ParticleTraits<Cabana::Field::Position<3>, Foo,
                                          CommRank, Bar>();
@@ -33,7 +33,7 @@ TEST( TEST_CATEGORY, particle_test )
     particleListTest( plist );
 }
 
-TEST( TEST_CATEGORY, particle_view_test )
+TEST( ParticleList, ParticleView )
 {
     auto fields = Cabana::ParticleTraits<Cabana::Field::Position<3>, Foo,
                                          CommRank, Bar>();

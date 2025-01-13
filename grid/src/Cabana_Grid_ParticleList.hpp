@@ -21,9 +21,8 @@
 #include <Cabana_ParticleList.hpp>
 #include <Cabana_SoA.hpp>
 #include <Cabana_Tuple.hpp>
-#include <Cabana_Utils.hpp> // FIXME: remove after next release.
 
-#include <Cabana_Grid_ParticleGridDistributor.hpp>
+#include <Cabana_Grid_ParticleDistributor.hpp>
 
 #include <memory>
 #include <string>
@@ -35,7 +34,7 @@ namespace Grid
 {
 
 //---------------------------------------------------------------------------//
-//! List of particle fields stored in AoSoA with associated Cajita mesh.
+//! List of particle fields stored in AoSoA with associated mesh.
 template <class MemorySpace, int VectorLength, class... FieldTags>
 class ParticleList
     : public Cabana::ParticleList<MemorySpace, VectorLength, FieldTags...>
@@ -91,9 +90,9 @@ class ParticleList
     bool redistribute( const LocalGridType& local_grid, PositionFieldTag,
                        const bool force_redistribute = false )
     {
-        return particleGridMigrate(
-            local_grid, this->slice( PositionFieldTag() ), _aosoa,
-            local_grid.haloCellWidth(), force_redistribute );
+        return particleMigrate( local_grid, this->slice( PositionFieldTag() ),
+                                _aosoa, local_grid.haloCellWidth(),
+                                force_redistribute );
     }
 
   protected:
@@ -151,33 +150,5 @@ auto createParticleList( const std::string& label,
 
 } // namespace Grid
 } // namespace Cabana
-
-namespace Cajita
-{
-//! \cond Deprecated
-template <class MemorySpace, int VectorLength, class... FieldTags>
-using ParticleList CAJITA_DEPRECATED =
-    Cabana::Grid::ParticleList<MemorySpace, VectorLength, FieldTags...>;
-
-template <class T>
-using is_particle_list CAJITA_DEPRECATED = Cabana::Grid::is_particle_list<T>;
-
-// MemorySpace and VectorLength cannot be deduced.
-template <class MemorySpace, int VectorLength, class... Args>
-CAJITA_DEPRECATED auto createParticleList( Args&&... args )
-{
-    return Cabana::Grid::createParticleList<MemorySpace, VectorLength>(
-        std::forward<Args>( args )... );
-}
-
-// MemorySpace cannot be deduced.
-template <class MemorySpace, class... Args>
-CAJITA_DEPRECATED auto createParticleList( Args&&... args )
-{
-    return Cabana::Grid::createParticleList<MemorySpace>(
-        std::forward<Args>( args )... );
-}
-//! \endcond
-} // namespace Cajita
 
 #endif // end CABANA_GRID_PARTICLELIST_HPP

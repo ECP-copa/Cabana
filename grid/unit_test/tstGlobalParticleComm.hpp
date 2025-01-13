@@ -244,8 +244,8 @@ void testMigrate2d()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( global_particle_comm, migrate_3d_test ) { testMigrate3d(); }
+TEST( GlobalParticleComm, Migrate3d ) { testMigrate3d(); }
 
-TEST( global_particle_comm, migrate_2d_test ) { testMigrate2d(); }
+TEST( GlobalParticleComm, Migrate2d ) { testMigrate2d(); }
 
 } // namespace Test

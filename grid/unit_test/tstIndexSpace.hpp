@@ -587,7 +587,7 @@ void inRangeTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, index_space_test )
+TEST( IndexSpace, Test )
 {
     sizeConstructorTest();
     rangeConstructorTest();
