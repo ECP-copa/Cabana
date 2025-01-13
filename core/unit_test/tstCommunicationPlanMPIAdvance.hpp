@@ -9,6 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+#include <Cabana_Types.hpp>
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_CommunicationPlan.hpp>
 #include <Cabana_DeepCopy.hpp>
@@ -25,14 +26,14 @@
 namespace Test
 {
 //---------------------------------------------------------------------------//
-class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE>
+class CommPlanTesterMPIAdvance : public Cabana::CommunicationPlan<TEST_MEMSPACE, Cabana::CommPlans::MPIAdvance>
 {
   public:
     using memory_space = TEST_MEMSPACE;
     using size_type = typename TEST_MEMSPACE::size_type;
 
-    CommPlanTester( MPI_Comm comm )
-        : Cabana::CommunicationPlan<memory_space>( comm )
+    CommPlanTesterMPIAdvance( MPI_Comm comm )
+        : Cabana::CommunicationPlan<memory_space, Cabana::CommPlans::MPIAdvance>( comm )
     {
     }
 
@@ -45,18 +46,18 @@ class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE>
                                                    neighbor_ranks );
     }
 
-    template <class ViewType, class CommPlan>
+    template <class ViewType>
     Kokkos::View<size_type*, memory_space>
     createFromExports( const ViewType& element_export_ranks )
     {
-        return this->createFromExportsOnly( CommPlan, element_export_ranks );
+        return this->createFromExportsOnly( element_export_ranks );
     }
 
-    template <class ViewType, class CommPlan>
+    template <class ViewType>
     void createSteering( Kokkos::View<size_type*, memory_space> neighbor_ids,
                          const ViewType& element_export_ranks )
     {
-        this->createExportSteering( CommPlan, neighbor_ids, element_export_ranks );
+        this->createExportSteering( neighbor_ids, element_export_ranks );
     }
 
     template <class RankViewType, class IdViewType>
@@ -73,7 +74,7 @@ class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE>
 void test1( const bool use_topology )
 {
     // Make a communication plan.
-    CommPlanTester comm_tmp( MPI_COMM_WORLD );
+    CommPlanTesterMPIAdvance comm_tmp( MPI_COMM_WORLD );
     auto comm_plan = comm_tmp;
 
     // Get my rank.
@@ -125,7 +126,7 @@ void test1( const bool use_topology )
 void test2( const bool use_topology )
 {
     // Make a communication plan.
-    CommPlanTester comm_plan( MPI_COMM_WORLD );
+    CommPlanTesterMPIAdvance comm_plan( MPI_COMM_WORLD );
 
     // Get my rank.
     int my_rank = -1;
@@ -187,7 +188,7 @@ void test2( const bool use_topology )
 void test3( const bool use_topology )
 {
     // Make a communication plan.
-    CommPlanTester comm_plan( MPI_COMM_WORLD );
+    CommPlanTesterMPIAdvance comm_plan( MPI_COMM_WORLD );
 
     // Get my rank.
     int my_rank = -1;
@@ -244,7 +245,7 @@ void test3( const bool use_topology )
 void test4( const bool use_topology )
 {
     // Make a communication plan.
-    CommPlanTester comm_plan( MPI_COMM_WORLD );
+    CommPlanTesterMPIAdvance comm_plan( MPI_COMM_WORLD );
 
     // Get my rank.
     int my_rank = -1;
@@ -362,7 +363,7 @@ void test4( const bool use_topology )
 void test5( const bool use_topology )
 {
     // Make a communication plan.
-    CommPlanTester comm_plan( MPI_COMM_WORLD );
+    CommPlanTesterMPIAdvance comm_plan( MPI_COMM_WORLD );
 
     // Get my rank.
     int my_rank = -1;
@@ -447,7 +448,7 @@ void test5( const bool use_topology )
 void test6( const bool use_topology )
 {
     // Make a communication plan.
-    CommPlanTester comm_plan( MPI_COMM_WORLD );
+    CommPlanTesterMPIAdvance comm_plan( MPI_COMM_WORLD );
 
     // Get my rank.
     int my_rank = -1;
@@ -517,7 +518,7 @@ void test6( const bool use_topology )
 void test7( const bool use_topology )
 {
     // Make a communication plan.
-    CommPlanTester comm_plan( MPI_COMM_WORLD );
+    CommPlanTesterMPIAdvance comm_plan( MPI_COMM_WORLD );
 
     // Get my rank.
     int my_rank = -1;

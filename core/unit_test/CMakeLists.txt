@@ -47,6 +47,10 @@ if(Cabana_ENABLE_HDF5)
   list(APPEND MPI_TESTS HDF5ParticleOutput)
 endif()
 
+if(Cabana_ENABLE_STREAMCOMM)
+  list(APPEND MPI_TESTS CommunicationPlanMPIAdvance)
+endif()
+
 Cabana_add_tests_nobackend(PACKAGE Core NAMES ${NOBACKEND_TESTS})
 
 Cabana_add_tests(PACKAGE Core NAMES ${SERIAL_TESTS})
