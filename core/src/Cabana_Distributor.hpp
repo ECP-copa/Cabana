@@ -58,8 +58,8 @@ namespace Cabana
   user must allocate their own destination data structure.
 
 */
-template <class MemorySpace>
-class Distributor : public CommunicationPlan<MemorySpace>
+template <class MemorySpace, class CommPlan=CommPlans::MPI>
+class Distributor : public CommunicationPlan<MemorySpace, CommPlan>
 {
   public:
     /*!
@@ -103,7 +103,7 @@ class Distributor : public CommunicationPlan<MemorySpace>
     {
         auto neighbor_ids = this->createFromExportsAndTopology(
             element_export_ranks, neighbor_ranks );
-        this->createExportSteering( neighbor_ids, element_export_ranks );
+        this->createExportSteering( CommPlan, neighbor_ids, element_export_ranks );
     }
 
     /*!
@@ -138,7 +138,7 @@ class Distributor : public CommunicationPlan<MemorySpace>
         : CommunicationPlan<MemorySpace>( comm )
     {
         auto neighbor_ids = this->createFromExportsOnly( element_export_ranks );
-        this->createExportSteering( neighbor_ids, element_export_ranks );
+        this->createExportSteering( CommPlan, neighbor_ids, element_export_ranks );
     }
 };
 
