@@ -36,13 +36,14 @@ namespace Grid
   communicator and halo size. The arrays must also reside in the same memory
   space. These requirements are checked at construction.
 */
-template <class MemorySpace, class CommSpace>
-class StreamHalo : public Halo<MemorySpace>;
+template <class MemorySpace, class CommSpace=MPI>
+class StreamHalo : public Halo<MemorySpace, CommSpace>
 {
 
   public:
     //! Memory space.
     using memory_space = MemorySpace;
+    using comm_space = CommSpace;
 
     /*!
       \brief Constructor.
@@ -54,66 +55,9 @@ class StreamHalo : public Halo<MemorySpace>;
       provided in the same order
     */
     template <class Pattern, class... ArrayTypes>
-    StreamHalo( const Pattern& pattern, const int width, const ArrayTypes&... arrays )
-    {
-        // Spatial dimension.
-        const std::size_t num_space_dim = Pattern::num_space_dim;
-
-        // Get the local grid.
-        auto local_grid = getLocalGrid( arrays... );
-
-        // Function to get the local id of the neighbor.
-        auto neighbor_id = []( const std::array<int, num_space_dim>& ijk )
-        {
-            int id = ijk[0];
-            for ( std::size_t d = 1; d < num_space_dim; ++d )
-                id += num_space_dim * id + ijk[d];
-            return id;
-        };
-
-        // Neighbor id flip function. This lets us compute what neighbor we
-        // are relative to a given neighbor.
-        auto flip_id = [=]( const std::array<int, num_space_dim>& ijk )
-        {
-            std::array<int, num_space_dim> flip_ijk;
-            for ( std::size_t d = 0; d < num_space_dim; ++d )
-                flip_ijk[d] = -ijk[d];
-            return flip_ijk;
-        };
-
-        // Get the neighbor ranks we will exchange with in the halo and
-        // allocate buffers. If any of the exchanges are self sends mark these
-        // so we know which send buffers correspond to which receive buffers.
-        auto neighbors = pattern.getNeighbors();
-        for ( const auto& n : neighbors )
-        {
-            // Get the rank of the neighbor.
-            int rank = local_grid->neighborRank( n );
-
-            // If this is a valid rank add it as a neighbor.
-            if ( rank >= 0 )
-            {
-                // Add the rank.
-                _neighbor_ranks.push_back( rank );
-
-                // Set the tag we will use to send data to this neighbor. The
-                // receiving rank should have a matching tag.
-                _send_tags.push_back( neighbor_id( n ) );
-
-                // Set the tag we will use to receive data from this
-                // neighbor. The sending rank should have a matching tag.
-                _receive_tags.push_back( neighbor_id( flip_id( n ) ) );
-
-                // Create communication data for owned entities.
-                buildCommData( Own(), width, n, _owned_buffers, _owned_steering,
-                               arrays... );
-
-                // Create communication data for ghosted entities.
-                buildCommData( Ghost(), width, n, _ghosted_buffers,
-                               _ghosted_steering, arrays... );
-            }
-        }
-    }
+    StreamHalo( const Pattern& pattern, const int width, const ArrayTypes&... arrays ) : Halo<memory_space, comm_space>(pattern, width, arrays...)
+  {
+  }
 
     /*!
       \brief Gather data into our ghosts from their owners.
@@ -126,84 +70,12 @@ class StreamHalo : public Halo<MemorySpace>;
       as the input arrays.
     */
     template <class ExecutionSpace, class... ArrayTypes>
-    void gather( const ExecutionSpace& exec_space,
-                 const ArrayTypes&... arrays ) const
+    void enqueueGather( const ExecutionSpace& exec_space,
+                 const ArrayTypes&... arrays ) const requires std::is_same_v<comm_space, MPI>
     {
-        Kokkos::Profiling::ScopedRegion region( "Cabana::Grid::gather" );
-
-        // Get the number of neighbors. Return if we have none.
-        int num_n = _neighbor_ranks.size();
-        if ( 0 == num_n )
-            return;
-
-        // Get the MPI communicator.
-        auto comm = getComm( arrays... );
-
-        // Allocate requests.
-        std::vector<MPI_Request> requests( 2 * num_n, MPI_REQUEST_NULL );
-
-        // Pick a tag to use for communication. This object has its own
-        // communication space so any tag will do.
-        const int mpi_tag = 1234;
-
-        // Post receives.
-        for ( int n = 0; n < num_n; ++n )
-        {
-            // Only process this neighbor if there is work to do.
-            if ( 0 < _ghosted_buffers[n].size() )
-            {
-                MPI_Irecv( _ghosted_buffers[n].data(),
-                           _ghosted_buffers[n].size(), MPI_BYTE,
-                           _neighbor_ranks[n], mpi_tag + _receive_tags[n], comm,
-                           &requests[n] );
-            }
-        }
-
-        // Pack send buffers and post sends.
-        for ( int n = 0; n < num_n; ++n )
-        {
-            // Only process this neighbor if there is work to do.
-            if ( 0 < _owned_buffers[n].size() )
-            {
-                // Pack the send buffer.
-                packBuffer( exec_space, _owned_buffers[n], _owned_steering[n],
-                            arrays.view()... );
-
-                // Post a send.
-                MPI_Isend( _owned_buffers[n].data(), _owned_buffers[n].size(),
-                           MPI_BYTE, _neighbor_ranks[n],
-                           mpi_tag + _send_tags[n], comm,
-                           &requests[num_n + n] );
-            }
-        }
-
-        // Unpack receive buffers.
-        bool unpack_complete = false;
-        while ( !unpack_complete )
-        {
-            // Get the next buffer to unpack.
-            int unpack_index = MPI_UNDEFINED;
-            MPI_Waitany( num_n, requests.data(), &unpack_index,
-                         MPI_STATUS_IGNORE );
-
-            // If there are no more buffers to unpack we are done.
-            if ( MPI_UNDEFINED == unpack_index )
-            {
-                unpack_complete = true;
-            }
-
-            // Otherwise unpack the next buffer.
-            else
-            {
-                unpackBuffer( ScatterReduce::Replace(), exec_space,
-                              _ghosted_buffers[unpack_index],
-                              _ghosted_steering[unpack_index],
-                              arrays.view()... );
-            }
-        }
-
-        // Wait on send requests.
-        MPI_Waitall( num_n, requests.data() + num_n, MPI_STATUSES_IGNORE );
+        Kokkos::Profiling::ScopedRegion region( "Cabana::Grid::enqueueGather" );
+	exec_space.fence();
+	this->gather(exec_space, arrays...);
     }
 
     /*!
@@ -214,85 +86,32 @@ class StreamHalo : public Halo<MemorySpace>;
       \param arrays The arrays to scatter.
     */
     template <class ExecutionSpace, class ReduceOp, class... ArrayTypes>
-    void scatter( const ExecutionSpace& exec_space, const ReduceOp& reduce_op,
-                  const ArrayTypes&... arrays ) const
+    void enqueueScatter( const ExecutionSpace& exec_space, const ReduceOp& reduce_op,
+                  const ArrayTypes&... arrays ) const requires std::is_same_v<comm_space, MPI>
     {
-        Kokkos::Profiling::ScopedRegion region( "Cabana::Grid::scatter" );
-
-        // Get the number of neighbors. Return if we have none.
-        int num_n = _neighbor_ranks.size();
-        if ( 0 == num_n )
-            return;
-
-        // Get the MPI communicator.
-        auto comm = getComm( arrays... );
-
-        // Requests.
-        std::vector<MPI_Request> requests( 2 * num_n, MPI_REQUEST_NULL );
-
-        // Pick a tag to use for communication. This object has its own
-        // communication space so any tag will do.
-        const int mpi_tag = 2345;
-
-        // Post receives for all neighbors that are not self sends.
-        for ( int n = 0; n < num_n; ++n )
-        {
-            // Only process this neighbor if there is work to do.
-            if ( 0 < _owned_buffers[n].size() )
-            {
-                MPI_Irecv( _owned_buffers[n].data(), _owned_buffers[n].size(),
-                           MPI_BYTE, _neighbor_ranks[n],
-                           mpi_tag + _receive_tags[n], comm, &requests[n] );
-            }
-        }
-
-        // Pack send buffers and post sends.
-        for ( int n = 0; n < num_n; ++n )
-        {
-            // Only process this neighbor if there is work to do.
-            if ( 0 < _ghosted_buffers[n].size() )
-            {
-                // Pack the send buffer.
-                packBuffer( exec_space, _ghosted_buffers[n],
-                            _ghosted_steering[n], arrays.view()... );
-
-                // Post a send.
-                MPI_Isend( _ghosted_buffers[n].data(),
-                           _ghosted_buffers[n].size(), MPI_BYTE,
-                           _neighbor_ranks[n], mpi_tag + _send_tags[n], comm,
-                           &requests[num_n + n] );
-            }
-        }
-
-        // Unpack receive buffers.
-        bool unpack_complete = false;
-        while ( !unpack_complete )
-        {
-            // Get the next buffer to unpack.
-            int unpack_index = MPI_UNDEFINED;
-            MPI_Waitany( num_n, requests.data(), &unpack_index,
-                         MPI_STATUS_IGNORE );
-
-            // If there are no more buffers to unpack we are done.
-            if ( MPI_UNDEFINED == unpack_index )
-            {
-                unpack_complete = true;
-            }
-
-            // Otherwise unpack the next buffer and apply the reduce operation.
-            else
-            {
-                unpackBuffer( reduce_op, exec_space,
-                              _owned_buffers[unpack_index],
-                              _owned_steering[unpack_index], arrays.view()... );
-            }
-
-            // Wait on send requests.
-            MPI_Waitall( num_n, requests.data() + num_n, MPI_STATUSES_IGNORE );
-        }
+        Kokkos::Profiling::ScopedRegion region( "Cabana::Grid::enqueueScatter" );
+	exec_space.fence();
+	this->scatter(exec_space, reduce_op, arrays...);
     }
 };
 
+/*!
+  \brief Stream Halo creation function.
+  \param TODO add communication space argument
+  \param pattern The pattern to build the halo from.
+  \param width Must be less than or equal to the width of the array halo.
+  \param arrays The arrays over which to build the halo.
+  \return Shared pointer to a Halo.
+*/
+  template <class Pattern, class... ArrayTypes>
+auto createStreamHalo( const Pattern& pattern, const int width,
+		       const ArrayTypes&... arrays )
+{
+    using memory_space = typename ArrayPackMemorySpace<ArrayTypes...>::type;
+    return std::make_shared<StreamHalo<memory_space>>( pattern, width, arrays... );
+}
+
+  
 } // namespace Grid
 } // namespace Cabana
 

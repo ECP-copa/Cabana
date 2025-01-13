@@ -86,6 +86,9 @@ Cabana_add_dependency( PACKAGE ALL )
 # find Clang Format
 find_package( CLANG_FORMAT 14 )
 
+# enable stream triggering
+option(Cabana_ENABLE_STREAMCOMM "Support Stream-Triggered Communication." ON)
+
 # find hypre
 Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.1 )
 

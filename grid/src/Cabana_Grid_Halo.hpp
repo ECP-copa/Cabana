@@ -223,7 +223,7 @@ class HPE : public DefaultCommSpace
   communicator and halo size. The arrays must also reside in the same memory
   space. These requirements are checked at construction.
 */
-template <class MemorySpace, class CommSpace=DefaultCommSpace>
+template <class MemorySpace, class CommSpace=MPI>
 class Halo
 {
 public:
@@ -314,7 +314,7 @@ public:
     */
     template <class ExecutionSpace, class... ArrayTypes>
     void gather( const ExecutionSpace& exec_space,
-                 const ArrayTypes&... arrays ) const requires std::is_same_v<comm_space, DefaultCommSpace>
+                 const ArrayTypes&... arrays ) const requires std::is_same_v<comm_space, MPI>
     {
         Kokkos::Profiling::ScopedRegion region( "Cabana::Grid::gather" );
 
