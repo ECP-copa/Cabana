@@ -93,6 +93,10 @@ if(Cabana_ENABLE_MPI)
   target_link_libraries(Core INTERFACE MPI::MPI_CXX)
 endif()
 
+if(Cabana_ENABLE_STREAMCOMM)
+  target_link_libraries( Core INTERFACE ${MPI_Advance_LIBRARY} )
+endif()
+
 target_include_directories(Core INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>

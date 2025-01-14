@@ -93,6 +93,12 @@ set_package_properties(ArborX PROPERTIES TYPE OPTIONAL PURPOSE "Used for neighbo
 Cabana_add_dependency( PACKAGE ALL )
 set_package_properties(ALL PROPERTIES TYPE OPTIONAL PURPOSE "Used for load balancing")
 
+# find MPIAdvance
+if(Cabana_ENABLE_STREAMCOMM)
+  find_package(MPI_Advance REQUIRED)
+  include_directories(${MPI_Advance_INCLUDE_DIR})
+endif()
+
 # find Clang Format
 find_package( CLANG_FORMAT 14 )
 
