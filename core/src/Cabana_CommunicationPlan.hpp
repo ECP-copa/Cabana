@@ -415,7 +415,7 @@ inline std::vector<int> getUniqueTopology( MPI_Comm comm,
   means is that neighbor 0 is the local rank and the data for that rank that
   is being exported will appear first in the steering vector.
 */
-template <class MemorySpace>
+template <class MemorySpace, class CommPlan=CommPlans::MPI>
 class CommunicationPlan
 {
   public:
@@ -596,6 +596,7 @@ class CommunicationPlan
     createFromExportsAndTopology( ExecutionSpace exec_space,
                                   const ViewType& element_export_ranks,
                                   const std::vector<int>& neighbor_ranks )
+        requires std::is_same_v<CommPlan, CommPlans::MPI>
     {
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
 
@@ -752,9 +753,10 @@ class CommunicationPlan
       will be efficiently migrated.
     */
     template <class ExecutionSpace, class ViewType>
-    Kokkos::View<size_type*, MemorySpace>
-    createFromExportsOnly( CommPlans::MPI, ExecutionSpace exec_space,
+    Kokkos::View<size_type*, memory_space>
+    createFromExportsOnly( ExecutionSpace exec_space,
                            const ViewType& element_export_ranks )
+        requires std::is_same_v<CommPlan, CommPlans::MPI>
     {
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
 
@@ -888,43 +890,14 @@ class CommunicationPlan
         return counts_and_ids.second;
     }
 
-    /*!
-      \brief Export rank creator, MPIAdvance version. Use this when you don't know who you will
-      receiving from - only who you are sending to. This is less efficient
-      than if we already knew who our neighbors were because we have to
-      determine the topology of the point-to-point communication first.
-
-      \param exec_space Kokkos execution space.
-
-      \param element_export_ranks The destination rank in the target
-      decomposition of each locally owned element in the source
-      decomposition. Each element will have one unique destination to which it
-      will be exported. This export rank may any one of the listed neighbor
-      ranks which can include the calling rank. An export rank of -1 will
-      signal that this element is *not* to be exported and will be ignored in
-      the data migration. The input is expected to be a Kokkos view or Cabana
-      slice in the same memory space as the communication plan.
-
-      \return The location of each export element in the send buffer for its
-      given neighbor.
-
-      \note Calling this function completely updates the state of this object
-      and invalidates the previous state.
-
-      \note For elements that you do not wish to export, use an export rank of
-      -1 to signal that this element is *not* to be exported and will be
-      ignored in the data migration. In other words, this element will be
-      *completely* removed in the new decomposition. If the data is staying on
-      this rank, just use this rank as the export destination and the data
-      will be efficiently migrated.
-    */
     template <class ExecutionSpace, class ViewType>
-    Kokkos::View<size_type*, MemorySpace>
-    createFromExportsOnly( CommPlans::MPIAdvance, ExecutionSpace exec_space,
+    Kokkos::View<size_type*, memory_space>
+    createFromExportsOnly( ExecutionSpace exec_space,
                            const ViewType& element_export_ranks )
+        requires std::is_same_v<CommPlan, CommPlans::MPIAdvance>
     {
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
-
+        printf("MPIAdvance createFromExportsOnly\n");
         // Store the number of export elements.
         _num_export_element = element_export_ranks.size();
 
@@ -1083,12 +1056,12 @@ class CommunicationPlan
       this rank, just use this rank as the export destination and the data
       will be efficiently migrated.
     */
-    template <class ViewType, class CommPlan>
+    template <class ViewType>
     Kokkos::View<size_type*, memory_space>
     createFromExportsOnly( const ViewType& element_export_ranks )
     {
         // Use the default execution space.
-        return createFromExportsOnly( CommPlan, execution_space{}, element_export_ranks );
+        return createFromExportsOnly( execution_space{}, element_export_ranks );
     }
 
     /*!
