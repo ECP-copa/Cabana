@@ -25,7 +25,7 @@
 namespace Test
 {
 //---------------------------------------------------------------------------//
-class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE>
+class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE, Cabana::CommPlans::MPI>
 {
   public:
     using memory_space = TEST_MEMSPACE;
@@ -45,18 +45,18 @@ class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE>
                                                    neighbor_ranks );
     }
 
-    template <class ViewType, class CommPlan>
+    template <class ViewType>
     Kokkos::View<size_type*, memory_space>
     createFromExports( const ViewType& element_export_ranks )
     {
-        return this->createFromExportsOnly( CommPlan, element_export_ranks );
+        return this->createFromExportsOnly( element_export_ranks );
     }
 
-    template <class ViewType, class CommPlan>
+    template <class ViewType>
     void createSteering( Kokkos::View<size_type*, memory_space> neighbor_ids,
                          const ViewType& element_export_ranks )
     {
-        this->createExportSteering( CommPlan, neighbor_ids, element_export_ranks );
+        this->createExportSteering( neighbor_ids, element_export_ranks );
     }
 
     template <class RankViewType, class IdViewType>
