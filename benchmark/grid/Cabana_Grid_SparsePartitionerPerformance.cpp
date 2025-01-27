@@ -96,8 +96,8 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
     MPI_Comm_size( comm, &comm_size );
 
     // Domain size setup
-    std::array<float, 3> global_low_corner = { 0.0, 0.0, 0.0 };
-    std::array<float, 3> global_high_corner = { 1.0, 1.0, 1.0 };
+    Kokkos::Array<float, 3> global_low_corner = { 0.0, 0.0, 0.0 };
+    Kokkos::Array<float, 3> global_high_corner = { 1.0, 1.0, 1.0 };
     constexpr int cell_num_per_tile_dim = 4;
     constexpr int cell_bits_per_tile_dim = 2;
 

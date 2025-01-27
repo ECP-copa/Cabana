@@ -18,10 +18,42 @@
 
 #include <Cabana_Core_Config.hpp>
 
-#include <type_traits>
+#include <Kokkos_Core.hpp>
 
+#include <array>
+#include <type_traits>
 namespace Cabana
 {
+//---------------------------------------------------------------------------//
+// Array copies.
+//---------------------------------------------------------------------------//
+//! Copy std::array into Kokkos::Array for potential device use.
+template <class Scalar, std::size_t Dim>
+auto copyArray( const std::array<Scalar, Dim> input )
+{
+    Kokkos::Array<Scalar, Dim> output;
+    for ( std::size_t d = 0; d < Dim; ++d )
+        output[d] = input[d];
+
+    return output;
+}
+//! Return original Kokkos::Array.
+template <class Scalar, std::size_t Dim>
+auto copyArray( const Kokkos::Array<Scalar, Dim> input )
+{
+    return input;
+}
+//! Copy c-array into Kokkos::Array for potential device use.
+template <class Scalar, std::size_t Dim>
+auto copyArray( const Scalar input[Dim] )
+{
+    Kokkos::Array<Scalar, Dim> output;
+    for ( std::size_t d = 0; d < Dim; ++d )
+        output[d] = input[d];
+
+    return output;
+}
+
 namespace Impl
 {
 //! \cond Impl
