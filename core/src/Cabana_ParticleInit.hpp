@@ -21,28 +21,13 @@
 
 #include <Cabana_ParticleList.hpp>
 #include <Cabana_Slice.hpp>
+#include <Cabana_Utils.hpp>
 
 #include <random>
 #include <type_traits>
 
 namespace Cabana
 {
-
-namespace Impl
-{
-//! Copy array (std, c-array) into Kokkos::Array for potential device use.
-template <class ArrayType>
-auto copyArray( ArrayType corner )
-{
-    using value_type = std::remove_reference_t<decltype( corner[0] )>;
-    Kokkos::Array<value_type, 3> kokkos_corner;
-    for ( std::size_t d = 0; d < 3; ++d )
-        kokkos_corner[d] = corner[d];
-
-    return kokkos_corner;
-}
-
-} // namespace Impl
 
 //---------------------------------------------------------------------------//
 // Initialization type tags.
