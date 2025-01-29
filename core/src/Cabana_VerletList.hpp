@@ -782,18 +782,14 @@ class VerletList
       range. All particles are candidates for being a neighbor, regardless of
       whether or not they are in the range.
     */
-    template <class PositionType,
-              template <class, std::size_t, class...> class ArrayType,
-              class... Args>
+    template <class PositionType, template <class, std::size_t> class ArrayType>
     VerletList(
         PositionType x,
         const typename PositionType::value_type neighborhood_radius,
         const typename PositionType::value_type cell_size_ratio,
-        const ArrayType<typename PositionType::value_type, num_space_dim,
-                        Args...>
+        const ArrayType<typename PositionType::value_type, num_space_dim>
             grid_min,
-        const ArrayType<typename PositionType::value_type, num_space_dim,
-                        Args...>
+        const ArrayType<typename PositionType::value_type, num_space_dim>
             grid_max,
         const std::size_t max_neigh = 0,
         typename std::enable_if<( is_slice<PositionType>::value ||
@@ -945,9 +941,7 @@ class VerletList
                kokkos_min, kokkos_max, max_neigh );
     }
 
-    template <class PositionType,
-              template <class, std::size_t, class...> class ArrayType,
-              class... Args>
+    template <class PositionType, template <class, std::size_t> class ArrayType>
     void
     build( PositionType x, const std::size_t begin, const std::size_t end,
            const typename PositionType::value_type neighborhood_radius,
@@ -967,8 +961,7 @@ class VerletList
     }
 
     template <class PositionType, class ExecutionSpace,
-              template <class, std::size_t, class...> class ArrayType,
-              class... Args>
+              template <class, std::size_t> class ArrayType>
     void
     build( ExecutionSpace, PositionType x, const std::size_t begin,
            const std::size_t end,

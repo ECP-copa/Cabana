@@ -69,13 +69,13 @@ struct InitRandom
   \return Number of particles created.
 */
 template <class ExecutionSpace, class InitFunctor, class ParticleListType,
-          template <class, std::size_t, class...> class ArrayType, class Scalar,
-          std::size_t NumSpaceDim, class... Args>
+          template <class, std::size_t> class ArrayType, class Scalar,
+          std::size_t NumSpaceDim>
 int createParticles(
     InitRandom, ExecutionSpace exec_space, const InitFunctor& create_functor,
     ParticleListType& particle_list, const std::size_t num_particles,
-    const ArrayType<Scalar, NumSpaceDim, Args...> box_min,
-    const ArrayType<Scalar, NumSpaceDim, Args...> box_max,
+    const ArrayType<Scalar, NumSpaceDim> box_min,
+    const ArrayType<Scalar, NumSpaceDim> box_max,
     const std::size_t previous_num_particles = 0,
     const bool shrink_to_fit = true, const uint64_t seed = 342343901,
     typename std::enable_if<is_particle_list<ParticleListType>::value,
@@ -161,13 +161,13 @@ int createParticles(
   \return Number of particles created.
 */
 template <class InitFunctor, class ParticleListType,
-          template <class, std::size_t, class...> class ArrayType, class Scalar,
-          std::size_t NumSpaceDim, class... Args>
+          template <class, std::size_t> class ArrayType, class Scalar,
+          std::size_t NumSpaceDim>
 int createParticles( InitRandom tag, const InitFunctor& create_functor,
                      ParticleListType& particle_list,
                      const std::size_t num_particles,
-                     const ArrayType<Scalar, NumSpaceDim, Args...> box_min,
-                     const ArrayType<Scalar, NumSpaceDim, Args...> box_max,
+                     const ArrayType<Scalar, NumSpaceDim> box_min,
+                     const ArrayType<Scalar, NumSpaceDim> box_max,
                      const std::size_t previous_num_particles = 0,
                      const bool shrink_to_fit = true,
                      const uint64_t seed = 342343901 )
@@ -191,13 +191,13 @@ int createParticles( InitRandom tag, const InitFunctor& create_functor,
   \param seed Optional random seed for generating particles.
 */
 template <class ExecutionSpace, class PositionType,
-          template <class, std::size_t, class...> class ArrayType, class Scalar,
-          std::size_t NumSpaceDim, class... Args>
+          template <class, std::size_t> class ArrayType, class Scalar,
+          std::size_t NumSpaceDim>
 void createParticles(
     InitRandom, ExecutionSpace exec_space, PositionType& positions,
     const std::size_t num_particles,
-    const ArrayType<Scalar, NumSpaceDim, Args...> box_min,
-    const ArrayType<Scalar, NumSpaceDim, Args...> box_max,
+    const ArrayType<Scalar, NumSpaceDim> box_min,
+    const ArrayType<Scalar, NumSpaceDim> box_max,
     const std::size_t previous_num_particles = 0,
     const uint64_t seed = 342343901,
     typename std::enable_if<( is_slice<PositionType>::value ||
@@ -241,13 +241,12 @@ void createParticles(
   already in the container (and should be unchanged).
   \param seed Optional random seed for generating particles.
 */
-template <class PositionType,
-          template <class, std::size_t, class...> class ArrayType, class Scalar,
-          std::size_t NumSpaceDim, class... Args>
+template <class PositionType, template <class, std::size_t> class ArrayType,
+          class Scalar, std::size_t NumSpaceDim>
 void createParticles(
     InitRandom tag, PositionType& positions, const std::size_t num_particles,
-    const ArrayType<Scalar, NumSpaceDim, Args...> box_min,
-    const ArrayType<Scalar, NumSpaceDim, Args...> box_max,
+    const ArrayType<Scalar, NumSpaceDim> box_min,
+    const ArrayType<Scalar, NumSpaceDim> box_max,
     const std::size_t previous_num_particles = 0,
     const uint64_t seed = 342343901,
     typename std::enable_if<( is_slice<PositionType>::value ||
@@ -340,16 +339,14 @@ void createParticles( InitRandom tag, PositionType& positions,
   \note This approximates many physical scenarios, e.g. atomic simulations.
 */
 template <class ExecutionSpace, class InitFunctor, class ParticleListType,
-          class PositionTag,
-          template <class, std::size_t, class...> class ArrayType, class Scalar,
-          std::size_t NumSpaceDim, class... Args>
+          class PositionTag, template <class, std::size_t> class ArrayType,
+          class Scalar, std::size_t NumSpaceDim>
 int createParticles(
     InitRandom tag, ExecutionSpace exec_space,
     const InitFunctor& create_functor, ParticleListType& particle_list,
     PositionTag position_tag, const std::size_t num_particles,
-    const double min_dist,
-    const ArrayType<Scalar, NumSpaceDim, Args...> box_min,
-    const ArrayType<Scalar, NumSpaceDim, Args...> box_max,
+    const double min_dist, const ArrayType<Scalar, NumSpaceDim> box_min,
+    const ArrayType<Scalar, NumSpaceDim> box_max,
     const std::size_t previous_num_particles = 0,
     const bool shrink_to_fit = true, const uint64_t seed = 342343901,
     typename std::enable_if<is_particle_list<ParticleListType>::value,
@@ -420,13 +417,13 @@ int createParticles(
   \note This approximates many physical scenarios, e.g. atomic simulations.
 */
 template <class InitFunctor, class ParticleListType, class PositionTag,
-          template <class, std::size_t, class...> class ArrayType, class Scalar,
-          std::size_t NumSpaceDim, class... Args>
+          template <class, std::size_t> class ArrayType, class Scalar,
+          std::size_t NumSpaceDim>
 int createParticles( InitRandom tag, const InitFunctor& create_functor,
                      ParticleListType& particle_list, PositionTag position_tag,
                      const std::size_t num_particles, const double min_dist,
-                     const ArrayType<Scalar, NumSpaceDim, Args...> box_min,
-                     const ArrayType<Scalar, NumSpaceDim, Args...> box_max,
+                     const ArrayType<Scalar, NumSpaceDim> box_min,
+                     const ArrayType<Scalar, NumSpaceDim> box_max,
                      const std::size_t previous_num_particles = 0,
                      const bool shrink_to_fit = true,
                      const uint64_t seed = 342343901 )

@@ -170,14 +170,12 @@ class LinkedCellList
       \param grid_min Grid minimum value in each direction.
       \param grid_max Grid maximum value in each direction.
     */
-    template <class PositionType,
-              template <class, std::size_t, class...> class ArrayType,
-              class... Args>
+    template <class PositionType, template <class, std::size_t> class ArrayType>
     LinkedCellList(
         PositionType positions,
-        const ArrayType<Scalar, num_space_dim, Args...> grid_delta,
-        const ArrayType<Scalar, num_space_dim, Args...> grid_min,
-        const ArrayType<Scalar, num_space_dim, Args...> grid_max,
+        const ArrayType<Scalar, num_space_dim> grid_delta,
+        const ArrayType<Scalar, num_space_dim> grid_min,
+        const ArrayType<Scalar, num_space_dim> grid_max,
         typename std::enable_if<( is_slice<PositionType>::value ||
                                   Kokkos::is_view<PositionType>::value ),
                                 int>::type* = 0 )
@@ -208,14 +206,12 @@ class LinkedCellList
       \param grid_min Grid minimum value in each direction.
       \param grid_max Grid maximum value in each direction.
     */
-    template <class PositionType,
-              template <class, std::size_t, class...> class ArrayType,
-              class... Args>
+    template <class PositionType, template <class, std::size_t> class ArrayType>
     LinkedCellList(
         PositionType positions, const std::size_t begin, const std::size_t end,
-        const ArrayType<Scalar, num_space_dim, Args...> grid_delta,
-        const ArrayType<Scalar, num_space_dim, Args...> grid_min,
-        const ArrayType<Scalar, num_space_dim, Args...> grid_max,
+        const ArrayType<Scalar, num_space_dim> grid_delta,
+        const ArrayType<Scalar, num_space_dim> grid_min,
+        const ArrayType<Scalar, num_space_dim> grid_max,
         typename std::enable_if<( is_slice<PositionType>::value ||
                                   Kokkos::is_view<PositionType>::value ),
                                 int>::type* = 0 )
@@ -241,14 +237,12 @@ class LinkedCellList
       \param neighborhood_radius Radius for neighbors.
       \param cell_size_ratio Ratio of the cell size to the neighborhood size.
     */
-    template <class PositionType,
-              template <class, std::size_t, class...> class ArrayType,
-              class... Args>
+    template <class PositionType, template <class, std::size_t> class ArrayType>
     LinkedCellList(
         PositionType positions,
-        const ArrayType<Scalar, num_space_dim, Args...> grid_delta,
-        const ArrayType<Scalar, num_space_dim, Args...> grid_min,
-        const ArrayType<Scalar, num_space_dim, Args...> grid_max,
+        const ArrayType<Scalar, num_space_dim> grid_delta,
+        const ArrayType<Scalar, num_space_dim> grid_min,
+        const ArrayType<Scalar, num_space_dim> grid_max,
         const Scalar neighborhood_radius, const Scalar cell_size_ratio = 1,
         typename std::enable_if<( is_slice<PositionType>::value ||
                                   Kokkos::is_view<PositionType>::value ),
@@ -283,14 +277,12 @@ class LinkedCellList
       \param neighborhood_radius Radius for neighbors.
       \param cell_size_ratio Ratio of the cell size to the neighborhood size.
     */
-    template <class PositionType,
-              template <class, std::size_t, class...> class ArrayType,
-              class... Args>
+    template <class PositionType, template <class, std::size_t> class ArrayType>
     LinkedCellList(
         PositionType positions, const std::size_t begin, const std::size_t end,
-        const ArrayType<Scalar, num_space_dim, Args...> grid_delta,
-        const ArrayType<Scalar, num_space_dim, Args...> grid_min,
-        const ArrayType<Scalar, num_space_dim, Args...> grid_max,
+        const ArrayType<Scalar, num_space_dim> grid_delta,
+        const ArrayType<Scalar, num_space_dim> grid_min,
+        const ArrayType<Scalar, num_space_dim> grid_max,
         const Scalar neighborhood_radius, const Scalar cell_size_ratio = 1,
         typename std::enable_if<( is_slice<PositionType>::value ||
                                   Kokkos::is_view<PositionType>::value ),
@@ -895,14 +887,12 @@ class LinkedCellList
   \brief Creation function for linked cell list.
   \return LinkedCellList.
 */
-template <class PositionType,
-          template <class, std::size_t, class...> class ArrayType,
-          class... Args, class Scalar, std::size_t NumSpaceDim>
-auto createLinkedCellList(
-    PositionType positions,
-    const ArrayType<Scalar, NumSpaceDim, Args...> grid_delta,
-    const ArrayType<Scalar, NumSpaceDim, Args...> grid_min,
-    const ArrayType<Scalar, NumSpaceDim, Args...> grid_max )
+template <class PositionType, template <class, std::size_t> class ArrayType,
+          class Scalar, std::size_t NumSpaceDim>
+auto createLinkedCellList( PositionType positions,
+                           const ArrayType<Scalar, NumSpaceDim> grid_delta,
+                           const ArrayType<Scalar, NumSpaceDim> grid_min,
+                           const ArrayType<Scalar, NumSpaceDim> grid_max )
 {
     using memory_space = typename PositionType::memory_space;
     using scalar_type = typename PositionType::value_type;
@@ -914,14 +904,13 @@ auto createLinkedCellList(
   \brief Creation function for linked cell list with partial range.
   \return LinkedCellList.
 */
-template <class PositionType,
-          template <class, std::size_t, class...> class ArrayType,
-          class... Args, class Scalar, std::size_t NumSpaceDim>
-auto createLinkedCellList(
-    PositionType positions, const std::size_t begin, const std::size_t end,
-    const ArrayType<Scalar, NumSpaceDim, Args...> grid_delta,
-    const ArrayType<Scalar, NumSpaceDim, Args...> grid_min,
-    const ArrayType<Scalar, NumSpaceDim, Args...> grid_max )
+template <class PositionType, template <class, std::size_t> class ArrayType,
+          class Scalar, std::size_t NumSpaceDim>
+auto createLinkedCellList( PositionType positions, const std::size_t begin,
+                           const std::size_t end,
+                           const ArrayType<Scalar, NumSpaceDim> grid_delta,
+                           const ArrayType<Scalar, NumSpaceDim> grid_min,
+                           const ArrayType<Scalar, NumSpaceDim> grid_max )
 {
     using memory_space = typename PositionType::memory_space;
     using scalar_type = typename PositionType::value_type;
@@ -934,14 +923,12 @@ auto createLinkedCellList(
   cell ratio.
   \return LinkedCellList.
 */
-template <class PositionType,
-          template <class, std::size_t, class...> class ArrayType,
-          class... Args, class Scalar, std::size_t NumSpaceDim>
+template <class PositionType, template <class, std::size_t> class ArrayType,
+          class Scalar, std::size_t NumSpaceDim>
 auto createLinkedCellList(
-    PositionType positions,
-    const ArrayType<Scalar, NumSpaceDim, Args...> grid_delta,
-    const ArrayType<Scalar, NumSpaceDim, Args...> grid_min,
-    const ArrayType<Scalar, NumSpaceDim, Args...> grid_max,
+    PositionType positions, const ArrayType<Scalar, NumSpaceDim> grid_delta,
+    const ArrayType<Scalar, NumSpaceDim> grid_min,
+    const ArrayType<Scalar, NumSpaceDim> grid_max,
     const typename PositionType::value_type neighborhood_radius,
     const typename PositionType::value_type cell_size_ratio = 1.0 )
 {
@@ -957,14 +944,13 @@ auto createLinkedCellList(
   cutoff radius and/or cell ratio.
   \return LinkedCellList.
 */
-template <class PositionType,
-          template <class, std::size_t, class...> class ArrayType,
-          class... Args, class Scalar, std::size_t NumSpaceDim>
+template <class PositionType, template <class, std::size_t> class ArrayType,
+          class Scalar, std::size_t NumSpaceDim>
 auto createLinkedCellList(
     PositionType positions, const std::size_t begin, const std::size_t end,
-    const ArrayType<Scalar, NumSpaceDim, Args...> grid_delta,
-    const ArrayType<Scalar, NumSpaceDim, Args...> grid_min,
-    const ArrayType<Scalar, NumSpaceDim, Args...> grid_max,
+    const ArrayType<Scalar, NumSpaceDim> grid_delta,
+    const ArrayType<Scalar, NumSpaceDim> grid_min,
+    const ArrayType<Scalar, NumSpaceDim> grid_max,
     const typename PositionType::value_type neighborhood_radius,
     const typename PositionType::value_type cell_size_ratio = 1.0 )
 {
