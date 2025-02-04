@@ -1039,7 +1039,7 @@ struct NeighborListTestData
 struct NeighborListTestDataOrdered
 {
     std::size_t num_particle;
-    std::size_t num_ignore = 100;
+    std::size_t num_ignore;
     double test_radius;
     double box_min = 0.0;
     double box_max = 5.0;
@@ -1048,7 +1048,7 @@ struct NeighborListTestDataOrdered
     double grid_min[3] = { box_min, box_min, box_min };
     double grid_max[3] = { box_max, box_max, box_max };
 
-    using DataTypes = Cabana::MemberTypes<double[3]>;
+    using DataTypes = Cabana::MemberTypes<double[3], double>;
     using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
     AoSoA_t aosoa;
 
@@ -1056,8 +1056,10 @@ struct NeighborListTestDataOrdered
         N2_list_copy;
 
     NeighborListTestDataOrdered( const std::size_t particle_x,
+                                 const std::size_t ignore = 100,
                                  const std::size_t m = 3 )
     {
+        num_ignore = ignore;
         num_particle = particle_x * particle_x * particle_x;
         double dx = ( grid_max[0] - grid_min[0] ) / particle_x;
         // Use a fixed ratio of cutoff / spacing (and include a floating point
