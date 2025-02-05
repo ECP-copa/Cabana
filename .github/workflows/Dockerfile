@@ -1,4 +1,4 @@
-FROM ghcr.io/ecp-copa/ci-containers/fedora:rawhide 
+FROM ghcr.io/ecp-copa/ci-containers/fedora:latest
 
 WORKDIR /home/kokkos/src/
 COPY kokkos/ /home/kokkos/src/kokkos
