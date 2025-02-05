@@ -27,7 +27,7 @@ jobs:
         cxx: ['g++', 'clang++']
         backend: ['OPENMP', 'SERIAL']
         cmake_build_type: ['Debug', 'Release']
-        kokkos_ver: ['4.1.00']
+        kokkos_ver: ['4.4.01']
         bounds_check: ['OFF']
         arborx: ['OFF']
         heffte: ['OFF' ]
@@ -42,7 +42,7 @@ jobs:
             cxx: 'g++'
             backend: 'THREADS'
             cmake_build_type: 'Debug'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'OFF'
             heffte: 'OFF'
             hypre: 'OFF'
@@ -52,7 +52,7 @@ jobs:
             cxx: 'icpx'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'OFF'
             heffte: 'OFF'
             hypre: 'OFF'
@@ -61,7 +61,7 @@ jobs:
             cxx: 'icpx'
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'OFF'
             heffte: 'OFF'
             hypre: 'OFF'
@@ -70,7 +70,7 @@ jobs:
             cxx: 'icpx'
             backend: 'SERIAL'
             cmake_build_type: 'Release'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'OFF'
             heffte: 'OFF'
             hypre: 'OFF'
@@ -79,7 +79,7 @@ jobs:
             cxx: 'icpx'
             backend: 'SERIAL'
             cmake_build_type: 'Debug'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'OFF'
             heffte: 'OFF'
             hypre: 'OFF'
@@ -88,7 +88,7 @@ jobs:
             cxx: 'icpx'
             backend: 'SERIAL'
             cmake_build_type: 'Debug'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'OFF'
             heffte: 'MKL'
             hypre: 'OFF'
@@ -97,7 +97,7 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'OFF'
             heffte: 'OFF'
             hypre: 'OFF'
@@ -107,7 +107,7 @@ jobs:
             cxx: 'clang++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'OFF'
             heffte: 'OFF'
             hypre: 'OFF'
@@ -116,7 +116,7 @@ jobs:
             cxx: 'g++'
             cmake_build_type: 'Release'
             backend: 'OPENMP'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'OFF'
             heffte: 'OFF'
             hypre: 'OFF'
@@ -125,7 +125,7 @@ jobs:
             cxx: 'clang++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'OFF'
             heffte: 'OFF'
             hypre: 'OFF'
@@ -135,7 +135,7 @@ jobs:
             cxx: 'g++'
             cmake_build_type: 'Release'
             backend: 'OPENMP'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'OFF'
             heffte: 'OFF'
             hypre: 'OFF'
@@ -144,7 +144,7 @@ jobs:
             cxx: 'clang++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'OFF'
             heffte: 'OFF'
             hypre: 'OFF'
@@ -153,7 +153,7 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'ArborX'
             heffte: 'OFF'
             hypre: 'OFF'
@@ -162,7 +162,7 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'ArborX'
             heffte: 'OFF'
             hypre: 'OFF'
@@ -171,7 +171,7 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'OFF'
             heffte: 'FFTW'
             hypre: 'OFF'
@@ -180,7 +180,7 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'OFF'
             heffte: 'OFF'
             hypre: 'OFF'
@@ -190,7 +190,7 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'OFF'
             heffte: 'OFF'
             hypre: 'HYPRE'
@@ -199,7 +199,7 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'OFF'
             heffte: 'OFF'
             hypre: 'OFF'
@@ -209,7 +209,7 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'OFF'
             heffte: 'OFF'
             hypre: 'OFF'
@@ -219,7 +219,7 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'ArborX'
             heffte: 'FFTW'
             hypre: 'HYPRE'
@@ -232,7 +232,7 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.4.01'
             arborx: 'ArborX'
             heffte: 'FFTW'
             hypre: 'HYPRE'
@@ -482,7 +482,7 @@ jobs:
       matrix:
         cxx: ['hipcc']
         cmake_build_type: ['Debug']
-        kokkos_ver: ['4.2.00']
+        kokkos_ver: ['4.4.01']
     runs-on: ubuntu-20.04
     container: ghcr.io/ecp-copa/ci-containers/rocm:latest
     steps:
@@ -566,7 +566,7 @@ jobs:
       matrix:
         cxx: ['nvcc']
         cmake_build_type: ['Release']
-        kokkos_ver: ['4.1.00']
+        kokkos_ver: ['4.4.01']
     runs-on: ubuntu-20.04
     container: ghcr.io/ecp-copa/ci-containers/cuda:12.2.0
     steps:

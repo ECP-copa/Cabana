@@ -12,6 +12,7 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_DeepCopy.hpp>
 #include <Cabana_ParticleInit.hpp>
+#include <Cabana_Slice.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -30,10 +31,9 @@ struct Bar : Cabana::Field::Matrix<double, 3, 3>
     static std::string label() { return "bar"; }
 };
 
-template <class PositionType>
-void checkRandomParticles( const int num_particle,
-                           const Kokkos::Array<double, 3> box_min,
-                           const Kokkos::Array<double, 3> box_max,
+template <std::size_t Dim, class PositionType, class ArrayType>
+void checkRandomParticles( const int num_particle, const ArrayType box_min,
+                           const ArrayType box_max,
                            const PositionType host_positions )
 {
     // Check that we got as many particles as we should have.
@@ -41,7 +41,7 @@ void checkRandomParticles( const int num_particle,
 
     // Check that all of the particles are in the domain.
     for ( int p = 0; p < num_particle; ++p )
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < Dim; ++d )
         {
             EXPECT_GE( host_positions( p, d ), box_min[d] );
             EXPECT_LE( host_positions( p, d ), box_max[d] );
@@ -68,16 +68,15 @@ void checkRandomDistances( const int min_distance,
         }
 }
 
-void testRandomCreationSlice( const int multiplier = 1 )
+template <std::size_t Dim, class ArrayType>
+void testRandomCreationSlice( ArrayType box_min, ArrayType box_max,
+                              const int multiplier = 1 )
 {
     int num_particle = 200;
     int prev_particle = 0;
-    Cabana::AoSoA<Cabana::MemberTypes<double[3]>, TEST_MEMSPACE> aosoa(
+    Cabana::AoSoA<Cabana::MemberTypes<double[Dim]>, TEST_MEMSPACE> aosoa(
         "random", num_particle );
     auto positions = Cabana::slice<0>( aosoa );
-
-    Kokkos::Array<double, 3> box_min = { -9.5, -4.7, 0.5 };
-    Kokkos::Array<double, 3> box_max = { 7.6, -1.5, 5.5 };
 
     for ( int m = 0; m < multiplier; ++m )
     {
@@ -92,8 +91,8 @@ void testRandomCreationSlice( const int multiplier = 1 )
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
     auto host_positions = Cabana::slice<0>( host_aosoa );
 
-    checkRandomParticles( multiplier * num_particle, box_min, box_max,
-                          host_positions );
+    checkRandomParticles<Dim>( multiplier * num_particle, box_min, box_max,
+                               host_positions );
 }
 
 void testRandomCreationParticleListMinDistance( const int multiplier = 1 )
@@ -139,7 +138,8 @@ void testRandomCreationParticleListMinDistance( const int multiplier = 1 )
     // minimum distance criterion).
     EXPECT_LE( created_particles, multiplier * num_particle );
     EXPECT_GE( host_positions.size(), 0 );
-    checkRandomParticles( created_particles, box_min, box_max, host_positions );
+    checkRandomParticles<3>( created_particles, box_min, box_max,
+                             host_positions );
     checkRandomDistances( min_dist, host_positions );
 }
 
@@ -179,17 +179,47 @@ void testRandomCreationParticleList( const int multiplier = 1 )
     auto host_positions =
         host_particle_list.slice( Cabana::Field::Position<3>() );
 
-    checkRandomParticles( multiplier * num_particle, box_min, box_max,
-                          host_positions );
+    checkRandomParticles<3>( multiplier * num_particle, box_min, box_max,
+                             host_positions );
 }
 
-TEST( ParticleInit, RandomSlice ) { testRandomCreationSlice(); }
+TEST( ParticleInit, RandomSlice )
+{
+    // Test with multiple array types.
+    {
+        Kokkos::Array<double, 3> box_min = { -9.5, -4.7, 0.5 };
+        Kokkos::Array<double, 3> box_max = { 7.6, -1.5, 5.5 };
+        testRandomCreationSlice<3>( box_min, box_max );
+    }
+    {
+        std::array<double, 3> box_min = { -9.5, -4.7, 0.5 };
+        std::array<double, 3> box_max = { 7.6, -1.5, 5.5 };
+        testRandomCreationSlice<3>( box_min, box_max );
+    }
+    {
+        double box_min[3] = { -9.5, -4.7, 0.5 };
+        double box_max[3] = { 7.6, -1.5, 5.5 };
+        testRandomCreationSlice<3>( box_min, box_max );
+    }
+}
 TEST( ParticleInit, RandomParticleList )
 {
     testRandomCreationParticleListMinDistance();
     testRandomCreationParticleList();
 }
-TEST( ParticleInit, MultipleRandomSlice ) { testRandomCreationSlice( 3 ); }
+TEST( ParticleInit, MultipleRandomSlice )
+{
+    {
+        Kokkos::Array<double, 3> box_min = { -9.5, -4.7, 0.5 };
+        Kokkos::Array<double, 3> box_max = { 7.6, -1.5, 5.5 };
+        testRandomCreationSlice<3>( box_min, box_max, 3 );
+    }
+    {
+        Kokkos::Array<double, 2> box_min = { -9.5, -4.7 };
+        Kokkos::Array<double, 2> box_max = { 7.6, -1.5 };
+        testRandomCreationSlice<2>( box_min, box_max, 3 );
+    }
+}
 TEST( ParticleInit, MultipleRandomParticleList )
 {
     testRandomCreationParticleListMinDistance( 3 );

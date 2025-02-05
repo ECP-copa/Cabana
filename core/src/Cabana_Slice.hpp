@@ -505,6 +505,8 @@ class Slice
     static_assert( Impl::IsVectorLengthValid<VectorLength>::value,
                    "Vector length must be valid" );
 
+    //! Slice data type.
+    using data_type = DataType;
     //! Slice type.
     using slice_type =
         Slice<DataType, MemorySpace, MemoryAccessType, VectorLength, Stride>;
