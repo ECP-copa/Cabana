@@ -153,7 +153,7 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.2.00'
             arborx: 'v1.7'
             heffte: 'OFF'
             hypre: 'OFF'
@@ -162,8 +162,8 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
-            kokkos_ver: '4.1.00'
-            arborx: 'v2.0'
+            kokkos_ver: '4.3.00'
+            arborx: 'fee3d77'
             heffte: 'OFF'
             hypre: 'OFF'
             coverage: 'OFF'
@@ -219,7 +219,7 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.2.00'
             arborx: 'v1.7'
             heffte: 'FFTW'
             hypre: 'HYPRE'
@@ -232,7 +232,7 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
-            kokkos_ver: '4.1.00'
+            kokkos_ver: '4.2.00'
             arborx: 'v1.7'
             heffte: 'FFTW'
             hypre: 'HYPRE'
@@ -244,8 +244,8 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
-            kokkos_ver: '4.1.00'
-            arborx: 'v2.0'
+            kokkos_ver: '4.3.00'
+            arborx: 'fee3d77'
             heffte: 'FFTW'
             hypre: 'HYPRE'
             liball: 'libALL'
@@ -578,7 +578,7 @@ jobs:
       matrix:
         cxx: ['nvcc']
         cmake_build_type: ['Release']
-        kokkos_ver: ['4.1.00']
+        kokkos_ver: ['4.2.00']
     runs-on: ubuntu-20.04
     container: ghcr.io/ecp-copa/ci-containers/cuda:12.2.0
     steps:
