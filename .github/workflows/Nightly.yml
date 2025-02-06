@@ -11,6 +11,9 @@ on:
 
 jobs:
   CI:
+    defaults:
+      run:
+        shell: bash
     strategy:
       matrix:
         backend: ["OPENMP", "SERIAL"]
@@ -44,11 +47,25 @@ jobs:
           cmake -B build -DCMAKE_PREFIX_PATH=${HOME}/kokkos -DCMAKE_INSTALL_PREFIX=$HOME/arborx
           cmake --build build --parallel 2
           cmake --install build
+      - name: Checkout hypre
+        uses: actions/checkout@v3
+        with:
+          repository: hypre-space/hypre
+          ref: master
+          path: hypre
+      - name: Build hypre
+        working-directory: hypre/src
+        run: |
+          [[ ${{ matrix.backend }} == 'OPENMP' ]] && hypre_cmake_opts+=( -DHYPRE_WITH_OPENMP=ON )
+          cmake -B build \
+            -DHYPRE_INSTALL_PREFIX=$HOME/hypre -DHYPRE_WITH_MPI=ON ${hypre_cmake_opts[@]}
+          cmake --build build --parallel 2
+          cmake --install build
       - name: Checkout Cabana
         uses: actions/checkout@v3
       - name: Build Cabana
         run: |
-          cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/Cabana -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx" -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON -DCabana_REQUIRE_${{ matrix.backend }}=ON -DVALGRIND_EXECUTABLE=False ${{ github.event.inputs.cmake_args }}
+          cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/Cabana -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/hypre" -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON -DCabana_REQUIRE_${{ matrix.backend }}=ON -DVALGRIND_EXECUTABLE=False ${{ github.event.inputs.cmake_args }}
           cmake --build build --parallel 2
           ctest --test-dir build --output-on-failure  ${{ github.event.inputs.ctest_args }}
           cmake --install build
