@@ -123,21 +123,22 @@ namespace Impl
 //---------------------------------------------------------------------------//
 // Verlet List Builder
 //---------------------------------------------------------------------------//
-template <class DeviceType, class PositionType, class RandomAccessPositionType,
+template <class DeviceType, class RandomAccessPositionType, class RadiusType,
           class AlgorithmTag, class LayoutTag, class BuildOpTag>
 struct VerletListBuilder
 {
     // Types.
     using device = DeviceType;
-    using PositionValueType = typename PositionType::value_type;
+    using PositionValueType = typename RandomAccessPositionType::value_type;
     using memory_space = typename device::memory_space;
     using execution_space = typename device::execution_space;
 
     // List data.
     VerletListData<memory_space, LayoutTag> _data;
-
-    // Neighbor cutoff.
+    // Background squared neighbor cutoff.
     PositionValueType rsqr;
+    // Fixed or per-particle neighbor radius.
+    RadiusType radius;
 
     // Positions.
     RandomAccessPositionType _position;
@@ -154,10 +155,11 @@ struct VerletListBuilder
     // Maximum allocated neighbors per particle
     std::size_t alloc_n;
 
-    // Constructor.
+    // Constructor with a single cutoff radius.
+    template <class PositionType>
     VerletListBuilder( PositionType positions, const std::size_t begin,
                        const std::size_t end,
-                       const PositionValueType neighborhood_radius,
+                       const RadiusType neighborhood_radius,
                        const PositionValueType cell_size_ratio,
                        const PositionValueType grid_min[3],
                        const PositionValueType grid_max[3],
@@ -165,6 +167,45 @@ struct VerletListBuilder
         : pid_begin( begin )
         , pid_end( end )
         , alloc_n( max_neigh )
+    {
+        init( positions, neighborhood_radius, cell_size_ratio, grid_min,
+              grid_max );
+        // This value is not currently used, but set to be consistent with the
+        // variable cutoff case below.
+        radius = neighborhood_radius;
+    }
+
+    // Constructor with a background radius (used for the LinkedCellList) and a
+    // per-particle radius.
+    template <class PositionType>
+    VerletListBuilder( PositionType positions, const std::size_t begin,
+                       const std::size_t end,
+                       const PositionValueType background_radius,
+                       const RadiusType neighborhood_radius,
+                       const PositionValueType cell_size_ratio,
+                       const PositionValueType grid_min[3],
+                       const PositionValueType grid_max[3],
+                       const std::size_t max_neigh )
+        : pid_begin( begin )
+        , pid_end( end )
+        , alloc_n( max_neigh )
+    {
+        assert( positions.size() == neighborhood_radius.size() );
+        init( positions, background_radius, cell_size_ratio, grid_min,
+              grid_max );
+
+        // Store a shallow copy (not squared).
+        // TODO: for cases where the radii never change, this could be better
+        // optimized with a deep copy of the squared radius instead.
+        radius = neighborhood_radius;
+    }
+
+    template <class PositionType>
+    void init( PositionType positions,
+               const PositionValueType neighborhood_radius,
+               const PositionValueType cell_size_ratio,
+               const PositionValueType grid_min[3],
+               const PositionValueType grid_max[3] )
     {
         count = true;
         refill = false;
@@ -192,6 +233,18 @@ struct VerletListBuilder
 
         // We will use the square of the distance for neighbor determination.
         rsqr = neighborhood_radius * neighborhood_radius;
+    }
+
+    KOKKOS_INLINE_FUNCTION auto cutoff( [[maybe_unused]] const int p ) const
+    {
+        // Square the radius on the fly if using a per-particle field to avoid a
+        // deep copy.
+        if constexpr ( is_slice<RadiusType>::value ||
+                       Kokkos::is_view<RadiusType>::value )
+            return radius( p ) * radius( p );
+        // This value is already squared.
+        else
+            return rsqr;
     }
 
     // Neighbor count team operator (only used for CSR lists).
@@ -320,7 +373,7 @@ struct VerletListBuilder
             PositionValueType dist_sqr = dx * dx + dy * dy + dz * dz;
 
             // If within the cutoff add to the count.
-            if ( dist_sqr <= rsqr )
+            if ( dist_sqr <= cutoff( pid ) )
                 local_count += 1;
         }
     }
@@ -530,7 +583,7 @@ struct VerletListBuilder
 
             // If within the cutoff increment the neighbor count and add as a
             // neighbor at that index.
-            if ( dist_sqr <= rsqr )
+            if ( dist_sqr <= cutoff( pid ) )
             {
                 _data.addNeighbor( pid, nid );
             }
@@ -540,8 +593,8 @@ struct VerletListBuilder
 
 // Builder creation functions. This is only necessary to define the different
 // random access types.
-template <class DeviceType, class PositionType, class AlgorithmTag,
-          class LayoutTag, class BuildOpTag>
+template <class DeviceType, class AlgorithmTag, class LayoutTag,
+          class BuildOpTag, class PositionType>
 auto createVerletListBuilder(
     PositionType x, const std::size_t begin, const std::size_t end,
     const typename PositionType::value_type radius,
@@ -552,13 +605,14 @@ auto createVerletListBuilder(
     typename std::enable_if<( is_slice<PositionType>::value ), int>::type* = 0 )
 {
     using RandomAccessPositionType = typename PositionType::random_access_slice;
-    return VerletListBuilder<DeviceType, PositionType, RandomAccessPositionType,
-                             AlgorithmTag, LayoutTag, BuildOpTag>(
+    return VerletListBuilder<DeviceType, RandomAccessPositionType,
+                             typename PositionType::value_type, AlgorithmTag,
+                             LayoutTag, BuildOpTag>(
         x, begin, end, radius, cell_size_ratio, grid_min, grid_max, max_neigh );
 }
 
-template <class DeviceType, class PositionType, class AlgorithmTag,
-          class LayoutTag, class BuildOpTag>
+template <class DeviceType, class AlgorithmTag, class LayoutTag,
+          class BuildOpTag, class PositionType>
 auto createVerletListBuilder(
     PositionType x, const std::size_t begin, const std::size_t end,
     const typename PositionType::value_type radius,
@@ -572,9 +626,51 @@ auto createVerletListBuilder(
     using RandomAccessPositionType =
         Kokkos::View<typename PositionType::value_type**, DeviceType,
                      Kokkos::MemoryTraits<Kokkos::RandomAccess>>;
-    return VerletListBuilder<DeviceType, PositionType, RandomAccessPositionType,
-                             AlgorithmTag, LayoutTag, BuildOpTag>(
+    return VerletListBuilder<DeviceType, RandomAccessPositionType,
+                             typename PositionType::value_type, AlgorithmTag,
+                             LayoutTag, BuildOpTag>(
         x, begin, end, radius, cell_size_ratio, grid_min, grid_max, max_neigh );
+}
+
+template <class DeviceType, class AlgorithmTag, class LayoutTag,
+          class BuildOpTag, class PositionType, class RadiusType>
+auto createVerletListBuilder(
+    PositionType x, const std::size_t begin, const std::size_t end,
+    const typename PositionType::value_type background_radius,
+    const RadiusType radius,
+    const typename PositionType::value_type cell_size_ratio,
+    const typename PositionType::value_type grid_min[3],
+    const typename PositionType::value_type grid_max[3],
+    const std::size_t max_neigh,
+    typename std::enable_if<( is_slice<PositionType>::value ), int>::type* = 0 )
+{
+    using RandomAccessPositionType = typename PositionType::random_access_slice;
+    return VerletListBuilder<DeviceType, RandomAccessPositionType, RadiusType,
+                             AlgorithmTag, LayoutTag, BuildOpTag>(
+        x, begin, end, background_radius, radius, cell_size_ratio, grid_min,
+        grid_max, max_neigh );
+}
+
+template <class DeviceType, class AlgorithmTag, class LayoutTag,
+          class BuildOpTag, class PositionType, class RadiusType>
+auto createVerletListBuilder(
+    PositionType x, const std::size_t begin, const std::size_t end,
+    const typename PositionType::value_type background_radius,
+    const RadiusType radius,
+    const typename PositionType::value_type cell_size_ratio,
+    const typename PositionType::value_type grid_min[3],
+    const typename PositionType::value_type grid_max[3],
+    const std::size_t max_neigh,
+    typename std::enable_if<( Kokkos::is_view<PositionType>::value ),
+                            int>::type* = 0 )
+{
+    using RandomAccessPositionType =
+        Kokkos::View<typename PositionType::value_type**, DeviceType,
+                     Kokkos::MemoryTraits<Kokkos::RandomAccess>>;
+    return VerletListBuilder<DeviceType, RandomAccessPositionType, RadiusType,
+                             AlgorithmTag, LayoutTag, BuildOpTag>(
+        x, begin, end, background_radius, radius, cell_size_ratio, grid_min,
+        grid_max, max_neigh );
 }
 
 //---------------------------------------------------------------------------//
@@ -672,6 +768,57 @@ class VerletList
     }
 
     /*!
+      \brief VerletList constructor. Given a list of particle positions and
+      a neighborhood radius calculate the neighbor list.
+
+      \param x The slice containing the particle positions
+
+      \param begin The beginning particle index to compute neighbors for.
+
+      \param end The end particle index to compute neighbors for.
+
+      \param background_radius The radius of the neighborhood used
+      for the background grid cells in each dimension.
+
+      \param neighborhood_radius The radius of the neighborhood per particle.
+      Particles within this radius are considered neighbors.
+
+      \param cell_size_ratio The ratio of the cell size in the Cartesian grid
+      to the neighborhood radius. For example, if the cell size ratio is 0.5
+      then the cells will be half the size of the neighborhood radius in each
+      dimension.
+
+      \param grid_min The minimum value of the grid containing the particles
+      in each dimension.
+
+      \param grid_max The maximum value of the grid containing the particles
+      in each dimension.
+
+      \param max_neigh Optional maximum number of neighbors per particle to
+      pre-allocate the neighbor list. Potentially avoids recounting with 2D
+      layout only.
+
+      Particles outside of the neighborhood radius will not be considered
+      neighbors. Only compute the neighbors of those that are within the given
+      range. All particles are candidates for being a neighbor, regardless of
+      whether or not they are in the range.
+    */
+    template <class PositionSlice, class RadiusSlice>
+    VerletList( PositionSlice x, const std::size_t begin, const std::size_t end,
+                const typename PositionSlice::value_type background_radius,
+                RadiusSlice neighborhood_radius,
+                const typename PositionSlice::value_type cell_size_ratio,
+                const typename PositionSlice::value_type grid_min[3],
+                const typename PositionSlice::value_type grid_max[3],
+                const std::size_t max_neigh = 0,
+                typename std::enable_if<( is_slice<PositionSlice>::value ),
+                                        int>::type* = 0 )
+    {
+        build( x, begin, end, background_radius, neighborhood_radius,
+               cell_size_ratio, grid_min, grid_max, max_neigh );
+    }
+
+    /*!
       \brief Given a list of particle positions and a neighborhood radius
       calculate the neighbor list.
     */
@@ -716,26 +863,79 @@ class VerletList
         assert( end <= size( x ) );
 
         using device_type = Kokkos::Device<ExecutionSpace, memory_space>;
+        // Create a builder functor.
+        auto builder = Impl::createVerletListBuilder<device_type, AlgorithmTag,
+                                                     LayoutTag, BuildTag>(
+            x, begin, end, neighborhood_radius, cell_size_ratio, grid_min,
+            grid_max, max_neigh );
+        buildImpl( builder );
+    }
+
+    /*!
+       \brief Given a list of particle positions and a neighborhood radius
+       calculate the neighbor list.
+     */
+    template <class PositionSlice, class RadiusSlice>
+    void build( PositionSlice x, const std::size_t begin, const std::size_t end,
+                const typename PositionSlice::value_type background_radius,
+                RadiusSlice neighborhood_radius,
+                const typename PositionSlice::value_type cell_size_ratio,
+                const typename PositionSlice::value_type grid_min[3],
+                const typename PositionSlice::value_type grid_max[3],
+                const std::size_t max_neigh = 0 )
+    {
+        // Use the default execution space.
+        build( execution_space{}, x, begin, end, background_radius,
+               neighborhood_radius, cell_size_ratio, grid_min, grid_max,
+               max_neigh );
+    }
+    /*!
+      \brief Given a list of particle positions and a neighborhood radius
+      calculate the neighbor list.
+    */
+    template <class PositionSlice, class RadiusSlice, class ExecutionSpace>
+    void build( ExecutionSpace, PositionSlice x, const std::size_t begin,
+                const std::size_t end,
+                const typename PositionSlice::value_type background_radius,
+                RadiusSlice neighborhood_radius,
+                const typename PositionSlice::value_type cell_size_ratio,
+                const typename PositionSlice::value_type grid_min[3],
+                const typename PositionSlice::value_type grid_max[3],
+                const std::size_t max_neigh = 0 )
+    {
+        Kokkos::Profiling::ScopedRegion region( "Cabana::VerletList::build" );
+
+        static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
+
+        assert( end >= begin );
+        assert( end <= x.size() );
 
         // Create a builder functor.
-        auto builder =
-            Impl::createVerletListBuilder<device_type, PositionType,
-                                          AlgorithmTag, LayoutTag, BuildTag>(
-                x, begin, end, neighborhood_radius, cell_size_ratio, grid_min,
-                grid_max, max_neigh );
+        using device_type = Kokkos::Device<ExecutionSpace, memory_space>;
+        auto builder = Impl::createVerletListBuilder<device_type, AlgorithmTag,
+                                                     LayoutTag, BuildTag>(
+            x, begin, end, background_radius, neighborhood_radius,
+            cell_size_ratio, grid_min, grid_max, max_neigh );
+        buildImpl( builder );
+    }
 
+    //! \cond Impl
+    template <class BuilderType>
+    void buildImpl( BuilderType builder )
+    {
         // For each particle in the range check each neighboring bin for
-        // neighbor particles. Bins are at least the size of the neighborhood
-        // radius so the bin in which the particle resides and any surrounding
-        // bins are guaranteed to contain the neighboring particles.
-        // For CSR lists, we count, then fill neighbors. For 2D lists, we
-        // count and fill at the same time, unless the array size is exceeded,
-        // at which point only counting is continued to reallocate and refill.
-        typename decltype( builder )::FillNeighborsPolicy fill_policy(
+        // neighbor particles. Bins are at least the size of the
+        // neighborhood radius so the bin in which the particle resides and
+        // any surrounding bins are guaranteed to contain the neighboring
+        // particles. For CSR lists, we count, then fill neighbors. For 2D
+        // lists, we count and fill at the same time, unless the array size
+        // is exceeded, at which point only counting is continued to
+        // reallocate and refill.
+        typename BuilderType::FillNeighborsPolicy fill_policy(
             builder.bin_data_1d.numBin(), Kokkos::AUTO, 4 );
         if ( builder.count )
         {
-            typename decltype( builder )::CountNeighborsPolicy count_policy(
+            typename BuilderType::CountNeighborsPolicy count_policy(
                 builder.bin_data_1d.numBin(), Kokkos::AUTO, 4 );
             Kokkos::parallel_for( "Cabana::VerletList::count_neighbors",
                                   count_policy, builder );
@@ -764,6 +964,7 @@ class VerletList
         // Get the data from the builder.
         _data = builder._data;
     }
+    //! \endcond
 
     //! Modify a neighbor in the list; for example, mark it as a broken bond.
     KOKKOS_INLINE_FUNCTION

@@ -209,6 +209,52 @@ void testNeighborParallelReduce()
 
 //---------------------------------------------------------------------------//
 template <class LayoutTag>
+void testNonUniformRadius()
+{
+    // Create the AoSoA and fill custom particle details.
+    std::size_t particle_x = 2;
+    // Purposely choose radius to reach all particles.
+    double large_radius = 4.35;
+    // Purposely choose radius to reach nearest neighbors only.
+    double small_radius = 3.32;
+    // Create the AoSoA and fill with particles
+    NeighborListTestDataOrdered test_data( particle_x );
+    auto position = Cabana::slice<0>( test_data.aosoa );
+    auto radii = Cabana::slice<1>( test_data.aosoa );
+
+    int num_p = test_data.num_particle;
+    Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, num_p );
+    Kokkos::parallel_for(
+        policy, KOKKOS_LAMBDA( int pid ) {
+            if ( pid == 0 || pid == num_p - 1 )
+                radii( pid ) = large_radius;
+            else
+                radii( pid ) = small_radius;
+        } );
+
+    // Create the neighbor list.
+    using ListType = Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag,
+                                        LayoutTag, Cabana::TeamOpTag>;
+    ListType nlist( position, 0, position.size(), small_radius, radii,
+                    test_data.cell_size_ratio, test_data.grid_min,
+                    test_data.grid_max );
+
+    // Allocate with known maximum neighbors.
+    auto list_copy = copyListToHost( nlist, test_data.num_particle, 10 );
+    // Check the results.
+    for ( std::size_t p = 0; p < test_data.num_particle; ++p )
+    {
+        // Certain particles were manually given larger radius and
+        // should therefore have more neighbors.
+        if ( p == 0 || p == test_data.num_particle - 1 )
+            EXPECT_EQ( list_copy.counts( p ), 6 );
+        else
+            EXPECT_EQ( list_copy.counts( p ), 3 );
+    }
+}
+
+//---------------------------------------------------------------------------//
+template <class LayoutTag>
 void testModifyNeighbors()
 {
     // Create the AoSoA and fill with random particle positions.
@@ -414,7 +460,16 @@ TEST( VerletList, NeighborHistogram )
 #endif
     testNeighborHistogram<Cabana::VerletLayout2D>();
 }
-TEST( TEST_CATEGORY, view_test )
+
+TEST( VerletList, non_uniform_radius_test )
+{
+#ifndef KOKKOS_ENABLE_OPENMPTARGET
+    testNonUniformRadius<Cabana::VerletLayoutCSR>();
+#endif
+    testNonUniformRadius<Cabana::VerletLayout2D>();
+}
+
+TEST( VerletList, view_test )
 {
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testNeighborView<Cabana::VerletLayoutCSR>();
