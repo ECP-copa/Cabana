@@ -153,8 +153,8 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
-            kokkos_ver: '4.1.00'
-            arborx: 'ArborX'
+            kokkos_ver: '4.2.00'
+            arborx: 'v1.7'
             heffte: 'OFF'
             hypre: 'OFF'
             coverage: 'OFF'
@@ -162,8 +162,8 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Release'
-            kokkos_ver: '4.1.00'
-            arborx: 'ArborX'
+            kokkos_ver: '4.3.00'
+            arborx: 'fee3d777c0325a90ab50671fca69f2dc98f2a882'
             heffte: 'OFF'
             hypre: 'OFF'
             coverage: 'OFF'
@@ -219,8 +219,8 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
-            kokkos_ver: '4.1.00'
-            arborx: 'ArborX'
+            kokkos_ver: '4.2.00'
+            arborx: 'v1.7'
             heffte: 'FFTW'
             hypre: 'HYPRE'
             liball: 'libALL'
@@ -232,14 +232,26 @@ jobs:
             cxx: 'g++'
             backend: 'OPENMP'
             cmake_build_type: 'Debug'
-            kokkos_ver: '4.1.00'
-            arborx: 'ArborX'
+            kokkos_ver: '4.2.00'
+            arborx: 'v1.7'
             heffte: 'FFTW'
             hypre: 'HYPRE'
             liball: 'libALL'
             silo: 'Silo'
             hdf5: 'HDF5'
             coverage: 'ON'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            backend: 'OPENMP'
+            cmake_build_type: 'Debug'
+            kokkos_ver: '4.3.00'
+            arborx: 'fee3d777c0325a90ab50671fca69f2dc98f2a882'
+            heffte: 'FFTW'
+            hypre: 'HYPRE'
+            liball: 'libALL'
+            silo: 'Silo'
+            hdf5: 'HDF5'
+            coverage: 'OFF'
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     container:
@@ -281,14 +293,14 @@ jobs:
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout arborx
-        if: ${{ matrix.arborx == 'ArborX' }}
+        if: ${{ matrix.arborx != 'OFF' }}
         uses: actions/checkout@v3
         with:
           repository: arborx/ArborX
-          ref: v1.2
+          ref: ${{ matrix.arborx }}
           path: arborx
       - name: Build arborx
-        if: ${{ matrix.arborx == 'ArborX' }}
+        if: ${{ matrix.arborx != 'OFF' }}
         working-directory: arborx
         run: |
           cmake -B build \
@@ -507,7 +519,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: arborx/ArborX
-          ref: v1.2
+          ref: v1.7
           path: arborx
       - name: Build arborx
         working-directory: arborx
@@ -566,7 +578,7 @@ jobs:
       matrix:
         cxx: ['nvcc']
         cmake_build_type: ['Release']
-        kokkos_ver: ['4.1.00']
+        kokkos_ver: ['4.2.00']
     runs-on: ubuntu-20.04
     container: ghcr.io/ecp-copa/ci-containers/cuda:12.2.0
     steps:
@@ -591,7 +603,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: arborx/ArborX
-          ref: v1.2
+          ref: v1.7
           path: arborx
       - name: Build arborx
         working-directory: arborx
