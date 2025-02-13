@@ -19,10 +19,16 @@ jobs:
         backend: ["OPENMP", "SERIAL"]
         distro: ['ubuntu:latest', 'fedora:rawhide']
         include:
-          - distro: 'ubuntu:latest'
+          - distro: 'ubuntu:latest-arm64'
+            backend: 'SERIAL'
+            arch: 'arm64'
+          - distro: 'ubuntu:latest-arm64'
+            backend: 'OPENMP'
+            arch: 'arm64'
+          - distro: 'ubuntu:latest-arm64'
             backend: 'THREADS'
             arch: 'arm64'
-    runs-on: ${{ matrix.config.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     timeout-minutes: 30
     container:
       image: ghcr.io/ecp-copa/ci-containers/${{ matrix.distro }}
