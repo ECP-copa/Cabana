@@ -252,7 +252,7 @@ jobs:
             silo: 'Silo'
             hdf5: 'HDF5'
             coverage: 'OFF'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     container:
       image: ghcr.io/ecp-copa/ci-containers/${{ matrix.distro }}
@@ -495,7 +495,7 @@ jobs:
         cxx: ['hipcc']
         cmake_build_type: ['Debug']
         kokkos_ver: ['4.2.00']
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     container: ghcr.io/ecp-copa/ci-containers/rocm:latest
     steps:
       - name: Checkout kokkos
@@ -579,7 +579,7 @@ jobs:
         cxx: ['nvcc']
         cmake_build_type: ['Release']
         kokkos_ver: ['4.2.00']
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     container: ghcr.io/ecp-copa/ci-containers/cuda:12.2.0
     steps:
       - name: Checkout kokkos
