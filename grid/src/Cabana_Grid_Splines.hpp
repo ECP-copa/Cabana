@@ -528,33 +528,29 @@ struct Spline<4>
         Scalar denom_0 = denom_2 * 2.0;
 
         // Knot at i - 2
-        Scalar xn = x0 - static_cast<int>( x0 );
-        xn -= 0.5;
+        Scalar xn = x0 - static_cast<int>( x0 ) - 0.5;
+        Scalar xn2 = xn * xn;
+        Scalar xn4 = xn2 * xn2;
         values[0] =
-            ( 1.0 +
-              xn * ( -8.0 + xn * ( 24.0 + xn * ( -32.0 + xn * ( 16.0 ) ) ) ) ) *
+            ( 16.0 * xn4 - 32.0 * xn * xn2 + 24.0 * xn2 - 8.0 * xn + 1.0 ) *
             denom_2;
 
         // Knot at i - 1
         values[1] =
-            ( 19.0 + xn * ( -44.0 +
-                            xn * ( 24.0 + xn * ( 16.0 + xn * ( -16.0 ) ) ) ) ) *
+            ( -16.0 * xn4 + 16.0 * xn * xn2 + 24.0 * xn2 - 44.0 * xn + 19.0 ) *
             denom_1;
 
         // Knot at i
-        values[2] =
-            ( 115.0 + xn * xn * ( -120.0 + xn * xn * ( 48.0 ) ) ) * denom_0;
+        values[2] = ( 48.0 * xn4 - 120.0 * xn2 + 115.0 ) * denom_0;
 
         // Knot at i + 1
         values[3] =
-            ( 19.0 + xn * ( 44.0 + xn * ( 24.0 + xn * ( -16.0 +
-                                                        xn * ( -16.0 ) ) ) ) ) *
+            ( -16.0 * xn4 - 16.0 * xn * xn2 + 24.0 * xn2 + 44.0 * xn + 19.0 ) *
             denom_1;
 
         // Knot at i + 2
         values[4] =
-            ( 1.0 +
-              xn * ( 8.0 + xn * ( 24.0 + xn * ( 32.0 + xn * ( 16.0 ) ) ) ) ) *
+            ( 16.0 * xn4 + 32.0 * xn * xn2 + 24.0 * xn2 + 8.0 * xn + 1 ) *
             denom_2;
     }
 
@@ -577,27 +573,25 @@ struct Spline<4>
         Scalar denom_0 = denom_2 * 12.0;
 
         // Knot at i - 2
-        Scalar xn = x0 - static_cast<int>( x0 ); // - 1.5;
-        xn -= 0.5;
-        gradients[0] = ( -1.0 + xn * ( 6.0 + xn * ( -12.0 + xn * ( 8.0 ) ) ) ) *
-                       denom_2 * rdx;
+        Scalar xn = x0 - static_cast<int>( x0 ) - 0.5;
+        Scalar xn2 = xn * xn;
+        gradients[0] =
+            ( 8.0 * xn * xn2 - 12.0 * xn2 + 6.0 * xn - 1.0 ) * denom_2 * rdx;
 
         // Knot at i - 1
-        gradients[1] =
-            ( -11.0 + xn * ( 12.0 + xn * ( 12.0 + xn * ( -16.0 ) ) ) ) *
-            denom_1 * rdx;
+        gradients[1] = ( -16.0 * xn * xn2 + 12.0 * xn2 + 12.0 * xn - 11.0 ) *
+                       denom_1 * rdx;
 
         // Knot at i
-        gradients[2] = ( xn * ( -5.0 + xn * xn * ( 4.0 ) ) ) * denom_0 * rdx;
+        gradients[2] = ( 4.0 * xn * xn2 - 5.0 * xn ) * denom_0 * rdx;
 
         // Knot at i + 1
-        gradients[3] =
-            ( 11.0 + xn * ( 12.0 + xn * ( -12.0 + xn * ( -16.0 ) ) ) ) *
-            denom_1 * rdx;
+        gradients[3] = ( -16.0 * xn * xn2 - 12.0 * xn2 + 12.0 * xn + 11.0 ) *
+                       denom_1 * rdx;
 
         // Knot at i + 2
-        gradients[4] = ( 1.0 + xn * ( 6.0 + xn * ( 12.0 + xn * ( 8.0 ) ) ) ) *
-                       denom_2 * rdx;
+        gradients[4] =
+            ( 8.0 * xn * xn2 + 12.0 * xn2 + 6.0 * xn + 1.0 ) * denom_2 * rdx;
     }
 };
 
@@ -679,59 +673,37 @@ struct Spline<5>
         Scalar denom_1 = denom_2 * 2.0;
 
         // Knot at i - 2
-        Scalar xn = x0 - static_cast<int>( x0 );
-        xn -= 0.5;
-        values[0] =
-            ( 1.0 +
-              xn * ( -10.0 +
-                     xn * ( 40.0 +
-                            xn * ( -80.0 +
-                                   xn * ( 80.0 + xn * ( -32.0 ) ) ) ) ) ) *
-            denom_2;
+        Scalar xn = x0 - static_cast<int>( x0 ) - 0.5;
+        Scalar xn2 = xn * xn;
+        Scalar xn4 = xn2 * xn2;
+        values[0] = ( -32.0 * xn * xn4 + 80.0 * xn4 - 80.0 * xn * xn2 +
+                      40.0 * xn2 - 10.0 * xn + 1.0 ) *
+                    denom_2;
 
         // Knot at i - 1
-        values[1] =
-            ( 237.0 +
-              xn * ( -750.0 +
-                     xn * ( 840.0 +
-                            xn * ( -240.0 +
-                                   xn * ( -240.0 + xn * ( 160.0 ) ) ) ) ) ) *
-            denom_2;
+        values[1] = ( 160.0 * xn * xn4 - 240.0 * xn4 - 240.0 * xn * xn2 +
+                      840.0 * xn2 - 750.0 * xn + 237.0 ) *
+                    denom_2;
 
         // Knot at i
-        values[2] =
-            ( 841.0 +
-              xn * ( -770.0 +
-                     xn * ( -440.0 +
-                            xn * ( 560.0 +
-                                   xn * ( 80.0 + xn * ( -160.0 ) ) ) ) ) ) *
-            denom_1;
+        values[2] = ( -160.0 * xn * xn4 + 80.0 * xn4 + 560.0 * xn * xn2 -
+                      440.0 * xn2 - 770.0 * xn + 841.0 ) *
+                    denom_1;
 
         // Knot at i + 1
-        values[3] =
-            ( 841.0 +
-              xn * ( 770.0 +
-                     xn * ( -440.0 +
-                            xn * ( -560.0 +
-                                   xn * ( 80.0 + xn * ( 160.0 ) ) ) ) ) ) *
-            denom_1;
+        values[3] = ( 160.0 * xn * xn4 + 80.0 * xn4 - 560.0 * xn * xn2 -
+                      440.0 * xn2 + 770.0 * xn + 841.0 ) *
+                    denom_1;
 
         // Knot at i + 2
-        values[4] =
-            ( 237.0 +
-              xn * ( 750.0 +
-                     xn * ( 840.0 +
-                            xn * ( 240.0 +
-                                   xn * ( -240.0 + xn * ( -160.0 ) ) ) ) ) ) *
-            denom_2;
+        values[4] = ( -160.0 * xn * xn4 - 240.0 * xn4 + 240.0 * xn * xn2 +
+                      840.0 * xn2 + 750.0 * xn + 237.0 ) *
+                    denom_2;
 
         // Knot at i + 3
-        values[5] =
-            ( 1.0 + xn * ( 10.0 +
-                           xn * ( 40.0 +
-                                  xn * ( 80.0 +
-                                         xn * ( 80.0 + xn * ( 32.0 ) ) ) ) ) ) *
-            denom_2;
+        values[5] = ( 32.0 * xn * xn4 + 80.0 * xn4 + 80.0 * xn * xn2 +
+                      40.0 * xn2 + 10.0 * xn + 1.0 ) *
+                    denom_2;
     }
 
     /*!
@@ -752,44 +724,36 @@ struct Spline<5>
         Scalar denom_1 = denom_2 * 2.0;
 
         // Knot at i - 2
-        Scalar xn = x0 - static_cast<int>( x0 );
-        xn -= 0.5;
+        Scalar xn = x0 - static_cast<int>( x0 ) - 0.5;
+        Scalar xn2 = xn * xn;
+        Scalar xn4 = xn2 * xn2;
         gradients[0] =
-            ( -1.0 +
-              xn * ( 8.0 + xn * ( -24.0 + xn * ( 32.0 + xn * ( -16.0 ) ) ) ) ) *
+            ( -16.0 * xn4 + 32.0 * xn * xn2 - 24.0 * xn2 + 8.0 * xn - 1.0 ) *
             denom_2 * rdx;
 
         // Knot at i - 1
         gradients[1] =
-            ( -75.0 +
-              xn * ( 168.0 +
-                     xn * ( -72.0 + xn * ( -96.0 + xn * ( 80.0 ) ) ) ) ) *
+            ( 80.0 * xn4 - 96.0 * xn * xn2 - 72.0 * xn2 + 168.0 * xn - 75.0 ) *
             denom_2 * rdx;
 
         // Knot at i
         gradients[2] =
-            ( -77.0 +
-              xn * ( -88.0 +
-                     xn * ( 168.0 + xn * ( 32.0 + xn * ( -80.0 ) ) ) ) ) *
+            ( -80.0 * xn4 + 32.0 * xn * xn2 + 168.0 * xn2 - 88.0 * xn - 77.0 ) *
             denom_1 * rdx;
 
         // Knot at i + 1
         gradients[3] =
-            ( 77.0 + xn * ( -88.0 + xn * ( -168.0 +
-                                           xn * ( 32.0 + xn * ( 80.0 ) ) ) ) ) *
+            ( 80.0 * xn4 + 32.0 * xn * xn2 - 168.0 * xn2 - 88.0 * xn + 77.0 ) *
             denom_1 * rdx;
 
         // Knot at i + 2
         gradients[4] =
-            ( 75.0 +
-              xn * ( 168.0 +
-                     xn * ( 72.0 + xn * ( -96.0 + xn * ( -80.0 ) ) ) ) ) *
+            ( -80.0 * xn4 - 96.0 * xn * xn2 + 72.0 * xn2 + 168.0 * xn + 75.0 ) *
             denom_2 * rdx;
 
         // Knot at i + 3
         gradients[5] =
-            ( 1.0 +
-              xn * ( 8.0 + xn * ( 24.0 + xn * ( 32.0 + xn * ( 16.0 ) ) ) ) ) *
+            ( 16.0 * xn4 + 32.0 * xn * xn2 + 24.0 * xn2 + 8.0 * xn + 1.0 ) *
             denom_2 * rdx;
     }
 };
@@ -875,79 +839,44 @@ struct Spline<6>
         Scalar denom_0 = denom_2 * 2.0;
 
         // Knot at i - 3
-        Scalar xn = x0 - static_cast<int>( x0 );
-        xn -= 0.5;
-        values[0] =
-            ( 1.0 +
-              xn * ( -12.0 +
-                     xn * ( 60.0 +
-                            xn * ( -160.0 +
-                                   xn * ( 240.0 +
-                                          xn * ( -192.0 +
-                                                 xn * ( 64.0 ) ) ) ) ) ) ) *
-            denom_31;
+        Scalar xn = x0 - static_cast<int>( x0 ) - 0.5;
+        Scalar xn2 = xn * xn;
+        Scalar xn4 = xn2 * xn2;
+        Scalar xn6 = xn2 * xn4;
+        values[0] = ( 64.0 * xn6 - 192.0 * xn * xn4 + 240.0 * xn4 -
+                      160.0 * xn * xn2 + 60.0 * xn2 - 12.0 * xn + 1.0 ) *
+                    denom_31;
 
         // Knot at i - 2
-        values[1] =
-            ( 361.0 +
-              xn * ( -1416.0 +
-                     xn * ( 2220.0 +
-                            xn * ( -1600.0 +
-                                   xn * ( 240.0 +
-                                          xn * ( 384.0 +
-                                                 xn * ( -192.0 ) ) ) ) ) ) ) *
-            denom_2;
+        values[1] = ( -192.0 * xn6 + 384.0 * xn * xn4 + 240.0 * xn4 -
+                      1600.0 * xn * xn2 + 2220.0 * xn2 - 1416.0 * xn + 361.0 ) *
+                    denom_2;
 
         // Knot at i - 1
         values[2] =
-            ( 10543.0 +
-              xn * ( -17340.0 +
-                     xn * ( 4740.0 +
-                            xn * ( 6880.0 +
-                                   xn * ( -4080.0 +
-                                          xn * ( -960.0 +
-                                                 xn * ( 960.0 ) ) ) ) ) ) ) *
+            ( 960.0 * xn6 - 960.0 * xn * xn4 - 4080.0 * xn4 +
+              6880.0 * xn * xn2 + 4740.0 * xn2 - 17340.0 * xn + 10543.0 ) *
             denom_31;
 
         // Knot at i
         values[3] =
-            ( 5887.0 +
-              xn * xn *
-                  ( -4620.0 + xn * xn * ( 1680.0 + xn * xn * ( -320.0 ) ) ) ) *
-            denom_0;
+            ( -320.0 * xn6 + 1680.0 * xn4 - 4620.0 * xn2 + 5887.0 ) * denom_0;
 
         // Knot at i + 1
         values[4] =
-            ( 10543.0 +
-              xn * ( 17340.0 +
-                     xn * ( 4740.0 +
-                            xn * ( -6880.0 +
-                                   xn * ( -4080.0 +
-                                          xn * ( 960.0 +
-                                                 xn * ( 960.0 ) ) ) ) ) ) ) *
+            ( 960.0 * xn6 + 960.0 * xn * xn4 - 4080.0 * xn4 -
+              6880.0 * xn * xn2 + 4740.0 * xn2 + 17340.0 * xn + 10543.0 ) *
             denom_31;
 
         // Knot at i + 2
-        values[5] =
-            ( 361.0 +
-              xn * ( 1416.0 +
-                     xn * ( 2220.0 +
-                            xn * ( 1600.0 +
-                                   xn * ( 240.0 +
-                                          xn * ( -384.0 +
-                                                 xn * ( -192.0 ) ) ) ) ) ) ) *
-            denom_2;
+        values[5] = ( -192.0 * xn6 - 384.0 * xn * xn4 + 240.0 * xn4 +
+                      1600.0 * xn * xn2 + 2220.0 * xn2 + 1416.0 * xn + 361.0 ) *
+                    denom_2;
 
         // Knot at i + 3
-        values[6] =
-            ( 1.0 +
-              xn * ( 12.0 +
-                     xn * ( 60.0 +
-                            xn * ( 160.0 +
-                                   xn * ( 240.0 +
-                                          xn * ( 192.0 +
-                                                 xn * ( 64.0 ) ) ) ) ) ) ) *
-            denom_31;
+        values[6] = ( 64.0 * xn6 + 192.0 * xn * xn4 + 240.0 * xn4 +
+                      160.0 * xn * xn2 + 60.0 * xn2 + 12.0 * xn + 1.0 ) *
+                    denom_31;
     }
 
     /*!
@@ -970,64 +899,41 @@ struct Spline<6>
         Scalar denom_0 = denom_3 * 40.0;
 
         // Knot at i - 2
-        Scalar xn = x0 - static_cast<int>( x0 );
-        xn -= 0.5;
-        gradients[0] =
-            ( -1.0 +
-              xn * ( 10.0 +
-                     xn * ( -40.0 +
-                            xn * ( 80.0 +
-                                   xn * ( -80.0 + xn * ( 32.0 ) ) ) ) ) ) *
-            denom_3 * rdx;
+        Scalar xn = x0 - static_cast<int>( x0 ) - 0.5;
+        Scalar xn2 = xn * xn;
+        Scalar xn4 = xn2 * xn2;
+        gradients[0] = ( 32.0 * xn * xn4 - 80.0 * xn4 + 80.0 * xn * xn2 -
+                         40.0 * xn2 + 10.0 * xn - 1.0 ) *
+                       denom_3 * rdx;
 
         // Knot at i - 2
-        gradients[1] =
-            ( -59.0 +
-              xn * ( 185.0 +
-                     xn * ( -200.0 +
-                            xn * ( 40.0 +
-                                   xn * ( 80.0 + xn * ( -48.0 ) ) ) ) ) ) *
-            denom_2 * rdx;
+        gradients[1] = ( -48.0 * xn * xn4 + 80.0 * xn4 + 40.0 * xn * xn2 -
+                         200.0 * xn2 + 185.0 * xn - 59.0 ) *
+                       denom_2 * rdx;
 
         // Knot at i - 1
-        gradients[2] =
-            ( -289.0 +
-              xn * ( 158.0 +
-                     xn * ( 344.0 +
-                            xn * ( -272.0 +
-                                   xn * ( -80.0 + xn * ( 96.0 ) ) ) ) ) ) *
-            denom_1 * rdx;
+        gradients[2] = ( 96.0 * xn * xn4 - 80.0 * xn4 - 272.0 * xn * xn2 +
+                         344.0 * xn2 + 158.0 * xn - 289.0 ) *
+                       denom_1 * rdx;
 
         // Knot at i
         gradients[3] =
-            ( xn * ( -77.0 + xn * xn * ( 56.0 + xn * xn * ( -16.0 ) ) ) ) *
-            denom_0 * rdx;
+            ( -16.0 * xn * xn4 + 56.0 * xn * xn2 - 77.0 * xn ) * denom_0 * rdx;
 
         // Knot at i + 1
-        gradients[4] =
-            ( 289.0 +
-              xn * ( 158.0 +
-                     xn * ( -344.0 +
-                            xn * ( -272.0 +
-                                   xn * ( 80.0 + xn * ( 96.0 ) ) ) ) ) ) *
-            denom_1 * rdx;
+        gradients[4] = ( 96.0 * xn * xn4 + 80.0 * xn4 - 272.0 * xn * xn2 -
+                         344.0 * xn2 + 158.0 * xn + 289.0 ) *
+                       denom_1 * rdx;
 
         // Knot at i + 2
-        gradients[5] =
-            ( 59.0 +
-              xn * ( 185.0 +
-                     xn * ( 200.0 +
-                            xn * ( 40.0 +
-                                   xn * ( -80.0 + xn * ( -48.0 ) ) ) ) ) ) *
-            denom_2 * rdx;
+        gradients[5] = ( -48.0 * xn * xn4 - 80.0 * xn4 + 40.0 * xn * xn2 +
+                         200.0 * xn2 + 185.0 * xn + 59.0 ) *
+                       denom_2 * rdx;
 
         // Knot at i + 3
-        gradients[6] =
-            ( 1.0 + xn * ( 10.0 +
-                           xn * ( 40.0 +
-                                  xn * ( 80.0 +
-                                         xn * ( 80.0 + xn * ( 32.0 ) ) ) ) ) ) *
-            denom_3 * rdx;
+        gradients[6] = ( 32.0 * xn * xn4 + 80.0 * xn4 + 80.0 * xn * xn2 +
+                         40.0 * xn2 + 10.0 * xn + 1.0 ) *
+                       denom_3 * rdx;
     }
 };
 
