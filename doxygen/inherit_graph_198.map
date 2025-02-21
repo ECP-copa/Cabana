@@ -1,5 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" title=" " alt="" coords="5,5,168,54"/>
-<area shape="rect" id="Node000001" href="$structCabana_1_1is__member__types.html" title="Static type checker." alt="" coords="216,15,428,44"/>
-<area shape="poly" id="edge41_Node000000_Node000001" title=" " alt="" coords="183,27,215,27,215,32,183,32"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,5,140,54"/>
+<area shape="rect" id="Node000001" href="$structCabana_1_1is__distributor.html" title="Distributor static type checker." alt="" coords="188,15,372,44"/>
+<area shape="poly" id="edge38_Node000000_Node000001" title=" " alt="" coords="155,27,187,27,187,32,155,32"/>
 </map>
