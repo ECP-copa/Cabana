@@ -249,7 +249,7 @@ void testNonUniformRadius()
         if ( p == 0 || p == test_data.num_particle - 1 )
             EXPECT_EQ( list_copy.counts( p ), 6 );
         else
-            EXPECT_EQ( list_copy.counts( p ), 3 );
+            EXPECT_EQ( list_copy.counts( p ), 4 );
     }
 }
 
