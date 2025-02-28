@@ -235,16 +235,22 @@ struct VerletListBuilder
         rsqr = neighborhood_radius * neighborhood_radius;
     }
 
-    KOKKOS_INLINE_FUNCTION auto cutoff( [[maybe_unused]] const int p ) const
+    KOKKOS_INLINE_FUNCTION auto cutoff( [[maybe_unused]] const int i,
+                                        [[maybe_unused]] const int j ) const
     {
         // Square the radius on the fly if using a per-particle field to avoid a
         // deep copy.
         if constexpr ( is_slice<RadiusType>::value ||
                        Kokkos::is_view<RadiusType>::value )
-            return radius( p ) * radius( p );
-        // This value is already squared.
+        {
+            auto max_radius = Kokkos::max( radius( i ), radius( j ) );
+            return max_radius * max_radius;
+        }
         else
+        {
+            // This value is already squared.
             return rsqr;
+        }
     }
 
     // Neighbor count team operator (only used for CSR lists).
@@ -373,7 +379,7 @@ struct VerletListBuilder
             PositionValueType dist_sqr = dx * dx + dy * dy + dz * dz;
 
             // If within the cutoff add to the count.
-            if ( dist_sqr <= cutoff( pid ) )
+            if ( dist_sqr <= cutoff( pid, nid ) )
                 local_count += 1;
         }
     }
@@ -583,7 +589,7 @@ struct VerletListBuilder
 
             // If within the cutoff increment the neighbor count and add as a
             // neighbor at that index.
-            if ( dist_sqr <= cutoff( pid ) )
+            if ( dist_sqr <= cutoff( pid, nid ) )
             {
                 _data.addNeighbor( pid, nid );
             }
