@@ -32,8 +32,8 @@ set(Cabana_INSTALL_PACKAGEDIR "${CMAKE_INSTALL_DATADIR}/cmake/Cabana" CACHE PATH
 
 include(FeatureSummary)
 
-# point to cmake modules
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+# add local cmake modules
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 #------------------------------------------------------------------------------#
 # Dependencies
