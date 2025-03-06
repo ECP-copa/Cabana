@@ -235,21 +235,68 @@ struct VerletListBuilder
         rsqr = neighborhood_radius * neighborhood_radius;
     }
 
-    KOKKOS_INLINE_FUNCTION auto cutoff( [[maybe_unused]] const int i,
-                                        [[maybe_unused]] const int j ) const
+    // Check if particle pair i-j is within cutoff, potentially with variable
+    // radii.
+    KOKKOS_INLINE_FUNCTION auto withinCutoff( [[maybe_unused]] const int i,
+                                              const double dist_sqr ) const
     {
         // Square the radius on the fly if using a per-particle field to avoid a
         // deep copy.
         if constexpr ( is_slice<RadiusType>::value ||
                        Kokkos::is_view<RadiusType>::value )
+            return dist_sqr <= radius( i ) * radius( i );
+        // This value is already squared.
+        else
+            return dist_sqr <= rsqr;
+    }
+
+    // Check if potential neighbor j is NOT within cutoff, meaning particle i
+    // should add instead for symmetry.
+    KOKKOS_INLINE_FUNCTION auto
+    neighborNotWithinCutoff( [[maybe_unused]] const int j,
+                             const double dist_sqr ) const
+    {
+        // This neighbor needs to be added if they will not find this particle.
+        if constexpr ( is_slice<RadiusType>::value ||
+                       Kokkos::is_view<RadiusType>::value )
         {
-            auto max_radius = Kokkos::max( radius( i ), radius( j ) );
-            return max_radius * max_radius;
+            return dist_sqr >= radius( j ) * radius( j );
         }
         else
         {
-            // This value is already squared.
-            return rsqr;
+            // For a fixed radius, this will never occur.
+            return false;
+        }
+    }
+
+    // Count neighbors, with consideration for self particle i and neighbor j.
+    KOKKOS_INLINE_FUNCTION auto countNeighbor( const int i, const int j,
+                                               const double dist_sqr ) const
+    {
+        int c = 0;
+        // Always add self if within cutoff.
+        if ( withinCutoff( i, dist_sqr ) )
+        {
+            c++;
+            // Add neighbor if they will not find this particle.
+            if ( neighborNotWithinCutoff( j, dist_sqr ) )
+                c++;
+        }
+        return c;
+    }
+
+    // Add neighbors, with consideration for self particle i and neighbor j.
+    KOKKOS_INLINE_FUNCTION void addNeighbor( const int i, const int j,
+                                             const double dist_sqr ) const
+    {
+        // Always add self if within cutoff.
+        if ( withinCutoff( i, dist_sqr ) )
+        {
+            _data.addNeighbor( i, j );
+
+            // Add neighbor if they will not find this particle.
+            if ( neighborNotWithinCutoff( j, dist_sqr ) )
+                _data.addNeighbor( j, i );
         }
     }
 
@@ -379,8 +426,7 @@ struct VerletListBuilder
             PositionValueType dist_sqr = dx * dx + dy * dy + dz * dz;
 
             // If within the cutoff add to the count.
-            if ( dist_sqr <= cutoff( pid, nid ) )
-                local_count += 1;
+            local_count += countNeighbor( pid, nid, dist_sqr );
         }
     }
 
@@ -589,10 +635,7 @@ struct VerletListBuilder
 
             // If within the cutoff increment the neighbor count and add as a
             // neighbor at that index.
-            if ( dist_sqr <= cutoff( pid, nid ) )
-            {
-                _data.addNeighbor( pid, nid );
-            }
+            addNeighbor( pid, nid, dist_sqr );
         }
     }
 };
