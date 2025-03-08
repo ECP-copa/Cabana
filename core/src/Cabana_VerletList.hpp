@@ -348,9 +348,11 @@ struct VerletListBuilder
                             {
                                 // See if we should actually check this box for
                                 // neighbors.
-                                if ( linked_cell_list.cellStencil()
-                                         .grid.minDistanceToPoint(
-                                             x_p, y_p, z_p, i, j, k ) <= rsqr )
+                                if ( withinCutoff(
+                                         pid,
+                                         linked_cell_list.cellStencil()
+                                             .grid.minDistanceToPoint(
+                                                 x_p, y_p, z_p, i, j, k ) ) )
                                 {
                                     std::size_t n_offset =
                                         linked_cell_list.binOffset( i, j, k );
@@ -564,9 +566,11 @@ struct VerletListBuilder
                             {
                                 // See if we should actually check this box for
                                 // neighbors.
-                                if ( linked_cell_list.cellStencil()
-                                         .grid.minDistanceToPoint(
-                                             x_p, y_p, z_p, i, j, k ) <= rsqr )
+                                if ( withinCutoff(
+                                         pid,
+                                         linked_cell_list.cellStencil()
+                                             .grid.minDistanceToPoint(
+                                                 x_p, y_p, z_p, i, j, k ) ) )
                                 {
                                     // Check the particles in this bin to see if
                                     // they are neighbors.
