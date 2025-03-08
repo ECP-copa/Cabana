@@ -493,7 +493,7 @@ struct VerletListBuilder
         _data.max_n = static_cast<std::size_t>( max );
 
         // Reallocate the neighbor list if previous size is exceeded.
-        if ( count or _data.max_n > _data.neighbors.extent( 1 ) )
+        if ( count || _data.max_n > _data.neighbors.extent( 1 ) )
         {
             refill = true;
             Kokkos::deep_copy( _data.counts, 0 );
@@ -1009,7 +1009,7 @@ class VerletList
 
         // For each particle in the range fill (or refill) its part of the
         // neighbor list.
-        if ( builder.count or builder.refill )
+        if ( builder.count || builder.refill )
         {
             Kokkos::parallel_for( "Cabana::VerletList::fill_neighbors",
                                   fill_policy, builder );
