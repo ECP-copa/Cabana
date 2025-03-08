@@ -254,7 +254,7 @@ struct VerletListBuilder
     // should add instead for symmetry.
     KOKKOS_INLINE_FUNCTION auto
     neighborNotWithinCutoff( [[maybe_unused]] const int j,
-                             const double dist_sqr ) const
+                             [[maybe_unused]] const double dist_sqr ) const
     {
         // This neighbor needs to be added if they will not find this particle.
         if constexpr ( is_slice<RadiusType>::value ||
