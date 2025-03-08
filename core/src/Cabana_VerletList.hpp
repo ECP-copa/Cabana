@@ -53,14 +53,35 @@ struct VerletListData<MemorySpace, VerletLayoutCSR>
     //! Kokkos memory space.
     using memory_space = MemorySpace;
 
+    //! Kokkos View type.
+    using view_type = Kokkos::View<int*, memory_space>;
+
     //! Number of neighbors per particle.
-    Kokkos::View<int*, memory_space> counts;
+    view_type counts;
 
     //! Offsets into the neighbor list.
-    Kokkos::View<int*, memory_space> offsets;
+    view_type offsets;
 
     //! Neighbor list.
-    Kokkos::View<int*, memory_space> neighbors;
+    view_type neighbors;
+
+    //! Actual current particles.
+    int total_num_particle;
+    //! Actual number of neighbors.
+    int total_num_neighbor;
+
+    VerletListData() {}
+
+    VerletListData( const int num_particles, const int max_neigh )
+    {
+        counts = view_type( "num_neighbors", num_particles );
+        offsets = view_type(
+            Kokkos::ViewAllocateWithoutInitializing( "neighbor_offsets" ),
+            num_particles );
+        neighbors =
+            view_type( Kokkos::ViewAllocateWithoutInitializing( "neighbors" ),
+                       num_particles * max_neigh );
+    }
 
     //! Add a neighbor to the list.
     KOKKOS_INLINE_FUNCTION
@@ -85,15 +106,34 @@ struct VerletListData<MemorySpace, VerletLayout2D>
     //! Kokkos memory space.
     using memory_space = MemorySpace;
 
+    //! Kokkos 1d View type.
+    using view_type = Kokkos::View<int*, memory_space>;
+    //! Kokkos 2d View type.
+    using view_2d_type = Kokkos::View<int**, memory_space>;
+
     //! Number of neighbors per particle.
-    Kokkos::View<int*, memory_space> counts;
+    view_type counts;
 
     //! Neighbor list.
-    Kokkos::View<int**, memory_space> neighbors;
+    view_2d_type neighbors;
+
+    //! Actual current particles.
+    int total_num_particle;
 
     //! Actual maximum neighbors per particle (potentially less than allocated
     //! space).
-    std::size_t max_n;
+    std::size_t max_num_neighbors;
+
+    VerletListData() {}
+
+    VerletListData( const int num_particles, const int max_neigh )
+        : max_num_neighbors( max_neigh )
+    {
+        counts = view_type( "num_neighbors", num_particles );
+        neighbors = view_2d_type(
+            Kokkos::ViewAllocateWithoutInitializing( "neighbors" ),
+            num_particles, max_num_neighbors );
+    }
 
     //! Add a neighbor to the list.
     KOKKOS_INLINE_FUNCTION
@@ -157,12 +197,14 @@ struct VerletListBuilder
 
     // Constructor with a single cutoff radius.
     template <class PositionType>
-    VerletListBuilder( LinkedCellList<memory_space, PositionValueType> lcl,
+    VerletListBuilder( VerletListData<memory_space, LayoutTag>& data,
+                       LinkedCellList<memory_space, PositionValueType> lcl,
                        PositionType positions, const std::size_t begin,
                        const std::size_t end,
                        const PositionValueType neighborhood_radius,
                        const std::size_t max_neigh )
-        : pid_begin( begin )
+        : _data( data )
+        , pid_begin( begin )
         , pid_end( end )
         , linked_cell_list( lcl )
         , alloc_n( max_neigh )
@@ -176,13 +218,15 @@ struct VerletListBuilder
     // Constructor with a background radius (used for the LinkedCellList) and a
     // per-particle radius.
     template <class PositionType>
-    VerletListBuilder( LinkedCellList<memory_space, PositionValueType> lcl,
+    VerletListBuilder( VerletListData<memory_space, LayoutTag>& data,
+                       LinkedCellList<memory_space, PositionValueType> lcl,
                        PositionType positions, const std::size_t begin,
                        const std::size_t end,
                        const PositionValueType background_radius,
                        const RadiusType neighborhood_radius,
                        const std::size_t max_neigh )
-        : pid_begin( begin )
+        : _data( data )
+        , pid_begin( begin )
         , pid_end( end )
         , linked_cell_list( lcl )
         , alloc_n( max_neigh )
@@ -203,9 +247,11 @@ struct VerletListBuilder
         count = true;
         refill = false;
 
-        // Create the count view.
-        _data.counts = Kokkos::View<int*, memory_space>( "num_neighbors",
-                                                         size( positions ) );
+        // Reset the count view.
+        _data.total_num_particle = size( positions );
+        if ( _data.counts.size() < _data.total_num_particle )
+            Kokkos::realloc( _data.counts, _data.total_num_particle );
+        Kokkos::deep_copy( _data.counts, 0 );
 
         // Make a guess for the number of neighbors per particle for 2D lists.
         initCounts( LayoutTag() );
@@ -440,18 +486,16 @@ struct VerletListBuilder
         {
             count = false;
 
-            _data.neighbors = Kokkos::View<int**, memory_space>(
-                Kokkos::ViewAllocateWithoutInitializing( "neighbors" ),
-                _data.counts.size(), alloc_n );
+            if ( _data.counts.size() < size( _position ) )
+                Kokkos::realloc( _data.neighbors, size( _position ), alloc_n );
         }
     }
 
     void processCounts( VerletLayoutCSR )
     {
         // Allocate offsets.
-        _data.offsets = Kokkos::View<int*, memory_space>(
-            Kokkos::ViewAllocateWithoutInitializing( "neighbor_offsets" ),
-            _data.counts.size() );
+        if ( _data.counts.size() < size( _position ) )
+            Kokkos::realloc( _data.offsets, size( _position ) );
 
         // Calculate offsets from counts and the total number of counts.
         OffsetScanOp<memory_space> offset_op;
@@ -464,10 +508,10 @@ struct VerletListBuilder
                                range_policy, offset_op, total_num_neighbor );
         Kokkos::fence();
 
-        // Allocate the neighbor list.
-        _data.neighbors = Kokkos::View<int*, memory_space>(
-            Kokkos::ViewAllocateWithoutInitializing( "neighbors" ),
-            total_num_neighbor );
+        // Reallocate the neighbor list if needed.
+        if ( _data.neighbors.size() < total_num_neighbor )
+            Kokkos::realloc( _data.neighbors, total_num_neighbor );
+        _data.total_num_neighbor = total_num_neighbor;
 
         // Reset the counts. We count again when we fill.
         Kokkos::deep_copy( _data.counts, 0 );
@@ -490,16 +534,15 @@ struct VerletListBuilder
             },
             max_reduce );
         Kokkos::fence();
-        _data.max_n = static_cast<std::size_t>( max );
+        _data.max_num_neighbors = static_cast<std::size_t>( max );
 
         // Reallocate the neighbor list if previous size is exceeded.
-        if ( count || _data.max_n > _data.neighbors.extent( 1 ) )
+        if ( count || _data.max_num_neighbors > _data.neighbors.extent( 1 ) )
         {
             refill = true;
             Kokkos::deep_copy( _data.counts, 0 );
-            _data.neighbors = Kokkos::View<int**, memory_space>(
-                Kokkos::ViewAllocateWithoutInitializing( "neighbors" ),
-                _data.counts.size(), _data.max_n );
+            Kokkos::realloc( _data.neighbors, _data.counts.size(),
+                             _data.max_num_neighbors );
         }
     }
 
@@ -630,6 +673,7 @@ struct VerletListBuilder
 template <class DeviceType, class AlgorithmTag, class LayoutTag,
           class BuildOpTag, class PositionType>
 auto createVerletListBuilder(
+    VerletListData<typename PositionType::memory_space, LayoutTag>& data,
     const LinkedCellList<typename PositionType::memory_space,
                          typename PositionType::value_type>& lcl,
     PositionType x, const std::size_t begin, const std::size_t end,
@@ -639,13 +683,14 @@ auto createVerletListBuilder(
     using RandomAccessPositionType = typename PositionType::random_access_slice;
     return VerletListBuilder<DeviceType, RandomAccessPositionType,
                              typename PositionType::value_type, AlgorithmTag,
-                             LayoutTag, BuildOpTag>( lcl, x, begin, end, radius,
-                                                     max_neigh );
+                             LayoutTag, BuildOpTag>( data, lcl, x, begin, end,
+                                                     radius, max_neigh );
 }
 
 template <class DeviceType, class AlgorithmTag, class LayoutTag,
           class BuildOpTag, class PositionType>
 auto createVerletListBuilder(
+    VerletListData<typename PositionType::memory_space, LayoutTag>& data,
     const LinkedCellList<typename PositionType::memory_space,
                          typename PositionType::value_type>& lcl,
     PositionType x, const std::size_t begin, const std::size_t end,
@@ -658,13 +703,14 @@ auto createVerletListBuilder(
                      Kokkos::MemoryTraits<Kokkos::RandomAccess>>;
     return VerletListBuilder<DeviceType, RandomAccessPositionType,
                              typename PositionType::value_type, AlgorithmTag,
-                             LayoutTag, BuildOpTag>( lcl, x, begin, end, radius,
-                                                     max_neigh );
+                             LayoutTag, BuildOpTag>( data, lcl, x, begin, end,
+                                                     radius, max_neigh );
 }
 
 template <class DeviceType, class AlgorithmTag, class LayoutTag,
           class BuildOpTag, class PositionType, class RadiusType>
 auto createVerletListBuilder(
+    VerletListData<typename PositionType::memory_space, LayoutTag>& data,
     const LinkedCellList<typename PositionType::memory_space,
                          typename PositionType::value_type>& lcl,
     PositionType x, const std::size_t begin, const std::size_t end,
@@ -675,12 +721,13 @@ auto createVerletListBuilder(
     using RandomAccessPositionType = typename PositionType::random_access_slice;
     return VerletListBuilder<DeviceType, RandomAccessPositionType, RadiusType,
                              AlgorithmTag, LayoutTag, BuildOpTag>(
-        lcl, x, begin, end, background_radius, radius, max_neigh );
+        data, lcl, x, begin, end, background_radius, radius, max_neigh );
 }
 
 template <class DeviceType, class AlgorithmTag, class LayoutTag,
           class BuildOpTag, class PositionType, class RadiusType>
 auto createVerletListBuilder(
+    VerletListData<typename PositionType::memory_space, LayoutTag>& data,
     const LinkedCellList<typename PositionType::memory_space,
                          typename PositionType::value_type>& lcl,
     PositionType x, const std::size_t begin, const std::size_t end,
@@ -694,7 +741,7 @@ auto createVerletListBuilder(
                      Kokkos::MemoryTraits<Kokkos::RandomAccess>>;
     return VerletListBuilder<DeviceType, RandomAccessPositionType, RadiusType,
                              AlgorithmTag, LayoutTag, BuildOpTag>(
-        lcl, x, begin, end, background_radius, radius, max_neigh );
+        data, lcl, x, begin, end, background_radius, radius, max_neigh );
 }
 
 //---------------------------------------------------------------------------//
@@ -789,6 +836,10 @@ class VerletList
                                   Kokkos::is_view<PositionType>::value ),
                                 int>::type* = 0 )
     {
+        // TODO: this should only be allocated for the particles in the
+        // (end-begin) range.
+        _data = VerletListData<memory_space, LayoutTag>( size( x ), max_neigh );
+
         // Bin the particles in the grid. Don't actually sort them but make a
         // permutation vector. Note that we are binning all particles here and
         // not just the requested range. This is because all particles are
@@ -917,7 +968,8 @@ class VerletList
         // Create a builder functor.
         auto builder = Impl::createVerletListBuilder<device_type, AlgorithmTag,
                                                      LayoutTag, BuildTag>(
-            linked_cell_list, x, begin, end, neighborhood_radius, max_neigh );
+            _data, linked_cell_list, x, begin, end, neighborhood_radius,
+            max_neigh );
         buildImpl( builder );
     }
 
@@ -969,7 +1021,7 @@ class VerletList
         using device_type = Kokkos::Device<ExecutionSpace, memory_space>;
         auto builder = Impl::createVerletListBuilder<device_type, AlgorithmTag,
                                                      LayoutTag, BuildTag>(
-            linked_cell_list, x, begin, end, background_radius,
+            _data, linked_cell_list, x, begin, end, background_radius,
             neighborhood_radius, max_neigh );
         buildImpl( builder );
     }
@@ -1050,15 +1102,15 @@ class NeighborList<
     KOKKOS_INLINE_FUNCTION
     static std::size_t totalNeighbor( const list_type& list )
     {
-        // Size of the allocated memory gives total neighbors.
-        return list._data.neighbors.extent( 0 );
+        // Directly stored in this case.
+        return list._data.total_num_neighbor;
     }
 
     //! Get the maximum number of neighbors across all particles.
     KOKKOS_INLINE_FUNCTION
     static std::size_t maxNeighbor( const list_type& list )
     {
-        std::size_t num_p = list._data.counts.size();
+        std::size_t num_p = list._data.total_num_particle;
         return Impl::maxNeighbor( list, num_p );
     }
 
@@ -1099,7 +1151,7 @@ class NeighborList<
     KOKKOS_INLINE_FUNCTION
     static std::size_t totalNeighbor( const list_type& list )
     {
-        std::size_t num_p = list._data.counts.size();
+        std::size_t num_p = list._data.total_num_particle;
         return Impl::totalNeighbor( list, num_p );
     }
 
@@ -1108,7 +1160,7 @@ class NeighborList<
     static std::size_t maxNeighbor( const list_type& list )
     {
         // Stored during neighbor search.
-        return list._data.max_n;
+        return list._data.max_num_neighbors;
     }
 
     //! Get the number of neighbors for a given particle index.
