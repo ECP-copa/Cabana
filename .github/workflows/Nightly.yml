@@ -11,11 +11,24 @@ on:
 
 jobs:
   CI:
+    defaults:
+      run:
+        shell: bash
     strategy:
       matrix:
         backend: ["OPENMP", "SERIAL"]
         distro: ['ubuntu:latest', 'fedora:rawhide']
-    runs-on: ubuntu-20.04
+        include:
+          - distro: 'ubuntu:latest-arm64'
+            backend: 'SERIAL'
+            arch: 'arm64'
+          - distro: 'ubuntu:latest-arm64'
+            backend: 'OPENMP'
+            arch: 'arm64'
+          - distro: 'ubuntu:latest-arm64'
+            backend: 'THREADS'
+            arch: 'arm64'
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     timeout-minutes: 30
     container:
       image: ghcr.io/ecp-copa/ci-containers/${{ matrix.distro }}
@@ -36,7 +49,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: arborx/ArborX
-          ref: v1.7
+          ref: master
           path: arborx
       - name: Build arborx
         working-directory: arborx
@@ -44,11 +57,25 @@ jobs:
           cmake -B build -DCMAKE_PREFIX_PATH=${HOME}/kokkos -DCMAKE_INSTALL_PREFIX=$HOME/arborx
           cmake --build build --parallel 2
           cmake --install build
+      - name: Checkout hypre
+        uses: actions/checkout@v3
+        with:
+          repository: hypre-space/hypre
+          ref: master
+          path: hypre
+      - name: Build hypre
+        working-directory: hypre/src
+        run: |
+          [[ ${{ matrix.backend }} == 'OPENMP' ]] && hypre_cmake_opts+=( -DHYPRE_WITH_OPENMP=ON )
+          cmake -B build \
+            -DHYPRE_INSTALL_PREFIX=$HOME/hypre -DHYPRE_WITH_MPI=ON ${hypre_cmake_opts[@]}
+          cmake --build build --parallel 2
+          cmake --install build
       - name: Checkout Cabana
         uses: actions/checkout@v3
       - name: Build Cabana
         run: |
-          cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/Cabana -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx" -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON -DCabana_REQUIRE_${{ matrix.backend }}=ON -DVALGRIND_EXECUTABLE=False ${{ github.event.inputs.cmake_args }}
+          cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/Cabana -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/hypre" -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON -DCabana_REQUIRE_${{ matrix.backend }}=ON -DVALGRIND_EXECUTABLE=False ${{ github.event.inputs.cmake_args }}
           cmake --build build --parallel 2
           ctest --test-dir build --output-on-failure  ${{ github.event.inputs.ctest_args }}
           cmake --install build

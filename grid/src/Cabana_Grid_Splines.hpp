@@ -451,6 +451,492 @@ struct Spline<3>
     }
 };
 
+//! Quartic. Defined on the dual grid.
+template <>
+struct Spline<4>
+{
+    //! Order.
+    static constexpr int order = 4;
+
+    //! The number of non-zero knots in the spline.
+    static constexpr int num_knot = 5;
+
+    /*!
+      \brief Map a physical location to the logical space of the primal
+      grid in a single dimension.
+      \param xp The coordinate to map to the logical space.
+      \param rdx The inverse of the physical distance between grid locations.
+      \param low_x The physical location of the low corner of the primal grid.
+      \return The coordinate in the logical primal grid space.
+
+      \note Casting this result to an integer yields the index at the center of
+      the stencil.
+      \note A quartic spline uses the dual grid.
+    */
+    template <class Scalar>
+    KOKKOS_INLINE_FUNCTION static Scalar
+    mapToLogicalGrid( const Scalar xp, const Scalar rdx, const Scalar low_x )
+    {
+        return ( xp - low_x ) * rdx + 0.5;
+    }
+
+    /*!
+     *       \brief Get the logical space stencil offsets of the spline. The
+     * stencil defines the offsets into a grid field about a logical coordinate.
+     *                   \param indices The stencil index offsets.
+     *                       */
+    KOKKOS_INLINE_FUNCTION
+    static void offsets( int indices[num_knot] )
+    {
+        indices[0] = -2;
+        indices[1] = -1;
+        indices[2] = 0;
+        indices[3] = 1;
+        indices[4] = 2;
+    }
+
+    /*!
+      \brief Compute the stencil indices for a given logical space location.
+      \param x0 The coordinate at which to evaluate the spline stencil.
+      \param indices The indices of the stencil.
+    */
+    template <class Scalar>
+    KOKKOS_INLINE_FUNCTION static void stencil( const Scalar x0,
+                                                int indices[num_knot] )
+    {
+        indices[0] = static_cast<int>( x0 ) - 2;
+        indices[1] = indices[0] + 1;
+        indices[2] = indices[1] + 1;
+        indices[3] = indices[2] + 1;
+        indices[4] = indices[3] + 1;
+    }
+
+    /*!
+      \brief Calculate the value of the spline at all knots.
+      \param x0 The coordinate at which to evaluate the spline in the logical
+      grid space.
+      \param values Basis values at the knots. Ordered from lowest to highest
+      in terms of knot location.
+    */
+    template <typename Scalar>
+    KOKKOS_INLINE_FUNCTION static void value( const Scalar x0,
+                                              Scalar values[num_knot] )
+    {
+        // Constants
+        Scalar denom_2 = 1.0 / 384.0;
+        Scalar denom_1 = denom_2 * 4.0;
+        Scalar denom_0 = denom_2 * 2.0;
+
+        // Knot at i - 2
+        Scalar xn = x0 - static_cast<int>( x0 ) - 0.5;
+        Scalar xn2 = xn * xn;
+        Scalar xn4 = xn2 * xn2;
+        values[0] =
+            ( 16.0 * xn4 - 32.0 * xn * xn2 + 24.0 * xn2 - 8.0 * xn + 1.0 ) *
+            denom_2;
+
+        // Knot at i - 1
+        values[1] =
+            ( -16.0 * xn4 + 16.0 * xn * xn2 + 24.0 * xn2 - 44.0 * xn + 19.0 ) *
+            denom_1;
+
+        // Knot at i
+        values[2] = ( 48.0 * xn4 - 120.0 * xn2 + 115.0 ) * denom_0;
+
+        // Knot at i + 1
+        values[3] =
+            ( -16.0 * xn4 - 16.0 * xn * xn2 + 24.0 * xn2 + 44.0 * xn + 19.0 ) *
+            denom_1;
+
+        // Knot at i + 2
+        values[4] =
+            ( 16.0 * xn4 + 32.0 * xn * xn2 + 24.0 * xn2 + 8.0 * xn + 1 ) *
+            denom_2;
+    }
+
+    /*!
+      \brief Calculate the value of the gradient of the spline in the
+      physical frame.
+      \param x0 The coordinate at which to evaluate the spline in the logical
+      grid space.
+      \param rdx The inverse of the physical distance between grid locations.
+      \param gradients Basis gradient values at the knots in the physical frame.
+      Ordered from lowest to highest in terms of knot location.
+    */
+    template <typename Scalar>
+    KOKKOS_INLINE_FUNCTION static void
+    gradient( const Scalar x0, const Scalar rdx, Scalar gradients[num_knot] )
+    {
+        // Constants
+        Scalar denom_2 = 1.0 / 48.0;
+        Scalar denom_1 = denom_2 * 2.0;
+        Scalar denom_0 = denom_2 * 12.0;
+
+        // Knot at i - 2
+        Scalar xn = x0 - static_cast<int>( x0 ) - 0.5;
+        Scalar xn2 = xn * xn;
+        gradients[0] =
+            ( 8.0 * xn * xn2 - 12.0 * xn2 + 6.0 * xn - 1.0 ) * denom_2 * rdx;
+
+        // Knot at i - 1
+        gradients[1] = ( -16.0 * xn * xn2 + 12.0 * xn2 + 12.0 * xn - 11.0 ) *
+                       denom_1 * rdx;
+
+        // Knot at i
+        gradients[2] = ( 4.0 * xn * xn2 - 5.0 * xn ) * denom_0 * rdx;
+
+        // Knot at i + 1
+        gradients[3] = ( -16.0 * xn * xn2 - 12.0 * xn2 + 12.0 * xn + 11.0 ) *
+                       denom_1 * rdx;
+
+        // Knot at i + 2
+        gradients[4] =
+            ( 8.0 * xn * xn2 + 12.0 * xn2 + 6.0 * xn + 1.0 ) * denom_2 * rdx;
+    }
+};
+
+//! Quintic. Defined on the primal grid.
+template <>
+struct Spline<5>
+{
+    //! Order.
+    static constexpr int order = 5;
+
+    //! The number of non-zero knots in the spline.
+    static constexpr int num_knot = 6;
+
+    /*!
+      \brief Map a physical location to the logical space of the primal grid in
+      a single dimension.
+      \param xp The coordinate to map to the logical space.
+      \param rdx The inverse of the physical distance between grid locations.
+      \param low_x The physical location of the low corner of the primal grid.
+      \return The coordinate in the logical primal grid space.
+
+      \note Casting this result to an integer yields the index at the center of
+      the stencil.
+      \note A quintic spline uses the primal grid.
+    */
+    template <class Scalar>
+    KOKKOS_INLINE_FUNCTION static Scalar
+    mapToLogicalGrid( const Scalar xp, const Scalar rdx, const Scalar low_x )
+    {
+        return ( xp - low_x ) * rdx;
+    }
+
+    /*!
+      \brief Get the logical space stencil offsets of the spline. The stencil
+      defines the offsets into a grid field about a logical coordinate.
+      \param indices The stencil index offsets.
+    */
+    KOKKOS_INLINE_FUNCTION
+    static void offsets( int indices[num_knot] )
+    {
+        indices[0] = -2;
+        indices[1] = -1;
+        indices[2] = 0;
+        indices[3] = 1;
+        indices[4] = 2;
+        indices[5] = 3;
+    }
+
+    /*!
+      \brief Compute the stencil indices for a given logical space location.
+      \param x0 The coordinate at which to evaluate the spline stencil.
+      \param indices The indices of the stencil.
+    */
+    template <class Scalar>
+    KOKKOS_INLINE_FUNCTION static void stencil( const Scalar x0,
+                                                int indices[num_knot] )
+    {
+        indices[0] = static_cast<int>( x0 ) - 2;
+        indices[1] = indices[0] + 1;
+        indices[2] = indices[1] + 1;
+        indices[3] = indices[2] + 1;
+        indices[4] = indices[3] + 1;
+        indices[5] = indices[4] + 1;
+    }
+
+    /*!
+      \brief Calculate the value of the spline at all knots.
+      \param x0 The coordinate at which to evaluate the spline in the logical
+      grid space.
+      \param values Basis values at the knots. Ordered from lowest to highest in
+      terms of knot location.
+    */
+    template <typename Scalar>
+    KOKKOS_INLINE_FUNCTION static void value( const Scalar x0,
+                                              Scalar values[num_knot] )
+    {
+        // Constants
+        Scalar denom_2 = 1.0 / 3840.0;
+        Scalar denom_1 = denom_2 * 2.0;
+
+        // Knot at i - 2
+        Scalar xn = x0 - static_cast<int>( x0 ) - 0.5;
+        Scalar xn2 = xn * xn;
+        Scalar xn4 = xn2 * xn2;
+        values[0] = ( -32.0 * xn * xn4 + 80.0 * xn4 - 80.0 * xn * xn2 +
+                      40.0 * xn2 - 10.0 * xn + 1.0 ) *
+                    denom_2;
+
+        // Knot at i - 1
+        values[1] = ( 160.0 * xn * xn4 - 240.0 * xn4 - 240.0 * xn * xn2 +
+                      840.0 * xn2 - 750.0 * xn + 237.0 ) *
+                    denom_2;
+
+        // Knot at i
+        values[2] = ( -160.0 * xn * xn4 + 80.0 * xn4 + 560.0 * xn * xn2 -
+                      440.0 * xn2 - 770.0 * xn + 841.0 ) *
+                    denom_1;
+
+        // Knot at i + 1
+        values[3] = ( 160.0 * xn * xn4 + 80.0 * xn4 - 560.0 * xn * xn2 -
+                      440.0 * xn2 + 770.0 * xn + 841.0 ) *
+                    denom_1;
+
+        // Knot at i + 2
+        values[4] = ( -160.0 * xn * xn4 - 240.0 * xn4 + 240.0 * xn * xn2 +
+                      840.0 * xn2 + 750.0 * xn + 237.0 ) *
+                    denom_2;
+
+        // Knot at i + 3
+        values[5] = ( 32.0 * xn * xn4 + 80.0 * xn4 + 80.0 * xn * xn2 +
+                      40.0 * xn2 + 10.0 * xn + 1.0 ) *
+                    denom_2;
+    }
+
+    /*!
+      \brief Calculate the value of the gradient of the spline in the physical
+      frame.
+      \param x0 The coordinate at which to evaluate the spline in the logical
+      grid space.
+      \param rdx The inverse of the physical distance between grid locations.
+      \param gradients Basis gradient values at the knots in the physical frame.
+      Ordered from lowest to highest in terms of knot location.
+    */
+    template <typename Scalar>
+    KOKKOS_INLINE_FUNCTION static void
+    gradient( const Scalar x0, const Scalar rdx, Scalar gradients[num_knot] )
+    {
+        // Constants
+        Scalar denom_2 = 1.0 / 384.0;
+        Scalar denom_1 = denom_2 * 2.0;
+
+        // Knot at i - 2
+        Scalar xn = x0 - static_cast<int>( x0 ) - 0.5;
+        Scalar xn2 = xn * xn;
+        Scalar xn4 = xn2 * xn2;
+        gradients[0] =
+            ( -16.0 * xn4 + 32.0 * xn * xn2 - 24.0 * xn2 + 8.0 * xn - 1.0 ) *
+            denom_2 * rdx;
+
+        // Knot at i - 1
+        gradients[1] =
+            ( 80.0 * xn4 - 96.0 * xn * xn2 - 72.0 * xn2 + 168.0 * xn - 75.0 ) *
+            denom_2 * rdx;
+
+        // Knot at i
+        gradients[2] =
+            ( -80.0 * xn4 + 32.0 * xn * xn2 + 168.0 * xn2 - 88.0 * xn - 77.0 ) *
+            denom_1 * rdx;
+
+        // Knot at i + 1
+        gradients[3] =
+            ( 80.0 * xn4 + 32.0 * xn * xn2 - 168.0 * xn2 - 88.0 * xn + 77.0 ) *
+            denom_1 * rdx;
+
+        // Knot at i + 2
+        gradients[4] =
+            ( -80.0 * xn4 - 96.0 * xn * xn2 + 72.0 * xn2 + 168.0 * xn + 75.0 ) *
+            denom_2 * rdx;
+
+        // Knot at i + 3
+        gradients[5] =
+            ( 16.0 * xn4 + 32.0 * xn * xn2 + 24.0 * xn2 + 8.0 * xn + 1.0 ) *
+            denom_2 * rdx;
+    }
+};
+
+//! Sextic. Defined on the dual grid.
+template <>
+struct Spline<6>
+{
+    //! Order.
+    static constexpr int order = 6;
+
+    //! The number of non-zero knots in the spline.
+    static constexpr int num_knot = 7;
+
+    /*!
+      \brief Map a physical location to the logical space of the primal grid in
+      a single dimension.
+      \param xp The coordinate to map to the logical space.
+      \param rdx The inverse of the physical distance between grid locations.
+      \param low_x The physical location of the low corner of the primal grid.
+      \return The coordinate in the logical primal grid space.
+
+      \note Casting this result to an integer yields the index at the center of
+      the stencil.
+      \note A sextic spline uses the primal grid.
+    */
+    template <class Scalar>
+    KOKKOS_INLINE_FUNCTION static Scalar
+    mapToLogicalGrid( const Scalar xp, const Scalar rdx, const Scalar low_x )
+    {
+        return ( xp - low_x ) * rdx + 0.5;
+    }
+
+    /*!
+      \brief Get the logical space stencil offsets of the spline. The stencil
+      defines the offsets into a grid field about a logical coordinate.
+      \param indices The stencil index offsets.
+    */
+    KOKKOS_INLINE_FUNCTION
+    static void offsets( int indices[num_knot] )
+    {
+        indices[0] = -3;
+        indices[1] = -2;
+        indices[2] = -1;
+        indices[3] = 0;
+        indices[4] = 1;
+        indices[5] = 2;
+        indices[6] = 3;
+    }
+
+    /*!
+      \brief Compute the stencil indices for a given logical space location.
+      \param x0 The coordinate at which to evaluate the spline stencil.
+      \param indices The indices of the stencil.
+    */
+    template <class Scalar>
+    KOKKOS_INLINE_FUNCTION static void stencil( const Scalar x0,
+                                                int indices[num_knot] )
+    {
+        indices[0] = static_cast<int>( x0 ) - 3;
+        indices[1] = indices[0] + 1;
+        indices[2] = indices[1] + 1;
+        indices[3] = indices[2] + 1;
+        indices[4] = indices[3] + 1;
+        indices[5] = indices[4] + 1;
+        indices[6] = indices[5] + 1;
+    }
+
+    /*!
+      \brief Calculate the value of the spline at all knots.
+      \param x0 The coordinate at which to evaluate the spline in the logical
+      grid space.
+      \param values Basis values at the knots. Ordered from lowest to highest
+      in terms of knot location.
+    */
+    template <typename Scalar>
+    KOKKOS_INLINE_FUNCTION static void value( const Scalar x0,
+                                              Scalar values[num_knot] )
+    {
+        // Constants
+        Scalar denom_31 = 1.0 / 46080.0;
+        Scalar denom_2 = denom_31 * 2.0;
+        Scalar denom_0 = denom_2 * 2.0;
+
+        // Knot at i - 3
+        Scalar xn = x0 - static_cast<int>( x0 ) - 0.5;
+        Scalar xn2 = xn * xn;
+        Scalar xn4 = xn2 * xn2;
+        Scalar xn6 = xn2 * xn4;
+        values[0] = ( 64.0 * xn6 - 192.0 * xn * xn4 + 240.0 * xn4 -
+                      160.0 * xn * xn2 + 60.0 * xn2 - 12.0 * xn + 1.0 ) *
+                    denom_31;
+
+        // Knot at i - 2
+        values[1] = ( -192.0 * xn6 + 384.0 * xn * xn4 + 240.0 * xn4 -
+                      1600.0 * xn * xn2 + 2220.0 * xn2 - 1416.0 * xn + 361.0 ) *
+                    denom_2;
+
+        // Knot at i - 1
+        values[2] =
+            ( 960.0 * xn6 - 960.0 * xn * xn4 - 4080.0 * xn4 +
+              6880.0 * xn * xn2 + 4740.0 * xn2 - 17340.0 * xn + 10543.0 ) *
+            denom_31;
+
+        // Knot at i
+        values[3] =
+            ( -320.0 * xn6 + 1680.0 * xn4 - 4620.0 * xn2 + 5887.0 ) * denom_0;
+
+        // Knot at i + 1
+        values[4] =
+            ( 960.0 * xn6 + 960.0 * xn * xn4 - 4080.0 * xn4 -
+              6880.0 * xn * xn2 + 4740.0 * xn2 + 17340.0 * xn + 10543.0 ) *
+            denom_31;
+
+        // Knot at i + 2
+        values[5] = ( -192.0 * xn6 - 384.0 * xn * xn4 + 240.0 * xn4 +
+                      1600.0 * xn * xn2 + 2220.0 * xn2 + 1416.0 * xn + 361.0 ) *
+                    denom_2;
+
+        // Knot at i + 3
+        values[6] = ( 64.0 * xn6 + 192.0 * xn * xn4 + 240.0 * xn4 +
+                      160.0 * xn * xn2 + 60.0 * xn2 + 12.0 * xn + 1.0 ) *
+                    denom_31;
+    }
+
+    /*!
+      \brief Calculate the value of the gradient of the spline in the physical
+      frame.
+      \param x0 The coordinate at which to evaluate the spline in the logical
+      grid space.
+      \param rdx The inverse of the physical distance between grid locations.
+      \param gradients Basis gradient values at the knots in the physical frame.
+      Ordered from lowest to highest in terms of knot location.
+    */
+    template <typename Scalar>
+    KOKKOS_INLINE_FUNCTION static void
+    gradient( const Scalar x0, const Scalar rdx, Scalar gradients[num_knot] )
+    {
+        // Constants
+        Scalar denom_3 = 1.0 / 3840.0;
+        Scalar denom_2 = denom_3 * 4.0;
+        Scalar denom_1 = denom_3 * 5.0;
+        Scalar denom_0 = denom_3 * 40.0;
+
+        // Knot at i - 2
+        Scalar xn = x0 - static_cast<int>( x0 ) - 0.5;
+        Scalar xn2 = xn * xn;
+        Scalar xn4 = xn2 * xn2;
+        gradients[0] = ( 32.0 * xn * xn4 - 80.0 * xn4 + 80.0 * xn * xn2 -
+                         40.0 * xn2 + 10.0 * xn - 1.0 ) *
+                       denom_3 * rdx;
+
+        // Knot at i - 2
+        gradients[1] = ( -48.0 * xn * xn4 + 80.0 * xn4 + 40.0 * xn * xn2 -
+                         200.0 * xn2 + 185.0 * xn - 59.0 ) *
+                       denom_2 * rdx;
+
+        // Knot at i - 1
+        gradients[2] = ( 96.0 * xn * xn4 - 80.0 * xn4 - 272.0 * xn * xn2 +
+                         344.0 * xn2 + 158.0 * xn - 289.0 ) *
+                       denom_1 * rdx;
+
+        // Knot at i
+        gradients[3] =
+            ( -16.0 * xn * xn4 + 56.0 * xn * xn2 - 77.0 * xn ) * denom_0 * rdx;
+
+        // Knot at i + 1
+        gradients[4] = ( 96.0 * xn * xn4 + 80.0 * xn4 - 272.0 * xn * xn2 -
+                         344.0 * xn2 + 158.0 * xn + 289.0 ) *
+                       denom_1 * rdx;
+
+        // Knot at i + 2
+        gradients[5] = ( -48.0 * xn * xn4 - 80.0 * xn4 + 40.0 * xn * xn2 +
+                         200.0 * xn2 + 185.0 * xn + 59.0 ) *
+                       denom_2 * rdx;
+
+        // Knot at i + 3
+        gradients[6] = ( 32.0 * xn * xn4 + 80.0 * xn4 + 80.0 * xn * xn2 +
+                         40.0 * xn2 + 10.0 * xn + 1.0 ) *
+                       denom_3 * rdx;
+    }
+};
+
 //---------------------------------------------------------------------------//
 // Spline Data
 //---------------------------------------------------------------------------//
@@ -496,7 +982,6 @@ struct has_spline_tag<T, SplineDataMemberTypes<U, Tags...>>
     : has_spline_tag<T, SplineDataMemberTypes<Tags...>>
 {
 };
-
 template <typename T, typename... Tags>
 struct has_spline_tag<T, SplineDataMemberTypes<T, Tags...>> : std::true_type
 {

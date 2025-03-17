@@ -213,14 +213,14 @@ class ParticleList
     }
 
     //! Get the number of particles in the list.
-    std::size_t size() const { return _aosoa.size(); }
+    KOKKOS_INLINE_FUNCTION std::size_t size() const { return _aosoa.size(); }
     //! Update the number of particles in the list.
     void resize( const std::size_t n ) { _aosoa.resize( n ); }
 
     //! Get the AoSoA.
     aosoa_type& aosoa() { return _aosoa; }
     //! Get the AoSoA (const).
-    const aosoa_type& aosoa() const { return _aosoa; }
+    KOKKOS_INLINE_FUNCTION const aosoa_type& aosoa() const { return _aosoa; }
 
     //! Get a single particle.
     template <class IndexType>
