@@ -94,7 +94,8 @@ if(Cabana_ENABLE_MPI)
 endif()
 
 if(Cabana_ENABLE_STREAMCOMM)
-  target_link_libraries( Core INTERFACE ${MPI_Advance_LIBRARY} )
+  target_link_libraries( Core INTERFACE ${MPI_ADVANCE_LIBRARY} )
+  target_include_directories(Core INTERFACE ${MPI_ADVANCE_INCLUDE_DIR})
 endif()
 
 target_include_directories(Core INTERFACE
