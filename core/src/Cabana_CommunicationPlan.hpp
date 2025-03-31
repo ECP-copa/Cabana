@@ -1176,7 +1176,7 @@ class CommunicationPlan
         MPI_Allreduce(importing_ranks.data(), num_ranks_communicate.data(), comm_size, MPI_INT,
             MPI_SUM, comm());
 	
-        // Post that many wildcard recieves to get indices
+        // Post that many wildcard recieves to get the number of indices I will recieve from each rank
 
         
 
