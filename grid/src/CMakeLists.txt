@@ -96,6 +96,11 @@ if(Cabana_ENABLE_ALL)
   target_link_libraries(Grid INTERFACE ALL::ALL)
 endif()
 
+if(Cabana_ENABLE_STREAMCOMM)
+  target_link_libraries( Grid INTERFACE ${MPI_ADVANCE_LIBRARY} )
+  target_include_directories(Grid INTERFACE ${MPI_ADVANCE_INCLUDE_DIR})
+endif()
+
 target_include_directories(Grid
   INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
