@@ -76,12 +76,12 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
 
       \param comm The MPI communicator over which the collector is defined.
 
-      \param element_export_ranks The destination rank in the target
+      \param element_import_ranks The source rank in the target
       decomposition of each locally owned element in the source
-      decomposition. Each element will have one unique destination to which it
-      will be exported. This export rank may be any one of the listed neighbor
-      ranks which can include the calling rank. An export rank of -1 will
-      signal that this element is *not* to be exported and will be ignored in
+      decomposition. Each element will have one unique source from which it
+      will be imported. This import rank may be any one of the listed neighbor
+      ranks which can include the calling rank. An import rank of -1 will
+      signal that this element is *not* to be imported and will be ignored in
       the data migration. The input is expected to be a Kokkos view or Cabana
       slice in the same memory space as the collector.
 
@@ -98,13 +98,13 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
       will be efficiently migrated.
     */
     template <class ViewType>
-    Collector( MPI_Comm comm, const ViewType& element_export_ranks,
+    Collector( MPI_Comm comm, const ViewType& element_import_ranks,
                  const std::vector<int>& neighbor_ranks )
         : CommunicationPlan<MemorySpace, CommPlan>( comm )
     {
         auto neighbor_ids = this->createFromExportsAndTopology(
-            element_export_ranks, neighbor_ranks );
-        this->createExportSteering( neighbor_ids, element_export_ranks );
+            element_import_ranks, neighbor_ranks );
+        this->createExportSteering( neighbor_ids, element_import_ranks );
     }
 
     /*!
@@ -118,12 +118,12 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
 
       \param comm The MPI communicator over which the collector is defined.
 
-      \param element_export_ranks The destination rank in the target
+      \param element_import_ranks The source rank in the target
       decomposition of each locally owned element in the source
-      decomposition. Each element will have one unique destination to which it
-      will be exported. This export rank may any one of the listed neighbor
-      ranks which can include the calling rank. An export rank of -1 will
-      signal that this element is *not* to be exported and will be ignored in
+      decomposition. Each element will have one unique source from which it
+      will be imported. This import rank may be any one of the listed neighbor
+      ranks which can include the calling rank. An import rank of -1 will
+      signal that this element is *not* to be imported and will be ignored in
       the data migration. The input is expected to be a Kokkos view or Cabana
       slice in the same memory space as the collector.
 
@@ -135,11 +135,23 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
       will be efficiently migrated.
     */
     template <class ViewType>
-    Collector( MPI_Comm comm, const ViewType& element_export_ranks )
+    Collector( MPI_Comm comm, const ViewType& element_import_ranks )
         : CommunicationPlan<MemorySpace>( comm )
     {
-        auto neighbor_ids = this->createFromExportsOnly( element_export_ranks );
-        this->createExportSteering( neighbor_ids, element_export_ranks );
+        auto neighbor_ids = this->createFromExportsOnly( element_import_ranks );
+        this->createExportSteering( neighbor_ids, element_import_ranks );
+    }
+
+    template <class ViewType>
+    void buildCollectionPlan(MPI_Comm comm, const ViewType& element_import_ranks)
+    {
+        /**
+         * Step 1: How many people are going to send me their indices
+         * Allreduce: 1 if I need to send to you, 0 otherwise
+	     * Do a sum of that array
+	     * Post that many wildcard recieves -> this is how many indicies I will get from you
+         */
+
     }
 };
 
