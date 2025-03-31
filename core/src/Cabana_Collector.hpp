@@ -138,20 +138,8 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
     Collector( MPI_Comm comm, const ViewType& element_import_ranks )
         : CommunicationPlan<MemorySpace>( comm )
     {
-        auto neighbor_ids = this->createFromExportsOnly( element_import_ranks );
-        this->createExportSteering( neighbor_ids, element_import_ranks );
-    }
-
-    template <class ViewType>
-    void buildCollectionPlan(MPI_Comm comm, const ViewType& element_import_ranks)
-    {
-        /**
-         * Step 1: How many people are going to send me their indices
-         * Allreduce: 1 if I need to send to you, 0 otherwise
-	     * Do a sum of that array
-	     * Post that many wildcard recieves -> this is how many indicies I will get from you
-         */
-
+        auto neighbor_ids = this->createFromImportsOnly( element_import_ranks );
+        // this->createExportSteering( neighbor_ids, element_import_ranks );
     }
 };
 
