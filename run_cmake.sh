@@ -1,0 +1,1 @@
+cmake -DMPI_ADVANCE_DIR=~/installed-libraries/mpi_advance/ -DCabana_ENABLE_TESTING=ON ..
