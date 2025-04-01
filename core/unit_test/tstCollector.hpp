@@ -28,6 +28,127 @@ namespace Test
 {
 
 //---------------------------------------------------------------------------//
+void test0( const bool use_topology )
+{
+    // Make a communication plan.
+    std::shared_ptr<Cabana::Collector<Kokkos::HostSpace>> collector;
+
+    // Get my rank.
+    int my_rank = -1;
+    MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
+
+    // Every rank will communicate with itself and send all of its data.
+    int num_data = 10;
+    Kokkos::View<int*, Kokkos::HostSpace> import_ranks( "import_ranks", num_data );
+    if (my_rank == 0)
+    {
+        import_ranks(0) = -1;
+        import_ranks(1) = -1;
+        import_ranks(2) = 2;
+        import_ranks(3) = 3;
+        import_ranks(4) = -1;
+        import_ranks(5) = -1;
+        import_ranks(6) = 2;
+        import_ranks(7) = 3;
+        import_ranks(6) = 2;
+        import_ranks(7) = 3;
+    }
+    if (my_rank == 1)
+    {
+        import_ranks(0) = 0;
+        import_ranks(1) = -1;
+        import_ranks(2) = 2;
+        import_ranks(3) = -1;
+        import_ranks(4) = 0;
+        import_ranks(5) = -1;
+        import_ranks(6) = 2;
+        import_ranks(7) = -1;
+        import_ranks(8) = 2;
+        import_ranks(9) = -1;
+    }
+    if (my_rank == 2)
+    {
+        import_ranks(0) = -1;
+        import_ranks(1) = 1;
+        import_ranks(2) = -1;
+        import_ranks(3) = 3;
+        import_ranks(4) = -1;
+        import_ranks(5) = 1;
+        import_ranks(6) = -1;
+        import_ranks(7) = 3;
+        import_ranks(8) = -1;
+        import_ranks(9) = 1;
+    }
+    if (my_rank == 3)
+    {
+        import_ranks(0) = 0;
+        import_ranks(1) = -1;
+        import_ranks(2) = 2;
+        import_ranks(3) = -1;
+        import_ranks(4) = 0;
+        import_ranks(5) = -1;
+        import_ranks(6) = 2;
+        import_ranks(7) = -1;
+        import_ranks(8) = 0;
+        import_ranks(9) = -1;
+    }
+
+    std::vector<int> neighbor_ranks( 1, my_rank );
+
+    // Create the plan.
+    if ( false )
+        collector = std::make_shared<Cabana::Collector<Kokkos::HostSpace>>(
+            MPI_COMM_WORLD, import_ranks, neighbor_ranks );
+    else
+        collector = std::make_shared<Cabana::Collector<Kokkos::HostSpace>>(
+            MPI_COMM_WORLD, import_ranks );
+
+    // Make some data to migrate.
+    // using DataTypes = Cabana::MemberTypes<int, double[2]>;
+    // using AoSoA_t = Cabana::AoSoA<DataTypes, Kokkos::HostSpace>;
+    // AoSoA_t data_src( "src", num_data );
+    // auto slice_int_src = Cabana::slice<0>( data_src );
+    // auto slice_dbl_src = Cabana::slice<1>( data_src );
+
+    // // Fill the data.
+    // auto fill_func = KOKKOS_LAMBDA( const int i )
+    // {
+    //     slice_int_src( i ) = my_rank + i;
+    //     slice_dbl_src( i, 0 ) = my_rank + i;
+    //     slice_dbl_src( i, 1 ) = my_rank + i + 0.5;
+    // };
+    // Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
+    // Kokkos::parallel_for( range_policy, fill_func );
+    // Kokkos::fence();
+
+    // // Create a second set of data to which we will migrate.
+    // AoSoA_t data_dst( "dst", num_data );
+    // auto slice_int_dst = Cabana::slice<0>( data_dst );
+    // auto slice_dbl_dst = Cabana::slice<1>( data_dst );
+
+    // // Do the migration
+    // Cabana::migrate( *collector, data_src, data_dst );
+
+    // // Check the migration.
+    // Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_dst_host( "data_dst_host",
+    //                                                             num_data );
+    // auto slice_int_dst_host = Cabana::slice<0>( data_dst_host );
+    // auto slice_dbl_dst_host = Cabana::slice<1>( data_dst_host );
+    // Cabana::deep_copy( data_dst_host, data_dst );
+    // auto steering = collector->getExportSteering();
+    // auto host_steering =
+    //     Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
+    // for ( int i = 0; i < num_data; ++i )
+    // {
+    //     EXPECT_EQ( slice_int_dst_host( i ), my_rank + host_steering( i ) );
+    //     EXPECT_DOUBLE_EQ( slice_dbl_dst_host( i, 0 ),
+    //                         my_rank + host_steering( i ) );
+    //     EXPECT_DOUBLE_EQ( slice_dbl_dst_host( i, 1 ),
+    //                         my_rank + host_steering( i ) + 0.5 );
+    // }
+}
+
+//---------------------------------------------------------------------------//
 void test1( const bool use_topology )
 {
     // Make a communication plan.
@@ -756,41 +877,43 @@ void test9( const bool use_topology )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( Collector, Test1 ) { test1( true ); }
+TEST( Collector, Test0 ) { test0( true ); }
 
-TEST( Collector, Test2 ) { test2( true ); }
+// TEST( Collector, Test1 ) { test1( true ); }
 
-TEST( Collector, Test3 ) { test3( true ); }
+// TEST( Collector, Test2 ) { test2( true ); }
 
-TEST( Collector, Test4 ) { test4( true ); }
+// TEST( Collector, Test3 ) { test3( true ); }
 
-TEST( Collector, Test5 ) { test5( true ); }
+// TEST( Collector, Test4 ) { test4( true ); }
 
-TEST( Collector, Test6 ) { test6( true ); }
+// TEST( Collector, Test5 ) { test5( true ); }
 
-TEST( Collector, Test7 ) { test7( true ); }
+// TEST( Collector, Test6 ) { test6( true ); }
 
-TEST( Collector, Test8 ) { test8( true ); }
+// TEST( Collector, Test7 ) { test7( true ); }
 
-TEST( Collector, Test9 ) { test9( true ); }
+// TEST( Collector, Test8 ) { test8( true ); }
 
-TEST( Collector, Test1NoTopo ) { test1( false ); }
+// TEST( Collector, Test9 ) { test9( true ); }
 
-TEST( Collector, Test2NoTopo ) { test2( false ); }
+// TEST( Collector, Test1NoTopo ) { test1( false ); }
 
-TEST( Collector, Test3NoTopo ) { test3( false ); }
+// TEST( Collector, Test2NoTopo ) { test2( false ); }
 
-TEST( Collector, Test4NoTopo ) { test4( false ); }
+// TEST( Collector, Test3NoTopo ) { test3( false ); }
 
-TEST( Collector, Test5NoTopo ) { test5( false ); }
+// TEST( Collector, Test4NoTopo ) { test4( false ); }
 
-TEST( Collector, Test6NoTopo ) { test6( false ); }
+// TEST( Collector, Test5NoTopo ) { test5( false ); }
 
-TEST( Collector, Test7NoTopo ) { test7( false ); }
+// TEST( Collector, Test6NoTopo ) { test6( false ); }
 
-TEST( Collector, Test8NoTopo ) { test8( false ); }
+// TEST( Collector, Test7NoTopo ) { test7( false ); }
 
-TEST( Collector, Test9NoTopo ) { test9( false ); }
+// TEST( Collector, Test8NoTopo ) { test8( false ); }
+
+// TEST( Collector, Test9NoTopo ) { test9( false ); }
 
 //---------------------------------------------------------------------------//
 

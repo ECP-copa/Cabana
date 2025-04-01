@@ -1157,64 +1157,63 @@ class CommunicationPlan
         // communication space so any mpi tag will do.
         const int mpi_tag = 1221;
 
-        // Store which ranks I need to recieve from (i.e. send data to me)
-        // https://github.com/CUP-ECS/CLAMR/blob/master/l7/l7_setup.c
-        Kokkos::View<int*, memory_space> importing_ranks("importing_ranks", comm_size);
-        Kokkos::View<int, memory_space> ranks_sending_to("ranks_sending_to");
-        Kokkos::deep_copy(importing_ranks, 0);
-        Kokkos::deep_copy(ranks_sending_to, 0);
-        Kokkos::parallel_for(
-            "Cabana::storeImportRanks",
-            Kokkos::RangePolicy<ExecutionSpace>( 0, element_import_ranks.extent(0) ),
-            KOKKOS_LAMBDA( const int i ) {
-                int val = Kokkos::atmoic_fetch_add(&importing_ranks(i), 1);
-                if (val == 0) Kokkos::atomic_increment(&ranks_sending_to();)
-            } );
-        Kokkos::fence();
-        auto importing_ranks_h = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace, importing_ranks)
+        // Count the number of sends this rank will do to other ranks. Keep
+        // track of which slot we get in our neighbor's send buffer.
+        auto counts_and_ids = Impl::countSendsAndCreateSteering(
+            exec_space, element_import_ranks, comm_size,
+            typename Impl::CountSendsAndCreateSteeringAlgorithm<
+                ExecutionSpace>::type() );
+        
+        // Copy the counts to the host.
+        auto neighbor_counts_host = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), counts_and_ids.first );
+        auto neighbor_ids_host = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), counts_and_ids.second );
+        
+        for (int i = 0; i < neighbor_counts_host.extent(0); i++)
+            printf("R%d: neighbor_counts(%d) = %d\n", rank, i, neighbor_counts_host(i));
+        for (int i = 0; i < neighbor_ids_host.extent(0); i++)
+            printf("R%d: neighbor_ids(%d) = %d\n", rank, i, neighbor_ids_host(i));
 
         // Allreduce to count number of ranks I am communicating with
-        Kokkos::View<int*, Kokkos::HostSpace> num_ranks_communicate("num_ranks_communicate", comm_size);
-        MPI_Allreduce()
+        Kokkos::View<int*, Kokkos::HostSpace> num_ranks_communicate_h("num_ranks_communicate_h", comm_size);
 
-        MPI_Allreduce(importing_ranks_h.data(), num_ranks_communicate.data(), comm_size, MPI_INT,
-            MPI_SUM, comm());
+        // MPI_Allreduce(importing_ranks_h.data(), num_ranks_communicate_h.data(), comm_size, MPI_INT,
+        //     MPI_SUM, comm());
 	
         // Post that many wildcard recieves to get the number of indices I will recieve from each rank
-        // Allocate buffers based on num_ranks_communicate
-        int num_recvs = num_ranks_communicate(rank);
-        Kokkos::View<int*> send_counts("send_counts", num_sends);
-        Kokkos::View<int*> recieved_from("recieved_from", num_sends);
+        // Allocate buffers based on num_ranks_communicate_h
+        // int num_recvs = num_ranks_communicate_h(rank);
+        // Kokkos::View<int*, Kokkos::HostSpace> index_counts("index_counts", num_sends);
+        // Kokkos::View<int*, Kokkos::HostSpace> recieved_from("recieved_from", num_recvs);
 
-        // Allocate MPI request and status arrays
-        int num_recvs = element_import_ranks.extent(0);
-        int num_msgs = 2 * num_recvs + num_sends; // Ensure sufficient requests
+        std::vector<MPI_Request> mpi_requests(10);
+        std::vector<MPI_Status> mpi_statuses(10);
 
-        std::vector<MPI_Request> mpi_requests(num_msgs);
-        std::vector<MPI_Status> mpi_statuses(num_msgs);
+        // // Receive counts for indices this process will send
+        // for (int i = 0; i < num_recvs; i++) {
+        //     MPI_Irecv(&index_counts(i), 1, MPI_INT, MPI_ANY_SOURCE,
+        //         mpi_tag, MPI_COMM_WORLD, &mpi_requests[i]);
+        // }
 
-        int request_count = 0;
+        
+        // // Send counts of needed indices
+        // for (int i = 0; i < num_recvs; i++) {
+        //     int target_rank = i;  // Assume recv_from[i] corresponds to process i
+        //     MPI_Send(&procs_num_indices(i), 1, MPI_INT, target_rank,
+        //             101, MPI_COMM_WORLD, &mpi_requests[request_count++]);
+        // }
 
-        // Send counts of needed indices
-        for (int i = 0; i < num_recvs; i++) {
-            int target_rank = i;  // Assume recv_from[i] corresponds to process i
-            MPI_Isend(&procs_num_indices(i), 1, MPI_INT, target_rank,
-                    101, MPI_COMM_WORLD, &mpi_requests[request_count++]);
-        }
-
-        // Receive counts for indices this process will send
-        for (int i = 0; i < num_sends; i++) {
-            MPI_Irecv(&send_counts(i), 1, MPI_INT, MPI_ANY_SOURCE,
-                    101, MPI_COMM_WORLD, &mpi_requests[request_count++]);
-        }
+        
+        
 
         // Wait for all count exchanges to complete
-        MPI_Waitall(request_count, mpi_requests.data(), mpi_statuses.data());
+        MPI_Waitall(10, mpi_requests.data(), mpi_statuses.data());
 
         // Identify which processes this process will send data to
-        for (int i = 0; i < num_sends; i++) {
-            send_to(i) = mpi_statuses[num_recvs + i].MPI_SOURCE;
-        }
+        // for (int i = 0; i < num_sends; i++) {
+        //     send_to(i) = mpi_statuses[num_recvs + i].MPI_SOURCE;
+        // }
 
 
 
@@ -1331,7 +1330,7 @@ class CommunicationPlan
         MPI_Barrier( comm() );
 
         // Return the neighbor ids.
-        // return counts_and_ids.second;
+        return counts_and_ids.second;
     }
 
     template <class ViewType>
