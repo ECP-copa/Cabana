@@ -38,59 +38,66 @@ void test0( const bool use_topology )
     MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
 
     // Every rank will communicate with itself and send all of its data.
-    int num_data = 10;
-    Kokkos::View<int*, Kokkos::HostSpace> import_ranks( "import_ranks", num_data );
+    int num_import_requests = 0;
+    if (rank == 0) num_import_requests = 6;
+    else if (rank == 1) num_import_requests = 5;
+    else if (rank == 2) num_import_requests = 5;
+    else if (rank == 3) num_import_requests = 5;
+    Kokkos::View<int*, Kokkos::HostSpace> import_ranks( "import_ranks", num_import_requests );
+    Kokkos::View<int*, Kokkos::HostSpace> import_ids( "import_ids", num_import_requests );
     if (my_rank == 0)
     {
-        import_ranks(0) = -1;
-        import_ranks(1) = -1;
+        import_ranks(0) = 2;
+        import_ranks(1) = 3;
         import_ranks(2) = 2;
         import_ranks(3) = 3;
-        import_ranks(4) = -1;
-        import_ranks(5) = -1;
-        import_ranks(6) = 2;
-        import_ranks(7) = 3;
-        import_ranks(6) = 2;
-        import_ranks(7) = 3;
+        import_ranks(4) = 2;
+        import_ranks(5) = 3;
+        import_ids(0) = 0;
+        import_ids(1) = 1;
+        import_ids(2) = 2;
+        import_ids(3) = 3;
+        import_ids(4) = 4;
+        import_ids(5) = 5;
     }
-    if (my_rank == 1)
+    else if (my_rank == 1)
     {
         import_ranks(0) = 0;
-        import_ranks(1) = -1;
-        import_ranks(2) = 2;
-        import_ranks(3) = -1;
-        import_ranks(4) = 0;
-        import_ranks(5) = -1;
-        import_ranks(6) = 2;
-        import_ranks(7) = -1;
-        import_ranks(8) = 2;
-        import_ranks(9) = -1;
+        import_ranks(1) = 2;
+        import_ranks(2) = 0;
+        import_ranks(3) = 2;
+        import_ranks(4) = 2;
+        import_ids(0) = 0;
+        import_ids(1) = 1;
+        import_ids(2) = 2;
+        import_ids(3) = 3;
+        import_ids(4) = 4;
     }
-    if (my_rank == 2)
+    else if (my_rank == 2)
     {
-        import_ranks(0) = -1;
-        import_ranks(1) = 1;
-        import_ranks(2) = -1;
+        import_ranks(0) = 1;
+        import_ranks(1) = 3;
+        import_ranks(2) = 1;
         import_ranks(3) = 3;
-        import_ranks(4) = -1;
-        import_ranks(5) = 1;
-        import_ranks(6) = -1;
-        import_ranks(7) = 3;
-        import_ranks(8) = -1;
-        import_ranks(9) = 1;
+        import_ranks(4) = 1;
+        import_ids(0) = 0;
+        import_ids(1) = 1;
+        import_ids(2) = 2;
+        import_ids(3) = 3;
+        import_ids(4) = 4;
     }
-    if (my_rank == 3)
+    else if (my_rank == 3)
     {
         import_ranks(0) = 0;
-        import_ranks(1) = -1;
-        import_ranks(2) = 2;
-        import_ranks(3) = -1;
+        import_ranks(1) = 2;
+        import_ranks(2) = 0;
+        import_ranks(3) = 2;
         import_ranks(4) = 0;
-        import_ranks(5) = -1;
-        import_ranks(6) = 2;
-        import_ranks(7) = -1;
-        import_ranks(8) = 0;
-        import_ranks(9) = -1;
+        import_ids(0) = 0;
+        import_ids(1) = 1;
+        import_ids(2) = 2;
+        import_ids(3) = 3;
+        import_ids(4) = 4;
     }
 
     std::vector<int> neighbor_ranks( 1, my_rank );
@@ -101,9 +108,10 @@ void test0( const bool use_topology )
             MPI_COMM_WORLD, import_ranks, neighbor_ranks );
     else
         collector = std::make_shared<Cabana::Collector<Kokkos::HostSpace>>(
-            MPI_COMM_WORLD, import_ranks );
+            MPI_COMM_WORLD, import_ranks, import_ids );
 
     // Make some data to migrate.
+    // int num_data = 10;
     // using DataTypes = Cabana::MemberTypes<int, double[2]>;
     // using AoSoA_t = Cabana::AoSoA<DataTypes, Kokkos::HostSpace>;
     // AoSoA_t data_src( "src", num_data );

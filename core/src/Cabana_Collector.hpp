@@ -85,6 +85,9 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
       the data migration. The input is expected to be a Kokkos view or Cabana
       slice in the same memory space as the collector.
 
+      \param element_import_ids The id that must be imported from each rank
+      in element_import_ranks
+
       \param neighbor_ranks List of ranks this rank will send to and receive
       from. This list can include the calling rank. This is effectively a
       description of the topology of the point-to-point communication
@@ -99,7 +102,8 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
     */
     template <class ViewType>
     Collector( MPI_Comm comm, const ViewType& element_import_ranks,
-                 const std::vector<int>& neighbor_ranks )
+                const ViewType& element_import_ids,
+                const std::vector<int>& neighbor_ranks )
         : CommunicationPlan<MemorySpace, CommPlan>( comm )
     {
         auto neighbor_ids = this->createFromExportsAndTopology(
@@ -126,6 +130,9 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
       signal that this element is *not* to be imported and will be ignored in
       the data migration. The input is expected to be a Kokkos view or Cabana
       slice in the same memory space as the collector.
+      
+      \param element_import_ids The id that must be imported from each rank
+      in element_import_ranks
 
       \note For elements that you do not wish to export, use an export rank of
       -1 to signal that this element is *not* to be exported and will be
@@ -135,10 +142,17 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
       will be efficiently migrated.
     */
     template <class ViewType>
-    Collector( MPI_Comm comm, const ViewType& element_import_ranks )
+    Collector( MPI_Comm comm, const ViewType& element_import_ranks,
+                const ViewType& element_import_ids )
         : CommunicationPlan<MemorySpace>( comm )
     {
-        auto neighbor_ids = this->createFromImportsOnly( element_import_ranks );
+        auto neighbor_ids = this->createFromImportsOnly( element_import_ranks,
+            element_import_ids );
+
+        int rank;
+        MPI_Comm_rank(comm, &rank);
+        for (size_t i = 0; i < neighbor_ids.extent(0); i++)
+            printf("R%d: neighbor_id(%d): %d\n", rank, i, neighbor_ids(i));
         // this->createExportSteering( neighbor_ids, element_import_ranks );
     }
 };
