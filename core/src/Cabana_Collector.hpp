@@ -146,14 +146,10 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
                 const ViewType& element_import_ids )
         : CommunicationPlan<MemorySpace>( comm )
     {
-        auto neighbor_ids = this->createFromImportsOnly( element_import_ranks,
+        auto neighbor_ids_ranks_indices = this->createFromImportsOnly( element_import_ranks,
             element_import_ids );
-
-        int rank;
-        MPI_Comm_rank(comm, &rank);
-        for (size_t i = 0; i < neighbor_ids.extent(0); i++)
-            printf("R%d: neighbor_id(%d): %d\n", rank, i, neighbor_ids(i));
-        // this->createExportSteering( neighbor_ids, element_import_ranks );
+        this->createExportSteering( neighbor_ids_ranks_indices.first,
+                                    neighbor_ids_ranks_indices.second );
     }
 };
 
