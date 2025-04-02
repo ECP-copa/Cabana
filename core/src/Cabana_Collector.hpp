@@ -148,8 +148,9 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
     {
         auto neighbor_ids_ranks_indices = this->createFromImportsOnly( element_import_ranks,
             element_import_ids );
-        this->createExportSteering( neighbor_ids_ranks_indices.first,
-                                    neighbor_ids_ranks_indices.second );
+        printf("Before createExportSteering\n");
+        this->createExportSteering( std::get<0>(neighbor_ids_ranks_indices),
+                                    std::get<1>(neighbor_ids_ranks_indices) );
     }
 };
 
