@@ -1046,20 +1046,18 @@ class CommunicationPlan
         MPIX_Info_init(&xinfo);
 
         int num_import_rank = -1;
-        std::vector<int> src( comm_size );
-        std::vector<std::size_t> import_sizes( comm_size );
+        int* src, *import_sizes;
+        // std::vector<std::size_t> import_sizes( comm_size );
         MPIX_Alltoall_crs(num_export_rank, _neighbors.data(), 1, MPI_UNSIGNED_LONG, _num_export.data(),
-                          &num_import_rank, src.data(), 1, MPI_UNSIGNED_LONG, import_sizes.data(),
+                          &num_import_rank, &src, 1, MPI_UNSIGNED_LONG, (void**)&import_sizes,
                           xinfo, xcomm);
 
         MPIX_Info_free(&xinfo);
         MPIX_Comm_free(&xcomm);
 
         // Compute the total number of imports.
-        import_sizes.resize(num_import_rank);
-        _total_num_import =
-            std::accumulate( import_sizes.begin(), import_sizes.end(), 0 );
-
+        _total_num_import = num_export_rank;
+            
         // Extract the imports. If we did self sends we already know what
         // imports we got from that.
         for ( int i = 0; i < num_import_rank; ++i )
@@ -1090,6 +1088,9 @@ class CommunicationPlan
                 _num_import[n] = import_sizes[i];
             }
         }
+
+        MPIX_Free(src);
+        MPIX_Free(import_sizes);
 
         // Barrier before continuing to ensure synchronization.
         MPI_Barrier( comm() );
@@ -1235,7 +1236,7 @@ class CommunicationPlan
         {
             for(int j = 0; j < num_indices_send(send_to(i)); j++)
             {
-                MPI_Irecv
+                // MPI_Irecv
             }
 
         }
