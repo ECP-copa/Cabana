@@ -115,11 +115,6 @@ void test1( const bool use_topology )
     EXPECT_EQ( comm_plan.numImport( 0 ), num_data );
     EXPECT_EQ( comm_plan.totalNumImport(), num_data );
 
-    for(size_t i = 0; i < neighbor_ids.extent(0); i ++)
-        printf("R%d: neighbor_id(%d): %d\n", my_rank, i, neighbor_ids(i));
-    for(size_t i = 0; i < export_ranks.extent(0); i ++)
-        printf("R%d: export_ranks(%d): %d\n", my_rank, i, export_ranks(i));
-
     // Create the export steering vector.
     comm_plan.createSteering( neighbor_ids, export_ranks );
 
@@ -690,15 +685,18 @@ void test9( const bool use_topology )
     int my_rank = -1;
     MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
 
-    int comm_size = -1;
-    MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
+    // Get my size.
+    int my_size = -1;
+    MPI_Comm_size( MPI_COMM_WORLD, &my_size );
 
-    // Every rank will import all the data from the next rank
+    // Compute the inverse rank.
+    int inverse_rank = my_size - my_rank - 1;
+
+    // Every rank will import all the data from its inverse rank
     int num_data = 10; 
     Kokkos::View<int*, Kokkos::HostSpace> import_ranks( "import_ranks", num_data );
     Kokkos::View<int*, Kokkos::HostSpace> import_ids( "import_ids", num_data );
-    int next_rank = ((my_rank + 1) == comm_size) ? 0 : (my_rank + 1);
-    Kokkos::deep_copy(import_ranks, next_rank);
+    Kokkos::deep_copy(import_ranks, inverse_rank);
 
     // Fill the import_ids.
     auto fill_func = KOKKOS_LAMBDA( const int i )
@@ -728,7 +726,7 @@ void test9( const bool use_topology )
     
     // Check the plan.
     EXPECT_EQ( comm_plan.numNeighbor(), 1 ) << "Rank " << my_rank << "\n";
-    EXPECT_EQ( comm_plan.neighborRank( 0 ), next_rank ) << "Rank " << my_rank << "\n";
+    EXPECT_EQ( comm_plan.neighborRank( 0 ), inverse_rank ) << "Rank " << my_rank << "\n";
     EXPECT_EQ( comm_plan.numExport( 0 ), num_data ) << "Rank " << my_rank << "\n";
     EXPECT_EQ( comm_plan.totalNumExport(), num_data ) << "Rank " << my_rank << "\n";
     EXPECT_EQ( comm_plan.numImport( 0 ), num_data ) << "Rank " << my_rank << "\n";
@@ -759,38 +757,38 @@ void test9( const bool use_topology )
 //---------------------------------------------------------------------------//
 
 // Export tests
-// TEST( CommPlan, Test1 ) { test1( true ); }
+TEST( CommPlan, Test1 ) { test1( true ); }
 
-// TEST( CommPlan, Test2 ) { test2( true ); }
+TEST( CommPlan, Test2 ) { test2( true ); }
 
-// TEST( CommPlan, Test3 ) { test3( true ); }
+TEST( CommPlan, Test3 ) { test3( true ); }
 
-// TEST( CommPlan, Test4 ) { test4( true ); }
+TEST( CommPlan, Test4 ) { test4( true ); }
 
-// TEST( CommPlan, Test5 ) { test5( true ); }
+TEST( CommPlan, Test5 ) { test5( true ); }
 
-// TEST( CommPlan, Test6 ) { test6( true ); }
+TEST( CommPlan, Test6 ) { test6( true ); }
 
-// TEST( CommPlan, Test7 ) { test7( true ); }
+TEST( CommPlan, Test7 ) { test7( true ); }
 
-// EST( CommPlan, Test1NoTopo ) { test1( false ); }
+TEST( CommPlan, Test1NoTopo ) { test1( false ); }
 
-// TEST( CommPlan, Test2NoTopo ) { test2( false ); }
+TEST( CommPlan, Test2NoTopo ) { test2( false ); }
 
-// TEST( CommPlan, Test3NoTopo ) { test3( false ); }
+TEST( CommPlan, Test3NoTopo ) { test3( false ); }
 
-// TEST( CommPlan, Test4NoTopo ) { test4( false ); }
+TEST( CommPlan, Test4NoTopo ) { test4( false ); }
 
-// TEST( CommPlan, Test5NoTopo ) { test5( false ); }
+TEST( CommPlan, Test5NoTopo ) { test5( false ); }
 
-// TEST( CommPlan, Test6NoTopo ) { test6( false ); }
+TEST( CommPlan, Test6NoTopo ) { test6( false ); }
 
-// TEST( CommPlan, Test7NoTopo ) { test7( false ); }
+TEST( CommPlan, Test7NoTopo ) { test7( false ); }
 
-// TEST( CommPlan, TestTopology ) { testTopology(); }
+TEST( CommPlan, TestTopology ) { testTopology(); }
 
 // Import tests
-// TEST( CommPlan, Test8NoTopo ) { test8( false ); }
+TEST( CommPlan, Test8NoTopo ) { test8( false ); }
 
 TEST( CommPlan, Test9NoTopo ) { test9( false ); }
 
