@@ -1152,9 +1152,6 @@ class CommunicationPlan
         if (element_import_ids.size() != element_import_ranks.size())
            throw std::runtime_error( "Export ids and ranks different sizes!" );
 
-        // Store the number of export elements.
-        // _num_export_element = element_export_ranks.size();
-
         // Get the size of this communicator.
         int comm_size = -1;
         MPI_Comm_size( comm(), &comm_size );
@@ -1243,20 +1240,23 @@ class CommunicationPlan
         // send ranks.
         _neighbors.clear();
         _num_export.clear();
+        _num_import.clear();
         _total_num_export = 0;
         for ( int r = 0; r < num_recvs; ++r )
             if ( send_to( r ) > -1 )
             {
                 _neighbors.push_back( send_to( r ) );
                 _num_export.push_back( send_counts( r ) );
+                _num_import.push_back( neighbor_counts_host( send_to( r ) ) );
                 _total_num_export += send_counts( r );
                 neighbor_counts_host( r ) = 1;
+                if (rank == 2) printf("R%d: adding: neighbor %d, export %d, import %d\n", rank,
+                    send_to( r ), send_counts( r ), neighbor_counts_host( send_to( r ) ));
             }
 
         // Get the number of export ranks and initially allocate the import
         // sizes.
         int num_export_rank = _neighbors.size();
-        _num_import.assign( num_export_rank, 0 );
 
         // If we are sending to ourself put that one first in the neighbor
         // list and assign the number of imports to be the number of exports.
@@ -1266,6 +1266,7 @@ class CommunicationPlan
             {
                 std::swap( _neighbors[n], _neighbors[0] );
                 std::swap( _num_export[n], _num_export[0] );
+                std::swap( _num_import[n], _num_import[0] );
                 _num_import[0] = _num_export[0];
                 self_send = true;
                 break;
@@ -1273,6 +1274,7 @@ class CommunicationPlan
 
         // Total number of imports known
         _total_num_import = element_import_ranks.extent(0);
+        _num_export_element = total_recvs;
 
         // Post receives to get the indices other processes are requesting
         Kokkos::View<int*, Kokkos::HostSpace> indices_send("indices_send", total_recvs);

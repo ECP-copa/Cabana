@@ -240,7 +240,7 @@ void test3( const bool use_topology )
     EXPECT_EQ( comm_plan.numImport( 0 ), num_data );
     EXPECT_EQ( comm_plan.totalNumImport(), num_data );
 
-    // Create the export steering vector.
+    // Create the export steering vector.`
     comm_plan.createSteering( neighbor_ids, export_ranks );
 
     // Check the steering vector. We thread the creation of the steering
@@ -658,105 +658,101 @@ void test8( const bool use_topology )
     EXPECT_EQ( comm_plan.totalNumExport(), num_data );
     EXPECT_EQ( comm_plan.numImport( 0 ), num_data );
     EXPECT_EQ( comm_plan.totalNumImport(), num_data );
-
-    for (size_t i = 0; i < std::get<0>(neighbor_ids_ranks_indices).extent(0); i++)
-    {
-        printf("R%d: neighbor_id(%d): %d\n", my_rank, i, std::get<0>(neighbor_ids_ranks_indices)(i));
-    }
-    for (size_t i = 0; i < std::get<1>(neighbor_ids_ranks_indices).extent(0); i++)
-    {
-        printf("R%d: neighbor_rank(%d): %d\n", my_rank, i, std::get<1>(neighbor_ids_ranks_indices)(i));
-    }
+    EXPECT_EQ( comm_plan.exportSize(), num_data );
 
     // Create the export steering vector.
-    // comm_plan.createSteering( std::get<0>(neighbor_ids_ranks_indices),
-    //                           std::get<1>(neighbor_ids_ranks_indices) );
+    comm_plan.createSteering( std::get<0>(neighbor_ids_ranks_indices),
+                              std::get<1>(neighbor_ids_ranks_indices) );
 
-    // // Check the steering vector. We thread the creation of the steering
-    // // vector so we don't really know what order it is in - only that it is
-    // // grouped by the ranks to which we are exporting. In this case just sort
-    // // the steering vector and make sure all of the ids are there. We can do
-    // // this because we are only sending to one rank.
-    // auto steering = comm_plan.getExportSteering();
-    // auto host_steering =
-    //     Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
-    // std::sort( host_steering.data(),
-    //            host_steering.data() + host_steering.size() );
-    // EXPECT_EQ( host_steering.size(), num_data );
-    // for ( int n = 0; n < num_data; ++n )
-    //     EXPECT_EQ( n, host_steering( n ) );
+    // Check the steering vector. We thread the creation of the steering
+    // vector so we don't really know what order it is in - only that it is
+    // grouped by the ranks to which we are exporting. In this case just sort
+    // the steering vector and make sure all of the ids are there. We can do
+    // this because we are only sending to one rank.
+    auto steering = comm_plan.getExportSteering();
+    auto host_steering =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
+    std::sort( host_steering.data(),
+               host_steering.data() + host_steering.size() );
+    EXPECT_EQ( host_steering.size(), num_data );
+    for ( int n = 0; n < num_data; ++n )
+        EXPECT_EQ( n, host_steering( n ) );
     
 }
 
 //---------------------------------------------------------------------------//
-// void test9( const bool use_topology )
-// {
-//     // Make a communication plan.
-//     CommPlanTester comm_plan( MPI_COMM_WORLD );
+void test9( const bool use_topology )
+{
+    // Make a communication plan.
+    CommPlanTester comm_plan( MPI_COMM_WORLD );
 
-//     // Get my rank.
-//     int my_rank = -1;
-//     MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
+    // Get my rank.
+    int my_rank = -1;
+    MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
 
-//     // Every rank will import from itself and import all of its data.
-//     int num_data = 10; 
-//     Kokkos::View<int*, Kokkos::HostSpace> import_ranks( "import_ranks", num_data );
-//     Kokkos::View<int*, Kokkos::HostSpace> import_ids( "import_ids", num_data );
-//     Kokkos::deep_copy(import_ranks, my_rank);
+    int comm_size = -1;
+    MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
 
-//     // Fill the import_ids.
-//     auto fill_func = KOKKOS_LAMBDA( const int i )
-//     {
-//         import_ids( i ) = i;
-//     };
-//     Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
-//     Kokkos::parallel_for( range_policy, fill_func );
-//     Kokkos::fence();
+    // Every rank will import all the data from the next rank
+    int num_data = 10; 
+    Kokkos::View<int*, Kokkos::HostSpace> import_ranks( "import_ranks", num_data );
+    Kokkos::View<int*, Kokkos::HostSpace> import_ids( "import_ids", num_data );
+    int next_rank = ((my_rank + 1) == comm_size) ? 0 : (my_rank + 1);
+    Kokkos::deep_copy(import_ranks, next_rank);
+
+    // Fill the import_ids.
+    auto fill_func = KOKKOS_LAMBDA( const int i )
+    {
+        import_ids( i ) = i;
+    };
+    Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
+    Kokkos::parallel_for( range_policy, fill_func );
+    Kokkos::fence();
     
-//     // std::vector<int> neighbor_ranks( 1, my_rank );
+    // std::vector<int> neighbor_ranks( 1, my_rank );
 
-//     // Create the plan.
-//     using size_type = typename TEST_MEMSPACE::size_type;
-//     std::tuple<Kokkos::View<size_type*, TEST_MEMSPACE>,
-//                       Kokkos::View<int*, TEST_MEMSPACE>,
-//                       Kokkos::View<int*, TEST_MEMSPACE>>
-//                       neighbor_ids_ranks_indices;
-//     if ( false )
-//     {
-//         // neighbor_ids_ranks_indices = comm_plan.createFromImportsOnly(
-//         //     MPI_COMM_WORLD, import_ranks, import_ids, neighbor_ranks );
-//     }
-//     else
-//         neighbor_ids_ranks_indices = comm_plan.createFromImports(
-//             import_ranks, import_ids );
+    // Create the plan.
+    using size_type = typename TEST_MEMSPACE::size_type;
+    std::tuple<Kokkos::View<size_type*, TEST_MEMSPACE>,
+                      Kokkos::View<int*, TEST_MEMSPACE>,
+                      Kokkos::View<int*, TEST_MEMSPACE>>
+                      neighbor_ids_ranks_indices;
+    if ( false )
+    {
+        // neighbor_ids_ranks_indices = comm_plan.createFromImportsOnly(
+        //     MPI_COMM_WORLD, import_ranks, import_ids, neighbor_ranks );
+    }
+    else
+        neighbor_ids_ranks_indices = comm_plan.createFromImports(
+            import_ranks, import_ids );
     
-//     // Check the plan.
-//     EXPECT_EQ( comm_plan.numNeighbor(), 1 );
-//     EXPECT_EQ( comm_plan.neighborRank( 0 ), my_rank );
-//     EXPECT_EQ( comm_plan.numExport( 0 ), num_data );
-//     EXPECT_EQ( comm_plan.totalNumExport(), num_data );
-//     EXPECT_EQ( comm_plan.numImport( 0 ), num_data );
-//     EXPECT_EQ( comm_plan.totalNumImport(), num_data );
+    // Check the plan.
+    EXPECT_EQ( comm_plan.numNeighbor(), 1 ) << "Rank " << my_rank << "\n";
+    EXPECT_EQ( comm_plan.neighborRank( 0 ), next_rank ) << "Rank " << my_rank << "\n";
+    EXPECT_EQ( comm_plan.numExport( 0 ), num_data ) << "Rank " << my_rank << "\n";
+    EXPECT_EQ( comm_plan.totalNumExport(), num_data ) << "Rank " << my_rank << "\n";
+    EXPECT_EQ( comm_plan.numImport( 0 ), num_data ) << "Rank " << my_rank << "\n";
+    EXPECT_EQ( comm_plan.totalNumImport(), num_data ) << "Rank " << my_rank << "\n";
 
-//     // Create the export steering vector.
-//     comm_plan.createSteering( std::get<0>(neighbor_ids_ranks_indices),
-//                               std::get<1>(neighbor_ids_ranks_indices) );
+    // Create the export steering vector.
+    comm_plan.createSteering( std::get<0>(neighbor_ids_ranks_indices),
+                              std::get<1>(neighbor_ids_ranks_indices) );
 
-//     // Check the steering vector. We thread the creation of the steering
-//     // vector so we don't really know what order it is in - only that it is
-//     // grouped by the ranks to which we are exporting. In this case just sort
-//     // the steering vector and make sure all of the ids are there. We can do
-//     // this because we are only sending to one rank.
-//     auto steering = comm_plan.getExportSteering();
-//     auto host_steering =
-//         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
-//     std::sort( host_steering.data(),
-//                host_steering.data() + host_steering.size() );
-//     EXPECT_EQ( host_steering.size(), num_data );
-//     for ( int n = 0; n < num_data; ++n )
-//         EXPECT_EQ( n, host_steering( n ) );
+    // Check the steering vector. We thread the creation of the steering
+    // vector so we don't really know what order it is in - only that it is
+    // grouped by the ranks to which we are exporting. In this case just sort
+    // the steering vector and make sure all of the ids are there. We can do
+    // this because we are only sending to one rank.
+    auto steering = comm_plan.getExportSteering();
+    auto host_steering =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
+    std::sort( host_steering.data(),
+               host_steering.data() + host_steering.size() );
+    EXPECT_EQ( host_steering.size(), num_data );
+    for ( int n = 0; n < num_data; ++n )
+        EXPECT_EQ( n, host_steering( n ) );
     
-// }
+}
 
 //---------------------------------------------------------------------------//
 // RUN TESTS
@@ -794,9 +790,9 @@ void test8( const bool use_topology )
 // TEST( CommPlan, TestTopology ) { testTopology(); }
 
 // Import tests
-TEST( CommPlan, Test8NoTopo ) { test8( false ); }
+// TEST( CommPlan, Test8NoTopo ) { test8( false ); }
 
-// TEST( CommPlan, Test7NoTopo ) { test7( false ); }
+TEST( CommPlan, Test9NoTopo ) { test9( false ); }
 
 //---------------------------------------------------------------------------//
 

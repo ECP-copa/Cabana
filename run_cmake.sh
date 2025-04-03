@@ -1,1 +1,1 @@
-cmake -DMPI_ADVANCE_DIR=~/installed-libraries/mpi_advance/ -DCabana_ENABLE_TESTING=ON ..
+cmake -DMPI_ADVANCE_DIR=~/installed-libraries/mpi_advance/ -DCabana_ENABLE_TESTING=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
