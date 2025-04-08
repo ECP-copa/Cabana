@@ -1181,6 +1181,9 @@ class CommunicationPlan
         Kokkos::View<int*, Kokkos::HostSpace> num_ranks_communicate("num_ranks_communicate", comm_size);
         MPI_Allreduce(importing_ranks_h.data(), num_ranks_communicate.data(), comm_size, MPI_INT,
             MPI_SUM, comm());
+        
+        for (int i = 0; i < num_ranks_communicate.extent(0); i++)
+            printf("R%d: num_ranks_communicate(%d): %d\n", rank, i, num_ranks_communicate(i));
 
         // Post that many wildcard recieves to get the number of indices I will send to each rank
         // Allocate buffers based on num_ranks_communicate
@@ -1336,10 +1339,6 @@ class CommunicationPlan
         // printf("Finished waitall\n");
         // sleep(1000);
 
-
-        // Barrier before continuing to ensure synchronization.
-        MPI_Barrier( comm() );
-
         // Now, build the export steering
         // Export rank in mpi_statuses[i].MPI_SOURCE
         // Export ID in export_indices(i)
@@ -1362,6 +1361,12 @@ class CommunicationPlan
         tmp = Kokkos::create_mirror_view(export_indices_d);
         Kokkos::deep_copy(tmp, export_indices);
         Kokkos::deep_copy(export_indices_d, tmp);
+
+        if (rank == 0)
+        {
+            for (int i = 0; i < _neighbors.size(); i++)
+                printf("R%d: _neighbors(%d): %d\n", rank, i, _neighbors[i]);
+        }
 
         // Return the neighbor ids, export ranks, and export indices
         return std::make_tuple(counts_and_ids.second, element_export_ranks, export_indices_d);

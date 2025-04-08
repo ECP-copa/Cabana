@@ -148,7 +148,6 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
     {
         auto neighbor_ids_ranks_indices = this->createFromImportsOnly( element_import_ranks,
             element_import_ids );
-        printf("Before createExportSteering\n");
         this->createExportSteering( std::get<0>(neighbor_ids_ranks_indices),
                                     std::get<1>(neighbor_ids_ranks_indices) );
     }
@@ -419,11 +418,7 @@ void migrate( ExecutionSpace exec_space, const Collector_t& collector,
                                         is_aosoa<AoSoA_t>::value ),
                                       int>::type* = 0 )
 {
-    // Check that the AoSoA is the right size.
-    if ( aosoa.size() != collector.exportSize() )
-        throw std::runtime_error( "AoSoA is the wrong size for migration!" );
-
-    // Determine if the source of destination decomposition has more data on
+    // Determine if the source or destination decomposition has more data on
     // this rank.
     bool dst_is_bigger =
         ( collector.totalNumImport() > collector.exportSize() );
