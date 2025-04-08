@@ -12,7 +12,7 @@ endif()
 find_path(
     MPI_ADVANCE_INCLUDE_DIR
     NAMES mpi_advance.h
-    PATHS ${MPI_ADVANCE_DIR}/include/src
+    PATHS ${MPI_ADVANCE_DIR}/include
           ENV CPATH
     NO_DEFAULT_PATH
 )
