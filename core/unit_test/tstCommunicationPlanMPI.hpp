@@ -21,6 +21,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <set>
 
 namespace Test
 {
@@ -808,8 +809,13 @@ void test10( const bool use_topology )
     
     // Check the plan.
     EXPECT_EQ( comm_plan.numNeighbor(), 2 ) << "Rank " << my_rank << "\n";
-    EXPECT_EQ( comm_plan.neighborRank( 0 ), previous_rank ) << "Rank " << my_rank << "\n";
-    EXPECT_EQ( comm_plan.neighborRank( 1 ), next_rank ) << "Rank " << my_rank << "\n";
+
+    // neighborRank built differently depending on rank. Check that all ranks are present
+    std::set<int> expected_neighbors = {previous_rank, next_rank};
+    std::set<int> actual_neighbors;
+    for (int i = 0; i < comm_plan.numNeighbor(); i++)
+        actual_neighbors.insert(comm_plan.neighborRank( i ));
+    EXPECT_EQ( expected_neighbors, actual_neighbors ) << "Rank " << my_rank << "\n";
     EXPECT_EQ( comm_plan.numExport( 0 ), num_data/2 ) << "Rank " << my_rank << "\n";
     EXPECT_EQ( comm_plan.numExport( 1 ), num_data/2 ) << "Rank " << my_rank << "\n";
     EXPECT_EQ( comm_plan.totalNumExport(), num_data ) << "Rank " << my_rank << "\n";
@@ -818,23 +824,22 @@ void test10( const bool use_topology )
     EXPECT_EQ( comm_plan.totalNumImport(), num_data ) << "Rank " << my_rank << "\n";
 
     // Create the export steering vector.
-    // comm_plan.createSteering( std::get<0>(neighbor_ids_ranks_indices),
-    //                           std::get<1>(neighbor_ids_ranks_indices) );
+    comm_plan.createSteering( std::get<0>(neighbor_ids_ranks_indices),
+                              std::get<1>(neighbor_ids_ranks_indices) );
 
-    // // Check the steering vector. We thread the creation of the steering
-    // // vector so we don't really know what order it is in - only that it is
-    // // grouped by the ranks to which we are exporting. In this case just sort
-    // // the steering vector and make sure all of the ids are there. We can do
-    // // this because we are only sending to one rank.
-    // auto steering = comm_plan.getExportSteering();
-    // auto host_steering =
-    //     Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
-    // std::sort( host_steering.data(),
-    //            host_steering.data() + host_steering.size() );
-    // EXPECT_EQ( host_steering.size(), num_data );
-    // for ( int n = 0; n < num_data; ++n )
-    //     EXPECT_EQ( n, host_steering( n ) );
-    
+    // Check the steering vector. We thread the creation of the steering
+    // vector so we don't really know what order it is in - only that it is
+    // grouped by the ranks to which we are exporting. In this case just sort
+    // the steering vector and make sure all of the ids are there. We can do
+    // this because we are sending all ids between the previous/next rank
+    auto steering = comm_plan.getExportSteering();
+    auto host_steering =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
+    std::sort( host_steering.data(),
+        host_steering.data() + host_steering.size() );
+    EXPECT_EQ( host_steering.size(), num_data );
+    for ( int n = 0; n < num_data; ++n )
+        EXPECT_EQ( n, host_steering( n ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -842,40 +847,40 @@ void test10( const bool use_topology )
 //---------------------------------------------------------------------------//
 
 // Export tests
-// TEST( CommPlan, Test1 ) { test1( true ); }
+TEST( CommPlan, Test1 ) { test1( true ); }
 
-// TEST( CommPlan, Test2 ) { test2( true ); }
+TEST( CommPlan, Test2 ) { test2( true ); }
 
-// TEST( CommPlan, Test3 ) { test3( true ); }
+TEST( CommPlan, Test3 ) { test3( true ); }
 
-// TEST( CommPlan, Test4 ) { test4( true ); }
+TEST( CommPlan, Test4 ) { test4( true ); }
 
-// TEST( CommPlan, Test5 ) { test5( true ); }
+TEST( CommPlan, Test5 ) { test5( true ); }
 
-// TEST( CommPlan, Test6 ) { test6( true ); }
+TEST( CommPlan, Test6 ) { test6( true ); }
 
-// TEST( CommPlan, Test7 ) { test7( true ); }
+TEST( CommPlan, Test7 ) { test7( true ); }
 
-// TEST( CommPlan, Test1NoTopo ) { test1( false ); }
+TEST( CommPlan, Test1NoTopo ) { test1( false ); }
 
-// TEST( CommPlan, Test2NoTopo ) { test2( false ); }
+TEST( CommPlan, Test2NoTopo ) { test2( false ); }
 
-// TEST( CommPlan, Test3NoTopo ) { test3( false ); }
+TEST( CommPlan, Test3NoTopo ) { test3( false ); }
 
-// TEST( CommPlan, Test4NoTopo ) { test4( false ); }
+TEST( CommPlan, Test4NoTopo ) { test4( false ); }
 
-// TEST( CommPlan, Test5NoTopo ) { test5( false ); }
+TEST( CommPlan, Test5NoTopo ) { test5( false ); }
 
-// TEST( CommPlan, Test6NoTopo ) { test6( false ); }
+TEST( CommPlan, Test6NoTopo ) { test6( false ); }
 
-// TEST( CommPlan, Test7NoTopo ) { test7( false ); }
+TEST( CommPlan, Test7NoTopo ) { test7( false ); }
 
-// TEST( CommPlan, TestTopology ) { testTopology(); }
+TEST( CommPlan, TestTopology ) { testTopology(); }
 
 // Import tests
-// TEST( CommPlan, Test8NoTopo ) { test8( false ); }
+TEST( CommPlan, Test8NoTopo ) { test8( false ); }
 
-// TEST( CommPlan, Test9NoTopo ) { test9( false ); }
+TEST( CommPlan, Test9NoTopo ) { test9( false ); }
 
 TEST( CommPlan, Test10NoTopo ) { test10( false ); }
 
