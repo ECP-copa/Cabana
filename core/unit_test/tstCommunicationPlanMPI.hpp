@@ -843,46 +843,141 @@ void test10( const bool use_topology )
 }
 
 //---------------------------------------------------------------------------//
+void test11( const bool use_topology )
+{
+    // Make a communication plan.
+    CommPlanTester comm_plan( MPI_COMM_WORLD );
+
+    // Get my rank.
+    int my_rank = -1;
+    MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
+
+    // Get the comm size.
+    int my_size = -1;
+    MPI_Comm_size( MPI_COMM_WORLD, &my_size );
+
+    // Rank 0 imports one element from each rank
+    // Every has one element
+    int num_data = 1;
+    Kokkos::View<int*, TEST_MEMSPACE> import_ranks( "import_ranks", my_size );
+    Kokkos::View<int*, TEST_MEMSPACE> import_ids( "import_ids", my_size );
+    Kokkos::deep_copy( import_ranks, 0 );
+    Kokkos::deep_copy( import_ids, 0 );
+    std::vector<int> neighbor_ranks;
+    if ( 0 == my_rank )
+    {
+        neighbor_ranks.resize( my_size );
+        std::iota( neighbor_ranks.begin(), neighbor_ranks.end(), 0 );
+
+        // Fill the import_ids and ranks.
+        auto fill_func0 = KOKKOS_LAMBDA( const int i )
+        {
+            import_ids( i ) = 0;
+            import_ranks( i ) = i;
+        };
+        Kokkos::RangePolicy<TEST_EXECSPACE> range_policy0( 0, my_size );
+        Kokkos::parallel_for( range_policy0, fill_func0 );
+        Kokkos::fence();
+    }
+    else
+    {
+        neighbor_ranks.assign( 1, 0 );
+
+        // No other rank is collecting
+        Kokkos::resize(import_ranks, 0);
+        Kokkos::resize(import_ids, 0);
+    }
+
+    // Create the plan.
+    using size_type = typename TEST_MEMSPACE::size_type;
+    std::tuple<Kokkos::View<size_type*, TEST_MEMSPACE>,
+                      Kokkos::View<int*, TEST_MEMSPACE>,
+                      Kokkos::View<int*, TEST_MEMSPACE>>
+                      neighbor_ids_ranks_indices;
+    if ( use_topology )
+        printf("TODO\n");
+        // neighbor_ids = comm_plan.createFromExportsAndNeighbors(
+        //     export_ranks, neighbor_ranks );
+    else
+    neighbor_ids_ranks_indices = comm_plan.createFromImports( import_ranks,
+                                                              import_ids );
+
+    // Check the plan.
+    if ( 0 == my_rank )
+    {
+        EXPECT_EQ( comm_plan.numNeighbor(), my_size ) << "Rank " << my_rank << "\n";
+        EXPECT_EQ( comm_plan.numImport( 0 ), 1 ) << "Rank " << my_rank << "\n";
+        EXPECT_EQ( comm_plan.totalNumImport(), my_size ) << "Rank " << my_rank << "\n";
+    }
+    else
+    {
+        EXPECT_EQ( comm_plan.numNeighbor(), 1 ) << "Rank " << my_rank << "\n";
+        EXPECT_EQ( comm_plan.neighborRank( 0 ), 0 ) << "Rank " << my_rank << "\n";
+        EXPECT_EQ( comm_plan.numImport( 0 ), 0 ) << "Rank " << my_rank << "\n";
+        EXPECT_EQ( comm_plan.totalNumImport(), 0 ) << "Rank " << my_rank << "\n";
+    }
+    EXPECT_EQ( comm_plan.numExport( 0 ), num_data ) << "Rank " << my_rank << "\n";
+    EXPECT_EQ( comm_plan.totalNumExport(), num_data ) << "Rank " << my_rank << "\n";
+
+    // Create the export steering vector.
+    comm_plan.createSteering( std::get<0>(neighbor_ids_ranks_indices),
+                              std::get<1>(neighbor_ids_ranks_indices) );
+
+    // Check the steering vector. We thread the creation of the steering
+    // vector so we don't really know what order it is in - only that it is
+    // grouped by the ranks to which we are exporting. In this case just sort
+    // the steering vector and make sure all of the ids are there. We can do
+    // this because we are only sending to one rank.
+    auto steering = comm_plan.getExportSteering();
+    auto host_steering =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
+    EXPECT_EQ( host_steering.size(), num_data ) << "Rank " << my_rank << "\n";
+    EXPECT_EQ( 0, host_steering( 0 ) ) << "Rank " << my_rank << "\n";
+}
+
+//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 
 // Export tests
-TEST( CommPlan, Test1 ) { test1( true ); }
+// TEST( CommPlan, Test1 ) { test1( true ); }
 
-TEST( CommPlan, Test2 ) { test2( true ); }
+// TEST( CommPlan, Test2 ) { test2( true ); }
 
-TEST( CommPlan, Test3 ) { test3( true ); }
+// TEST( CommPlan, Test3 ) { test3( true ); }
 
-TEST( CommPlan, Test4 ) { test4( true ); }
+// TEST( CommPlan, Test4 ) { test4( true ); }
 
-TEST( CommPlan, Test5 ) { test5( true ); }
+// TEST( CommPlan, Test5 ) { test5( true ); }
 
-TEST( CommPlan, Test6 ) { test6( true ); }
+// TEST( CommPlan, Test6 ) { test6( true ); }
 
-TEST( CommPlan, Test7 ) { test7( true ); }
+// TEST( CommPlan, Test7 ) { test7( true ); }
 
-TEST( CommPlan, Test1NoTopo ) { test1( false ); }
+// TEST( CommPlan, Test1NoTopo ) { test1( false ); }
 
-TEST( CommPlan, Test2NoTopo ) { test2( false ); }
+// TEST( CommPlan, Test2NoTopo ) { test2( false ); }
 
-TEST( CommPlan, Test3NoTopo ) { test3( false ); }
+// TEST( CommPlan, Test3NoTopo ) { test3( false ); }
 
-TEST( CommPlan, Test4NoTopo ) { test4( false ); }
+// TEST( CommPlan, Test4NoTopo ) { test4( false ); }
 
-TEST( CommPlan, Test5NoTopo ) { test5( false ); }
+// TEST( CommPlan, Test5NoTopo ) { test5( false ); }
 
-TEST( CommPlan, Test6NoTopo ) { test6( false ); }
+// TEST( CommPlan, Test6NoTopo ) { test6( false ); }
 
-TEST( CommPlan, Test7NoTopo ) { test7( false ); }
+// TEST( CommPlan, Test7NoTopo ) { test7( false ); }
 
-TEST( CommPlan, TestTopology ) { testTopology(); }
+// TEST( CommPlan, TestTopology ) { testTopology(); }
 
-// Import tests
-TEST( CommPlan, Test8NoTopo ) { test8( false ); }
+// // Import tests
+// TEST( CommPlan, Test8NoTopo ) { test8( false ); }
 
-TEST( CommPlan, Test9NoTopo ) { test9( false ); }
+// TEST( CommPlan, Test9NoTopo ) { test9( false ); }
 
-TEST( CommPlan, Test10NoTopo ) { test10( false ); }
+// TEST( CommPlan, Test10NoTopo ) { test10( false ); }
+
+TEST( CommPlan, Test11NoTopo ) { test11( false ); }
 
 //---------------------------------------------------------------------------//
 

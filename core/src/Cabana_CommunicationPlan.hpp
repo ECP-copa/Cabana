@@ -1182,8 +1182,8 @@ class CommunicationPlan
         MPI_Allreduce(importing_ranks_h.data(), num_ranks_communicate.data(), comm_size, MPI_INT,
             MPI_SUM, comm());
         
-        for (int i = 0; i < num_ranks_communicate.extent(0); i++)
-            printf("R%d: num_ranks_communicate(%d): %d\n", rank, i, num_ranks_communicate(i));
+        // for (int i = 0; i < num_ranks_communicate.extent(0); i++)
+        //     printf("R%d: num_ranks_communicate(%d): %d\n", rank, i, num_ranks_communicate(i));
 
         // Post that many wildcard recieves to get the number of indices I will send to each rank
         // Allocate buffers based on num_ranks_communicate
@@ -1195,7 +1195,9 @@ class CommunicationPlan
         std::vector<MPI_Status> mpi_statuses(num_recvs);
 
         // Receive counts for indices this process will send
-        for (int i = 0; i < num_recvs; i++) {
+        for (int i = 0; i < num_recvs; i++)
+        {
+            // printf("R%d: posting recv into send_counts(%d)\n", rank, i);
             MPI_Irecv(&send_counts(i), 1, MPI_INT, MPI_ANY_SOURCE,
                 mpi_tag, comm(), &mpi_requests[i]);
         }
@@ -1224,6 +1226,7 @@ class CommunicationPlan
             if (neighbor_counts_host(i) != 0)
             {
                 // Send counts of needed indices
+                // printf("R%d: sending val %d to %d\n", rank, neighbor_counts_host(i), i);
                 MPI_Send(&neighbor_counts_host(i), 1, MPI_INT, i,
                         mpi_tag, comm());
                 
@@ -1239,12 +1242,12 @@ class CommunicationPlan
         const int ec0 = MPI_Waitall(num_recvs, mpi_requests.data(), mpi_statuses.data());
         if ( MPI_SUCCESS != ec0 )
             throw std::logic_error( "Failed MPI Communication" );
-        
         // Save ranks we got messages from and track total messages to size buffers
         _total_num_export = 0;
         for (int i = 0; i < num_recvs; i++) {
             send_to(i) = mpi_statuses[i].MPI_SOURCE;
             _total_num_export += send_counts(i);
+            // printf("R%d: send_to(%d) = %d\n", rank, i, mpi_statuses[i].MPI_SOURCE);
         }
 
         // Extract the export ranks and number of exports and then flag the
@@ -1327,13 +1330,15 @@ class CommunicationPlan
         }
 
         // Wait for all count exchanges to complete
+        // printf("R%d: before second waitall\n", rank);
         const int ec1 = MPI_Waitall(_total_num_export, mpi_requests.data(), mpi_statuses.data());
         if ( MPI_SUCCESS != ec1 )
             throw std::logic_error( "Failed MPI Communication" );
+        // printf("R%d: after second waitall\n", rank);
 
         // for (size_t i = 0; i < _total_num_export; i++) {
         //     int from_rank = mpi_statuses[i].MPI_SOURCE;
-        //     printf("R%d: must export index %d to R%d\n", rank, indices_send(i), from_rank);
+        //     printf("R%d: must export index %d to R%d\n", rank, export_indices(i), from_rank);
         // }
 
         // printf("Finished waitall\n");
@@ -1362,11 +1367,8 @@ class CommunicationPlan
         Kokkos::deep_copy(tmp, export_indices);
         Kokkos::deep_copy(export_indices_d, tmp);
 
-        if (rank == 0)
-        {
-            for (int i = 0; i < _neighbors.size(); i++)
-                printf("R%d: _neighbors(%d): %d\n", rank, i, _neighbors[i]);
-        }
+        // for (int i = 0; i < _neighbors.size(); i++)
+        //     printf("R%d: _neighbors(%d): %d\n", rank, i, _neighbors[i]);
 
         // Return the neighbor ids, export ranks, and export indices
         return std::make_tuple(counts_and_ids.second, element_export_ranks, export_indices_d);
