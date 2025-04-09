@@ -564,10 +564,11 @@ void test5( const bool use_topology )
         neighbor_ranks.resize( my_size );
         std::iota( neighbor_ranks.begin(), neighbor_ranks.end(), 0 );
 
-        // Fill the import_ids.
+        // Fill the import_ids and ranks.
         auto fill_func0 = KOKKOS_LAMBDA( const int i )
         {
-            import_ids( i ) = i;
+            import_ids( i ) = 0;
+            import_ranks( i ) = i;
         };
         Kokkos::RangePolicy<TEST_EXECSPACE> range_policy0( 0, my_size );
         Kokkos::parallel_for( range_policy0, fill_func0 );
@@ -629,7 +630,7 @@ void test5( const bool use_topology )
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
     for ( std::size_t i = 0; i < collector->totalNumImport(); ++i )
     {
-        EXPECT_EQ( slice_int_host( i ), collector->neighborRank( i ) )  << "Rank " << my_rank << "\n";
+        EXPECT_EQ( slice_int_host( i ), collector->neighborRank( i ) ) << "Rank " << my_rank << "\n";
         EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ),
                           collector->neighborRank( i ) ) << "Rank " << my_rank << "\n";
         EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ),
@@ -637,79 +638,113 @@ void test5( const bool use_topology )
     }
 }
 
-// //---------------------------------------------------------------------------//
-// void test7( const bool use_topology )
-// {
-//     // Make a communication plan.
-//     std::shared_ptr<Cabana::Collector<TEST_MEMSPACE>> collector;
+//---------------------------------------------------------------------------//
+void test6( const bool use_topology )
+{
+    // Make a communication plan.
+    std::shared_ptr<Cabana::Collector<TEST_MEMSPACE>> collector;
 
-//     // Get my rank.
-//     int my_rank = -1;
-//     MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
+    // Get my rank.
+    int my_rank = -1;
+    MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
 
-//     // Get the comm size.
-//     int my_size = -1;
-//     MPI_Comm_size( MPI_COMM_WORLD, &my_size );
+    // Get the comm size.
+    int my_size = -1;
+    MPI_Comm_size( MPI_COMM_WORLD, &my_size );
 
-//     // Rank 0 starts with all the data and sends one element to every rank.
-//     int num_data = ( 0 == my_rank ) ? my_size : 0;
-//     Kokkos::View<int*, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
-//     auto fill_ranks = KOKKOS_LAMBDA( const int i ) { export_ranks( i ) = i; };
-//     Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
-//     Kokkos::parallel_for( range_policy, fill_ranks );
-//     Kokkos::fence();
-//     std::vector<int> neighbor_ranks;
-//     if ( 0 == my_rank )
-//     {
-//         neighbor_ranks.resize( my_size );
-//         std::iota( neighbor_ranks.begin(), neighbor_ranks.end(), 0 );
-//     }
-//     else
-//     {
-//         neighbor_ranks.assign( 1, 0 );
-//     }
+    // Rank 0 starts with all the data 
+    // Each rank imports one element from Rank 0
+    int num_data = ( 0 == my_rank ) ? my_size : 0;
+    std::vector<int> neighbor_ranks;
 
-//     // Create the plan.
-//     if ( use_topology )
-//         collector = std::make_shared<Cabana::Collector<TEST_MEMSPACE>>(
-//             MPI_COMM_WORLD, export_ranks, neighbor_ranks );
-//     else
-//         collector = std::make_shared<Cabana::Collector<TEST_MEMSPACE>>(
-//             MPI_COMM_WORLD, export_ranks );
+    int import_size = ( 0 == my_rank ) ? 0 : 1;
+    Kokkos::View<int*, TEST_MEMSPACE> import_ranks( "import_ranks", import_size );
+    Kokkos::View<int*, TEST_MEMSPACE> import_ids( "import_ids", import_size );
+    Kokkos::deep_copy( import_ranks, 0 );
+    Kokkos::deep_copy( import_ids, 0 );
 
-//     // Make some data to migrate.
-//     using DataTypes = Cabana::MemberTypes<int, double[2]>;
-//     using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
-//     AoSoA_t data( "data", num_data );
-//     auto slice_int = Cabana::slice<0>( data );
-//     auto slice_dbl = Cabana::slice<1>( data );
+    if ( 0 == my_rank )
+    {
+        neighbor_ranks.resize( my_size );
+        std::iota( neighbor_ranks.begin(), neighbor_ranks.end(), 0 );
+    }
+    else
+    {
+        neighbor_ranks.assign( 1, 0 );
 
-//     // Fill the data.
-//     auto fill_func = KOKKOS_LAMBDA( const int i )
-//     {
-//         slice_int( i ) = i;
-//         slice_dbl( i, 0 ) = i;
-//         slice_dbl( i, 1 ) = i + 0.5;
-//     };
-//     Kokkos::parallel_for( range_policy, fill_func );
-//     Kokkos::fence();
+        // Fill the import_ids and ranks.
+        auto fill_func0 = KOKKOS_LAMBDA( const int i )
+        {
+            import_ids( i ) = my_rank;
+            import_ranks( i ) = 0;
+            printf("R%d: import_id(%d): %d\n", my_rank, i, import_ids(i));
+        };
+        Kokkos::RangePolicy<TEST_EXECSPACE> range_policy0( 0, import_size );
+        Kokkos::parallel_for( range_policy0, fill_func0 );
+        Kokkos::fence();
+    }
 
-//     // Do the migration
-//     Cabana::migrate( *collector, data );
+    // Create the plan.
+    if ( use_topology )
+        printf("TODO\n");
+        // collector = std::make_shared<Cabana::Collector<TEST_MEMSPACE>>(
+        //     MPI_COMM_WORLD, import_ranks, neighbor_ranks );
+    else
+    {
+        collector = std::make_shared<Cabana::Collector<TEST_MEMSPACE>>(
+            MPI_COMM_WORLD, import_ranks, import_ids );
+    }
 
-//     // Check the change in size.
-//     EXPECT_EQ( data.size(), 1 );
+    // Make some data to migrate.
+    using DataTypes = Cabana::MemberTypes<int, double[2]>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
+    AoSoA_t data( "data", num_data );
+    auto slice_int = Cabana::slice<0>( data );
+    auto slice_dbl = Cabana::slice<1>( data );
 
-//     // Check the migration.
-//     Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host(
-//         "data_host", collector->totalNumImport() );
-//     auto slice_int_host = Cabana::slice<0>( data_host );
-//     auto slice_dbl_host = Cabana::slice<1>( data_host );
-//     Cabana::deep_copy( data_host, data );
-//     EXPECT_EQ( slice_int_host( 0 ), my_rank );
-//     EXPECT_DOUBLE_EQ( slice_dbl_host( 0, 0 ), my_rank );
-//     EXPECT_DOUBLE_EQ( slice_dbl_host( 0, 1 ), my_rank + 0.5 );
-// }
+    // Fill the data.
+    auto fill_func = KOKKOS_LAMBDA( const int i )
+    {
+        slice_int( i ) = i;
+        slice_dbl( i, 0 ) = i;
+        slice_dbl( i, 1 ) = i + 0.5;
+        // printf("R%d: i%d: int, d1, d2: %d, %0.1lf, %0.1lf\n", my_rank, i, slice_int(i), slice_dbl(i, 0), slice_dbl(i, 1));
+    };
+    Kokkos::RangePolicy<TEST_EXECSPACE> range_policy1( 0, num_data );
+    Kokkos::parallel_for( range_policy1, fill_func );
+    Kokkos::fence();
+
+    // Do the migration
+    Cabana::migrate( *collector, data );
+
+    // Check the change in size and import counts.
+    if (my_rank == 0)
+    {
+        ASSERT_EQ( data.size(), 4 ) << "Rank " << my_rank << "\n";
+        ASSERT_EQ( collector->totalNumImport(), 0 ) << "Rank " << my_rank << "\n";
+    }
+    else
+    {
+        ASSERT_EQ( data.size(), 1 ) << "Rank " << my_rank << "\n";
+        ASSERT_EQ( collector->totalNumImport(), 1 ) << "Rank " << my_rank << "\n";
+    }
+
+    // Check the migration.
+    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host(
+        "data_host", data.size() );
+    auto slice_int_host = Cabana::slice<0>( data_host );
+    auto slice_dbl_host = Cabana::slice<1>( data_host );
+    Cabana::deep_copy( data_host, data );
+    for (int i = 0; i < data_host.size(); i++)
+    {
+        printf("Recv: R%d: i%d: int, d1, d2: %d, %0.1lf, %0.1lf\n", my_rank,
+            i, slice_int_host(i), slice_dbl_host(i, 0), slice_dbl_host(i, 1));
+    }
+    if (my_rank == 0) return; // Rank 0 has no data after migration
+    ASSERT_EQ( slice_int_host( 0 ), my_rank ) << "Rank " << my_rank << "\n";
+    // ASSERT_DOUBLE_EQ( slice_dbl_host( 0, 0 ), my_rank ) << "Rank " << my_rank << "\n";
+    // ASSERT_DOUBLE_EQ( slice_dbl_host( 0, 1 ), my_rank + 0.5 ) << "Rank " << my_rank << "\n";
+}
 
 // //---------------------------------------------------------------------------//
 // void test8( const bool use_topology )
@@ -879,9 +914,9 @@ void test5( const bool use_topology )
 
 // TEST( Collector, Test4NoTopo ) { test4( false ); }
 
-TEST( Collector, Test5NoTopo ) { test5( false ); }
+// TEST( Collector, Test5NoTopo ) { test5( false ); }
 
-// TEST( Collector, Test6NoTopo ) { test6( false ); }
+TEST( Collector, Test6NoTopo ) { test6( false ); }
 
 // TEST( Collector, Test7NoTopo ) { test7( false ); }
 

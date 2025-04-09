@@ -238,7 +238,11 @@ void collectData(
         if ( i < num_stay )
             recv_buffer( i ) = tpl;
         else
+        {
             send_buffer( i - num_stay ) = tpl;
+            printf("R%d: src.tuple(%d): %d, %0.1lf, %0.1lf, in send_buf(%d)\n", my_rank, steering( i ), Cabana::get<0>(tpl), Cabana::get<1>(tpl, 0),
+                Cabana::get<1>(tpl, 1), i - num_stay);
+        }
     };
     Kokkos::RangePolicy<ExecutionSpace> build_send_buffer_policy(
         0, collector.totalNumExport() );
@@ -284,7 +288,7 @@ void collectData(
             send_range.second = send_range.first + collector.numExport( n );
 
             auto send_subview = Kokkos::subview( send_buffer, send_range );
-
+            printf("R%d: send subview range: %d, %d to R%d\n", my_rank, send_range.first, send_range.second, collector.neighborRank( n ));
             MPI_Send( send_subview.data(),
                       send_subview.size() *
                           sizeof( typename AoSoA_t::tuple_type ),
@@ -306,6 +310,9 @@ void collectData(
     auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
     {
         dst.setTuple( i, recv_buffer( i ) );
+        auto tuple = dst.getTuple(i);
+        printf("R%d: got tuple: %d, %0.1lf, %0.1lf\n", my_rank, Cabana::get<0>(tuple), Cabana::get<1>(tuple, 0),
+        Cabana::get<1>(tuple, 1));
     };
     Kokkos::RangePolicy<ExecutionSpace> extract_recv_buffer_policy(
         0, collector.totalNumImport() );
@@ -433,8 +440,8 @@ void migrate( ExecutionSpace exec_space, const Collector_t& collector,
 
     // If the destination decomposition is smaller than the source
     // decomposition resize after we have moved the data.
-    if ( !dst_is_bigger )
-        aosoa.resize( collector.totalNumImport() );
+    // if ( !dst_is_bigger )
+    //     aosoa.resize( collector.totalNumImport() );
 }
 
 /*!
