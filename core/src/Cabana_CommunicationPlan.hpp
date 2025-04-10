@@ -1370,6 +1370,9 @@ class CommunicationPlan
         // for (int i = 0; i < _neighbors.size(); i++)
         //     printf("R%d: _neighbors(%d): %d\n", rank, i, _neighbors[i]);
 
+        // for (int i = 0; i < element_export_ranks.extent(0); i++)
+        //     printf("R%d: export/index: (To R%d, index %d)\n", rank, element_export_ranks(i), export_indices(i));
+
         // Return the neighbor ids, export ranks, and export indices
         return std::make_tuple(counts_and_ids.second, element_export_ranks, export_indices_d);
     }

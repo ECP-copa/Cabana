@@ -149,7 +149,8 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
         auto neighbor_ids_ranks_indices = this->createFromImportsOnly( element_import_ranks,
             element_import_ids );
         this->createExportSteering( std::get<0>(neighbor_ids_ranks_indices),
-                                    std::get<1>(neighbor_ids_ranks_indices) );
+                                    std::get<1>(neighbor_ids_ranks_indices),
+                                    std::get<2>(neighbor_ids_ranks_indices) );
     }
 };
 
@@ -240,8 +241,8 @@ void collectData(
         else
         {
             send_buffer( i - num_stay ) = tpl;
-            printf("R%d: src.tuple(%d): %d, %0.1lf, %0.1lf, in send_buf(%d)\n", my_rank, steering( i ), Cabana::get<0>(tpl), Cabana::get<1>(tpl, 0),
-                Cabana::get<1>(tpl, 1), i - num_stay);
+            // printf("R%d: src.tuple(%d): %d, %0.1lf, %0.1lf, in send_buf(%d)\n", my_rank, steering( i ), Cabana::get<0>(tpl), Cabana::get<1>(tpl, 0),
+            //     Cabana::get<1>(tpl, 1), i - num_stay);
         }
     };
     Kokkos::RangePolicy<ExecutionSpace> build_send_buffer_policy(
@@ -288,7 +289,7 @@ void collectData(
             send_range.second = send_range.first + collector.numExport( n );
 
             auto send_subview = Kokkos::subview( send_buffer, send_range );
-            printf("R%d: send subview range: %d, %d to R%d\n", my_rank, send_range.first, send_range.second, collector.neighborRank( n ));
+            // printf("R%d: send subview range: %d, %d to R%d\n", my_rank, send_range.first, send_range.second, collector.neighborRank( n ));
             MPI_Send( send_subview.data(),
                       send_subview.size() *
                           sizeof( typename AoSoA_t::tuple_type ),
@@ -311,7 +312,7 @@ void collectData(
     {
         dst.setTuple( i, recv_buffer( i ) );
         auto tuple = dst.getTuple(i);
-        printf("R%d: got tuple: %d, %0.1lf, %0.1lf\n", my_rank, Cabana::get<0>(tuple), Cabana::get<1>(tuple, 0),
+        // printf("R%d: got tuple: %d, %0.1lf, %0.1lf\n", my_rank, Cabana::get<0>(tuple), Cabana::get<1>(tuple, 0),
         Cabana::get<1>(tuple, 1));
     };
     Kokkos::RangePolicy<ExecutionSpace> extract_recv_buffer_policy(

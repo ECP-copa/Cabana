@@ -658,7 +658,8 @@ void test8( const bool use_topology )
 
     // Create the export steering vector.
     comm_plan.createSteering( std::get<0>(neighbor_ids_ranks_indices),
-                              std::get<1>(neighbor_ids_ranks_indices) );
+                              std::get<1>(neighbor_ids_ranks_indices),
+                              std::get<2>(neighbor_ids_ranks_indices) );
 
     // Check the steering vector. We thread the creation of the steering
     // vector so we don't really know what order it is in - only that it is
@@ -735,7 +736,8 @@ void test9( const bool use_topology )
 
     // Create the export steering vector.
     comm_plan.createSteering( std::get<0>(neighbor_ids_ranks_indices),
-                              std::get<1>(neighbor_ids_ranks_indices) );
+                              std::get<1>(neighbor_ids_ranks_indices),
+                              std::get<2>(neighbor_ids_ranks_indices) );
 
     // Check the steering vector. We thread the creation of the steering
     // vector so we don't really know what order it is in - only that it is
@@ -825,7 +827,8 @@ void test10( const bool use_topology )
 
     // Create the export steering vector.
     comm_plan.createSteering( std::get<0>(neighbor_ids_ranks_indices),
-                              std::get<1>(neighbor_ids_ranks_indices) );
+                              std::get<1>(neighbor_ids_ranks_indices),
+                              std::get<2>(neighbor_ids_ranks_indices) );
 
     // Check the steering vector. We thread the creation of the steering
     // vector so we don't really know what order it is in - only that it is
@@ -921,7 +924,8 @@ void test11( const bool use_topology )
 
     // Create the export steering vector.
     comm_plan.createSteering( std::get<0>(neighbor_ids_ranks_indices),
-                              std::get<1>(neighbor_ids_ranks_indices) );
+                              std::get<1>(neighbor_ids_ranks_indices),
+                              std::get<2>(neighbor_ids_ranks_indices) );
 
     // Check the steering vector. We thread the creation of the steering
     // vector so we don't really know what order it is in - only that it is
@@ -940,42 +944,42 @@ void test11( const bool use_topology )
 //---------------------------------------------------------------------------//
 
 // Export tests
-// TEST( CommPlan, Test1 ) { test1( true ); }
+TEST( CommPlan, Test1 ) { test1( true ); }
 
-// TEST( CommPlan, Test2 ) { test2( true ); }
+TEST( CommPlan, Test2 ) { test2( true ); }
 
-// TEST( CommPlan, Test3 ) { test3( true ); }
+TEST( CommPlan, Test3 ) { test3( true ); }
 
-// TEST( CommPlan, Test4 ) { test4( true ); }
+TEST( CommPlan, Test4 ) { test4( true ); }
 
-// TEST( CommPlan, Test5 ) { test5( true ); }
+TEST( CommPlan, Test5 ) { test5( true ); }
 
-// TEST( CommPlan, Test6 ) { test6( true ); }
+TEST( CommPlan, Test6 ) { test6( true ); }
 
-// TEST( CommPlan, Test7 ) { test7( true ); }
+TEST( CommPlan, Test7 ) { test7( true ); }
 
-// TEST( CommPlan, Test1NoTopo ) { test1( false ); }
+TEST( CommPlan, Test1NoTopo ) { test1( false ); }
 
-// TEST( CommPlan, Test2NoTopo ) { test2( false ); }
+TEST( CommPlan, Test2NoTopo ) { test2( false ); }
 
-// TEST( CommPlan, Test3NoTopo ) { test3( false ); }
+TEST( CommPlan, Test3NoTopo ) { test3( false ); }
 
-// TEST( CommPlan, Test4NoTopo ) { test4( false ); }
+TEST( CommPlan, Test4NoTopo ) { test4( false ); }
 
-// TEST( CommPlan, Test5NoTopo ) { test5( false ); }
+TEST( CommPlan, Test5NoTopo ) { test5( false ); }
 
-// TEST( CommPlan, Test6NoTopo ) { test6( false ); }
+TEST( CommPlan, Test6NoTopo ) { test6( false ); }
 
-// TEST( CommPlan, Test7NoTopo ) { test7( false ); }
+TEST( CommPlan, Test7NoTopo ) { test7( false ); }
 
-// TEST( CommPlan, TestTopology ) { testTopology(); }
+TEST( CommPlan, TestTopology ) { testTopology(); }
 
-// // Import tests
-// TEST( CommPlan, Test8NoTopo ) { test8( false ); }
+// Import tests
+TEST( CommPlan, Test8NoTopo ) { test8( false ); }
 
-// TEST( CommPlan, Test9NoTopo ) { test9( false ); }
+TEST( CommPlan, Test9NoTopo ) { test9( false ); }
 
-// TEST( CommPlan, Test10NoTopo ) { test10( false ); }
+TEST( CommPlan, Test10NoTopo ) { test10( false ); }
 
 TEST( CommPlan, Test11NoTopo ) { test11( false ); }
 
