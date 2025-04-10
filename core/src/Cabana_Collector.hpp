@@ -76,6 +76,10 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
 
       \param comm The MPI communicator over which the collector is defined.
 
+      \param num_owned The number of owned elements on this rank. Used to check
+      that AoSoAs are sized properly for importing. For importing in-place, the
+      AoSoA size must be num_owned+num_imported.
+
       \param element_import_ranks The source rank in the target
       decomposition of each locally owned element in the source
       decomposition. Each element will have one unique source from which it
@@ -101,11 +105,14 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
       will be efficiently migrated.
     */
     template <class ViewType>
-    Collector( MPI_Comm comm, const ViewType& element_import_ranks,
+    Collector( MPI_Comm comm, const std::size_t num_owned,
+                const ViewType& element_import_ranks,
                 const ViewType& element_import_ids,
                 const std::vector<int>& neighbor_ranks )
         : CommunicationPlan<MemorySpace, CommPlan>( comm )
+        , _num_owned( num_owned )
     {
+        throw std::runtime_error("Cabana::Collector: Neighbor ranks constructor not yet implemented\n");
         auto neighbor_ids = this->createFromExportsAndTopology(
             element_import_ranks, neighbor_ranks );
         this->createExportSteering( neighbor_ids, element_import_ranks );
@@ -121,6 +128,10 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
       container type can be either a Kokkos View or a Cabana Slice.
 
       \param comm The MPI communicator over which the collector is defined.
+
+      \param num_owned The number of owned elements on this rank. Used to check
+      that AoSoAs are sized properly for importing. For importing in-place, the
+      AoSoA size must be num_owned+num_imported.
 
       \param element_import_ranks The source rank in the target
       decomposition of each locally owned element in the source
@@ -142,9 +153,11 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
       will be efficiently migrated.
     */
     template <class ViewType>
-    Collector( MPI_Comm comm, const ViewType& element_import_ranks,
+    Collector( MPI_Comm comm, const std::size_t num_owned,
+                const ViewType& element_import_ranks,
                 const ViewType& element_import_ids )
         : CommunicationPlan<MemorySpace>( comm )
+        , _num_owned( num_owned )
     {
         auto neighbor_ids_ranks_indices = this->createFromImportsOnly( element_import_ranks,
             element_import_ids );
@@ -152,6 +165,15 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
                                     std::get<1>(neighbor_ids_ranks_indices),
                                     std::get<2>(neighbor_ids_ranks_indices) );
     }
+
+    /*!
+      \brief Get the total number of owned elements on this rank
+      \return The total number of owned elements on this rank.
+    */
+    std::size_t numOwned() const { return _num_owned; }
+
+  private:
+    std::size_t _num_owned;
 };
 
 //---------------------------------------------------------------------------//
@@ -194,6 +216,11 @@ void collectData(
     static_assert( is_accessible_from<typename Collector_t::memory_space,
                                       ExecutionSpace>{},
                    "" );
+    
+    // Check if src and dst are the same AoSoA.
+    // If so, place imported elements at the end of src
+    int offset = (src.data() == dst.data());
+    if (offset) offset = collector.numOwned();
 
     // Get the MPI rank we are currently on.
     int my_rank = -1;
@@ -310,10 +337,10 @@ void collectData(
     // Extract the receive buffer into the destination AoSoA.
     auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
     {
-        dst.setTuple( i, recv_buffer( i ) );
-        auto tuple = dst.getTuple(i);
+        dst.setTuple( offset+i, recv_buffer( i ) );
+        // auto tuple = dst.getTuple(i);
         // printf("R%d: got tuple: %d, %0.1lf, %0.1lf\n", my_rank, Cabana::get<0>(tuple), Cabana::get<1>(tuple, 0),
-        Cabana::get<1>(tuple, 1));
+        //      Cabana::get<1>(tuple, 1));
     };
     Kokkos::RangePolicy<ExecutionSpace> extract_recv_buffer_policy(
         0, collector.totalNumImport() );
@@ -344,9 +371,9 @@ void collectData(
 
   \param exec_space Kokkos execution space.
   \param collector The collector to use for the migration.
-  \param src The AoSoA containing the data to be migrated. Must have the same
-  number of elements as the inputs used to construct the collector.
-  \param dst The AoSoA to which the migrated data will be written. Must be the
+  \param src The AoSoA containing the data other ranks will be asking to import.
+  Indices in src must match with the import_ids passed by other ranks into the Collector
+  \param dst The AoSoA to which the imported data will be written. Must be the
   same size as the number of imports given by the collector on this
   rank. Call totalNumImport() on the collector to get this size value.
 */
@@ -358,11 +385,12 @@ void migrate( ExecutionSpace exec_space, const Collector_t& collector,
                                       int>::type* = 0 )
 {
     // Check that src and dst are the right size.
-    if ( src.size() != collector.exportSize() )
-        throw std::runtime_error( "Source is the wrong size for migration!" );
+    if ( src.size() != collector.numOwned())
+        throw std::runtime_error(
+            "Cabana::Collector::migrate: Source is the wrong size for migration!" );
     if ( dst.size() != collector.totalNumImport() )
         throw std::runtime_error(
-            "Destination is the wrong size for migration!" );
+            "Cabana::Collector::migrate: Destination is the wrong size for migration!" );
 
     // Move the data.
     Impl::collectData( exec_space, collector, src, dst );
@@ -379,8 +407,8 @@ void migrate( ExecutionSpace exec_space, const Collector_t& collector,
   \tparam AoSoA_t AoSoA type - must be an AoSoA.
 
   \param collector The collector to use for the migration.
-  \param src The AoSoA containing the data to be migrated. Must have the same
-  number of elements as the inputs used to construct the collector.
+  \param src The AoSoA containing the data other ranks will be asking to import.
+  Indices in src must match with the import_ids passed by other ranks into the Collector
   \param dst The AoSoA to which the migrated data will be written. Must be the
   same size as the number of imports given by the collector on this
   rank. Call totalNumImport() on the collector to get this size value.
@@ -412,9 +440,9 @@ void migrate( const Collector_t& collector, const AoSoA_t& src,
 
   \param exec_space Kokkos execution space.
   \param collector The collector to use for the migration.
-  \param aosoa The AoSoA containing the data to be migrated. Upon input, must
-  have the same number of elements as the inputs used to construct the
-  collector. At output, it will be the same size as th enumber of import
+  \param aosoa The AoSoA containing the data other ranks will be asking to import.
+  Indices in src must match with the import_ids passed by other ranks into the Collector.
+  At output, it will be the same size as the number of import
   elements on this rank provided by the collector. Before using this
   function, consider reserving enough memory in the data structure so
   reallocating is not necessary.
@@ -426,23 +454,13 @@ void migrate( ExecutionSpace exec_space, const Collector_t& collector,
                                         is_aosoa<AoSoA_t>::value ),
                                       int>::type* = 0 )
 {
-    // Determine if the source or destination decomposition has more data on
-    // this rank.
-    bool dst_is_bigger =
-        ( collector.totalNumImport() > collector.exportSize() );
-
-    // If the destination decomposition is bigger than the source
-    // decomposition resize now so we have enough space to do the operation.
-    if ( dst_is_bigger )
-        aosoa.resize( collector.totalNumImport() );
+    // Check if the aosoa is large enough
+    if ( aosoa.size() != (collector.numOwned() + collector.totalNumImport()) )
+        throw std::runtime_error(
+            "Cabana::Collector::migrate (in-place): Source is the wrong size for migration!" );
 
     // Move the data.
     Impl::collectData( exec_space, collector, aosoa, aosoa );
-
-    // If the destination decomposition is smaller than the source
-    // decomposition resize after we have moved the data.
-    // if ( !dst_is_bigger )
-    //     aosoa.resize( collector.totalNumImport() );
 }
 
 /*!
@@ -487,7 +505,7 @@ void migrate( const Collector_t& collector, AoSoA_t& aosoa,
 
   \tparam ExecutionSpace Kokkos execution space.
   \tparam Collector_t Collector type - must be a collector.
-  \tparam Slice_t Slice type - must be an Slice.
+  \tparam Slice_t Slice type - must be a Slice.
 
   \param collector The collector to use for the migration.
   \param src The slice containing the data to be migrated. Must have the same
@@ -504,11 +522,12 @@ void migrate( ExecutionSpace, const Collector_t& collector,
                                       int>::type* = 0 )
 {
     // Check that src and dst are the right size.
-    if ( src.size() != collector.exportSize() )
-        throw std::runtime_error( "Source is the wrong size for migration!" );
+    if ( src.size() != collector.numOwned())
+        throw std::runtime_error(
+            "Cabana::Collector::migrate: Source is the wrong size for migration!" );
     if ( dst.size() != collector.totalNumImport() )
         throw std::runtime_error(
-            "Destination is the wrong size for migration!" );
+            "Cabana::Collector: Destination is the wrong size for migration!" );
 
     // Get the number of components in the slices.
     size_t num_comp = 1;

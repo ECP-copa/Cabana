@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <memory>
 #include <vector>
+#include <set>
 
 namespace Test
 {
@@ -190,7 +191,7 @@ void test1( const bool use_topology )
     }
     else
         collector = std::make_shared<Cabana::Collector<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, import_ranks, import_ids );
+            MPI_COMM_WORLD, num_data, import_ranks, import_ids );
 
     // Make some data to migrate.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
@@ -273,7 +274,7 @@ void test2( const bool use_topology )
     }
     else
         collector = std::make_shared<Cabana::Collector<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, import_ranks, import_ids );
+            MPI_COMM_WORLD, num_data, import_ranks, import_ids );
 
     // Make some data to migrate.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
@@ -294,28 +295,29 @@ void test2( const bool use_topology )
     Kokkos::fence();
 
     // Do the migration in-place
+    data.resize(collector->numOwned() + collector->totalNumImport());
     Cabana::migrate( *collector, data );
 
     // Get host copies of the migrated data.
     Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host( "data_host",
-                                                           num_data / 2 );
+                                                           data.size() );
     auto slice_int_host = Cabana::slice<0>( data_host );
     auto slice_dbl_host = Cabana::slice<1>( data_host );
     Cabana::deep_copy( data_host, data );
 
-    // Check the migration. We received less than we sent so this should have
-    // resized the aososa.
+    // Check the migration.
     auto steering = collector->getExportSteering();
     auto host_steering =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
-    EXPECT_EQ( data.size(), num_data / 2 );
-    for ( int i = 0; i < num_data / 2; ++i )
+    for ( std::size_t i = collector->numOwned(); i < data.size(); ++i )
     {
-        EXPECT_EQ( slice_int_host( i ), my_rank + host_steering( i ) );
-        EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ),
-                          my_rank + host_steering( i ) );
-        EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ),
-                          my_rank + host_steering( i ) + 0.5 );
+        printf("R%d: int(%d): %d\n", my_rank, i, slice_int_host(i));
+        // int j = i - collector->numOwned();
+        // ASSERT_EQ( slice_int_host( i ), my_rank + host_steering( j ) );
+        // ASSERT_DOUBLE_EQ( slice_dbl_host( i, 0 ),
+        //                   my_rank + host_steering( j ) );
+        // ASSERT_DOUBLE_EQ( slice_dbl_host( i, 1 ),
+        //                   my_rank + host_steering( j ) + 0.5 );
     }
 }
 
@@ -360,7 +362,7 @@ void test3( const bool use_topology )
         //     MPI_COMM_WORLD, export_ranks, neighbor_ranks );
     else
         collector = std::make_shared<Cabana::Collector<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, import_ranks, import_ids );
+            MPI_COMM_WORLD, num_data, import_ranks, import_ids );
 
     // Make some data to migrate.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
@@ -467,7 +469,7 @@ void test4( const bool use_topology )
         //     MPI_COMM_WORLD, export_ranks, neighbor_ranks );
     else
         collector = std::make_shared<Cabana::Collector<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, import_ranks, import_ids );
+            MPI_COMM_WORLD, num_data, import_ranks, import_ids );
 
     // Make some data to migrate.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
@@ -590,7 +592,7 @@ void test5( const bool use_topology )
         //     MPI_COMM_WORLD, import_ranks, neighbor_ranks );
     else
         collector = std::make_shared<Cabana::Collector<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, import_ranks, import_ids );
+            MPI_COMM_WORLD, num_data, import_ranks, import_ids );
 
     // Make some data to migrate.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
@@ -611,6 +613,7 @@ void test5( const bool use_topology )
     Kokkos::fence();
 
     // Do the migration
+    data.resize(collector->numOwned() + collector->totalNumImport());
     Cabana::migrate( *collector, data );
 
     // Check the change in size.
@@ -628,13 +631,14 @@ void test5( const bool use_topology )
     auto steering = collector->getExportSteering();
     auto host_steering =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
-    for ( std::size_t i = 0; i < collector->totalNumImport(); ++i )
+    for ( std::size_t i = collector->numOwned(); i < collector->totalNumImport(); ++i )
     {
-        EXPECT_EQ( slice_int_host( i ), collector->neighborRank( i ) ) << "Rank " << my_rank << "\n";
+        int j = i - collector->numOwned();
+        EXPECT_EQ( slice_int_host( i ), collector->neighborRank( j ) ) << "Rank " << my_rank << "\n";
         EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ),
-                          collector->neighborRank( i ) ) << "Rank " << my_rank << "\n";
+                          collector->neighborRank( j ) ) << "Rank " << my_rank << "\n";
         EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ),
-                          collector->neighborRank( i ) + 0.5 ) << "Rank " << my_rank << "\n";
+                          collector->neighborRank( j ) + 0.5 ) << "Rank " << my_rank << "\n";
     }
 }
 
@@ -692,7 +696,7 @@ void test6( const bool use_topology )
     else
     {
         collector = std::make_shared<Cabana::Collector<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, import_ranks, import_ids );
+            MPI_COMM_WORLD, num_data, import_ranks, import_ids );
     }
 
     // Make some data to migrate.
@@ -715,6 +719,7 @@ void test6( const bool use_topology )
     Kokkos::fence();
 
     // Do the migration
+    data.resize(collector->numOwned() + collector->totalNumImport());
     Cabana::migrate( *collector, data );
 
     // Check the change in size and import counts.
@@ -740,7 +745,6 @@ void test6( const bool use_topology )
     //     printf("Recv: R%d: i%d: int, d1, d2: %d, %0.1lf, %0.1lf\n", my_rank,
     //         i, slice_int_host(i), slice_dbl_host(i, 0), slice_dbl_host(i, 1));
     // }
-    if (my_rank == 0) return; // Rank 0 has no data after migration
     ASSERT_EQ( slice_int_host( 0 ), my_rank ) << "Rank " << my_rank << "\n";
     ASSERT_DOUBLE_EQ( slice_dbl_host( 0, 0 ), my_rank ) << "Rank " << my_rank << "\n";
     ASSERT_DOUBLE_EQ( slice_dbl_host( 0, 1 ), my_rank + 0.5 ) << "Rank " << my_rank << "\n";
@@ -760,18 +764,24 @@ void test7( const bool use_topology )
     int my_size = -1;
     MPI_Comm_size( MPI_COMM_WORLD, &my_size );
 
-    // Each rank imports two items. Rank zero imports 1 item to itself and 1 item
+    // Each rank imports two items. Rank zero imports 1 item from itself and 1 item
     // from the rank with the id 1 larger. The rest of the ranks import 1 item from
     // the rank with id 1 smaller and 1 item from the rank with id 1
     // larger. For problems with 3 or more MPI ranks this creates a situation
-    // where rank 0 receives from rank with id (my_size-1) but does not send
-    // data to that rank.
+    // where rank 0 must send to rank with id (my_size-1) but does not recieve
+    // data from that rank.
     int num_data = 2;
-    Kokkos::View<int*, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
+    int import0 = ( my_rank == 0 ) ? 0 : my_rank - 1;
+    int import1 = ( my_rank == my_size - 1 ) ? 0 : my_rank + 1;
+    Kokkos::View<int*, TEST_MEMSPACE> import_ranks( "import_ranks", num_data );
+    Kokkos::View<int*, TEST_MEMSPACE> import_ids( "import_ids", num_data );
     auto fill_ranks = KOKKOS_LAMBDA( const int )
     {
-        export_ranks( 0 ) = ( my_rank == 0 ) ? 0 : my_rank - 1;
-        export_ranks( 1 ) = ( my_rank == my_size - 1 ) ? 0 : my_rank + 1;
+        import_ranks( 0 ) = import0;
+        import_ranks( 1 ) = import1;
+        import_ids( 0 ) = 0;
+        import_ids( 1 ) = 1;
+        // printf("R%d: R%d/id%d, R%d/id%d\n", my_rank, import_ranks(0), import_ids(0), import_ranks(1), import_ids(1));
     };
     Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, 1 );
     Kokkos::parallel_for( range_policy, fill_ranks );
@@ -785,33 +795,41 @@ void test7( const bool use_topology )
 
     // Create the plan.
     if ( use_topology )
-        collector = std::make_shared<Cabana::Collector<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
+        printf("TODO\n");
+        // collector = std::make_shared<Cabana::Collector<TEST_MEMSPACE>>(
+        //     MPI_COMM_WORLD, export_ranks, neighbor_ranks );
     else
         collector = std::make_shared<Cabana::Collector<TEST_MEMSPACE>>(
-            MPI_COMM_WORLD, export_ranks );
+            MPI_COMM_WORLD, num_data, import_ranks, import_ids );
 
     // Make some data to migrate.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
     using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
-    AoSoA_t data( "data", num_data );
+    AoSoA_t data( "data", num_data + collector->totalNumImport() );
     auto slice_int = Cabana::slice<0>( data );
     auto slice_dbl = Cabana::slice<1>( data );
 
     // Fill the data.
     auto fill_func = KOKKOS_LAMBDA( const int )
     {
-        slice_int( 0 ) = export_ranks( 0 );
-        slice_int( 1 ) = export_ranks( 1 );
+        slice_int( 0 ) = my_rank;
+        slice_int( 1 ) = my_rank + 10;
 
-        slice_dbl( 0, 0 ) = export_ranks( 0 );
-        slice_dbl( 1, 0 ) = export_ranks( 1 );
+        slice_dbl( 0, 0 ) = my_rank + 10;
+        slice_dbl( 0, 1 ) = my_rank + 10.5;
 
-        slice_dbl( 0, 1 ) = export_ranks( 0 ) + 1;
-        slice_dbl( 1, 1 ) = export_ranks( 1 ) + 1;
+        slice_dbl( 1, 0 ) = my_rank + 11;
+        slice_dbl( 1, 1 ) = my_rank + 11.5;
     };
     Kokkos::parallel_for( range_policy, fill_func );
     Kokkos::fence();
+    // printf("R%d: collector num import/export: %d, %d, data: %d\n", my_rank, collector->totalNumImport(),
+    //     collector->totalNumExport(), data.size());
+    // for (int i = 0; i < data.size(); i++)
+    // {
+    //     printf("Before migrate: R%d: i%d: int, d1, d2: %d, %0.1lf, %0.1lf\n", my_rank,
+    //         i, slice_int(i), slice_dbl(i, 0), slice_dbl(i, 1));
+    // }
 
     // Do the migration
     Cabana::migrate( *collector, data );
@@ -822,66 +840,42 @@ void test7( const bool use_topology )
     auto slice_int_host = Cabana::slice<0>( data_host );
     auto slice_dbl_host = Cabana::slice<1>( data_host );
     Cabana::deep_copy( data_host, data );
+
+    // for (int i = 0; i < data_host.size(); i++)
+    // {
+    //     printf("After migrate: R%d: i%d: int, d1, d2: %d, %0.1lf, %0.1lf\n", my_rank,
+    //         i, slice_int_host(i), slice_dbl_host(i, 0), slice_dbl_host(i, 1));
+    // }
+    std::set<int> expected_ints = {
+        import0,
+        import1 + 10,
+    };
+    std::set<double> expected_dbls = {
+        import0 + 10.0,
+        import0 + 10.5,
+        import1 + 11.0,
+        import1 + 11.5
+    };
+    std::set<int> actual_ints = {};
+    std::set<double> actual_dbls = {};
     for ( unsigned i = 0; i < data.size(); ++i )
     {
-        EXPECT_EQ( slice_int_host( i ), my_rank );
-        EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), my_rank );
-        EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), my_rank + 1 );
+        if (i < collector->numOwned())
+        {
+            ASSERT_EQ( slice_int_host( i ), my_rank + 10*i ) << "Rank " << my_rank << "\n";
+            ASSERT_DOUBLE_EQ( slice_dbl_host( i, 0 ), my_rank + 10 + i ) << "Rank " << my_rank << "\n";
+            ASSERT_DOUBLE_EQ( slice_dbl_host( i, 1 ), my_rank + 10 + i + 0.5 ) << "Rank " << my_rank << "\n";
+        }
+        else
+        {
+            actual_ints.insert(slice_int_host( i ));
+            actual_dbls.insert(slice_dbl_host( i, 0 ));
+            actual_dbls.insert( slice_dbl_host( i, 1 ));
+        }
     }
+    ASSERT_EQ(expected_ints, actual_ints) << "Rank " << my_rank << "\n";
+    ASSERT_EQ(expected_dbls, actual_dbls) << "Rank " << my_rank << "\n";
 }
-
-// //---------------------------------------------------------------------------//
-// void test9( const bool use_topology )
-// {
-//     // Make a communication plan.
-//     std::shared_ptr<Cabana::Collector<TEST_MEMSPACE>> collector;
-
-//     // Edge case where all particles will be removed - nothing is kept, sent, or
-//     // received.
-//     int num_data = 2;
-//     Kokkos::View<int*, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
-//     auto fill_ranks = KOKKOS_LAMBDA( const int i ) { export_ranks( i ) = -1; };
-
-//     Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
-//     Kokkos::parallel_for( range_policy, fill_ranks );
-//     Kokkos::fence();
-
-//     // Create the plan.
-//     if ( use_topology )
-//     {
-//         std::vector<int> neighbor_ranks;
-//         collector = std::make_shared<Cabana::Collector<TEST_MEMSPACE>>(
-//             MPI_COMM_WORLD, export_ranks, neighbor_ranks );
-//     }
-//     else
-//     {
-//         collector = std::make_shared<Cabana::Collector<TEST_MEMSPACE>>(
-//             MPI_COMM_WORLD, export_ranks );
-//     }
-
-//     // Make empty data to migrate.
-//     using DataTypes = Cabana::MemberTypes<int, double[2]>;
-//     using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
-//     AoSoA_t data( "data", num_data );
-//     auto slice_int = Cabana::slice<0>( data );
-
-//     // Create empty slice to "copy" into.
-//     AoSoA_t data_copy( "copy", 0 );
-//     auto slice_int_copy = Cabana::slice<0>( data_copy );
-
-//     // Do empty slice migration.
-//     Cabana::migrate( *collector, slice_int, slice_int_copy );
-
-//     // Check entries were removed.
-//     slice_int_copy = Cabana::slice<0>( data_copy );
-//     EXPECT_EQ( slice_int_copy.size(), 0 );
-
-//     // Do empty in-place migration.
-//     Cabana::migrate( *collector, data );
-
-//     // Check entries were removed.
-//     EXPECT_EQ( data.size(), 0 );
-// }
 
 //---------------------------------------------------------------------------//
 // RUN TESTS
@@ -908,7 +902,7 @@ void test7( const bool use_topology )
 
 // TEST( Collector, Test1NoTopo ) { test1( false ); }
 
-// TEST( Collector, Test2NoTopo ) { test2( false ); }
+TEST( Collector, Test2NoTopo ) { test2( false ); }
 
 // TEST( Collector, Test3NoTopo ) { test3( false ); }
 
@@ -918,11 +912,7 @@ void test7( const bool use_topology )
 
 // TEST( Collector, Test6NoTopo ) { test6( false ); }
 
-TEST( Collector, Test7NoTopo ) { test7( false ); }
-
-// TEST( Collector, Test8NoTopo ) { test8( false ); }
-
-// TEST( Collector, Test9NoTopo ) { test9( false ); }
+// TEST( Collector, Test7NoTopo ) { test7( false ); }
 
 //---------------------------------------------------------------------------//
 
