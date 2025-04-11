@@ -26,7 +26,7 @@
 namespace Test
 {
 //---------------------------------------------------------------------------//
-class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE, Cabana::CommPlans::MPI>
+class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE>
 {
   public:
     using memory_space = TEST_MEMSPACE;
