@@ -258,7 +258,8 @@ void test2( const bool use_topology )
     for ( int n = 0; n < num_data/2; ++n )
     {
         import_ranks_host( n ) = my_rank;
-        import_ids_host( n ) = num_data*2;
+        import_ids_host( n ) = n*2;
+        // printf("R%d: i%d: id%d\n", my_rank, n, import_ids_host( n ));
     }
     auto import_ranks = Kokkos::create_mirror_view_and_copy(
         TEST_MEMSPACE(), import_ranks_host );
@@ -289,6 +290,7 @@ void test2( const bool use_topology )
         slice_int( i ) = my_rank + i;
         slice_dbl( i, 0 ) = my_rank + i;
         slice_dbl( i, 1 ) = my_rank + i + 0.5;
+        // printf("R%d: data(%d): %d\n", my_rank, i, slice_int(i));
     };
     Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
     Kokkos::parallel_for( range_policy, fill_func );
@@ -311,13 +313,13 @@ void test2( const bool use_topology )
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
     for ( std::size_t i = collector->numOwned(); i < data.size(); ++i )
     {
-        printf("R%d: int(%d): %d\n", my_rank, i, slice_int_host(i));
-        // int j = i - collector->numOwned();
-        // ASSERT_EQ( slice_int_host( i ), my_rank + host_steering( j ) );
-        // ASSERT_DOUBLE_EQ( slice_dbl_host( i, 0 ),
-        //                   my_rank + host_steering( j ) );
-        // ASSERT_DOUBLE_EQ( slice_dbl_host( i, 1 ),
-        //                   my_rank + host_steering( j ) + 0.5 );
+        // printf("R%d: int(%d): %d\n", my_rank, i, slice_int_host(i));
+        int j = i - collector->numOwned();
+        ASSERT_EQ( slice_int_host( i ), my_rank + host_steering( j ) );
+        ASSERT_DOUBLE_EQ( slice_dbl_host( i, 0 ),
+                          my_rank + host_steering( j ) );
+        ASSERT_DOUBLE_EQ( slice_dbl_host( i, 1 ),
+                          my_rank + host_steering( j ) + 0.5 );
     }
 }
 
@@ -624,7 +626,7 @@ void test5( const bool use_topology )
 
     // Check the migration.
     Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host(
-        "data_host", collector->totalNumImport() );
+        "data_host", data.size() );
     auto slice_int_host = Cabana::slice<0>( data_host );
     auto slice_dbl_host = Cabana::slice<1>( data_host );
     Cabana::deep_copy( data_host, data );
@@ -900,19 +902,19 @@ void test7( const bool use_topology )
 
 // TEST( Collector, Test9 ) { test9( true ); }
 
-// TEST( Collector, Test1NoTopo ) { test1( false ); }
+TEST( Collector, Test1NoTopo ) { test1( false ); }
 
 TEST( Collector, Test2NoTopo ) { test2( false ); }
 
-// TEST( Collector, Test3NoTopo ) { test3( false ); }
+TEST( Collector, Test3NoTopo ) { test3( false ); }
 
-// TEST( Collector, Test4NoTopo ) { test4( false ); }
+TEST( Collector, Test4NoTopo ) { test4( false ); }
 
-// TEST( Collector, Test5NoTopo ) { test5( false ); }
+TEST( Collector, Test5NoTopo ) { test5( false ); }
 
-// TEST( Collector, Test6NoTopo ) { test6( false ); }
+TEST( Collector, Test6NoTopo ) { test6( false ); }
 
-// TEST( Collector, Test7NoTopo ) { test7( false ); }
+TEST( Collector, Test7NoTopo ) { test7( false ); }
 
 //---------------------------------------------------------------------------//
 
