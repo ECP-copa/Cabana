@@ -38,7 +38,7 @@ if(Cabana_ENABLE_ARBORX)
 endif()
 
 set(MPI_TESTS
-  CommunicationPlanMPI
+  CommunicationPlan
   Collector
   Distributor
   Halo
