@@ -42,12 +42,6 @@ set(HEADERS_PUBLIC
   Cabana_Grid_Splines.hpp
   Cabana_Grid_Types.hpp
 )
-
-if(Cabana_ENABLE_STREAMCOMM)
-  list(APPEND HEADERS_PUBLIC
-    Cabana_Grid_StreamHalo.hpp
-  )
-endif()
   
 if(Cabana_ENABLE_HYPRE)
   list(APPEND HEADERS_PUBLIC
@@ -94,11 +88,6 @@ endif()
 
 if(Cabana_ENABLE_ALL)
   target_link_libraries(Grid INTERFACE ALL::ALL)
-endif()
-
-if(Cabana_ENABLE_STREAMCOMM)
-  target_link_libraries( Grid INTERFACE ${MPI_ADVANCE_LIBRARY} )
-  target_include_directories(Grid INTERFACE ${MPI_ADVANCE_INCLUDE_DIR})
 endif()
 
 target_include_directories(Grid

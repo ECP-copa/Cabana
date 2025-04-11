@@ -45,12 +45,6 @@ set(MPI_TESTS
   SparseHalo
   SparseLocalGrid
   )
-
-if(Cabana_ENABLE_STREAMCOMM)
-  list(APPEND MPI_TESTS
-    StreamHalo2d
-  )
-endif()
   
 if(Kokkos_ENABLE_SYCL) #FIXME_SYCL
   list(REMOVE_ITEM SERIAL_TESTS SparseIndexSpace)

@@ -93,15 +93,6 @@ set_package_properties(ArborX PROPERTIES TYPE OPTIONAL PURPOSE "Used for neighbo
 Cabana_add_dependency( PACKAGE ALL )
 set_package_properties(ALL PROPERTIES TYPE OPTIONAL PURPOSE "Used for load balancing")
 
-# enable stream triggering
-option(Cabana_ENABLE_STREAMCOMM "Support Stream-Triggered Communication." ON)
-
-# find MPIAdvance
-if(Cabana_ENABLE_STREAMCOMM)
-  find_package(mpi-advance REQUIRED)
-  include_directories(${MPI_ADVANCE_INCLUDE_DIR})
-endif()
-
 # find Clang Format
 find_package( CLANG_FORMAT 14 )
 
