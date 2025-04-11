@@ -59,8 +59,8 @@ namespace Cabana
   user must allocate their own destination data structure.
 
 */
-template <class MemorySpace, class CommPlan=CommPlans::MPI>
-class Collector : public CommunicationPlan<MemorySpace, CommPlan>
+template <class MemorySpace>
+class Collector : public CommunicationPlan<MemorySpace>
 {
   public:
     /*!
@@ -109,7 +109,7 @@ class Collector : public CommunicationPlan<MemorySpace, CommPlan>
                 const ViewType& element_import_ranks,
                 const ViewType& element_import_ids,
                 const std::vector<int>& neighbor_ranks )
-        : CommunicationPlan<MemorySpace, CommPlan>( comm )
+        : CommunicationPlan<MemorySpace>( comm )
         , _num_owned( num_owned )
     {
         throw std::runtime_error("Cabana::Collector: Neighbor ranks constructor not yet implemented\n");

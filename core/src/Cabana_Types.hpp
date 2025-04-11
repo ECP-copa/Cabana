@@ -22,25 +22,6 @@
 
 namespace Cabana
 {
-namespace CommPlans
-{
-//---------------------------------------------------------------------------//
-// Communication plan types.
-//---------------------------------------------------------------------------//
-/*!
-  \brief MPI comm tag - default.
-*/
-struct MPI
-{
-};
-
-/*!
-  \brief MPI Advance comm tag.
-*/
-struct MPIAdvance
-{
-};
-} // end namespace CommPlans
 
 //---------------------------------------------------------------------------//
 // Memory access tags.

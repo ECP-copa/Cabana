@@ -23,8 +23,6 @@
 
 #include <mpi.h>
 
-#include <mpi_advance.h>
-
 #include <algorithm>
 #include <exception>
 #include <memory>
@@ -417,7 +415,7 @@ inline std::vector<int> getUniqueTopology( MPI_Comm comm,
   means is that neighbor 0 is the local rank and the data for that rank that
   is being exported will appear first in the steering vector.
 */
-template <class MemorySpace, class CommPlan=CommPlans::MPI>
+template <class MemorySpace>
 class CommunicationPlan
 {
   public:
@@ -598,92 +596,6 @@ class CommunicationPlan
     createFromExportsAndTopology( ExecutionSpace exec_space,
                                   const ViewType& element_export_ranks,
                                   const std::vector<int>& neighbor_ranks )
-        requires std::is_same_v<CommPlan, CommPlans::MPI>
-    {
-        static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
-
-        // Store the number of export elements.
-        _num_export_element = element_export_ranks.size();
-
-        // Store the unique neighbors (this rank first).
-        _neighbors = getUniqueTopology( comm(), neighbor_ranks );
-        int num_n = _neighbors.size();
-
-        // Get the size of this communicator.
-        int comm_size = -1;
-        MPI_Comm_size( comm(), &comm_size );
-
-        // Get the MPI rank we are currently on.
-        int my_rank = -1;
-        MPI_Comm_rank( comm(), &my_rank );
-
-        // Pick an mpi tag for communication. This object has it's own
-        // communication space so any mpi tag will do.
-        const int mpi_tag = 1221;
-
-        // Initialize import/export sizes.
-        _num_export.assign( num_n, 0 );
-        _num_import.assign( num_n, 0 );
-
-        // Count the number of sends this rank will do to other ranks. Keep
-        // track of which slot we get in our neighbor's send buffer.
-        auto counts_and_ids = Impl::countSendsAndCreateSteering(
-            exec_space, element_export_ranks, comm_size,
-            typename Impl::CountSendsAndCreateSteeringAlgorithm<
-                ExecutionSpace>::type() );
-
-        // Copy the counts to the host.
-        auto neighbor_counts_host = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), counts_and_ids.first );
-
-        // Get the export counts.
-        for ( int n = 0; n < num_n; ++n )
-            _num_export[n] = neighbor_counts_host( _neighbors[n] );
-
-        // Post receives for the number of imports we will get.
-        std::vector<MPI_Request> requests;
-        requests.reserve( num_n );
-        for ( int n = 0; n < num_n; ++n )
-            if ( my_rank != _neighbors[n] )
-            {
-                requests.push_back( MPI_Request() );
-                MPI_Irecv( &_num_import[n], 1, MPI_UNSIGNED_LONG, _neighbors[n],
-                           mpi_tag, comm(), &( requests.back() ) );
-            }
-            else
-                _num_import[n] = _num_export[n];
-
-        // Send the number of exports to each of our neighbors.
-        for ( int n = 0; n < num_n; ++n )
-            if ( my_rank != _neighbors[n] )
-                MPI_Send( &_num_export[n], 1, MPI_UNSIGNED_LONG, _neighbors[n],
-                          mpi_tag, comm() );
-
-        // Wait on receives.
-        std::vector<MPI_Status> status( requests.size() );
-        const int ec =
-            MPI_Waitall( requests.size(), requests.data(), status.data() );
-        if ( MPI_SUCCESS != ec )
-            throw std::logic_error( "Failed MPI Communication" );
-
-        // Get the total number of imports/exports.
-        _total_num_export =
-            std::accumulate( _num_export.begin(), _num_export.end(), 0 );
-        _total_num_import =
-            std::accumulate( _num_import.begin(), _num_import.end(), 0 );
-
-        // Barrier before continuing to ensure synchronization.
-        MPI_Barrier( comm() );
-
-        // Return the neighbor ids.
-        return counts_and_ids.second;
-    }
-    template <class ExecutionSpace, class ViewType>
-    Kokkos::View<size_type*, memory_space>
-    createFromExportsAndTopology( ExecutionSpace exec_space,
-                                  const ViewType& element_export_ranks,
-                                  const std::vector<int>& neighbor_ranks )
-        requires std::is_same_v<CommPlan, CommPlans::MPIAdvance>
     {
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
 
@@ -843,7 +755,6 @@ class CommunicationPlan
     Kokkos::View<size_type*, memory_space>
     createFromExportsOnly( ExecutionSpace exec_space,
                            const ViewType& element_export_ranks )
-        requires std::is_same_v<CommPlan, CommPlans::MPI>
     {
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
 
@@ -977,128 +888,6 @@ class CommunicationPlan
         return counts_and_ids.second;
     }
 
-    template <class ExecutionSpace, class ViewType>
-    Kokkos::View<size_type*, memory_space>
-    createFromExportsOnly( ExecutionSpace exec_space,
-                           const ViewType& element_export_ranks )
-        requires std::is_same_v<CommPlan, CommPlans::MPIAdvance>
-    {
-        static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
-
-        // Store the number of export elements.
-        _num_export_element = element_export_ranks.size();
-
-        // Get the size of this communicator.
-        int comm_size = -1;
-        MPI_Comm_size( comm(), &comm_size );
-
-        // Get the MPI rank we are currently on.
-        int my_rank = -1;
-        MPI_Comm_rank( comm(), &my_rank );
-
-        // Count the number of sends this rank will do to other ranks. Keep
-        // track of which slot we get in our neighbor's send buffer.
-        auto counts_and_ids = Impl::countSendsAndCreateSteering(
-            exec_space, element_export_ranks, comm_size,
-            typename Impl::CountSendsAndCreateSteeringAlgorithm<
-                ExecutionSpace>::type() );
-
-        // Copy the counts to the host.
-        auto neighbor_counts_host = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), counts_and_ids.first );
-
-        // Extract the export ranks and number of exports and then flag the
-        // send ranks.
-        _neighbors.clear();
-        _num_export.clear();
-        _total_num_export = 0;
-        for ( int r = 0; r < comm_size; ++r )
-            if ( neighbor_counts_host( r ) > 0 )
-            {
-                _neighbors.push_back( r );
-                _num_export.push_back( neighbor_counts_host( r ) );
-                _total_num_export += neighbor_counts_host( r );
-                neighbor_counts_host( r ) = 1;
-            }
-
-        // Get the number of export ranks and initially allocate the import
-        // sizes.
-        int num_export_rank = _neighbors.size();
-        _num_import.assign( num_export_rank, 0 );
-
-        // If we are sending to ourself put that one first in the neighbor
-        // list and assign the number of imports to be the number of exports.
-        bool self_send = false;
-        for ( int n = 0; n < num_export_rank; ++n )
-            if ( _neighbors[n] == my_rank )
-            {
-                std::swap( _neighbors[n], _neighbors[0] );
-                std::swap( _num_export[n], _num_export[0] );
-                _num_import[0] = _num_export[0];
-                self_send = true;
-                break;
-        
-            }
-
-        MPIX_Comm *xcomm;
-        MPIX_Info *xinfo;
-        MPIX_Comm_init(&xcomm, comm());
-        MPIX_Info_init(&xinfo);
-
-        int num_import_rank = -1;
-        int* src, *import_sizes;
-        // std::vector<std::size_t> import_sizes( comm_size );
-        MPIX_Alltoall_crs(num_export_rank, _neighbors.data(), 1, MPI_UNSIGNED_LONG, _num_export.data(),
-                          &num_import_rank, &src, 1, MPI_UNSIGNED_LONG, (void**)&import_sizes,
-                          xinfo, xcomm);
-
-        MPIX_Info_free(&xinfo);
-        MPIX_Comm_free(&xcomm);
-
-        // Compute the total number of imports.
-        _total_num_import = num_export_rank;
-            
-        // Extract the imports. If we did self sends we already know what
-        // imports we got from that.
-        for ( int i = 0; i < num_import_rank; ++i )
-        {
-            // Get the message source.
-            const auto source = src[i];
-
-            // See if the neighbor we received stuff from was someone we also
-            // sent stuff to.
-            auto found_neighbor =
-                std::find( _neighbors.begin(), _neighbors.end(), source );
-
-            // If this is a new neighbor (i.e. someone we didn't send anything
-            // to) record this.
-            if ( found_neighbor == std::end( _neighbors ) )
-            {
-                _neighbors.push_back( source );
-                _num_import.push_back( import_sizes[i] );
-                _num_export.push_back( 0 );
-            }
-
-            // Otherwise if we already sent something to this neighbor that
-            // means we already have a neighbor/export entry. Just assign the
-            // import entry for that neighbor.
-            else
-            {
-                auto n = std::distance( _neighbors.begin(), found_neighbor );
-                _num_import[n] = import_sizes[i];
-            }
-        }
-
-        MPIX_Free(src);
-        MPIX_Free(import_sizes);
-
-        // Barrier before continuing to ensure synchronization.
-        MPI_Barrier( comm() );
-
-        // Return the neighbor ids.
-        return counts_and_ids.second;
-    }
-
     /*!
       \brief Export rank creator. Use this when you don't know who you will
       receiving from - only who you are sending to. This is less efficient
@@ -1144,7 +933,6 @@ class CommunicationPlan
                                    typename ViewType::memory_space>,
                       Kokkos::View<int*, typename ViewType::memory_space>,
                       Kokkos::View<int*, typename ViewType::memory_space>> 
-        requires std::is_same_v<CommPlan, CommPlans::MPI>
     {
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
 
