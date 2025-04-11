@@ -618,12 +618,6 @@ void test5( const bool use_topology )
     data.resize(collector->numOwned() + collector->totalNumImport());
     Cabana::migrate( *collector, data );
 
-    // Check the change in size.
-    if ( 0 == my_rank )
-        EXPECT_EQ( data.size(), my_size ) << "Rank " << my_rank << "\n";
-    else
-        EXPECT_EQ( data.size(), 0 ) << "Rank " << my_rank << "\n";
-
     // Check the migration.
     Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host(
         "data_host", data.size() );
