@@ -926,6 +926,254 @@ class CommunicationPlan
 
     template <class ExecutionSpace, class ViewType>
     auto
+    createFromImportsAndTopology( ExecutionSpace exec_space,
+                                  const ViewType& element_import_ranks,
+                                  const ViewType& element_import_ids )
+        -> std::tuple<Kokkos::View<typename ViewType::size_type*,
+                                   typename ViewType::memory_space>,
+                      Kokkos::View<int*, typename ViewType::memory_space>,
+                      Kokkos::View<int*, typename ViewType::memory_space>> 
+    {
+        static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
+
+        if (element_import_ids.size() != element_import_ranks.size())
+           throw std::runtime_error( "Export ids and ranks different sizes!" );
+
+        // Get the size of this communicator.
+        int comm_size = -1;
+        MPI_Comm_size( comm(), &comm_size );
+
+        // Get the MPI rank we are currently on.
+        int rank = -1;
+        MPI_Comm_rank( comm(), &rank );
+
+        // Pick an mpi tag for communication. This object has it's own
+        // communication space so any mpi tag will do.
+        const int mpi_tag = 1221;
+
+        // Store which ranks I need to recieve from (i.e. send data to me)
+        // https://github.com/CUP-ECS/CLAMR/blob/master/l7/l7_setup.c
+        Kokkos::View<int*, memory_space> importing_ranks("importing_ranks", comm_size);
+        Kokkos::deep_copy(importing_ranks, 0);
+        Kokkos::parallel_for(
+            "Cabana::storeImportRanks",
+            Kokkos::RangePolicy<ExecutionSpace>( 0, element_import_ranks.extent(0) ),
+            KOKKOS_LAMBDA( const int i ) {
+                int import_rank = element_import_ranks(i);
+                Kokkos::atomic_store(&importing_ranks(import_rank), 1);
+            } );
+        Kokkos::fence();
+        auto importing_ranks_h = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), importing_ranks);
+
+        // Allreduce to count number of ranks I am communicating with
+        Kokkos::View<int*, Kokkos::HostSpace> num_ranks_communicate("num_ranks_communicate", comm_size);
+        MPI_Allreduce(importing_ranks_h.data(), num_ranks_communicate.data(), comm_size, MPI_INT,
+            MPI_SUM, comm());
+        
+        // for (int i = 0; i < num_ranks_communicate.extent(0); i++)
+        //     printf("R%d: num_ranks_communicate(%d): %d\n", rank, i, num_ranks_communicate(i));
+
+        // Post that many wildcard recieves to get the number of indices I will send to each rank
+        // Allocate buffers based on num_ranks_communicate
+        int num_recvs = num_ranks_communicate(rank);
+        Kokkos::View<int*, Kokkos::HostSpace> send_counts("send_counts", num_recvs);
+        Kokkos::View<int*, Kokkos::HostSpace> send_to("send_to", num_recvs);
+
+        std::vector<MPI_Request> mpi_requests(num_recvs);
+        std::vector<MPI_Status> mpi_statuses(num_recvs);
+
+        // Receive counts for indices this process will send
+        for (int i = 0; i < num_recvs; i++)
+        {
+            // printf("R%d: posting recv into send_counts(%d)\n", rank, i);
+            MPI_Irecv(&send_counts(i), 1, MPI_INT, MPI_ANY_SOURCE,
+                mpi_tag, comm(), &mpi_requests[i]);
+        }
+        // printf("R%d: num receives: %d\n", rank, num_recvs);
+
+        // Count the number of imports this rank needs from other ranks. Keep
+        // track of which slot we get in our neighbor's send buffer?
+        auto counts_and_ids = Impl::countSendsAndCreateSteering(
+            exec_space, element_import_ranks, comm_size,
+            typename Impl::CountSendsAndCreateSteeringAlgorithm<
+                ExecutionSpace>::type() );
+        
+        // Copy the counts to the host.
+        auto neighbor_counts_host = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), counts_and_ids.first );
+        
+        // for (int i = 0; i < neighbor_counts_host.extent(0); i++)
+        //     printf("R%d: neighbor_counts(%d) = %d\n", rank, i, neighbor_counts_host(i));
+        
+        // Clear vectors before we use them
+        _neighbors.clear();
+        _num_export.clear();
+        _num_import.clear();
+
+        for (size_t i = 0; i < neighbor_counts_host.extent(0); i++) {
+            if (neighbor_counts_host(i) != 0)
+            {
+                // Send counts of needed indices
+                // printf("R%d: sending val %d to %d\n", rank, neighbor_counts_host(i), i);
+                MPI_Send(&neighbor_counts_host(i), 1, MPI_INT, i,
+                        mpi_tag, comm());
+                
+                // Store we are importing this count from this rank
+                _neighbors.push_back(i);
+                _num_import.push_back(neighbor_counts_host(i));
+            }
+        }
+        // Assign all exports to zero
+        _num_export.assign(_num_import.size(), 0);
+
+        // Wait for all count exchanges to complete
+        const int ec0 = MPI_Waitall(num_recvs, mpi_requests.data(), mpi_statuses.data());
+        if ( MPI_SUCCESS != ec0 )
+            throw std::logic_error( "Failed MPI Communication" );
+        // Save ranks we got messages from and track total messages to size buffers
+        _total_num_export = 0;
+        for (int i = 0; i < num_recvs; i++) {
+            send_to(i) = mpi_statuses[i].MPI_SOURCE;
+            _total_num_export += send_counts(i);
+            // printf("R%d: send_to(%d) = %d\n", rank, i, mpi_statuses[i].MPI_SOURCE);
+        }
+
+        // Extract the export ranks and number of exports and then flag the
+        // send ranks.
+        for ( int r = 0; r < num_recvs; ++r )
+        {
+            int export_to = send_to( r );
+            if ( export_to > -1 )
+            {                
+                // See if the neighbor we are exporting to is someone we are
+                // also importing from
+                auto found_neighbor =
+                    std::find( _neighbors.begin(), _neighbors.end(), export_to );
+
+                // If this is a new neighbor (i.e. someone we are not importing
+                // from) record this.
+                if ( found_neighbor == std::end( _neighbors ) )
+                {
+                    _neighbors.push_back( export_to );
+                    _num_import.push_back( 0 );
+                    _num_export.push_back( send_counts(r) );
+                }
+
+                // Otherwise if we are already importing from this neighbor that
+                // means we already have a neighbor/import entry. Just assign the
+                // export entry for that neighbor.
+                else
+                {
+                    auto n = std::distance( _neighbors.begin(), found_neighbor );
+                    _num_export[n] = send_counts(r);
+                }
+                // if (rank == 2) printf("R%d: adding: neighbor %d, export %d, import %d\n", rank,
+                //     send_to( r ), send_counts( r ), neighbor_counts_host( send_to( r ) ));
+            }
+        }
+        // If we are sending to ourself put that one first in the neighbor
+        // list and assign the number of exports to be the number of imports.
+        bool self_send = false;
+        for ( int n = 0; n < _neighbors.size(); ++n )
+            if ( _neighbors[n] == rank )
+            {
+                std::swap( _neighbors[n], _neighbors[0] );
+                std::swap( _num_export[n], _num_export[0] );
+                std::swap( _num_import[n], _num_import[0] );
+                _num_export[0] = _num_import[0];
+                self_send = true;
+                break;
+            }
+
+        // Total number of imports and exports are now known
+        _total_num_import = element_import_ranks.extent(0);
+        _num_export_element = _total_num_export;
+
+        // Post receives to get the indices other processes are requesting
+        // i.e. our export indices
+        Kokkos::View<int*, Kokkos::HostSpace> export_indices("export_indices", _total_num_export);
+        size_t idx = 0;
+        mpi_requests.clear();
+        mpi_statuses.clear();
+        int num_messages = _total_num_export + element_import_ranks.extent(0);
+        mpi_requests.resize(num_messages);
+        mpi_statuses.resize(num_messages);
+        for(int i = 0; i < num_recvs; i++)
+        {
+            // printf("R%d: send_counts(%d) = %d, send_to(%d) = %d\n", rank, i, send_counts(i), i, send_to(i));
+            for(int j = 0; j < send_counts(i); j++)
+            {
+                // printf("R%d: posting IRecv from %d into index %d\n", rank, send_to(i), idx);
+                MPI_Irecv(&export_indices(idx), 1, MPI_INT, send_to(i), mpi_tag, comm(), &mpi_requests[idx]);
+                idx++;
+            }
+        }
+        // printf("R%d: idx: %d, total_num_export: %d\n", rank, idx, _total_num_export);
+        assert(idx == _total_num_export);
+
+        // Send the indices we need
+        for (size_t i = 0; i < element_import_ranks.extent(0); i++)
+        {
+            // printf("R%d sending index %d to R%d\n", rank, element_import_ids(i), element_import_ranks(i));
+            MPI_Isend(&element_import_ids(i), 1, MPI_INT, element_import_ranks(i), mpi_tag, comm(), &mpi_requests[idx++]);
+        }
+
+        // Wait for all count exchanges to complete
+        // printf("R%d: before second waitall\n", rank);
+        const int ec1 = MPI_Waitall(num_messages, mpi_requests.data(), mpi_statuses.data());
+        if ( MPI_SUCCESS != ec1 )
+            throw std::logic_error( "Failed MPI Communication" );
+        // printf("R%d: after second waitall\n", rank);
+
+        // for (size_t i = 0; i < _total_num_export; i++) {
+        //     int from_rank = mpi_statuses[i].MPI_SOURCE;
+        //     printf("R%d: must export index %d to R%d\n", rank, export_indices(i), from_rank);
+        // }
+
+        // printf("Finished waitall\n");
+        // sleep(1000);
+
+        // Now, build the export steering
+        // Export rank in mpi_statuses[i].MPI_SOURCE
+        // Export ID in export_indices(i)
+        // Kokkos::View<int*, memory_space> element_export_ranks("element_export_ranks", _total_num_export);
+        Kokkos::View<int*, Kokkos::HostSpace> element_export_ranks_h("element_export_ranks_h", _total_num_export);
+        for (size_t i = 0; i < _total_num_export; i++) {
+            element_export_ranks_h[i] = mpi_statuses[i].MPI_SOURCE;
+        }
+        auto element_export_ranks = Kokkos::create_mirror_view_and_copy(memory_space(), element_export_ranks_h);
+        
+        auto counts_and_ids2 = Impl::countSendsAndCreateSteering(
+            exec_space, element_export_ranks, comm_size,
+            typename Impl::CountSendsAndCreateSteeringAlgorithm<
+                ExecutionSpace>::type() );
+        
+        // Copy indices_send to device mempry before returning
+        auto export_indices_d = Kokkos::create_mirror_view_and_copy(memory_space(), export_indices);
+
+        // for (int i = 0; i < _neighbors.size(); i++)
+        //     printf("R%d: _neighbors(%d): %d\n", rank, i, _neighbors[i]);
+
+        // for (int i = 0; i < element_export_ranks.extent(0); i++)
+        //     printf("R%d: export/index: (To R%d, index %d)\n", rank, element_export_ranks(i), export_indices(i));
+
+        // Return the neighbor ids, export ranks, and export indices
+        return std::tuple{counts_and_ids2.second, element_export_ranks, export_indices_d};
+    }
+
+    template <class ViewType>
+    // Kokkos::View<size_type*, memory_space>
+    auto
+    createFromImportsAndTopology( const ViewType& element_import_ranks,
+                           const ViewType& element_import_ids )
+    {
+        // Use the default execution space.
+        return createFromImportsAndTopology( execution_space{}, element_import_ranks,
+            element_import_ids );
+    }
+
+    template <class ExecutionSpace, class ViewType>
+    auto
     createFromImportsOnly( ExecutionSpace exec_space,
                            const ViewType& element_import_ranks,
                            const ViewType& element_import_ids )
@@ -1095,8 +1343,9 @@ class CommunicationPlan
         size_t idx = 0;
         mpi_requests.clear();
         mpi_statuses.clear();
-        mpi_requests.resize(_total_num_export);
-        mpi_statuses.resize(_total_num_export);
+        int num_messages = _total_num_export + element_import_ranks.extent(0);
+        mpi_requests.resize(num_messages);
+        mpi_statuses.resize(num_messages);
         for(int i = 0; i < num_recvs; i++)
         {
             // printf("R%d: send_counts(%d) = %d, send_to(%d) = %d\n", rank, i, send_counts(i), i, send_to(i));
@@ -1114,12 +1363,12 @@ class CommunicationPlan
         for (size_t i = 0; i < element_import_ranks.extent(0); i++)
         {
             // printf("R%d sending index %d to R%d\n", rank, element_import_ids(i), element_import_ranks(i));
-            MPI_Send(&element_import_ids(i), 1, MPI_INT, element_import_ranks(i), mpi_tag, comm());
+            MPI_Isend(&element_import_ids(i), 1, MPI_INT, element_import_ranks(i), mpi_tag, comm(), &mpi_requests[idx++]);
         }
 
         // Wait for all count exchanges to complete
         // printf("R%d: before second waitall\n", rank);
-        const int ec1 = MPI_Waitall(_total_num_export, mpi_requests.data(), mpi_statuses.data());
+        const int ec1 = MPI_Waitall(num_messages, mpi_requests.data(), mpi_statuses.data());
         if ( MPI_SUCCESS != ec1 )
             throw std::logic_error( "Failed MPI Communication" );
         // printf("R%d: after second waitall\n", rank);
