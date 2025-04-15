@@ -1135,25 +1135,20 @@ class CommunicationPlan
         // Now, build the export steering
         // Export rank in mpi_statuses[i].MPI_SOURCE
         // Export ID in export_indices(i)
-        Kokkos::View<int*, memory_space> element_export_ranks("element_export_ranks", _total_num_export);
+        // Kokkos::View<int*, memory_space> element_export_ranks("element_export_ranks", _total_num_export);
         Kokkos::View<int*, Kokkos::HostSpace> element_export_ranks_h("element_export_ranks_h", _total_num_export);
         for (size_t i = 0; i < _total_num_export; i++) {
             element_export_ranks_h[i] = mpi_statuses[i].MPI_SOURCE;
         }
-        auto tmp = Kokkos::create_mirror_view(element_export_ranks);
-        Kokkos::deep_copy(tmp, element_export_ranks_h);
-        Kokkos::deep_copy(element_export_ranks, tmp);
+        auto element_export_ranks = Kokkos::create_mirror_view_and_copy(memory_space(), element_export_ranks_h);
         
-        counts_and_ids = Impl::countSendsAndCreateSteering(
+        auto counts_and_ids2 = Impl::countSendsAndCreateSteering(
             exec_space, element_export_ranks, comm_size,
             typename Impl::CountSendsAndCreateSteeringAlgorithm<
                 ExecutionSpace>::type() );
         
         // Copy indices_send to device mempry before returning
-        Kokkos::View<int*, memory_space> export_indices_d("export_indices_d", _total_num_export);
-        tmp = Kokkos::create_mirror_view(export_indices_d);
-        Kokkos::deep_copy(tmp, export_indices);
-        Kokkos::deep_copy(export_indices_d, tmp);
+        auto export_indices_d = Kokkos::create_mirror_view_and_copy(memory_space(), export_indices);
 
         // for (int i = 0; i < _neighbors.size(); i++)
         //     printf("R%d: _neighbors(%d): %d\n", rank, i, _neighbors[i]);
@@ -1162,7 +1157,7 @@ class CommunicationPlan
         //     printf("R%d: export/index: (To R%d, index %d)\n", rank, element_export_ranks(i), export_indices(i));
 
         // Return the neighbor ids, export ranks, and export indices
-        return std::make_tuple(counts_and_ids.second, element_export_ranks, export_indices_d);
+        return std::tuple{counts_and_ids2.second, element_export_ranks, export_indices_d};
     }
 
     template <class ViewType>
