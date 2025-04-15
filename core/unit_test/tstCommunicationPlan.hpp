@@ -617,8 +617,8 @@ void test8( const bool use_topology )
 
     // Every rank will import from itself and import all of its data.
     int num_data = 10; 
-    Kokkos::View<int*, Kokkos::HostSpace> import_ranks( "import_ranks", num_data );
-    Kokkos::View<int*, Kokkos::HostSpace> import_ids( "import_ids", num_data );
+    Kokkos::View<int*, TEST_MEMSPACE> import_ranks( "import_ranks", num_data );
+    Kokkos::View<int*, TEST_MEMSPACE> import_ids( "import_ids", num_data );
     Kokkos::deep_copy(import_ranks, my_rank);
 
     // Fill the import_ids.
@@ -629,11 +629,7 @@ void test8( const bool use_topology )
     Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
     Kokkos::parallel_for( range_policy, fill_func );
     Kokkos::fence();
-    
-    // Copy to device
-    auto import_ranks_d = Kokkos::create_mirror_view_and_copy(TEST_MEMSPACE(), import_ranks);
-    auto import_ids_d = Kokkos::create_mirror_view_and_copy(TEST_MEMSPACE(), import_ids);
-    
+        
     // std::vector<int> neighbor_ranks( 1, my_rank );
 
     // Create the plan.
@@ -649,7 +645,7 @@ void test8( const bool use_topology )
     }
     else
         neighbor_ids_ranks_indices = comm_plan.createFromImports(
-            import_ranks_d, import_ids_d );
+            import_ranks, import_ids );
     
     // Check the plan.
     EXPECT_EQ( comm_plan.numNeighbor(), 1 );
@@ -700,8 +696,8 @@ void test9( const bool use_topology )
 
     // Every rank will import all the data from its inverse rank
     int num_data = 10; 
-    Kokkos::View<int*, Kokkos::HostSpace> import_ranks( "import_ranks", num_data );
-    Kokkos::View<int*, Kokkos::HostSpace> import_ids( "import_ids", num_data );
+    Kokkos::View<int*, TEST_MEMSPACE> import_ranks( "import_ranks", num_data );
+    Kokkos::View<int*, TEST_MEMSPACE> import_ids( "import_ids", num_data );
     Kokkos::deep_copy(import_ranks, inverse_rank);
 
     // Fill the import_ids.
@@ -712,11 +708,7 @@ void test9( const bool use_topology )
     Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
     Kokkos::parallel_for( range_policy, fill_func );
     Kokkos::fence();
-    
-    // Copy to device
-    auto import_ranks_d = Kokkos::create_mirror_view_and_copy(TEST_MEMSPACE(), import_ranks);
-    auto import_ids_d = Kokkos::create_mirror_view_and_copy(TEST_MEMSPACE(), import_ids);
-    
+        
     // std::vector<int> neighbor_ranks( 1, my_rank );
 
     // Create the plan.
@@ -732,7 +724,7 @@ void test9( const bool use_topology )
     }
     else
         neighbor_ids_ranks_indices = comm_plan.createFromImports(
-            import_ranks_d, import_ids_d );
+            import_ranks, import_ids );
     
     // Check the plan.
     EXPECT_EQ( comm_plan.numNeighbor(), 1 ) << "Rank " << my_rank << "\n";
@@ -779,8 +771,8 @@ void test10( const bool use_topology )
 
     // Every rank will import data from its previous and next ranks
     int num_data = 10; 
-    Kokkos::View<int*, Kokkos::HostSpace> import_ranks( "import_ranks", num_data );
-    Kokkos::View<int*, Kokkos::HostSpace> import_ids( "import_ids", num_data );
+    Kokkos::View<int*, TEST_MEMSPACE> import_ranks( "import_ranks", num_data );
+    Kokkos::View<int*, TEST_MEMSPACE> import_ids( "import_ids", num_data );
     int previous_rank = (my_rank == 0) ? (comm_size - 1) : (my_rank - 1);
     int next_rank = (my_rank == comm_size - 1) ? 0 : (my_rank + 1);
 
@@ -799,11 +791,7 @@ void test10( const bool use_topology )
     Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
     Kokkos::parallel_for( range_policy, fill_func );
     Kokkos::fence();
-    
-    // Copy to device
-    auto import_ranks_d = Kokkos::create_mirror_view_and_copy(TEST_MEMSPACE(), import_ranks);
-    auto import_ids_d = Kokkos::create_mirror_view_and_copy(TEST_MEMSPACE(), import_ids);
-    
+        
     // std::vector<int> neighbor_ranks( 1, my_rank );
 
     // Create the plan.
@@ -819,7 +807,7 @@ void test10( const bool use_topology )
     }
     else
         neighbor_ids_ranks_indices = comm_plan.createFromImports(
-            import_ranks_d, import_ids_d );
+            import_ranks, import_ids );
     
     // Check the plan.
     EXPECT_EQ( comm_plan.numNeighbor(), 2 ) << "Rank " << my_rank << "\n";
