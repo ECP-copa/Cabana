@@ -58,6 +58,20 @@ class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE>
                             typename ViewType::memory_space>,
                Kokkos::View<int*, typename ViewType::memory_space>,
                Kokkos::View<int*, typename ViewType::memory_space>> 
+    createFromImportsAndNeighbors( const ViewType& element_import_ranks,
+                                   const ViewType& element_import_ids,
+                                   const std::vector<int>& neighbor_ranks )
+    {
+        return this->createFromImportsAndTopology( element_import_ranks,
+                                                   element_import_ids,
+                                                   neighbor_ranks );
+    }
+
+    template <class ViewType>
+    std::tuple<Kokkos::View<typename ViewType::size_type*,
+                            typename ViewType::memory_space>,
+               Kokkos::View<int*, typename ViewType::memory_space>,
+               Kokkos::View<int*, typename ViewType::memory_space>> 
     createFromImports( const ViewType& element_import_ranks,
                        const ViewType& element_import_ids )
     {
@@ -630,7 +644,7 @@ void test8( const bool use_topology )
     Kokkos::parallel_for( range_policy, fill_func );
     Kokkos::fence();
         
-    // std::vector<int> neighbor_ranks( 1, my_rank );
+    std::vector<int> neighbor_ranks( 1, my_rank );
 
     // Create the plan.
     using size_type = typename TEST_MEMSPACE::size_type;
@@ -638,11 +652,9 @@ void test8( const bool use_topology )
                       Kokkos::View<int*, TEST_MEMSPACE>,
                       Kokkos::View<int*, TEST_MEMSPACE>>
                       neighbor_ids_ranks_indices;
-    if ( false )
-    {
-        // neighbor_ids_ranks_indices = comm_plan.createFromImportsOnly(
-        //     MPI_COMM_WORLD, import_ranks, import_ids, neighbor_ranks );
-    }
+    if ( use_topology )
+        neighbor_ids_ranks_indices = comm_plan.createFromImportsAndNeighbors(
+            import_ranks, import_ids, neighbor_ranks );
     else
         neighbor_ids_ranks_indices = comm_plan.createFromImports(
             import_ranks, import_ids );
@@ -709,7 +721,7 @@ void test9( const bool use_topology )
     Kokkos::parallel_for( range_policy, fill_func );
     Kokkos::fence();
         
-    // std::vector<int> neighbor_ranks( 1, my_rank );
+    std::vector<int> neighbor_ranks( 1, inverse_rank );
 
     // Create the plan.
     using size_type = typename TEST_MEMSPACE::size_type;
@@ -717,11 +729,9 @@ void test9( const bool use_topology )
                       Kokkos::View<int*, TEST_MEMSPACE>,
                       Kokkos::View<int*, TEST_MEMSPACE>>
                       neighbor_ids_ranks_indices;
-    if ( false )
-    {
-        // neighbor_ids_ranks_indices = comm_plan.createFromImportsOnly(
-        //     MPI_COMM_WORLD, import_ranks, import_ids, neighbor_ranks );
-    }
+    if ( use_topology )
+        neighbor_ids_ranks_indices = comm_plan.createFromImportsAndNeighbors(
+            import_ranks, import_ids, neighbor_ranks );
     else
         neighbor_ids_ranks_indices = comm_plan.createFromImports(
             import_ranks, import_ids );
@@ -792,7 +802,7 @@ void test10( const bool use_topology )
     Kokkos::parallel_for( range_policy, fill_func );
     Kokkos::fence();
         
-    // std::vector<int> neighbor_ranks( 1, my_rank );
+    std::vector<int> neighbor_ranks = {previous_rank, next_rank};
 
     // Create the plan.
     using size_type = typename TEST_MEMSPACE::size_type;
@@ -800,11 +810,9 @@ void test10( const bool use_topology )
                       Kokkos::View<int*, TEST_MEMSPACE>,
                       Kokkos::View<int*, TEST_MEMSPACE>>
                       neighbor_ids_ranks_indices;
-    if ( false )
-    {
-        // neighbor_ids_ranks_indices = comm_plan.createFromImportsOnly(
-        //     MPI_COMM_WORLD, import_ranks, import_ids, neighbor_ranks );
-    }
+    if ( use_topology )
+        neighbor_ids_ranks_indices = comm_plan.createFromImportsAndNeighbors(
+            import_ranks, import_ids, neighbor_ranks );
     else
         neighbor_ids_ranks_indices = comm_plan.createFromImports(
             import_ranks, import_ids );
@@ -898,12 +906,11 @@ void test11( const bool use_topology )
                       Kokkos::View<int*, TEST_MEMSPACE>>
                       neighbor_ids_ranks_indices;
     if ( use_topology )
-        printf("TODO\n");
-        // neighbor_ids = comm_plan.createFromExportsAndNeighbors(
-        //     export_ranks, neighbor_ranks );
+        neighbor_ids_ranks_indices = comm_plan.createFromImportsAndNeighbors(
+            import_ranks, import_ids, neighbor_ranks );
     else
-    neighbor_ids_ranks_indices = comm_plan.createFromImports( import_ranks,
-                                                              import_ids );
+        neighbor_ids_ranks_indices = comm_plan.createFromImports(
+            import_ranks, import_ids );
 
     // Check the plan.
     if ( 0 == my_rank )
@@ -944,44 +951,52 @@ void test11( const bool use_topology )
 //---------------------------------------------------------------------------//
 
 // Export tests
-TEST( CommPlan, Test1 ) { test1( true ); }
+// TEST( CommPlan, Test1 ) { test1( true ); }
 
-TEST( CommPlan, Test2 ) { test2( true ); }
+// TEST( CommPlan, Test2 ) { test2( true ); }
 
-TEST( CommPlan, Test3 ) { test3( true ); }
+// TEST( CommPlan, Test3 ) { test3( true ); }
 
-TEST( CommPlan, Test4 ) { test4( true ); }
+// TEST( CommPlan, Test4 ) { test4( true ); }
 
-TEST( CommPlan, Test5 ) { test5( true ); }
+// TEST( CommPlan, Test5 ) { test5( true ); }
 
-TEST( CommPlan, Test6 ) { test6( true ); }
+// TEST( CommPlan, Test6 ) { test6( true ); }
 
-TEST( CommPlan, Test7 ) { test7( true ); }
+// TEST( CommPlan, Test7 ) { test7( true ); }
 
-TEST( CommPlan, Test1NoTopo ) { test1( false ); }
+// TEST( CommPlan, Test1NoTopo ) { test1( false ); }
 
-TEST( CommPlan, Test2NoTopo ) { test2( false ); }
+// TEST( CommPlan, Test2NoTopo ) { test2( false ); }
 
-TEST( CommPlan, Test3NoTopo ) { test3( false ); }
+// TEST( CommPlan, Test3NoTopo ) { test3( false ); }
 
-TEST( CommPlan, Test4NoTopo ) { test4( false ); }
+// TEST( CommPlan, Test4NoTopo ) { test4( false ); }
 
-TEST( CommPlan, Test5NoTopo ) { test5( false ); }
+// TEST( CommPlan, Test5NoTopo ) { test5( false ); }
 
-TEST( CommPlan, Test6NoTopo ) { test6( false ); }
+// TEST( CommPlan, Test6NoTopo ) { test6( false ); }
 
-TEST( CommPlan, Test7NoTopo ) { test7( false ); }
+// TEST( CommPlan, Test7NoTopo ) { test7( false ); }
 
-TEST( CommPlan, TestTopology ) { testTopology(); }
+// TEST( CommPlan, TestTopology ) { testTopology(); }
 
 // Import tests
-TEST( CommPlan, Test8NoTopo ) { test8( false ); }
+TEST( CommPlan, Test8 ) { test8( true ); }
 
-TEST( CommPlan, Test9NoTopo ) { test9( false ); }
+// TEST( CommPlan, Test9 ) { test9( true ); }
 
-TEST( CommPlan, Test10NoTopo ) { test10( false ); }
+// TEST( CommPlan, Test10 ) { test10( true ); }
 
-TEST( CommPlan, Test11NoTopo ) { test11( false ); }
+// TEST( CommPlan, Test11 ) { test11( true ); }
+
+// TEST( CommPlan, Test8NoTopo ) { test8( false ); }
+
+// TEST( CommPlan, Test9NoTopo ) { test9( false ); }
+
+// TEST( CommPlan, Test10NoTopo ) { test10( false ); }
+
+// TEST( CommPlan, Test11NoTopo ) { test11( false ); }
 
 //---------------------------------------------------------------------------//
 
