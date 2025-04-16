@@ -26,7 +26,7 @@ macro(Cabana_add_tests_nobackend)
     add_executable(${_target} tst${_test}.cpp ${TEST_HARNESS_DIR}/unit_test_main.cpp)
     target_link_libraries(${_target} PRIVATE ${CABANA_UNIT_TEST_PACKAGE} ${gtest_target})
 
-    # 🔧 Install the test executable
+    # Install the test executable
     install(TARGETS ${_target}
             RUNTIME DESTINATION bin/tests)
 
@@ -39,7 +39,6 @@ macro(Cabana_add_tests_nobackend)
     endif()
   endforeach()
 endmacro()
-
 
 ##--------------------------------------------------------------------------##
 ## On-node tests with and without MPI.
@@ -95,7 +94,7 @@ macro(Cabana_add_tests)
         ${TEST_HARNESS_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
       target_link_libraries(${_target} PRIVATE ${CABANA_UNIT_TEST_PACKAGE} ${gtest_target})
 
-      # 🔧 Install the test executable
+      # Install the test executable
       install(TARGETS ${_target}
               RUNTIME DESTINATION bin/tests)
 
