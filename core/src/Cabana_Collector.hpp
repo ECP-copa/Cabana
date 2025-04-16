@@ -112,10 +112,11 @@ class Collector : public CommunicationPlan<MemorySpace>
         : CommunicationPlan<MemorySpace>( comm )
         , _num_owned( num_owned )
     {
-        throw std::runtime_error("Cabana::Collector: Neighbor ranks constructor not yet implemented\n");
-        auto neighbor_ids = this->createFromExportsAndTopology(
-            element_import_ranks, neighbor_ranks );
-        this->createExportSteering( neighbor_ids, element_import_ranks );
+        auto neighbor_ids_ranks_indices = this->createFromImportsAndTopology(
+            element_import_ranks, element_import_ids, neighbor_ranks );
+        this->createExportSteering( std::get<0>(neighbor_ids_ranks_indices),
+                                    std::get<1>(neighbor_ids_ranks_indices),
+                                    std::get<2>(neighbor_ids_ranks_indices) );
     }
 
     /*!
