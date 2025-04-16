@@ -980,14 +980,12 @@ class CommunicationPlan
         // Post that many wildcard recieves to get the number of indices I will send to each rank
         std::vector<MPI_Request> requests;
         requests.reserve( num_n * 2 );
-        int num_recvs = 0;
         for ( int n = 0; n < num_n; ++n )
             if ( my_rank != _neighbors[n] )
             {
                 requests.push_back( MPI_Request() );
                 MPI_Irecv( &_num_export[n], 1, MPI_UNSIGNED_LONG, _neighbors[n],
                         mpi_tag, comm(), &( requests.back() ) );
-                num_recvs++;
             }
             else // Self import
             {
@@ -999,7 +997,7 @@ class CommunicationPlan
         for ( int n = 0; n < num_n; ++n )
             if ( my_rank != _neighbors[n] )
             {
-                printf("R%d: sending: import %d to R%d\n", my_rank, _num_import[n], _neighbors[n]);
+                // printf("R%d: sending: import %d to R%d\n", my_rank, _num_import[n], _neighbors[n]);
                 requests.push_back( MPI_Request() );
                 MPI_Isend( &_num_import[n], 1, MPI_UNSIGNED_LONG, _neighbors[n],
                         mpi_tag, comm(), &( requests.back() ) );
@@ -1014,9 +1012,10 @@ class CommunicationPlan
 
         // Get the total number of imports/exports.
         _total_num_export =
-        std::accumulate( _num_export.begin(), _num_export.end(), 0 );
+            std::accumulate( _num_export.begin(), _num_export.end(), 0 );
         _total_num_import =
-        std::accumulate( _num_import.begin(), _num_import.end(), 0 );
+            std::accumulate( _num_import.begin(), _num_import.end(), 0 );
+        _num_export_element = _total_num_export;
 
         // Post receives to get the indices other processes are requesting
         // i.e. our export indices
@@ -1025,12 +1024,12 @@ class CommunicationPlan
         int num_messages = _total_num_export + element_import_ranks.extent(0);
         std::vector<MPI_Request> mpi_requests(num_messages);
         std::vector<MPI_Status> mpi_statuses(num_messages);
-        for(int i = 0; i < num_recvs; i++)
+        for(int i = 0; i < num_n; i++)
         {
-            // printf("R%d: send_counts(%d) = %d, send_to(%d) = %d\n", rank, i, send_counts(i), i, send_to(i));
+            // printf("R%d: _num_export(%d) = %d, _neighbors(%d) = %d\n", my_rank, i, _num_export[i], i, _neighbors[i]);
             for(int j = 0; j < _num_export[i]; j++)
             {
-                printf("R%d: posting IRecv from %d into index %d\n", my_rank, _neighbors[i], idx);
+                // printf("R%d: posting IRecv from %d into index %d\n", my_rank, _neighbors[i], idx);
                 MPI_Irecv(&export_indices(idx), 1, MPI_INT, _neighbors[i], mpi_tag, comm(), &mpi_requests[idx]);
                 idx++;
             }
@@ -1041,7 +1040,7 @@ class CommunicationPlan
         // Send the indices we need
         for (size_t i = 0; i < element_import_ranks.extent(0); i++)
         {
-            printf("R%d sending index %d to R%d\n", my_rank, element_import_ids(i), element_import_ranks(i));
+            // printf("R%d sending index %d to R%d\n", my_rank, element_import_ids(i), element_import_ranks(i));
             MPI_Isend(&element_import_ids(i), 1, MPI_INT, element_import_ranks(i), mpi_tag, comm(), &mpi_requests[idx++]);
         }
 
@@ -1050,7 +1049,7 @@ class CommunicationPlan
         const int ec1 = MPI_Waitall(num_messages, mpi_requests.data(), mpi_statuses.data());
         if ( MPI_SUCCESS != ec1 )
             throw std::logic_error( "Failed MPI Communication" );
-        printf("R%d: after second waitall\n", my_rank);
+        // printf("R%d: after second waitall\n", my_rank);
 
         // for (size_t i = 0; i < _total_num_export; i++) {
         //     int from_rank = mpi_statuses[i].MPI_SOURCE;

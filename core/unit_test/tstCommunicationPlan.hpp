@@ -660,13 +660,13 @@ void test8( const bool use_topology )
             import_ranks, import_ids );
     
     // Check the plan.
-    EXPECT_EQ( comm_plan.numNeighbor(), 1 );
-    EXPECT_EQ( comm_plan.neighborRank( 0 ), my_rank );
-    EXPECT_EQ( comm_plan.numExport( 0 ), num_data );
-    EXPECT_EQ( comm_plan.totalNumExport(), num_data );
-    EXPECT_EQ( comm_plan.numImport( 0 ), num_data );
-    EXPECT_EQ( comm_plan.totalNumImport(), num_data );
-    EXPECT_EQ( comm_plan.exportSize(), num_data );
+    ASSERT_EQ( comm_plan.numNeighbor(), 1 );
+    ASSERT_EQ( comm_plan.neighborRank( 0 ), my_rank );
+    ASSERT_EQ( comm_plan.numExport( 0 ), num_data );
+    ASSERT_EQ( comm_plan.totalNumExport(), num_data );
+    ASSERT_EQ( comm_plan.numImport( 0 ), num_data );
+    ASSERT_EQ( comm_plan.totalNumImport(), num_data );
+    ASSERT_EQ( comm_plan.exportSize(), num_data );
 
     // Create the export steering vector.
     comm_plan.createSteering( std::get<0>(neighbor_ids_ranks_indices),
@@ -683,9 +683,9 @@ void test8( const bool use_topology )
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
     std::sort( host_steering.data(),
                host_steering.data() + host_steering.size() );
-    EXPECT_EQ( host_steering.size(), num_data );
+    ASSERT_EQ( host_steering.size(), num_data );
     for ( int n = 0; n < num_data; ++n )
-        EXPECT_EQ( n, host_steering( n ) );
+        ASSERT_EQ( n, host_steering( n ) );
     
 }
 
@@ -951,52 +951,52 @@ void test11( const bool use_topology )
 //---------------------------------------------------------------------------//
 
 // Export tests
-// TEST( CommPlan, Test1 ) { test1( true ); }
+TEST( CommPlan, Test1 ) { test1( true ); }
 
-// TEST( CommPlan, Test2 ) { test2( true ); }
+TEST( CommPlan, Test2 ) { test2( true ); }
 
-// TEST( CommPlan, Test3 ) { test3( true ); }
+TEST( CommPlan, Test3 ) { test3( true ); }
 
-// TEST( CommPlan, Test4 ) { test4( true ); }
+TEST( CommPlan, Test4 ) { test4( true ); }
 
-// TEST( CommPlan, Test5 ) { test5( true ); }
+TEST( CommPlan, Test5 ) { test5( true ); }
 
-// TEST( CommPlan, Test6 ) { test6( true ); }
+TEST( CommPlan, Test6 ) { test6( true ); }
 
-// TEST( CommPlan, Test7 ) { test7( true ); }
+TEST( CommPlan, Test7 ) { test7( true ); }
 
-// TEST( CommPlan, Test1NoTopo ) { test1( false ); }
+TEST( CommPlan, Test1NoTopo ) { test1( false ); }
 
-// TEST( CommPlan, Test2NoTopo ) { test2( false ); }
+TEST( CommPlan, Test2NoTopo ) { test2( false ); }
 
-// TEST( CommPlan, Test3NoTopo ) { test3( false ); }
+TEST( CommPlan, Test3NoTopo ) { test3( false ); }
 
-// TEST( CommPlan, Test4NoTopo ) { test4( false ); }
+TEST( CommPlan, Test4NoTopo ) { test4( false ); }
 
-// TEST( CommPlan, Test5NoTopo ) { test5( false ); }
+TEST( CommPlan, Test5NoTopo ) { test5( false ); }
 
-// TEST( CommPlan, Test6NoTopo ) { test6( false ); }
+TEST( CommPlan, Test6NoTopo ) { test6( false ); }
 
-// TEST( CommPlan, Test7NoTopo ) { test7( false ); }
+TEST( CommPlan, Test7NoTopo ) { test7( false ); }
 
-// TEST( CommPlan, TestTopology ) { testTopology(); }
+TEST( CommPlan, TestTopology ) { testTopology(); }
 
 // Import tests
 TEST( CommPlan, Test8 ) { test8( true ); }
 
-// TEST( CommPlan, Test9 ) { test9( true ); }
+TEST( CommPlan, Test9 ) { test9( true ); }
 
-// TEST( CommPlan, Test10 ) { test10( true ); }
+TEST( CommPlan, Test10 ) { test10( true ); }
 
-// TEST( CommPlan, Test11 ) { test11( true ); }
+TEST( CommPlan, Test11 ) { test11( true ); }
 
-// TEST( CommPlan, Test8NoTopo ) { test8( false ); }
+TEST( CommPlan, Test8NoTopo ) { test8( false ); }
 
-// TEST( CommPlan, Test9NoTopo ) { test9( false ); }
+TEST( CommPlan, Test9NoTopo ) { test9( false ); }
 
-// TEST( CommPlan, Test10NoTopo ) { test10( false ); }
+TEST( CommPlan, Test10NoTopo ) { test10( false ); }
 
-// TEST( CommPlan, Test11NoTopo ) { test11( false ); }
+TEST( CommPlan, Test11NoTopo ) { test11( false ); }
 
 //---------------------------------------------------------------------------//
 
