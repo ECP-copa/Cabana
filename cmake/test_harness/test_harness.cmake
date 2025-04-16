@@ -25,14 +25,21 @@ macro(Cabana_add_tests_nobackend)
     set(_target Cabana_${CABANA_UNIT_TEST_PACKAGE}_${_test}_test)
     add_executable(${_target} tst${_test}.cpp ${TEST_HARNESS_DIR}/unit_test_main.cpp)
     target_link_libraries(${_target} PRIVATE ${CABANA_UNIT_TEST_PACKAGE} ${gtest_target})
+
+    # 🔧 Install the test executable
+    install(TARGETS ${_target}
+            RUNTIME DESTINATION bin/tests)
+
     add_test(NAME ${_target} COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:${_target}> ${gtest_args})
     set_property(TEST ${_target} PROPERTY ENVIRONMENT OMP_NUM_THREADS=1)
+
     if(VALGRIND_FOUND)
       add_test(NAME ${_target}_valgrind COMMAND ${NONMPI_PRECOMMAND} ${VALGRIND_EXECUTABLE} ${VALGRIND_ARGS} $<TARGET_FILE:${_target}> ${gtest_args})
       set_property(TEST ${_target}_valgrind PROPERTY ENVIRONMENT OMP_NUM_THREADS=1)
     endif()
   endforeach()
 endmacro()
+
 
 ##--------------------------------------------------------------------------##
 ## On-node tests with and without MPI.
@@ -87,6 +94,11 @@ macro(Cabana_add_tests)
       target_include_directories(${_target} PRIVATE ${_dir}
         ${TEST_HARNESS_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
       target_link_libraries(${_target} PRIVATE ${CABANA_UNIT_TEST_PACKAGE} ${gtest_target})
+
+      # 🔧 Install the test executable
+      install(TARGETS ${_target}
+              RUNTIME DESTINATION bin/tests)
+
       if(CABANA_UNIT_TEST_MPI)
         foreach(_np ${CABANA_UNIT_TEST_MPIEXEC_NUMPROCS})
           add_test(NAME ${_target}_np_${_np} COMMAND
