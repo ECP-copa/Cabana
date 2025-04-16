@@ -924,12 +924,50 @@ class CommunicationPlan
         return createFromExportsOnly( execution_space{}, element_export_ranks );
     }
 
+    /*!
+      \brief Neighbor and import rank creator. Use this when you already know
+      which ranks neighbor each other (i.e. every rank already knows who they
+      will be sending and receiving from) as it will be more efficient. In
+      this case you already know the topology of the point-to-point
+      communication but not how much data to send to and receive from the
+      neighbors.
+
+      \param exec_space Kokkos execution space.
+
+      \param element_import_ranks The source rank in the target
+      decomposition of each remotely owned element in element_import_ids.
+      This import rank may be any one of the listed neighbor
+      ranks which can include the calling rank. The input is expected
+      to be a Kokkos view in the same memory space as the communication plan.
+
+      \param element_import_ids The local IDs of remotely owned elements that
+      are to be imported. These are local IDs on the remote rank.
+      element_import_ids is mapped such that element_import_ids(i) lives on
+      remote rank element_import_ranks(i).
+
+      \param neighbor_ranks List of ranks this rank will send to and receive
+      from. This list can include the calling rank. This is effectively a
+      description of the topology of the point-to-point communication
+      plan. Only the unique elements in this list are used.
+
+      \return A tuple of Kokkos views, where:
+      Element 1: The location of each export element in the send buffer for its
+      given neighbor.
+      Element 2: The remote ranks this rank will export to
+      Element 3: The local IDs this rank will export
+      Elements 2 and 3 are mapped in the same way as element_import_ranks
+      and element_import_ids
+
+      \note Calling this function completely updates the state of this object
+      and invalidates the previous state.
+
+      \note Unlike creating from exports, an import rank of -1 is not supported.
+    */
     template <class ExecutionSpace, class ViewType>
-    auto
-    createFromImportsAndTopology( ExecutionSpace exec_space,
-                                  const ViewType& element_import_ranks,
-                                  const ViewType& element_import_ids,
-                                  const std::vector<int>& neighbor_ranks )
+    auto createFromImportsAndTopology( ExecutionSpace exec_space,
+                                       const ViewType& element_import_ranks,
+                                       const ViewType& element_import_ids,
+                                       const std::vector<int>& neighbor_ranks )
         -> std::tuple<Kokkos::View<typename ViewType::size_type*,
                                    typename ViewType::memory_space>,
                       Kokkos::View<int*, typename ViewType::memory_space>,
@@ -1087,23 +1125,89 @@ class CommunicationPlan
         return std::tuple{counts_and_ids2.second, element_export_ranks, export_indices_d};
     }
 
+    /*!
+      \brief Neighbor and import rank creator. Use this when you already know
+      which ranks neighbor each other (i.e. every rank already knows who they
+      will be sending and receiving from) as it will be more efficient. In
+      this case you already know the topology of the point-to-point
+      communication but not how much data to send to and receive from the
+      neighbors.
+
+      \param element_import_ranks The source rank in the target
+      decomposition of each remotely owned element in element_import_ids.
+      This import rank may be any one of the listed neighbor
+      ranks which can include the calling rank. The input is expected
+      to be a Kokkos view in the same memory space as the communication plan.
+
+      \param element_import_ids The local IDs of remotely owned elements that
+      are to be imported. These are local IDs on the remote rank.
+      element_import_ids is mapped such that element_import_ids(i) lives on
+      remote rank element_import_ranks(i).
+
+      \param neighbor_ranks List of ranks this rank will send to and receive
+      from. This list can include the calling rank. This is effectively a
+      description of the topology of the point-to-point communication
+      plan. Only the unique elements in this list are used.
+
+      \return A tuple of Kokkos views, where:
+      Element 1: The location of each export element in the send buffer for its
+      given neighbor.
+      Element 2: The remote ranks this rank will export to
+      Element 3: The local IDs this rank will export
+      Elements 2 and 3 are mapped in the same way as element_import_ranks
+      and element_import_ids
+
+      \note Calling this function completely updates the state of this object
+      and invalidates the previous state.
+
+      \note Unlike creating from exports, an import rank of -1 is not supported.
+    */
     template <class ViewType>
-    // Kokkos::View<size_type*, memory_space>
-    auto
-    createFromImportsAndTopology( const ViewType& element_import_ranks,
-                                  const ViewType& element_import_ids,
-                                  const std::vector<int>& neighbor_ranks )
+    auto createFromImportsAndTopology( const ViewType& element_import_ranks,
+                                       const ViewType& element_import_ids,
+                                       const std::vector<int>& neighbor_ranks )
     {
         // Use the default execution space.
         return createFromImportsAndTopology( execution_space{}, element_import_ranks,
             element_import_ids, neighbor_ranks );
     }
 
+    /*!
+      \brief Import rank creator. Use this when you don't know who you will
+      be receiving from - only who you are importing from. This is less efficient
+      than if we already knew who our neighbors were because we have to
+      determine the topology of the point-to-point communication first.
+
+      \param exec_space Kokkos execution space.
+
+      \param element_import_ranks The source rank in the target
+      decomposition of each remotely owned element in element_import_ids.
+      This import rank may be any one of the listed neighbor
+      ranks which can include the calling rank. The input is expected
+      to be a Kokkos view in the same memory space as the communication plan.
+
+      \param element_import_ids The local IDs of remotely owned elements that
+      are to be imported. These are local IDs on the remote rank.
+      element_import_ids is mapped such that element_import_ids(i) lives on
+      remote rank element_import_ranks(i).
+
+      \return A tuple of Kokkos views, where:
+      Element 1: The location of each export element in the send buffer for its
+      given neighbor.
+      Element 2: The remote ranks this rank will export to
+      Element 3: The local IDs this rank will export
+      Elements 2 and 3 are mapped in the same way as element_import_ranks
+      and element_import_ids
+
+      \note Calling this function completely updates the state of this object
+      and invalidates the previous state.
+
+      \note Unlike creating from exports, an import rank of -1 is not supported.
+    */
     template <class ExecutionSpace, class ViewType>
-    auto
-    createFromImportsOnly( ExecutionSpace exec_space,
-                           const ViewType& element_import_ranks,
-                           const ViewType& element_import_ids )
+    auto createFromImportsOnly( ExecutionSpace exec_space,
+                                const ViewType& element_import_ranks,
+                                const ViewType& element_import_ids )
         -> std::tuple<Kokkos::View<typename ViewType::size_type*,
                                    typename ViewType::memory_space>,
                       Kokkos::View<int*, typename ViewType::memory_space>,
@@ -1336,11 +1440,39 @@ class CommunicationPlan
         return std::tuple{counts_and_ids2.second, element_export_ranks, export_indices_d};
     }
 
+    /*!
+      \brief Import rank creator. Use this when you don't know who you will
+      be receiving from - only who you are importing from. This is less efficient
+      than if we already knew who our neighbors were because we have to
+      determine the topology of the point-to-point communication first.
+
+      \param element_import_ranks The source rank in the target
+      decomposition of each remotely owned element in element_import_ids.
+      This import rank may be any one of the listed neighbor
+      ranks which can include the calling rank. The input is expected
+      to be a Kokkos view in the same memory space as the communication plan.
+
+      \param element_import_ids The local IDs of remotely owned elements that
+      are to be imported. These are local IDs on the remote rank.
+      element_import_ids is mapped such that element_import_ids(i) lives on
+      remote rank element_import_ranks(i).
+
+      \return A tuple of Kokkos views, where:
+      Element 1: The location of each export element in the send buffer for its
+      given neighbor.
+      Element 2: The remote ranks this rank will export to
+      Element 3: The local IDs this rank will export
+      Elements 2 and 3 are mapped in the same way as element_import_ranks
+      and element_import_ids
+
+      \note Calling this function completely updates the state of this object
+      and invalidates the previous state.
+
+      \note Unlike creating from exports, an import rank of -1 is not supported.
+    */
     template <class ViewType>
-    // Kokkos::View<size_type*, memory_space>
-    auto
-    createFromImportsOnly( const ViewType& element_import_ranks,
-                           const ViewType& element_import_ids )
+    auto createFromImportsOnly( const ViewType& element_import_ranks,
+                                const ViewType& element_import_ids )
     {
         // Use the default execution space.
         return createFromImportsOnly( execution_space{}, element_import_ranks,
