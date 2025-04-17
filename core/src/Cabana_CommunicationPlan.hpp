@@ -1055,8 +1055,8 @@ class CommunicationPlan
 
         // Post receives to get the indices other processes are requesting
         // i.e. our export indices
-        Kokkos::View<int*, memory_space> export_indices(
-            "export_indices", _total_num_export );
+        Kokkos::View<int*, memory_space> export_indices( "export_indices",
+                                                         _total_num_export );
         size_t idx = 0;
         int num_messages = _total_num_export + element_import_ranks.extent( 0 );
         std::vector<MPI_Request> mpi_requests( num_messages );
@@ -1065,8 +1065,8 @@ class CommunicationPlan
         {
             for ( int j = 0; j < _num_export[i]; j++ )
             {
-                MPI_Irecv( export_indices.data() + idx, 1, MPI_INT, _neighbors[i],
-                           mpi_tag, comm(), &mpi_requests[idx] );
+                MPI_Irecv( export_indices.data() + idx, 1, MPI_INT,
+                           _neighbors[i], mpi_tag, comm(), &mpi_requests[idx] );
                 idx++;
             }
         }
@@ -1075,7 +1075,7 @@ class CommunicationPlan
         for ( size_t i = 0; i < element_import_ranks.extent( 0 ); i++ )
         {
             MPI_Isend( element_import_ids.data() + i, 1, MPI_INT,
-                       *(element_import_ranks.data() + i), mpi_tag, comm(),
+                       *( element_import_ranks.data() + i ), mpi_tag, comm(),
                        &mpi_requests[idx++] );
         }
 
@@ -1354,8 +1354,8 @@ class CommunicationPlan
 
         // Post receives to get the indices other processes are requesting
         // i.e. our export indices
-        Kokkos::View<int*, memory_space> export_indices(
-            "export_indices", _total_num_export );
+        Kokkos::View<int*, memory_space> export_indices( "export_indices",
+                                                         _total_num_export );
         size_t idx = 0;
         mpi_requests.clear();
         mpi_statuses.clear();
@@ -1366,8 +1366,8 @@ class CommunicationPlan
         {
             for ( int j = 0; j < send_counts( i ); j++ )
             {
-                MPI_Irecv( export_indices.data() + idx, 1, MPI_INT, send_to( i ),
-                           mpi_tag, comm(), &mpi_requests[idx] );
+                MPI_Irecv( export_indices.data() + idx, 1, MPI_INT,
+                           send_to( i ), mpi_tag, comm(), &mpi_requests[idx] );
                 idx++;
             }
         }
@@ -1376,7 +1376,7 @@ class CommunicationPlan
         for ( size_t i = 0; i < element_import_ranks.extent( 0 ); i++ )
         {
             MPI_Isend( element_import_ids.data() + i, 1, MPI_INT,
-                       *(element_import_ranks.data() + i), mpi_tag, comm(),
+                       *( element_import_ranks.data() + i ), mpi_tag, comm(),
                        &mpi_requests[idx++] );
         }
 
