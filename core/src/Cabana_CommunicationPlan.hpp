@@ -1055,7 +1055,7 @@ class CommunicationPlan
 
         // Post receives to get the indices other processes are requesting
         // i.e. our export indices
-        Kokkos::View<int*, Kokkos::HostSpace> export_indices(
+        Kokkos::View<int*, memory_space> export_indices(
             "export_indices", _total_num_export );
         size_t idx = 0;
         int num_messages = _total_num_export + element_import_ranks.extent( 0 );
@@ -1065,7 +1065,7 @@ class CommunicationPlan
         {
             for ( int j = 0; j < _num_export[i]; j++ )
             {
-                MPI_Irecv( &export_indices( idx ), 1, MPI_INT, _neighbors[i],
+                MPI_Irecv( export_indices.data() + idx, 1, MPI_INT, _neighbors[i],
                            mpi_tag, comm(), &mpi_requests[idx] );
                 idx++;
             }
@@ -1074,8 +1074,8 @@ class CommunicationPlan
         // Send the indices we need
         for ( size_t i = 0; i < element_import_ranks.extent( 0 ); i++ )
         {
-            MPI_Isend( &element_import_ids( i ), 1, MPI_INT,
-                       element_import_ranks( i ), mpi_tag, comm(),
+            MPI_Isend( element_import_ids.data() + i, 1, MPI_INT,
+                       *(element_import_ranks.data() + i), mpi_tag, comm(),
                        &mpi_requests[idx++] );
         }
 
@@ -1103,12 +1103,12 @@ class CommunicationPlan
                 ExecutionSpace>::type() );
 
         // Copy indices_send to device mempry before returning
-        auto export_indices_d = Kokkos::create_mirror_view_and_copy(
-            memory_space(), export_indices );
+        // auto export_indices_d = Kokkos::create_mirror_view_and_copy(
+        //     memory_space(), export_indices );
 
         // Return the neighbor ids, export ranks, and export indices
         return std::tuple{ counts_and_ids2.second, element_export_ranks,
-                           export_indices_d };
+                           export_indices };
     }
 
     /*!
@@ -1354,7 +1354,7 @@ class CommunicationPlan
 
         // Post receives to get the indices other processes are requesting
         // i.e. our export indices
-        Kokkos::View<int*, Kokkos::HostSpace> export_indices(
+        Kokkos::View<int*, memory_space> export_indices(
             "export_indices", _total_num_export );
         size_t idx = 0;
         mpi_requests.clear();
@@ -1366,7 +1366,7 @@ class CommunicationPlan
         {
             for ( int j = 0; j < send_counts( i ); j++ )
             {
-                MPI_Irecv( &export_indices( idx ), 1, MPI_INT, send_to( i ),
+                MPI_Irecv( export_indices.data() + idx, 1, MPI_INT, send_to( i ),
                            mpi_tag, comm(), &mpi_requests[idx] );
                 idx++;
             }
@@ -1375,8 +1375,8 @@ class CommunicationPlan
         // Send the indices we need
         for ( size_t i = 0; i < element_import_ranks.extent( 0 ); i++ )
         {
-            MPI_Isend( &element_import_ids( i ), 1, MPI_INT,
-                       element_import_ranks( i ), mpi_tag, comm(),
+            MPI_Isend( element_import_ids.data() + i, 1, MPI_INT,
+                       *(element_import_ranks.data() + i), mpi_tag, comm(),
                        &mpi_requests[idx++] );
         }
 
@@ -1404,11 +1404,11 @@ class CommunicationPlan
                 ExecutionSpace>::type() );
 
         // Copy indices_send to device mempry before returning
-        auto export_indices_d = Kokkos::create_mirror_view_and_copy(
-            memory_space(), export_indices );
+        // auto export_indices_d = Kokkos::create_mirror_view_and_copy(
+        //     memory_space(), export_indices );
 
         return std::tuple{ counts_and_ids2.second, element_export_ranks,
-                           export_indices_d };
+                           export_indices };
     }
 
     /*!
