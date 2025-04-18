@@ -120,7 +120,7 @@ struct AccessTraits<Positions,
     //! Get number of particles.
     static KOKKOS_FUNCTION size_type size( Positions const& x )
     {
-        return Cabana::size( x );
+        return x.size();
     }
     //! Get the particle at the index.
     static KOKKOS_FUNCTION auto get( Positions const& x, size_type i )
