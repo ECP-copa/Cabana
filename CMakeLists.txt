@@ -241,8 +241,10 @@ if(Cabana_ENABLE_TESTING)
 endif()
 
 # enable doxygen
-find_package(Doxygen)
-if(Doxygen_FOUND)
+option(Cabana_ENABLE_DOXYGEN "Build documentation" OFF)
+add_feature_info(Documentation Cabana_ENABLE_DOXYGEN "Build documentation (requires Doxygen)")
+if(Cabana_ENABLE_DOXYGEN)
+  find_package(Doxygen REQUIRED)
   doxygen_add_docs(doxygen core/src grid/src)
 endif()
 
