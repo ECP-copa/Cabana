@@ -437,6 +437,7 @@ jobs:
             -DCabana_ENABLE_TESTING=ON \
             -DCabana_ENABLE_EXAMPLES=ON \
             -DCabana_ENABLE_PERFORMANCE_TESTING=ON \
+            -DCabana_ENABLE_DOXYGEN="$([[ -n "${{ matrix.doxygen }}" ]] && echo "${{ matrix.doxygen }}" || echo "OFF")" \
             -DCabana_PERFORMANCE_EXPECTED_FLOPS=0 \
             -DCabana_ENABLE_COVERAGE_BUILD=${{ matrix.coverage }} \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
