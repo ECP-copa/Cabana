@@ -14,8 +14,12 @@
 #------------------------------------------------------------------------------#
 cmake_minimum_required(VERSION 3.16)
 
-project(Cabana LANGUAGES CXX)
+project(Cabana LANGUAGES C CXX)
 set(PROJECT_VERSION "0.8.0-dev")
+
+# Set the C++ version we need - 20 for requires
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # If the user doesn't provide a build type default to release
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CXX_FLAGS)
@@ -238,6 +242,10 @@ if(Cabana_ENABLE_TESTING)
   set(TEST_HARNESS_DIR ${CMAKE_SOURCE_DIR}/cmake/test_harness)
   include(cmake/test_harness/test_harness.cmake)
   enable_testing()
+
+  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/core/unit_test
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/Cabana
+        FILES_MATCHING PATTERN "*.cpp" PATTERN "*.hpp" PATTERN "CMakeLists.txt")
 endif()
 
 # enable doxygen

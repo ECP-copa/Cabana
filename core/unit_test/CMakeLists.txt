@@ -39,6 +39,7 @@ endif()
 
 set(MPI_TESTS
   CommunicationPlan
+  Collector
   Distributor
   Halo
   )
