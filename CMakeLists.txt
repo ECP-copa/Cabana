@@ -99,7 +99,7 @@ set_package_properties(HYPRE PROPERTIES TYPE OPTIONAL PURPOSE "Used for structur
 # find heffte
 Cabana_add_dependency( PACKAGE Heffte VERSION 2.3.0 )
 set_package_properties(Heffte PROPERTIES TYPE OPTIONAL PURPOSE "Used for fft calculations")
-if(HEFFTE_FOUND)
+if(Heffte_FOUND)
   # ensure at least one host backend is enabled
   if(NOT Heffte_ENABLE_FFTW AND NOT Heffte_ENABLE_MKL)
     message(FATAL_ERROR "Cabana heFFTe support requires at least one host backend (FFTW or MKL).")
