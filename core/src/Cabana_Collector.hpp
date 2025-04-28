@@ -33,31 +33,26 @@ namespace Cabana
 {
 //---------------------------------------------------------------------------//
 /*!
-  \brief A communication plan for migrating data from one uniquely-owned
+  \brief A communication plan for importing data from one uniquely-owned
   decomposition to another uniquely owned decomposition.
 
   \tparam MemorySpace Kokkos memory space in which data for this class will be
   allocated.
 
-  The Collector allows data to be migrated to an entirely new
-  decomposition. Only uniquely-owned decompositions are handled (i.e. each
-  local element in the source rank has a single unique destination rank).
+  The Collector allows data to be imported from remote ranks.
 
   Some nomenclature:
 
+  Import - the data we will be receiving from other ranks.
+
   Export - the data we uniquely own that we will be sending to other ranks.
 
-  Import - the data we uniquely own that we will be receiving from other
-  ranks.
-
-  \note We can migrate data to the same rank. In this case a copy will occur
+  \note We can import data to the same rank. In this case a copy will occur
   instead of communication.
 
-  \note To get the number of elements this rank will be receiving from
-  migration in the forward communication plan, call totalNumImport() on the
-  collector. This will be needed when in-place migration is not used and a
-  user must allocate their own destination data structure.
-
+  \note To get the number of elements this rank will be exporting
+  in the forward communication plan, call totalNumExport() on the
+  collector.
 */
 template <class MemorySpace>
 class Collector : public CommunicationPlan<MemorySpace>
@@ -74,7 +69,7 @@ class Collector : public CommunicationPlan<MemorySpace>
       \tparam ViewType The container type for the export element ranks. This
       container type can be either a Kokkos View or a Cabana Slice.
 
-      \param comm The MPI communicator over which the collector is defined.
+      \param comm The MPI communicator over which the Collector is defined.
 
       \param num_owned The number of owned elements on this rank. Used to check
       that AoSoAs are sized properly for importing. For importing in-place, the
@@ -84,43 +79,39 @@ class Collector : public CommunicationPlan<MemorySpace>
       decomposition of each locally owned element in the source
       decomposition. Each element will have one unique source from which it
       will be imported. This import rank may be any one of the listed neighbor
-      ranks which can include the calling rank. An import rank of -1 will
-      signal that this element is *not* to be imported and will be ignored in
-      the data migration. The input is expected to be a Kokkos view or Cabana
-      slice in the same memory space as the collector.
+      ranks which can include the calling rank. The input is expected to be a
+      Kokkos view or Cabana slice in the same memory space as the Collector.
 
-      \param element_import_ids The id that must be imported from each rank
-      in element_import_ranks
+      \param element_import_ids The id that will be imported from each rank
+      in element_import_ranks. element_import_ids(i) maps to
+      element_import_ranks(i).
 
       \param neighbor_ranks List of ranks this rank will send to and receive
       from. This list can include the calling rank. This is effectively a
       description of the topology of the point-to-point communication
       plan. The elements in this list must be unique.
 
-      \note For elements that you do not wish to export, use an export rank of
-      -1 to signal that this element is *not* to be exported and will be
-      ignored in the data migration. In other words, this element will be
-      *completely* removed in the new decomposition. If the data is staying on
-      this rank, just use this rank as the export destination and the data
-      will be efficiently migrated.
+      \note Unlike for the Distributor, a Collector does not support import
+      ranks or ids of -1.
     */
     template <class ViewType>
     Collector( MPI_Comm comm, const std::size_t num_owned,
-                const ViewType& element_import_ranks,
-                const ViewType& element_import_ids,
-                const std::vector<int>& neighbor_ranks )
+               const ViewType& element_import_ranks,
+               const ViewType& element_import_ids,
+               const std::vector<int>& neighbor_ranks )
         : CommunicationPlan<MemorySpace>( comm )
         , _num_owned( num_owned )
     {
-        throw std::runtime_error("Cabana::Collector: Neighbor ranks constructor not yet implemented\n");
-        auto neighbor_ids = this->createFromExportsAndTopology(
-            element_import_ranks, neighbor_ranks );
-        this->createExportSteering( neighbor_ids, element_import_ranks );
+        auto neighbor_ids_ranks_indices = this->createFromImportsAndTopology(
+            element_import_ranks, element_import_ids, neighbor_ranks );
+        this->createExportSteering( std::get<0>( neighbor_ids_ranks_indices ),
+                                    std::get<1>( neighbor_ids_ranks_indices ),
+                                    std::get<2>( neighbor_ids_ranks_indices ) );
     }
 
     /*!
-      \brief Export rank constructor. Use this when you don't know who you
-      will be receiving from - only who you are sending to. This is less
+      \brief Import rank constructor. Use this when you don't know who you
+      will be sending to - only who you are receiving from. This is less
       efficient than if we already knew who our neighbors were because we have
       to determine the topology of the point-to-point communication first.
 
@@ -137,33 +128,28 @@ class Collector : public CommunicationPlan<MemorySpace>
       decomposition of each locally owned element in the source
       decomposition. Each element will have one unique source from which it
       will be imported. This import rank may be any one of the listed neighbor
-      ranks which can include the calling rank. An import rank of -1 will
-      signal that this element is *not* to be imported and will be ignored in
-      the data migration. The input is expected to be a Kokkos view or Cabana
-      slice in the same memory space as the collector.
-      
-      \param element_import_ids The id that must be imported from each rank
-      in element_import_ranks
+      ranks which can include the calling rank. The input is expected to be a
+      Kokkos view or Cabana slice in the same memory space as the Collector.
 
-      \note For elements that you do not wish to export, use an export rank of
-      -1 to signal that this element is *not* to be exported and will be
-      ignored in the data migration. In other words, this element will be
-      *completely* removed in the new decomposition. If the data is staying on
-      this rank, just use this rank as the export destination and the data
-      will be efficiently migrated.
+      \param element_import_ids The id that will be imported from each rank
+      in element_import_ranks. element_import_ids(i) maps to
+      element_import_ranks(i).
+
+      \note Unlike for the Distributor, a Collector does not support import
+      ranks or ids of -1.
     */
     template <class ViewType>
     Collector( MPI_Comm comm, const std::size_t num_owned,
-                const ViewType& element_import_ranks,
-                const ViewType& element_import_ids )
+               const ViewType& element_import_ranks,
+               const ViewType& element_import_ids )
         : CommunicationPlan<MemorySpace>( comm )
         , _num_owned( num_owned )
     {
-        auto neighbor_ids_ranks_indices = this->createFromImportsOnly( element_import_ranks,
-            element_import_ids );
-        this->createExportSteering( std::get<0>(neighbor_ids_ranks_indices),
-                                    std::get<1>(neighbor_ids_ranks_indices),
-                                    std::get<2>(neighbor_ids_ranks_indices) );
+        auto neighbor_ids_ranks_indices = this->createFromImportsOnly(
+            element_import_ranks, element_import_ids );
+        this->createExportSteering( std::get<0>( neighbor_ids_ranks_indices ),
+                                    std::get<1>( neighbor_ids_ranks_indices ),
+                                    std::get<2>( neighbor_ids_ranks_indices ) );
     }
 
     /*!
@@ -204,23 +190,23 @@ namespace Impl
 // Synchronously move data between a source and destination AoSoA by executing
 // the forward communication plan.
 template <class ExecutionSpace, class Collector_t, class AoSoA_t>
-void collectData(
-    ExecutionSpace, const Collector_t& collector, const AoSoA_t& src,
-    AoSoA_t& dst,
-    typename std::enable_if<( is_collector<Collector_t>::value &&
-                              is_aosoa<AoSoA_t>::value ),
-                            int>::type* = 0 )
+void collectData( ExecutionSpace, const Collector_t& collector,
+                  const AoSoA_t& src, AoSoA_t& dst,
+                  typename std::enable_if<( is_collector<Collector_t>::value &&
+                                            is_aosoa<AoSoA_t>::value ),
+                                          int>::type* = 0 )
 {
     Kokkos::Profiling::ScopedRegion region( "Cabana::migrate" );
 
     static_assert( is_accessible_from<typename Collector_t::memory_space,
                                       ExecutionSpace>{},
                    "" );
-    
+
     // Check if src and dst are the same AoSoA.
     // If so, place imported elements at the end of src
-    int offset = (src.data() == dst.data());
-    if (offset) offset = collector.numOwned();
+    int offset = ( src.data() == dst.data() );
+    if ( offset )
+        offset = collector.numOwned();
 
     // Get the MPI rank we are currently on.
     int my_rank = -1;
@@ -242,16 +228,16 @@ void collectData(
     std::size_t num_send = collector.totalNumExport() - num_stay;
     Kokkos::View<typename AoSoA_t::tuple_type*,
                  typename Collector_t::memory_space>
-        send_buffer( Kokkos::ViewAllocateWithoutInitializing(
-                         "collector_send_buffer" ),
-                     num_send );
+        send_buffer(
+            Kokkos::ViewAllocateWithoutInitializing( "collector_send_buffer" ),
+            num_send );
 
     // Allocate a receive buffer.
     Kokkos::View<typename AoSoA_t::tuple_type*,
                  typename Collector_t::memory_space>
-        recv_buffer( Kokkos::ViewAllocateWithoutInitializing(
-                         "collector_recv_buffer" ),
-                     collector.totalNumImport() );
+        recv_buffer(
+            Kokkos::ViewAllocateWithoutInitializing( "collector_recv_buffer" ),
+            collector.totalNumImport() );
 
     // Get the steering vector for the sends.
     auto steering = collector.getExportSteering();
@@ -268,8 +254,6 @@ void collectData(
         else
         {
             send_buffer( i - num_stay ) = tpl;
-            // printf("R%d: src.tuple(%d): %d, %0.1lf, %0.1lf, in send_buf(%d)\n", my_rank, steering( i ), Cabana::get<0>(tpl), Cabana::get<1>(tpl, 0),
-            //     Cabana::get<1>(tpl, 1), i - num_stay);
         }
     };
     Kokkos::RangePolicy<ExecutionSpace> build_send_buffer_policy(
@@ -316,7 +300,6 @@ void collectData(
             send_range.second = send_range.first + collector.numExport( n );
 
             auto send_subview = Kokkos::subview( send_buffer, send_range );
-            // printf("R%d: send subview range: %d, %d to R%d\n", my_rank, send_range.first, send_range.second, collector.neighborRank( n ));
             MPI_Send( send_subview.data(),
                       send_subview.size() *
                           sizeof( typename AoSoA_t::tuple_type ),
@@ -337,10 +320,7 @@ void collectData(
     // Extract the receive buffer into the destination AoSoA.
     auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
     {
-        dst.setTuple( offset+i, recv_buffer( i ) );
-        // auto tuple = dst.getTuple(i);
-        // printf("R%d: got tuple: %d, %0.1lf, %0.1lf\n", my_rank, Cabana::get<0>(tuple), Cabana::get<1>(tuple, 0),
-        //      Cabana::get<1>(tuple, 1));
+        dst.setTuple( offset + i, recv_buffer( i ) );
     };
     Kokkos::RangePolicy<ExecutionSpace> extract_recv_buffer_policy(
         0, collector.totalNumImport() );
@@ -372,9 +352,9 @@ void collectData(
   \param exec_space Kokkos execution space.
   \param collector The collector to use for the migration.
   \param src The AoSoA containing the data other ranks will be asking to import.
-  Indices in src must match with the import_ids passed by other ranks into the Collector
-  \param dst The AoSoA to which the imported data will be written. Must be the
-  same size as the number of imports given by the collector on this
+  Indices in src must match with the import_ids passed by other ranks into the
+  Collector \param dst The AoSoA to which the imported data will be written.
+  Must be the same size as the number of imports given by the collector on this
   rank. Call totalNumImport() on the collector to get this size value.
 */
 template <class ExecutionSpace, class Collector_t, class AoSoA_t>
@@ -385,12 +365,12 @@ void migrate( ExecutionSpace exec_space, const Collector_t& collector,
                                       int>::type* = 0 )
 {
     // Check that src and dst are the right size.
-    if ( src.size() != collector.numOwned())
-        throw std::runtime_error(
-            "Cabana::Collector::migrate: Source is the wrong size for migration!" );
+    if ( src.size() != collector.numOwned() )
+        throw std::runtime_error( "Cabana::Collector::migrate: Source is the "
+                                  "wrong size for migration!" );
     if ( dst.size() != collector.totalNumImport() )
-        throw std::runtime_error(
-            "Cabana::Collector::migrate: Destination is the wrong size for migration!" );
+        throw std::runtime_error( "Cabana::Collector::migrate: Destination is "
+                                  "the wrong size for migration!" );
 
     // Move the data.
     Impl::collectData( exec_space, collector, src, dst );
@@ -408,14 +388,13 @@ void migrate( ExecutionSpace exec_space, const Collector_t& collector,
 
   \param collector The collector to use for the migration.
   \param src The AoSoA containing the data other ranks will be asking to import.
-  Indices in src must match with the import_ids passed by other ranks into the Collector
-  \param dst The AoSoA to which the migrated data will be written. Must be the
-  same size as the number of imports given by the collector on this
+  Indices in src must match with the import_ids passed by other ranks into the
+  Collector \param dst The AoSoA to which the migrated data will be written.
+  Must be the same size as the number of imports given by the collector on this
   rank. Call totalNumImport() on the collector to get this size value.
 */
 template <class Collector_t, class AoSoA_t>
-void migrate( const Collector_t& collector, const AoSoA_t& src,
-              AoSoA_t& dst,
+void migrate( const Collector_t& collector, const AoSoA_t& src, AoSoA_t& dst,
               typename std::enable_if<( is_collector<Collector_t>::value &&
                                         is_aosoa<AoSoA_t>::value ),
                                       int>::type* = 0 )
@@ -440,10 +419,10 @@ void migrate( const Collector_t& collector, const AoSoA_t& src,
 
   \param exec_space Kokkos execution space.
   \param collector The collector to use for the migration.
-  \param aosoa The AoSoA containing the data other ranks will be asking to import.
-  Indices in src must match with the import_ids passed by other ranks into the Collector.
-  At output, it will be the same size as the number of import
-  elements on this rank provided by the collector. Before using this
+  \param aosoa The AoSoA containing the data other ranks will be asking to
+  import. Indices in src must match with the import_ids passed by other ranks
+  into the Collector. At output, it will be the same size as the number of
+  import elements on this rank provided by the collector. Before using this
   function, consider reserving enough memory in the data structure so
   reallocating is not necessary.
 */
@@ -455,9 +434,9 @@ void migrate( ExecutionSpace exec_space, const Collector_t& collector,
                                       int>::type* = 0 )
 {
     // Check if the aosoa is large enough
-    if ( aosoa.size() != (collector.numOwned() + collector.totalNumImport()) )
-        throw std::runtime_error(
-            "Cabana::Collector::migrate (in-place): Source is the wrong size for migration!" );
+    if ( aosoa.size() != ( collector.numOwned() + collector.totalNumImport() ) )
+        throw std::runtime_error( "Cabana::Collector::migrate (in-place): "
+                                  "Source is the wrong size for migration!" );
 
     // Move the data.
     Impl::collectData( exec_space, collector, aosoa, aosoa );
@@ -515,16 +494,16 @@ void migrate( const Collector_t& collector, AoSoA_t& aosoa,
   rank. Call totalNumImport() on the collector to get this size value.
 */
 template <class ExecutionSpace, class Collector_t, class Slice_t>
-void migrate( ExecutionSpace, const Collector_t& collector,
-              const Slice_t& src, Slice_t& dst,
+void migrate( ExecutionSpace, const Collector_t& collector, const Slice_t& src,
+              Slice_t& dst,
               typename std::enable_if<( is_collector<Collector_t>::value &&
                                         is_slice<Slice_t>::value ),
                                       int>::type* = 0 )
 {
     // Check that src and dst are the right size.
-    if ( src.size() != collector.numOwned())
-        throw std::runtime_error(
-            "Cabana::Collector::migrate: Source is the wrong size for migration!" );
+    if ( src.size() != collector.numOwned() )
+        throw std::runtime_error( "Cabana::Collector::migrate: Source is the "
+                                  "wrong size for migration!" );
     if ( dst.size() != collector.totalNumImport() )
         throw std::runtime_error(
             "Cabana::Collector: Destination is the wrong size for migration!" );
@@ -559,17 +538,17 @@ void migrate( ExecutionSpace, const Collector_t& collector,
     std::size_t num_send = collector.totalNumExport() - num_stay;
     Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
                  typename Collector_t::memory_space>
-        send_buffer( Kokkos::ViewAllocateWithoutInitializing(
-                         "collector_send_buffer" ),
-                     num_send, num_comp );
+        send_buffer(
+            Kokkos::ViewAllocateWithoutInitializing( "collector_send_buffer" ),
+            num_send, num_comp );
 
     // Allocate a receive buffer. Note this one is layout right so the
     // components of each element are consecutive in memory.
     Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
                  typename Collector_t::memory_space>
-        recv_buffer( Kokkos::ViewAllocateWithoutInitializing(
-                         "collector_recv_buffer" ),
-                     collector.totalNumImport(), num_comp );
+        recv_buffer(
+            Kokkos::ViewAllocateWithoutInitializing( "collector_recv_buffer" ),
+            collector.totalNumImport(), num_comp );
 
     // Get the steering vector for the sends.
     auto steering = collector.getExportSteering();
@@ -696,8 +675,7 @@ void migrate( ExecutionSpace, const Collector_t& collector,
   rank. Call totalNumImport() on the collector to get this size value.
 */
 template <class Collector_t, class Slice_t>
-void migrate( const Collector_t& collector, const Slice_t& src,
-              Slice_t& dst,
+void migrate( const Collector_t& collector, const Slice_t& src, Slice_t& dst,
               typename std::enable_if<( is_collector<Collector_t>::value &&
                                         is_slice<Slice_t>::value ),
                                       int>::type* = 0 )

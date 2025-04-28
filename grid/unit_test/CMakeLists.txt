@@ -45,7 +45,7 @@ set(MPI_TESTS
   SparseHalo
   SparseLocalGrid
   )
-  
+
 if(Kokkos_ENABLE_SYCL) #FIXME_SYCL
   list(REMOVE_ITEM SERIAL_TESTS SparseIndexSpace)
   list(REMOVE_ITEM MPI_TESTS SparseDimPartitioner SparseHalo SparseLocalGrid SparseArray)
