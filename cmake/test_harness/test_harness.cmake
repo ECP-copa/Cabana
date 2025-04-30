@@ -96,7 +96,7 @@ macro(Cabana_add_tests)
 
       # Install the test executable
       install(TARGETS ${_target}
-              RUNTIME DESTINATION bin/tests)
+              RUNTIME DESTINATION share/tests)
 
       if(CABANA_UNIT_TEST_MPI)
         foreach(_np ${CABANA_UNIT_TEST_MPIEXEC_NUMPROCS})
