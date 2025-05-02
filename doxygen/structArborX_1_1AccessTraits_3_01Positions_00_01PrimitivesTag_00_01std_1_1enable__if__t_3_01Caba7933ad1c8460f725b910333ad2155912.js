@@ -1,0 +1,5 @@
+var structArborX_1_1AccessTraits_3_01Positions_00_01PrimitivesTag_00_01std_1_1enable__if__t_3_01Caba7933ad1c8460f725b910333ad2155912 =
+[
+    [ "memory_space", "structArborX_1_1AccessTraits_3_01Positions_00_01PrimitivesTag_00_01std_1_1enable__if__t_3_01Caba7933ad1c8460f725b910333ad2155912.html#a9776bfe8d96d013f8b5d5c349ea94a3e", null ],
+    [ "size_type", "structArborX_1_1AccessTraits_3_01Positions_00_01PrimitivesTag_00_01std_1_1enable__if__t_3_01Caba7933ad1c8460f725b910333ad2155912.html#a2749e03b8c292c4892ce4c1d449efffb", null ]
+];

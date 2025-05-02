@@ -14,7 +14,10 @@ var searchData=
   ['nodehalopattern_3c_202_20_3e_11',['NodeHaloPattern&lt; 2 &gt;',['../classCabana_1_1Grid_1_1NodeHaloPattern_3_012_01_4.html',1,'Cabana::Grid']]],
   ['nodehalopattern_3c_203_20_3e_12',['NodeHaloPattern&lt; 3 &gt;',['../classCabana_1_1Grid_1_1NodeHaloPattern_3_013_01_4.html',1,'Cabana::Grid']]],
   ['nonuniformmesh_13',['NonUniformMesh',['../structCabana_1_1Grid_1_1NonUniformMesh.html',1,'Cabana::Grid']]],
-  ['norm1functor_14',['Norm1Functor',['../structCabana_1_1Grid_1_1ArrayOp_1_1Norm1Functor.html',1,'Cabana::Grid::ArrayOp']]],
-  ['norm2functor_15',['Norm2Functor',['../structCabana_1_1Grid_1_1ArrayOp_1_1Norm2Functor.html',1,'Cabana::Grid::ArrayOp']]],
-  ['norminffunctor_16',['NormInfFunctor',['../structCabana_1_1Grid_1_1ArrayOp_1_1NormInfFunctor.html',1,'Cabana::Grid::ArrayOp']]]
+  ['nonuniformmesh_3c_20scalar_2c_202_20_3e_14',['NonUniformMesh&lt; Scalar, 2 &gt;',['../structCabana_1_1Grid_1_1NonUniformMesh.html',1,'Cabana::Grid']]],
+  ['nonuniformmesh_3c_20scalar_2c_203_20_3e_15',['NonUniformMesh&lt; Scalar, 3 &gt;',['../structCabana_1_1Grid_1_1NonUniformMesh.html',1,'Cabana::Grid']]],
+  ['nonuniformmesh_3c_20scalar_2c_20numspacedim_20_3e_16',['NonUniformMesh&lt; Scalar, NumSpaceDim &gt;',['../structCabana_1_1Grid_1_1NonUniformMesh.html',1,'Cabana::Grid']]],
+  ['norm1functor_17',['Norm1Functor',['../structCabana_1_1Grid_1_1ArrayOp_1_1Norm1Functor.html',1,'Cabana::Grid::ArrayOp']]],
+  ['norm2functor_18',['Norm2Functor',['../structCabana_1_1Grid_1_1ArrayOp_1_1Norm2Functor.html',1,'Cabana::Grid::ArrayOp']]],
+  ['norminffunctor_19',['NormInfFunctor',['../structCabana_1_1Grid_1_1ArrayOp_1_1NormInfFunctor.html',1,'Cabana::Grid::ArrayOp']]]
 ];

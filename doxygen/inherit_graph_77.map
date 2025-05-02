@@ -1,3 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classCabana_1_1Grid_1_1GlobalMesh_3_01NonUniformMesh_3_01Scalar_00_013_01_4_01_4.html" title="Global mesh partial specialization for 3D non&#45;uniform mesh." alt="" coords="5,5,231,54"/>
+<area shape="rect" id="Node000000" href="$classCabana_1_1Grid_1_1HaloPattern.html" title=" " alt="" coords="5,32,220,62"/>
+<area shape="rect" id="Node000001" href="$classCabana_1_1Grid_1_1FaceHaloPattern_3_013_01_4.html" title=" " alt="" coords="271,5,513,35"/>
+<area shape="poly" id="edge13_Node000000_Node000001" title=" " alt="" coords="235,32,270,29,271,34,235,38"/>
+<area shape="rect" id="Node000002" href="$classCabana_1_1Grid_1_1NodeHaloPattern_3_013_01_4.html" title=" " alt="" coords="268,59,516,88"/>
+<area shape="poly" id="edge14_Node000000_Node000002" title=" " alt="" coords="235,56,267,59,267,64,235,61"/>
 </map>

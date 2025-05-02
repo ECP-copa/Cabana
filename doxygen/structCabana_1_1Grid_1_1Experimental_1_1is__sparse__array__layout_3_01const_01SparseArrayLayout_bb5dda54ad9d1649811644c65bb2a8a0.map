@@ -1,5 +1,7 @@
 <map id="Cabana::Grid::Experimental::is_sparse_array_layout&lt; const SparseArrayLayout&lt; DataTypes, EntityType, MeshType, SparseMapType &gt; &gt;" name="Cabana::Grid::Experimental::is_sparse_array_layout&lt; const SparseArrayLayout&lt; DataTypes, EntityType, MeshType, SparseMapType &gt; &gt;">
-<area shape="rect" id="Node000001" title="Sparse array layout static type checker." alt="" coords="5,83,250,189"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="73,5,182,35"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="130,51,130,83,125,83,125,51"/>
+<area shape="rect" id="Node000001" title="Sparse array layout static type checker." alt="" coords="6,83,250,189"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,117,35"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="79,47,99,81,95,84,75,50"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="141,5,250,35"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="182,50,161,84,157,81,177,47"/>
 </map>

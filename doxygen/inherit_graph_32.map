@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$structCabana_1_1Grid_1_1ArrayPackMemorySpace.html" title="Infer array memory space." alt="" coords="5,5,230,54"/>
+<area shape="rect" id="Node000000" href="$classCabana_1_1Grid_1_1BlockPartitioner.html" title=" " alt="" coords="5,24,245,54"/>
+<area shape="rect" id="Node000001" href="$classCabana_1_1Grid_1_1SparseDimPartitioner.html" title=" " alt="" coords="293,5,536,73"/>
+<area shape="poly" id="edge7_Node000000_Node000001" title=" " alt="" coords="260,36,292,36,292,42,260,42"/>
 </map>

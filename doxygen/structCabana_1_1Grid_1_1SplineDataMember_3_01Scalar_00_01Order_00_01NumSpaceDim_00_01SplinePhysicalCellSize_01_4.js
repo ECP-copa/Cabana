@@ -1,0 +1,4 @@
+var structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalCellSize_01_4 =
+[
+    [ "dx", "structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalCellSize_01_4.html#a5672a6f1bad4c6747f0ec38f88f2b807", null ]
+];

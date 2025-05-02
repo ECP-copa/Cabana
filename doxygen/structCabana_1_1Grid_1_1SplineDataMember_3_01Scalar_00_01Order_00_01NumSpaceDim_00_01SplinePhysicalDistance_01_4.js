@@ -1,0 +1,5 @@
+var structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalDistance_01_4 =
+[
+    [ "spline_type", "structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalDistance_01_4.html#ace0e154e9e7e05eef9af13426b607479", null ],
+    [ "d", "structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalDistance_01_4.html#a20e0bf2d5b8c1df695fb9e6dd6e6a750", null ]
+];

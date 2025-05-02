@@ -1,5 +1,7 @@
 <map id="Cabana::Grid::is_array&lt; Array&lt; Scalar, EntityType, MeshType, Params... &gt; &gt;" name="Cabana::Grid::is_array&lt; Array&lt; Scalar, EntityType, MeshType, Params... &gt; &gt;">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,83,192,151"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="44,5,153,35"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,51,101,82,96,82,96,51"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="34,83,221,151"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,117,35"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="82,46,106,81,102,84,77,49"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="141,5,250,35"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="179,49,154,84,149,81,174,46"/>
 </map>

@@ -6,8 +6,9 @@ var searchData=
   ['ghost_3',['Ghost',['../structCabana_1_1Grid_1_1Ghost.html',1,'Cabana::Grid']]],
   ['global_4',['Global',['../structCabana_1_1Grid_1_1Global.html',1,'Cabana::Grid']]],
   ['globalgrid_5',['GlobalGrid',['../classCabana_1_1Grid_1_1GlobalGrid.html',1,'Cabana::Grid']]],
-  ['globalmesh_6',['GlobalMesh',['../classCabana_1_1Grid_1_1GlobalMesh.html',1,'Cabana::Grid']]],
-  ['globalmesh_3c_20nonuniformmesh_3c_20scalar_2c_202_20_3e_20_3e_7',['GlobalMesh&lt; NonUniformMesh&lt; Scalar, 2 &gt; &gt;',['../classCabana_1_1Grid_1_1GlobalMesh_3_01NonUniformMesh_3_01Scalar_00_012_01_4_01_4.html',1,'Cabana::Grid']]],
-  ['globalmesh_3c_20nonuniformmesh_3c_20scalar_2c_203_20_3e_20_3e_8',['GlobalMesh&lt; NonUniformMesh&lt; Scalar, 3 &gt; &gt;',['../classCabana_1_1Grid_1_1GlobalMesh_3_01NonUniformMesh_3_01Scalar_00_013_01_4_01_4.html',1,'Cabana::Grid']]],
-  ['globalparticlecomm_9',['GlobalParticleComm',['../classCabana_1_1Grid_1_1GlobalParticleComm.html',1,'Cabana::Grid']]]
+  ['globalgrid_3c_20mesh_5ftype_20_3e_6',['GlobalGrid&lt; mesh_type &gt;',['../classCabana_1_1Grid_1_1GlobalGrid.html',1,'Cabana::Grid']]],
+  ['globalmesh_7',['GlobalMesh',['../classCabana_1_1Grid_1_1GlobalMesh.html',1,'Cabana::Grid']]],
+  ['globalmesh_3c_20nonuniformmesh_3c_20scalar_2c_202_20_3e_20_3e_8',['GlobalMesh&lt; NonUniformMesh&lt; Scalar, 2 &gt; &gt;',['../classCabana_1_1Grid_1_1GlobalMesh_3_01NonUniformMesh_3_01Scalar_00_012_01_4_01_4.html',1,'Cabana::Grid']]],
+  ['globalmesh_3c_20nonuniformmesh_3c_20scalar_2c_203_20_3e_20_3e_9',['GlobalMesh&lt; NonUniformMesh&lt; Scalar, 3 &gt; &gt;',['../classCabana_1_1Grid_1_1GlobalMesh_3_01NonUniformMesh_3_01Scalar_00_013_01_4_01_4.html',1,'Cabana::Grid']]],
+  ['globalparticlecomm_10',['GlobalParticleComm',['../classCabana_1_1Grid_1_1GlobalParticleComm.html',1,'Cabana::Grid']]]
 ];

@@ -1,3 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classCabana_1_1CommunicationData.html" title="Store communication plan and communication buffers." alt="" coords="5,5,251,54"/>
+<area shape="rect" id="Node000000" href="$classCabana_1_1CommunicationData.html" title=" " alt="" coords="5,62,255,129"/>
+<area shape="rect" id="Node000001" href="$classCabana_1_1Gather_3_01HaloType_00_01SliceType_00_01typename_01std_1_1enable__if_3_01is__slica420051aad1e71fccbd290130c9a8cef.html" title="Synchronously gather data from the local decomposition to the ghosts using the halo forward communica..." alt="" coords="303,5,508,92"/>
+<area shape="poly" id="edge2_Node000000_Node000001" title=" " alt="" coords="270,69,302,63,303,69,271,74"/>
+<area shape="rect" id="Node000002" href="$classCabana_1_1Scatter.html" title="Synchronously scatter data from the ghosts to the local decomposition of a slice using the halo rever..." alt="" coords="310,116,501,165"/>
+<area shape="poly" id="edge3_Node000000_Node000002" title=" " alt="" coords="271,116,310,122,309,128,270,121"/>
 </map>

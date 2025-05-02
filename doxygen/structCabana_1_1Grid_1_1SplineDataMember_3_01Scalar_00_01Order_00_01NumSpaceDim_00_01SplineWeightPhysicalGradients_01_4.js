@@ -1,0 +1,5 @@
+var structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineWeightPhysicalGradients_01_4 =
+[
+    [ "spline_type", "structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineWeightPhysicalGradients_01_4.html#accfcc23ca1c52c670ceda6155e49a1c6", null ],
+    [ "g", "structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineWeightPhysicalGradients_01_4.html#a1bd7a10caff31495ad932c5448bade47", null ]
+];

@@ -1,5 +1,7 @@
 <map id="Cabana::is_memory_access_tag&lt; AtomicAccessMemory &gt;" name="Cabana::is_memory_access_tag&lt; AtomicAccessMemory &gt;">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,83,212,132"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="54,5,163,35"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="111,50,111,82,106,82,106,50"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="24,83,231,132"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,117,35"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="84,46,111,81,107,84,79,49"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="141,5,250,35"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="177,49,149,84,145,81,173,45"/>
 </map>

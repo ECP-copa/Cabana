@@ -1,5 +1,7 @@
 <map id="Cabana::Grid::isEdge&lt; Edge&lt; Dir &gt; &gt;" name="Cabana::Grid::isEdge&lt; Edge&lt; Dir &gt; &gt;">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,83,155,132"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="25,5,135,35"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="83,50,83,82,77,82,77,50"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="53,83,202,132"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,117,35"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="84,46,111,81,107,84,79,49"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="141,5,250,35"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="177,49,149,84,145,81,173,45"/>
 </map>

@@ -1,5 +1,7 @@
 <map id="Cabana::is_accessible_from&lt; MemorySpace, ExecutionSpace, std::enable_if_t&lt; Kokkos::SpaceAccessibility&lt; ExecutionSpace, MemorySpace &gt;::accessible &gt; &gt;" name="Cabana::is_accessible_from&lt; MemorySpace, ExecutionSpace, std::enable_if_t&lt; Kokkos::SpaceAccessibility&lt; ExecutionSpace, MemorySpace &gt;::accessible &gt; &gt;">
 <area shape="rect" id="Node000001" title=" " alt="" coords="5,83,255,189"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="75,5,185,35"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="133,51,133,83,127,83,127,51"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="8,5,119,35"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="82,47,102,81,97,84,77,50"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="143,5,253,35"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="184,50,164,84,159,81,180,47"/>
 </map>

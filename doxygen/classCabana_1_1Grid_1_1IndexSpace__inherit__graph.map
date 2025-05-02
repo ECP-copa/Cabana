@@ -1,5 +1,7 @@
 <map id="Cabana::Grid::IndexSpace&lt; N &gt;" name="Cabana::Grid::IndexSpace&lt; N &gt;">
-<area shape="rect" id="Node000001" title="Structured index space." alt="" coords="5,5,218,35"/>
-<area shape="rect" id="Node000002" href="$classCabana_1_1Grid_1_1TileIndexSpace.html" title="Index space with tile as unit; _min and _max forms the tile range. Note this is for sparse grid only,..." alt="" coords="11,83,212,132"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="114,50,114,82,109,82,109,50"/>
+<area shape="rect" id="Node000001" title="Structured index space." alt="" coords="5,66,218,95"/>
+<area shape="rect" id="Node000002" href="$classCabana_1_1Grid_1_1TileIndexSpace.html" title=" " alt="" coords="266,5,467,73"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="222,60,265,53,266,58,222,65"/>
+<area shape="rect" id="Node000003" href="$classCabana_1_1Grid_1_1TileIndexSpace.html" title="Index space with tile as unit; _min and _max forms the tile range. Note this is for sparse grid only,..." alt="" coords="266,98,467,146"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="222,96,266,103,265,108,222,101"/>
 </map>

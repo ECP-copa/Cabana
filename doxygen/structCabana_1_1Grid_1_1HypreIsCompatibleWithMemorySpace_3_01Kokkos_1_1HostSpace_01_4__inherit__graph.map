@@ -1,5 +1,7 @@
 <map id="Cabana::Grid::HypreIsCompatibleWithMemorySpace&lt; Kokkos::HostSpace &gt;" name="Cabana::Grid::HypreIsCompatibleWithMemorySpace&lt; Kokkos::HostSpace &gt;">
 <area shape="rect" id="Node000001" title="Hypre device compatibility check &#45; host memory." alt="" coords="5,83,283,132"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="89,5,199,35"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="147,50,147,82,141,82,141,50"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="22,5,133,35"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="100,46,128,81,123,84,96,49"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="157,5,267,35"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="193,49,165,84,161,81,189,45"/>
 </map>
