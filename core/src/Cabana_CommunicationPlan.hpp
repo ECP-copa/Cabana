@@ -664,10 +664,10 @@ class CommunicationPlan
             throw std::logic_error( "Failed MPI Communication" );
 
         // Get the total number of imports/exports.
-        _total_num_export =
-            std::accumulate( _num_export.begin(), _num_export.end(), 0 );
-        _total_num_import =
-            std::accumulate( _num_import.begin(), _num_import.end(), 0 );
+        _total_num_export = std::accumulate(
+            _num_export.begin(), _num_export.end(), std::size_t{ 0u } );
+        _total_num_import = std::accumulate(
+            _num_import.begin(), _num_import.end(), std::size_t{ 0u } );
 
         // Barrier before continuing to ensure synchronization.
         MPI_Barrier( comm() );
@@ -1281,12 +1281,14 @@ class CommunicationData
         setData( particles );
 
         auto send_capacity = sendCapacity();
-        std::size_t new_send_size = total_send * _overallocation;
+        auto new_send_size = static_cast<std::size_t>(
+            static_cast<double>( total_send ) * _overallocation );
         if ( new_send_size > send_capacity )
             _comm_data.reallocateSend( new_send_size );
 
         auto recv_capacity = receiveCapacity();
-        std::size_t new_recv_size = total_recv * _overallocation;
+        auto new_recv_size = static_cast<std::size_t>(
+            static_cast<double>( total_recv ) * _overallocation );
         if ( new_recv_size > recv_capacity )
             _comm_data.reallocateReceive( new_recv_size );
 

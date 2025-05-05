@@ -37,9 +37,9 @@ template <class Space, class SrcAoSoA>
 inline AoSoA<typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length>
 create_mirror(
     const Space&, const SrcAoSoA& src,
-    typename std::enable_if<
-        ( !std::is_same<typename SrcAoSoA::memory_space,
-                        typename Space::memory_space>::value )>::type* = 0 )
+    std::enable_if_t<( !std::is_same_v<typename SrcAoSoA::memory_space,
+                                       typename Space::memory_space> )>* =
+        nullptr )
 {
     static_assert( is_aosoa<SrcAoSoA>::value,
                    "create_mirror() requires an AoSoA" );
@@ -61,9 +61,9 @@ create_mirror(
 template <class Space, class SrcAoSoA>
 inline SrcAoSoA create_mirror_view(
     const Space&, const SrcAoSoA& src,
-    typename std::enable_if<
-        ( std::is_same<typename SrcAoSoA::memory_space,
-                       typename Space::memory_space>::value )>::type* = 0 )
+    std::enable_if_t<( std::is_same_v<typename SrcAoSoA::memory_space,
+                                      typename Space::memory_space> )>* =
+        nullptr )
 {
     static_assert( is_aosoa<SrcAoSoA>::value,
                    "create_mirror_view() requires an AoSoA" );
@@ -84,9 +84,9 @@ template <class Space, class SrcAoSoA>
 inline AoSoA<typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length>
 create_mirror_view(
     const Space& space, const SrcAoSoA& src,
-    typename std::enable_if<
-        ( !std::is_same<typename SrcAoSoA::memory_space,
-                        typename Space::memory_space>::value )>::type* = 0 )
+    std::enable_if_t<( !std::is_same_v<typename SrcAoSoA::memory_space,
+                                       typename Space::memory_space> )>* =
+        nullptr )
 {
     static_assert( is_aosoa<SrcAoSoA>::value,
                    "create_mirror_view() requires an AoSoA" );
@@ -107,10 +107,9 @@ create_mirror_view(
 template <class Space, class SrcAoSoA>
 inline SrcAoSoA create_mirror_view_and_copy(
     const Space&, const SrcAoSoA& src,
-    typename std::enable_if<
-        ( std::is_same<typename SrcAoSoA::memory_space,
-                       typename Space::memory_space>::value &&
-          is_aosoa<SrcAoSoA>::value )>::type* = 0 )
+    std::enable_if_t<( std::is_same_v<typename SrcAoSoA::memory_space,
+                                      typename Space::memory_space> &&
+                       is_aosoa<SrcAoSoA>::value )>* = nullptr )
 {
     return src;
 }
@@ -130,10 +129,9 @@ template <class Space, class SrcAoSoA>
 inline AoSoA<typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length>
 create_mirror_view_and_copy(
     const Space& space, const SrcAoSoA& src,
-    typename std::enable_if<
-        ( !std::is_same<typename SrcAoSoA::memory_space,
-                        typename Space::memory_space>::value &&
-          is_aosoa<SrcAoSoA>::value )>::type* = 0 )
+    std::enable_if_t<( !std::is_same_v<typename SrcAoSoA::memory_space,
+                                       typename Space::memory_space> &&
+                       is_aosoa<SrcAoSoA>::value )>* = nullptr )
 {
     auto dst = create_mirror( space, src );
 
@@ -156,8 +154,8 @@ create_mirror_view_and_copy(
 template <class DstAoSoA, class SrcAoSoA>
 inline void
 deep_copy( DstAoSoA& dst, const SrcAoSoA& src,
-           typename std::enable_if<( is_aosoa<DstAoSoA>::value &&
-                                     is_aosoa<SrcAoSoA>::value )>::type* = 0 )
+           std::enable_if_t<( is_aosoa<DstAoSoA>::value &&
+                              is_aosoa<SrcAoSoA>::value )>* = nullptr )
 {
     using dst_type = DstAoSoA;
     using src_type = SrcAoSoA;
@@ -168,8 +166,8 @@ deep_copy( DstAoSoA& dst, const SrcAoSoA& src,
 
     // Check that the data types are the same.
     static_assert(
-        std::is_same<typename dst_type::member_types,
-                     typename src_type::member_types>::value,
+        std::is_same_v<typename dst_type::member_types,
+                       typename src_type::member_types>,
         "Attempted to deep copy AoSoA objects of different member types" );
 
     // Check for the same number of values.
@@ -202,7 +200,7 @@ deep_copy( DstAoSoA& dst, const SrcAoSoA& src,
 
     // If the inner array size is the same and both AoSoAs have the same number
     // of values then we can do a byte-wise copy directly.
-    if ( std::is_same<dst_soa_type, src_soa_type>::value )
+    if ( std::is_same_v<dst_soa_type, src_soa_type> )
     {
         Kokkos::deep_copy( Kokkos::View<char*, dst_memory_space>(
                                reinterpret_cast<char*>( dst.data() ),
@@ -288,16 +286,16 @@ inline void deep_copy( AoSoA_t& aosoa,
 template <class DstSlice, class SrcSlice>
 inline void
 deep_copy( DstSlice& dst, const SrcSlice& src,
-           typename std::enable_if<( is_slice<DstSlice>::value &&
-                                     is_slice<SrcSlice>::value )>::type* = 0 )
+           std::enable_if_t<( is_slice<DstSlice>::value &&
+                              is_slice<SrcSlice>::value )>* = nullptr )
 {
     using dst_type = DstSlice;
     using src_type = SrcSlice;
 
     // Check that the data types are the same.
     static_assert(
-        std::is_same<typename dst_type::value_type,
-                     typename src_type::value_type>::value,
+        std::is_same_v<typename dst_type::value_type,
+                       typename src_type::value_type>,
         "Attempted to deep copy Slice objects of different value types" );
 
     // Check that the element dimensions are the same.
@@ -417,8 +415,8 @@ template <class DstMemorySpace, class SrcMemorySpace, int VectorLength,
 auto create_mirror_view_and_copy(
     DstMemorySpace,
     ParticleList<SrcMemorySpace, VectorLength, FieldTags...> plist_src,
-    typename std::enable_if<
-        std::is_same<SrcMemorySpace, DstMemorySpace>::value>::type* = 0 )
+    std::enable_if_t<std::is_same_v<SrcMemorySpace, DstMemorySpace>>* =
+        nullptr )
 {
     return plist_src;
 }
@@ -435,8 +433,8 @@ template <class DstMemorySpace, class SrcMemorySpace, int VectorLength,
 auto create_mirror_view_and_copy(
     DstMemorySpace,
     ParticleList<SrcMemorySpace, VectorLength, FieldTags...> plist_src,
-    typename std::enable_if<
-        !std::is_same<SrcMemorySpace, DstMemorySpace>::value>::type* = 0 )
+    std::enable_if_t<!std::is_same_v<SrcMemorySpace, DstMemorySpace>>* =
+        nullptr )
 {
     // Extract the original AoSoA.
     auto aosoa_src = plist_src.aosoa();
