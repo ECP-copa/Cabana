@@ -715,7 +715,7 @@ class VerletList
     /*!
       \brief Default constructor.
     */
-    VerletList() {}
+    VerletList() = default;
 
     /*!
       \brief VerletList constructor. Given a list of particle positions and

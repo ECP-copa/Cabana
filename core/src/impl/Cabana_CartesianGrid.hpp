@@ -46,7 +46,7 @@ class CartesianGrid
     int _ny;
     int _nz;
 
-    CartesianGrid() {}
+    CartesianGrid() = default;
 
     CartesianGrid( const Real min_x, const Real min_y, const Real min_z,
                    const Real max_x, const Real max_y, const Real max_z,
