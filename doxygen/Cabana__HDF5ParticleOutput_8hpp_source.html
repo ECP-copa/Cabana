@@ -367,7 +367,7 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>    hid_t type_id =</div>
 <div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>        HDF5Traits&lt;typename SliceType::value_type&gt;::type( &amp;dtype, &amp;precision );</div>
 <div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span> </div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>    filespace_id = H5Screate_simple( 1, dimsf, NULL );</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>    filespace_id = H5Screate_simple( 1, dimsf, <span class="keyword">nullptr</span> );</div>
 <div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span> </div>
 <div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>    dcpl_id = H5Pcreate( H5P_DATASET_CREATE );</div>
 <div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>    H5Pset_fill_time( dcpl_id, H5D_FILL_TIME_NEVER );</div>
@@ -375,10 +375,10 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>    dset_id = H5Dcreate( file_id, <a class="code hl_function" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>.label().c_str(), type_id, filespace_id,</div>
 <div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>                         H5P_DEFAULT, dcpl_id, H5P_DEFAULT );</div>
 <div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span> </div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>    H5Sselect_hyperslab( filespace_id, H5S_SELECT_SET, offset, NULL, count,</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>                         NULL );</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>    H5Sselect_hyperslab( filespace_id, H5S_SELECT_SET, offset, <span class="keyword">nullptr</span>, count,</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>                         <span class="keyword">nullptr</span> );</div>
 <div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span> </div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>    memspace_id = H5Screate_simple( 1, count, NULL );</div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>    memspace_id = H5Screate_simple( 1, count, <span class="keyword">nullptr</span> );</div>
 <div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span> </div>
 <div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>    plist_id = H5Pcreate( H5P_DATASET_XFER );</div>
 <div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>    <span class="comment">// Default IO in HDF5 is independent</span></div>
@@ -451,7 +451,7 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>    hid_t type_id =</div>
 <div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>        HDF5Traits&lt;typename SliceType::value_type&gt;::type( &amp;dtype, &amp;precision );</div>
 <div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span> </div>
-<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>    filespace_id = H5Screate_simple( 2, dimsf, NULL );</div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>    filespace_id = H5Screate_simple( 2, dimsf, <span class="keyword">nullptr</span> );</div>
 <div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span> </div>
 <div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>    dcpl_id = H5Pcreate( H5P_DATASET_CREATE );</div>
 <div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>    H5Pset_fill_time( dcpl_id, H5D_FILL_TIME_NEVER );</div>
@@ -459,10 +459,10 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>    dset_id = H5Dcreate( file_id, <a class="code hl_function" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>.label().c_str(), type_id, filespace_id,</div>
 <div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>                         H5P_DEFAULT, dcpl_id, H5P_DEFAULT );</div>
 <div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span> </div>
-<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>    H5Sselect_hyperslab( filespace_id, H5S_SELECT_SET, offset, NULL, count,</div>
-<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>                         NULL );</div>
+<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>    H5Sselect_hyperslab( filespace_id, H5S_SELECT_SET, offset, <span class="keyword">nullptr</span>, count,</div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>                         <span class="keyword">nullptr</span> );</div>
 <div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span> </div>
-<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>    memspace_id = H5Screate_simple( 2, dimsm, NULL );</div>
+<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>    memspace_id = H5Screate_simple( 2, dimsm, <span class="keyword">nullptr</span> );</div>
 <div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>    plist_id = H5Pcreate( H5P_DATASET_XFER );</div>
 <div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>    <span class="comment">// Default IO in HDF5 is independent</span></div>
 <div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>    <span class="keywordflow">if</span> ( h5_config.collective )</div>
@@ -538,7 +538,7 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span>    hid_t type_id =</div>
 <div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>        HDF5Traits&lt;typename SliceType::value_type&gt;::type( &amp;dtype, &amp;precision );</div>
 <div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span> </div>
-<div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>    filespace_id = H5Screate_simple( 3, dimsf, NULL );</div>
+<div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>    filespace_id = H5Screate_simple( 3, dimsf, <span class="keyword">nullptr</span> );</div>
 <div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span> </div>
 <div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span>    dcpl_id = H5Pcreate( H5P_DATASET_CREATE );</div>
 <div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span>    H5Pset_fill_time( dcpl_id, H5D_FILL_TIME_NEVER );</div>
@@ -546,10 +546,10 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00466" name="l00466"></a><span class="lineno">  466</span>    dset_id = H5Dcreate( file_id, <a class="code hl_function" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>.label().c_str(), type_id, filespace_id,</div>
 <div class="line"><a id="l00467" name="l00467"></a><span class="lineno">  467</span>                         H5P_DEFAULT, dcpl_id, H5P_DEFAULT );</div>
 <div class="line"><a id="l00468" name="l00468"></a><span class="lineno">  468</span> </div>
-<div class="line"><a id="l00469" name="l00469"></a><span class="lineno">  469</span>    H5Sselect_hyperslab( filespace_id, H5S_SELECT_SET, offset, NULL, count,</div>
-<div class="line"><a id="l00470" name="l00470"></a><span class="lineno">  470</span>                         NULL );</div>
+<div class="line"><a id="l00469" name="l00469"></a><span class="lineno">  469</span>    H5Sselect_hyperslab( filespace_id, H5S_SELECT_SET, offset, <span class="keyword">nullptr</span>, count,</div>
+<div class="line"><a id="l00470" name="l00470"></a><span class="lineno">  470</span>                         <span class="keyword">nullptr</span> );</div>
 <div class="line"><a id="l00471" name="l00471"></a><span class="lineno">  471</span> </div>
-<div class="line"><a id="l00472" name="l00472"></a><span class="lineno">  472</span>    memspace_id = H5Screate_simple( 3, dimsm, NULL );</div>
+<div class="line"><a id="l00472" name="l00472"></a><span class="lineno">  472</span>    memspace_id = H5Screate_simple( 3, dimsm, <span class="keyword">nullptr</span> );</div>
 <div class="line"><a id="l00473" name="l00473"></a><span class="lineno">  473</span>    plist_id = H5Pcreate( H5P_DATASET_XFER );</div>
 <div class="line"><a id="l00474" name="l00474"></a><span class="lineno">  474</span>    <span class="comment">// Default IO in HDF5 is independent</span></div>
 <div class="line"><a id="l00475" name="l00475"></a><span class="lineno">  475</span>    <span class="keywordflow">if</span> ( h5_config.collective )</div>
@@ -647,15 +647,15 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span><span class="preprocessor">#if H5_VERSION_GE( 1, 10, 1 )</span></div>
 <div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>    <span class="keywordflow">if</span> ( h5_config.evict_on_close )</div>
 <div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>    {</div>
-<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>        H5Pset_evict_on_close( plist_id, (hbool_t)1 );</div>
+<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>        H5Pset_evict_on_close( plist_id, <span class="keyword">true</span> );</div>
 <div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>    }</div>
 <div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span> </div>
 <div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span><span class="preprocessor">#if H5_VERSION_GE( 1, 10, 0 )</span></div>
 <div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>    <span class="keywordflow">if</span> ( h5_config.collective )</div>
 <div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>    {</div>
-<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>        H5Pset_all_coll_metadata_ops( plist_id, 1 );</div>
-<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>        H5Pset_coll_metadata_write( plist_id, 1 );</div>
+<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>        H5Pset_all_coll_metadata_ops( plist_id, <span class="keyword">true</span> );</div>
+<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>        H5Pset_coll_metadata_write( plist_id, <span class="keyword">true</span> );</div>
 <div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>    }</div>
 <div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span> </div>
@@ -668,8 +668,8 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>        H5FD_subfiling_config_t subfiling_config;</div>
 <div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>        H5FD_ioc_config_t ioc_config;</div>
 <div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span> </div>
-<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>        H5FD_subfiling_config_t* subfiling_ptr = NULL;</div>
-<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>        H5FD_ioc_config_t* ioc_ptr = NULL;</div>
+<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>        H5FD_subfiling_config_t* subfiling_ptr = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>        H5FD_ioc_config_t* ioc_ptr = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span> </div>
 <div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>        <span class="comment">// Get the default subfiling configuration parameters</span></div>
 <div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>        hid_t fapl_id = H5I_INVALID_HID;</div>
@@ -682,7 +682,7 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>        {</div>
 <div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>            subfiling_config.shared_cfg.stripe_size =</div>
 <div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>                h5_config.subfiling_stripe_size;</div>
-<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>            <span class="keywordflow">if</span> ( subfiling_ptr == NULL )</div>
+<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>            <span class="keywordflow">if</span> ( subfiling_ptr == <span class="keyword">nullptr</span> )</div>
 <div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>                subfiling_ptr = &amp;subfiling_config;</div>
 <div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>        }</div>
 <div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>        <span class="keywordflow">if</span> ( h5_config.subfiling_stripe_count !=</div>
@@ -690,7 +690,7 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>        {</div>
 <div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>            subfiling_config.shared_cfg.stripe_count =</div>
 <div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>                h5_config.subfiling_stripe_count;</div>
-<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>            <span class="keywordflow">if</span> ( subfiling_ptr == NULL )</div>
+<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>            <span class="keywordflow">if</span> ( subfiling_ptr == <span class="keyword">nullptr</span> )</div>
 <div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>                subfiling_ptr = &amp;subfiling_config;</div>
 <div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>        }</div>
 <div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span>        <span class="keywordflow">if</span> ( h5_config.subfiling_ioc_selection !=</div>
@@ -698,7 +698,7 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span>        {</div>
 <div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span>            subfiling_config.shared_cfg.ioc_selection =</div>
 <div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>                (H5FD_subfiling_ioc_select_t)h5_config.subfiling_ioc_selection;</div>
-<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>            <span class="keywordflow">if</span> ( subfiling_ptr == NULL )</div>
+<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>            <span class="keywordflow">if</span> ( subfiling_ptr == <span class="keyword">nullptr</span> )</div>
 <div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>                subfiling_ptr = &amp;subfiling_config;</div>
 <div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>        }</div>
 <div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>        <span class="keywordflow">if</span> ( h5_config.subfiling_thread_pool_size !=</div>
@@ -706,14 +706,14 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>        {</div>
 <div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>            H5Pget_fapl_ioc( fapl_id, &amp;ioc_config );</div>
 <div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>            ioc_config.thread_pool_size = h5_config.subfiling_thread_pool_size;</div>
-<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>            <span class="keywordflow">if</span> ( ioc_ptr == NULL )</div>
+<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>            <span class="keywordflow">if</span> ( ioc_ptr == <span class="keyword">nullptr</span> )</div>
 <div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>                ioc_ptr = &amp;ioc_config;</div>
 <div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>        }</div>
 <div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>        H5Pclose( fapl_id );</div>
 <div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span> </div>
 <div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>        H5Pset_mpi_params( plist_id, comm, MPI_INFO_NULL );</div>
 <div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span> </div>
-<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>        <span class="keywordflow">if</span> ( ioc_ptr != NULL )</div>
+<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>        <span class="keywordflow">if</span> ( ioc_ptr != <span class="keyword">nullptr</span> )</div>
 <div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>            H5Pset_fapl_ioc( subfiling_config.ioc_fapl_id, ioc_ptr );</div>
 <div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span> </div>
 <div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>        H5Pset_fapl_subfiling( plist_id, subfiling_ptr );</div>
@@ -777,12 +777,12 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>    dimsf[0] = n_global;</div>
 <div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>    dimsf[1] = 3;</div>
 <div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span> </div>
-<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>    filespace_id = H5Screate_simple( 2, dimsf, NULL );</div>
+<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>    filespace_id = H5Screate_simple( 2, dimsf, <span class="keyword">nullptr</span> );</div>
 <div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span> </div>
 <div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>    count[0] = n_local;</div>
 <div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>    count[1] = 3;</div>
 <div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span> </div>
-<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>    memspace_id = H5Screate_simple( 2, count, NULL );</div>
+<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>    memspace_id = H5Screate_simple( 2, count, <span class="keyword">nullptr</span> );</div>
 <div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span> </div>
 <div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>    plist_id = H5Pcreate( H5P_DATASET_XFER );</div>
 <div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span> </div>
@@ -801,8 +801,8 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>    dset_id = H5Dcreate( file_id, coords_slice.label().c_str(), type_id,</div>
 <div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>                         filespace_id, H5P_DEFAULT, dcpl_id, H5P_DEFAULT );</div>
 <div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span> </div>
-<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>    H5Sselect_hyperslab( filespace_id, H5S_SELECT_SET, offset, NULL, count,</div>
-<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>                         NULL );</div>
+<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>    H5Sselect_hyperslab( filespace_id, H5S_SELECT_SET, offset, <span class="keyword">nullptr</span>, count,</div>
+<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>                         <span class="keyword">nullptr</span> );</div>
 <div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span> </div>
 <div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>    H5Dwrite( dset_id, type_id, memspace_id, filespace_id, plist_id,</div>
 <div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>              host_coords.data() );</div>
@@ -942,7 +942,7 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span><span class="preprocessor">#if H5_VERSION_GE( 1, 10, 0 )</span></div>
 <div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span>    <span class="keywordflow">if</span> ( h5_config.collective )</div>
 <div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>    {</div>
-<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>        H5Pset_all_coll_metadata_ops( plist_id, 1 );</div>
+<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>        H5Pset_all_coll_metadata_ops( plist_id, <span class="keyword">true</span> );</div>
 <div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>    }</div>
 <div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span> </div>
@@ -968,7 +968,7 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>    ndims = H5Sget_simple_extent_ndims( filespace_id );</div>
 <div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span> </div>
 <div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span>    <span class="comment">// Get the extents of the file dataspace.</span></div>
-<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span>    H5Sget_simple_extent_dims( filespace_id, dimsf, NULL );</div>
+<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span>    H5Sget_simple_extent_dims( filespace_id, dimsf, <span class="keyword">nullptr</span> );</div>
 <div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span> </div>
 <div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span>    std::vector&lt;int&gt; all_offsets( comm_size );</div>
 <div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>    all_offsets[comm_rank] = n_local;</div>
@@ -989,7 +989,7 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span>    count[1] = dimsf[1];</div>
 <div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span>    count[2] = dimsf[2];</div>
 <div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span> </div>
-<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span>    memspace_id = H5Screate_simple( ndims, count, NULL );</div>
+<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span>    memspace_id = H5Screate_simple( ndims, count, <span class="keyword">nullptr</span> );</div>
 <div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span> </div>
 <div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span>    plist_id = H5Pcreate( H5P_DATASET_XFER );</div>
 <div class="line"><a id="l00929" name="l00929"></a><span class="lineno">  929</span> </div>
@@ -997,8 +997,8 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>    <span class="keywordflow">if</span> ( h5_config.collective )</div>
 <div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span>        H5Pset_dxpl_mpio( plist_id, H5FD_MPIO_COLLECTIVE );</div>
 <div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span> </div>
-<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span>    H5Sselect_hyperslab( filespace_id, H5S_SELECT_SET, offset, NULL, count,</div>
-<div class="line"><a id="l00935" name="l00935"></a><span class="lineno">  935</span>                         NULL );</div>
+<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span>    H5Sselect_hyperslab( filespace_id, H5S_SELECT_SET, offset, <span class="keyword">nullptr</span>, count,</div>
+<div class="line"><a id="l00935" name="l00935"></a><span class="lineno">  935</span>                         <span class="keyword">nullptr</span> );</div>
 <div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span> </div>
 <div class="line"><a id="l00937" name="l00937"></a><span class="lineno">  937</span>    <a class="code hl_function" href="Cabana__HDF5ParticleOutput_8hpp.html#a8cc075e0f4edaa3844d5b326377a6eb1">readField</a>( dset_id, dtype_id, memspace_id, filespace_id, plist_id, n_local,</div>
 <div class="line"><a id="l00938" name="l00938"></a><span class="lineno">  938</span>               field );</div>
