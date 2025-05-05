@@ -46,7 +46,7 @@ struct LinkedCellStencil
     int cell_range;
 
     //! Default Constructor
-    LinkedCellStencil() {}
+    LinkedCellStencil() = default;
 
     //! Constructor
     LinkedCellStencil( const Scalar neighborhood_radius,
@@ -120,7 +120,7 @@ class LinkedCellList
     /*!
       \brief Default constructor.
     */
-    LinkedCellList() {}
+    LinkedCellList() = default;
 
     /*!
       \brief Simple constructor
