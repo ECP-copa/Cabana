@@ -44,8 +44,3 @@ set(Cabana_ENABLE_HDF5 @Cabana_ENABLE_HDF5@)
 if(Cabana_ENABLE_HDF5)
   find_dependency(HDF5 REQUIRED COMPONENTS C)
 endif()
-set(Cabana_ENABLE_TESTING @Cabana_ENABLE_TESTING@)
-if(Cabana_ENABLE_TESTING)
-  install(TARGETS ${TEST_EXECUTABLE}
-        RUNTIME DESTINATION bin/tests)
-endif()
