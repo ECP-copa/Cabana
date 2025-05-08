@@ -28,7 +28,7 @@ macro(Cabana_add_tests_nobackend)
 
     # Install the test executable
     install(TARGETS ${_target}
-            RUNTIME DESTINATION share/tests)
+            RUNTIME DESTINATION CMake_INSTALL_DATADIR)
 
     add_test(NAME ${_target} COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:${_target}> ${gtest_args})
     set_property(TEST ${_target} PROPERTY ENVIRONMENT OMP_NUM_THREADS=1)
@@ -96,7 +96,7 @@ macro(Cabana_add_tests)
 
       # Install the test executable
       install(TARGETS ${_target}
-              RUNTIME DESTINATION share/tests)
+              RUNTIME DESTINATION CMake_INSTALL_DATADIR)
 
       if(CABANA_UNIT_TEST_MPI)
         foreach(_np ${CABANA_UNIT_TEST_MPIEXEC_NUMPROCS})
