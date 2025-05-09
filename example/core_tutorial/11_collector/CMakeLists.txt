@@ -9,8 +9,8 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-  add_executable(Migration migration_example.cpp)
-  target_link_libraries(Migration Cabana::Core)
-  add_test(NAME Cabana_Core_Tutorial_11_migration COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG}
-    ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:Migration> ${MPIEXEC_POSTFLAGS})
-  set_tests_properties(Cabana_Core_Tutorial_11_migration PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
+  add_executable(Collector collector_example.cpp)
+  target_link_libraries(Collector Cabana::Core)
+  add_test(NAME Cabana_Core_Tutorial_11_collector COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG}
+    ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:Collector> ${MPIEXEC_POSTFLAGS})
+  set_tests_properties(Cabana_Core_Tutorial_11_collector PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
