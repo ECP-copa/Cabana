@@ -240,7 +240,7 @@ if(Cabana_ENABLE_TESTING)
   enable_testing()
 
   install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/core/unit_test
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/Cabana
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/Cabana/tests
         FILES_MATCHING PATTERN "*.cpp" PATTERN "*.hpp" PATTERN "CMakeLists.txt")
 endif()
 
