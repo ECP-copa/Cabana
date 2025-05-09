@@ -1336,7 +1336,6 @@ class CommunicationPlan
         }
         // If we are sending to ourself put that one first in the neighbor
         // list and assign the number of exports to be the number of imports.
-        bool self_send = false;
         for ( std::size_t n = 0; n < _neighbors.size(); ++n )
             if ( _neighbors[n] == rank )
             {
@@ -1344,7 +1343,6 @@ class CommunicationPlan
                 std::swap( _num_export[n], _num_export[0] );
                 std::swap( _num_import[n], _num_import[0] );
                 _num_export[0] = _num_import[0];
-                self_send = true;
                 break;
             }
 
