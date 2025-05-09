@@ -26,6 +26,7 @@ add_subdirectory(10_neighbor_parallel_for)
 add_subdirectory(10_simd_parallel_for)
 if(Cabana_ENABLE_MPI)
   add_subdirectory(11_migration)
+  add_subdirectory(11_collector)
   add_subdirectory(12_halo_exchange)
 endif()
 
