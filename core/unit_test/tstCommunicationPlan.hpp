@@ -811,7 +811,8 @@ void test10( const bool use_topology )
             comm_plan.createFromImports( import_ranks, import_ids );
 
     // Check the plan.
-    EXPECT_EQ( comm_plan.numNeighbor(), 2 ) << "Rank " << my_rank << "\n";
+    if (comm_size < 3) EXPECT_EQ( comm_plan.numNeighbor(), 1 ) << "Rank " << my_rank << "\n";
+    else EXPECT_EQ( comm_plan.numNeighbor(), 2 ) << "Rank " << my_rank << "\n";
 
     // neighborRank built differently depending on rank. Check that all ranks
     // are present
@@ -819,17 +820,32 @@ void test10( const bool use_topology )
     std::set<int> actual_neighbors;
     for ( int i = 0; i < comm_plan.numNeighbor(); i++ )
         actual_neighbors.insert( comm_plan.neighborRank( i ) );
+    
     EXPECT_EQ( expected_neighbors, actual_neighbors )
         << "Rank " << my_rank << "\n";
-    EXPECT_EQ( comm_plan.numExport( 0 ), num_data / 2 )
+
+    // If comm_size is < 3, we export num_data either ourselves
+    // or one other rank instead of two other ranks.
+    if (comm_size < 3)
+    {
+        EXPECT_EQ( comm_plan.numExport( 0 ), num_data )
+            << "Rank " << my_rank << "\n";
+        EXPECT_EQ( comm_plan.numImport( 0 ), num_data )
         << "Rank " << my_rank << "\n";
-    EXPECT_EQ( comm_plan.numExport( 1 ), num_data / 2 )
-        << "Rank " << my_rank << "\n";
+    }
+    else
+    {
+        EXPECT_EQ( comm_plan.numExport( 0 ), num_data / 2 )
+            << "Rank " << my_rank << "\n";
+        EXPECT_EQ( comm_plan.numExport( 1 ), num_data / 2 )
+            << "Rank " << my_rank << "\n";
+        EXPECT_EQ( comm_plan.numImport( 0 ), num_data / 2 )
+            << "Rank " << my_rank << "\n";
+        EXPECT_EQ( comm_plan.numImport( 1 ), num_data / 2 )
+            << "Rank " << my_rank << "\n";
+    }
+    
     EXPECT_EQ( comm_plan.totalNumExport(), num_data )
-        << "Rank " << my_rank << "\n";
-    EXPECT_EQ( comm_plan.numImport( 0 ), num_data / 2 )
-        << "Rank " << my_rank << "\n";
-    EXPECT_EQ( comm_plan.numImport( 1 ), num_data / 2 )
         << "Rank " << my_rank << "\n";
     EXPECT_EQ( comm_plan.totalNumImport(), num_data )
         << "Rank " << my_rank << "\n";
