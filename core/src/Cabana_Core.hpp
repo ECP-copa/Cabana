@@ -39,9 +39,8 @@
 #include <Cabana_Version.hpp>
 
 #ifdef Cabana_ENABLE_MPI
-#include <Cabana_Collector.hpp>
-#include <Cabana_Distributor.hpp>
 #include <Cabana_Halo.hpp>
+#include <Cabana_Migrate.hpp>
 
 #ifdef Cabana_ENABLE_SILO
 #include <Cabana_SiloParticleOutput.hpp>

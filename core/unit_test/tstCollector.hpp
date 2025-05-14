@@ -10,8 +10,8 @@
  ****************************************************************************/
 
 #include <Cabana_AoSoA.hpp>
-#include <Cabana_Collector.hpp>
 #include <Cabana_DeepCopy.hpp>
+#include <Cabana_Migrate.hpp>
 #include <Cabana_Parallel.hpp>
 
 #include <Kokkos_Core.hpp>
