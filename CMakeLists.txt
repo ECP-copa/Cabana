@@ -243,9 +243,11 @@ if(Cabana_ENABLE_TESTING)
   include(cmake/test_harness/test_harness.cmake)
   enable_testing()
 
-  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/core/unit_test
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/Cabana/tests
-        FILES_MATCHING PATTERN "*.cpp" PATTERN "*.hpp" PATTERN "CMakeLists.txt")
+  if(Cabana_INSTALL_TEST_EXECUTABLES)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/core/unit_test
+          DESTINATION ${CMAKE_INSTALL_DATADIR}/Cabana/tests
+          FILES_MATCHING PATTERN "*.cpp" PATTERN "*.hpp" PATTERN "CMakeLists.txt")
+  endif()
 endif()
 
 # enable doxygen
