@@ -31,6 +31,7 @@ set(SERIAL_TESTS
   Slice
   Sort
   Tuple
+  BatchedLinearAlgebra
   )
 
 if(Cabana_ENABLE_ARBORX)
