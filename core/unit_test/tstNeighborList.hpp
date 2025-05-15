@@ -214,7 +214,7 @@ void testNonUniformRadius()
     // Create the AoSoA and fill custom particle details.
     std::size_t particle_x = 2;
     // Purposely choose radius to reach all particles.
-    double large_radius = 4.35;
+    double large_radius = 4.05;
     // Purposely choose radius to reach nearest neighbors only.
     double small_radius = 3.32;
     // Create the AoSoA and fill with particles
@@ -249,7 +249,7 @@ void testNonUniformRadius()
         if ( p == 0 || p == test_data.num_particle - 1 )
             EXPECT_EQ( list_copy.counts( p ), 6 );
         else
-            EXPECT_EQ( list_copy.counts( p ), 3 );
+            EXPECT_EQ( list_copy.counts( p ), 4 );
     }
 }
 
