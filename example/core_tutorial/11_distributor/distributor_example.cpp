@@ -20,9 +20,9 @@
 #include <mpi.h>
 
 //---------------------------------------------------------------------------//
-// Migration example.
+// Distributor example.
 //---------------------------------------------------------------------------//
-void migrationExample()
+void distributorExample()
 {
     /*
       The distributor is a communication plan allowing for the migration of
@@ -40,7 +40,7 @@ void migrationExample()
       allocated in GPU memory, this feature will be used automatically.
     */
 
-    std::cout << "Cabana Migration Example\n" << std::endl;
+    std::cout << "Cabana Distributor Example\n" << std::endl;
 
     /*
        Get parameters from the communicator. We will use MPI_COMM_WORLD for
@@ -228,7 +228,7 @@ int main( int argc, char* argv[] )
     {
         Kokkos::ScopeGuard scope_guard( argc, argv );
 
-        migrationExample();
+        distributorExample();
     }
     MPI_Finalize();
 
