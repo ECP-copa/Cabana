@@ -9,49 +9,8 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-include(${TEST_HARNESS_DIR}/test_harness.cmake)
-
-set(NOBACKEND_TESTS
-  Version
-  Index
-  CartesianGrid
-  SoA
-  )
-
-set(SERIAL_TESTS
-  AoSoA
-  DeepCopy
-  LinkedCellList
-  NeighborList
-  Parallel
-  ParameterPack
-  ParticleInit
-  ParticleList
-  Remove
-  Slice
-  Sort
-  Tuple
-  )
-
-if(Cabana_ENABLE_ARBORX)
-  list(APPEND SERIAL_TESTS NeighborListArborX)
-endif()
-
-set(MPI_TESTS
-  CommunicationPlan
-  Collector
-  Distributor
-  Halo
-  )
-
-if(Cabana_ENABLE_HDF5)
-  list(APPEND MPI_TESTS HDF5ParticleOutput)
-endif()
-
-Cabana_add_tests_nobackend(PACKAGE Core NAMES ${NOBACKEND_TESTS})
-
-Cabana_add_tests(PACKAGE Core NAMES ${SERIAL_TESTS})
-
-if(Cabana_ENABLE_MPI)
-  Cabana_add_tests(MPI PACKAGE Core NAMES ${MPI_TESTS})
-endif()
+  add_executable(Distributor distributor_example.cpp)
+  target_link_libraries(Distributor Cabana::Core)
+  add_test(NAME Cabana_Core_Tutorial_11_distributor COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG}
+    ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:Distributor> ${MPIEXEC_POSTFLAGS})
+  set_tests_properties(Cabana_Core_Tutorial_11_distributor PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})

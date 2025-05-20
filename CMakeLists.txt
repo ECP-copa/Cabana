@@ -225,6 +225,10 @@ MESSAGE(STATUS "Cabana Revision = '${Cabana_GIT_COMMIT_HASH}'")
 # enable unit tests
 option(Cabana_ENABLE_TESTING "Build tests" OFF)
 add_feature_info(Tests Cabana_ENABLE_TESTING "Build unit tests (requires GTest)")
+
+# Set installing tests to off by default
+option(Cabana_INSTALL_TEST_EXECUTABLES "Install Cabana test executables" OFF)
+
 if(Cabana_ENABLE_TESTING)
   find_package(GTest 1.10 REQUIRED)
   # Workaround for FindGTest module in CMake older than 3.20
@@ -238,6 +242,12 @@ if(Cabana_ENABLE_TESTING)
   set(TEST_HARNESS_DIR ${CMAKE_SOURCE_DIR}/cmake/test_harness)
   include(cmake/test_harness/test_harness.cmake)
   enable_testing()
+
+  if(Cabana_INSTALL_TEST_EXECUTABLES)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/core/unit_test
+          DESTINATION ${CMAKE_INSTALL_DATADIR}/Cabana/tests
+          FILES_MATCHING PATTERN "*.cpp" PATTERN "*.hpp" PATTERN "CMakeLists.txt")
+  endif()
 endif()
 
 # enable doxygen
