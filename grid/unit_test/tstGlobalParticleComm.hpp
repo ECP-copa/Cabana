@@ -14,7 +14,7 @@
 
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_DeepCopy.hpp>
-#include <Cabana_Distributor.hpp>
+#include <Cabana_Migrate.hpp>
 #include <Cabana_Slice.hpp>
 
 #include <Cabana_Grid_GlobalGrid.hpp>

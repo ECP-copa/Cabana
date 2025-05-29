@@ -19,7 +19,7 @@
 #include <Cabana_Grid_LocalMesh.hpp>
 #include <Cabana_Grid_Types.hpp>
 
-#include <Cabana_Distributor.hpp>
+#include <Cabana_Migrate.hpp>
 #include <Cabana_Slice.hpp>
 
 #include <memory>
