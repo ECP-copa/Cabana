@@ -1102,10 +1102,6 @@ class CommunicationPlan
             typename Impl::CountSendsAndCreateSteeringAlgorithm<
                 ExecutionSpace>::type() );
 
-        // Copy indices_send to device mempry before returning
-        // auto export_indices_d = Kokkos::create_mirror_view_and_copy(
-        //     memory_space(), export_indices );
-
         // Return the neighbor ids, export ranks, and export indices
         return std::tuple{ counts_and_ids2.second, element_export_ranks,
                            export_indices };
@@ -1333,6 +1329,14 @@ class CommunicationPlan
                     _num_export[n] = send_counts( r );
                 }
             }
+            else
+            {
+                // This block should never be reached as
+                // mpi_statuses[i].MPI_SOURCE will never be less than 0.
+                throw std::runtime_error(
+                    "CommunicationPlan::createFromImportsOnly: "
+                    "mpi_statuses[i].MPI_SOURCE returned a value >= -1" );
+            }
         }
         // If we are sending to ourself put that one first in the neighbor
         // list and assign the number of exports to be the number of imports.
@@ -1400,10 +1404,6 @@ class CommunicationPlan
             exec_space, element_export_ranks, comm_size,
             typename Impl::CountSendsAndCreateSteeringAlgorithm<
                 ExecutionSpace>::type() );
-
-        // Copy indices_send to device mempry before returning
-        // auto export_indices_d = Kokkos::create_mirror_view_and_copy(
-        //     memory_space(), export_indices );
 
         return std::tuple{ counts_and_ids2.second, element_export_ranks,
                            export_indices };
