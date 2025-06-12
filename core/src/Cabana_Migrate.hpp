@@ -41,6 +41,10 @@ namespace Cabana
   The Distributor allows data to be migrated to an entirely new
   decomposition. Only uniquely-owned decompositions are handled (i.e. each
   local element in the source rank has a single unique destination rank).
+  Data is not duplicated - after calling Cabana::migrate
+  with a Distributor, the data will exist only on the rank it was exported to;
+  it is removed from the rank that called Cabana::migrate. (Unless the data is
+  exported to itself)
 
   Some nomenclature:
 
@@ -53,8 +57,8 @@ namespace Cabana
   instead of communication.
 
   \note To get the number of elements this rank will be receiving from
-  migration in the forward communication plan, call totalNumImport() on the
-  distributor. This will be needed when in-place migration is not used and a
+  distribution in the forward communication plan, call totalNumImport() on the
+  distributor. This will be needed when in-place distribution is not used and a
   user must allocate their own destination data structure.
 
 */
@@ -81,7 +85,7 @@ class Distributor : public CommunicationPlan<MemorySpace>
       will be exported. This export rank may be any one of the listed neighbor
       ranks which can include the calling rank. An export rank of -1 will
       signal that this element is *not* to be exported and will be ignored in
-      the data migration. The input is expected to be a Kokkos view or Cabana
+      the data distribution. The input is expected to be a Kokkos view or Cabana
       slice in the same memory space as the distributor.
 
       \param neighbor_ranks List of ranks this rank will send to and receive
@@ -91,7 +95,7 @@ class Distributor : public CommunicationPlan<MemorySpace>
 
       \note For elements that you do not wish to export, use an export rank of
       -1 to signal that this element is *not* to be exported and will be
-      ignored in the data migration. In other words, this element will be
+      ignored in the data distribution. In other words, this element will be
       *completely* removed in the new decomposition. If the data is staying on
       this rank, just use this rank as the export destination and the data
       will be efficiently migrated.
@@ -123,12 +127,12 @@ class Distributor : public CommunicationPlan<MemorySpace>
       will be exported. This export rank may any one of the listed neighbor
       ranks which can include the calling rank. An export rank of -1 will
       signal that this element is *not* to be exported and will be ignored in
-      the data migration. The input is expected to be a Kokkos view or Cabana
+      the data distribution. The input is expected to be a Kokkos view or Cabana
       slice in the same memory space as the distributor.
 
       \note For elements that you do not wish to export, use an export rank of
       -1 to signal that this element is *not* to be exported and will be
-      ignored in the data migration. In other words, this element will be
+      ignored in the data distribution. In other words, this element will be
       *completely* removed in the new decomposition. If the data is staying on
       this rank, just use this rank as the export destination and the data
       will be efficiently migrated.
@@ -164,13 +168,16 @@ struct is_distributor
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief A communication plan for importing data from one uniquely-owned
-  decomposition to another uniquely owned decomposition.
+  \brief A communication plan for importing data from one
+  decomposition to another decomposition. Imported data is duplicated from its
+  source decomposition.
 
   \tparam MemorySpace Kokkos memory space in which data for this class will be
   allocated.
 
-  The Collector allows data to be imported from remote ranks.
+  The Collector allows data to be imported from remote ranks. Data is duplicated
+  - after calling Cabana::migrate with a Collector, the imported data will exist
+  on both the remote rank and the rank that called migrate.
 
   Some nomenclature:
 
@@ -451,7 +458,8 @@ void migrateData(
     const int ec =
         MPI_Waitall( requests.size(), requests.data(), status.data() );
     if ( MPI_SUCCESS != ec )
-        throw std::logic_error( "Failed MPI Communication" );
+        throw std::logic_error(
+            "Cabana::Impl::migrateData::Failed MPI Communication" );
 
     // Extract the receive buffer into the destination AoSoA.
     auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
@@ -501,8 +509,8 @@ void migrateSlice(
 {
     // Check that dst is the right size.
     if ( dst.size() != migrator.totalNumImport() )
-        throw std::runtime_error(
-            "migrateSlice: Destination is the wrong size for migration!" );
+        throw std::runtime_error( "Cabana::Impl::migrateSlice: Destination is "
+                                  "the wrong size for migration!" );
 
     // Get the number of components in the slices.
     size_t num_comp = 1;
@@ -568,7 +576,7 @@ void migrateSlice(
     };
     Kokkos::RangePolicy<ExecutionSpace> build_send_buffer_policy(
         0, migrator.totalNumExport() );
-    Kokkos::parallel_for( "Cabana::migrate::build_send_buffer",
+    Kokkos::parallel_for( "Cabana::Impl::migrateSlice::build_send_buffer",
                           build_send_buffer_policy, build_send_buffer_func );
     Kokkos::fence();
 
@@ -628,7 +636,8 @@ void migrateSlice(
     const int ec =
         MPI_Waitall( requests.size(), requests.data(), status.data() );
     if ( MPI_SUCCESS != ec )
-        throw std::logic_error( "Failed MPI Communication" );
+        throw std::logic_error(
+            "Cabana::Impl::migrateSlice: Failed MPI Communication" );
 
     // Extract the data from the receive buffer into the destination Slice.
     auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
@@ -642,7 +651,7 @@ void migrateSlice(
     };
     Kokkos::RangePolicy<ExecutionSpace> extract_recv_buffer_policy(
         0, migrator.totalNumImport() );
-    Kokkos::parallel_for( "Cabana::migrate::extract_recv_buffer",
+    Kokkos::parallel_for( "Cabana::Impl::migrateSlice::extract_recv_buffer",
                           extract_recv_buffer_policy,
                           extract_recv_buffer_func );
     Kokkos::fence();
@@ -669,7 +678,7 @@ void migrateSlice(
   \tparam AoSoA_t AoSoA type - must be an AoSoA.
 
   \param exec_space Kokkos execution space.
-  \param distributor The distributor to use for the migration.
+  \param distributor The distributor to use for the distribution.
   \param src The AoSoA containing the data to be migrated. Must have the same
   number of elements as the inputs used to construct the distributor.
   \param dst The AoSoA to which the migrated data will be written. Must be the
@@ -686,10 +695,11 @@ void migrate(
 {
     // Check that src and dst are the right size.
     if ( src.size() != distributor.exportSize() )
-        throw std::runtime_error( "Source is the wrong size for migration!" );
+        throw std::runtime_error( "Cabana::migrate (Distributor): Source is "
+                                  "the wrong size for distribution!" );
     if ( dst.size() != distributor.totalNumImport() )
-        throw std::runtime_error(
-            "Destination is the wrong size for migration!" );
+        throw std::runtime_error( "Cabana::migrate (Distributor): Destination "
+                                  "is the wrong size for distribution!" );
 
     // Move the data.
     Impl::migrateData( exec_space, distributor, src, dst );
@@ -705,7 +715,7 @@ void migrate(
   \tparam AoSoA_t AoSoA type - must be an AoSoA.
 
   \param exec_space Kokkos execution space.
-  \param collector The collector to use for the migration.
+  \param collector The collector to use for the collection.
   \param src The AoSoA containing the data other ranks will be asking to import.
   Indices in src must match with the import_ids passed by other ranks into the
   Collector.
@@ -721,11 +731,11 @@ void migrate(
 {
     // Check that src and dst are the right size.
     if ( src.size() != collector.numOwned() )
-        throw std::runtime_error( "Cabana::Collector::migrate: Source is the "
-                                  "wrong size for migration!" );
+        throw std::runtime_error( "Cabana::migrate (Collector): Source is the "
+                                  "wrong size for collection!" );
     if ( dst.size() != collector.totalNumImport() )
-        throw std::runtime_error( "Cabana::Collector::migrate: Destination is "
-                                  "the wrong size for migration!" );
+        throw std::runtime_error( "Cabana::migrate (Collector): Destination is "
+                                  "the wrong size for collection!" );
 
     // Move the data.
     Impl::migrateData( exec_space, collector, src, dst );
@@ -738,13 +748,17 @@ void migrate(
   For Distributors, migrate moves all data to a new distribution that is
   uniquely owned - each element will only have a single destination rank.
 
+  For Collectors, duplicates data on the sending and receiving decompostions.
+
   \tparam Migrator_t Migrator type - must be a Distributor or a Collector.
   \tparam AoSoA_t AoSoA type - must be an AoSoA.
 
   \param migrator The migrator to use for the migration. Either a Distributor or
-  a Collector. \param src The AoSoA containing the data to be migrated. Must
+  a Collector.
+  \param src The AoSoA containing the data to be migrated. Must
   have the same number of elements as the inputs used to construct the
-  distributor. \param dst The AoSoA to which the migrated data will be written.
+  distributor.
+  \param dst The AoSoA to which the migrated data will be written.
   Must be the same size as the number of imports given by the distributor on
   this rank. Call totalNumImport() on the distributor to get this size value.
 */
@@ -766,8 +780,8 @@ void migrate( const Migrator_t& migrator, const AoSoA_t& src, AoSoA_t& dst,
   memory. The AoSoA memory will only increase if not enough has already been
   reserved/allocated for the needed number of elements.
 
-  Migrate moves all data to a new distribution that is uniquely owned - each
-  element will only have a single destination rank.
+  Migrate with a Distributor moves all data to a new distribution that is
+  uniquely owned - each element will only have a single destination rank.
 
   \tparam ExecutionSpace Kokkos execution space.
   \tparam Distributor_t Distributor type - must be a distributor.
@@ -790,7 +804,8 @@ void migrate(
 {
     // Check that the AoSoA is the right size.
     if ( aosoa.size() != distributor.exportSize() )
-        throw std::runtime_error( "AoSoA is the wrong size for migration!" );
+        throw std::runtime_error( "Cabana::migrate (Distributor): AoSoA is the "
+                                  "wrong size for distribution!" );
 
     // Determine if the source of destination decomposition has more data on
     // this rank.
@@ -812,15 +827,18 @@ void migrate(
 }
 
 /*!
-  \brief Synchronously migrate data between two different decompositions using
+  \brief Synchronously collect data to different decompositions using
   the forward communication plan. Collector version.
+
+  Migrate with a Collector duplicates data on the sending and receiving
+  decompostions.
 
   \tparam ExecutionSpace Kokkos execution space.
   \tparam Collector_t Collector type - must be a Collector.
   \tparam AoSoA_t AoSoA type - must be an AoSoA.
 
   \param exec_space Kokkos execution space.
-  \param collector The Collector to use for the migration.
+  \param collector The Collector to use for the collection.
   \param aosoa The AoSoA containing the data other ranks will be asking to
   import. Indices in src must match with the import_ids passed by other ranks
   into the Collector. Must be the same size as the number of
@@ -834,8 +852,8 @@ void migrate(
 {
     // Check if the aosoa is large enough
     if ( aosoa.size() != ( collector.numOwned() + collector.totalNumImport() ) )
-        throw std::runtime_error( "Cabana::Collector::migrate (in-place): "
-                                  "Source is the wrong size for migration!" );
+        throw std::runtime_error( "Cabana::migrate (Collector, in-place) "
+                                  "Source is the wrong size for collection!" );
 
     // Move the data.
     Impl::migrateData( exec_space, collector, aosoa, aosoa );
@@ -849,7 +867,8 @@ void migrate(
   \tparam AoSoA_t AoSoA type - must be an AoSoA.
 
   \param migrator The migrator to use for the migration. Either a Distributor or
-  a Collector. \param aosoa The AoSoA containing the data to be migrated.
+  a Collector.
+  \param aosoa The AoSoA containing the data to be migrated.
   Behavior varies depending on whether Migrator_t is a Collector or a
   Distributor. See their respective migrate function details.
 */
@@ -864,23 +883,23 @@ void migrate( const Migrator_t& migrator, AoSoA_t& aosoa,
 }
 
 /*!
-  \brief Synchronously migrate data between two different decompositions using
-  the Distributor forward communication plan. Slice version. The user can do
-  this in-place with the same slice but they will need to manage the resizing
+  \brief Synchronously distribute data between two different decompositions
+  using the Distributor forward communication plan. Slice version. The user can
+  do this in-place with the same slice but they will need to manage the resizing
   themselves as we can't resize slices.
 
-  Migrate moves all data to a new distribution that is uniquely owned - each
-  element will only have a single destination rank.
+  Migrate with a Distributor moves all data to a new distribution that is
+  uniquely owned - each element will only have a single destination rank.
 
   \tparam MemorySpace The memory space the Distributor is in.
   \tparam Slice_t Slice type - must be a Slice.
 
-  \param distributor The Distributor to use for the migration.
-  \param src The slice containing the data to be migrated. Must have the same
+  \param distributor The Distributor to use for the data distribution.
+  \param src The slice containing the data to be distributed. Must have the same
   number of elements as the inputs used to construct the Distributor.
-  \param dst The slice to which the migrated data will be written. Must be the
-  same size as the number of imports given by the distributor on this
-  rank. Call totalNumImport() on the distributor to get this size value.
+  \param dst The slice to which the distributed data will be written. Must be
+  the same size as the number of imports given by the distributor on this rank.
+  Call totalNumImport() on the distributor to get this size value.
 */
 template <class MemorySpace, class Slice_t>
 void migrate(
@@ -890,26 +909,30 @@ void migrate(
 {
     if ( src.size() != distributor.exportSize() )
         throw std::runtime_error(
-            "Cabana::Migrate::migrate: Source slice is the "
-            "wrong size for migration!" );
+            "Cabana::migrate (Distributor): Source slice is the "
+            "wrong size for distribution!" );
 
     Impl::migrateSlice( typename Distributor<MemorySpace>::execution_space{},
                         distributor, src, dst );
 }
 
 /*!
-  \brief Synchronously migrate data between two different decompositions using
+  \brief Synchronously collect data to different decompositions using
   the Collector forward communication plan. Slice version. The user can do
   this in-place with the same slice but they will need to manage the resizing
   themselves as we can't resize slices.
 
+  Migrate with a Collector duplicates data on the sending and receiving
+  decompostions.
+
   \tparam MemorySpace The memory space the Collector is in.
   \tparam Slice_t Slice type - must be a Slice.
 
-  \param collector The Collector to use for the migration.
-  \param src The slice containing the data to be migrated. Must have the same
+  \param collector The Collector to use for the data collection.
+  \param src The slice containing the data to be collected. Must have the same
   number of elements as the number of owned elements passed to the constructer
-  of the Collector. \param dst The slice to which the migrated data will be
+  of the Collector.
+  \param dst The slice to which the collected data will be
   written. Must be the same size as the number of imports given by the collector
   on this rank. Call totalNumImport() on the Collector to get this size value.
 */
@@ -920,8 +943,8 @@ void migrate(
 {
     if ( src.size() != collector.numOwned() )
         throw std::runtime_error(
-            "Cabana::Migrate::migrate: Source slice is the "
-            "wrong size for migration!" );
+            "Cabana::migrate (Collector): Source slice is the "
+            "wrong size for collection!" );
 
     Impl::migrateSlice( typename Collector<MemorySpace>::execution_space{},
                         collector, src, dst );
