@@ -74,10 +74,10 @@ void test1( const bool use_topology )
     auto slice_int_dst = Cabana::slice<0>( data_dst );
     auto slice_dbl_dst = Cabana::slice<1>( data_dst );
 
-    // Do the migration
+    // Do the distribution
     Cabana::migrate( *distributor, data_src, data_dst );
 
-    // Check the migration.
+    // Check the distribution.
     Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_dst_host( "data_dst_host",
                                                                num_data );
     auto slice_int_dst_host = Cabana::slice<0>( data_dst_host );
@@ -143,7 +143,7 @@ void test2( const bool use_topology )
     Kokkos::parallel_for( range_policy, fill_func );
     Kokkos::fence();
 
-    // Do the migration in-place
+    // Do the distribution in-place
     Cabana::migrate( *distributor, data );
 
     // Get host copies of the migrated data.
@@ -153,7 +153,7 @@ void test2( const bool use_topology )
     auto slice_dbl_host = Cabana::slice<1>( data_host );
     Cabana::deep_copy( data_host, data );
 
-    // Check the migration. We received less than we sent so this should have
+    // Check the distribution. We received less than we sent so this should have
     // resized the aososa.
     auto steering = distributor->getExportSteering();
     auto host_steering =
@@ -223,7 +223,7 @@ void test3( const bool use_topology )
     auto slice_int_dst = Cabana::slice<0>( data_dst );
     auto slice_dbl_dst = Cabana::slice<1>( data_dst );
 
-    // Do the migration with slices
+    // Do the distribution with slices
     Cabana::migrate( *distributor, slice_int_src, slice_int_dst );
     Cabana::migrate( *distributor, slice_dbl_src, slice_dbl_dst );
 
@@ -245,7 +245,7 @@ void test3( const bool use_topology )
     auto host_steering = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), inverse_steering );
 
-    // Check the migration.
+    // Check the distribution.
     Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_dst_host( "data_dst_host",
                                                                num_data );
     Cabana::deep_copy( data_dst_host, data_dst );
@@ -320,10 +320,10 @@ void test4( const bool use_topology )
     auto slice_int_dst = Cabana::slice<0>( data_dst );
     auto slice_dbl_dst = Cabana::slice<1>( data_dst );
 
-    // Do the migration
+    // Do the distribution
     Cabana::migrate( *distributor, data_src, data_dst );
 
-    // Check the migration.
+    // Check the distribution.
     Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_dst_host( "data_dst_host",
                                                                num_data );
     auto slice_int_dst_host = Cabana::slice<0>( data_dst_host );
@@ -425,11 +425,11 @@ void test5( const bool use_topology )
     auto slice_int_dst = Cabana::slice<0>( data_dst );
     auto slice_dbl_dst = Cabana::slice<1>( data_dst );
 
-    // Do the migration with slices
+    // Do the distribution with slices
     Cabana::migrate( *distributor, slice_int_src, slice_int_dst );
     Cabana::migrate( *distributor, slice_dbl_src, slice_dbl_dst );
 
-    // Check the migration.
+    // Check the distribution.
     Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host( "data_host",
                                                            my_size );
     auto slice_int_host = Cabana::slice<0>( data_host );
@@ -514,7 +514,7 @@ void test6( const bool use_topology )
     Kokkos::parallel_for( range_policy, fill_func );
     Kokkos::fence();
 
-    // Do the migration
+    // Do the distribution
     Cabana::migrate( *distributor, data );
 
     // Check the change in size.
@@ -523,7 +523,7 @@ void test6( const bool use_topology )
     else
         EXPECT_EQ( data.size(), 0 );
 
-    // Check the migration.
+    // Check the distribution.
     Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host(
         "data_host", distributor->totalNumImport() );
     auto slice_int_host = Cabana::slice<0>( data_host );
@@ -599,13 +599,13 @@ void test7( const bool use_topology )
     Kokkos::parallel_for( range_policy, fill_func );
     Kokkos::fence();
 
-    // Do the migration
+    // Do the distribution
     Cabana::migrate( *distributor, data );
 
     // Check the change in size.
     EXPECT_EQ( data.size(), 1 );
 
-    // Check the migration.
+    // Check the distribution.
     Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host(
         "data_host", distributor->totalNumImport() );
     auto slice_int_host = Cabana::slice<0>( data_host );
@@ -683,7 +683,7 @@ void test8( const bool use_topology )
     Kokkos::parallel_for( range_policy, fill_func );
     Kokkos::fence();
 
-    // Do the migration
+    // Do the distribution
     Cabana::migrate( *distributor, data );
 
     // Check the results.
@@ -739,14 +739,14 @@ void test9( const bool use_topology )
     AoSoA_t data_copy( "copy", 0 );
     auto slice_int_copy = Cabana::slice<0>( data_copy );
 
-    // Do empty slice migration.
+    // Do empty slice distribution.
     Cabana::migrate( *distributor, slice_int, slice_int_copy );
 
     // Check entries were removed.
     slice_int_copy = Cabana::slice<0>( data_copy );
     EXPECT_EQ( slice_int_copy.size(), 0 );
 
-    // Do empty in-place migration.
+    // Do empty in-place distribution.
     Cabana::migrate( *distributor, data );
 
     // Check entries were removed.

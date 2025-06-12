@@ -25,18 +25,20 @@
 void collectorExample()
 {
     /*
-      The collector is a communication plan allowing for the collection of
+      The Collector is a communication plan allowing for the collection of
       data from one uniquely-owned distribution to another uniquely-owned
-      distribution. Data collection may be applied to entire AoSoA data
+      distribution. After collection (via calling Cabana::migrate), the data
+      exists on both the receiving rank and the rank the data was imported from.
+      Data collection may be applied to entire AoSoA data
       structures as well as slices.
 
-      In this example we will demonstrate building a collector communication
+      In this example we will demonstrate building a Collector communication
       plan and collecting data.
 
-      Note: The collector uses MPI for data migration. MPI is initialized
+      Note: The Collector uses MPI for data collection. MPI is initialized
       and finalized in the main function below.
 
-      Note: The collector uses GPU-aware MPI communication. If AoSoA data is
+      Note: The Collector uses GPU-aware MPI communication. If AoSoA data is
       allocated in GPU memory, this feature will be used automatically.
     */
 
@@ -126,7 +128,7 @@ void collectorExample()
     }
 
     /*
-      We have two ways to make a collector. In the first case we know which
+      We have two ways to make a Collector. In the first case we know which
       ranks we are importing the data from but not the ranks we are sending
       data to. In the second we know the topology of the communication plan
       (i.e. the ranks we send and receive from).
@@ -145,34 +147,34 @@ void collectorExample()
         MPI_COMM_WORLD, num_tuple, import_ranks, import_ids, neighbors );
 
     /*
-      There are three choices for applying the collector: 1) Migrating the
-      data into a new AoSoA, 2) Migrating the data into an existing AoSoA, 3)
-      Migrating using slices. We will go through each next.
+      There are three choices for applying the Collector: 1) Collecting the
+      data into a new AoSoA, 2) Collecting the data into an existing AoSoA, 3)
+      Collecting using slices. We will go through each next.
      */
 
     /*
-      1) MIGRATING TO A NEW AOSOA
+      1) COLLECTING TO A NEW AOSOA
 
-      The following creates a new AoSoA and migrates into the AoSoA.
+      The following creates a new AoSoA and collects into the AoSoA.
      */
 
     // Make a new AoSoA. Note that this has the same data types, vector
     // length, and memory space as the original aosoa.
     //
-    // We are importing 20 elements, so the AoSoA should be size 20.
-    // Since we know how much data we are importing, we can size this
+    // We are collecting 20 elements, so the AoSoA should be size 20.
+    // Since we know how much data we are collecting, we can size this
     // manually, or call collector.totalNumImport().
     Cabana::AoSoA<DataTypes, MemorySpace, VectorLength> imports(
         "imports", collector.totalNumImport() );
 
-    // Do the migration.
+    // Do the collection.
     Cabana::migrate( collector, aosoa, imports );
 
     /*
-      2) MIGRATING SLICES
+      2) COLLECTING SLICES
 
-      We can migrate each slice individually as well. This is useful when not
-      all data in an AoSoA needs to be moved to a new decomposition.
+      We can collect each slice individually as well. This is useful when we do
+      not want to collect all data in an AoSoA on a remote decomposition.
      */
     auto slice_ranks_dst = Cabana::slice<0>( imports );
     auto slice_ids_dst = Cabana::slice<1>( imports );
@@ -180,13 +182,13 @@ void collectorExample()
     Cabana::migrate( collector, slice_ids, slice_ids_dst );
 
     /*
-      3) IN-PLACE MIGRATION.
+      3) IN-PLACE COLLECTION.
 
       In many cases a user may want to use the same AoSoA and not manage a
       second temporary copy for the data collection.
 
       To use the same AoSoA, the size of the AoSoA must be
-      num_owned + num_imported. Imported data is placed at the end of
+      num_owned + num_imported. Collected data is placed at the end of
       the AoSoA.
 
       Note: Any existing slices created from this AoSoA will be invalidated if
@@ -196,7 +198,7 @@ void collectorExample()
     Cabana::migrate( collector, aosoa );
 
     /*
-      Having migrated the data, let's print out the in-place case on one rank.
+      Having collected the data, let's print out the in-place case on one rank.
       We re-slice because the previous slices are no longer valid.
     */
     slice_ranks = Cabana::slice<0>( aosoa );
@@ -204,18 +206,18 @@ void collectorExample()
 
     if ( comm_rank == 0 )
     {
-        std::cout << "AFTER migration" << std::endl
+        std::cout << "AFTER collection" << std::endl
                   << "(Rank " << comm_rank << ") ";
         for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
             std::cout << slice_ranks( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ranks.size() << " ranks after migrate)"
+                  << "(" << slice_ranks.size() << " ranks after collection)"
                   << std::endl
                   << "(Rank " << comm_rank << ") ";
         for ( std::size_t i = 0; i < slice_ids.size(); ++i )
             std::cout << slice_ids( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ids.size() << " IDs after migrate)"
+                  << "(" << slice_ids.size() << " IDs after collection)"
                   << std::endl;
     }
 }

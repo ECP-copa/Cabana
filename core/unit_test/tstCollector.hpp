@@ -85,10 +85,10 @@ void test1( const bool use_topology )
     auto slice_int_dst = Cabana::slice<0>( data_dst );
     auto slice_dbl_dst = Cabana::slice<1>( data_dst );
 
-    // Do the migration
+    // Do the collection
     Cabana::migrate( *collector, data_src, data_dst );
 
-    // Check the migration.
+    // Check the collection.
     Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_dst_host( "data_dst_host",
                                                                num_data );
     auto slice_int_dst_host = Cabana::slice<0>( data_dst_host );
@@ -168,7 +168,7 @@ void test2( const bool use_topology )
     Kokkos::parallel_for( range_policy, fill_func );
     Kokkos::fence();
 
-    // Do the migration in-place
+    // Do the collection in-place
     data.resize( collector->numOwned() + collector->totalNumImport() );
     Cabana::migrate( *collector, data );
 
@@ -179,7 +179,7 @@ void test2( const bool use_topology )
     auto slice_dbl_host = Cabana::slice<1>( data_host );
     Cabana::deep_copy( data_host, data );
 
-    // Check the migration.
+    // Check the collection.
     auto steering = collector->getExportSteering();
     auto host_steering =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
@@ -257,7 +257,7 @@ void test3( const bool use_topology )
     auto slice_int_dst = Cabana::slice<0>( data_dst );
     auto slice_dbl_dst = Cabana::slice<1>( data_dst );
 
-    // Do the migration with slices
+    // Do the collection with slices
     Cabana::migrate( *collector, slice_int_src, slice_int_dst );
     Cabana::migrate( *collector, slice_dbl_src, slice_dbl_dst );
 
@@ -279,7 +279,7 @@ void test3( const bool use_topology )
     auto host_steering = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), inverse_steering );
 
-    // Check the migration.
+    // Check the collection.
     Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_dst_host( "data_dst_host",
                                                                num_data );
     Cabana::deep_copy( data_dst_host, data_dst );
@@ -366,10 +366,10 @@ void test4( const bool use_topology )
     auto slice_int_dst = Cabana::slice<0>( data_dst );
     auto slice_dbl_dst = Cabana::slice<1>( data_dst );
 
-    // Do the migration
+    // Do the collection
     Cabana::migrate( *collector, data_src, data_dst );
 
-    // Check the migration.
+    // Check the collection.
     Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_dst_host( "data_dst_host",
                                                                num_data );
     auto slice_int_dst_host = Cabana::slice<0>( data_dst_host );
@@ -484,11 +484,11 @@ void test5( const bool use_topology )
     Kokkos::parallel_for( range_policy, fill_func );
     Kokkos::fence();
 
-    // Do the migration
+    // Do the collection
     data.resize( collector->numOwned() + collector->totalNumImport() );
     Cabana::migrate( *collector, data );
 
-    // Check the migration.
+    // Check the collection.
     Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host( "data_host",
                                                            data.size() );
     auto slice_int_host = Cabana::slice<0>( data_host );
@@ -586,7 +586,7 @@ void test6( const bool use_topology )
     Kokkos::parallel_for( range_policy1, fill_func );
     Kokkos::fence();
 
-    // Do the migration
+    // Do the collection
     data.resize( collector->numOwned() + collector->totalNumImport() );
     Cabana::migrate( *collector, data );
 
@@ -604,7 +604,7 @@ void test6( const bool use_topology )
             << "Rank " << my_rank << "\n";
     }
 
-    // Check the migration.
+    // Check the collection.
     Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host( "data_host",
                                                            data.size() );
     auto slice_int_host = Cabana::slice<0>( data_host );
@@ -690,7 +690,7 @@ void test7( const bool use_topology )
     Kokkos::parallel_for( range_policy, fill_func );
     Kokkos::fence();
 
-    // Do the migration
+    // Do the collection
     Cabana::migrate( *collector, data );
 
     // Check the results.
