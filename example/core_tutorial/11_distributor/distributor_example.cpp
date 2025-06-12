@@ -25,18 +25,20 @@
 void distributorExample()
 {
     /*
-      The distributor is a communication plan allowing for the migration of
+      The Distributor is a communication plan allowing for the distribution of
       data from one uniquely-owned distribution to another uniquely-owned
-      distribution. Data migration may be applied to entire AoSoA data
+      distribution. After distributing (via calling Cabana::migrate), the data
+      exists only on the rank it was exported to. (Unless the data was exported
+      to itself) Data distribution may be applied to entire AoSoA data
       structures as well as slices.
 
-      In this example we will demonstrate building a distributor communication
-      plan and migrating data.
+      In this example we will demonstrate building a Distributor communication
+      plan and distributing data.
 
-      Note: The distributor uses MPI for data migration. MPI is initialized
+      Note: The Distributor uses MPI for data distribution. MPI is initialized
       and finalized in the main function below.
 
-      Note: The distributor uses GPU-aware MPI communication. If AoSoA data is
+      Note: The Distributor uses GPU-aware MPI communication. If AoSoA data is
       allocated in GPU memory, this feature will be used automatically.
     */
 
@@ -78,23 +80,23 @@ void distributorExample()
     }
 
     /*
-      Before migrating the data, let's print out the data in the slices
+      Before distributing the data, let's print out the data in the slices
       on one rank.
     */
     if ( comm_rank == 0 )
     {
-        std::cout << "BEFORE migration" << std::endl
+        std::cout << "BEFORE distribution" << std::endl
                   << "(Rank " << comm_rank << ") ";
         for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
             std::cout << slice_ranks( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ranks.size() << " ranks before migrate)"
+                  << "(" << slice_ranks.size() << " ranks before distribution)"
                   << std::endl
                   << "(Rank " << comm_rank << ") ";
         for ( std::size_t i = 0; i < slice_ids.size(); ++i )
             std::cout << slice_ids( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ids.size() << " IDs before migrate)"
+                  << "(" << slice_ids.size() << " IDs before distribution)"
                   << std::endl
                   << std::endl;
     }
@@ -125,7 +127,7 @@ void distributorExample()
         export_ranks( i ) = comm_rank;
 
     /*
-      We have two ways to make a distributor. In the first case we know which
+      We have two ways to make a Distributor. In the first case we know which
       ranks we are sending the data to but not the ranks we are receiving data
       from. In the second we know the topology of the communication plan
       (i.e. the ranks we send and receive from).
@@ -144,33 +146,33 @@ void distributorExample()
                                                   neighbors );
 
     /*
-      There are three choices for applying the distributor: 1) Migrating the
-      entire AoSoA to a new AoSoA, 2) Migrating the AoSoA in-place, 3)
-      Migrating using slices. We will go through each next.
+      There are three choices for applying the distributor: 1) Distributing the
+      entire AoSoA to a new AoSoA, 2) Distributing the AoSoA in-place, 3)
+      Distributing using slices. We will go through each next.
      */
 
     /*
-      1) MIGRATING TO A NEW AOSOA
+      1) DISTRIBUTING TO A NEW AOSOA
 
-      The following creates a new AoSoA and migrates the entire AoSoA.
+      The following creates a new AoSoA and distributes the entire AoSoA.
      */
 
     // Make a new AoSoA. Note that this has the same data types, vector
     // length, and memory space as the original aosoa.
     //
-    // Also note how this AoSoA is sized. The distributor computes how many
+    // Also note how this AoSoA is sized. The Distributor computes how many
     // imported elements each rank will receive. We discard 10 elements, get
     // 10 from our neighbor, and keep 80 of our own so this number should be 90.
     Cabana::AoSoA<DataTypes, MemorySpace, VectorLength> destination(
         "destination", distributor.totalNumImport() );
 
-    // Do the migration.
+    // Do the distribution.
     Cabana::migrate( distributor, aosoa, destination );
 
     /*
-      2) MIGRATING SLICES
+      2) DISTRIBUTING SLICES
 
-      We can migrate each slice individually as well. This is useful when not
+      We can distribute each slice individually as well. This is useful when not
       all data in an AoSoA needs to be moved to a new decomposition.
      */
     auto slice_ranks_dst = Cabana::slice<0>( destination );
@@ -179,42 +181,42 @@ void distributorExample()
     Cabana::migrate( distributor, slice_ids, slice_ids_dst );
 
     /*
-      3) IN-PLACE MIGRATION.
+      3) IN-PLACE DISTRIBUTION.
 
       In many cases a user may want to use the same AoSoA and not manage a
-      second temporary copy for the data migration. In-place migration does
-      this automatically by moving the data to the new decomposition and
+      second temporary copy for the data distribution. In-place distribution
+      does this automatically by moving the data to the new decomposition and
       resizing the AoSoA automatically.
 
       The AoSoA should be size 100 on input and size 90 on output, having
       removed 10, moved 10, and added 10.
 
       Note: Any existing slices created from this AoSoA may be invalidated as
-      the data structure will be resized as necessary during migration.
+      the data structure will be resized as necessary during distribution.
      */
     Cabana::migrate( distributor, aosoa );
 
     /*
-      Having migrated the data, let's print out the in-place case on one rank.
-      We re-slice because the previous slices are no longer valid.
+      Having distributed the data, let's print out the in-place case on one
+      rank. We re-slice because the previous slices are no longer valid.
     */
     slice_ranks = Cabana::slice<0>( aosoa );
     slice_ids = Cabana::slice<1>( aosoa );
 
     if ( comm_rank == 0 )
     {
-        std::cout << "AFTER migration" << std::endl
+        std::cout << "AFTER distribution" << std::endl
                   << "(Rank " << comm_rank << ") ";
         for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
             std::cout << slice_ranks( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ranks.size() << " ranks after migrate)"
+                  << "(" << slice_ranks.size() << " ranks after distribution)"
                   << std::endl
                   << "(Rank " << comm_rank << ") ";
         for ( std::size_t i = 0; i < slice_ids.size(); ++i )
             std::cout << slice_ids( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ids.size() << " IDs after migrate)"
+                  << "(" << slice_ids.size() << " IDs after distribution)"
                   << std::endl;
     }
 }
