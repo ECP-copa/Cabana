@@ -55,7 +55,7 @@ namespace Cabana
   ghost from is the unique owner of that data. Import is used in the context
   of the forward communication plan (the gather).
 */
-template <class MemorySpace, class BuildType=Cabana::CommDriver::Export>
+template <class MemorySpace, class BuildType=CommDriver::Export>
 class Halo : public CommunicationPlan<MemorySpace>
 {
   public:
