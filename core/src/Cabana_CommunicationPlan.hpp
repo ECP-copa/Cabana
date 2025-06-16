@@ -593,7 +593,7 @@ class CommunicationPlan
     */
     template <class ExecutionSpace, class ViewType>
     Kokkos::View<size_type*, memory_space>
-    createFromTopology( Cabana::CommDriver::Export, ExecutionSpace exec_space,
+    createFromTopology( CommDriver::Export, ExecutionSpace exec_space,
                                   const ViewType& element_export_ranks,
                                   const std::vector<int>& neighbor_ranks )
     {
@@ -713,11 +713,11 @@ class CommunicationPlan
     */
     template <class ViewType>
     Kokkos::View<size_type*, memory_space>
-    createFromTopology( Cabana::CommDriver::Export, const ViewType& element_export_ranks,
+    createFromTopology( CommDriver::Export, const ViewType& element_export_ranks,
                                   const std::vector<int>& neighbor_ranks )
     {
         // Use the default execution space.
-        return createFromTopology( Cabana::CommDriver::Export,
+        return createFromTopology( CommDriver::Export(),
             execution_space{}, element_export_ranks, neighbor_ranks );
     }
 
@@ -753,7 +753,7 @@ class CommunicationPlan
     */
     template <class ExecutionSpace, class ViewType>
     Kokkos::View<size_type*, memory_space>
-    createFromNoTopology( Cabana::CommDriver::Export, ExecutionSpace exec_space,
+    createFromNoTopology( CommDriver::Export, ExecutionSpace exec_space,
                            const ViewType& element_export_ranks )
     {
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
@@ -918,10 +918,10 @@ class CommunicationPlan
     */
     template <class ViewType>
     Kokkos::View<size_type*, memory_space>
-    createFromNoTopology( Cabana::CommDriver::Export, const ViewType& element_export_ranks )
+    createFromNoTopology( CommDriver::Export, const ViewType& element_export_ranks )
     {
         // Use the default execution space.
-        return createFromNoTopology( Cabana::CommDriver::Export, execution_space{}, element_export_ranks );
+        return createFromNoTopology( CommDriver::Export(), execution_space{}, element_export_ranks );
     }
 
     /*!
@@ -964,7 +964,7 @@ class CommunicationPlan
       \note Unlike creating from exports, an import rank of -1 is not supported.
     */
     template <class ExecutionSpace, class ViewType>
-    auto createFromTopology( Cabana::CommDriver::Import, ExecutionSpace exec_space,
+    auto createFromTopology( CommDriver::Import, ExecutionSpace exec_space,
                                        const ViewType& element_import_ranks,
                                        const ViewType& element_import_ids,
                                        const std::vector<int>& neighbor_ranks )
@@ -1145,12 +1145,12 @@ class CommunicationPlan
       \note Unlike creating from exports, an import rank of -1 is not supported.
     */
     template <class ViewType>
-    auto createFromTopology( Cabana::CommDriver::Import, const ViewType& element_import_ranks,
+    auto createFromTopology( CommDriver::Import, const ViewType& element_import_ranks,
                                        const ViewType& element_import_ids,
                                        const std::vector<int>& neighbor_ranks )
     {
         // Use the default execution space.
-        return createFromTopology( Cabana::CommDriver::Import,
+        return createFromTopology( CommDriver::Import(),
             execution_space{}, element_import_ranks, element_import_ids,
             neighbor_ranks );
     }
@@ -1188,7 +1188,7 @@ class CommunicationPlan
       \note Unlike creating from exports, an import rank of -1 is not supported.
     */
     template <class ExecutionSpace, class ViewType>
-    auto createFromNoTopology( Cabana::CommDriver::Import, ExecutionSpace exec_space,
+    auto createFromNoTopology( CommDriver::Import, ExecutionSpace exec_space,
                                 const ViewType& element_import_ranks,
                                 const ViewType& element_import_ids )
         -> std::tuple<Kokkos::View<typename ViewType::size_type*,
@@ -1440,11 +1440,11 @@ class CommunicationPlan
       \note Unlike creating from exports, an import rank of -1 is not supported.
     */
     template <class ViewType>
-    auto createFromNoTopology( Cabana::CommDriver::Import, const ViewType& element_import_ranks,
+    auto createFromNoTopology( CommDriver::Import, const ViewType& element_import_ranks,
                                 const ViewType& element_import_ids )
     {
         // Use the default execution space.
-        return createFromNoTopology( Cabana::CommDriver::Import, execution_space{}, element_import_ranks,
+        return createFromNoTopology( CommDriver::Import(), execution_space{}, element_import_ranks,
                                       element_import_ids );
     }
 
