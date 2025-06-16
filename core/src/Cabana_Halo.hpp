@@ -110,7 +110,7 @@ class Halo : public CommunicationPlan<MemorySpace>
         if ( element_ids.size() != element_ranks.size() )
             throw std::runtime_error( "Export ids and ranks different sizes!" );
 
-        auto neighbor_ids = this->createFromTopology( BuildType, 
+        auto neighbor_ids = this->createFromTopology( BuildType(), 
             element_ranks, neighbor_ranks );
         this->createExportSteering( neighbor_ids, element_ranks,
                                     element_ids );
@@ -159,7 +159,7 @@ class Halo : public CommunicationPlan<MemorySpace>
         if ( element_ids.size() != element_ranks.size() )
             throw std::runtime_error( "Export ids and ranks different sizes!" );
 
-        auto neighbor_ids = this->createFromNoTopology( BuildType, element_ranks );
+        auto neighbor_ids = this->createFromNoTopology( BuildType(), element_ranks );
         this->createExportSteering( neighbor_ids, element_ranks,
                                     element_ids );
     }
