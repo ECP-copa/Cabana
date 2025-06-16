@@ -664,10 +664,10 @@ class CommunicationPlan
             throw std::logic_error( "Failed MPI Communication" );
 
         // Get the total number of imports/exports.
-        _total_num_export = std::accumulate(
-            _num_export.begin(), _num_export.end(), std::size_t{ 0u } );
-        _total_num_import = std::accumulate(
-            _num_import.begin(), _num_import.end(), std::size_t{ 0u } );
+        _total_num_export =
+            std::accumulate( _num_export.begin(), _num_export.end(), 0 );
+        _total_num_import =
+            std::accumulate( _num_import.begin(), _num_import.end(), 0 );
 
         // Barrier before continuing to ensure synchronization.
         MPI_Barrier( comm() );
@@ -922,6 +922,530 @@ class CommunicationPlan
     {
         // Use the default execution space.
         return createFromExportsOnly( execution_space{}, element_export_ranks );
+    }
+
+    /*!
+      \brief Neighbor and import rank creator. Use this when you already know
+      which ranks neighbor each other (i.e. every rank already knows who they
+      will be sending and receiving from) as it will be more efficient. In
+      this case you already know the topology of the point-to-point
+      communication but not how much data to send to and receive from the
+      neighbors.
+
+      \param exec_space Kokkos execution space.
+
+      \param element_import_ranks The source rank in the target
+      decomposition of each remotely owned element in element_import_ids.
+      This import rank may be any one of the listed neighbor
+      ranks which can include the calling rank. The input is expected
+      to be a Kokkos view in the same memory space as the communication plan.
+
+      \param element_import_ids The local IDs of remotely owned elements that
+      are to be imported. These are local IDs on the remote rank.
+      element_import_ids is mapped such that element_import_ids(i) lives on
+      remote rank element_import_ranks(i).
+
+      \param neighbor_ranks List of ranks this rank will send to and receive
+      from. This list can include the calling rank. This is effectively a
+      description of the topology of the point-to-point communication
+      plan. Only the unique elements in this list are used.
+
+      \return A tuple of Kokkos views, where:
+      Element 1: The location of each export element in the send buffer for its
+      given neighbor.
+      Element 2: The remote ranks this rank will export to
+      Element 3: The local IDs this rank will export
+      Elements 2 and 3 are mapped in the same way as element_import_ranks
+      and element_import_ids
+
+      \note Calling this function completely updates the state of this object
+      and invalidates the previous state.
+
+      \note Unlike creating from exports, an import rank of -1 is not supported.
+    */
+    template <class ExecutionSpace, class ViewType>
+    auto createFromImportsAndTopology( ExecutionSpace exec_space,
+                                       const ViewType& element_import_ranks,
+                                       const ViewType& element_import_ids,
+                                       const std::vector<int>& neighbor_ranks )
+        -> std::tuple<Kokkos::View<typename ViewType::size_type*,
+                                   typename ViewType::memory_space>,
+                      Kokkos::View<int*, typename ViewType::memory_space>,
+                      Kokkos::View<int*, typename ViewType::memory_space>>
+    {
+        static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
+
+        if ( element_import_ids.size() != element_import_ranks.size() )
+            throw std::runtime_error( "Export ids and ranks different sizes!" );
+
+        // Store the unique neighbors (this rank first).
+        _neighbors = getUniqueTopology( comm(), neighbor_ranks );
+        std::size_t num_n = _neighbors.size();
+
+        // Get the size of this communicator.
+        int comm_size = -1;
+        MPI_Comm_size( comm(), &comm_size );
+
+        // Get the MPI rank we are currently on.
+        int my_rank = -1;
+        MPI_Comm_rank( comm(), &my_rank );
+
+        // Pick an mpi tag for communication. This object has it's own
+        // communication space so any mpi tag will do.
+        const int mpi_tag = 1221;
+
+        // Initialize import/export sizes.
+        _num_export.assign( num_n, 0 );
+        _num_import.assign( num_n, 0 );
+
+        // Count the number of imports this rank needs from other ranks. Keep
+        // track of which slot we get in our neighbor's send buffer?
+        auto counts_and_ids = Impl::countSendsAndCreateSteering(
+            exec_space, element_import_ranks, comm_size,
+            typename Impl::CountSendsAndCreateSteeringAlgorithm<
+                ExecutionSpace>::type() );
+
+        // Copy the counts to the host.
+        auto neighbor_counts_host = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), counts_and_ids.first );
+
+        // Get the import counts.
+        for ( std::size_t n = 0; n < num_n; ++n )
+            _num_import[n] = neighbor_counts_host( _neighbors[n] );
+
+        // Post receives to get the number of indices I will send to each rank.
+        // Post that many wildcard recieves to get the number of indices I will
+        // send to each rank
+        std::vector<MPI_Request> requests;
+        requests.reserve( num_n * 2 );
+        for ( std::size_t n = 0; n < num_n; ++n )
+            if ( my_rank != _neighbors[n] )
+            {
+                requests.push_back( MPI_Request() );
+                MPI_Irecv( &_num_export[n], 1, MPI_UNSIGNED_LONG, _neighbors[n],
+                           mpi_tag, comm(), &( requests.back() ) );
+            }
+            else // Self import
+            {
+                _num_export[n] = _num_import[n];
+            }
+
+        // Send the number of imports to each of our neighbors.
+        for ( std::size_t n = 0; n < num_n; ++n )
+            if ( my_rank != _neighbors[n] )
+            {
+                requests.push_back( MPI_Request() );
+                MPI_Isend( &_num_import[n], 1, MPI_UNSIGNED_LONG, _neighbors[n],
+                           mpi_tag, comm(), &( requests.back() ) );
+            }
+
+        // Wait on messages.
+        std::vector<MPI_Status> status( requests.size() );
+        const int ec =
+            MPI_Waitall( requests.size(), requests.data(), status.data() );
+        if ( MPI_SUCCESS != ec )
+            throw std::logic_error( "Failed MPI Communication" );
+
+        // Get the total number of imports/exports.
+        _total_num_export =
+            std::accumulate( _num_export.begin(), _num_export.end(), 0 );
+        _total_num_import =
+            std::accumulate( _num_import.begin(), _num_import.end(), 0 );
+        _num_export_element = _total_num_export;
+
+        // Post receives to get the indices other processes are requesting
+        // i.e. our export indices
+        Kokkos::View<int*, memory_space> export_indices( "export_indices",
+                                                         _total_num_export );
+        std::size_t idx = 0;
+        int num_messages = _total_num_export + element_import_ranks.extent( 0 );
+        std::vector<MPI_Request> mpi_requests( num_messages );
+        std::vector<MPI_Status> mpi_statuses( num_messages );
+        for ( std::size_t i = 0; i < num_n; i++ )
+        {
+            for ( std::size_t j = 0; j < _num_export[i]; j++ )
+            {
+                MPI_Irecv( export_indices.data() + idx, 1, MPI_INT,
+                           _neighbors[i], mpi_tag, comm(), &mpi_requests[idx] );
+                idx++;
+            }
+        }
+
+        // Send the indices we need
+        for ( std::size_t i = 0; i < element_import_ranks.extent( 0 ); i++ )
+        {
+            MPI_Isend( element_import_ids.data() + i, 1, MPI_INT,
+                       *( element_import_ranks.data() + i ), mpi_tag, comm(),
+                       &mpi_requests[idx++] );
+        }
+
+        // Wait for all count exchanges to complete
+        const int ec1 = MPI_Waitall( num_messages, mpi_requests.data(),
+                                     mpi_statuses.data() );
+        if ( MPI_SUCCESS != ec1 )
+            throw std::logic_error( "Failed MPI Communication" );
+
+        // Now, build the export steering
+        // Export rank in mpi_statuses[i].MPI_SOURCE
+        // Export ID in export_indices(i)
+        Kokkos::View<int*, Kokkos::HostSpace> element_export_ranks_h(
+            "element_export_ranks_h", _total_num_export );
+        for ( std::size_t i = 0; i < _total_num_export; i++ )
+        {
+            element_export_ranks_h[i] = mpi_statuses[i].MPI_SOURCE;
+        }
+        auto element_export_ranks = Kokkos::create_mirror_view_and_copy(
+            memory_space(), element_export_ranks_h );
+
+        auto counts_and_ids2 = Impl::countSendsAndCreateSteering(
+            exec_space, element_export_ranks, comm_size,
+            typename Impl::CountSendsAndCreateSteeringAlgorithm<
+                ExecutionSpace>::type() );
+
+        // Return the neighbor ids, export ranks, and export indices
+        return std::tuple{ counts_and_ids2.second, element_export_ranks,
+                           export_indices };
+    }
+
+    /*!
+      \brief Neighbor and import rank creator. Use this when you already know
+      which ranks neighbor each other (i.e. every rank already knows who they
+      will be sending and receiving from) as it will be more efficient. In
+      this case you already know the topology of the point-to-point
+      communication but not how much data to send to and receive from the
+      neighbors.
+
+      \param element_import_ranks The source rank in the target
+      decomposition of each remotely owned element in element_import_ids.
+      This import rank may be any one of the listed neighbor
+      ranks which can include the calling rank. The input is expected
+      to be a Kokkos view in the same memory space as the communication plan.
+
+      \param element_import_ids The local IDs of remotely owned elements that
+      are to be imported. These are local IDs on the remote rank.
+      element_import_ids is mapped such that element_import_ids(i) lives on
+      remote rank element_import_ranks(i).
+
+      \param neighbor_ranks List of ranks this rank will send to and receive
+      from. This list can include the calling rank. This is effectively a
+      description of the topology of the point-to-point communication
+      plan. Only the unique elements in this list are used.
+
+      \return A tuple of Kokkos views, where:
+      Element 1: The location of each export element in the send buffer for its
+      given neighbor.
+      Element 2: The remote ranks this rank will export to
+      Element 3: The local IDs this rank will export
+      Elements 2 and 3 are mapped in the same way as element_import_ranks
+      and element_import_ids
+
+      \note Calling this function completely updates the state of this object
+      and invalidates the previous state.
+
+      \note Unlike creating from exports, an import rank of -1 is not supported.
+    */
+    template <class ViewType>
+    auto createFromImportsAndTopology( const ViewType& element_import_ranks,
+                                       const ViewType& element_import_ids,
+                                       const std::vector<int>& neighbor_ranks )
+    {
+        // Use the default execution space.
+        return createFromImportsAndTopology(
+            execution_space{}, element_import_ranks, element_import_ids,
+            neighbor_ranks );
+    }
+
+    /*!
+      \brief Import rank creator. Use this when you don't know who you will
+      be receiving from - only who you are importing from. This is less
+      efficient than if we already knew who our neighbors were because we have
+      to determine the topology of the point-to-point communication first.
+
+      \param exec_space Kokkos execution space.
+
+      \param element_import_ranks The source rank in the target
+      decomposition of each remotely owned element in element_import_ids.
+      This import rank may be any one of the listed neighbor
+      ranks which can include the calling rank. The input is expected
+      to be a Kokkos view in the same memory space as the communication plan.
+
+      \param element_import_ids The local IDs of remotely owned elements that
+      are to be imported. These are local IDs on the remote rank.
+      element_import_ids is mapped such that element_import_ids(i) lives on
+      remote rank element_import_ranks(i).
+
+      \return A tuple of Kokkos views, where:
+      Element 1: The location of each export element in the send buffer for its
+      given neighbor.
+      Element 2: The remote ranks this rank will export to
+      Element 3: The local IDs this rank will export
+      Elements 2 and 3 are mapped in the same way as element_import_ranks
+      and element_import_ids
+
+      \note Calling this function completely updates the state of this object
+      and invalidates the previous state.
+
+      \note Unlike creating from exports, an import rank of -1 is not supported.
+    */
+    template <class ExecutionSpace, class ViewType>
+    auto createFromImportsOnly( ExecutionSpace exec_space,
+                                const ViewType& element_import_ranks,
+                                const ViewType& element_import_ids )
+        -> std::tuple<Kokkos::View<typename ViewType::size_type*,
+                                   typename ViewType::memory_space>,
+                      Kokkos::View<int*, typename ViewType::memory_space>,
+                      Kokkos::View<int*, typename ViewType::memory_space>>
+    {
+        static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
+
+        if ( element_import_ids.size() != element_import_ranks.size() )
+            throw std::runtime_error( "Export ids and ranks different sizes!" );
+
+        // Get the size of this communicator.
+        int comm_size = -1;
+        MPI_Comm_size( comm(), &comm_size );
+
+        // Get the MPI rank we are currently on.
+        int rank = -1;
+        MPI_Comm_rank( comm(), &rank );
+
+        // Pick an mpi tag for communication. This object has it's own
+        // communication space so any mpi tag will do.
+        const int mpi_tag = 1221;
+
+        // Store which ranks I need to recieve from (i.e. send data to me)
+        Kokkos::View<int*, memory_space> importing_ranks( "importing_ranks",
+                                                          comm_size );
+        Kokkos::deep_copy( importing_ranks, 0 );
+        Kokkos::parallel_for(
+            "Cabana::storeImportRanks",
+            Kokkos::RangePolicy<ExecutionSpace>(
+                0, element_import_ranks.extent( 0 ) ),
+            KOKKOS_LAMBDA( const int i ) {
+                int import_rank = element_import_ranks( i );
+                Kokkos::atomic_store( &importing_ranks( import_rank ), 1 );
+            } );
+        Kokkos::fence();
+        auto importing_ranks_h = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), importing_ranks );
+
+        // Allreduce to count number of ranks I am communicating with
+        Kokkos::View<int*, Kokkos::HostSpace> num_ranks_communicate(
+            "num_ranks_communicate", comm_size );
+        MPI_Allreduce( importing_ranks_h.data(), num_ranks_communicate.data(),
+                       comm_size, MPI_INT, MPI_SUM, comm() );
+
+        // Post that many wildcard recieves to get the number of indices I will
+        // send to each rank Allocate buffers based on num_ranks_communicate
+        int num_recvs = num_ranks_communicate( rank );
+        Kokkos::View<int*, Kokkos::HostSpace> send_counts( "send_counts",
+                                                           num_recvs );
+        Kokkos::View<int*, Kokkos::HostSpace> send_to( "send_to", num_recvs );
+
+        std::vector<MPI_Request> mpi_requests( num_recvs );
+        std::vector<MPI_Status> mpi_statuses( num_recvs );
+
+        // Receive counts for indices this process will send
+        for ( int i = 0; i < num_recvs; i++ )
+        {
+            MPI_Irecv( &send_counts( i ), 1, MPI_INT, MPI_ANY_SOURCE, mpi_tag,
+                       comm(), &mpi_requests[i] );
+        }
+
+        // Count the number of imports this rank needs from other ranks. Keep
+        // track of which slot we get in our neighbor's send buffer?
+        auto counts_and_ids = Impl::countSendsAndCreateSteering(
+            exec_space, element_import_ranks, comm_size,
+            typename Impl::CountSendsAndCreateSteeringAlgorithm<
+                ExecutionSpace>::type() );
+
+        // Copy the counts to the host.
+        auto neighbor_counts_host = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), counts_and_ids.first );
+
+        // Clear vectors before we use them
+        _neighbors.clear();
+        _num_export.clear();
+        _num_import.clear();
+
+        for ( std::size_t i = 0; i < neighbor_counts_host.extent( 0 ); i++ )
+        {
+            if ( neighbor_counts_host( i ) != 0 )
+            {
+                // Send counts of needed indices
+                MPI_Send( &neighbor_counts_host( i ), 1, MPI_INT, i, mpi_tag,
+                          comm() );
+
+                // Store we are importing this count from this rank
+                _neighbors.push_back( i );
+                _num_import.push_back( neighbor_counts_host( i ) );
+            }
+        }
+        // Assign all exports to zero
+        _num_export.assign( _num_import.size(), 0 );
+
+        // Wait for all count exchanges to complete
+        const int ec0 =
+            MPI_Waitall( num_recvs, mpi_requests.data(), mpi_statuses.data() );
+        if ( MPI_SUCCESS != ec0 )
+            throw std::logic_error( "Failed MPI Communication" );
+        // Save ranks we got messages from and track total messages to size
+        // buffers
+        _total_num_export = 0;
+        for ( int i = 0; i < num_recvs; i++ )
+        {
+            send_to( i ) = mpi_statuses[i].MPI_SOURCE;
+            _total_num_export += send_counts( i );
+        }
+
+        // Extract the export ranks and number of exports and then flag the
+        // send ranks.
+        for ( int r = 0; r < num_recvs; ++r )
+        {
+            int export_to = send_to( r );
+            if ( export_to > -1 )
+            {
+                // See if the neighbor we are exporting to is someone we are
+                // also importing from
+                auto found_neighbor = std::find( _neighbors.begin(),
+                                                 _neighbors.end(), export_to );
+
+                // If this is a new neighbor (i.e. someone we are not importing
+                // from) record this.
+                if ( found_neighbor == std::end( _neighbors ) )
+                {
+                    _neighbors.push_back( export_to );
+                    _num_import.push_back( 0 );
+                    _num_export.push_back( send_counts( r ) );
+                }
+
+                // Otherwise if we are already importing from this neighbor that
+                // means we already have a neighbor/import entry. Just assign
+                // the export entry for that neighbor.
+                else
+                {
+                    auto n =
+                        std::distance( _neighbors.begin(), found_neighbor );
+                    _num_export[n] = send_counts( r );
+                }
+            }
+            else
+            {
+                // This block should never be reached as
+                // mpi_statuses[i].MPI_SOURCE will never be less than 0.
+                throw std::runtime_error(
+                    "CommunicationPlan::createFromImportsOnly: "
+                    "mpi_statuses[i].MPI_SOURCE returned a value >= -1" );
+            }
+        }
+        // If we are sending to ourself put that one first in the neighbor
+        // list and assign the number of exports to be the number of imports.
+        for ( std::size_t n = 0; n < _neighbors.size(); ++n )
+            if ( _neighbors[n] == rank )
+            {
+                std::swap( _neighbors[n], _neighbors[0] );
+                std::swap( _num_export[n], _num_export[0] );
+                std::swap( _num_import[n], _num_import[0] );
+                _num_export[0] = _num_import[0];
+                break;
+            }
+
+        // Total number of imports and exports are now known
+        _total_num_import = element_import_ranks.extent( 0 );
+        _num_export_element = _total_num_export;
+
+        // Post receives to get the indices other processes are requesting
+        // i.e. our export indices
+        Kokkos::View<int*, memory_space> export_indices( "export_indices",
+                                                         _total_num_export );
+        std::size_t idx = 0;
+        mpi_requests.clear();
+        mpi_statuses.clear();
+        int num_messages = _total_num_export + element_import_ranks.extent( 0 );
+        mpi_requests.resize( num_messages );
+        mpi_statuses.resize( num_messages );
+        for ( int i = 0; i < num_recvs; i++ )
+        {
+            for ( int j = 0; j < send_counts( i ); j++ )
+            {
+                MPI_Irecv( export_indices.data() + idx, 1, MPI_INT,
+                           send_to( i ), mpi_tag, comm(), &mpi_requests[idx] );
+                idx++;
+            }
+        }
+
+        // Send the indices we need
+        for ( std::size_t i = 0; i < element_import_ranks.extent( 0 ); i++ )
+        {
+            MPI_Isend( element_import_ids.data() + i, 1, MPI_INT,
+                       *( element_import_ranks.data() + i ), mpi_tag, comm(),
+                       &mpi_requests[idx++] );
+        }
+
+        // Wait for all count exchanges to complete
+        const int ec1 = MPI_Waitall( num_messages, mpi_requests.data(),
+                                     mpi_statuses.data() );
+        if ( MPI_SUCCESS != ec1 )
+            throw std::logic_error( "Failed MPI Communication" );
+
+        // Now, build the export steering
+        // Export rank in mpi_statuses[i].MPI_SOURCE
+        // Export ID in export_indices(i)
+        Kokkos::View<int*, Kokkos::HostSpace> element_export_ranks_h(
+            "element_export_ranks_h", _total_num_export );
+        for ( std::size_t i = 0; i < _total_num_export; i++ )
+        {
+            element_export_ranks_h[i] = mpi_statuses[i].MPI_SOURCE;
+        }
+        auto element_export_ranks = Kokkos::create_mirror_view_and_copy(
+            memory_space(), element_export_ranks_h );
+
+        auto counts_and_ids2 = Impl::countSendsAndCreateSteering(
+            exec_space, element_export_ranks, comm_size,
+            typename Impl::CountSendsAndCreateSteeringAlgorithm<
+                ExecutionSpace>::type() );
+
+        return std::tuple{ counts_and_ids2.second, element_export_ranks,
+                           export_indices };
+    }
+
+    /*!
+      \brief Import rank creator. Use this when you don't know who you will
+      be receiving from - only who you are importing from. This is less
+      efficient than if we already knew who our neighbors were because we have
+      to determine the topology of the point-to-point communication first.
+
+      \param element_import_ranks The source rank in the target
+      decomposition of each remotely owned element in element_import_ids.
+      This import rank may be any one of the listed neighbor
+      ranks which can include the calling rank. The input is expected
+      to be a Kokkos view in the same memory space as the communication plan.
+
+      \param element_import_ids The local IDs of remotely owned elements that
+      are to be imported. These are local IDs on the remote rank.
+      element_import_ids is mapped such that element_import_ids(i) lives on
+      remote rank element_import_ranks(i).
+
+      \return A tuple of Kokkos views, where:
+      Element 1: The location of each export element in the send buffer for its
+      given neighbor.
+      Element 2: The remote ranks this rank will export to
+      Element 3: The local IDs this rank will export
+      Elements 2 and 3 are mapped in the same way as element_import_ranks
+      and element_import_ids
+
+      \note Calling this function completely updates the state of this object
+      and invalidates the previous state.
+
+      \note Unlike creating from exports, an import rank of -1 is not supported.
+    */
+    template <class ViewType>
+    auto createFromImportsOnly( const ViewType& element_import_ranks,
+                                const ViewType& element_import_ids )
+    {
+        // Use the default execution space.
+        return createFromImportsOnly( execution_space{}, element_import_ranks,
+                                      element_import_ids );
     }
 
     /*!
@@ -1281,14 +1805,12 @@ class CommunicationData
         setData( particles );
 
         auto send_capacity = sendCapacity();
-        auto new_send_size = static_cast<std::size_t>(
-            static_cast<double>( total_send ) * _overallocation );
+        std::size_t new_send_size = total_send * _overallocation;
         if ( new_send_size > send_capacity )
             _comm_data.reallocateSend( new_send_size );
 
         auto recv_capacity = receiveCapacity();
-        auto new_recv_size = static_cast<std::size_t>(
-            static_cast<double>( total_recv ) * _overallocation );
+        std::size_t new_recv_size = total_recv * _overallocation;
         if ( new_recv_size > recv_capacity )
             _comm_data.reallocateReceive( new_recv_size );
 
