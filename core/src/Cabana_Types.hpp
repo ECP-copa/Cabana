@@ -23,9 +23,9 @@
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
-// Halo type tags.
+// Communication driver construction type tags.
 //---------------------------------------------------------------------------//
-namespace Halo
+namespace CommDriver
 {
 /*!
     \brief Export-based halo tag - default.
