@@ -23,6 +23,26 @@
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
+// Halo type tags.
+//---------------------------------------------------------------------------//
+namespace Halo
+{
+/*!
+    \brief Export-based halo tag - default.
+*/
+struct Export
+{
+};
+
+/*!
+    \brief Import-based halo tag.
+*/
+struct Import
+{
+};
+} // end namespace Halo
+
+//---------------------------------------------------------------------------//
 // Memory access tags.
 //---------------------------------------------------------------------------//
 //! Memory access type checker.
