@@ -87,7 +87,7 @@ void exportHaloExchangeExample()
     }
 
     /*
-      Before migrating the data, let's print out the data in the slices
+      Before haloing the data, let's print out the data in the slices
       on one rank.
     */
     if ( comm_rank == 0 )
