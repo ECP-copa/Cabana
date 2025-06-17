@@ -380,8 +380,7 @@ class HypreSemiStructuredSolver
         if ( values.layout()->dofsPerEntity() !=
              static_cast<int>( index_size ) )
             throw std::runtime_error(
-                "Cabana::Grid::HypreSemiStructuredSolver::setMatrixValues: "
-                "Number of matrix values does not match stencil size" );
+                "Cabana::Grid::HypreSemiStructuredSolver::setMatrixValues: Number of matrix values does not match stencil size" );
 
         // Spatial dimension.
         const std::size_t num_space_dim = Array_t::num_space_dim;
@@ -1220,9 +1219,7 @@ createHypreSemiStructuredSolver( const std::string& solver_type,
         return createHypreSemiStructDiagonal<Scalar, MemorySpace>(
             layout, is_preconditioner, n_vars );
     else
-        throw std::runtime_error(
-            "Cabana::Grid::createHypreSemiStructuredSolver: Invalid solver "
-            "type" );
+        throw std::runtime_error( "Cabana::Grid::createHypreSemiStructuredSolver: Invalid solver type" );
 }
 
 //---------------------------------------------------------------------------//
