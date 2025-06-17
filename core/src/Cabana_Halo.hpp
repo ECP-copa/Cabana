@@ -433,7 +433,7 @@ class Gather<HaloType, AoSoAType,
             MPI_Waitall( requests.size(), requests.data(), status.data() );
         if ( MPI_SUCCESS != ec )
             throw std::logic_error(
-                "Cabana::gather::apply: Failed MPI Communication" );
+                "Cabana::Gather::apply: Failed MPI Communication" );
 
         // Extract the receive buffer into the ghosted elements.
         std::size_t num_local = _halo.numLocal();
