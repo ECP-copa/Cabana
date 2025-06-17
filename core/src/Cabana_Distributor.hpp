@@ -291,7 +291,7 @@ void distributeData(
         MPI_Waitall( requests.size(), requests.data(), status.data() );
     if ( MPI_SUCCESS != ec )
         throw std::logic_error(
-            "Cabana::Impl::distributeData: Failed MPI Communication" );
+            "Cabana::Distributor: Failed MPI Communication" );
 
     // Extract the receive buffer into the destination AoSoA.
     auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
@@ -342,10 +342,10 @@ void migrate( ExecutionSpace exec_space, const Distributor_t& distributor,
 {
     // Check that src and dst are the right size.
     if ( src.size() != distributor.exportSize() )
-        throw std::runtime_error( "Cabana::migrate (Distributor): Source is "
+        throw std::runtime_error( "Cabana::migrate: Source is "
                                   "the wrong size for migration!" );
     if ( dst.size() != distributor.totalNumImport() )
-        throw std::runtime_error( "Cabana::migrate (Distributor): Destination "
+        throw std::runtime_error( "Cabana::migrate: Destination "
                                   "is the wrong size for migration!" );
 
     // Move the data.
