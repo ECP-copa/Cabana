@@ -107,7 +107,7 @@ class Halo : public CommunicationPlan<MemorySpace>
         : CommunicationPlan<MemorySpace>( comm )
         , _num_local( num_local )
     {
-        if ( export_ids.size() != export_ranks.size() )
+        if ( element_ids.size() != element_ranks.size() )
             throw std::runtime_error(
                 "Cabana::Halo: ids and ranks views are different sizes!" );
 
@@ -193,8 +193,8 @@ struct is_halo_impl : public std::false_type
 {
 };
 
-template <typename MemorySpace>
-struct is_halo_impl<Halo<MemorySpace>> : public std::true_type
+template <typename MemorySpace, typename BuildType>
+struct is_halo_impl<Halo<MemorySpace, BuildType>> : public std::true_type
 {
 };
 //! \endcond
