@@ -25,22 +25,19 @@ namespace Cabana
 //---------------------------------------------------------------------------//
 // Communication driver construction type tags.
 //---------------------------------------------------------------------------//
-namespace CommDriver
-{
 /*!
-    \brief Export-based halo tag - default.
+    \brief Export-based tag - default.
 */
 struct Export
 {
 };
 
 /*!
-    \brief Import-based halo tag.
+    \brief Import-based tag.
 */
 struct Import
 {
 };
-} // end namespace Halo
 
 //---------------------------------------------------------------------------//
 // Memory access tags.

@@ -55,7 +55,7 @@ namespace Cabana
   ghost from is the unique owner of that data. Import is used in the context
   of the forward communication plan (the gather).
 */
-template <class MemorySpace, class BuildType=CommDriver::Export>
+template <class MemorySpace, class BuildType=Export>
 class Halo : public CommunicationPlan<MemorySpace>
 {
   public:
@@ -107,8 +107,9 @@ class Halo : public CommunicationPlan<MemorySpace>
         : CommunicationPlan<MemorySpace>( comm )
         , _num_local( num_local )
     {
-        if ( element_ids.size() != element_ranks.size() )
-            throw std::runtime_error( "Export ids and ranks different sizes!" );
+        if ( export_ids.size() != export_ranks.size() )
+            throw std::runtime_error(
+                "Cabana::Halo: ids and ranks views are different sizes!" );
 
         auto neighbor_ids = this->createFromTopology( BuildType(), 
             element_ranks, neighbor_ranks );
@@ -157,7 +158,8 @@ class Halo : public CommunicationPlan<MemorySpace>
         , _num_local( num_local )
     {
         if ( element_ids.size() != element_ranks.size() )
-            throw std::runtime_error( "Export ids and ranks different sizes!" );
+            throw std::runtime_error(
+                "Cabana::Halo: ids and ranks views are different sizes!" );
 
         auto neighbor_ids = this->createFromNoTopology( BuildType(), element_ranks );
         this->createExportSteering( neighbor_ids, element_ranks,

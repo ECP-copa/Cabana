@@ -593,7 +593,7 @@ class CommunicationPlan
     */
     template <class ExecutionSpace, class ViewType>
     Kokkos::View<size_type*, memory_space>
-    createFromTopology( CommDriver::Export, ExecutionSpace exec_space,
+    createFromTopology( Cabana::Export, ExecutionSpace exec_space,
                                   const ViewType& element_export_ranks,
                                   const std::vector<int>& neighbor_ranks )
     {
@@ -715,11 +715,11 @@ class CommunicationPlan
     */
     template <class ViewType>
     Kokkos::View<size_type*, memory_space>
-    createFromTopology( CommDriver::Export, const ViewType& element_export_ranks,
+    createFromTopology( Cabana::Export, const ViewType& element_export_ranks,
                                   const std::vector<int>& neighbor_ranks )
     {
         // Use the default execution space.
-        return createFromTopology( CommDriver::Export(),
+        return createFromTopology( Cabana::Export(),
             execution_space{}, element_export_ranks, neighbor_ranks );
     }
 
@@ -755,7 +755,7 @@ class CommunicationPlan
     */
     template <class ExecutionSpace, class ViewType>
     Kokkos::View<size_type*, memory_space>
-    createFromNoTopology( CommDriver::Export, ExecutionSpace exec_space,
+    createFromNoTopology( Cabana::Export, ExecutionSpace exec_space,
                            const ViewType& element_export_ranks )
     {
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
@@ -922,10 +922,10 @@ class CommunicationPlan
     */
     template <class ViewType>
     Kokkos::View<size_type*, memory_space>
-    createFromNoTopology( CommDriver::Export, const ViewType& element_export_ranks )
+    createFromNoTopology( Cabana::Export, const ViewType& element_export_ranks )
     {
         // Use the default execution space.
-        return createFromNoTopology( CommDriver::Export(), execution_space{}, element_export_ranks );
+        return createFromNoTopology( Cabana::Export(), execution_space{}, element_export_ranks );
     }
 
     /*!
