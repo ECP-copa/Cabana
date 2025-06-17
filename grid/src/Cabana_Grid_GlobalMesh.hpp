@@ -75,7 +75,7 @@ class GlobalMesh
                  scalar_type( 100.0 ) *
                      std::numeric_limits<scalar_type>::epsilon() )
                 throw std::logic_error(
-                    "Cabana::Grid::GlocalMesh: Extent not evenly divisible by "
+                    "Cabana::Grid::GlobalMesh: Extent not evenly divisible by "
                     "uniform cell size" );
         }
     }
