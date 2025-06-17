@@ -289,7 +289,7 @@ void distributeData(
     const int ec =
         MPI_Waitall( requests.size(), requests.data(), status.data() );
     if ( MPI_SUCCESS != ec )
-        throw std::logic_error( "Failed MPI Communication" );
+        throw std::logic_error( "Cabana::Impl::distributeData: Failed MPI Communication" );
 
     // Extract the receive buffer into the destination AoSoA.
     auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
@@ -340,10 +340,10 @@ void migrate( ExecutionSpace exec_space, const Distributor_t& distributor,
 {
     // Check that src and dst are the right size.
     if ( src.size() != distributor.exportSize() )
-        throw std::runtime_error( "Source is the wrong size for migration!" );
+        throw std::runtime_error( "Cabana::migrate (Distributor): Source is the wrong size for migration!" );
     if ( dst.size() != distributor.totalNumImport() )
         throw std::runtime_error(
-            "Destination is the wrong size for migration!" );
+            "Cabana::migrate (Distributor): Destination is the wrong size for migration!" );
 
     // Move the data.
     Impl::distributeData( exec_space, distributor, src, dst );
@@ -409,7 +409,7 @@ void migrate( ExecutionSpace exec_space, const Distributor_t& distributor,
 {
     // Check that the AoSoA is the right size.
     if ( aosoa.size() != distributor.exportSize() )
-        throw std::runtime_error( "AoSoA is the wrong size for migration!" );
+        throw std::runtime_error( "Cabana::migrate (Distributor, in-place): AoSoA is the wrong size for migration!" );
 
     // Determine if the source of destination decomposition has more data on
     // this rank.
@@ -490,10 +490,10 @@ void migrate( ExecutionSpace, const Distributor_t& distributor,
 {
     // Check that src and dst are the right size.
     if ( src.size() != distributor.exportSize() )
-        throw std::runtime_error( "Source is the wrong size for migration!" );
+        throw std::runtime_error( "Cabana::migrate (Distributor, slice version): Source is the wrong size for migration!" );
     if ( dst.size() != distributor.totalNumImport() )
         throw std::runtime_error(
-            "Destination is the wrong size for migration!" );
+            "Cabana::migrate (Distributor, slice version): Destination is the wrong size for migration!" );
 
     // Get the number of components in the slices.
     size_t num_comp = 1;
@@ -619,7 +619,7 @@ void migrate( ExecutionSpace, const Distributor_t& distributor,
     const int ec =
         MPI_Waitall( requests.size(), requests.data(), status.data() );
     if ( MPI_SUCCESS != ec )
-        throw std::logic_error( "Failed MPI Communication" );
+        throw std::logic_error( "Cabana::migrate: Failed MPI Communication" );
 
     // Extract the data from the receive buffer into the destination Slice.
     auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
