@@ -316,7 +316,9 @@ class SparseHalo
                     Kokkos::resize( _tmp_tile_steering[i], tmp_steering_size );
             }
             else
-                std::runtime_error( "neighbor rank doesn't match id" );
+                std::runtime_error(
+                    "Cabana::Grid::Experimental::SparseHalo::updateTileSpace: "
+                    "Neighbor rank doesn't match id" );
         }
     }
 
@@ -451,7 +453,9 @@ class SparseHalo
 
         // check if the counting communication succeed
         if ( MPI_SUCCESS != ec )
-            throw std::logic_error( "sparse_halo: counting sending failed." );
+            throw std::logic_error(
+                "Cabana::Grid::Experimental::SparseHalo::"
+                "collectNeighborCounting: counting sending failed." );
         MPI_Barrier( comm );
     }
 
@@ -619,8 +623,8 @@ class SparseHalo
             valid_sends.size(), steering_requests.data() + valid_recvs.size(),
             MPI_STATUSES_IGNORE );
         if ( MPI_SUCCESS != ec_ss )
-            throw std::logic_error(
-                "sparse_halo_gather: steering sending failed." );
+            throw std::logic_error( "Cabana::Grid::Experimental::SparseHalo::"
+                                    "gather: steering sending failed." );
         MPI_Barrier( comm );
 
         // ------------------------------------------------------------------
@@ -680,7 +684,8 @@ class SparseHalo
             // if not there could be some problems
             if ( MPI_UNDEFINED == unpack_index )
                 std::runtime_error(
-                    std::string( "sparse_halo_gather: data receiving failed, "
+                    std::string( "Cabana::Grid::Experimental::SparseHalo::"
+                                 "gather: data receiving failed, "
                                  "get only " ) +
                     std::to_string( i ) + ", need " +
                     std::to_string( valid_recvs.size() ) );
@@ -794,8 +799,8 @@ class SparseHalo
             valid_sends.size(), steering_requests.data() + valid_recvs.size(),
             MPI_STATUSES_IGNORE );
         if ( MPI_SUCCESS != ec_ss )
-            throw std::logic_error(
-                "sparse_halo_scatter: steering sending failed." );
+            throw std::logic_error( "Cabana::Grid::Experimental::SparseHalo::"
+                                    "scatter: steering sending failed." );
         MPI_Barrier( comm );
 
         // ------------------------------------------------------------------
@@ -877,8 +882,8 @@ class SparseHalo
                                          requests.data() + valid_recvs.size(),
                                          MPI_STATUSES_IGNORE );
         if ( MPI_SUCCESS != ec_data )
-            throw std::logic_error(
-                "sparse_halo_scatter: data sending failed." );
+            throw std::logic_error( "Cabana::Grid::Experimental::SparseHalo::"
+                                    "scatter: data sending failed." );
 
         // reinit steerings for next round of communication
         for ( std::size_t i = 0; i < _tmp_tile_steering.size(); ++i )

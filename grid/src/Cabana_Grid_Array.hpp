@@ -284,7 +284,9 @@ class Array
             if ( (long)view.extent( d ) !=
                  layout->indexSpace( Ghost(), Local() ).extent( d ) )
                 throw std::runtime_error(
-                    "Layout and view dimensions do not match" );
+                    "Cabana::Grid::Array: Layout and "
+                    "view dimensions do not match (View label: " +
+                    view.label() + ")" );
     }
 
     //! Get the layout of the array.
@@ -375,7 +377,9 @@ createSubarray( const Array<Scalar, EntityType, MeshType, Params...>& array,
                 const int dof_min, const int dof_max )
 {
     if ( dof_min < 0 || dof_max > array.layout()->dofsPerEntity() )
-        throw std::logic_error( "Subarray dimensions out of bounds" );
+        throw std::logic_error( "Cabana::Grid::createSubarray: Subarray "
+                                "dimensions out of bounds (Label: " +
+                                array.label() + ")" );
 
     auto space = array.layout()->indexSpace( Ghost(), Local() );
     std::array<long, MeshType::num_space_dim + 1> min;
@@ -428,7 +432,9 @@ template <class Array_t, class DecompositionTag>
 void assign( Array_t& array, const typename Array_t::value_type alpha,
              DecompositionTag tag )
 {
-    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
+    static_assert(
+        is_array<Array_t>::value,
+        "Cabana::Grid::ArrayOp::assign: Cabana::Grid::Array required" );
     auto subview = createSubview( array.view(),
                                   array.layout()->indexSpace( tag, Local() ) );
     Kokkos::deep_copy( subview, alpha );
@@ -446,7 +452,9 @@ std::enable_if_t<3 == Array_t::num_space_dim, void>
 scale( Array_t& array, const typename Array_t::value_type alpha,
        DecompositionTag tag )
 {
-    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
+    static_assert(
+        is_array<Array_t>::value,
+        "Cabana::Grid::ArrayOp::scale: Cabana::Grid::Array required" );
     auto view = array.view();
     Kokkos::parallel_for(
         "ArrayOp::scale",
@@ -468,7 +476,9 @@ std::enable_if_t<2 == Array_t::num_space_dim, void>
 scale( Array_t& array, const typename Array_t::value_type alpha,
        DecompositionTag tag )
 {
-    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
+    static_assert(
+        is_array<Array_t>::value,
+        "Cabana::Grid::ArrayOp::scale: Cabana::Grid::Array required" );
     auto view = array.view();
     Kokkos::parallel_for(
         "ArrayOp::scale",
@@ -492,10 +502,14 @@ std::enable_if_t<3 == Array_t::num_space_dim, void>
 scale( Array_t& array, const std::vector<typename Array_t::value_type>& alpha,
        DecompositionTag tag )
 {
-    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
+    static_assert(
+        is_array<Array_t>::value,
+        "Cabana::Grid::ArrayOp::scale: Cabana::Grid::Array required" );
     if ( alpha.size() !=
          static_cast<unsigned>( array.layout()->dofsPerEntity() ) )
-        throw std::runtime_error( "Incorrect vector size" );
+        throw std::runtime_error( "Cabana::Grid::ArrayOp::scale: Incorrect "
+                                  "vector size (Label: " +
+                                  array.label() + ")" );
 
     Kokkos::View<const typename Array_t::value_type*, Kokkos::HostSpace,
                  Kokkos::MemoryUnmanaged>
@@ -525,10 +539,14 @@ std::enable_if_t<2 == Array_t::num_space_dim, void>
 scale( Array_t& array, const std::vector<typename Array_t::value_type>& alpha,
        DecompositionTag tag )
 {
-    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
+    static_assert(
+        is_array<Array_t>::value,
+        "Cabana::Grid::ArrayOp::scale: Cabana::Grid::Array required" );
     if ( alpha.size() !=
          static_cast<unsigned>( array.layout()->dofsPerEntity() ) )
-        throw std::runtime_error( "Incorrect vector size" );
+        throw std::runtime_error( "Cabana::Grid::ArrayOp::scale: Incorrect "
+                                  "vector size (Label: " +
+                                  array.label() + ")" );
 
     Kokkos::View<const typename Array_t::value_type*, Kokkos::HostSpace,
                  Kokkos::MemoryUnmanaged>
@@ -556,11 +574,15 @@ scale( Array_t& array, const std::vector<typename Array_t::value_type>& alpha,
 template <class Array_t, class DecompositionTag>
 void copy( Array_t& a, const Array_t& b, DecompositionTag tag )
 {
-    static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
+    static_assert(
+        is_array<Array_t>::value,
+        "Cabana::Grid::ArrayOp::copy: Cabana::Grid::Array required" );
     auto a_space = a.layout()->indexSpace( tag, Local() );
     auto b_space = b.layout()->indexSpace( tag, Local() );
     if ( a_space != b_space )
-        throw std::logic_error( "Incompatible index spaces" );
+        throw std::logic_error( "Cabana::Grid::ArrayOp::copy: Incompatible "
+                                "index spaces (Labels: " +
+                                a.label() + ", " + b.label() + ")" );
     auto subview_a = createSubview( a.view(), a_space );
     auto subview_b = createSubview( b.view(), b_space );
     Kokkos::deep_copy( subview_a, subview_b );
@@ -783,7 +805,8 @@ void dot( const Array_t& a, const Array_t& b,
     static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     if ( products.size() !=
          static_cast<unsigned>( a.layout()->dofsPerEntity() ) )
-        throw std::runtime_error( "Incorrect vector size" );
+        throw std::runtime_error(
+            "Cabana::Grid::ArrayOp::dot: Incorrect vector size" );
 
     for ( auto& p : products )
         p = 0.0;
@@ -889,7 +912,8 @@ void normInf( const Array_t& array,
     static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     if ( norms.size() !=
          static_cast<unsigned>( array.layout()->dofsPerEntity() ) )
-        throw std::runtime_error( "Incorrect vector size" );
+        throw std::runtime_error(
+            "Cabana::Grid::ArrayOp::normInf: Incorrect vector size" );
 
     for ( auto& n : norms )
         n = 0.0;
@@ -989,7 +1013,8 @@ void norm1( const Array_t& array,
     static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     if ( norms.size() !=
          static_cast<unsigned>( array.layout()->dofsPerEntity() ) )
-        throw std::runtime_error( "Incorrect vector size" );
+        throw std::runtime_error(
+            "Cabana::Grid::ArrayOp::norm1: Incorrect vector size" );
 
     for ( auto& n : norms )
         n = 0.0;
@@ -1089,7 +1114,8 @@ void norm2( const Array_t& array,
     static_assert( is_array<Array_t>::value, "Cabana::Grid::Array required" );
     if ( norms.size() !=
          static_cast<unsigned>( array.layout()->dofsPerEntity() ) )
-        throw std::runtime_error( "Incorrect vector size" );
+        throw std::runtime_error(
+            "Cabana::Grid::ArrayOp::norm2: Incorrect vector size" );
 
     for ( auto& n : norms )
         n = 0.0;

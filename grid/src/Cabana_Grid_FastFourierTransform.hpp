@@ -74,9 +74,9 @@ template <class ArrayEntity, class ArrayMesh, class ArrayMemorySpace,
 struct is_matching_array : public std::false_type
 {
     static_assert( std::is_same<ArrayEntity, Entity>::value,
-                   "Array entity type mush match FFT entity type." );
+                   "Array entity type must match FFT entity type." );
     static_assert( std::is_same<ArrayMesh, Mesh>::value,
-                   "Array mesh type mush match FFT mesh type." );
+                   "Array mesh type must match FFT mesh type." );
     static_assert( std::is_same<ArrayMemorySpace, MemorySpace>::value,
                    "Array memory space must match FFT memory space." );
 };
@@ -237,7 +237,9 @@ class FastFourierTransform
     {
         if ( 2 != dof )
             throw std::logic_error(
-                "Only 1 complex value per entity allowed in FFT" );
+                "Cabana::Grid::Experimental::FastFourierTransform::"
+                "checkArrayDofs: Only 1 complex value per entity allowed in "
+                "FFT" );
     }
 
     /*!
@@ -401,7 +403,8 @@ struct HeffteBackendTraits<ExecutionSpace, Impl::FFTBackendDefault>
     using backend_type = heffte::backend::mkl;
 };
 #else
-throw std::runtime_error( "Must enable at least one heFFTe host backend." );
+throw std::runtime_error( "Cabana::Grid::FastFourierTransform: Must enable at "
+                          "least one heFFTe host backend." );
 #endif
 #endif
 #ifdef Heffte_ENABLE_CUDA
@@ -592,8 +595,10 @@ class HeffteFastFourierTransform
         auto entity_space =
             layout.localGrid()->indexSpace( Own(), EntityType(), Local() );
         if ( fftsize < (int)entity_space.size() )
-            throw std::logic_error( "Expected FFT allocation size smaller "
-                                    "than local grid size" );
+            throw std::logic_error(
+                "Cabana::Grid::Experimental::HeffteFastFourierTransform: "
+                "Expected FFT allocation size smaller "
+                "than local grid size" );
 
         _fft_work = Kokkos::View<Scalar*, memory_space>(
             Kokkos::ViewAllocateWithoutInitializing( "fft_work" ),
@@ -667,7 +672,9 @@ class HeffteFastFourierTransform
         else
         {
             throw std::logic_error(
-                "Only 1:forward and -1:backward are allowed as compute flag" );
+                "Cabana::Grid::Experimental::HeffteFastFourierTransform::"
+                "compute: Only 1:forward and -1:backward are allowed as "
+                "compute flag" );
         }
 
         // Copy back to output array.
