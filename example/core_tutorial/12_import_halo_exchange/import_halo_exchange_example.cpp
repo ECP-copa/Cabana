@@ -87,7 +87,7 @@ void importHaloExchangeExample()
     }
 
     /*
-      Before migrating the data, let's print out the data in the slices
+      Before haloing the data, let's print out the data in the slices
       on one rank.
     */
     if ( comm_rank == 0 )
@@ -174,28 +174,28 @@ void importHaloExchangeExample()
       elements in the AoSoA should now have data from our neighbor (with
       their previous local ID), with a total size of 110.
      */
-    // Cabana::gather( halo, aosoa );
+    Cabana::gather( halo, aosoa );
 
     /*
       Having exchanged the data, let's print out the data on one rank.
     */
-    // if ( comm_rank == 0 )
-    // {
-    //     std::cout << "AFTER gather" << std::endl
-    //               << "(Rank " << comm_rank << ") ";
-    //     for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
-    //         std::cout << slice_ranks( i ) << " ";
-    //     std::cout << std::endl
-    //               << "(" << slice_ranks.size() << " ranks after gather)"
-    //               << std::endl
-    //               << "(Rank " << comm_rank << ") ";
-    //     for ( std::size_t i = 0; i < slice_ids.size(); ++i )
-    //         std::cout << slice_ids( i ) << " ";
-    //     std::cout << std::endl
-    //               << "(" << slice_ids.size() << " IDs after gather)"
-    //               << std::endl
-    //               << std::endl;
-    // }
+    if ( comm_rank == 0 )
+    {
+        std::cout << "AFTER gather" << std::endl
+                  << "(Rank " << comm_rank << ") ";
+        for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
+            std::cout << slice_ranks( i ) << " ";
+        std::cout << std::endl
+                  << "(" << slice_ranks.size() << " rank data after gather)"
+                  << std::endl
+                  << "(Rank " << comm_rank << ") ";
+        for ( std::size_t i = 0; i < slice_ids.size(); ++i )
+            std::cout << slice_ids( i ) << " ";
+        std::cout << std::endl
+                  << "(" << slice_ids.size() << " ID data after gather)"
+                  << std::endl
+                  << std::endl;
+    }
 
     /*
       Scatter the ghost data we have back to its owning rank. Any collisions
@@ -208,28 +208,28 @@ void importHaloExchangeExample()
       received from their neighbors. We only have one neighbor in this case so
       these elements should now be doubled, with an unchanged total slice size.
      */
-    // Cabana::scatter( halo, slice_ranks );
-    // Cabana::scatter( halo, slice_ids );
+    Cabana::scatter( halo, slice_ranks );
+    Cabana::scatter( halo, slice_ids );
 
     /*
       Having exchanged the data, let's print out the data on one rank.
     */
-    // if ( comm_rank == 0 )
-    // {
-    //     std::cout << "AFTER scatter" << std::endl
-    //               << "(Rank " << comm_rank << ") ";
-    //     for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
-    //         std::cout << slice_ranks( i ) << " ";
-    //     std::cout << std::endl
-    //               << "(" << slice_ranks.size() << " ranks after scatter)"
-    //               << std::endl
-    //               << "(Rank " << comm_rank << ") ";
-    //     for ( std::size_t i = 0; i < slice_ids.size(); ++i )
-    //         std::cout << slice_ids( i ) << " ";
-    //     std::cout << std::endl
-    //               << "(" << slice_ids.size() << " IDs after scatter)"
-    //               << std::endl;
-    // }
+    if ( comm_rank == 0 )
+    {
+        std::cout << "AFTER scatter" << std::endl
+                  << "(Rank " << comm_rank << ") ";
+        for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
+            std::cout << slice_ranks( i ) << " ";
+        std::cout << std::endl
+                  << "(" << slice_ranks.size() << " ranks after scatter)"
+                  << std::endl
+                  << "(Rank " << comm_rank << ") ";
+        for ( std::size_t i = 0; i < slice_ids.size(); ++i )
+            std::cout << slice_ids( i ) << " ";
+        std::cout << std::endl
+                  << "(" << slice_ids.size() << " IDs after scatter)"
+                  << std::endl;
+    }
 }
 
 //---------------------------------------------------------------------------//
