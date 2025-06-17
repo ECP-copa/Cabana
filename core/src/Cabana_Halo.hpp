@@ -55,7 +55,7 @@ namespace Cabana
   ghost from is the unique owner of that data. Import is used in the context
   of the forward communication plan (the gather).
 */
-template <class MemorySpace>
+template <class MemorySpace, class BuildType=CommDriver::Export>
 class Halo : public CommunicationPlan<MemorySpace>
 {
   public:
@@ -78,16 +78,16 @@ class Halo : public CommunicationPlan<MemorySpace>
 
       \param num_local The number of locally-owned elements on this rank.
 
-      \param element_export_ids The local ids of the elements that will be
+      \param element_ids The local ids of the elements that will be
       exported to other ranks to be used as ghosts. Element ids may be
       repeated in this list if they are sent to multiple destinations. Must be
-      the same length as element_export_ranks. The input is expected to be a
+      the same length as element_ranks. The input is expected to be a
       Kokkos view or Cabana slice in the same memory space as the
       communication plan.
 
-      \param element_export_ranks The ranks to which we will send each element
-      in element_export_ids. In this case each rank must be one of the
-      neighbor ranks. Must be the same length as element_export_ids. A rank is
+      \param element_ranks The ranks to which we will send each element
+      in element_ids. In this case each rank must be one of the
+      neighbor ranks. Must be the same length as element_ids. A rank is
       allowed to send to itself. The input is expected to be a Kokkos view or
       Cabana slice in the same memory space as the communication plan.
 
@@ -101,20 +101,20 @@ class Halo : public CommunicationPlan<MemorySpace>
     */
     template <class IdViewType, class RankViewType>
     Halo( MPI_Comm comm, const std::size_t num_local,
-          const IdViewType& element_export_ids,
-          const RankViewType& element_export_ranks,
+          const IdViewType& element_ids,
+          const RankViewType& element_ranks,
           const std::vector<int>& neighbor_ranks )
         : CommunicationPlan<MemorySpace>( comm )
         , _num_local( num_local )
     {
         if ( element_export_ids.size() != element_export_ranks.size() )
             throw std::runtime_error(
-                "Cabana::Halo: Export ids and ranks different sizes!" );
+                "Cabana::Halo: ids and ranks views are different sizes!" );
 
-        auto neighbor_ids = this->createFromExportsAndTopology(
-            element_export_ranks, neighbor_ranks );
-        this->createExportSteering( neighbor_ids, element_export_ranks,
-                                    element_export_ids );
+        auto neighbor_ids = this->createFromTopology( BuildType(), 
+            element_ranks, neighbor_ranks );
+        this->createExportSteering( neighbor_ids, element_ranks,
+                                    element_ids );
     }
 
     /*!
@@ -134,15 +134,15 @@ class Halo : public CommunicationPlan<MemorySpace>
 
       \param num_local The number of locally-owned elements on this rank.
 
-      \param element_export_ids The local ids of the elements that will be
+      \param element_ids The local ids of the elements that will be
       sent to other ranks to be used as ghosts. Element ids may be repeated in
       this list if they are sent to multiple destinations. Must be the same
-      length as element_export_ranks. The input is expected to be a Kokkos
+      length as element_ranks. The input is expected to be a Kokkos
       view or Cabana slice in the same memory space as the communication plan.
 
-      \param element_export_ranks The ranks to which we will export each element
-      in element_export_ids. Must be the same length as
-      element_export_ids. The neighbor ranks will be determined from this
+      \param element_ranks The ranks to which we will export each element
+      in element_ids. Must be the same length as
+      element_ids. The neighbor ranks will be determined from this
       list. A rank is allowed to send to itself. The input is expected to be a
       Kokkos view or Cabana slice in the same memory space as the
       communication plan.
@@ -152,18 +152,18 @@ class Halo : public CommunicationPlan<MemorySpace>
     */
     template <class IdViewType, class RankViewType>
     Halo( MPI_Comm comm, const std::size_t num_local,
-          const IdViewType& element_export_ids,
-          const RankViewType& element_export_ranks )
+          const IdViewType& element_ids,
+          const RankViewType& element_ranks )
         : CommunicationPlan<MemorySpace>( comm )
         , _num_local( num_local )
     {
         if ( element_export_ids.size() != element_export_ranks.size() )
             throw std::runtime_error(
-                "Cabana::Halo: Export ids and ranks different sizes!" );
+                "Cabana::Halo: ids and ranks views are different sizes!" );
 
-        auto neighbor_ids = this->createFromExportsOnly( element_export_ranks );
-        this->createExportSteering( neighbor_ids, element_export_ranks,
-                                    element_export_ids );
+        auto neighbor_ids = this->createFromNoTopology( BuildType(), element_ranks );
+        this->createExportSteering( neighbor_ids, element_ranks,
+                                    element_ids );
     }
 
     /*!
