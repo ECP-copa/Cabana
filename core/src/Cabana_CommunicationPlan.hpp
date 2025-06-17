@@ -593,7 +593,7 @@ class CommunicationPlan
     */
     template <class ExecutionSpace, class ViewType>
     Kokkos::View<size_type*, memory_space>
-    createFromTopology( Cabana::Export, ExecutionSpace exec_space,
+    createFromTopology( ExecutionSpace exec_space, Export,
                                   const ViewType& element_export_ranks,
                                   const std::vector<int>& neighbor_ranks )
     {
@@ -661,9 +661,7 @@ class CommunicationPlan
         const int ec =
             MPI_Waitall( requests.size(), requests.data(), status.data() );
         if ( MPI_SUCCESS != ec )
-            throw std::logic_error(
-                "Cabana::CommunicationPlan::createFromExportsAndTopology: "
-                "Failed MPI Communication" );
+            throw std::logic_error( "Failed MPI Communication" );
 
         // Get the total number of imports/exports.
         _total_num_export =
@@ -715,12 +713,12 @@ class CommunicationPlan
     */
     template <class ViewType>
     Kokkos::View<size_type*, memory_space>
-    createFromTopology( Cabana::Export, const ViewType& element_export_ranks,
+    createFromTopology( Export, const ViewType& element_export_ranks,
                                   const std::vector<int>& neighbor_ranks )
     {
         // Use the default execution space.
-        return createFromTopology( Cabana::Export(),
-            execution_space{}, element_export_ranks, neighbor_ranks );
+        return createFromTopology(
+            execution_space{}, Export(), element_export_ranks, neighbor_ranks );
     }
 
     /*!
@@ -755,7 +753,7 @@ class CommunicationPlan
     */
     template <class ExecutionSpace, class ViewType>
     Kokkos::View<size_type*, memory_space>
-    createFromNoTopology( Cabana::Export, ExecutionSpace exec_space,
+    createFromNoTopology( ExecutionSpace exec_space, Export,
                            const ViewType& element_export_ranks )
     {
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
@@ -845,9 +843,7 @@ class CommunicationPlan
         const int ec =
             MPI_Waitall( requests.size(), requests.data(), status.data() );
         if ( MPI_SUCCESS != ec )
-            throw std::logic_error(
-                "Cabana::CommunicationPlan::createFromExportsOnly: Failed MPI "
-                "Communication" );
+            throw std::logic_error( "Failed MPI Communication" );
 
         // Compute the total number of imports.
         _total_num_import =
@@ -922,10 +918,10 @@ class CommunicationPlan
     */
     template <class ViewType>
     Kokkos::View<size_type*, memory_space>
-    createFromNoTopology( Cabana::Export, const ViewType& element_export_ranks )
+    createFromNoTopology( Export, const ViewType& element_export_ranks )
     {
         // Use the default execution space.
-        return createFromNoTopology( Cabana::Export(), execution_space{}, element_export_ranks );
+        return createFromNoTopology( execution_space{}, Export(), element_export_ranks );
     }
 
     /*!
@@ -968,7 +964,7 @@ class CommunicationPlan
       \note Unlike creating from exports, an import rank of -1 is not supported.
     */
     template <class ExecutionSpace, class ViewType>
-    auto createFromTopology( Import, ExecutionSpace exec_space,
+    auto createFromTopology( ExecutionSpace exec_space, Import,
                                        const ViewType& element_import_ranks,
                                        const ViewType& element_import_ids,
                                        const std::vector<int>& neighbor_ranks )
@@ -1154,8 +1150,8 @@ class CommunicationPlan
                                        const std::vector<int>& neighbor_ranks )
     {
         // Use the default execution space.
-        return createFromTopology( Import(),
-            execution_space{}, element_import_ranks, element_import_ids,
+        return createFromTopology(
+            execution_space{}, Import(), element_import_ranks, element_import_ids,
             neighbor_ranks );
     }
 
@@ -1192,7 +1188,7 @@ class CommunicationPlan
       \note Unlike creating from exports, an import rank of -1 is not supported.
     */
     template <class ExecutionSpace, class ViewType>
-    auto createFromNoTopology( Import, ExecutionSpace exec_space,
+    auto createFromNoTopology( ExecutionSpace exec_space, Import,
                                 const ViewType& element_import_ranks,
                                 const ViewType& element_import_ids )
         -> std::tuple<Kokkos::View<typename ViewType::size_type*,
@@ -1448,7 +1444,7 @@ class CommunicationPlan
                                 const ViewType& element_import_ids )
     {
         // Use the default execution space.
-        return createFromNoTopology( Import(), execution_space{}, element_import_ranks,
+        return createFromNoTopology( execution_space{}, Import(), element_import_ranks,
                                       element_import_ids );
     }
 
@@ -1516,9 +1512,7 @@ class CommunicationPlan
 
         if ( !use_iota &&
              ( element_export_ids.size() != element_export_ranks.size() ) )
-            throw std::runtime_error(
-                "Cabana::CommunicationPlan::createSteering: Export ids and "
-                "ranks different sizes!" );
+            throw std::runtime_error( "Cabana::CommunicationPlan::createSteering: Export ids and ranks different sizes!" );
 
         // Get the size of this communicator.
         int comm_size = -1;
@@ -1796,8 +1790,7 @@ class CommunicationData
                       const double overallocation )
     {
         if ( overallocation < 1.0 )
-            throw std::runtime_error( "Cabana::CommunicationPlan::reserveImpl: "
-                                      "Cannot allocate buffers with less space "
+            throw std::runtime_error( "Cabana::CommunicationData::reserveImpl: Cannot allocate buffers with less space "
                                       "than data to communicate!" );
         _overallocation = overallocation;
 

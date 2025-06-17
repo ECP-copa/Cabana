@@ -99,7 +99,10 @@ class Halo : public CommunicationPlan<MemorySpace>
       \note Calling this function completely updates the state of this object
       and invalidates the previous state.
     */
-    template <class IdViewType, class RankViewType>
+    template <
+        class IdViewType, class RankViewType,
+        typename T = BuildType,
+        std::enable_if_t<std::is_same<T, Export>::value, int> = 0>
     Halo( MPI_Comm comm, const std::size_t num_local,
           const IdViewType& element_ids,
           const RankViewType& element_ranks,
@@ -109,12 +112,86 @@ class Halo : public CommunicationPlan<MemorySpace>
     {
         if ( element_ids.size() != element_ranks.size() )
             throw std::runtime_error(
-                "Cabana::Halo: ids and ranks views are different sizes!" );
+                "Cabana::Halo (export): ids and ranks views are different sizes!" );
 
         auto neighbor_ids = this->createFromTopology( BuildType(), 
             element_ranks, neighbor_ranks );
         this->createExportSteering( neighbor_ids, element_ranks,
                                     element_ids );
+    }
+
+    /*!
+      \brief Import rank constructor. Use this when you don't know who you
+      will receiving from - only who you are sending to. This is less
+      efficient than if we already knew who our neighbors were because we have
+      to determine the topology of the point-to-point communication first.
+
+      \tparam IdViewType The container type for the export element ids. This
+      container type can be either a Kokkos View or a Cabana Slice.
+
+      \tparam RankViewType The container type for the export element
+      ranks. This container type can be either a Kokkos View or a Cabana
+      Slice.
+
+      \param comm The MPI communicator over which the halo is defined.
+
+      \param num_local The number of locally-owned elements on this rank.
+
+      \param element_ids The local ids of the elements that will be
+      sent to other ranks to be used as ghosts. Element ids may be repeated in
+      this list if they are sent to multiple destinations. Must be the same
+      length as element_ranks. The input is expected to be a Kokkos
+      view or Cabana slice in the same memory space as the communication plan.
+
+      \param element_ranks The ranks to which we will export each element
+      in element_ids. Must be the same length as
+      element_ids. The neighbor ranks will be determined from this
+      list. A rank is allowed to send to itself. The input is expected to be a
+      Kokkos view or Cabana slice in the same memory space as the
+      communication plan.
+
+      \note Calling this function completely updates the state of this object
+      and invalidates the previous state.
+    */
+    template <
+        class IdViewType, class RankViewType,
+        typename T = BuildType,
+        std::enable_if_t<std::is_same<T, Import>::value, int> = 0>
+    Halo( MPI_Comm comm, const std::size_t num_local,
+          const IdViewType& element_ids,
+          const RankViewType& element_ranks )
+        : CommunicationPlan<MemorySpace>( comm )
+        , _num_local( num_local )
+    {
+        if ( element_ids.size() != element_ranks.size() )
+            throw std::runtime_error(
+                "Cabana::Halo (export): ids and ranks views are different sizes!" );
+
+        auto neighbor_ids = this->createFromNoTopology( BuildType(), element_ranks );
+        this->createExportSteering( neighbor_ids, element_ranks,
+                                    element_ids );
+    }
+
+    template <
+        class IdViewType, class RankViewType,
+        typename T = BuildType,
+        std::enable_if_t<std::is_same<T, Import>::value, int> = 0>
+    Halo( MPI_Comm comm, const std::size_t num_local,
+          const IdViewType& element_ids,
+          const RankViewType& element_ranks,
+          const std::vector<int>& neighbor_ranks )
+        : CommunicationPlan<MemorySpace>( comm )
+        , _num_local( num_local )
+    {
+        if ( element_ids.size() != element_ranks.size() )
+            throw std::runtime_error(
+                "Cabana::Halo (import): ids and ranks views are different sizes!" );
+
+        auto neighbor_ids_ranks_indices = this->createFromTopology( BuildType(),
+            element_ranks, element_ids, neighbor_ranks );
+        this->createExportSteering( std::get<0>( neighbor_ids_ranks_indices ),
+                                    std::get<1>( neighbor_ids_ranks_indices ),
+                                    std::get<2>( neighbor_ids_ranks_indices ) );
     }
 
     /*!
@@ -150,7 +227,10 @@ class Halo : public CommunicationPlan<MemorySpace>
       \note Calling this function completely updates the state of this object
       and invalidates the previous state.
     */
-    template <class IdViewType, class RankViewType>
+    template <
+        class IdViewType, class RankViewType,
+        typename T = BuildType,
+        std::enable_if_t<std::is_same<T, Export>::value, int> = 0>
     Halo( MPI_Comm comm, const std::size_t num_local,
           const IdViewType& element_ids,
           const RankViewType& element_ranks )
@@ -159,11 +239,13 @@ class Halo : public CommunicationPlan<MemorySpace>
     {
         if ( element_ids.size() != element_ranks.size() )
             throw std::runtime_error(
-                "Cabana::Halo: ids and ranks views are different sizes!" );
+                "Cabana::Halo (import): ids and ranks views are different sizes!" );
 
-        auto neighbor_ids = this->createFromNoTopology( BuildType(), element_ranks );
-        this->createExportSteering( neighbor_ids, element_ranks,
-                                    element_ids );
+        auto neighbor_ids_ranks_indices = this->createFromNoTopology( BuildType(),
+            element_ranks, element_ids );
+        this->createExportSteering( std::get<0>( neighbor_ids_ranks_indices ),
+                                    std::get<1>( neighbor_ids_ranks_indices ),
+                                    std::get<2>( neighbor_ids_ranks_indices ) );
     }
 
     /*!
@@ -193,8 +275,8 @@ struct is_halo_impl : public std::false_type
 {
 };
 
-template <typename MemorySpace, typename BuildType>
-struct is_halo_impl<Halo<MemorySpace, BuildType>> : public std::true_type
+template <typename MemorySpace>
+struct is_halo_impl<Halo<MemorySpace>> : public std::true_type
 {
 };
 //! \endcond

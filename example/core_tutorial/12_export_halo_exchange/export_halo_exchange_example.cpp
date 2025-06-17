@@ -20,9 +20,9 @@
 #include <mpi.h>
 
 //---------------------------------------------------------------------------//
-// Halo exchange example.
+// Export halo exchange example.
 //---------------------------------------------------------------------------//
-void haloExchangeExample()
+void exportHaloExchangeExample()
 {
     /*
       The halo is a communication plan designed from halo exchange where some
@@ -34,8 +34,12 @@ void haloExchangeExample()
       decomposition back to the uniquely-owned decomposition and collisions
       are resolved.
 
-      In this example we will demonstrate building a halo communication
-      plan and performing both scatter and gather operations.
+      In this example we will demonstrate building an export-driven halo communication
+      plan and performing both scatter and gather operations. An export-driven halo is
+      used when you know who you are sending to but not who you are receiving from.
+      
+      Note: If no Cabana::Import or Cabana::Export tag is provided in the construction of a
+      Halo, the default behavior is to use Cabana::Export.
 
       Note: The halo uses MPI for data movement. MPI is initialized
       and finalized in the main function below.
@@ -44,7 +48,7 @@ void haloExchangeExample()
       allocated in GPU memory, this feature will be used automatically.
     */
 
-    std::cout << "Cabana Halo Example\n" << std::endl;
+    std::cout << "Cabana Export Halo Example\n" << std::endl;
 
     /*
        Get parameters from the communicator. We will use MPI_COMM_WORLD for
@@ -93,13 +97,13 @@ void haloExchangeExample()
         for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
             std::cout << slice_ranks( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ranks.size() << " ranks before exchange)"
+                  << "(" << slice_ranks.size() << " rank data before exchange)"
                   << std::endl
                   << "(Rank " << comm_rank << ") ";
         for ( std::size_t i = 0; i < slice_ids.size(); ++i )
             std::cout << slice_ids( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ids.size() << " IDs before exchange)"
+                  << "(" << slice_ids.size() << " ID data before exchange)"
                   << std::endl
                   << std::endl;
     }
@@ -139,6 +143,7 @@ void haloExchangeExample()
     std::sort( neighbors.begin(), neighbors.end() );
     auto unique_end = std::unique( neighbors.begin(), neighbors.end() );
     neighbors.resize( std::distance( neighbors.begin(), unique_end ) );
+    /* No Cabana::Import or Cabana::Export tag provided - defaults to Cabana::Export */
     Cabana::Halo<MemorySpace> halo( MPI_COMM_WORLD, num_tuple, export_ids,
                                     export_ranks, neighbors );
 
@@ -181,13 +186,13 @@ void haloExchangeExample()
         for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
             std::cout << slice_ranks( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ranks.size() << " ranks after gather)"
+                  << "(" << slice_ranks.size() << " rank data after gather)"
                   << std::endl
                   << "(Rank " << comm_rank << ") ";
         for ( std::size_t i = 0; i < slice_ids.size(); ++i )
             std::cout << slice_ids( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ids.size() << " IDs after gather)"
+                  << "(" << slice_ids.size() << " ID data after gather)"
                   << std::endl
                   << std::endl;
     }
@@ -216,13 +221,13 @@ void haloExchangeExample()
         for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
             std::cout << slice_ranks( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ranks.size() << " ranks after scatter)"
+                  << "(" << slice_ranks.size() << " rank data after scatter)"
                   << std::endl
                   << "(Rank " << comm_rank << ") ";
         for ( std::size_t i = 0; i < slice_ids.size(); ++i )
             std::cout << slice_ids( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ids.size() << " IDs after scatter)"
+                  << "(" << slice_ids.size() << " ID data after scatter)"
                   << std::endl;
     }
 }
@@ -236,7 +241,7 @@ int main( int argc, char* argv[] )
     {
         Kokkos::ScopeGuard scope_guard( argc, argv );
 
-        haloExchangeExample();
+        exportHaloExchangeExample();
     }
     MPI_Finalize();
 
