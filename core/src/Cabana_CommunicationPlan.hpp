@@ -968,7 +968,7 @@ class CommunicationPlan
       \note Unlike creating from exports, an import rank of -1 is not supported.
     */
     template <class ExecutionSpace, class ViewType>
-    auto createFromTopology( CommDriver::Import, ExecutionSpace exec_space,
+    auto createFromTopology( Import, ExecutionSpace exec_space,
                                        const ViewType& element_import_ranks,
                                        const ViewType& element_import_ids,
                                        const std::vector<int>& neighbor_ranks )
@@ -1149,12 +1149,12 @@ class CommunicationPlan
       \note Unlike creating from exports, an import rank of -1 is not supported.
     */
     template <class ViewType>
-    auto createFromTopology( CommDriver::Import, const ViewType& element_import_ranks,
+    auto createFromTopology( Import, const ViewType& element_import_ranks,
                                        const ViewType& element_import_ids,
                                        const std::vector<int>& neighbor_ranks )
     {
         // Use the default execution space.
-        return createFromTopology( CommDriver::Import(),
+        return createFromTopology( Import(),
             execution_space{}, element_import_ranks, element_import_ids,
             neighbor_ranks );
     }
@@ -1192,7 +1192,7 @@ class CommunicationPlan
       \note Unlike creating from exports, an import rank of -1 is not supported.
     */
     template <class ExecutionSpace, class ViewType>
-    auto createFromNoTopology( CommDriver::Import, ExecutionSpace exec_space,
+    auto createFromNoTopology( Import, ExecutionSpace exec_space,
                                 const ViewType& element_import_ranks,
                                 const ViewType& element_import_ids )
         -> std::tuple<Kokkos::View<typename ViewType::size_type*,
@@ -1444,11 +1444,11 @@ class CommunicationPlan
       \note Unlike creating from exports, an import rank of -1 is not supported.
     */
     template <class ViewType>
-    auto createFromNoTopology( CommDriver::Import, const ViewType& element_import_ranks,
+    auto createFromNoTopology( Import, const ViewType& element_import_ranks,
                                 const ViewType& element_import_ids )
     {
         // Use the default execution space.
-        return createFromNoTopology( CommDriver::Import(), execution_space{}, element_import_ranks,
+        return createFromNoTopology( Import(), execution_space{}, element_import_ranks,
                                       element_import_ids );
     }
 
