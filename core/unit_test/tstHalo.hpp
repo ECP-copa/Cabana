@@ -94,10 +94,11 @@ struct HaloData
     }
 };
 
-auto createHalo( UniqueTestTag, const int use_topology, const int my_size,
+template <class BuildType>
+auto createHalo( UniqueTestTag, BuildType, const int use_topology, const int my_size,
                  const int num_local )
 {
-    std::shared_ptr<Cabana::Halo<TEST_MEMSPACE>> halo;
+    std::shared_ptr<Cabana::Halo<TEST_MEMSPACE, BuildType>> halo;
 
     // Every rank will send ghosts to all other ranks. Send one element to
     // each rank including yourself. Interleave the sends. The resulting
@@ -120,19 +121,20 @@ auto createHalo( UniqueTestTag, const int use_topology, const int my_size,
 
     // Create the plan.
     if ( use_topology )
-        halo = std::make_shared<Cabana::Halo<TEST_MEMSPACE>>(
+        halo = std::make_shared<Cabana::Halo<TEST_MEMSPACE, BuildType>>(
             MPI_COMM_WORLD, num_local, export_ids, export_ranks, neighbors );
     else
-        halo = std::make_shared<Cabana::Halo<TEST_MEMSPACE>>(
+        halo = std::make_shared<Cabana::Halo<TEST_MEMSPACE, BuildType>>(
             MPI_COMM_WORLD, num_local, export_ids, export_ranks );
 
     return halo;
 }
 
-auto createHalo( AllTestTag, const int use_topology, const int my_size,
+template <class BuildType>
+auto createHalo( AllTestTag, BuildType, const int use_topology, const int my_size,
                  const int num_local )
 {
-    std::shared_ptr<Cabana::Halo<TEST_MEMSPACE>> halo;
+    std::shared_ptr<Cabana::Halo<TEST_MEMSPACE, BuildType>> halo;
 
     // Every rank will send its single data point as ghosts to all other
     // ranks. This will create collisions in the scatter as every rank will
@@ -153,10 +155,10 @@ auto createHalo( AllTestTag, const int use_topology, const int my_size,
 
     // Create the plan.
     if ( use_topology )
-        halo = std::make_shared<Cabana::Halo<TEST_MEMSPACE>>(
+        halo = std::make_shared<Cabana::Halo<TEST_MEMSPACE, BuildType>>(
             MPI_COMM_WORLD, num_local, export_ids, export_ranks, neighbors );
     else
-        halo = std::make_shared<Cabana::Halo<TEST_MEMSPACE>>(
+        halo = std::make_shared<Cabana::Halo<TEST_MEMSPACE, BuildType>>(
             MPI_COMM_WORLD, num_local, export_ids, export_ranks );
 
     return halo;
@@ -441,8 +443,8 @@ void checkSizeAndCapacity( CommData comm_data, const int num_send,
 
 //---------------------------------------------------------------------------//
 // Gather/scatter test.
-template <class TestTag>
-void testHalo( TestTag tag, const bool use_topology )
+template <class TestTag, class BuildType>
+void testHalo( TestTag tag, BuildType build_type, const bool use_topology )
 {
     // Get my rank.
     int my_rank = -1;
@@ -454,7 +456,7 @@ void testHalo( TestTag tag, const bool use_topology )
 
     // Make a communication plan.
     int num_local = tag.num_local;
-    auto halo = createHalo( tag, use_topology, my_size, num_local );
+    auto halo = createHalo( tag, build_type, use_topology, my_size, num_local );
 
     // Check the plan.
     EXPECT_EQ( halo->numLocal(), num_local );
@@ -583,32 +585,58 @@ void testHaloBuffers( TestTag tag, const bool use_topology )
 }
 
 //---------------------------------------------------------------------------//
-// RUN TESTS
+// DEFINE TESTS
 //---------------------------------------------------------------------------//
 // test without collisions (each ghost is unique)
-TEST( Halo, Unique )
-{
-    testHalo( UniqueTestTag{}, true );
-    testHaloBuffers( UniqueTestTag{}, true );
-}
 
-TEST( Halo, UniqueNoTopo )
-{
-    testHalo( UniqueTestTag{}, false );
-    testHaloBuffers( UniqueTestTag{}, false );
-}
 
-// tests with collisions (each ghost is duplicated on all ranks)
-TEST( Halo, All )
-{
-    testHalo( AllTestTag{}, true );
-    testHaloBuffers( AllTestTag{}, false );
-}
+// template <class T>
+// Test2( Halo, UniqueNoTopo )
+// {
+//     testHalo( UniqueTestTag{}, BuildType(), false );
+//     testHaloBuffers( UniqueTestTag{}, BuildType(), false );
+// }
 
-TEST( Halo, AllNoTopo )
+// // tests with collisions (each ghost is duplicated on all ranks)
+// template <class T>
+// Test3( Halo, All )
+// {
+//     testHalo( AllTestTag{}, BuildType(), true );
+//     testHaloBuffers( AllTestTag{}, BuildType(), false );
+// }
+
+// template <class T>
+// Test4( Halo, AllNoTopo )
+// {
+//     testHalo( AllTestTag{}, BuildType(), false );
+//     testHaloBuffers( AllTestTag{}, BuildType(), false );
+// }
+
+//---------------------------------------------------------------------------//
+// RUN TESTS
+//---------------------------------------------------------------------------//
+using HaloTestTypes = ::testing::Types<
+    std::tuple<Cabana::Export, Cabana::Export>,
+    std::tuple<Cabana::Import, Cabana::Import>
+    // Future: Set first tuple element to communication space used.
+>;
+
+template <typename T>
+class HaloTypedTest : public ::testing::Test
 {
-    testHalo( AllTestTag{}, false );
-    testHaloBuffers( AllTestTag{}, false );
+public:
+    // using CommSpace = typename std::tuple_element<0, T>::type;
+    using BuildType = typename std::tuple_element<1, T>::type;
+};
+
+TYPED_TEST_SUITE(HaloTypedTest, HaloTestTypes);
+
+// test without collisions (each ghost is unique)
+TYPED_TEST(HaloTypedTest, Test1)
+{
+    using BuildType = typename std::tuple_element<1, TypeParam>::type;
+    testHalo( UniqueTestTag{}, BuildType(), true );
+    testHaloBuffers( UniqueTestTag{}, BuildType(), true );
 }
 
 //---------------------------------------------------------------------------//
