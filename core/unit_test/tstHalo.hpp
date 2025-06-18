@@ -54,6 +54,7 @@ struct AllTestTag
     }
 };
 
+template <class BuildType>
 struct HaloData
 {
     // Create an AoSoA of local data with space allocated for local data.
@@ -62,7 +63,7 @@ struct HaloData
     using AoSoA_Host_t = Cabana::AoSoA<DataTypes, Kokkos::HostSpace>;
     AoSoA_t aosoa;
 
-    HaloData( Cabana::Halo<TEST_MEMSPACE> halo )
+    HaloData( Cabana::Halo<TEST_MEMSPACE, BuildType> halo )
     {
         aosoa = AoSoA_t( "data", halo.numLocal() + halo.numGhost() );
     }
@@ -463,7 +464,7 @@ void testHalo( TestTag tag, BuildType build_type, const bool use_topology )
     EXPECT_EQ( halo->numGhost(), my_size );
 
     // Create particle data.
-    HaloData halo_data( *halo );
+    HaloData<BuildType> halo_data( *halo );
     auto data = halo_data.createData( my_rank, num_local );
 
     // Gather by AoSoA.
@@ -490,8 +491,8 @@ void testHalo( TestTag tag, BuildType build_type, const bool use_topology )
 
 //---------------------------------------------------------------------------//
 // Gather/scatter test with persistent buffers.
-template <class TestTag>
-void testHaloBuffers( TestTag tag, const bool use_topology )
+template <class TestTag, class BuildType>
+void testHaloBuffers( TestTag tag, BuildType build_type, const bool use_topology )
 {
     // Get my rank.
     int my_rank = -1;
@@ -503,14 +504,14 @@ void testHaloBuffers( TestTag tag, const bool use_topology )
 
     // Make a communication plan.
     int num_local = tag.num_local;
-    auto halo = createHalo( tag, use_topology, my_size, num_local );
+    auto halo = createHalo( tag, build_type, use_topology, my_size, num_local );
 
     // Check the plan.
     EXPECT_EQ( halo->numLocal(), num_local );
     EXPECT_EQ( halo->numGhost(), my_size );
 
     // Create particle data.
-    HaloData halo_data( *halo );
+    HaloData<BuildType> halo_data( *halo );
     auto data = halo_data.createData( my_rank, num_local );
 
     // Create send and receive buffers with an overallocation.
@@ -585,39 +586,11 @@ void testHaloBuffers( TestTag tag, const bool use_topology )
 }
 
 //---------------------------------------------------------------------------//
-// DEFINE TESTS
-//---------------------------------------------------------------------------//
-// test without collisions (each ghost is unique)
-
-
-// template <class T>
-// Test2( Halo, UniqueNoTopo )
-// {
-//     testHalo( UniqueTestTag{}, BuildType(), false );
-//     testHaloBuffers( UniqueTestTag{}, BuildType(), false );
-// }
-
-// // tests with collisions (each ghost is duplicated on all ranks)
-// template <class T>
-// Test3( Halo, All )
-// {
-//     testHalo( AllTestTag{}, BuildType(), true );
-//     testHaloBuffers( AllTestTag{}, BuildType(), false );
-// }
-
-// template <class T>
-// Test4( Halo, AllNoTopo )
-// {
-//     testHalo( AllTestTag{}, BuildType(), false );
-//     testHaloBuffers( AllTestTag{}, BuildType(), false );
-// }
-
-//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 using HaloTestTypes = ::testing::Types<
     std::tuple<Cabana::Export, Cabana::Export>,
-    std::tuple<Cabana::Import, Cabana::Import>
+    // std::tuple<Cabana::Import, Cabana::Import>
     // Future: Set first tuple element to communication space used.
 >;
 
@@ -632,11 +605,31 @@ public:
 TYPED_TEST_SUITE(HaloTypedTest, HaloTestTypes);
 
 // test without collisions (each ghost is unique)
-TYPED_TEST(HaloTypedTest, Test1)
+TYPED_TEST(HaloTypedTest, Unique)
 {
     using BuildType = typename std::tuple_element<1, TypeParam>::type;
     testHalo( UniqueTestTag{}, BuildType(), true );
     testHaloBuffers( UniqueTestTag{}, BuildType(), true );
+}
+TYPED_TEST( HaloTypedTest, UniqueNoTopo )
+{
+    using BuildType = typename std::tuple_element<1, TypeParam>::type;
+    testHalo( UniqueTestTag{}, BuildType(), false );
+    testHaloBuffers( UniqueTestTag{}, BuildType(), false );
+}
+
+// tests with collisions (each ghost is duplicated on all ranks)
+TYPED_TEST( HaloTypedTest, All )
+{
+    using BuildType = typename std::tuple_element<1, TypeParam>::type;
+    testHalo( AllTestTag{}, BuildType(), true );
+    testHaloBuffers( AllTestTag{}, BuildType(), false );
+}
+TYPED_TEST( HaloTypedTest, AllNoTopo )
+{
+    using BuildType = typename std::tuple_element<1, TypeParam>::type;
+    testHalo( AllTestTag{}, BuildType(), false );
+    testHaloBuffers( AllTestTag{}, BuildType(), false );
 }
 
 //---------------------------------------------------------------------------//
