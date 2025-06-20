@@ -260,7 +260,6 @@ void checkScatter( UniqueTestTag, AoSoAType data_host, const int my_size,
                 EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), (my_rank + 1) * (my_size+1) );
                 EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), (my_rank + 1.5) * (my_size+1) );
             }
-            
         }
     }
 
@@ -301,21 +300,21 @@ void checkGatherSlice( UniqueTestTag, AoSoAType data_host, const int my_size,
     auto slice_int_host = Cabana::slice<0>( data_host );
     auto slice_dbl_host = Cabana::slice<1>( data_host );
 
-    // Check that the local data remained unchanged.
-    for ( int i = 0; i < my_size; ++i )
-    {
-        EXPECT_EQ( slice_int_host( 2 * i ), my_rank + 1 );
-        EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i, 0 ), my_rank + 1 );
-        EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i, 1 ), my_rank + 1.5 );
-
-        EXPECT_EQ( slice_int_host( 2 * i + 1 ), 2 * ( my_rank + 1 ) );
-        EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i + 1, 0 ), 2 * ( my_rank + 1 ) );
-        EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i + 1, 1 ),
-                          2 * ( my_rank + 1.5 ) );
-    }
-
     if constexpr (std::is_same_v<BuildType, Cabana::Export>)
     {
+        // Check that the local data remained unchanged.
+        for ( int i = 0; i < my_size; ++i )
+        {
+            EXPECT_EQ( slice_int_host( 2 * i ), my_rank + 1 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i, 0 ), my_rank + 1 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i, 1 ), my_rank + 1.5 );
+
+            EXPECT_EQ( slice_int_host( 2 * i + 1 ), 2 * ( my_rank + 1 ) );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i + 1, 0 ), 2 * ( my_rank + 1 ) );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i + 1, 1 ),
+                            2 * ( my_rank + 1.5 ) );
+        }
+
         // Check that the ghost data was updated.
         for ( int i = num_local; i < num_local + my_size; ++i )
         {
@@ -343,24 +342,49 @@ void checkGatherSlice( UniqueTestTag, AoSoAType data_host, const int my_size,
     }
     if constexpr (std::is_same_v<BuildType, Cabana::Import>)
     {
-        // Import test. Ghosted data should be multiplied by (my_size + 1)
+        // Import tests. Check that the local data remained unchanged.
+        for ( int i = 0; i < num_local; ++i )
+        {
+            if (i != my_rank * 2 + 1)
+            {
+                EXPECT_EQ( slice_int_host( i ), my_rank + 1 );
+                EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), my_rank + 1 );
+                EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), my_rank + 1.5 );
+            }
+            else
+            {
+                // This is the updated id, with value original value + (my_size * original value).
+                EXPECT_EQ( slice_int_host( i ), (my_rank + 1) * (my_size+1) );
+                EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), (my_rank + 1) * (my_size+1) );
+                EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), (my_rank + 1.5) * (my_size+1) );
+            }
+        }
+
+        // Ghosted data should be multiplied by (my_size + 1)
         // for being gathered from itself plus all other ranks and then being added
         // to the existing value.
         for ( int i = num_local; i < num_local + my_size; ++i )
         {
-           
-            EXPECT_EQ( slice_int_host( i ), 5*(my_rank + 1 );
-            // EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), 5*(my_rank + 1) );
-            // EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), 5*(my_rank + 1.5) );
-            
-            // else
-            // {
-            //     // This is the updated id, with value original value + (my_size * original value).
-            //     EXPECT_EQ( slice_int_host( i ), (my_rank + 1) * (my_size+1) );
-            //     EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), (my_rank + 1) * (my_size+1) );
-            //     EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), (my_rank + 1.5) * (my_size+1) );
-            // }
-            
+            // Self sends are first.
+            int send_rank = i - num_local;
+            if ( send_rank == 0 )
+            {
+                EXPECT_EQ( slice_int_host( i ), 5*(my_rank + 1) ) << "Rank " << my_rank << ", i: " << "i" << std::endl;
+                EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), 5*(my_rank + 1) );
+                EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), 5*(my_rank + 1.5) );
+            }
+            else if ( send_rank == my_rank )
+            {
+                EXPECT_EQ( slice_int_host( i ), 5*1 ) << "Rank " << my_rank << ", i: " << "i" << std::endl;
+                EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), 5*1 );
+                EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), 5*1.5 );
+            }
+            else
+            {
+                EXPECT_EQ( slice_int_host( i ), 5*(send_rank + 1) ) << "Rank " << my_rank << ", i: " << "i" << std::endl;
+                EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), 5*(send_rank + 1) );
+                EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), 5*(send_rank + 1.5) );
+            }
         }
     }
 }
@@ -575,7 +599,7 @@ void testHalo( TestTag tag, BuildType build_type, const bool use_topology )
 
 //---------------------------------------------------------------------------//
 // Gather/scatter test with persistent buffers.
-template <class TestTag, class BuildType>
+template <class BuildType, class TestTag>
 void testHaloBuffers( TestTag tag, BuildType build_type, const bool use_topology )
 {
     // Get my rank.
@@ -622,7 +646,7 @@ void testHaloBuffers( TestTag tag, BuildType build_type, const bool use_topology
     scatter_int.apply();
     scatter_dbl.apply();
     Cabana::deep_copy( data_host, data );
-    checkScatter( tag, data_host, my_size, my_rank, num_local );
+    checkScatter<BuildType>( tag, data_host, my_size, my_rank, num_local );
     checkSizeAndCapacity( scatter_int, num_recv, num_send, overalloc );
     checkSizeAndCapacity( scatter_dbl, num_recv, num_send, overalloc );
 
@@ -634,7 +658,7 @@ void testHaloBuffers( TestTag tag, BuildType build_type, const bool use_topology
     gather_int.apply();
     gather_dbl.apply();
     Cabana::deep_copy( data_host, data );
-    checkGatherSlice( tag, data_host, my_size, my_rank, num_local );
+    checkGatherSlice<BuildType>( tag, data_host, my_size, my_rank, num_local );
     checkSizeAndCapacity( gather_int, num_send, num_recv, overalloc );
     checkSizeAndCapacity( gather_dbl, num_send, num_recv, overalloc );
 
@@ -693,14 +717,14 @@ TYPED_TEST(HaloTypedTest, Unique)
 {
     using BuildType = typename std::tuple_element<1, TypeParam>::type;
     testHalo( UniqueTestTag{}, BuildType(), true );
-    // testHaloBuffers( UniqueTestTag{}, BuildType(), true );
+    testHaloBuffers( UniqueTestTag{}, BuildType(), true );
 }
-// TYPED_TEST( HaloTypedTest, UniqueNoTopo )
-// {
-//     using BuildType = typename std::tuple_element<1, TypeParam>::type;
-//     testHalo( UniqueTestTag{}, BuildType(), false );
-//     testHaloBuffers( UniqueTestTag{}, BuildType(), false );
-// }
+TYPED_TEST( HaloTypedTest, UniqueNoTopo )
+{
+    using BuildType = typename std::tuple_element<1, TypeParam>::type;
+    testHalo( UniqueTestTag{}, BuildType(), false );
+    testHaloBuffers( UniqueTestTag{}, BuildType(), false );
+}
 
 // // tests with collisions (each ghost is duplicated on all ranks)
 // TYPED_TEST( HaloTypedTest, All )
