@@ -101,7 +101,7 @@ class Distributor : public CommunicationPlan<MemorySpace>
                  const std::vector<int>& neighbor_ranks )
         : CommunicationPlan<MemorySpace>( comm )
     {
-        auto neighbor_ids = this->createFromExportsAndTopology(
+        auto neighbor_ids = this->createFromTopology( Export(),
             element_export_ranks, neighbor_ranks );
         this->createExportSteering( neighbor_ids, element_export_ranks );
     }
@@ -137,7 +137,7 @@ class Distributor : public CommunicationPlan<MemorySpace>
     Distributor( MPI_Comm comm, const ViewType& element_export_ranks )
         : CommunicationPlan<MemorySpace>( comm )
     {
-        auto neighbor_ids = this->createFromExportsOnly( element_export_ranks );
+        auto neighbor_ids = this->createFromNoTopology( Export(), element_export_ranks );
         this->createExportSteering( neighbor_ids, element_export_ranks );
     }
 };
