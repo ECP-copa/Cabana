@@ -296,7 +296,8 @@ class FastFourierTransform
                  LViewType& l_view, const LGViewType lg_view )
     {
         Kokkos::parallel_for(
-            "fft_copy_to_work", createExecutionPolicy( own_space, exec_space ),
+            "Cabana::Grid::FastFourierTransform::copyTo",
+            createExecutionPolicy( own_space, exec_space ),
             KOKKOS_LAMBDA( const int i, const int j, const int k ) {
                 auto iw = i - own_space.min( Dim::I );
                 auto jw = j - own_space.min( Dim::J );
@@ -316,7 +317,8 @@ class FastFourierTransform
                  LViewType& l_view, const LGViewType lg_view )
     {
         Kokkos::parallel_for(
-            "fft_copy_to_work", createExecutionPolicy( own_space, space ),
+            "Cabana::Grid::FastFourierTransform::copyTo",
+            createExecutionPolicy( own_space, space ),
             KOKKOS_LAMBDA( const int i, const int j ) {
                 auto iw = i - own_space.min( Dim::I );
                 auto jw = j - own_space.min( Dim::J );
@@ -335,7 +337,8 @@ class FastFourierTransform
                    const LViewType l_view, LGViewType& lg_view )
     {
         Kokkos::parallel_for(
-            "fft_copy_from_work", createExecutionPolicy( own_space, space ),
+            "Cabana::Grid::FastFourierTransform::copyFrom",
+            createExecutionPolicy( own_space, space ),
             KOKKOS_LAMBDA( const int i, const int j, const int k ) {
                 auto iw = i - own_space.min( Dim::I );
                 auto jw = j - own_space.min( Dim::J );
@@ -355,7 +358,8 @@ class FastFourierTransform
                    const LViewType l_view, LGViewType& lg_view )
     {
         Kokkos::parallel_for(
-            "fft_copy_from_work", createExecutionPolicy( own_space, space ),
+            "Cabana::Grid::FastFourierTransform::copyFrom",
+            createExecutionPolicy( own_space, space ),
             KOKKOS_LAMBDA( const int i, const int j ) {
                 auto iw = i - own_space.min( Dim::I );
                 auto jw = j - own_space.min( Dim::J );

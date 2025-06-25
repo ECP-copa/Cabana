@@ -859,7 +859,8 @@ void g2p(
 
     // Loop over points and interpolate from the grid.
     Kokkos::parallel_for(
-        "g2p", Kokkos::RangePolicy<ExecutionSpace>( 0, num_point ),
+        "Cabana::Grid::g2p",
+        Kokkos::RangePolicy<ExecutionSpace>( 0, num_point ),
         KOKKOS_LAMBDA( const int p ) {
             // Get the point coordinates.
             MeshScalar px[NumSpaceDim];
@@ -1240,7 +1241,8 @@ void p2g( ExecutionSpace, const PointEvalFunctor& functor,
 
     // Loop over points and interpolate to the grid.
     Kokkos::parallel_for(
-        "p2g", Kokkos::RangePolicy<ExecutionSpace>( 0, num_point ),
+        "Cabana::Grid::p2g",
+        Kokkos::RangePolicy<ExecutionSpace>( 0, num_point ),
         KOKKOS_LAMBDA( const int p ) {
             // Get the point coordinates.
             MeshScalar px[NumSpaceDim];

@@ -457,7 +457,7 @@ scale( Array_t& array, const typename Array_t::value_type alpha,
         "Cabana::Grid::ArrayOp::scale: Cabana::Grid::Array required" );
     auto view = array.view();
     Kokkos::parallel_for(
-        "ArrayOp::scale",
+        "Cabana::Grid::ArrayOp::scale",
         createExecutionPolicy( array.layout()->indexSpace( tag, Local() ),
                                typename Array_t::execution_space() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ) {
@@ -481,7 +481,7 @@ scale( Array_t& array, const typename Array_t::value_type alpha,
         "Cabana::Grid::ArrayOp::scale: Cabana::Grid::Array required" );
     auto view = array.view();
     Kokkos::parallel_for(
-        "ArrayOp::scale",
+        "Cabana::Grid::ArrayOp::scale",
         createExecutionPolicy( array.layout()->indexSpace( tag, Local() ),
                                typename Array_t::execution_space() ),
         KOKKOS_LAMBDA( const int i, const int j, const int l ) {
@@ -519,7 +519,7 @@ scale( Array_t& array, const std::vector<typename Array_t::value_type>& alpha,
 
     auto array_view = array.view();
     Kokkos::parallel_for(
-        "ArrayOp::scale",
+        "Cabana::Grid::ArrayOp::scale",
         createExecutionPolicy( array.layout()->indexSpace( tag, Local() ),
                                typename Array_t::execution_space() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ) {
@@ -556,7 +556,7 @@ scale( Array_t& array, const std::vector<typename Array_t::value_type>& alpha,
 
     auto array_view = array.view();
     Kokkos::parallel_for(
-        "ArrayOp::scale",
+        "Cabana::Grid::ArrayOp::scale",
         createExecutionPolicy( array.layout()->indexSpace( tag, Local() ),
                                typename Array_t::execution_space() ),
         KOKKOS_LAMBDA( const int i, const int j, const int l ) {
@@ -621,7 +621,7 @@ update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
     auto a_view = a.view();
     auto b_view = b.view();
     Kokkos::parallel_for(
-        "ArrayOp::update",
+        "Cabana::Grid::ArrayOp::update",
         createExecutionPolicy( a.layout()->indexSpace( tag, Local() ),
                                typename Array_t::execution_space() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ) {
@@ -648,7 +648,7 @@ update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
     auto a_view = a.view();
     auto b_view = b.view();
     Kokkos::parallel_for(
-        "ArrayOp::update",
+        "Cabana::Grid::ArrayOp::update",
         createExecutionPolicy( a.layout()->indexSpace( tag, Local() ),
                                typename Array_t::execution_space() ),
         KOKKOS_LAMBDA( const long i, const long j, const long l ) {
@@ -680,7 +680,7 @@ update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
     auto b_view = b.view();
     auto c_view = c.view();
     Kokkos::parallel_for(
-        "ArrayOp::update",
+        "Cabana::Grid::ArrayOp::update",
         createExecutionPolicy( a.layout()->indexSpace( tag, Local() ),
                                typename Array_t::execution_space() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ) {
@@ -712,7 +712,7 @@ update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
     auto b_view = b.view();
     auto c_view = c.view();
     Kokkos::parallel_for(
-        "ArrayOp::update",
+        "Cabana::Grid::ArrayOp::update",
         createExecutionPolicy( a.layout()->indexSpace( tag, Local() ),
                                typename Array_t::execution_space() ),
         KOKKOS_LAMBDA( const int i, const int j, const int l ) {
@@ -815,13 +815,13 @@ void dot( const Array_t& a, const Array_t& b,
         a.view(), b.view() );
     typename Array_t::execution_space exec_space;
     Kokkos::parallel_reduce(
-        "ArrayOp::dot",
+        "Cabana::Grid::ArrayOp::dot",
         createExecutionPolicy( a.layout()->indexSpace( Own(), Local() ),
                                exec_space ),
         functor,
         Kokkos::View<typename Array_t::value_type*, Kokkos::HostSpace>(
             products.data(), products.size() ) );
-    exec_space.fence( "ArrayOp::dot before MPI_Allreduce" );
+    exec_space.fence( "Cabana::Grid::ArrayOp::dot before MPI_Allreduce" );
 
     MPI_Allreduce( MPI_IN_PLACE, products.data(), products.size(),
                    MpiTraits<typename Array_t::value_type>::type(), MPI_SUM,
@@ -922,7 +922,7 @@ void normInf( const Array_t& array,
         array.view() );
     typename Array_t::execution_space exec_space;
     Kokkos::parallel_reduce(
-        "ArrayOp::normInf",
+        "Cabana::Grid::ArrayOp::normInf",
         createExecutionPolicy( array.layout()->indexSpace( Own(), Local() ),
                                exec_space ),
         functor,
@@ -1023,13 +1023,13 @@ void norm1( const Array_t& array,
         array.view() );
     typename Array_t::execution_space exec_space;
     Kokkos::parallel_reduce(
-        "ArrayOp::norm1",
+        "Cabana::Grid::ArrayOp::norm1",
         createExecutionPolicy( array.layout()->indexSpace( Own(), Local() ),
                                exec_space ),
         functor,
         Kokkos::View<typename Array_t::value_type*, Kokkos::HostSpace>(
             norms.data(), norms.size() ) );
-    exec_space.fence( "ArrayOp::norm1 before MPI_Allreduce" );
+    exec_space.fence( "Cabana::Grid::ArrayOp::norm1 before MPI_Allreduce" );
 
     MPI_Allreduce( MPI_IN_PLACE, norms.data(), norms.size(),
                    MpiTraits<typename Array_t::value_type>::type(), MPI_SUM,
@@ -1124,13 +1124,13 @@ void norm2( const Array_t& array,
         array.view() );
     typename Array_t::execution_space exec_space;
     Kokkos::parallel_reduce(
-        "ArrayOp::norm2",
+        "Cabana::Grid::ArrayOp::norm2",
         createExecutionPolicy( array.layout()->indexSpace( Own(), Local() ),
                                exec_space ),
         functor,
         Kokkos::View<typename Array_t::value_type*, Kokkos::HostSpace>(
             norms.data(), norms.size() ) );
-    exec_space.fence( "ArrayOp::norm2 before MPI_Allreduce" );
+    exec_space.fence( "Cabana::Grid::ArrayOp::norm2 before MPI_Allreduce" );
 
     MPI_Allreduce( MPI_IN_PLACE, norms.data(), norms.size(),
                    MpiTraits<typename Array_t::value_type>::type(), MPI_SUM,

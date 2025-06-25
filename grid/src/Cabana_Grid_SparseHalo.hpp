@@ -908,7 +908,7 @@ class SparseHalo
                      SparseArrayType& sparse_array, const int count ) const
     {
         Kokkos::parallel_for(
-            "pack_spares_halo_buffer",
+            "Cabana::Grid::Experimental::SparseHalo::packBuffer",
             Kokkos::RangePolicy<ExecSpace>( exec_space, 0, count ),
             KOKKOS_LAMBDA( const int i ) {
                 if ( tile_steering( i ) != invalid_key )
@@ -1156,7 +1156,7 @@ class SparseHalo
                        const int count ) const
     {
         Kokkos::parallel_for(
-            "unpack_spares_halo_buffer",
+            "Cabana::Grid::Experimental::SparseHalo::unpackBuffer",
             Kokkos::RangePolicy<ExecSpace>( exec_space, 0, count ),
             KOKKOS_LAMBDA( const int i ) {
                 if ( tile_steering( i ) != invalid_key )

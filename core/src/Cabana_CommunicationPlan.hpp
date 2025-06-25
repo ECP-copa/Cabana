@@ -1023,7 +1023,7 @@ class CommunicationPlan
             _total_num_export );
         auto steer_vec = _export_steering;
         Kokkos::parallel_for(
-            "Cabana::createSteering",
+            "Cabana::CommunicationPlan::createSteering",
             Kokkos::RangePolicy<ExecutionSpace>( 0, _num_export_element ),
             KOKKOS_LAMBDA( const int i ) {
                 if ( element_export_ranks( i ) >= 0 )
