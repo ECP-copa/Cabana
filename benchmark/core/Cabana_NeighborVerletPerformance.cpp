@@ -135,15 +135,19 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                 };
                 Kokkos::RangePolicy<exec_space> policy( 0, num_p );
 
+                double cutoff = cutoff_ratios[c0];
+                double ratio = cell_ratios[c1];
+                auto x = Cabana::slice<0>( aosoas[p], "position" );
+                neigh_type nlist( x, 0, num_p, cutoff, ratio, grid_min,
+                                  grid_max );
+
                 // Run tests and time the ensemble
                 for ( int t = 0; t < num_run; ++t )
                 {
                     // Create the neighbor list.
-                    double cutoff = cutoff_ratios[c0];
                     create_timer.start( pid );
-                    neigh_type nlist( Cabana::slice<0>( aosoas[p], "position" ),
-                                      0, num_p, cutoff, cell_ratios[c1],
-                                      grid_min, grid_max );
+                    nlist.build( x, 0, num_p, cutoff, ratio, grid_min,
+                                 grid_max );
                     create_timer.stop( pid );
 
                     // Iterate through the neighbor list.
