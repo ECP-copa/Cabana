@@ -181,8 +181,7 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
             nrank *= _ranks_per_dim[d];
         if ( comm_size != nrank )
             throw std::runtime_error(
-                "Cabana::Grid::SparseDimPartitioner::ranksPerDimension: "
-                "SparseDimPartitioner ranks do not match comm size" );
+                "SparsePartitioner ranks do not match comm size" );
         return ranks_per_dim;
     }
 
