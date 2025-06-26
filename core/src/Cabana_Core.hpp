@@ -19,6 +19,7 @@
 #include <Cabana_Core_Config.hpp>
 
 #include <Cabana_AoSoA.hpp>
+#include <Cabana_BatchedLinearAlgebra.hpp>
 #include <Cabana_DeepCopy.hpp>
 #include <Cabana_Fields.hpp>
 #include <Cabana_LinkedCellList.hpp>
