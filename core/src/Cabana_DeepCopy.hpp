@@ -165,16 +165,16 @@ deep_copy( DstAoSoA& dst, const SrcAoSoA& src,
     using src_soa_type = typename src_type::soa_type;
 
     // Check that the data types are the same.
-    static_assert( std::is_same_v<typename dst_type::member_types,
-                                  typename src_type::member_types>,
-                   "Cabana::deep_copy: Attempted to deep copy AoSoA objects of "
-                   "different member types" );
+    static_assert(
+        std::is_same_v<typename dst_type::member_types,
+                       typename src_type::member_types>,
+        "Attempted to deep copy AoSoA objects of different member types" );
 
     // Check for the same number of values.
     if ( dst.size() != src.size() )
     {
-        throw std::runtime_error( "Cabana::deep_copy: Attempted to deep copy "
-                                  "AoSoA objects of different sizes" );
+        throw std::runtime_error(
+            "Attempted to deep copy AoSoA objects of different sizes" );
     }
 
     // Get the pointers to the beginning of the data blocks.

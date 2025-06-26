@@ -1512,7 +1512,7 @@ class CommunicationPlan
 
         if ( !use_iota &&
              ( element_export_ids.size() != element_export_ranks.size() ) )
-            throw std::runtime_error( "Cabana::CommunicationPlan::createSteering: Export ids and ranks different sizes!" );
+            throw std::runtime_error( "Export ids and ranks different sizes!" );
 
         // Get the size of this communicator.
         int comm_size = -1;
@@ -1790,8 +1790,7 @@ class CommunicationData
                       const double overallocation )
     {
         if ( overallocation < 1.0 )
-            throw std::runtime_error( "Cabana::CommunicationPlan: "
-                                      "Cannot allocate buffers with less space "
+            throw std::runtime_error( "Cannot allocate buffers with less space "
                                       "than data to communicate!" );
         _overallocation = overallocation;
 
