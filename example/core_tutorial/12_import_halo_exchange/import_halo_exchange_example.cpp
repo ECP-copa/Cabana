@@ -22,7 +22,7 @@
 //---------------------------------------------------------------------------//
 // Halo exchange example.
 //---------------------------------------------------------------------------//
-void haloExchangeExample()
+void importHaloExchangeExample()
 {
     /*
       The halo is a communication plan designed from halo exchange where some
@@ -34,8 +34,12 @@ void haloExchangeExample()
       decomposition back to the uniquely-owned decomposition and collisions
       are resolved.
 
-      In this example we will demonstrate building a halo communication
-      plan and performing both scatter and gather operations.
+      In this example we will demonstrate building an import-driven halo communication
+      plan and performing both scatter and gather operations. An import-driven halo is
+      used when you know who you are receiving from but not who you are sending to.
+      
+      Note: If no Cabana::Import or Cabana::Export tag is provided in the construction of a
+      Halo, the default behavior is to use Cabana::Export.
 
       Note: The halo uses MPI for data movement. MPI is initialized
       and finalized in the main function below.
@@ -44,7 +48,7 @@ void haloExchangeExample()
       allocated in GPU memory, this feature will be used automatically.
     */
 
-    std::cout << "Cabana Halo Example\n" << std::endl;
+    std::cout << "Cabana Import Halo Example\n" << std::endl;
 
     /*
        Get parameters from the communicator. We will use MPI_COMM_WORLD for
@@ -83,7 +87,7 @@ void haloExchangeExample()
     }
 
     /*
-      Before migrating the data, let's print out the data in the slices
+      Before haloing the data, let's print out the data in the slices
       on one rank.
     */
     if ( comm_rank == 0 )
@@ -93,34 +97,34 @@ void haloExchangeExample()
         for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
             std::cout << slice_ranks( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ranks.size() << " ranks before exchange)"
+                  << "(" << slice_ranks.size() << " rank data before exchange)"
                   << std::endl
                   << "(Rank " << comm_rank << ") ";
         for ( std::size_t i = 0; i < slice_ids.size(); ++i )
             std::cout << slice_ids( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ids.size() << " IDs before exchange)"
+                  << "(" << slice_ids.size() << " ID data before exchange)"
                   << std::endl
                   << std::endl;
     }
 
     /*
-      Build a halo where the last 10 elements are sent to the next rank.
+      Build a halo where the last 10 elements are imported from the next rank.
     */
     int local_num_send = 10;
-    Kokkos::View<int*, MemorySpace> export_ranks( "export_ranks",
+    Kokkos::View<int*, MemorySpace> import_ranks( "import_ranks",
                                                   local_num_send );
-    Kokkos::View<int*, MemorySpace> export_ids( "export_ids", local_num_send );
+    Kokkos::View<int*, MemorySpace> import_ids( "import_ids", local_num_send );
 
-    // Last 10 elements (elements 90-99) go to the next rank. Note that this
+    // Last 10 elements (elements 90-99) are imported from the next rank. Note that this
     // view will most often be filled within a parallel_for but we do so in
     // serial here for demonstration purposes.
     int previous_rank = ( comm_rank == 0 ) ? comm_size - 1 : comm_rank - 1;
     int next_rank = ( comm_rank == comm_size - 1 ) ? 0 : comm_rank + 1;
     for ( int i = 0; i < local_num_send; ++i )
     {
-        export_ranks( i ) = next_rank;
-        export_ids( i ) = i + num_tuple - 10;
+        import_ranks( i ) = next_rank;
+        import_ids( i ) = i + num_tuple - 10;
     }
 
     /*
@@ -139,8 +143,9 @@ void haloExchangeExample()
     std::sort( neighbors.begin(), neighbors.end() );
     auto unique_end = std::unique( neighbors.begin(), neighbors.end() );
     neighbors.resize( std::distance( neighbors.begin(), unique_end ) );
-    Cabana::Halo<MemorySpace> halo( MPI_COMM_WORLD, num_tuple, export_ids,
-                                    export_ranks, neighbors );
+    /* Note we must explicity include Cabana::Import in Halo construction */
+    Cabana::Halo<MemorySpace, Cabana::Import> halo( MPI_COMM_WORLD, num_tuple, import_ids,
+                                    import_ranks, neighbors );
 
     /*
       Resize the AoSoA to allow for additional ghost data. We can get the
@@ -181,13 +186,13 @@ void haloExchangeExample()
         for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
             std::cout << slice_ranks( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ranks.size() << " ranks after gather)"
+                  << "(" << slice_ranks.size() << " rank data after gather)"
                   << std::endl
                   << "(Rank " << comm_rank << ") ";
         for ( std::size_t i = 0; i < slice_ids.size(); ++i )
             std::cout << slice_ids( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ids.size() << " IDs after gather)"
+                  << "(" << slice_ids.size() << " ID data after gather)"
                   << std::endl
                   << std::endl;
     }
@@ -236,7 +241,7 @@ int main( int argc, char* argv[] )
     {
         Kokkos::ScopeGuard scope_guard( argc, argv );
 
-        haloExchangeExample();
+        importHaloExchangeExample();
     }
     MPI_Finalize();
 
