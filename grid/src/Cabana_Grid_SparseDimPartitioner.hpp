@@ -181,7 +181,8 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
             nrank *= _ranks_per_dim[d];
         if ( comm_size != nrank )
             throw std::runtime_error(
-                "SparsePartitioner ranks do not match comm size" );
+                "Cabana::Grid::SparseDimPartitioner::ranksPerDimension: "
+                "SparseDimPartitioner ranks do not match comm size" );
         return ranks_per_dim;
     }
 
@@ -369,7 +370,7 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
         }
 
         Kokkos::parallel_for(
-            "compute_local_workload_parpos",
+            "Cabana::Grid::SparseDimPartitioner::computeLocalWorkLoadPosition",
             Kokkos::RangePolicy<execution_space>( 0, particle_num ),
             KOKKOS_LAMBDA( const int i ) {
                 int ti = static_cast<int>(
@@ -398,7 +399,7 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
         // make a local copy
         auto workload = _workload_per_tile;
         Kokkos::parallel_for(
-            "compute_local_workload_sparsmap",
+            "Cabana::Grid::SparseDimPartitioner::computeLocalWorkLoadSparseMap",
             Kokkos::RangePolicy<execution_space>( 0, sparseMap.capacity() ),
             KOKKOS_LAMBDA( uint32_t i ) {
                 if ( sparseMap.valid_at( i ) )
@@ -614,7 +615,7 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
             Kokkos::View<int*, memory_space> ave_workload(
                 "ave_workload", _ranks_per_dim[dj] * _ranks_per_dim[dk] );
             Kokkos::parallel_for(
-                "compute_average_workload",
+                "Cabana::Grid::SparseDimPartitioner::computeAverageWorkLoad",
                 Kokkos::RangePolicy<execution_space>(
                     0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
                 KOKKOS_LAMBDA( uint32_t jnk ) {
@@ -647,7 +648,8 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
                 {
                     // compute current workload between [last_point, point_i)
                     Kokkos::parallel_for(
-                        "compute_current_workload",
+                        "Cabana::Grid::SparseDimPartitioner::"
+                        "computeCurrentWorkLoad",
                         Kokkos::RangePolicy<execution_space>(
                             0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
                         KOKKOS_LAMBDA( uint32_t jnk ) {
@@ -660,7 +662,7 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
 
                     // compute the (w_jk^ave - w_jk^{last_point:point_i})
                     Kokkos::parallel_for(
-                        "compute_diff",
+                        "Cabana::Grid::SparseDimPartitioner::computeDifference",
                         Kokkos::RangePolicy<execution_space>(
                             0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
                         KOKKOS_LAMBDA( uint32_t jnk ) {

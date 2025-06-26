@@ -143,7 +143,8 @@ reorderView( TargetView& target, const SourceView& source,
              const Indices& index_space, const ExecSpace& exec_space )
 {
     Kokkos::parallel_for(
-        "bov_reorder", createExecutionPolicy( index_space, exec_space ),
+        "Cabana::Grid::BovWriter::Reorder",
+        createExecutionPolicy( index_space, exec_space ),
         KOKKOS_LAMBDA( const int k, const int j, const int i, const int l ) {
             target( k, j, i, l ) = source( i, j, k, l );
         } );
@@ -157,7 +158,8 @@ reorderView( TargetView& target, const SourceView& source,
              const Indices& index_space, const ExecSpace& exec_space )
 {
     Kokkos::parallel_for(
-        "bov_reorder", createExecutionPolicy( index_space, exec_space ),
+        "Cabana::Grid::BovWriter::Reorder",
+        createExecutionPolicy( index_space, exec_space ),
         KOKKOS_LAMBDA( const int j, const int i, const int l ) {
             target( j, i, l ) = source( i, j, l );
         } );

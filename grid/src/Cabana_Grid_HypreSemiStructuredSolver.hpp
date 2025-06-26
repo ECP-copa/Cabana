@@ -83,7 +83,7 @@ class HypreSemiStructuredSolver
         static_assert(
             std::is_same<typename ArrayLayout_t::entity_type,
                          entity_type>::value,
-            "Array layout entity type mush match solver entity type" );
+            "Array layout entity type must match solver entity type" );
 
         // Spatial dimension.
         const std::size_t num_space_dim = ArrayLayout_t::num_space_dim;
@@ -359,7 +359,7 @@ class HypreSemiStructuredSolver
         static_assert( is_array<Array_t>::value, "Must use an array" );
         static_assert(
             std::is_same<typename Array_t::entity_type, entity_type>::value,
-            "Array entity type mush match solver entity type" );
+            "Array entity type must match solver entity type" );
         static_assert(
             std::is_same<typename Array_t::memory_space, MemorySpace>::value,
             "Array device type and solver device type are different." );
@@ -380,6 +380,7 @@ class HypreSemiStructuredSolver
         if ( values.layout()->dofsPerEntity() !=
              static_cast<int>( index_size ) )
             throw std::runtime_error(
+                "Cabana::Grid::HypreSemiStructuredSolver::setMatrixValues: "
                 "Number of matrix values does not match stencil size" );
 
         // Spatial dimension.
@@ -500,7 +501,7 @@ class HypreSemiStructuredSolver
         static_assert( is_array<Array_t>::value, "Must use an array" );
         static_assert(
             std::is_same<typename Array_t::entity_type, entity_type>::value,
-            "Array entity type mush match solver entity type" );
+            "Array entity type must match solver entity type" );
         static_assert(
             std::is_same<typename Array_t::memory_space, MemorySpace>::value,
             "Array device type and solver device type are different." );
@@ -1219,7 +1220,9 @@ createHypreSemiStructuredSolver( const std::string& solver_type,
         return createHypreSemiStructDiagonal<Scalar, MemorySpace>(
             layout, is_preconditioner, n_vars );
     else
-        throw std::runtime_error( "Invalid solver type" );
+        throw std::runtime_error(
+            "Cabana::Grid::createHypreSemiStructuredSolver: Invalid solver "
+            "type" );
 }
 
 //---------------------------------------------------------------------------//

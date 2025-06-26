@@ -670,7 +670,7 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
         coords_view( Kokkos::ViewAllocateWithoutInitializing( "coords" ),
                      coords_slice.size(), coords_slice.extent( 2 ) );
     Kokkos::parallel_for(
-        "Cabana::HDF5ParticleOutput::writeCoords",
+        "Cabana::HDF5ParticleOutput::copyCoords",
         Kokkos::RangePolicy<typename CoordSliceType::execution_space>(
             0, coords_slice.size() ),
         KOKKOS_LAMBDA( const int i ) {

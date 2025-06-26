@@ -661,7 +661,9 @@ class CommunicationPlan
         const int ec =
             MPI_Waitall( requests.size(), requests.data(), status.data() );
         if ( MPI_SUCCESS != ec )
-            throw std::logic_error( "Failed MPI Communication" );
+            throw std::logic_error(
+                "Cabana::CommunicationPlan::createFromExportsAndTopology: "
+                "Failed MPI Communication" );
 
         // Get the total number of imports/exports.
         _total_num_export = std::accumulate(
@@ -843,7 +845,9 @@ class CommunicationPlan
         const int ec =
             MPI_Waitall( requests.size(), requests.data(), status.data() );
         if ( MPI_SUCCESS != ec )
-            throw std::logic_error( "Failed MPI Communication" );
+            throw std::logic_error(
+                "Cabana::CommunicationPlan::createFromExportsOnly: Failed MPI "
+                "Communication" );
 
         // Compute the total number of imports.
         _total_num_import =
@@ -988,7 +992,9 @@ class CommunicationPlan
 
         if ( !use_iota &&
              ( element_export_ids.size() != element_export_ranks.size() ) )
-            throw std::runtime_error( "Export ids and ranks different sizes!" );
+            throw std::runtime_error(
+                "Cabana::CommunicationPlan::createSteering: Export ids and "
+                "ranks different sizes!" );
 
         // Get the size of this communicator.
         int comm_size = -1;
@@ -1017,7 +1023,7 @@ class CommunicationPlan
             _total_num_export );
         auto steer_vec = _export_steering;
         Kokkos::parallel_for(
-            "Cabana::createSteering",
+            "Cabana::CommunicationPlan::createSteering",
             Kokkos::RangePolicy<ExecutionSpace>( 0, _num_export_element ),
             KOKKOS_LAMBDA( const int i ) {
                 if ( element_export_ranks( i ) >= 0 )
@@ -1266,7 +1272,8 @@ class CommunicationData
                       const double overallocation )
     {
         if ( overallocation < 1.0 )
-            throw std::runtime_error( "Cannot allocate buffers with less space "
+            throw std::runtime_error( "Cabana::CommunicationPlan: "
+                                      "Cannot allocate buffers with less space "
                                       "than data to communicate!" );
         _overallocation = overallocation;
 

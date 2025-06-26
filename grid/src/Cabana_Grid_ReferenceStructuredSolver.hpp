@@ -457,7 +457,9 @@ class ReferenceConjugateGradient
 
         // If we didn't converge throw.
         if ( !converged )
-            throw std::runtime_error( "CG solver did not converge" );
+            throw std::runtime_error(
+                "Cabana::Grid::ReferenceConjugateGradient::solve: CG solver "
+                "did not converge" );
     }
 
     //! Get the number of iterations taken on the last solve.

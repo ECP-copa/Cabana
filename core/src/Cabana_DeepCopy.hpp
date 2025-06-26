@@ -165,16 +165,18 @@ deep_copy( DstAoSoA& dst, const SrcAoSoA& src,
     using src_soa_type = typename src_type::soa_type;
 
     // Check that the data types are the same.
-    static_assert(
-        std::is_same_v<typename dst_type::member_types,
-                       typename src_type::member_types>,
-        "Attempted to deep copy AoSoA objects of different member types" );
+    static_assert( std::is_same_v<typename dst_type::member_types,
+                                  typename src_type::member_types>,
+                   "Cabana::deep_copy: Attempted to deep copy AoSoA objects of "
+                   "different member types" );
 
     // Check for the same number of values.
     if ( dst.size() != src.size() )
     {
         throw std::runtime_error(
-            "Attempted to deep copy AoSoA objects of different sizes" );
+            "Cabana::deep_copy: Attempted to deep copy "
+            "AoSoA objects of different sizes. (Labels: " +
+            src.label() + ", " + dst.label() + ")" );
     }
 
     // Get the pointers to the beginning of the data blocks.
@@ -263,7 +265,7 @@ inline void deep_copy( AoSoA_t& aosoa,
                        const typename AoSoA_t::tuple_type& tuple )
 {
     static_assert( is_aosoa<AoSoA_t>::value,
-                   "Only AoSoAs can be assigned tuples" );
+                   "Cabana::deep_copy: Only AoSoAs can be assigned tuples" );
     auto assign_func = KOKKOS_LAMBDA( const std::size_t i )
     {
         aosoa.setTuple( i, tuple );
@@ -293,30 +295,32 @@ deep_copy( DstSlice& dst, const SrcSlice& src,
     using src_type = SrcSlice;
 
     // Check that the data types are the same.
-    static_assert(
-        std::is_same_v<typename dst_type::value_type,
-                       typename src_type::value_type>,
-        "Attempted to deep copy Slice objects of different value types" );
+    static_assert( std::is_same_v<typename dst_type::value_type,
+                                  typename src_type::value_type>,
+                   "Cabana::deep_copy: Attempted to deep copy Slice objects of "
+                   "different value types" );
 
     // Check that the element dimensions are the same.
     static_assert( SrcSlice::view_layout::D0 == SrcSlice::view_layout::D0,
-                   "Slice dimension 0 is different" );
+                   "Cabana::deep_copy: Slice dimension 0 is different" );
     static_assert( SrcSlice::view_layout::D1 == SrcSlice::view_layout::D1,
-                   "Slice dimension 1 is different" );
+                   "Cabana::deep_copy: Slice dimension 1 is different" );
     static_assert( SrcSlice::view_layout::D2 == SrcSlice::view_layout::D2,
-                   "Slice dimension 2 is different" );
+                   "Cabana::deep_copy: Slice dimension 2 is different" );
     static_assert( SrcSlice::view_layout::D3 == SrcSlice::view_layout::D3,
-                   "Slice dimension 3 is different" );
+                   "Cabana::deep_copy: Slice dimension 3 is different" );
     static_assert( SrcSlice::view_layout::D4 == SrcSlice::view_layout::D4,
-                   "Slice dimension 4 is different" );
+                   "Cabana::deep_copy: Slice dimension 4 is different" );
     static_assert( SrcSlice::view_layout::D5 == SrcSlice::view_layout::D5,
-                   "Slice dimension 5 is different" );
+                   "Cabana::deep_copy: Slice dimension 5 is different" );
 
     // Check for the same number of elements.
     if ( dst.size() != src.size() )
     {
         throw std::runtime_error(
-            "Attempted to deep copy Slice objects of different sizes" );
+            "Cabana::deep_copy: Attempted to deep copy Slice objects of "
+            "different sizes. (Labels: " +
+            src.label() + ", " + dst.label() + ")" );
     }
 
     // Get the pointers to the beginning of the data blocks.
@@ -398,7 +402,7 @@ inline void deep_copy( Slice_t& slice,
                        const typename Slice_t::value_type scalar )
 {
     static_assert( is_slice<Slice_t>::value,
-                   "Only slices can be assigned scalars" );
+                   "Cabana::deep_copy: Only slices can be assigned scalars" );
     Kokkos::deep_copy( slice.view(), scalar );
 }
 
