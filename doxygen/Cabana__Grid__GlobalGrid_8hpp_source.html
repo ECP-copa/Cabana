@@ -244,8 +244,8 @@ $(function(){initNavTree('Cabana__Grid__GlobalGrid_8hpp_source.html',''); initRe
 <div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>{</div>
 <div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>    <span class="keywordflow">for</span> ( <span class="keywordtype">long</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> d = 0; d &lt; NumSpaceDim; ++d )</div>
 <div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>        <span class="keywordflow">if</span> ( periodic[d] )</div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>            std::runtime_error(</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>                <span class="stringliteral">&quot;Sparse grid doesn&#39;t support periodic BC so far!&quot;</span> );</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>            std::runtime_error( <span class="stringliteral">&quot;Cabana::Grid::createGlobalGrid: Sparse grid &quot;</span></div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>                                <span class="stringliteral">&quot;does not support periodic boundaries&quot;</span> );</div>
 <div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>    <span class="keywordflow">return</span> std::make_shared&lt;GlobalGrid&lt;SparseMesh&lt;Scalar, NumSpaceDim&gt;&gt;&gt;(</div>
 <div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        comm, global_mesh, periodic, partitioner );</div>
 <div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>}</div>

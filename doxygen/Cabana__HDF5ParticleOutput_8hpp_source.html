@@ -742,7 +742,7 @@ $(function(){initNavTree('Cabana__HDF5ParticleOutput_8hpp_source.html',''); init
 <div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>        coords_view( Kokkos::ViewAllocateWithoutInitializing( <span class="stringliteral">&quot;coords&quot;</span> ),</div>
 <div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>                     coords_slice.size(), coords_slice.extent( 2 ) );</div>
 <div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>    Kokkos::parallel_for(</div>
-<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span>        <span class="stringliteral">&quot;Cabana::HDF5ParticleOutput::writeCoords&quot;</span>,</div>
+<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span>        <span class="stringliteral">&quot;Cabana::HDF5ParticleOutput::copyCoords&quot;</span>,</div>
 <div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>        Kokkos::RangePolicy&lt;typename CoordSliceType::execution_space&gt;(</div>
 <div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>            0, coords_slice.size() ),</div>
 <div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>        KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i ) {</div>

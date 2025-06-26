@@ -222,7 +222,7 @@ $(function(){initNavTree('Cabana__Grid__SparseArray_8hpp_source.html',''); initR
 <div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>        <span class="keyword">auto</span>&amp; low_corner = _global_low_corner;</div>
 <div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>        <span class="comment">// register sparse map in sparse array layout</span></div>
 <div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>        Kokkos::parallel_for(</div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>            <span class="stringliteral">&quot;register sparse map in sparse array layout&quot;</span>,</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>            <span class="stringliteral">&quot;Cabana::Grid::Experimental::SparseArrayLayout::registerSparseMap&quot;</span>,</div>
 <div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>            Kokkos::RangePolicy&lt;ExecSpace&gt;( 0, particle_num ),</div>
 <div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>            KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> pid ) {</div>
 <div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>                <a class="code hl_typedef" href="classCabana_1_1Grid_1_1Experimental_1_1SparseArrayLayout.html#ae477ab46297d660e3150f4a824c25b8b">scalar_type</a> pos[3] = { positions( pid, 0 ) - low_corner[0],</div>
