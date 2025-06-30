@@ -139,7 +139,8 @@ int createParticles(
     Kokkos::RangePolicy<ExecutionSpace> exec_policy(
         exec_space, previous_num_particles,
         previous_num_particles + num_particles );
-    Kokkos::parallel_for( exec_policy, random_coord_op );
+    Kokkos::parallel_for( "Cabana::createParticles", exec_policy,
+                          random_coord_op );
     Kokkos::fence();
 
     auto count_host =
@@ -232,7 +233,8 @@ void createParticles(
     Kokkos::RangePolicy<ExecutionSpace> exec_policy(
         exec_space, previous_num_particles,
         previous_num_particles + num_particles );
-    Kokkos::parallel_for( exec_policy, random_coord_op );
+    Kokkos::parallel_for( "Cabana::createParticles", exec_policy,
+                          random_coord_op );
     Kokkos::fence();
 }
 

@@ -888,7 +888,7 @@ void copySliceToView(
         3 == SliceType::kokkos_view::traits::dimension::rank, int*>::type = 0 )
 {
     Kokkos::parallel_for(
-        "Cabana::copySliceToView::FieldRank1",
+        "Cabana::copySliceToView::Rank1",
         Kokkos::RangePolicy<ExecutionSpace>( exec_space, begin, end ),
         KOKKOS_LAMBDA( const int i ) {
             for ( std::size_t d0 = 0; d0 < slice.extent( 2 ); ++d0 )
@@ -905,7 +905,7 @@ void copySliceToView(
         4 == SliceType::kokkos_view::traits::dimension::rank, int*>::type = 0 )
 {
     Kokkos::parallel_for(
-        "Cabana::copySliceToView::writeFieldRank2",
+        "Cabana::copySliceToView::Rank2",
         Kokkos::RangePolicy<ExecutionSpace>( exec_space, begin, end ),
         KOKKOS_LAMBDA( const int i ) {
             for ( std::size_t d0 = 0; d0 < slice.extent( 2 ); ++d0 )
@@ -950,7 +950,7 @@ void copyViewToSlice(
         3 == SliceType::kokkos_view::traits::dimension::rank, int*>::type = 0 )
 {
     Kokkos::parallel_for(
-        "Cabana::copySliceToView::FieldRank1",
+        "Cabana::copyViewToSlice::Rank1",
         Kokkos::RangePolicy<ExecutionSpace>( exec_space, begin, end ),
         KOKKOS_LAMBDA( const int i ) {
             for ( std::size_t d0 = 0; d0 < slice.extent( 2 ); ++d0 )
@@ -967,7 +967,7 @@ void copyViewToSlice(
         4 == SliceType::kokkos_view::traits::dimension::rank, int*>::type = 0 )
 {
     Kokkos::parallel_for(
-        "Cabana::copySliceToView::writeFieldRank2",
+        "Cabana::copyViewToSlice::Rank2",
         Kokkos::RangePolicy<ExecutionSpace>( exec_space, begin, end ),
         KOKKOS_LAMBDA( const int i ) {
             for ( std::size_t d0 = 0; d0 < slice.extent( 2 ); ++d0 )
