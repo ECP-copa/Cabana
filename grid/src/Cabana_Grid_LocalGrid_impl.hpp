@@ -302,7 +302,8 @@ auto LocalGrid<MeshType>::getBound(
             else if ( upper_lower > 0 )
                 minmax[d] = owned_space.max( d );
             else
-                throw std::runtime_error( "Impl: Only 1 or -1 allowed" );
+                throw std::runtime_error( "Cabana::Grid::LocalGrid::getBound::"
+                                          "Impl: Only 1 or -1 allowed" );
         }
         // Upper neighbor.
         else if ( 1 == off_ijk[d] )
@@ -311,7 +312,8 @@ auto LocalGrid<MeshType>::getBound(
         }
         else
         {
-            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
+            throw std::runtime_error( "Cabana::Grid::LocalGrid::getBound: "
+                                      "Neighbor offset must be 1, 0, or -1" );
         }
     }
     return minmax;
@@ -345,7 +347,8 @@ auto LocalGrid<MeshType>::getBound(
             else if ( upper_lower > 0 )
                 minmax[d] = owned_space.max( d );
             else
-                throw std::runtime_error( "Impl: Only 1 or -1 allowed" );
+                throw std::runtime_error( "Cabana::Grid::LocalGrid::getBound::"
+                                          "Impl: Only 1 or -1 allowed" );
         }
         // Upper neighbor.
         else if ( 1 == off_ijk[d] )
@@ -355,7 +358,8 @@ auto LocalGrid<MeshType>::getBound(
         }
         else
         {
-            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
+            throw std::runtime_error( "Cabana::Grid::LocalGrid::getBound: "
+                                      "Neighbor offset must be 1, 0, or -1" );
         }
     }
     return minmax;

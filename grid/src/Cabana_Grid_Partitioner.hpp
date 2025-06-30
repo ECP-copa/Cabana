@@ -105,7 +105,8 @@ class ManualBlockPartitioner : public BlockPartitioner<NumSpaceDim>
             nrank *= _ranks_per_dim[d];
         if ( comm_size != nrank )
             throw std::runtime_error(
-                "ManualPartitioner ranks do not match comm size" );
+                "Cabana::Grid::ManualBlockPartitioner::ranksPerDimension: "
+                "ManualBlockPartitioner ranks do not match comm size" );
         return _ranks_per_dim;
     }
 

@@ -151,12 +151,15 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::sharedTileIndexSpace(
     // Check that the offsets are valid.
     for ( std::size_t d = 0; d < num_space_dim; ++d )
         if ( off_ijk[d] < -1 || 1 < off_ijk[d] )
-            throw std::logic_error( "Neighbor indices out of bounds" );
+            throw std::logic_error(
+                "Cabana::Grid::Experimental::LocalGrid::sharedTileIndexSpace "
+                "(SparseMesh): Neighbor indices out of bounds" );
 
     // Check that the requested halo width is valid.
     if ( hw > _halo_cell_width )
         throw std::logic_error(
-            "Requested halo width larger than local grid halo" );
+            "Cabana::Grid::Experimental::LocalGrid::sharedTileIndexSpace "
+            "(SparseMesh):Requested halo width larger than local grid halo" );
 
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
@@ -276,7 +279,9 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::sharedTileIndexSpaceImpl(
             min[d] = ( owned_cell_space.max( d ) - halo_width ) >>
                      cellBitsPerTileDim;
         else
-            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
+            throw std::runtime_error(
+                "Cabana::Grid::Experimental::LocalGrid::sharedTileIndexSpace "
+                "(SparseMesh): Neighbor offset must be 1, 0, or -1" );
     }
 
     // Compute the upper bound.
@@ -296,7 +301,9 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::sharedTileIndexSpaceImpl(
         else if ( 1 == off_ijk[d] )
             max[d] = owned_cell_space.max( d ) >> cellBitsPerTileDim;
         else
-            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
+            throw std::runtime_error(
+                "Cabana::Grid::Experimental::LocalGrid::sharedTileIndexSpace "
+                "(SparseMesh): Neighbor offset must be 1, 0, or -1" );
     }
 
     return TileIndexSpace<num_space_dim, cellBitsPerTileDim>( min, max );
@@ -332,7 +339,9 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::sharedTileIndexSpaceImpl(
         else if ( 1 == off_ijk[d] )
             min[d] = owned_cell_space.max( d ) >> cellBitsPerTileDim;
         else
-            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
+            throw std::runtime_error(
+                "Cabana::Grid::Experimental::LocalGrid::sharedTileIndexSpace "
+                "(SparseMesh): Neighbor offset must be 1, 0, or -1" );
     }
 
     // Compute the upper bound.
@@ -352,7 +361,9 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::sharedTileIndexSpaceImpl(
             max[d] = ( owned_cell_space.max( d ) + halo_width ) >>
                      cellBitsPerTileDim;
         else
-            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
+            throw std::runtime_error(
+                "Cabana::Grid::Experimental::LocalGrid::sharedTileIndexSpace "
+                "(SparseMesh): Neighbor offset must be 1, 0, or -1" );
     }
 
     return TileIndexSpace<num_space_dim, cellBitsPerTileDim>( min, max );
@@ -417,7 +428,8 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::indexSpaceImpl(
     -> IndexSpace<num_space_dim>
 {
     std::runtime_error(
-        "Sparse grid implementation doesn't support Face entities so far" );
+        "Cabana::Grid::Experimental::LocalGrid::indexSpace "
+        "(SparseMesh): Implementation doesn't support Face entities." );
     return indexSpaceImpl( t1, t3 );
 }
 
@@ -429,7 +441,8 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::indexSpaceImpl(
     -> IndexSpace<num_space_dim>
 {
     std::runtime_error(
-        "Sparse grid implementation doesn't support Face entities so far" );
+        "Cabana::Grid::Experimental::LocalGrid::indexSpace "
+        "(SparseMesh): Implementation doesn't support Face entities." );
     return indexSpaceImpl( t1, t3 );
 }
 
@@ -440,8 +453,9 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::indexSpaceImpl(
     DecompositionTag t1, Face<Dim::K>, IndexType t3 ) const
     -> IndexSpace<num_space_dim>
 {
-    std::runtime_error(
-        "Sparse grid implementation doesn't support Face entities so far" );
+    std::runtime_error( "Cabana::Grid::Experimental::LocalGrid::indexSpace "
+                        "(SparseMesh): Sparse grid implementation doesn't "
+                        "support Face entities." );
     return indexSpaceImpl( t1, t3 );
 }
 
@@ -454,7 +468,8 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::sharedTileIndexSpaceImpl(
     -> TileIndexSpace<num_space_dim, cellBitsPerTileDim>
 {
     std::runtime_error(
-        "Sparse grid implementation doesn't support Face entities so far" );
+        "Cabana::Grid::Experimental::LocalGrid::indexSpace "
+        "(SparseMesh): Implementation doesn't support Face entities." );
     return sharedTileIndexSpaceImpl<cellBitsPerTileDim>( t1, off_ijk,
                                                          halo_width );
 }
@@ -468,7 +483,8 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::sharedTileIndexSpaceImpl(
     -> TileIndexSpace<num_space_dim, cellBitsPerTileDim>
 {
     std::runtime_error(
-        "Sparse grid implementation doesn't support Face entities so far" );
+        "Cabana::Grid::Experimental::LocalGrid::indexSpace "
+        "(SparseMesh): Implementation doesn't support Face entities." );
     return sharedTileIndexSpaceImpl<cellBitsPerTileDim>( t1, off_ijk,
                                                          halo_width );
 }
@@ -481,7 +497,8 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::sharedTileIndexSpaceImpl(
     -> TileIndexSpace<num_space_dim, cellBitsPerTileDim>
 {
     std::runtime_error(
-        "Sparse grid implementation doesn't support Face entities so far" );
+        "Cabana::Grid::Experimental::LocalGrid::indexSpace "
+        "(SparseMesh): Implementation doesn't support Face entities." );
     return sharedTileIndexSpaceImpl<cellBitsPerTileDim>( t1, off_ijk,
                                                          halo_width );
 }
@@ -497,7 +514,8 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::indexSpaceImpl(
     -> IndexSpace<num_space_dim>
 {
     std::runtime_error(
-        "Sparse grid implementation doesn't support Edge entities so far" );
+        "Cabana::Grid::Experimental::LocalGrid::indexSpace "
+        "(SparseMesh): Implementation doesn't support Edge entities." );
     return indexSpaceImpl( t1, t3 );
 }
 
@@ -509,7 +527,8 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::indexSpaceImpl(
     -> IndexSpace<num_space_dim>
 {
     std::runtime_error(
-        "Sparse grid implementation doesn't support Edge entities so far" );
+        "Cabana::Grid::Experimental::LocalGrid::indexSpace "
+        "(SparseMesh): Implementation doesn't support Edge entities." );
     return indexSpaceImpl( t1, t3 );
 }
 
@@ -521,7 +540,8 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::indexSpaceImpl(
     -> IndexSpace<num_space_dim>
 {
     std::runtime_error(
-        "Sparse grid implementation doesn't support Edge entities so far" );
+        "Cabana::Grid::Experimental::LocalGrid::indexSpace "
+        "(SparseMesh): Implementation doesn't support Edge entities." );
     return indexSpaceImpl( t1, t3 );
 }
 
@@ -534,7 +554,8 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::sharedTileIndexSpaceImpl(
     -> TileIndexSpace<num_space_dim, cellBitsPerTileDim>
 {
     std::runtime_error(
-        "Sparse grid implementation doesn't support Edge entities so far" );
+        "Cabana::Grid::Experimental::LocalGrid::sharedTileIndexSpace "
+        "(SparseMesh): Implementation doesn't support Edge entities." );
     return sharedTileIndexSpaceImpl<cellBitsPerTileDim>( t1, off_ijk,
                                                          halo_width );
 }
@@ -548,7 +569,8 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::sharedTileIndexSpaceImpl(
     -> TileIndexSpace<num_space_dim, cellBitsPerTileDim>
 {
     std::runtime_error(
-        "Sparse grid implementation doesn't support Edge entities so far" );
+        "Cabana::Grid::Experimental::LocalGrid::sharedTileIndexSpace "
+        "(SparseMesh): Implementation doesn't support Edge entities." );
     return sharedTileIndexSpaceImpl<cellBitsPerTileDim>( t1, off_ijk,
                                                          halo_width );
 }
@@ -562,7 +584,8 @@ auto LocalGrid<SparseMesh<Scalar, NumSpaceDim>>::sharedTileIndexSpaceImpl(
     -> TileIndexSpace<num_space_dim, cellBitsPerTileDim>
 {
     std::runtime_error(
-        "Sparse grid implementation doesn't support Edge entities so far" );
+        "Cabana::Grid::Experimental::LocalGrid::sharedTileIndexSpace "
+        "(SparseMesh): Implementation doesn't support Edge entities." );
     return sharedTileIndexSpaceImpl<cellBitsPerTileDim>( t1, off_ijk,
                                                          halo_width );
 }

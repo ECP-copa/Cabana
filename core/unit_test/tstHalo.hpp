@@ -702,11 +702,12 @@ void testHaloBuffers( TestTag tag, BuildType build_type,
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-using HaloTestTypes = ::testing::Types<
-    std::tuple<Cabana::Export, Cabana::Export>,
-    std::tuple<Cabana::Import, Cabana::Import>
-    // Future: Set first tuple element to communication space used.
-    >;
+using HaloTestTypes =
+    ::testing::Types<std::tuple<Cabana::Export, Cabana::Export>,
+                     std::tuple<Cabana::Import, Cabana::Import>
+                     // Future: Set first tuple element to communication space
+                     // used.
+                     >;
 
 template <typename T>
 class HaloTypedTest : public ::testing::Test

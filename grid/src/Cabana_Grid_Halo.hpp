@@ -470,7 +470,8 @@ class Halo
         int result;
         MPI_Comm_compare( comm, getComm( arrays... ), &result );
         if ( result != MPI_IDENT && result != MPI_CONGRUENT )
-            throw std::runtime_error( "Arrays have different communicators" );
+            throw std::runtime_error( "Cabana::Grid::Halo::getComm: Arrays "
+                                      "have different communicators" );
 
         return comm;
     }
@@ -495,7 +496,8 @@ class Halo
         if ( local_grid->haloCellWidth() !=
              array.layout()->localGrid()->haloCellWidth() )
         {
-            throw std::runtime_error( "Arrays have different halo widths" );
+            throw std::runtime_error( "Cabana::Grid::Halo::getlocalGrid: "
+                                      "Arrays have different halo widths" );
         }
 
         return local_grid;
@@ -600,10 +602,12 @@ class Halo
 
         // Check that all elements and bytes are accounted for.
         if ( byte_counter != buffer_bytes )
-            throw std::logic_error( "Steering vector contains different number "
+            throw std::logic_error( "Cabana::Grid::Halo::buildSteeringVector: "
+                                    "Steering vector contains different number "
                                     "of bytes than buffer" );
         if ( elem_counter != buffer_num_element )
-            throw std::logic_error( "Steering vector contains different number "
+            throw std::logic_error( "Cabana::Grid::Halo::buildSteeringVector: "
+                                    "Steering vector contains different number "
                                     "of elements than buffer" );
 
         // Copy steering vector to device.
@@ -657,10 +661,12 @@ class Halo
 
         // Check that all elements and bytes are accounted for.
         if ( byte_counter != buffer_bytes )
-            throw std::logic_error( "Steering vector contains different number "
+            throw std::logic_error( "Cabana::Grid::Halo::buildSteeringVector: "
+                                    "Steering vector contains different number "
                                     "of bytes than buffer" );
         if ( elem_counter != buffer_num_element )
-            throw std::logic_error( "Steering vector contains different number "
+            throw std::logic_error( "Cabana::Grid::Halo::buildSteeringVector: "
+                                    "Steering vector contains different number "
                                     "of elements than buffer" );
 
         // Copy steering vector to device.

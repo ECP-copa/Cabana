@@ -195,7 +195,8 @@ neighborHistogram( ExecutionSpace exec_space, const std::size_t num_particles,
     };
     Kokkos::RangePolicy<ExecutionSpace> particle_policy( exec_space, 0,
                                                          num_particles );
-    Kokkos::parallel_for( particle_policy, extract_functor );
+    Kokkos::parallel_for( "Cabana::NeighborList::neighborHistogram::extract",
+                          particle_policy, extract_functor );
     Kokkos::fence();
 
     auto bin_data = Cabana::binByKey( num_neigh, num_bin );
@@ -214,7 +215,8 @@ neighborHistogram( ExecutionSpace exec_space, const std::size_t num_particles,
         histogram( b, 1 ) = bin_data.binSize( b );
     };
     Kokkos::RangePolicy<ExecutionSpace> bin_policy( exec_space, 0, num_bin );
-    Kokkos::parallel_for( bin_policy, histogram_functor );
+    Kokkos::parallel_for( "Cabana::NeighborList::neighborHistogram", bin_policy,
+                          histogram_functor );
     Kokkos::fence();
 
     return histogram;

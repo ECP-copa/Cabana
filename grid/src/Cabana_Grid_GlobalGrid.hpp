@@ -225,8 +225,8 @@ std::shared_ptr<GlobalGrid<SparseMesh<Scalar, NumSpaceDim>>> createGlobalGrid(
 {
     for ( long unsigned int d = 0; d < NumSpaceDim; ++d )
         if ( periodic[d] )
-            std::runtime_error(
-                "Sparse grid doesn't support periodic BC so far!" );
+            std::runtime_error( "Cabana::Grid::createGlobalGrid: Sparse grid "
+                                "does not support periodic boundaries" );
     return std::make_shared<GlobalGrid<SparseMesh<Scalar, NumSpaceDim>>>(
         comm, global_mesh, periodic, partitioner );
 }

@@ -156,7 +156,7 @@ class SparseArrayLayout
         auto& low_corner = _global_low_corner;
         // register sparse map in sparse array layout
         Kokkos::parallel_for(
-            "register sparse map in sparse array layout",
+            "Cabana::Grid::Experimental::SparseArrayLayout::registerSparseMap",
             Kokkos::RangePolicy<ExecSpace>( 0, particle_num ),
             KOKKOS_LAMBDA( const int pid ) {
                 scalar_type pos[3] = { positions( pid, 0 ) - low_corner[0],

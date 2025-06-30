@@ -594,8 +594,8 @@ class CommunicationPlan
     template <class ExecutionSpace, class RankViewType>
     Kokkos::View<size_type*, memory_space>
     createFromTopology( ExecutionSpace exec_space, Export,
-                                  const RankViewType& element_export_ranks,
-                                  const std::vector<int>& neighbor_ranks )
+                        const RankViewType& element_export_ranks,
+                        const std::vector<int>& neighbor_ranks )
     {
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
 
@@ -661,13 +661,15 @@ class CommunicationPlan
         const int ec =
             MPI_Waitall( requests.size(), requests.data(), status.data() );
         if ( MPI_SUCCESS != ec )
-            throw std::logic_error( "Failed MPI Communication" );
+            throw std::logic_error(
+                "Cabana::CommunicationPlan::createFromExportsAndTopology: "
+                "Failed MPI Communication" );
 
         // Get the total number of imports/exports.
-        _total_num_export =
-            std::accumulate( _num_export.begin(), _num_export.end(), 0 );
-        _total_num_import =
-            std::accumulate( _num_import.begin(), _num_import.end(), 0 );
+        _total_num_export = std::accumulate(
+            _num_export.begin(), _num_export.end(), std::size_t{ 0u } );
+        _total_num_import = std::accumulate(
+            _num_import.begin(), _num_import.end(), std::size_t{ 0u } );
 
         // Barrier before continuing to ensure synchronization.
         MPI_Barrier( comm() );
@@ -714,11 +716,11 @@ class CommunicationPlan
     template <class RankViewType>
     Kokkos::View<size_type*, memory_space>
     createFromTopology( Export, const RankViewType& element_export_ranks,
-                                  const std::vector<int>& neighbor_ranks )
+                        const std::vector<int>& neighbor_ranks )
     {
         // Use the default execution space.
-        return createFromTopology(
-            execution_space{}, Export(), element_export_ranks, neighbor_ranks );
+        return createFromTopology( execution_space{}, Export(),
+                                   element_export_ranks, neighbor_ranks );
     }
 
     /*!
@@ -754,7 +756,7 @@ class CommunicationPlan
     template <class ExecutionSpace, class RankViewType>
     Kokkos::View<size_type*, memory_space>
     createFromNoTopology( ExecutionSpace exec_space, Export,
-                           const RankViewType& element_export_ranks )
+                          const RankViewType& element_export_ranks )
     {
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
 
@@ -843,7 +845,9 @@ class CommunicationPlan
         const int ec =
             MPI_Waitall( requests.size(), requests.data(), status.data() );
         if ( MPI_SUCCESS != ec )
-            throw std::logic_error( "Failed MPI Communication" );
+            throw std::logic_error(
+                "Cabana::CommunicationPlan::createFromExportsOnly: Failed MPI "
+                "Communication" );
 
         // Compute the total number of imports.
         _total_num_import =
@@ -921,7 +925,8 @@ class CommunicationPlan
     createFromNoTopology( Export, const RankViewType& element_export_ranks )
     {
         // Use the default execution space.
-        return createFromNoTopology( execution_space{}, Export(), element_export_ranks );
+        return createFromNoTopology( execution_space{}, Export(),
+                                     element_export_ranks );
     }
 
     /*!
@@ -965,9 +970,9 @@ class CommunicationPlan
     */
     template <class ExecutionSpace, class RankViewType, class IdViewType>
     auto createFromTopology( ExecutionSpace exec_space, Import,
-                                       const RankViewType& element_import_ranks,
-                                       const IdViewType& element_import_ids,
-                                       const std::vector<int>& neighbor_ranks )
+                             const RankViewType& element_import_ranks,
+                             const IdViewType& element_import_ids,
+                             const std::vector<int>& neighbor_ranks )
         -> std::tuple<Kokkos::View<typename RankViewType::size_type*,
                                    typename RankViewType::memory_space>,
                       Kokkos::View<int*, typename RankViewType::memory_space>,
@@ -1146,13 +1151,13 @@ class CommunicationPlan
     */
     template <class RankViewType, class IdViewType>
     auto createFromTopology( Import, const RankViewType& element_import_ranks,
-                                       const IdViewType& element_import_ids,
-                                       const std::vector<int>& neighbor_ranks )
+                             const IdViewType& element_import_ids,
+                             const std::vector<int>& neighbor_ranks )
     {
         // Use the default execution space.
-        return createFromTopology(
-            execution_space{}, Import(), element_import_ranks, element_import_ids,
-            neighbor_ranks );
+        return createFromTopology( execution_space{}, Import(),
+                                   element_import_ranks, element_import_ids,
+                                   neighbor_ranks );
     }
 
     /*!
@@ -1189,8 +1194,8 @@ class CommunicationPlan
     */
     template <class ExecutionSpace, class RankViewType, class IdViewType>
     auto createFromNoTopology( ExecutionSpace exec_space, Import,
-                                const RankViewType& element_import_ranks,
-                                const IdViewType& element_import_ids )
+                               const RankViewType& element_import_ranks,
+                               const IdViewType& element_import_ids )
         -> std::tuple<Kokkos::View<typename RankViewType::size_type*,
                                    typename RankViewType::memory_space>,
                       Kokkos::View<int*, typename RankViewType::memory_space>,
@@ -1441,11 +1446,11 @@ class CommunicationPlan
     */
     template <class RankViewType, class IdViewType>
     auto createFromNoTopology( Import, const RankViewType& element_import_ranks,
-                                const IdViewType& element_import_ids )
+                               const IdViewType& element_import_ids )
     {
         // Use the default execution space.
-        return createFromNoTopology( execution_space{}, Import(), element_import_ranks,
-                                      element_import_ids );
+        return createFromNoTopology( execution_space{}, Import(),
+                                     element_import_ranks, element_import_ids );
     }
 
     /*!
@@ -1512,7 +1517,9 @@ class CommunicationPlan
 
         if ( !use_iota &&
              ( element_export_ids.size() != element_export_ranks.size() ) )
-            throw std::runtime_error( "Export ids and ranks different sizes!" );
+            throw std::runtime_error(
+                "Cabana::CommunicationPlan::createSteering: Export ids and "
+                "ranks different sizes!" );
 
         // Get the size of this communicator.
         int comm_size = -1;
@@ -1541,7 +1548,7 @@ class CommunicationPlan
             _total_num_export );
         auto steer_vec = _export_steering;
         Kokkos::parallel_for(
-            "Cabana::createSteering",
+            "Cabana::CommunicationPlan::createSteering",
             Kokkos::RangePolicy<ExecutionSpace>( 0, _num_export_element ),
             KOKKOS_LAMBDA( const int i ) {
                 if ( element_export_ranks( i ) >= 0 )
@@ -1790,7 +1797,8 @@ class CommunicationData
                       const double overallocation )
     {
         if ( overallocation < 1.0 )
-            throw std::runtime_error( "Cannot allocate buffers with less space "
+            throw std::runtime_error( "Cabana::CommunicationPlan: "
+                                      "Cannot allocate buffers with less space "
                                       "than data to communicate!" );
         _overallocation = overallocation;
 
@@ -1805,12 +1813,14 @@ class CommunicationData
         setData( particles );
 
         auto send_capacity = sendCapacity();
-        std::size_t new_send_size = total_send * _overallocation;
+        auto new_send_size = static_cast<std::size_t>(
+            static_cast<double>( total_send ) * _overallocation );
         if ( new_send_size > send_capacity )
             _comm_data.reallocateSend( new_send_size );
 
         auto recv_capacity = receiveCapacity();
-        std::size_t new_recv_size = total_recv * _overallocation;
+        auto new_recv_size = static_cast<std::size_t>(
+            static_cast<double>( total_recv ) * _overallocation );
         if ( new_recv_size > recv_capacity )
             _comm_data.reallocateReceive( new_recv_size );
 

@@ -70,12 +70,13 @@ class HypreStructuredSolver
         : _comm( layout.localGrid()->globalGrid().comm() )
         , _is_preconditioner( is_preconditioner )
     {
-        static_assert( is_array_layout<ArrayLayout_t>::value,
-                       "Must use an array layout" );
         static_assert(
-            std::is_same<typename ArrayLayout_t::entity_type,
-                         entity_type>::value,
-            "Array layout entity type mush match solver entity type" );
+            is_array_layout<ArrayLayout_t>::value,
+            "Cabana::Grid::HypreStructuredSolver: Must use an array layout" );
+        static_assert( std::is_same<typename ArrayLayout_t::entity_type,
+                                    entity_type>::value,
+                       "Cabana::Grid::HypreStructuredSolver: Array layout "
+                       "entity type must match solver entity type" );
 
         // Spatial dimension.
         const std::size_t num_space_dim = ArrayLayout_t::num_space_dim;
@@ -232,24 +233,29 @@ class HypreStructuredSolver
         static_assert( is_array<Array_t>::value, "Must use an array" );
         static_assert(
             std::is_same<typename Array_t::entity_type, entity_type>::value,
-            "Array entity type mush match solver entity type" );
+            "Cabana::Grid::HypreStructuredSolver::setMatrixValues: Array "
+            "entity type must match solver entity type" );
         static_assert(
             std::is_same<typename Array_t::memory_space, MemorySpace>::value,
-            "Array memory space and solver memory space are different." );
+            "Cabana::Grid::HypreStructuredSolver::setMatrixValues: Array "
+            "memory space and solver memory space are different." );
 
         static_assert(
             std::is_same<typename Array_t::value_type, value_type>::value,
-            "Array value type and solver value type are different." );
+            "Cabana::Grid::HypreStructuredSolver::setMatrixValues: Array value "
+            "type and solver value type are different." );
 
         // This function is only valid for non-preconditioners.
         if ( _is_preconditioner )
             throw std::logic_error(
-                "Cannot call setMatrixValues() on preconditioners" );
+                "Cabana::Grid::HypreStructuredSolver::setMatrixValues: Cannot "
+                "call setMatrixValues() on preconditioners" );
 
         if ( values.layout()->dofsPerEntity() !=
              static_cast<int>( _stencil_size ) )
             throw std::runtime_error(
-                "Number of matrix values does not match stencil size" );
+                "Cabana::Grid::HypreStructuredSolver::setMatrixValues: Number "
+                "of matrix values does not match stencil size" );
 
         // Spatial dimension.
         const std::size_t num_space_dim = Array_t::num_space_dim;
@@ -328,11 +334,14 @@ class HypreStructuredSolver
         // This function is only valid for non-preconditioners.
         if ( _is_preconditioner )
             throw std::logic_error(
-                "Cannot call setPreconditioner() on a preconditioner" );
+                "Cabana::Grid::HypreStructuredSolver::setPreconditioner: "
+                "Cannot "
+                "call setPreconditioner() on a preconditioner" );
 
         // Only a preconditioner can be used as a preconditioner.
         if ( !preconditioner->isPreconditioner() )
-            throw std::logic_error( "Not a preconditioner" );
+            throw std::logic_error( "Cabana::Grid::HypreStructuredSolver:"
+                                    "setPreconditioner: Not a preconditioner" );
 
         _preconditioner = preconditioner;
         this->setPreconditionerImpl( *_preconditioner );
@@ -343,7 +352,9 @@ class HypreStructuredSolver
     {
         // This function is only valid for non-preconditioners.
         if ( _is_preconditioner )
-            throw std::logic_error( "Cannot call setup() on preconditioners" );
+            throw std::logic_error(
+                "Cabana::Grid::HypreStructuredSolver::setup:"
+                " Cannot call setup() on preconditioners" );
 
         // FIXME: appears to be a memory issue in the call to this function
         this->setupImpl();
@@ -360,26 +371,34 @@ class HypreStructuredSolver
         Kokkos::Profiling::ScopedRegion region(
             "Cabana::Grid::HypreStructuredSolver::solve" );
 
-        static_assert( is_array<Array_t>::value, "Must use an array" );
+        static_assert(
+            is_array<Array_t>::value,
+            "Cabana::Grid::HypreStructuredSolver::solve: Must use an array" );
         static_assert(
             std::is_same<typename Array_t::entity_type, entity_type>::value,
-            "Array entity type mush match solver entity type" );
+            "Cabana::Grid::HypreStructuredSolver::solve: Array entity type "
+            "must match solver entity type" );
         static_assert(
             std::is_same<typename Array_t::memory_space, MemorySpace>::value,
-            "Array memory space and solver memory space are different." );
+            "Cabana::Grid::HypreStructuredSolver::solve: Array memory space "
+            "and solver memory space are different." );
 
         static_assert(
             std::is_same<typename Array_t::value_type, value_type>::value,
-            "Array value type and solver value type are different." );
+            "Cabana::Grid::HypreStructuredSolver::solve: Array value type and "
+            "solver value type are different." );
 
         // This function is only valid for non-preconditioners.
         if ( _is_preconditioner )
-            throw std::logic_error( "Cannot call solve() on preconditioners" );
+            throw std::logic_error(
+                "Cabana::Grid::HypreStructuredSolver::solve: Cannot call "
+                "solve() on preconditioners" );
 
         if ( b.layout()->dofsPerEntity() != 1 ||
              x.layout()->dofsPerEntity() != 1 )
             throw std::runtime_error(
-                "Structured solver only for scalar fields" );
+                "Cabana::Grid::HypreStructuredSolver::solve: Structured solver "
+                "only for scalar fields" );
 
         // Spatial dimension.
         const std::size_t num_space_dim = Array_t::num_space_dim;
@@ -1515,7 +1534,8 @@ createHypreStructuredSolver( const std::string& solver_type,
         return createHypreStructDiagonal<Scalar, MemorySpace>(
             layout, is_preconditioner );
     else
-        throw std::runtime_error( "Invalid solver type" );
+        throw std::runtime_error(
+            "Cabana::Grid::createHypreStructuredSolver: Invalid solver type" );
 }
 
 //---------------------------------------------------------------------------//
