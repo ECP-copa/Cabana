@@ -34,12 +34,13 @@ void importHaloExchangeExample()
       decomposition back to the uniquely-owned decomposition and collisions
       are resolved.
 
-      In this example we will demonstrate building an import-driven halo communication
-      plan and performing both scatter and gather operations. An import-driven halo is
-      used when you know who you are receiving from but not who you are sending to.
-      
-      Note: If no Cabana::Import or Cabana::Export tag is provided in the construction of a
-      Halo, the default behavior is to use Cabana::Export.
+      In this example we will demonstrate building an import-driven halo
+      communication plan and performing both scatter and gather operations. An
+      import-driven halo is used when you know who you are receiving from but
+      not who you are sending to.
+
+      Note: If no Cabana::Import or Cabana::Export tag is provided in the
+      construction of a Halo, the default behavior is to use Cabana::Export.
 
       Note: The halo uses MPI for data movement. MPI is initialized
       and finalized in the main function below.
@@ -116,9 +117,9 @@ void importHaloExchangeExample()
                                                   local_num_send );
     Kokkos::View<int*, MemorySpace> import_ids( "import_ids", local_num_send );
 
-    // Last 10 elements (elements 90-99) are imported from the next rank. Note that this
-    // view will most often be filled within a parallel_for but we do so in
-    // serial here for demonstration purposes.
+    // Last 10 elements (elements 90-99) are imported from the next rank. Note
+    // that this view will most often be filled within a parallel_for but we do
+    // so in serial here for demonstration purposes.
     int previous_rank = ( comm_rank == 0 ) ? comm_size - 1 : comm_rank - 1;
     int next_rank = ( comm_rank == comm_size - 1 ) ? 0 : comm_rank + 1;
     for ( int i = 0; i < local_num_send; ++i )
@@ -144,8 +145,8 @@ void importHaloExchangeExample()
     auto unique_end = std::unique( neighbors.begin(), neighbors.end() );
     neighbors.resize( std::distance( neighbors.begin(), unique_end ) );
     /* Note we must explicity include Cabana::Import in Halo construction */
-    Cabana::Halo<MemorySpace, Cabana::Import> halo( MPI_COMM_WORLD, num_tuple, import_ids,
-                                    import_ranks, neighbors );
+    Cabana::Halo<MemorySpace, Cabana::Import> halo(
+        MPI_COMM_WORLD, num_tuple, import_ids, import_ranks, neighbors );
 
     /*
       Resize the AoSoA to allow for additional ghost data. We can get the

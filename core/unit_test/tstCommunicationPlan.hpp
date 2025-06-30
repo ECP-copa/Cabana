@@ -43,14 +43,15 @@ class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE>
                                    const std::vector<int>& neighbor_ranks )
     {
         return this->createFromTopology( Cabana::Export(), element_export_ranks,
-                                                   neighbor_ranks );
+                                         neighbor_ranks );
     }
 
     template <class ViewType>
     Kokkos::View<size_type*, memory_space>
     createFromExports( const ViewType& element_export_ranks )
     {
-        return this->createFromNoTopology( Cabana::Export(), element_export_ranks );
+        return this->createFromNoTopology( Cabana::Export(),
+                                           element_export_ranks );
     }
 
     template <class ViewType>
@@ -62,8 +63,8 @@ class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE>
                                    const ViewType& element_import_ids,
                                    const std::vector<int>& neighbor_ranks )
     {
-        return this->createFromTopology( Cabana::Import(),
-            element_import_ranks, element_import_ids, neighbor_ranks );
+        return this->createFromTopology( Cabana::Import(), element_import_ranks,
+                                         element_import_ids, neighbor_ranks );
     }
 
     template <class ViewType>
@@ -74,8 +75,8 @@ class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE>
     createFromImports( const ViewType& element_import_ranks,
                        const ViewType& element_import_ids )
     {
-        return this->createFromNoTopology( Cabana::Import(), element_import_ranks,
-                                            element_import_ids );
+        return this->createFromNoTopology(
+            Cabana::Import(), element_import_ranks, element_import_ids );
     }
 
     template <class ViewType>
