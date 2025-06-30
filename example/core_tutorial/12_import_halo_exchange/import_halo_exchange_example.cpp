@@ -88,23 +88,23 @@ void importHaloExchangeExample()
     }
 
     /*
-      Before haloing the data, let's print out the data in the slices
+      Before gathering the data, let's print out the data in the slices
       on one rank.
     */
     if ( comm_rank == 0 )
     {
-        std::cout << "BEFORE exchange" << std::endl
+        std::cout << "BEFORE gather" << std::endl
                   << "(Rank " << comm_rank << ") ";
         for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
             std::cout << slice_ranks( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ranks.size() << " rank data before exchange)"
+                  << "(" << slice_ranks.size() << " rank data before gather)"
                   << std::endl
                   << "(Rank " << comm_rank << ") ";
         for ( std::size_t i = 0; i < slice_ids.size(); ++i )
             std::cout << slice_ids( i ) << " ";
         std::cout << std::endl
-                  << "(" << slice_ids.size() << " ID data before exchange)"
+                  << "(" << slice_ids.size() << " ID data before gather)"
                   << std::endl
                   << std::endl;
     }
