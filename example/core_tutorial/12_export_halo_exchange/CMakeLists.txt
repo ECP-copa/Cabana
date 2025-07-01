@@ -9,8 +9,8 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-  add_executable(HaloExchange halo_exchange_example.cpp)
-  target_link_libraries(HaloExchange Cabana::Core)
-  add_test(NAME Cabana_Core_Tutorial_12 COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG}
-    ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:HaloExchange> ${MPIEXEC_POSTFLAGS})
-  set_tests_properties(Cabana_Core_Tutorial_12 PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
+  add_executable(ExportHaloExchange export_halo_exchange_example.cpp)
+  target_link_libraries(ExportHaloExchange Cabana::Core)
+  add_test(NAME Cabana_Core_Tutorial_12_export_halo COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG}
+    ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} $<TARGET_FILE:ExportHaloExchange> ${MPIEXEC_POSTFLAGS})
+  set_tests_properties(Cabana_Core_Tutorial_12_export_halo PROPERTIES PROCESSORS ${MPIEXEC_MAX_NUMPROCS})
