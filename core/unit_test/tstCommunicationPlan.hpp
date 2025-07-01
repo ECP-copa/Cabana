@@ -50,7 +50,7 @@ class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE>
     Kokkos::View<size_type*, memory_space>
     createFromExports( const ViewType& element_export_ranks )
     {
-        return this->createFromNoTopology( Cabana::Export(),
+        return this->createWithoutTopology( Cabana::Export(),
                                            element_export_ranks );
     }
 
@@ -75,7 +75,7 @@ class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE>
     createFromImports( const ViewType& element_import_ranks,
                        const ViewType& element_import_ids )
     {
-        return this->createFromNoTopology(
+        return this->createWithoutTopology(
             Cabana::Import(), element_import_ranks, element_import_ids );
     }
 

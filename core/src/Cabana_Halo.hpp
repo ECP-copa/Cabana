@@ -222,7 +222,7 @@ class Halo : public CommunicationPlan<MemorySpace>
             throw std::runtime_error( "Cabana::Halo (import): ids and ranks "
                                       "views are different sizes!" );
 
-        auto neighbor_ids_ranks_indices = this->createFromNoTopology(
+        auto neighbor_ids_ranks_indices = this->createWithoutTopology(
             BuildType(), element_ranks, element_ids );
         this->createExportSteering( std::get<0>( neighbor_ids_ranks_indices ),
                                     std::get<1>( neighbor_ids_ranks_indices ),

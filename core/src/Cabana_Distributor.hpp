@@ -138,7 +138,7 @@ class Distributor : public CommunicationPlan<MemorySpace>
         : CommunicationPlan<MemorySpace>( comm )
     {
         auto neighbor_ids =
-            this->createFromNoTopology( Export(), element_export_ranks );
+            this->createWithoutTopology( Export(), element_export_ranks );
         this->createExportSteering( neighbor_ids, element_export_ranks );
     }
 };
