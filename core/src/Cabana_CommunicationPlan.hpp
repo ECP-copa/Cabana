@@ -32,6 +32,24 @@
 
 namespace Cabana
 {
+//---------------------------------------------------------------------------//
+// Communication driver construction type tags.
+//---------------------------------------------------------------------------//
+/*!
+    \brief Export-based tag - default.
+*/
+struct Export
+{
+};
+
+/*!
+    \brief Import-based tag.
+*/
+struct Import
+{
+};
+//---------------------------------------------------------------------------//
+
 namespace Impl
 {
 //! \cond Impl
