@@ -35,6 +35,7 @@ macro(Cabana_add_tests_nobackend)
     if(Cabana_INSTALL_TEST_EXECUTABLES)
       install(TARGETS ${_target}
               RUNTIME DESTINATION ${CMAKE_INSTALL_DATADIR}/Cabana/tests)
+    endif()
   endforeach()
 endmacro()
 
@@ -124,8 +125,8 @@ macro(Cabana_add_tests)
         endif()
       endif()
       if(Cabana_INSTALL_TEST_EXECUTABLES)
-      install(TARGETS ${_target}
-              RUNTIME DESTINATION ${CMAKE_INSTALL_DATADIR}/Cabana/tests)
+        install(TARGETS ${_target}
+                RUNTIME DESTINATION ${CMAKE_INSTALL_DATADIR}/Cabana/tests)
       endif()
     endforeach()
   endforeach()
