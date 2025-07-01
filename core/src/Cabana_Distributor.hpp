@@ -101,7 +101,7 @@ class Distributor : public CommunicationPlan<MemorySpace>
                  const std::vector<int>& neighbor_ranks )
         : CommunicationPlan<MemorySpace>( comm )
     {
-        auto neighbor_ids = this->createFromTopology(
+        auto neighbor_ids = this->createWithTopology(
             Export(), element_export_ranks, neighbor_ranks );
         this->createExportSteering( neighbor_ids, element_export_ranks );
     }

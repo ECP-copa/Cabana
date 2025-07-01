@@ -42,7 +42,7 @@ class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE>
     createFromExportsAndNeighbors( const ViewType& element_export_ranks,
                                    const std::vector<int>& neighbor_ranks )
     {
-        return this->createFromTopology( Cabana::Export(), element_export_ranks,
+        return this->createWithTopology( Cabana::Export(), element_export_ranks,
                                          neighbor_ranks );
     }
 
@@ -51,7 +51,7 @@ class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE>
     createFromExports( const ViewType& element_export_ranks )
     {
         return this->createWithoutTopology( Cabana::Export(),
-                                           element_export_ranks );
+                                            element_export_ranks );
     }
 
     template <class ViewType>
@@ -63,7 +63,7 @@ class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE>
                                    const ViewType& element_import_ids,
                                    const std::vector<int>& neighbor_ranks )
     {
-        return this->createFromTopology( Cabana::Import(), element_import_ranks,
+        return this->createWithTopology( Cabana::Import(), element_import_ranks,
                                          element_import_ids, neighbor_ranks );
     }
 

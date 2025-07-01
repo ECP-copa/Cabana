@@ -611,7 +611,7 @@ class CommunicationPlan
     */
     template <class ExecutionSpace, class RankViewType>
     Kokkos::View<size_type*, memory_space>
-    createFromTopology( ExecutionSpace exec_space, Export,
+    createWithTopology( ExecutionSpace exec_space, Export,
                         const RankViewType& element_export_ranks,
                         const std::vector<int>& neighbor_ranks )
     {
@@ -733,11 +733,11 @@ class CommunicationPlan
     */
     template <class RankViewType>
     Kokkos::View<size_type*, memory_space>
-    createFromTopology( Export, const RankViewType& element_export_ranks,
+    createWithTopology( Export, const RankViewType& element_export_ranks,
                         const std::vector<int>& neighbor_ranks )
     {
         // Use the default execution space.
-        return createFromTopology( execution_space{}, Export(),
+        return createWithTopology( execution_space{}, Export(),
                                    element_export_ranks, neighbor_ranks );
     }
 
@@ -774,7 +774,7 @@ class CommunicationPlan
     template <class ExecutionSpace, class RankViewType>
     Kokkos::View<size_type*, memory_space>
     createWithoutTopology( ExecutionSpace exec_space, Export,
-                          const RankViewType& element_export_ranks )
+                           const RankViewType& element_export_ranks )
     {
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
 
@@ -944,7 +944,7 @@ class CommunicationPlan
     {
         // Use the default execution space.
         return createWithoutTopology( execution_space{}, Export(),
-                                     element_export_ranks );
+                                      element_export_ranks );
     }
 
     /*!
@@ -987,7 +987,7 @@ class CommunicationPlan
       \note Unlike creating from exports, an import rank of -1 is not supported.
     */
     template <class ExecutionSpace, class RankViewType, class IdViewType>
-    auto createFromTopology( ExecutionSpace exec_space, Import,
+    auto createWithTopology( ExecutionSpace exec_space, Import,
                              const RankViewType& element_import_ranks,
                              const IdViewType& element_import_ids,
                              const std::vector<int>& neighbor_ranks )
@@ -1168,12 +1168,12 @@ class CommunicationPlan
       \note Unlike creating from exports, an import rank of -1 is not supported.
     */
     template <class RankViewType, class IdViewType>
-    auto createFromTopology( Import, const RankViewType& element_import_ranks,
+    auto createWithTopology( Import, const RankViewType& element_import_ranks,
                              const IdViewType& element_import_ids,
                              const std::vector<int>& neighbor_ranks )
     {
         // Use the default execution space.
-        return createFromTopology( execution_space{}, Import(),
+        return createWithTopology( execution_space{}, Import(),
                                    element_import_ranks, element_import_ids,
                                    neighbor_ranks );
     }
@@ -1212,8 +1212,8 @@ class CommunicationPlan
     */
     template <class ExecutionSpace, class RankViewType, class IdViewType>
     auto createWithoutTopology( ExecutionSpace exec_space, Import,
-                               const RankViewType& element_import_ranks,
-                               const IdViewType& element_import_ids )
+                                const RankViewType& element_import_ranks,
+                                const IdViewType& element_import_ids )
         -> std::tuple<Kokkos::View<typename RankViewType::size_type*,
                                    typename RankViewType::memory_space>,
                       Kokkos::View<int*, typename RankViewType::memory_space>,
@@ -1463,12 +1463,14 @@ class CommunicationPlan
       \note Unlike creating from exports, an import rank of -1 is not supported.
     */
     template <class RankViewType, class IdViewType>
-    auto createWithoutTopology( Import, const RankViewType& element_import_ranks,
-                               const IdViewType& element_import_ids )
+    auto createWithoutTopology( Import,
+                                const RankViewType& element_import_ranks,
+                                const IdViewType& element_import_ids )
     {
         // Use the default execution space.
         return createWithoutTopology( execution_space{}, Import(),
-                                     element_import_ranks, element_import_ids );
+                                      element_import_ranks,
+                                      element_import_ids );
     }
 
     /*!
