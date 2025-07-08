@@ -702,13 +702,14 @@ void testHaloBuffers( TestTag tag, BuildType build_type,
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-using HaloTestTypes =
-    ::testing::Types<std::tuple<Cabana::Export, Cabana::Export>,
-                     std::tuple<Cabana::Import, Cabana::Import>
-                     // Future: Set first tuple element to communication space
-                     // used.
-                     >;
+// Define the type list
+using HaloTestTypes = ::testing::Types<
+    std::tuple<Cabana::Export, Cabana::Export>,
+    std::tuple<Cabana::Import, Cabana::Import>
+    // Future: Set first tuple element to communication space used.
+>;
 
+// Test fixture template
 template <typename T>
 class HaloTypedTest : public ::testing::Test
 {
@@ -717,41 +718,58 @@ class HaloTypedTest : public ::testing::Test
     using BuildType = typename std::tuple_element<1, T>::type;
 };
 
-TYPED_TEST_SUITE( HaloTypedTest, HaloTestTypes );
+// Declare the parameterized typed test suite
+TYPED_TEST_SUITE_P(HaloTypedTest);
 
+// 'Unique' tests:
 // Export version: test without collisions (each ghost is unique)
 // Import version: test with no collision in first gather
 // Behavior, and consequently tests, differ between export/import build type
-TYPED_TEST( HaloTypedTest, Unique )
+TYPED_TEST_P(HaloTypedTest, Unique)
 {
     using BuildType = typename std::tuple_element<1, TypeParam>::type;
-    testHalo( UniqueTestTag{}, BuildType(), true );
-    testHaloBuffers( UniqueTestTag{}, BuildType(), true );
-}
-TYPED_TEST( HaloTypedTest, UniqueNoTopo )
-{
-    using BuildType = typename std::tuple_element<1, TypeParam>::type;
-    testHalo( UniqueTestTag{}, BuildType(), false );
-    testHaloBuffers( UniqueTestTag{}, BuildType(), false );
+    testHalo(UniqueTestTag{}, BuildType(), true);
+    testHaloBuffers(UniqueTestTag{}, BuildType(), true);
 }
 
+TYPED_TEST_P(HaloTypedTest, UniqueNoTopo)
+{
+    using BuildType = typename std::tuple_element<1, TypeParam>::type;
+    testHalo(UniqueTestTag{}, BuildType(), false);
+    testHaloBuffers(UniqueTestTag{}, BuildType(), false);
+}
+
+// 'All' tests:
 // Export version: test with collisions (each ghost is duplicated on all ranks)
 // Import version: test with multiple collisions in first gather
 // Behavior is identical between export/import build types because the
 // communication is symmetrical. Test logic unchanged between the two build
 // types.
-TYPED_TEST( HaloTypedTest, All )
+TYPED_TEST_P(HaloTypedTest, All)
 {
     using BuildType = typename std::tuple_element<1, TypeParam>::type;
-    testHalo( AllTestTag{}, BuildType(), true );
-    testHaloBuffers( AllTestTag{}, BuildType(), false );
+    testHalo(AllTestTag{}, BuildType(), true);
+    testHaloBuffers(AllTestTag{}, BuildType(), false);
 }
-TYPED_TEST( HaloTypedTest, AllNoTopo )
+
+TYPED_TEST_P(HaloTypedTest, AllNoTopo)
 {
     using BuildType = typename std::tuple_element<1, TypeParam>::type;
-    testHalo( AllTestTag{}, BuildType(), false );
-    testHaloBuffers( AllTestTag{}, BuildType(), false );
+    testHalo(AllTestTag{}, BuildType(), false);
+    testHaloBuffers(AllTestTag{}, BuildType(), false);
 }
+
+// Register tests
+REGISTER_TYPED_TEST_SUITE_P(
+    HaloTypedTest,
+    Unique,
+    UniqueNoTopo,
+    All,
+    AllNoTopo
+);
+
+// Instantiate the test suite with the type list
+INSTANTIATE_TYPED_TEST_SUITE_P(MyHaloTests, HaloTypedTest, HaloTestTypes);
 
 //---------------------------------------------------------------------------//
 
