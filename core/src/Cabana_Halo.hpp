@@ -98,9 +98,6 @@ class Halo : public CommunicationPlan<MemorySpace>
       from. This list can include the calling rank. This is effectively a
       description of the topology of the point-to-point communication
       plan. The elements in this list must be unique.
-
-      \note Calling this function completely updates the state of this object
-      and invalidates the previous state.
     */
     template <class IdViewType, class RankViewType, typename T = BuildType,
               std::enable_if_t<std::is_same<T, Export>::value, int> = 0>
@@ -150,9 +147,6 @@ class Halo : public CommunicationPlan<MemorySpace>
       list. A rank is allowed to send to itself. The input is expected to be a
       Kokkos view or Cabana slice in the same memory space as the
       communication plan.
-
-      \note Calling this function completely updates the state of this object
-      and invalidates the previous state.
     */
     template <class IdViewType, class RankViewType, typename T = BuildType,
               std::enable_if_t<std::is_same<T, Export>::value, int> = 0>
@@ -209,9 +203,6 @@ class Halo : public CommunicationPlan<MemorySpace>
       from. This list can include the calling rank. This is effectively a
       description of the topology of the point-to-point communication
       plan. The elements in this list must be unique.
-
-      \note Calling this function completely updates the state of this object
-      and invalidates the previous state.
     */
     template <class IdViewType, class RankViewType, typename T = BuildType,
               std::enable_if_t<std::is_same<T, Import>::value, int> = 0>
@@ -267,9 +258,6 @@ class Halo : public CommunicationPlan<MemorySpace>
       from. This list can include the calling rank. This is effectively a
       description of the topology of the point-to-point communication
       plan. The elements in this list must be unique.
-
-      \note Calling this function completely updates the state of this object
-      and invalidates the previous state.
     */
     template <class IdViewType, class RankViewType, typename T = BuildType,
               std::enable_if_t<std::is_same<T, Import>::value, int> = 0>
@@ -292,7 +280,7 @@ class Halo : public CommunicationPlan<MemorySpace>
     /*!
       \brief Get the number of elements locally owned by this rank.
 
-      \return THe number of elements locally owned by this rank.
+      \return The number of elements locally owned by this rank.
     */
     std::size_t numLocal() const { return _num_local; }
 
