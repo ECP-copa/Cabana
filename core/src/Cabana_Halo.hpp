@@ -234,8 +234,8 @@ class Halo : public CommunicationPlan<MemorySpace>
 
     /*!
       \brief Import rank constructor. Use this when you don't know which ranks
-      neighbor each other. (i.e. every rank already knows who they will be
-      exporting to and receiving from)
+      neighbor each other. (i.e. every rank does not already know who they will
+      be exporting to and receiving from)
 
       \tparam IdViewType The container type for the export element ids. This
       container type can be either a Kokkos View or a Cabana Slice.
