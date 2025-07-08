@@ -392,26 +392,29 @@ void checkGatherSlice( UniqueTestTag, AoSoAType data_host, const int my_size,
             int send_rank = i - num_local;
             if ( send_rank == 0 )
             {
-                EXPECT_EQ( slice_int_host( i ), 5 * ( my_rank + 1 ) )
-                    << "Rank " << my_rank << ", i: "
-                    << "i" << std::endl;
-                EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), 5 * ( my_rank + 1 ) );
+                EXPECT_EQ( slice_int_host( i ),
+                           ( my_size + 1 ) * ( my_rank + 1 ) )
+                    << "Rank " << my_rank << ", i: " << i << std::endl;
+                EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ),
+                                  ( my_size + 1 ) * ( my_rank + 1 ) );
                 EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ),
-                                  5 * ( my_rank + 1.5 ) );
+                                  ( my_size + 1 ) * ( my_rank + 1.5 ) );
             }
             else if ( send_rank == my_rank )
             {
-                EXPECT_EQ( slice_int_host( i ), 5 * 1 );
-                EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), 5 * 1 );
-                EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), 5 * 1.5 );
+                EXPECT_EQ( slice_int_host( i ), ( my_size + 1 ) * 1 );
+                EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), ( my_size + 1 ) * 1 );
+                EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ),
+                                  ( my_size + 1 ) * 1.5 );
             }
             else
             {
-                EXPECT_EQ( slice_int_host( i ), 5 * ( send_rank + 1 ) );
+                EXPECT_EQ( slice_int_host( i ),
+                           ( my_size + 1 ) * ( send_rank + 1 ) );
                 EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ),
-                                  5 * ( send_rank + 1 ) );
+                                  ( my_size + 1 ) * ( send_rank + 1 ) );
                 EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ),
-                                  5 * ( send_rank + 1.5 ) );
+                                  ( my_size + 1 ) * ( send_rank + 1.5 ) );
             }
         }
     }
