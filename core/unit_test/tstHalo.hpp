@@ -764,8 +764,9 @@ TYPED_TEST_P( HaloTypedTest, AllNoTopo )
 REGISTER_TYPED_TEST_SUITE_P( HaloTypedTest, Unique, UniqueNoTopo, All,
                              AllNoTopo );
 
-// Instantiate the test suite with the type list
-INSTANTIATE_TYPED_TEST_SUITE_P( MyHaloTests, HaloTypedTest, HaloTestTypes );
+// Instantiate the test suite with the type list. Need a trailing comma
+// to avoid an error when compiling with clang++
+INSTANTIATE_TYPED_TEST_SUITE_P( HaloTests, HaloTypedTest, HaloTestTypes, );
 
 //---------------------------------------------------------------------------//
 
