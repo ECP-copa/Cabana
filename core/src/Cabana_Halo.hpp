@@ -98,9 +98,6 @@ class Halo : public CommunicationPlan<MemorySpace>
       from. This list can include the calling rank. This is effectively a
       description of the topology of the point-to-point communication
       plan. The elements in this list must be unique.
-
-      \note Calling this function completely updates the state of this object
-      and invalidates the previous state.
     */
     template <class IdViewType, class RankViewType, typename T = BuildType,
               std::enable_if_t<std::is_same<T, Export>::value, int> = 0>
@@ -110,8 +107,9 @@ class Halo : public CommunicationPlan<MemorySpace>
         : CommunicationPlan<MemorySpace>( comm )
         , _num_local( num_local )
     {
-        throw std::runtime_error( "Cabana::Halo (export): ids and ranks "
-                                  "views are different sizes!" );
+        if ( element_ids.size() != element_ranks.size() )
+            throw std::runtime_error( "Cabana::Halo (export): ids and ranks "
+                                      "views are different sizes!" );
 
         auto neighbor_ids = this->createWithTopology(
             BuildType(), element_ranks, neighbor_ranks );
@@ -149,9 +147,6 @@ class Halo : public CommunicationPlan<MemorySpace>
       list. A rank is allowed to send to itself. The input is expected to be a
       Kokkos view or Cabana slice in the same memory space as the
       communication plan.
-
-      \note Calling this function completely updates the state of this object
-      and invalidates the previous state.
     */
     template <class IdViewType, class RankViewType, typename T = BuildType,
               std::enable_if_t<std::is_same<T, Export>::value, int> = 0>
@@ -170,9 +165,13 @@ class Halo : public CommunicationPlan<MemorySpace>
     }
 
     /*!
-      \brief Import rank constructor. Use this when you know which ranks
-      neighbor each other. (i.e. you know which ranks you are importing from and
-      exporting to)
+      \brief Neighbor and import rank constructor. Use this when you don't know
+      who you will sending to - only who you are receiving from, but you already
+      know which ranks neighbor each other (i.e. every rank already knows who
+      they will be exporting to and receiving from) as it will be more
+      efficient. In this case you already know the topology of the
+      point-to-point communication but not how much data to send and receive
+      from the neighbors.
 
       \tparam IdViewType The container type for the export element ids. This
       container type can be either a Kokkos View or a Cabana Slice.
@@ -204,9 +203,6 @@ class Halo : public CommunicationPlan<MemorySpace>
       from. This list can include the calling rank. This is effectively a
       description of the topology of the point-to-point communication
       plan. The elements in this list must be unique.
-
-      \note Calling this function completely updates the state of this object
-      and invalidates the previous state.
     */
     template <class IdViewType, class RankViewType, typename T = BuildType,
               std::enable_if_t<std::is_same<T, Import>::value, int> = 0>
@@ -229,8 +225,8 @@ class Halo : public CommunicationPlan<MemorySpace>
 
     /*!
       \brief Import rank constructor. Use this when you don't know which ranks
-      neighbor each other. (i.e. you don't know which ranks you are exporting
-      to)
+      neighbor each other. (i.e. every rank does not already know who they will
+      be exporting to and receiving from)
 
       \tparam IdViewType The container type for the export element ids. This
       container type can be either a Kokkos View or a Cabana Slice.
@@ -258,8 +254,10 @@ class Halo : public CommunicationPlan<MemorySpace>
       allowed to send to itself. The input is expected to be a Kokkos view or
       Cabana slice in the same memory space as the communication plan.
 
-      \note Calling this function completely updates the state of this object
-      and invalidates the previous state.
+      \param neighbor_ranks List of ranks this rank will send to and receive
+      from. This list can include the calling rank. This is effectively a
+      description of the topology of the point-to-point communication
+      plan. The elements in this list must be unique.
     */
     template <class IdViewType, class RankViewType, typename T = BuildType,
               std::enable_if_t<std::is_same<T, Import>::value, int> = 0>
@@ -282,7 +280,7 @@ class Halo : public CommunicationPlan<MemorySpace>
     /*!
       \brief Get the number of elements locally owned by this rank.
 
-      \return THe number of elements locally owned by this rank.
+      \return The number of elements locally owned by this rank.
     */
     std::size_t numLocal() const { return _num_local; }
 
