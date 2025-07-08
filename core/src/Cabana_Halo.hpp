@@ -253,11 +253,6 @@ class Halo : public CommunicationPlan<MemorySpace>
       neighbor ranks. Must be the same length as element_ids. A rank is
       allowed to send to itself. The input is expected to be a Kokkos view or
       Cabana slice in the same memory space as the communication plan.
-
-      \param neighbor_ranks List of ranks this rank will send to and receive
-      from. This list can include the calling rank. This is effectively a
-      description of the topology of the point-to-point communication
-      plan. The elements in this list must be unique.
     */
     template <class IdViewType, class RankViewType, typename T = BuildType,
               std::enable_if_t<std::is_same<T, Import>::value, int> = 0>
