@@ -774,14 +774,6 @@ struct DotFunctor
             dst[j] += src[j];
     }
 
-    //! Join operation.
-    KOKKOS_INLINE_FUNCTION
-    void join( volatile value_type dst, const volatile value_type src ) const
-    {
-        for ( size_type j = 0; j < value_count; ++j )
-            dst[j] += src[j];
-    }
-
     //! Zero initialization.
     KOKKOS_INLINE_FUNCTION void init( value_type sum ) const
     {
@@ -882,15 +874,6 @@ struct NormInfFunctor
                 dst[j] = src[j];
     }
 
-    //! Join operation.
-    KOKKOS_INLINE_FUNCTION
-    void join( volatile value_type dst, const volatile value_type src ) const
-    {
-        for ( size_type j = 0; j < value_count; ++j )
-            if ( src[j] > dst[j] )
-                dst[j] = src[j];
-    }
-
     //! Zero initialization.
     KOKKOS_INLINE_FUNCTION void init( value_type norm ) const
     {
@@ -984,14 +967,6 @@ struct Norm1Functor
             dst[j] += src[j];
     }
 
-    //! Join operation.
-    KOKKOS_INLINE_FUNCTION
-    void join( volatile value_type dst, const volatile value_type src ) const
-    {
-        for ( size_type j = 0; j < value_count; ++j )
-            dst[j] += src[j];
-    }
-
     //! Zero initialization.
     KOKKOS_INLINE_FUNCTION void init( value_type norm ) const
     {
@@ -1080,14 +1055,6 @@ struct Norm2Functor
     //! Join operation.
     KOKKOS_INLINE_FUNCTION
     void join( value_type dst, const value_type src ) const
-    {
-        for ( size_type j = 0; j < value_count; ++j )
-            dst[j] += src[j];
-    }
-
-    //! Join operation.
-    KOKKOS_INLINE_FUNCTION
-    void join( volatile value_type dst, const volatile value_type src ) const
     {
         for ( size_type j = 0; j < value_count; ++j )
             dst[j] += src[j];
