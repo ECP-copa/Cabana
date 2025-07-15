@@ -142,7 +142,7 @@ $(function(){initNavTree('Cabana__Grid__Parallel_8hpp_source.html',''); initResi
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>{</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    Kokkos::Profiling::ScopedRegion region( <span class="stringliteral">&quot;Cabana::Grid::grid_parallel_for&quot;</span> );</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    Kokkos::parallel_for(</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        label, <a class="code hl_function" href="Cabana__Grid__IndexSpace_8hpp.html#a68bc6d2cd948e7ec18d376643cfd6b02">createExecutionPolicy</a>( index_space, exec_space ), functor );</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        label, <a class="code hl_function" href="Cabana__Grid__IndexSpace_8hpp.html#a78d02f5303b3385d92ca8b7ab1d9faf3">createExecutionPolicy</a>( index_space, exec_space ), functor );</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>}</div>
 </div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
@@ -156,7 +156,7 @@ $(function(){initNavTree('Cabana__Grid__Parallel_8hpp_source.html',''); initResi
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>{</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    Kokkos::Profiling::ScopedRegion region( <span class="stringliteral">&quot;Cabana::Grid::grid_parallel_for&quot;</span> );</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    Kokkos::parallel_for(</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        label, <a class="code hl_function" href="Cabana__Grid__IndexSpace_8hpp.html#a68bc6d2cd948e7ec18d376643cfd6b02">createExecutionPolicy</a>( index_space, exec_space, work_tag ),</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        label, <a class="code hl_function" href="Cabana__Grid__IndexSpace_8hpp.html#a78d02f5303b3385d92ca8b7ab1d9faf3">createExecutionPolicy</a>( index_space, exec_space, work_tag ),</div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        functor );</div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>}</div>
 </div>
@@ -391,7 +391,7 @@ $(function(){initNavTree('Cabana__Grid__Parallel_8hpp_source.html',''); initResi
 <div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span>    Kokkos::Profiling::ScopedRegion region(</div>
 <div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span>        <span class="stringliteral">&quot;Cabana::Grid::grid_parallel_reduce&quot;</span> );</div>
 <div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>    Kokkos::parallel_reduce( label,</div>
-<div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>                             <a class="code hl_function" href="Cabana__Grid__IndexSpace_8hpp.html#a68bc6d2cd948e7ec18d376643cfd6b02">createExecutionPolicy</a>( index_space, exec_space ),</div>
+<div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>                             <a class="code hl_function" href="Cabana__Grid__IndexSpace_8hpp.html#a78d02f5303b3385d92ca8b7ab1d9faf3">createExecutionPolicy</a>( index_space, exec_space ),</div>
 <div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>                             functor, reducer );</div>
 <div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>}</div>
 </div>
@@ -409,7 +409,7 @@ $(function(){initNavTree('Cabana__Grid__Parallel_8hpp_source.html',''); initResi
 <div class="line"><a id="l00484" name="l00484"></a><span class="lineno">  484</span>    Kokkos::Profiling::ScopedRegion region(</div>
 <div class="line"><a id="l00485" name="l00485"></a><span class="lineno">  485</span>        <span class="stringliteral">&quot;Cabana::Grid::grid_parallel_reduce&quot;</span> );</div>
 <div class="line"><a id="l00486" name="l00486"></a><span class="lineno">  486</span>    Kokkos::parallel_reduce(</div>
-<div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span>        label, <a class="code hl_function" href="Cabana__Grid__IndexSpace_8hpp.html#a68bc6d2cd948e7ec18d376643cfd6b02">createExecutionPolicy</a>( index_space, exec_space, work_tag ),</div>
+<div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span>        label, <a class="code hl_function" href="Cabana__Grid__IndexSpace_8hpp.html#a78d02f5303b3385d92ca8b7ab1d9faf3">createExecutionPolicy</a>( index_space, exec_space, work_tag ),</div>
 <div class="line"><a id="l00488" name="l00488"></a><span class="lineno">  488</span>        functor, reducer );</div>
 <div class="line"><a id="l00489" name="l00489"></a><span class="lineno">  489</span>}</div>
 </div>
@@ -457,7 +457,7 @@ $(function(){initNavTree('Cabana__Grid__Parallel_8hpp_source.html',''); initResi
 <div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span> </div>
 <div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span><span class="preprocessor">#endif </span><span class="comment">// end CABANA_GRID_PARALLEL_HPP</span></div>
 <div class="ttc" id="aCabana__Grid__IndexSpace_8hpp_html"><div class="ttname"><a href="Cabana__Grid__IndexSpace_8hpp.html">Cabana_Grid_IndexSpace.hpp</a></div><div class="ttdoc">Logical grid indexing.</div></div>
-<div class="ttc" id="aCabana__Grid__IndexSpace_8hpp_html_a68bc6d2cd948e7ec18d376643cfd6b02"><div class="ttname"><a href="Cabana__Grid__IndexSpace_8hpp.html#a68bc6d2cd948e7ec18d376643cfd6b02">Cabana::Grid::createExecutionPolicy</a></div><div class="ttdeci">Kokkos::RangePolicy&lt; ExecutionSpace &gt; createExecutionPolicy(const IndexSpace&lt; 1 &gt; &amp;index_space, const ExecutionSpace &amp;)</div><div class="ttdoc">Create a multi-dimensional execution policy over an index space.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_IndexSpace.hpp:175</div></div>
+<div class="ttc" id="aCabana__Grid__IndexSpace_8hpp_html_a78d02f5303b3385d92ca8b7ab1d9faf3"><div class="ttname"><a href="Cabana__Grid__IndexSpace_8hpp.html#a78d02f5303b3385d92ca8b7ab1d9faf3">Cabana::Grid::createExecutionPolicy</a></div><div class="ttdeci">Kokkos::RangePolicy&lt; ExecutionSpace &gt; createExecutionPolicy(const IndexSpace&lt; 1 &gt; &amp;index_space, const ExecutionSpace &amp;exec_space)</div><div class="ttdoc">Create a multi-dimensional execution policy over an index space.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_IndexSpace.hpp:175</div></div>
 <div class="ttc" id="aCabana__Grid__LocalGrid_8hpp_html"><div class="ttname"><a href="Cabana__Grid__LocalGrid_8hpp.html">Cabana_Grid_LocalGrid.hpp</a></div><div class="ttdoc">Local grid.</div></div>
 <div class="ttc" id="aCabana__Grid__Parallel_8hpp_html_a1e8693bc687ee727b7319d11157eda47"><div class="ttname"><a href="Cabana__Grid__Parallel_8hpp.html#a1e8693bc687ee727b7319d11157eda47">Cabana::Grid::grid_parallel_for</a></div><div class="ttdeci">void grid_parallel_for(const std::string &amp;label, const ExecutionSpace &amp;exec_space, const IndexSpace&lt; N &gt; &amp;index_space, const FunctorType &amp;functor)</div><div class="ttdoc">Execute a functor in parallel with a multidimensional execution policy specified by the given index s...</div><div class="ttdef"><b>Definition</b> Cabana_Grid_Parallel.hpp:52</div></div>
 <div class="ttc" id="aCabana__Grid__Parallel_8hpp_html_ab139f3df2cec1dc98324e6b99931704a"><div class="ttname"><a href="Cabana__Grid__Parallel_8hpp.html#ab139f3df2cec1dc98324e6b99931704a">Cabana::Grid::grid_parallel_reduce</a></div><div class="ttdeci">void grid_parallel_reduce(const std::string &amp;label, const ExecutionSpace &amp;exec_space, const IndexSpace&lt; N &gt; &amp;index_space, const FunctorType &amp;functor, ReduceType &amp;reducer)</div><div class="ttdoc">Execute a reduction functor in parallel with a multidimensional execution policy specified by the giv...</div><div class="ttdef"><b>Definition</b> Cabana_Grid_Parallel.hpp:436</div></div>

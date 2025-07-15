@@ -5,7 +5,6 @@ var structCabana_1_1Grid_1_1ArrayOp_1_1DotFunctor =
     [ "DotFunctor", "structCabana_1_1Grid_1_1ArrayOp_1_1DotFunctor.html#af91028a51da1d881dc1fa884ea3a18de", null ],
     [ "init", "structCabana_1_1Grid_1_1ArrayOp_1_1DotFunctor.html#a9f891e51d9c4ba837b33f9a0d38a550c", null ],
     [ "join", "structCabana_1_1Grid_1_1ArrayOp_1_1DotFunctor.html#a2e3ec8834fe53bbb9122d453b91a0283", null ],
-    [ "join", "structCabana_1_1Grid_1_1ArrayOp_1_1DotFunctor.html#a88e5d2f7c355dd938c03c60232d40185", null ],
     [ "operator()", "structCabana_1_1Grid_1_1ArrayOp_1_1DotFunctor.html#a386b85e2f98e759453f699d3ce58aa53", null ],
     [ "operator()", "structCabana_1_1Grid_1_1ArrayOp_1_1DotFunctor.html#aa37f97f5e6dc50ce58e42df0c4e1ff9b", null ],
     [ "_a", "structCabana_1_1Grid_1_1ArrayOp_1_1DotFunctor.html#a368f124bb95a445be1681ebc2cd9f9e1", null ],

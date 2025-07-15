@@ -60,8 +60,8 @@ var NAVTREEINDEX =
 "classCabana_1_1LinkedCellList.html#a80e00cb821f2cbbdd9fb2f471432f287",
 "classCabana_1_1TeamVectorOpTag.html",
 "structCabana_1_1AtomicAccessMemory.html",
-"structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineLogicalPosition_01_4.html#a010d15daf1cb208ea387f15abc8d0a4f",
-"structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#a5ff0b8c7bc3de752325aa7d86849ffac"
+"structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalDistance_01_4.html#a20e0bf2d5b8c1df695fb9e6dd6e6a750",
+"structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#a8ab95724a2a56038db9ebd05ff7a7722"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

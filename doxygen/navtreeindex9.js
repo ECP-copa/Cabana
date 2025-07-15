@@ -1,9 +1,5 @@
 var NAVTREEINDEX9 =
 {
-"structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#a5ff0b8c7bc3de752325aa7d86849ffac":[0,0,0,77,0],
-"structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#a5ff0b8c7bc3de752325aa7d86849ffac":[1,0,1,81,0],
-"structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#a77d03463f79414ea68e34d5d91c7c20a":[0,0,0,77,3],
-"structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#a77d03463f79414ea68e34d5d91c7c20a":[1,0,1,81,3],
 "structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#a8ab95724a2a56038db9ebd05ff7a7722":[0,0,0,77,5],
 "structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#a8ab95724a2a56038db9ebd05ff7a7722":[1,0,1,81,5],
 "structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#acd2fc53ea6d8c05298a6127c8ac88365":[0,0,0,77,2],

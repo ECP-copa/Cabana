@@ -1,9 +1,5 @@
 var NAVTREEINDEX8 =
 {
-"structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineLogicalPosition_01_4.html#a010d15daf1cb208ea387f15abc8d0a4f":[1,0,1,2,128,0],
-"structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalCellSize_01_4.html":[1,0,1,2,129],
-"structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalCellSize_01_4.html#a5672a6f1bad4c6747f0ec38f88f2b807":[1,0,1,2,129,0],
-"structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalDistance_01_4.html":[1,0,1,2,130],
 "structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalDistance_01_4.html#a20e0bf2d5b8c1df695fb9e6dd6e6a750":[1,0,1,2,130,1],
 "structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalDistance_01_4.html#ace0e154e9e7e05eef9af13426b607479":[1,0,1,2,130,0],
 "structCabana_1_1Grid_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineWeightPhysicalGradients_01_4.html":[1,0,1,2,131],
@@ -249,5 +245,9 @@ var NAVTREEINDEX8 =
 "structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html":[0,0,0,77],
 "structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html":[1,0,1,81],
 "structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#a054bad67ce597fe4450dd3bf2752d6eb":[0,0,0,77,1],
-"structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#a054bad67ce597fe4450dd3bf2752d6eb":[1,0,1,81,1]
+"structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#a054bad67ce597fe4450dd3bf2752d6eb":[1,0,1,81,1],
+"structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#a5ff0b8c7bc3de752325aa7d86849ffac":[0,0,0,77,0],
+"structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#a5ff0b8c7bc3de752325aa7d86849ffac":[1,0,1,81,0],
+"structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#a77d03463f79414ea68e34d5d91c7c20a":[0,0,0,77,3],
+"structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#a77d03463f79414ea68e34d5d91c7c20a":[1,0,1,81,3]
 };
