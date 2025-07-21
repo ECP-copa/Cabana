@@ -864,7 +864,8 @@ class VerletList
                 const typename PositionSlice::value_type grid_min[3],
                 const typename PositionSlice::value_type grid_max[3],
                 const std::size_t max_neigh = 0,
-                typename std::enable_if<( is_slice<PositionSlice>::value ),
+                typename std::enable_if<( is_slice<PositionSlice>::value ||
+                                          Kokkos::is_view<PositionSlice>::value ),
                                         int>::type* = 0 )
     {
         build( x, begin, end, background_radius, neighborhood_radius,
