@@ -42,7 +42,11 @@ jobs:
       - name: Build kokkos
         working-directory: kokkos
         run: |
-          cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/kokkos -DKokkos_ENABLE_${{ matrix.backend }}=ON  -DKokkos_ENABLE_DEPRECATED_CODE_3=OFF
+          cmake -B build \
+            -DCMAKE_INSTALL_PREFIX=$HOME/kokkos \
+            -DKokkos_ENABLE_${{ matrix.backend }}=ON \
+            -DKokkos_ENABLE_DEPRECATED_CODE_4=OFF \
+            -DKokkos_ENABLE_IMPL_VIEW_LEGACY=ON
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout arborx
