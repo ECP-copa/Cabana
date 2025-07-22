@@ -33,6 +33,7 @@ set(HEADERS_PUBLIC
   Cabana_Utils.hpp
   Cabana_VerletList.hpp
   Cabana_Version.hpp
+  Cabana_BatchedLinearAlgebra.hpp
   )
 
 if(Cabana_ENABLE_ARBORX)
