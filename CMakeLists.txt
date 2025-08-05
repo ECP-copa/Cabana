@@ -42,9 +42,11 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(Kokkos 4.1 REQUIRED)
 
 # FIXME: remove when custom layout support with mdspan Views is added.
-if(Kokkos_VERSION VERSION_GREATER 4.6.99 AND Kokkos_ENABLE_IMPL_VIEW_LEGACY EQUAL OFF)
-  message(FATAL_ERROR "Current Kokkos does not support custom View layouts needed for AoSoA unless"
-          "Kokkos is built with Kokkos_ENABLE_IMPL_VIEW_LEGACY=ON.")
+if(Kokkos_VERSION VERSION_GREATER 4.6.99)
+    if (NOT DEFINED Kokkos_ENABLE_IMPL_VIEW_LEGACY OR Kokkos_ENABLE_IMPL_VIEW_LEGACY EQUAL OFF)
+       message(FATAL_ERROR "Current Kokkos does not support custom View layouts needed for AoSoA unless "
+                           "Kokkos is built with Kokkos_ENABLE_IMPL_VIEW_LEGACY=ON.")
+    endif()
 endif()
 
 # set supported kokkos devices
