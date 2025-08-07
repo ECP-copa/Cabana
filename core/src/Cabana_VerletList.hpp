@@ -190,7 +190,7 @@ struct VerletListBuilder
         , pid_end( end )
         , alloc_n( max_neigh )
     {
-        assert( positions.size() == neighborhood_radius.size() );
+        assert( size( positions ) == size( neighborhood_radius ) );
         init( positions, background_radius, cell_size_ratio, grid_min,
               grid_max );
 
@@ -857,15 +857,17 @@ class VerletList
       whether or not they are in the range.
     */
     template <class PositionSlice, class RadiusSlice>
-    VerletList( PositionSlice x, const std::size_t begin, const std::size_t end,
-                const typename PositionSlice::value_type background_radius,
-                RadiusSlice neighborhood_radius,
-                const typename PositionSlice::value_type cell_size_ratio,
-                const typename PositionSlice::value_type grid_min[3],
-                const typename PositionSlice::value_type grid_max[3],
-                const std::size_t max_neigh = 0,
-                typename std::enable_if<( is_slice<PositionSlice>::value ),
-                                        int>::type* = 0 )
+    VerletList(
+        PositionSlice x, const std::size_t begin, const std::size_t end,
+        const typename PositionSlice::value_type background_radius,
+        RadiusSlice neighborhood_radius,
+        const typename PositionSlice::value_type cell_size_ratio,
+        const typename PositionSlice::value_type grid_min[3],
+        const typename PositionSlice::value_type grid_max[3],
+        const std::size_t max_neigh = 0,
+        typename std::enable_if<( is_slice<PositionSlice>::value ||
+                                  Kokkos::is_view<PositionSlice>::value ),
+                                int>::type* = 0 )
     {
         build( x, begin, end, background_radius, neighborhood_radius,
                cell_size_ratio, grid_min, grid_max, max_neigh );
@@ -961,7 +963,7 @@ class VerletList
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
 
         assert( end >= begin );
-        assert( end <= x.size() );
+        assert( end <= size( x ) );
 
         // Create a builder functor.
         using device_type = Kokkos::Device<ExecutionSpace, memory_space>;
