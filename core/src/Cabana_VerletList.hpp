@@ -190,7 +190,7 @@ struct VerletListBuilder
         , pid_end( end )
         , alloc_n( max_neigh )
     {
-        assert( size(positions) == size(neighborhood_radius) );
+        assert( size( positions ) == size( neighborhood_radius ) );
         init( positions, background_radius, cell_size_ratio, grid_min,
               grid_max );
 
@@ -963,7 +963,7 @@ class VerletList
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
 
         assert( end >= begin );
-        assert( end <= size(x) );
+        assert( end <= size( x ) );
 
         // Create a builder functor.
         using device_type = Kokkos::Device<ExecutionSpace, memory_space>;
