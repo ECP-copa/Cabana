@@ -3,7 +3,7 @@ FROM ghcr.io/ecp-copa/ci-containers/fedora:latest
 WORKDIR /home/kokkos/src/
 COPY kokkos/ /home/kokkos/src/kokkos
 RUN sudo chown -R kokkos:kokkos kokkos
-RUN cmake -S kokkos -B kokkos/build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DKokkos_ENABLE_OPENMP=On -DKokkos_ENABLE_HWLOC=ON
+RUN cmake -S kokkos -B kokkos/build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DKokkos_ENABLE_IMPL_VIEW_LEGACY=ON -DKokkos_ENABLE_OPENMP=On -DKokkos_ENABLE_HWLOC=ON
 RUN cmake --build kokkos/build -j2
 RUN sudo cmake --install kokkos/build
 
