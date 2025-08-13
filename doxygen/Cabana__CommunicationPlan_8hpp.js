@@ -1,5 +1,7 @@
 var Cabana__CommunicationPlan_8hpp =
 [
+    [ "Cabana::Export", "structCabana_1_1Export.html", null ],
+    [ "Cabana::Import", "structCabana_1_1Import.html", null ],
     [ "Cabana::CommunicationPlan< MemorySpace >", "classCabana_1_1CommunicationPlan.html", "classCabana_1_1CommunicationPlan" ],
     [ "Cabana::CommunicationDataAoSoA< AoSoAType >", "structCabana_1_1CommunicationDataAoSoA.html", "structCabana_1_1CommunicationDataAoSoA" ],
     [ "Cabana::CommunicationDataSlice< SliceType >", "structCabana_1_1CommunicationDataSlice.html", "structCabana_1_1CommunicationDataSlice" ],

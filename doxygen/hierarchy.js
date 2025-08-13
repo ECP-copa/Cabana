@@ -39,7 +39,7 @@ var hierarchy =
     [ "Cabana::CommunicationDataSlice< SliceType >", "structCabana_1_1CommunicationDataSlice.html", null ],
     [ "Cabana::CommunicationPlan< MemorySpace >", "classCabana_1_1CommunicationPlan.html", [
       [ "Cabana::Distributor< MemorySpace >", "classCabana_1_1Distributor.html", null ],
-      [ "Cabana::Halo< MemorySpace >", "classCabana_1_1Halo.html", null ]
+      [ "Cabana::Halo< MemorySpace, BuildType >", "classCabana_1_1Halo.html", null ]
     ] ],
     [ "Cabana::Experimental::CrsGraph< MemorySpace, Tag >", "structCabana_1_1Experimental_1_1CrsGraph.html", null ],
     [ "Cabana::DefaultAccessMemory", "structCabana_1_1DefaultAccessMemory.html", null ],
@@ -50,6 +50,7 @@ var hierarchy =
     [ "Cabana::Grid::Edge< Dim::I >", "structCabana_1_1Grid_1_1Edge_3_01Dim_1_1I_01_4.html", null ],
     [ "Cabana::Grid::Edge< Dim::J >", "structCabana_1_1Grid_1_1Edge_3_01Dim_1_1J_01_4.html", null ],
     [ "Cabana::Grid::Edge< Dim::K >", "structCabana_1_1Grid_1_1Edge_3_01Dim_1_1K_01_4.html", null ],
+    [ "Cabana::Export", "structCabana_1_1Export.html", null ],
     [ "Cabana::Grid::Face< D >", "structCabana_1_1Grid_1_1Face.html", null ],
     [ "Cabana::Grid::Face< Dim::I >", "structCabana_1_1Grid_1_1Face_3_01Dim_1_1I_01_4.html", null ],
     [ "Cabana::Grid::Face< Dim::J >", "structCabana_1_1Grid_1_1Face_3_01Dim_1_1J_01_4.html", null ],
@@ -160,6 +161,7 @@ var hierarchy =
       [ "Cabana::Grid::HypreStructPFMG< Scalar, EntityType, MemorySpace >", "classCabana_1_1Grid_1_1HypreStructPFMG.html", null ],
       [ "Cabana::Grid::HypreStructSMG< Scalar, EntityType, MemorySpace >", "classCabana_1_1Grid_1_1HypreStructSMG.html", null ]
     ] ],
+    [ "Cabana::Import", "structCabana_1_1Import.html", null ],
     [ "Cabana::Impl::Index< VectorLength >", "classCabana_1_1Impl_1_1Index.html", null ],
     [ "Cabana::Grid::IndexSpace< N >", "classCabana_1_1Grid_1_1IndexSpace.html", [
       [ "Cabana::Grid::TileIndexSpace< num_space_dim, cell_bits_per_tile_dim >", "classCabana_1_1Grid_1_1TileIndexSpace.html", null ],
