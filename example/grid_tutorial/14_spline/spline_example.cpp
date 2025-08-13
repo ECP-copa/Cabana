@@ -36,7 +36,6 @@ void splineExample()
       This includes the creation of a simple uniform mesh and a single particle
       position.
     */
-    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
 
     // Create a 3-dimensional global uniform mesh
     // Global bounding box.
@@ -67,7 +66,7 @@ void splineExample()
 
     // Get the local mesh for this rank.
     auto local_mesh =
-        Cabana::Grid::createLocalMesh<ExecutionSpace>( *local_grid );
+        Cabana::Grid::createLocalMesh<Kokkos::HostSpace>( *local_grid );
 
     // Create a particle position vector.
     double xp[3] = { 0.5, 2, 1.5 };

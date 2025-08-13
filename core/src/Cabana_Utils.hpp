@@ -26,12 +26,10 @@ namespace Impl
 {
 //! \cond Impl
 
-// Custom warning for switch from device_type to memory_space.
+// Custom warning for use within static_assert.
 constexpr bool deprecated( std::false_type ) { return true; }
 
-[[deprecated(
-    "Template parameter should be converted from Kokkos device type to "
-    "Kokkos memory space." )]] constexpr bool
+[[deprecated( "Cabana deprecation." )]] constexpr bool
 deprecated( std::true_type )
 {
     return true;

@@ -454,37 +454,6 @@ auto makeNeighborList( Tag tag, Positions const& positions,
                              buffer_size );
 }
 
-/*!
-  \brief Neighbor list implementation using ArborX for particles within the
-  interaction distance with a 1D compressed layout for particles and neighbors.
-
-  \tparam DeviceType Kokkos device type.
-  \tparam Positions The position type.
-  \tparam Tag Tag indicating whether to build a full or half neighbor list.
-
-  \param tag Tag indicating whether to build a full or half neighbor list.
-  \param positions The particle positions.
-  \param first The beginning particle index to compute neighbors for.
-  \param last The end particle index to compute neighbors for.
-  \param radius The radius of the neighborhood. Particles within this radius are
-  considered neighbors.
-  \param buffer_size Optional guess for maximum number of neighbors.
-
-  Neighbor list implementation most appropriate for highly varying particle
-  densities.
-*/
-template <typename DeviceType, typename Positions, typename Tag>
-[[deprecated]] auto makeNeighborList( Tag tag, Positions const& positions,
-                                      typename Positions::size_type first,
-                                      typename Positions::size_type last,
-                                      typename Positions::value_type radius,
-                                      int buffer_size = 0 )
-{
-    using exec_space = typename DeviceType::execution_space;
-    return makeNeighborList( exec_space{}, tag, positions, first, last, radius,
-                             buffer_size );
-}
-
 //---------------------------------------------------------------------------//
 //! 2d ArborX neighbor list storage layout.
 template <typename MemorySpace, typename Tag>
@@ -622,38 +591,6 @@ auto make2DNeighborList( Tag tag, Positions const& positions,
                          int buffer_size = 0 )
 {
     using exec_space = typename Positions::execution_space;
-    return make2DNeighborList( exec_space{}, tag, positions, first, last,
-                               radius, buffer_size );
-}
-
-/*!
-  \brief Neighbor list implementation using ArborX for particles within the
-  interaction distance with a 2D layout for particles and neighbors.
-
-  \tparam DeviceType Kokkos device type.
-  \tparam Positions The position type.
-  \tparam Tag Tag indicating whether to build a full or half neighbor list.
-
-  \param tag Tag indicating whether to build a full or half neighbor list.
-  \param positions The particle positions.
-  \param first The beginning particle index to compute neighbors for.
-  \param last The end particle index to compute neighbors for.
-  \param radius The radius of the neighborhood. Particles within this radius are
-  considered neighbors.
-  \param buffer_size Optional guess for maximum number of neighbors per
-  particle.
-
-  Neighbor list implementation most appropriate for highly varying particle
-  densities.
-*/
-template <typename DeviceType, typename Positions, typename Tag>
-[[deprecated]] auto make2DNeighborList( Tag tag, Positions const& positions,
-                                        typename Positions::size_type first,
-                                        typename Positions::size_type last,
-                                        typename Positions::value_type radius,
-                                        int buffer_size = 0 )
-{
-    using exec_space = typename DeviceType::execution_space;
     return make2DNeighborList( exec_space{}, tag, positions, first, last,
                                radius, buffer_size );
 }
