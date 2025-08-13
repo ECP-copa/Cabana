@@ -142,20 +142,20 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:abbfcda4fab4459a025268f48c4f20b8d" id="r_abbfcda4fab4459a025268f48c4f20b8d"><td class="memItemLeft" align="right" valign="top"><a id="abbfcda4fab4459a025268f48c4f20b8d" name="abbfcda4fab4459a025268f48c4f20b8d"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename MemorySpace::memory_space</td></tr>
-<tr class="memdesc:abbfcda4fab4459a025268f48c4f20b8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Memory space. <br /></td></tr>
-<tr class="separator:abbfcda4fab4459a025268f48c4f20b8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6eea5edd2f1278bc98cf1eab0df8a3b5" id="r_a6eea5edd2f1278bc98cf1eab0df8a3b5"><td class="memItemLeft" align="right" valign="top"><a id="a6eea5edd2f1278bc98cf1eab0df8a3b5" name="a6eea5edd2f1278bc98cf1eab0df8a3b5"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
+<tr class="memdesc:a6eea5edd2f1278bc98cf1eab0df8a3b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
+<tr class="separator:a6eea5edd2f1278bc98cf1eab0df8a3b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94c5b7423639e9a8b4ca11e7bfef5cc7" id="r_a94c5b7423639e9a8b4ca11e7bfef5cc7"><td class="memItemLeft" align="right" valign="top"><a id="a94c5b7423639e9a8b4ca11e7bfef5cc7" name="a94c5b7423639e9a8b4ca11e7bfef5cc7"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename memory_space::execution_space</td></tr>
 <tr class="memdesc:a94c5b7423639e9a8b4ca11e7bfef5cc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default execution space. <br /></td></tr>
 <tr class="separator:a94c5b7423639e9a8b4ca11e7bfef5cc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a27388a56ba092b79bd42615501b7c321" id="r_a27388a56ba092b79bd42615501b7c321"><td class="memItemLeft" align="right" valign="top"><a id="a27388a56ba092b79bd42615501b7c321" name="a27388a56ba092b79bd42615501b7c321"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>workload_view</b> = Kokkos::View&lt;int***, <a class="el" href="#abbfcda4fab4459a025268f48c4f20b8d">memory_space</a>&gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>workload_view</b> = Kokkos::View&lt;int***, <a class="el" href="#a6eea5edd2f1278bc98cf1eab0df8a3b5">memory_space</a>&gt;</td></tr>
 <tr class="memdesc:a27388a56ba092b79bd42615501b7c321"><td class="mdescLeft">&#160;</td><td class="mdescRight">Workload device view. <br /></td></tr>
 <tr class="separator:a27388a56ba092b79bd42615501b7c321"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade8db3005f303ff5d6a633d60b14fe35" id="r_ade8db3005f303ff5d6a633d60b14fe35"><td class="memItemLeft" align="right" valign="top"><a id="ade8db3005f303ff5d6a633d60b14fe35" name="ade8db3005f303ff5d6a633d60b14fe35"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>partition_view</b> = Kokkos::View&lt;int* [<a class="el" href="#a3cea37a794ad5d4ae351d3d105cfdd1b">num_space_dim</a>], <a class="el" href="#abbfcda4fab4459a025268f48c4f20b8d">memory_space</a>&gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>partition_view</b> = Kokkos::View&lt;int* [<a class="el" href="#a3cea37a794ad5d4ae351d3d105cfdd1b">num_space_dim</a>], <a class="el" href="#a6eea5edd2f1278bc98cf1eab0df8a3b5">memory_space</a>&gt;</td></tr>
 <tr class="memdesc:ade8db3005f303ff5d6a633d60b14fe35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Partition device view. <br /></td></tr>
 <tr class="separator:ade8db3005f303ff5d6a633d60b14fe35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad6508a8829591b46ba2bea8d66862f40" id="r_ad6508a8829591b46ba2bea8d66862f40"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad6508a8829591b46ba2bea8d66862f40">workload_view_host</a></td></tr>
@@ -1258,7 +1258,7 @@ template&lt;typename MemorySpace, unsigned long long CellPerTileDim = 4, std::si
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
 <div class="line">        1 &lt;&lt; <a class="code hl_variable" href="#aeb0cacf309fb03111199b75cbe55f8cd">cell_bits_per_tile_dim</a></div>
-<div class="ttc" id="aclassCabana_1_1Grid_1_1SparseDimPartitioner_html_aeb0cacf309fb03111199b75cbe55f8cd"><div class="ttname"><a href="#aeb0cacf309fb03111199b75cbe55f8cd">Cabana::Grid::SparseDimPartitioner::cell_bits_per_tile_dim</a></div><div class="ttdeci">static constexpr unsigned long long cell_bits_per_tile_dim</div><div class="ttdoc">Number of bits (per dimension) needed to index the cells inside a tile.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseDimPartitioner.hpp:76</div></div>
+<div class="ttc" id="aclassCabana_1_1Grid_1_1SparseDimPartitioner_html_aeb0cacf309fb03111199b75cbe55f8cd"><div class="ttname"><a href="#aeb0cacf309fb03111199b75cbe55f8cd">Cabana::Grid::SparseDimPartitioner::cell_bits_per_tile_dim</a></div><div class="ttdeci">static constexpr unsigned long long cell_bits_per_tile_dim</div><div class="ttdoc">Number of bits (per dimension) needed to index the cells inside a tile.</div><div class="ttdef"><b>Definition</b> Cabana_Grid_SparseDimPartitioner.hpp:70</div></div>
 </div><!-- fragment --><p>Number of cells inside each tile (per dimension) Tile size reset to power of 2 </p>
 
 </div>

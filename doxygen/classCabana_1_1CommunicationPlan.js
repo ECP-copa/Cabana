@@ -1,7 +1,7 @@
 var classCabana_1_1CommunicationPlan =
 [
     [ "execution_space", "classCabana_1_1CommunicationPlan.html#ae846372aa7018c5da4d017502a0803e2", null ],
-    [ "memory_space", "classCabana_1_1CommunicationPlan.html#a31b59b320cff95e400db68ca831be873", null ],
+    [ "memory_space", "classCabana_1_1CommunicationPlan.html#a4b57656297b6e95ac7dce53d6967f1df", null ],
     [ "size_type", "classCabana_1_1CommunicationPlan.html#a2888c5686762460a20d0cc78aea4e9d4", null ],
     [ "CommunicationPlan", "classCabana_1_1CommunicationPlan.html#ad37cb95149bc904f4da45e193dc59cd3", null ],
     [ "comm", "classCabana_1_1CommunicationPlan.html#a614a7eb904961fd1c301accd4f8b9848", null ],

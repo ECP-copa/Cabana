@@ -3,7 +3,7 @@ var classCabana_1_1Grid_1_1ReferenceStructuredSolver =
     [ "Array_t", "classCabana_1_1Grid_1_1ReferenceStructuredSolver.html#af0b0cfd2ab47490fd2693945bd5f255f", null ],
     [ "entity_type", "classCabana_1_1Grid_1_1ReferenceStructuredSolver.html#acbe2d1fe9a68cbc87fb1e156393c977f", null ],
     [ "execution_space", "classCabana_1_1Grid_1_1ReferenceStructuredSolver.html#a6757092c68fb2661a726e5eb54c944ff", null ],
-    [ "memory_space", "classCabana_1_1Grid_1_1ReferenceStructuredSolver.html#a6955023f860e0d7424462b79f1791069", null ],
+    [ "memory_space", "classCabana_1_1Grid_1_1ReferenceStructuredSolver.html#a142bc8a7168888c6d162b85f43c877ff", null ],
     [ "subarray_type", "classCabana_1_1Grid_1_1ReferenceStructuredSolver.html#a4283f64c8ff45e352eccd3bbdab673a5", null ],
     [ "value_type", "classCabana_1_1Grid_1_1ReferenceStructuredSolver.html#aed0b1d80cc3280f43570e0f0029cc00a", null ],
     [ "getFinalRelativeResidualNorm", "classCabana_1_1Grid_1_1ReferenceStructuredSolver.html#a13869c815e98be70846d04c5b423ec6d", null ],

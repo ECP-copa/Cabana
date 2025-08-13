@@ -9,7 +9,7 @@ var classCabana_1_1AoSoA =
     [ "member_slice_type", "classCabana_1_1AoSoA.html#a6aeaffe06d107446d6649e8122ad5a10", null ],
     [ "member_types", "classCabana_1_1AoSoA.html#a42762ef5eab475571f679a879dd56580", null ],
     [ "member_value_type", "classCabana_1_1AoSoA.html#a8fb53b5ac21aa0e11a338b1d38a0da38", null ],
-    [ "memory_space", "classCabana_1_1AoSoA.html#a1a4d20fe21947d1db4d834a0381439ed", null ],
+    [ "memory_space", "classCabana_1_1AoSoA.html#a8648042a8498cd5e4017b65c8d925f3b", null ],
     [ "memory_traits", "classCabana_1_1AoSoA.html#a399c8c3c09a90e7f688d69b6d2c8d5b0", null ],
     [ "size_type", "classCabana_1_1AoSoA.html#a2ec517c16b23bec68dd6730a22582e83", null ],
     [ "soa_type", "classCabana_1_1AoSoA.html#a88ff7497a416a417bc7857356c64140c", null ],

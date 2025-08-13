@@ -2,7 +2,7 @@ var classCabana_1_1BinningData =
 [
     [ "CountView", "classCabana_1_1BinningData.html#a4bfb51bf790c6b72e8ae626fe4af30da", null ],
     [ "execution_space", "classCabana_1_1BinningData.html#a60f26e8c982285a5f9811ab2d38b75c4", null ],
-    [ "memory_space", "classCabana_1_1BinningData.html#aceed2de37c3ccc67a675f16ad0f52fe2", null ],
+    [ "memory_space", "classCabana_1_1BinningData.html#a32f2b082ad0f292b257a0c369caedacc", null ],
     [ "OffsetView", "classCabana_1_1BinningData.html#a9c3e5c4941c2e2b390e783388d9ef051", null ],
     [ "size_type", "classCabana_1_1BinningData.html#aa4018543d416d3ca4e036f10d0b5bc1a", null ],
     [ "BinningData", "classCabana_1_1BinningData.html#a4e8436bf8132483cd015dcb8a512968f", null ],

@@ -129,10 +129,10 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>host_mirror_type</b>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>member_types</b> = DataTypes</td></tr>
 <tr class="memdesc:a42762ef5eab475571f679a879dd56580"><td class="mdescLeft">&#160;</td><td class="mdescRight">Member data types. <br /></td></tr>
 <tr class="separator:a42762ef5eab475571f679a879dd56580"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a4d20fe21947d1db4d834a0381439ed" id="r_a1a4d20fe21947d1db4d834a0381439ed"><td class="memItemLeft" align="right" valign="top"><a id="a1a4d20fe21947d1db4d834a0381439ed" name="a1a4d20fe21947d1db4d834a0381439ed"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename MemorySpace::memory_space</td></tr>
-<tr class="memdesc:a1a4d20fe21947d1db4d834a0381439ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Memory space. <br /></td></tr>
-<tr class="separator:a1a4d20fe21947d1db4d834a0381439ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8648042a8498cd5e4017b65c8d925f3b" id="r_a8648042a8498cd5e4017b65c8d925f3b"><td class="memItemLeft" align="right" valign="top"><a id="a8648042a8498cd5e4017b65c8d925f3b" name="a8648042a8498cd5e4017b65c8d925f3b"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
+<tr class="memdesc:a8648042a8498cd5e4017b65c8d925f3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
+<tr class="separator:a8648042a8498cd5e4017b65c8d925f3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43dbbfdc1ca79d77e0824e4be3cdb0ba" id="r_a43dbbfdc1ca79d77e0824e4be3cdb0ba"><td class="memItemLeft" align="right" valign="top"><a id="a43dbbfdc1ca79d77e0824e4be3cdb0ba" name="a43dbbfdc1ca79d77e0824e4be3cdb0ba"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename memory_space::execution_space</td></tr>
 <tr class="memdesc:a43dbbfdc1ca79d77e0824e4be3cdb0ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default execution space. <br /></td></tr>
@@ -150,7 +150,7 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>soa_type</b> = <a cl
 <tr class="memdesc:a88ff7497a416a417bc7857356c64140c"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1SoA.html">SoA</a> type. <br /></td></tr>
 <tr class="separator:a88ff7497a416a417bc7857356c64140c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6cc65929e6fe95ed65371f36fc998fe" id="r_ab6cc65929e6fe95ed65371f36fc998fe"><td class="memItemLeft" align="right" valign="top"><a id="ab6cc65929e6fe95ed65371f36fc998fe" name="ab6cc65929e6fe95ed65371f36fc998fe"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>soa_view</b> = Kokkos::View&lt;<a class="el" href="#a88ff7497a416a417bc7857356c64140c">soa_type</a>*, <a class="el" href="#a1a4d20fe21947d1db4d834a0381439ed">memory_space</a>, <a class="el" href="#a399c8c3c09a90e7f688d69b6d2c8d5b0">memory_traits</a>&gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>soa_view</b> = Kokkos::View&lt;<a class="el" href="#a88ff7497a416a417bc7857356c64140c">soa_type</a>*, <a class="el" href="#a8648042a8498cd5e4017b65c8d925f3b">memory_space</a>, <a class="el" href="#a399c8c3c09a90e7f688d69b6d2c8d5b0">memory_traits</a>&gt;</td></tr>
 <tr class="memdesc:ab6cc65929e6fe95ed65371f36fc998fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Managed data view. <br /></td></tr>
 <tr class="separator:ab6cc65929e6fe95ed65371f36fc998fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0493c317ed10da809dd190d0c381f4b4" id="r_a0493c317ed10da809dd190d0c381f4b4"><td class="memItemLeft" align="right" valign="top"><a id="a0493c317ed10da809dd190d0c381f4b4" name="a0493c317ed10da809dd190d0c381f4b4"></a>
@@ -274,7 +274,7 @@ template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::Perform
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line"> </div>
 <div class="line">        <a class="code hl_function" href="#ac952483cd2ef4aa12b637aee1da26303">AoSoA&lt;DataTypes, MemorySpace, VectorLength, MemoryTraits&gt;</a></div>
-<div class="ttc" id="aclassCabana_1_1AoSoA_html_ac952483cd2ef4aa12b637aee1da26303"><div class="ttname"><a href="#ac952483cd2ef4aa12b637aee1da26303">Cabana::AoSoA::AoSoA</a></div><div class="ttdeci">AoSoA(const std::string &amp;label=&quot;&quot;)</div><div class="ttdoc">Default constructor.</div><div class="ttdef"><b>Definition</b> Cabana_AoSoA.hpp:211</div></div>
+<div class="ttc" id="aclassCabana_1_1AoSoA_html_ac952483cd2ef4aa12b637aee1da26303"><div class="ttname"><a href="#ac952483cd2ef4aa12b637aee1da26303">Cabana::AoSoA::AoSoA</a></div><div class="ttdeci">AoSoA(const std::string &amp;label=&quot;&quot;)</div><div class="ttdoc">Default constructor.</div><div class="ttdef"><b>Definition</b> Cabana_AoSoA.hpp:206</div></div>
 </div><!-- fragment -->
 <p><a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> type. </p>
 
@@ -337,13 +337,13 @@ template&lt;std::size_t M&gt; </div>
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line"> </div>
-<div class="line">        <a class="code hl_class" href="classCabana_1_1Slice.html">Slice&lt;member_data_type&lt;M&gt;</a>, <a class="code hl_typedef" href="#a1a4d20fe21947d1db4d834a0381439ed">memory_space</a>, <a class="code hl_struct" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>,</div>
+<div class="line">        <a class="code hl_class" href="classCabana_1_1Slice.html">Slice&lt;member_data_type&lt;M&gt;</a>, <a class="code hl_typedef" href="#a8648042a8498cd5e4017b65c8d925f3b">memory_space</a>, <a class="code hl_struct" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>,</div>
 <div class="line">              <a class="code hl_variable" href="#a38f8b6f55e138b578eaea1d8420bf232">vector_length</a>,</div>
 <div class="line">              <span class="keyword">sizeof</span>( <a class="code hl_typedef" href="#a88ff7497a416a417bc7857356c64140c">soa_type</a> ) / <span class="keyword">sizeof</span>( <a class="code hl_typedef" href="#a8fb53b5ac21aa0e11a338b1d38a0da38">member_value_type&lt;M&gt;</a> )&gt;</div>
-<div class="ttc" id="aclassCabana_1_1AoSoA_html_a1a4d20fe21947d1db4d834a0381439ed"><div class="ttname"><a href="#a1a4d20fe21947d1db4d834a0381439ed">Cabana::AoSoA::memory_space</a></div><div class="ttdeci">typename MemorySpace::memory_space memory_space</div><div class="ttdoc">Memory space.</div><div class="ttdef"><b>Definition</b> Cabana_AoSoA.hpp:142</div></div>
-<div class="ttc" id="aclassCabana_1_1AoSoA_html_a38f8b6f55e138b578eaea1d8420bf232"><div class="ttname"><a href="#a38f8b6f55e138b578eaea1d8420bf232">Cabana::AoSoA::vector_length</a></div><div class="ttdeci">static constexpr int vector_length</div><div class="ttdoc">Vector length (size of the arrays held by the structs).</div><div class="ttdef"><b>Definition</b> Cabana_AoSoA.hpp:154</div></div>
-<div class="ttc" id="aclassCabana_1_1AoSoA_html_a88ff7497a416a417bc7857356c64140c"><div class="ttname"><a href="#a88ff7497a416a417bc7857356c64140c">Cabana::AoSoA::soa_type</a></div><div class="ttdeci">SoA&lt; member_types, vector_length &gt; soa_type</div><div class="ttdoc">SoA type.</div><div class="ttdef"><b>Definition</b> Cabana_AoSoA.hpp:163</div></div>
-<div class="ttc" id="aclassCabana_1_1AoSoA_html_a8fb53b5ac21aa0e11a338b1d38a0da38"><div class="ttname"><a href="#a8fb53b5ac21aa0e11a338b1d38a0da38">Cabana::AoSoA::member_value_type</a></div><div class="ttdeci">typename std::remove_all_extents&lt; member_data_type&lt; M &gt; &gt;::type member_value_type</div><div class="ttdoc">Struct member array element value type at a given index M.</div><div class="ttdef"><b>Definition</b> Cabana_AoSoA.hpp:188</div></div>
+<div class="ttc" id="aclassCabana_1_1AoSoA_html_a38f8b6f55e138b578eaea1d8420bf232"><div class="ttname"><a href="#a38f8b6f55e138b578eaea1d8420bf232">Cabana::AoSoA::vector_length</a></div><div class="ttdeci">static constexpr int vector_length</div><div class="ttdoc">Vector length (size of the arrays held by the structs).</div><div class="ttdef"><b>Definition</b> Cabana_AoSoA.hpp:149</div></div>
+<div class="ttc" id="aclassCabana_1_1AoSoA_html_a8648042a8498cd5e4017b65c8d925f3b"><div class="ttname"><a href="#a8648042a8498cd5e4017b65c8d925f3b">Cabana::AoSoA::memory_space</a></div><div class="ttdeci">MemorySpace memory_space</div><div class="ttdoc">Kokkos memory space.</div><div class="ttdef"><b>Definition</b> Cabana_AoSoA.hpp:140</div></div>
+<div class="ttc" id="aclassCabana_1_1AoSoA_html_a88ff7497a416a417bc7857356c64140c"><div class="ttname"><a href="#a88ff7497a416a417bc7857356c64140c">Cabana::AoSoA::soa_type</a></div><div class="ttdeci">SoA&lt; member_types, vector_length &gt; soa_type</div><div class="ttdoc">SoA type.</div><div class="ttdef"><b>Definition</b> Cabana_AoSoA.hpp:158</div></div>
+<div class="ttc" id="aclassCabana_1_1AoSoA_html_a8fb53b5ac21aa0e11a338b1d38a0da38"><div class="ttname"><a href="#a8fb53b5ac21aa0e11a338b1d38a0da38">Cabana::AoSoA::member_value_type</a></div><div class="ttdeci">typename std::remove_all_extents&lt; member_data_type&lt; M &gt; &gt;::type member_value_type</div><div class="ttdoc">Struct member array element value type at a given index M.</div><div class="ttdef"><b>Definition</b> Cabana_AoSoA.hpp:183</div></div>
 <div class="ttc" id="aclassCabana_1_1Slice_html"><div class="ttname"><a href="classCabana_1_1Slice.html">Cabana::Slice</a></div><div class="ttdoc">A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.</div><div class="ttdef"><b>Definition</b> Cabana_Slice.hpp:502</div></div>
 <div class="ttc" id="astructCabana_1_1DefaultAccessMemory_html"><div class="ttname"><a href="structCabana_1_1DefaultAccessMemory.html">Cabana::DefaultAccessMemory</a></div><div class="ttdef"><b>Definition</b> Cabana_Types.hpp:37</div></div>
 </div><!-- fragment -->

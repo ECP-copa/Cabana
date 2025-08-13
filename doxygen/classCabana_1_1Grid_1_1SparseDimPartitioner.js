@@ -2,7 +2,7 @@ var classCabana_1_1Grid_1_1SparseDimPartitioner =
 [
     [ "SubWorkloadFunctor", "structCabana_1_1Grid_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html", "structCabana_1_1Grid_1_1SparseDimPartitioner_1_1SubWorkloadFunctor" ],
     [ "execution_space", "classCabana_1_1Grid_1_1SparseDimPartitioner.html#a94c5b7423639e9a8b4ca11e7bfef5cc7", null ],
-    [ "memory_space", "classCabana_1_1Grid_1_1SparseDimPartitioner.html#abbfcda4fab4459a025268f48c4f20b8d", null ],
+    [ "memory_space", "classCabana_1_1Grid_1_1SparseDimPartitioner.html#a6eea5edd2f1278bc98cf1eab0df8a3b5", null ],
     [ "partition_view", "classCabana_1_1Grid_1_1SparseDimPartitioner.html#ade8db3005f303ff5d6a633d60b14fe35", null ],
     [ "partition_view_host", "classCabana_1_1Grid_1_1SparseDimPartitioner.html#a4725a292c52e404c9b2ca902ed21fe91", null ],
     [ "workload_view", "classCabana_1_1Grid_1_1SparseDimPartitioner.html#a27388a56ba092b79bd42615501b7c321", null ],

@@ -6,7 +6,7 @@ var classCabana_1_1Slice =
     [ "index_type", "classCabana_1_1Slice.html#a6bc54e263f3269fa9a762d8394b3266e", null ],
     [ "kokkos_view", "classCabana_1_1Slice.html#af85e42ed78f4f0b854b3fa3330c9c254", null ],
     [ "memory_access_type", "classCabana_1_1Slice.html#ab71f872167d5fd5f2b2195af1cf79994", null ],
-    [ "memory_space", "classCabana_1_1Slice.html#a9ea4589bc76c28fe5e087e436b3a4fb1", null ],
+    [ "memory_space", "classCabana_1_1Slice.html#aae6fa8d4af68dc92f7b137a63dc1f767", null ],
     [ "pointer_type", "classCabana_1_1Slice.html#a36f2a9948f6429b54c36d67052ecc3e0", null ],
     [ "random_access_slice", "classCabana_1_1Slice.html#a47f69a2558e4666e7a0042724055b831", null ],
     [ "reference_type", "classCabana_1_1Slice.html#a839c710da6c931de28d6c0eb773bc37d", null ],

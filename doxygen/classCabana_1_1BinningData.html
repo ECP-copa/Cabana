@@ -117,10 +117,10 @@ $(function(){initNavTree('classCabana_1_1BinningData.html',''); initResizable(tr
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:aceed2de37c3ccc67a675f16ad0f52fe2" id="r_aceed2de37c3ccc67a675f16ad0f52fe2"><td class="memItemLeft" align="right" valign="top"><a id="aceed2de37c3ccc67a675f16ad0f52fe2" name="aceed2de37c3ccc67a675f16ad0f52fe2"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename MemorySpace::memory_space</td></tr>
-<tr class="memdesc:aceed2de37c3ccc67a675f16ad0f52fe2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Memory space. <br /></td></tr>
-<tr class="separator:aceed2de37c3ccc67a675f16ad0f52fe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32f2b082ad0f292b257a0c369caedacc" id="r_a32f2b082ad0f292b257a0c369caedacc"><td class="memItemLeft" align="right" valign="top"><a id="a32f2b082ad0f292b257a0c369caedacc" name="a32f2b082ad0f292b257a0c369caedacc"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
+<tr class="memdesc:a32f2b082ad0f292b257a0c369caedacc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
+<tr class="separator:a32f2b082ad0f292b257a0c369caedacc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60f26e8c982285a5f9811ab2d38b75c4" id="r_a60f26e8c982285a5f9811ab2d38b75c4"><td class="memItemLeft" align="right" valign="top"><a id="a60f26e8c982285a5f9811ab2d38b75c4" name="a60f26e8c982285a5f9811ab2d38b75c4"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename memory_space::execution_space</td></tr>
 <tr class="memdesc:a60f26e8c982285a5f9811ab2d38b75c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default execution space. <br /></td></tr>
@@ -130,11 +130,11 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>size_type</b> = type
 <tr class="memdesc:aa4018543d416d3ca4e036f10d0b5bc1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Memory space size type. <br /></td></tr>
 <tr class="separator:aa4018543d416d3ca4e036f10d0b5bc1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4bfb51bf790c6b72e8ae626fe4af30da" id="r_a4bfb51bf790c6b72e8ae626fe4af30da"><td class="memItemLeft" align="right" valign="top"><a id="a4bfb51bf790c6b72e8ae626fe4af30da" name="a4bfb51bf790c6b72e8ae626fe4af30da"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>CountView</b> = Kokkos::View&lt;const int*, <a class="el" href="#aceed2de37c3ccc67a675f16ad0f52fe2">memory_space</a>&gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>CountView</b> = Kokkos::View&lt;const int*, <a class="el" href="#a32f2b082ad0f292b257a0c369caedacc">memory_space</a>&gt;</td></tr>
 <tr class="memdesc:a4bfb51bf790c6b72e8ae626fe4af30da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binning view type. <br /></td></tr>
 <tr class="separator:a4bfb51bf790c6b72e8ae626fe4af30da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c3e5c4941c2e2b390e783388d9ef051" id="r_a9c3e5c4941c2e2b390e783388d9ef051"><td class="memItemLeft" align="right" valign="top"><a id="a9c3e5c4941c2e2b390e783388d9ef051" name="a9c3e5c4941c2e2b390e783388d9ef051"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>OffsetView</b> = Kokkos::View&lt;<a class="el" href="#aa4018543d416d3ca4e036f10d0b5bc1a">size_type</a>*, <a class="el" href="#aceed2de37c3ccc67a675f16ad0f52fe2">memory_space</a>&gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>OffsetView</b> = Kokkos::View&lt;<a class="el" href="#aa4018543d416d3ca4e036f10d0b5bc1a">size_type</a>*, <a class="el" href="#a32f2b082ad0f292b257a0c369caedacc">memory_space</a>&gt;</td></tr>
 <tr class="memdesc:a9c3e5c4941c2e2b390e783388d9ef051"><td class="mdescLeft">&#160;</td><td class="mdescRight">Offset view type. <br /></td></tr>
 <tr class="separator:a9c3e5c4941c2e2b390e783388d9ef051"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
