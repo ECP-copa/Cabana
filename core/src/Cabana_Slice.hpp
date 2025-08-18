@@ -673,9 +673,21 @@ class Slice
     KOKKOS_INLINE_FUNCTION
     size_type arraySize( const size_type s ) const
     {
-        return ( static_cast<size_type>( s ) < _view.extent( 0 ) - 1 )
-                   ? vector_length
-                   : ( _size % vector_length );
+        // Check if this is not the last struct index.
+        // If it isn't, the data array is guaranteed to be full.
+        if ( static_cast<size_type>( s ) < _view.extent( 0 ) - 1 )
+        {
+            return vector_length;
+        }
+        else
+        {
+            // This is the last struct index, which may be partially full.
+            // We calculate the remainder to see how many elements it holds.
+            const size_type rem = _size % vector_length;
+            // If rem is 0 and size is positive, the last chunk is full.
+            // Otherwise, the remainder is the correct size (e.g., for _size=0).
+            return ( rem == 0 && _size > 0 ) ? vector_length : rem;
+        }
     }
 
     // ------------
