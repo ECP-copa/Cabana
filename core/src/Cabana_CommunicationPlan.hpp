@@ -1124,7 +1124,7 @@ class CommunicationPlan
             exec_space, element_export_ranks, comm_size,
             typename Impl::CountSendsAndCreateSteeringAlgorithm<
                 ExecutionSpace>::type() );
-            
+
         // Barrier before continuing to ensure synchronization.
         MPI_Barrier( comm() );
 
@@ -1437,7 +1437,7 @@ class CommunicationPlan
             exec_space, element_export_ranks, comm_size,
             typename Impl::CountSendsAndCreateSteeringAlgorithm<
                 ExecutionSpace>::type() );
-        
+
         // Barrier before continuing to ensure synchronization.
         MPI_Barrier( comm() );
 
