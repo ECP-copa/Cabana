@@ -1124,6 +1124,9 @@ class CommunicationPlan
             exec_space, element_export_ranks, comm_size,
             typename Impl::CountSendsAndCreateSteeringAlgorithm<
                 ExecutionSpace>::type() );
+            
+        // Barrier before continuing to ensure synchronization.
+        MPI_Barrier( comm() );
 
         // Return the neighbor ids, export ranks, and export indices
         return std::tuple{ counts_and_ids2.second, element_export_ranks,
@@ -1434,6 +1437,9 @@ class CommunicationPlan
             exec_space, element_export_ranks, comm_size,
             typename Impl::CountSendsAndCreateSteeringAlgorithm<
                 ExecutionSpace>::type() );
+        
+        // Barrier before continuing to ensure synchronization.
+        MPI_Barrier( comm() );
 
         return std::tuple{ counts_and_ids2.second, element_export_ranks,
                            export_indices };
