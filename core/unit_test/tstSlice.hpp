@@ -94,10 +94,15 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
 
 //---------------------------------------------------------------------------//
 // API test function
-void apiTest()
+void apiTest( const int num_data )
 {
     // Manually set the inner array size with the test layout.
     const int vector_length = 16;
+
+    // Compute expected number of SoAs
+    int num_SoA = num_data / vector_length;
+    if ( num_data % vector_length > 0 )
+        ++num_SoA;
 
     // Data dimensions.
     const int dim_1 = 3;
@@ -110,7 +115,6 @@ void apiTest()
 
     // Create an AoSoA.
     using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE, vector_length>;
-    int num_data = 35;
     AoSoA_t aosoa( "aosoa", num_data );
 
     // Create some slices.
@@ -126,17 +130,17 @@ void apiTest()
     EXPECT_TRUE( Cabana::is_slice<decltype( slice_3 )>::value );
 
     // Check field sizes.
-    EXPECT_EQ( slice_0.size(), 35 );
-    EXPECT_EQ( slice_0.numSoA(), 3 );
+    EXPECT_EQ( slice_0.size(), num_data );
+    EXPECT_EQ( slice_0.numSoA(), num_SoA );
 
-    EXPECT_EQ( slice_1.size(), 35 );
-    EXPECT_EQ( slice_1.numSoA(), 3 );
+    EXPECT_EQ( slice_1.size(), num_data );
+    EXPECT_EQ( slice_1.numSoA(), num_SoA );
 
-    EXPECT_EQ( slice_2.size(), 35 );
-    EXPECT_EQ( slice_2.numSoA(), 3 );
+    EXPECT_EQ( slice_2.size(), num_data );
+    EXPECT_EQ( slice_2.numSoA(), num_SoA );
 
-    EXPECT_EQ( slice_3.size(), 35 );
-    EXPECT_EQ( slice_3.numSoA(), 3 );
+    EXPECT_EQ( slice_3.size(), num_data );
+    EXPECT_EQ( slice_3.numSoA(), num_SoA );
 
     // Initialize data with the () operator. The implementation of operator()
     // calls access() and therefore tests that as well.
@@ -151,27 +155,27 @@ void apiTest()
     // Check the raw pointer interface sizes.
     EXPECT_EQ( slice_0.viewRank(), 5 );
     EXPECT_EQ( slice_0.rank, 4 );
-    EXPECT_EQ( slice_0.extent( 0 ), 3 );
-    EXPECT_EQ( slice_0.extent( 1 ), 16 );
+    EXPECT_EQ( slice_0.extent( 0 ), num_SoA );
+    EXPECT_EQ( slice_0.extent( 1 ), vector_length );
     EXPECT_EQ( slice_0.extent( 2 ), dim_1 );
     EXPECT_EQ( slice_0.extent( 3 ), dim_2 );
     EXPECT_EQ( slice_0.extent( 4 ), dim_3 );
 
     EXPECT_EQ( slice_1.viewRank(), 2 );
     EXPECT_EQ( slice_1.rank, 1 );
-    EXPECT_EQ( slice_1.extent( 0 ), 3 );
-    EXPECT_EQ( slice_1.extent( 1 ), 16 );
+    EXPECT_EQ( slice_1.extent( 0 ), num_SoA );
+    EXPECT_EQ( slice_1.extent( 1 ), vector_length );
 
     EXPECT_EQ( slice_2.viewRank(), 3 );
     EXPECT_EQ( slice_2.rank, 2 );
-    EXPECT_EQ( slice_2.extent( 0 ), 3 );
-    EXPECT_EQ( slice_2.extent( 1 ), 16 );
+    EXPECT_EQ( slice_2.extent( 0 ), num_SoA );
+    EXPECT_EQ( slice_2.extent( 1 ), vector_length );
     EXPECT_EQ( slice_2.extent( 2 ), dim_1 );
 
     EXPECT_EQ( slice_3.viewRank(), 4 );
     EXPECT_EQ( slice_3.rank, 3 );
-    EXPECT_EQ( slice_3.extent( 0 ), 3 );
-    EXPECT_EQ( slice_3.extent( 1 ), 16 );
+    EXPECT_EQ( slice_3.extent( 0 ), num_SoA );
+    EXPECT_EQ( slice_3.extent( 1 ), vector_length );
     EXPECT_EQ( slice_3.extent( 2 ), dim_1 );
     EXPECT_EQ( slice_3.extent( 3 ), dim_2 );
 
@@ -347,7 +351,9 @@ void atomicAccessTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( Slice, API ) { apiTest(); }
+TEST( Slice, API ) { apiTest( 35 ); }
+// Test with an even multiple of the vector_length; see #836
+TEST( Slice, API_multiple ) { apiTest( 48 ); }
 
 //---------------------------------------------------------------------------//
 TEST( Slice, RandomAccess ) { randomAccessTest(); }
