@@ -1079,8 +1079,10 @@ class CommunicationPlan
         int num_messages = _total_num_export + element_import_ranks.extent( 0 );
         std::vector<MPI_Request> mpi_requests( num_messages );
         std::vector<MPI_Status> mpi_statuses( num_messages );
-        // Increment the mpi_tag to ensure messages are processed in the correct
-        // order from the previous round of Isends and Irecvs.
+
+        // Increment the mpi_tag for this round of messages to ensure messages
+        // are processed in the correct order from the previous round of Isends
+        // and Irecvs.
         for ( std::size_t i = 0; i < num_n; i++ )
         {
             for ( std::size_t j = 0; j < _num_export[i]; j++ )
@@ -1093,8 +1095,6 @@ class CommunicationPlan
         }
 
         // Send the indices we need
-        // Increment the mpi_tag to ensure messages are processed in the correct
-        // order from the previous round of Isends and Irecvs.
         for ( std::size_t i = 0; i < element_import_ranks.extent( 0 ); i++ )
         {
             MPI_Isend( element_import_ids.data() + i, 1, MPI_INT,
@@ -1391,8 +1391,10 @@ class CommunicationPlan
         int num_messages = _total_num_export + element_import_ranks.extent( 0 );
         mpi_requests.resize( num_messages );
         mpi_statuses.resize( num_messages );
-        // Increment the mpi_tag to ensure messages are processed in the correct
-        // order from the previous round of Isends and Irecvs.
+
+        // Increment the mpi_tag for this round of messages to ensure messages
+        // are processed in the correct order from the previous round of Isends
+        // and Irecvs.
         for ( int i = 0; i < num_recvs; i++ )
         {
             for ( int j = 0; j < send_counts( i ); j++ )
@@ -1405,8 +1407,6 @@ class CommunicationPlan
         }
 
         // Send the indices we need
-        // Increment the mpi_tag to ensure messages are processed in the correct
-        // order from the previous round of Isends and Irecvs.
         for ( std::size_t i = 0; i < element_import_ranks.extent( 0 ); i++ )
         {
             MPI_Isend( element_import_ids.data() + i, 1, MPI_INT,
