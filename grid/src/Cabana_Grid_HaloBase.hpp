@@ -10,7 +10,7 @@
  ****************************************************************************/
 
 /*!
-  \file Cabana_Grid_Halo.hpp
+  \file Cabana_Grid_HaloBase.hpp
   \brief Multi-node grid scatter/gather
 */
 #ifndef CABANA_GRID_HALO_HPP
@@ -197,7 +197,7 @@ struct Replace
   space. These requirements are checked at construction.
 */
 template <class MemorySpace>
-class Halo
+class HaloBase
 {
   public:
     //! Memory space.
@@ -213,7 +213,7 @@ class Halo
       provided in the same order
     */
     template <class Pattern, class... ArrayTypes>
-    Halo( const Pattern& pattern, const int width, const ArrayTypes&... arrays )
+    HaloBase( const Pattern& pattern, const int width, const ArrayTypes&... arrays )
     {
         // Spatial dimension.
         const std::size_t num_space_dim = Pattern::num_space_dim;
@@ -271,183 +271,6 @@ class Halo
                 buildCommData( Ghost(), width, n, _ghosted_buffers,
                                _ghosted_steering, arrays... );
             }
-        }
-    }
-
-    /*!
-      \brief Gather data into our ghosts from their owners.
-
-      \param exec_space The execution space to use for pack/unpack.
-
-      \param arrays The arrays to gather. NOTE: These arrays must be given in
-      the same order as in the constructor. These could technically be
-      different arrays, they just need to have the same layouts and data types
-      as the input arrays.
-    */
-    template <class ExecutionSpace, class... ArrayTypes>
-    void gather( const ExecutionSpace& exec_space,
-                 const ArrayTypes&... arrays ) const
-    {
-        Kokkos::Profiling::ScopedRegion region( "Cabana::Grid::gather" );
-
-        // Get the number of neighbors. Return if we have none.
-        int num_n = _neighbor_ranks.size();
-        if ( 0 == num_n )
-            return;
-
-        // Get the MPI communicator.
-        auto comm = getComm( arrays... );
-
-        // Allocate requests.
-        std::vector<MPI_Request> requests( 2 * num_n, MPI_REQUEST_NULL );
-
-        // Pick a tag to use for communication. This object has its own
-        // communication space so any tag will do.
-        const int mpi_tag = 1234;
-
-        // Post receives.
-        for ( int n = 0; n < num_n; ++n )
-        {
-            // Only process this neighbor if there is work to do.
-            if ( 0 < _ghosted_buffers[n].size() )
-            {
-                MPI_Irecv( _ghosted_buffers[n].data(),
-                           _ghosted_buffers[n].size(), MPI_BYTE,
-                           _neighbor_ranks[n], mpi_tag + _receive_tags[n], comm,
-                           &requests[n] );
-            }
-        }
-
-        // Pack send buffers and post sends.
-        for ( int n = 0; n < num_n; ++n )
-        {
-            // Only process this neighbor if there is work to do.
-            if ( 0 < _owned_buffers[n].size() )
-            {
-                // Pack the send buffer.
-                packBuffer( exec_space, _owned_buffers[n], _owned_steering[n],
-                            arrays.view()... );
-
-                // Post a send.
-                MPI_Isend( _owned_buffers[n].data(), _owned_buffers[n].size(),
-                           MPI_BYTE, _neighbor_ranks[n],
-                           mpi_tag + _send_tags[n], comm,
-                           &requests[num_n + n] );
-            }
-        }
-
-        // Unpack receive buffers.
-        bool unpack_complete = false;
-        while ( !unpack_complete )
-        {
-            // Get the next buffer to unpack.
-            int unpack_index = MPI_UNDEFINED;
-            MPI_Waitany( num_n, requests.data(), &unpack_index,
-                         MPI_STATUS_IGNORE );
-
-            // If there are no more buffers to unpack we are done.
-            if ( MPI_UNDEFINED == unpack_index )
-            {
-                unpack_complete = true;
-            }
-
-            // Otherwise unpack the next buffer.
-            else
-            {
-                unpackBuffer( ScatterReduce::Replace(), exec_space,
-                              _ghosted_buffers[unpack_index],
-                              _ghosted_steering[unpack_index],
-                              arrays.view()... );
-            }
-        }
-
-        // Wait on send requests.
-        MPI_Waitall( num_n, requests.data() + num_n, MPI_STATUSES_IGNORE );
-    }
-
-    /*!
-      \brief Scatter data from our ghosts to their owners using the given type
-      of reduce operation.
-      \param reduce_op The functor used to reduce the results.
-      \param exec_space The execution space to use for pack/unpack.
-      \param arrays The arrays to scatter.
-    */
-    template <class ExecutionSpace, class ReduceOp, class... ArrayTypes>
-    void scatter( const ExecutionSpace& exec_space, const ReduceOp& reduce_op,
-                  const ArrayTypes&... arrays ) const
-    {
-        Kokkos::Profiling::ScopedRegion region( "Cabana::Grid::scatter" );
-
-        // Get the number of neighbors. Return if we have none.
-        int num_n = _neighbor_ranks.size();
-        if ( 0 == num_n )
-            return;
-
-        // Get the MPI communicator.
-        auto comm = getComm( arrays... );
-
-        // Requests.
-        std::vector<MPI_Request> requests( 2 * num_n, MPI_REQUEST_NULL );
-
-        // Pick a tag to use for communication. This object has its own
-        // communication space so any tag will do.
-        const int mpi_tag = 2345;
-
-        // Post receives for all neighbors that are not self sends.
-        for ( int n = 0; n < num_n; ++n )
-        {
-            // Only process this neighbor if there is work to do.
-            if ( 0 < _owned_buffers[n].size() )
-            {
-                MPI_Irecv( _owned_buffers[n].data(), _owned_buffers[n].size(),
-                           MPI_BYTE, _neighbor_ranks[n],
-                           mpi_tag + _receive_tags[n], comm, &requests[n] );
-            }
-        }
-
-        // Pack send buffers and post sends.
-        for ( int n = 0; n < num_n; ++n )
-        {
-            // Only process this neighbor if there is work to do.
-            if ( 0 < _ghosted_buffers[n].size() )
-            {
-                // Pack the send buffer.
-                packBuffer( exec_space, _ghosted_buffers[n],
-                            _ghosted_steering[n], arrays.view()... );
-
-                // Post a send.
-                MPI_Isend( _ghosted_buffers[n].data(),
-                           _ghosted_buffers[n].size(), MPI_BYTE,
-                           _neighbor_ranks[n], mpi_tag + _send_tags[n], comm,
-                           &requests[num_n + n] );
-            }
-        }
-
-        // Unpack receive buffers.
-        bool unpack_complete = false;
-        while ( !unpack_complete )
-        {
-            // Get the next buffer to unpack.
-            int unpack_index = MPI_UNDEFINED;
-            MPI_Waitany( num_n, requests.data(), &unpack_index,
-                         MPI_STATUS_IGNORE );
-
-            // If there are no more buffers to unpack we are done.
-            if ( MPI_UNDEFINED == unpack_index )
-            {
-                unpack_complete = true;
-            }
-
-            // Otherwise unpack the next buffer and apply the reduce operation.
-            else
-            {
-                unpackBuffer( reduce_op, exec_space,
-                              _owned_buffers[unpack_index],
-                              _owned_steering[unpack_index], arrays.view()... );
-            }
-
-            // Wait on send requests.
-            MPI_Waitall( num_n, requests.data() + num_n, MPI_STATUSES_IGNORE );
         }
     }
 
@@ -909,7 +732,7 @@ class Halo
             } );
     }
 
-  private:
+  protected:
     // The ranks we will send/receive from.
     std::vector<int> _neighbor_ranks;
 
@@ -961,7 +784,16 @@ auto createHalo( const Pattern& pattern, const int width,
 
 //---------------------------------------------------------------------------//
 
+// Forward declaration of the primary grid Halo template.
+template <class MemorySpace, class CommSpaceType = CommSpace::Mpi>
+class Halo;
+
 } // namespace Grid
 } // namespace Cabana
 
-#endif // end CABANA_GRID_HALO_HPP
+// Include communication backends from what is enabled in CMake.
+#ifdef Cabana_ENABLE_MPI
+#include <impl/Cabana_Grid_Halo_Mpi.hpp>
+#endif // Enable MPI
+
+#endif // end CABANA_GRID_HALOBASE_HPP
