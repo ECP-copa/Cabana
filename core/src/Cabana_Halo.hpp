@@ -17,7 +17,7 @@
 #define CABANA_HALO_HPP
 
 #include <Cabana_AoSoA.hpp>
-#include <Cabana_CommunicationPlan.hpp>
+#include <Cabana_CommunicationPlanBase.hpp>
 #include <Cabana_Slice.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -56,11 +56,11 @@ namespace Cabana
   of the forward communication plan (the gather).
 */
 template <class MemorySpace, class BuildType = Export,
-          class CommSpace = CommSpace::Mpi>
-class Halo : public CommunicationPlan<MemorySpace, CommSpace>
+          class CommSpaceType = CommSpace::Mpi>
+class Halo : public CommunicationPlan<MemorySpace, CommSpaceType>
 {
   public:
-    using commspace_type = CommSpace;
+    using commspace_type = CommSpaceType;
 
     /*!
       \brief Neighbor and export rank constructor. Use this when you don't know
@@ -107,14 +107,14 @@ class Halo : public CommunicationPlan<MemorySpace, CommSpace>
     Halo( MPI_Comm comm, const std::size_t num_local,
           const IdViewType& element_ids, const RankViewType& element_ranks,
           const std::vector<int>& neighbor_ranks )
-        : CommunicationPlan<MemorySpace, CommSpace>( comm )
+        : CommunicationPlan<MemorySpace, CommSpaceType>( comm )
         , _num_local( num_local )
     {
         if ( element_ids.size() != element_ranks.size() )
             throw std::runtime_error( "Cabana::Halo (export): ids and ranks "
                                       "views are different sizes!" );
 
-        auto neighbor_ids = this->createFromTopology(
+        auto neighbor_ids = this->createWithTopology(
             BuildType(), element_ranks, neighbor_ranks );
         this->createExportSteering( neighbor_ids, element_ranks, element_ids );
     }
@@ -155,7 +155,7 @@ class Halo : public CommunicationPlan<MemorySpace, CommSpace>
               std::enable_if_t<std::is_same<T, Export>::value, int> = 0>
     Halo( MPI_Comm comm, const std::size_t num_local,
           const IdViewType& element_ids, const RankViewType& element_ranks )
-        : CommunicationPlan<MemorySpace, CommSpace>( comm )
+        : CommunicationPlan<MemorySpace, CommSpaceType>( comm )
         , _num_local( num_local )
     {
         if ( element_ids.size() != element_ranks.size() )
@@ -163,7 +163,7 @@ class Halo : public CommunicationPlan<MemorySpace, CommSpace>
                                       "views are different sizes!" );
 
         auto neighbor_ids =
-            this->createFromNoTopology( BuildType(), element_ranks );
+            this->createWithoutTopology( BuildType(), element_ranks );
         this->createExportSteering( neighbor_ids, element_ranks, element_ids );
     }
 
@@ -212,14 +212,14 @@ class Halo : public CommunicationPlan<MemorySpace, CommSpace>
     Halo( MPI_Comm comm, const std::size_t num_local,
           const IdViewType& element_ids, const RankViewType& element_ranks,
           const std::vector<int>& neighbor_ranks )
-        : CommunicationPlan<MemorySpace, CommSpace>( comm )
+        : CommunicationPlan<MemorySpace, CommSpaceType>( comm )
         , _num_local( num_local )
     {
         if ( element_ids.size() != element_ranks.size() )
             throw std::runtime_error( "Cabana::Halo (import): ids and ranks "
                                       "views are different sizes!" );
 
-        auto neighbor_ids_ranks_indices = this->createFromTopology(
+        auto neighbor_ids_ranks_indices = this->createWithTopology(
             BuildType(), element_ranks, element_ids, neighbor_ranks );
         this->createExportSteering( std::get<0>( neighbor_ids_ranks_indices ),
                                     std::get<1>( neighbor_ids_ranks_indices ),
@@ -261,14 +261,14 @@ class Halo : public CommunicationPlan<MemorySpace, CommSpace>
               std::enable_if_t<std::is_same<T, Import>::value, int> = 0>
     Halo( MPI_Comm comm, const std::size_t num_local,
           const IdViewType& element_ids, const RankViewType& element_ranks )
-        : CommunicationPlan<MemorySpace, CommSpace>( comm )
+        : CommunicationPlan<MemorySpace, CommSpaceType>( comm )
         , _num_local( num_local )
     {
         if ( element_ids.size() != element_ranks.size() )
             throw std::runtime_error( "Cabana::Halo (import): ids and ranks "
                                       "views are different sizes!" );
 
-        auto neighbor_ids_ranks_indices = this->createFromNoTopology(
+        auto neighbor_ids_ranks_indices = this->createWithoutTopology(
             BuildType(), element_ranks, element_ids );
         this->createExportSteering( std::get<0>( neighbor_ids_ranks_indices ),
                                     std::get<1>( neighbor_ids_ranks_indices ),
@@ -355,6 +355,8 @@ class Gather<HaloType, AoSoAType,
   public:
     static_assert( is_halo<HaloType>::value, "" );
 
+    //! Communication space type.
+    using commspace_type = typename HaloType::commspace_type;
     //! Base type.
     using base_type =
         CommunicationData<HaloType, CommunicationDataAoSoA<AoSoAType>>;
@@ -397,11 +399,11 @@ class Gather<HaloType, AoSoAType,
     */
     void apply() override { applyImpl( execution_space{}, commspace_type{} ); }
 
-    template <class ExecutionSpace, class CommSpaceType>
-    std::enable_if_t<std::is_same<CommSpaceType, CommSpace::Mpi>::value, void>
-        applyImpl( ExecutionSpace, CommSpaceType );
+    template <class ExecutionSpace, class CommSpaceTypeType>
+    std::enable_if_t<std::is_same<CommSpaceTypeType, CommSpace::Mpi>::value, void>
+        applyImpl( ExecutionSpace, CommSpaceTypeType );
 
-    // Future: Add applyImpl that is enabled for other CommSpaceType types.
+    // Future: Add applyImpl that is enabled for other CommSpaceTypeType types.
 
     /*!
       \brief Reserve new buffers as needed and update the halo and AoSoA data.
@@ -465,6 +467,8 @@ class Gather<HaloType, SliceType,
   public:
     static_assert( is_halo<HaloType>::value, "" );
 
+    //! Communication space type.
+    using commspace_type = typename HaloType::commspace_type;
     //! Base type.
     using base_type =
         CommunicationData<HaloType, CommunicationDataSlice<SliceType>>;
@@ -507,11 +511,11 @@ class Gather<HaloType, SliceType,
     */
     void apply() override { applyImpl( execution_space{}, commspace_type{} ); }
 
-    template <class ExecutionSpace, class CommSpaceType>
-    std::enable_if_t<std::is_same<CommSpaceType, CommSpace::Mpi>::value, void>
-        applyImpl( ExecutionSpace, CommSpaceType );
+    template <class ExecutionSpace, class CommSpaceTypeType>
+    std::enable_if_t<std::is_same<CommSpaceTypeType, CommSpace::Mpi>::value, void>
+        applyImpl( ExecutionSpace, CommSpaceTypeType );
 
-    // Future: Add applyImpl that is enabled for other CommSpaceType types.
+    // Future: Add applyImpl that is enabled for other CommSpaceTypeType types.
 
     /*!
       \brief Reserve new buffers as needed and update the halo and slice data.
@@ -622,9 +626,11 @@ template <class HaloType, class SliceType>
 class Scatter
     : public CommunicationData<HaloType, CommunicationDataSlice<SliceType>>
 {
+  public:
     static_assert( is_halo<HaloType>::value, "" );
 
-  public:
+    //! Communication space type.
+    using commspace_type = typename HaloType::commspace_type;
     //! Base type.
     using base_type =
         CommunicationData<HaloType, CommunicationDataSlice<SliceType>>;
@@ -667,11 +673,11 @@ class Scatter
     */
     void apply() override { applyImpl( execution_space{}, commspace_type{} ); }
 
-    template <class ExecutionSpace, class CommSpaceType>
-    std::enable_if_t<std::is_same<CommSpaceType, CommSpace::Mpi>::value, void>
-        applyImpl( ExecutionSpace, CommSpaceType );
+    template <class ExecutionSpace, class CommSpaceTypeType>
+    std::enable_if_t<std::is_same<CommSpaceTypeType, CommSpace::Mpi>::value, void>
+        applyImpl( ExecutionSpace, CommSpaceTypeType );
 
-    // Future: Add applyImpl that is enabled for other CommSpaceType types.
+    // Future: Add applyImpl that is enabled for other CommSpaceTypeType types.
 
     /*!
       \brief Reserve new buffers as needed and update the halo and slice data.

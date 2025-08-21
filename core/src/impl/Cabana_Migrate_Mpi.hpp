@@ -205,10 +205,15 @@ void migrateSlice(
                               is_slice<Slice_t>::value ),
                             int>::type* = 0 )
 {
-    // Check that dst is the right size.
+    // Check that src and dst are the right size.
+    if ( src.size() != distributor.exportSize() )
+        throw std::runtime_error( "Cabana::migrate: Source Slice is the wrong "
+                                  "size for migration! (Label: " +
+                                  src.label() + ")" );
     if ( dst.size() != distributor.totalNumImport() )
-        throw std::runtime_error(
-            "migrateSlice: Destination is the wrong size for migration!" );
+        throw std::runtime_error( "Cabana::migrate: Destination Slice is the "
+                                  "wrong size for migration! (Label: " +
+                                  dst.label() + ")" );
 
     // Get the number of components in the slices.
     size_t num_comp = 1;
@@ -334,7 +339,7 @@ void migrateSlice(
     const int ec =
         MPI_Waitall( requests.size(), requests.data(), status.data() );
     if ( MPI_SUCCESS != ec )
-        throw std::logic_error( "Failed MPI Communication" );
+        throw std::logic_error( "Cabana::migrate: Failed MPI Communication" );
 
     // Extract the data from the receive buffer into the destination Slice.
     auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )

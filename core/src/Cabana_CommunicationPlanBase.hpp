@@ -32,6 +32,19 @@
 
 namespace Cabana
 {
+namespace CommSpace
+{
+//---------------------------------------------------------------------------//
+// Communication plan types.
+//---------------------------------------------------------------------------//
+/*!
+    \brief MPI comm tag - default.
+*/
+struct Mpi
+{
+};
+} // end namespace CommSpace
+
 //---------------------------------------------------------------------------//
 // Communication driver construction type tags.
 //---------------------------------------------------------------------------//
@@ -434,7 +447,7 @@ inline std::vector<int> getUniqueTopology( MPI_Comm comm,
   is being exported will appear first in the steering vector.
 */
 template <class MemorySpace>
-class CommunicationPlan
+class CommunicationPlanBase
 {
   public:
     //! Kokkos memory space.
@@ -450,12 +463,13 @@ class CommunicationPlan
     //! Size type.
     using size_type = typename memory_space::memory_space::size_type;
 
+  protected:
     /*!
       \brief Constructor.
 
       \param comm The MPI communicator over which the distributor is defined.
     */
-    CommunicationPlan( MPI_Comm comm )
+    CommunicationPlanBase( MPI_Comm comm )
     {
         _comm_ptr.reset(
             // Duplicate the communicator and store in a std::shared_ptr so that
@@ -474,6 +488,7 @@ class CommunicationPlan
             } );
     }
 
+  public:
     /*!
       \brief Get the MPI communicator.
     */
@@ -683,7 +698,7 @@ class CommunicationPlan
     }
     //! \endcond
 
-  private:
+  protected:
     std::shared_ptr<MPI_Comm> _comm_ptr;
     std::vector<int> _neighbors;
     std::size_t _total_num_export;
@@ -813,7 +828,7 @@ struct CommunicationDataSlice
   \brief Store communication plan and communication buffers.
 */
 template <class CommPlanType, class CommDataType>
-class CommunicationData
+class CommunicationDataBase
 {
   public:
     //! Communication plan type (Halo, Distributor)
@@ -833,13 +848,14 @@ class CommunicationData
     //! Communication buffer type.
     using buffer_type = typename comm_data_type::buffer_type;
 
+  protected:
     /*!
       \param comm_plan The communication plan.
       \param particles The particle data (either AoSoA or slice).
       \param overallocation An optional factor to keep extra space in the
       buffers to avoid frequent resizing.
     */
-    CommunicationData( const CommPlanType& comm_plan,
+    CommunicationDataBase( const CommPlanType& comm_plan,
                        const particle_data_type& particles,
                        const double overallocation = 1.0 )
         : _comm_plan( comm_plan )
@@ -848,6 +864,7 @@ class CommunicationData
     {
     }
 
+  public:
     //! Get the communication send buffer.
     buffer_type getSendBuffer() const { return _comm_data._send_buffer; }
     //! Get the communication receive buffer.
@@ -959,12 +976,12 @@ class CommunicationData
 };
 
 // Forward declaration of the primary CommunicationPlan template.
-template <class MemorySpace, class CommSpace = CommSpace::Mpi>
+template <class MemorySpace, class CommSpaceType = CommSpace::Mpi>
 class CommunicationPlan;
 
 // Forward declaration of the primary CommunicationData template.
 template <class CommPlanType, class CommDataType,
-          class CommSpace = CommSpace::Mpi>
+          class CommSpaceType = CommSpace::Mpi>
 class CommunicationData;
 
 } // namespace Cabana

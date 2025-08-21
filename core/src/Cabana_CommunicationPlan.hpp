@@ -32,18 +32,6 @@
 
 namespace Cabana
 {
-namespace CommSpace
-{
-//---------------------------------------------------------------------------//
-// Communication plan types.
-//---------------------------------------------------------------------------//
-/*!
-    \brief MPI comm tag - default.
-*/
-struct Mpi
-{
-};
-} // end namespace CommSpace
 
 //---------------------------------------------------------------------------//
 // Communication driver construction type tags.
