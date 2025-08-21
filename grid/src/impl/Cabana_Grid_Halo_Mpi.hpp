@@ -35,6 +35,8 @@
 
 namespace Cabana
 {
+namespace Grid
+{
 
 //---------------------------------------------------------------------------//
 /*!
@@ -57,7 +59,7 @@ class Halo<MemorySpace, CommSpace::Mpi>
     */
     template <class Pattern, class... ArrayTypes>
     Halo( const Pattern& pattern, const int width, const ArrayTypes&... arrays )
-        : HaloBase<MemorySpace>( pattern, width, *arrays )
+        : HaloBase<MemorySpace>( pattern, width, arrays... )
     {
     }
 
@@ -83,7 +85,7 @@ class Halo<MemorySpace, CommSpace::Mpi>
             return;
 
         // Get the MPI communicator.
-        auto comm = getComm( arrays... );
+        auto comm = this->getComm( arrays... );
 
         // Allocate requests.
         std::vector<MPI_Request> requests( 2 * num_n, MPI_REQUEST_NULL );
@@ -100,7 +102,7 @@ class Halo<MemorySpace, CommSpace::Mpi>
             {
                 MPI_Irecv( this->_ghosted_buffers[n].data(),
                            this->_ghosted_buffers[n].size(), MPI_BYTE,
-                           this->_neighbor_ranks[n], mpi_tag + _receive_tags[n], comm,
+                           this->_neighbor_ranks[n], mpi_tag + this->_receive_tags[n], comm,
                            &requests[n] );
             }
         }
@@ -112,7 +114,7 @@ class Halo<MemorySpace, CommSpace::Mpi>
             if ( 0 < this->_owned_buffers[n].size() )
             {
                 // Pack the send buffer.
-                packBuffer( exec_space, this->_owned_buffers[n], this->_owned_steering[n],
+                this->packBuffer( exec_space, this->_owned_buffers[n], this->_owned_steering[n],
                             arrays.view()... );
 
                 // Post a send.
@@ -141,9 +143,9 @@ class Halo<MemorySpace, CommSpace::Mpi>
             // Otherwise unpack the next buffer.
             else
             {
-                unpackBuffer( ScatterReduce::Replace(), exec_space,
+                this->unpackBuffer( ScatterReduce::Replace(), exec_space,
                               this->_ghosted_buffers[unpack_index],
-                              _ghosted_steering[unpack_index],
+                              this->_ghosted_steering[unpack_index],
                               arrays.view()... );
             }
         }
@@ -171,7 +173,7 @@ class Halo<MemorySpace, CommSpace::Mpi>
             return;
 
         // Get the MPI communicator.
-        auto comm = getComm( arrays... );
+        auto comm = this->getComm( arrays... );
 
         // Requests.
         std::vector<MPI_Request> requests( 2 * num_n, MPI_REQUEST_NULL );
@@ -188,7 +190,7 @@ class Halo<MemorySpace, CommSpace::Mpi>
             {
                 MPI_Irecv( this->_owned_buffers[n].data(), this->_owned_buffers[n].size(),
                            MPI_BYTE, this->_neighbor_ranks[n],
-                           mpi_tag + _receive_tags[n], comm, &requests[n] );
+                           mpi_tag + this->_receive_tags[n], comm, &requests[n] );
             }
         }
 
@@ -199,8 +201,8 @@ class Halo<MemorySpace, CommSpace::Mpi>
             if ( 0 < this->_ghosted_buffers[n].size() )
             {
                 // Pack the send buffer.
-                packBuffer( exec_space, this->_ghosted_buffers[n],
-                            _ghosted_steering[n], arrays.view()... );
+                this->packBuffer( exec_space, this->_ghosted_buffers[n],
+                            this->_ghosted_steering[n], arrays.view()... );
 
                 // Post a send.
                 MPI_Isend( this->_ghosted_buffers[n].data(),
@@ -228,7 +230,7 @@ class Halo<MemorySpace, CommSpace::Mpi>
             // Otherwise unpack the next buffer and apply the reduce operation.
             else
             {
-                unpackBuffer( reduce_op, exec_space,
+                this->unpackBuffer( reduce_op, exec_space,
                               this->_owned_buffers[unpack_index],
                               this->_owned_steering[unpack_index], arrays.view()... );
             }
@@ -240,6 +242,7 @@ class Halo<MemorySpace, CommSpace::Mpi>
 
 };
 
+} // end namespace Grid
 } // end namespace Cabana
 
 #endif // end CABANA_GRID_HALO_MPI_HPP

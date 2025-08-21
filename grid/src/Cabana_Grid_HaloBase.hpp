@@ -36,6 +36,19 @@ namespace Cabana
 {
 namespace Grid
 {
+namespace CommSpace
+{
+//---------------------------------------------------------------------------//
+// Communication backend types.
+//---------------------------------------------------------------------------//
+/*!
+    \brief MPI comm tag - default.
+*/
+struct Mpi
+{
+};
+} // end namespace CommSpace
+
 //---------------------------------------------------------------------------//
 // Halo exchange patterns.
 //---------------------------------------------------------------------------//
@@ -203,6 +216,7 @@ class HaloBase
     //! Memory space.
     using memory_space = MemorySpace;
 
+  protected:
     /*!
       \brief Constructor.
       \tparam The arrays types to construct the halo for.
@@ -766,6 +780,23 @@ struct ArrayPackMemorySpace
     using type = typename ArrayT::memory_space;
 };
 
+// Forward declaration of the primary grid Halo template.
+template <class MemorySpace, class CommSpaceType = CommSpace::Mpi>
+class Halo;
+
+} // end namespace Grid
+} // end namespace Cabana
+
+// Include communication backends from what is enabled in CMake.
+#ifdef Cabana_ENABLE_MPI
+#include <impl/Cabana_Grid_Halo_Mpi.hpp>
+#endif // Enable MPI
+
+namespace Cabana
+{
+namespace Grid
+{
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Halo creation function.
@@ -774,26 +805,19 @@ struct ArrayPackMemorySpace
   \param arrays The arrays over which to build the halo.
   \return Shared pointer to a Halo.
 */
-template <class Pattern, class... ArrayTypes>
+template <class Pattern, class CommSpaceType = CommSpace::Mpi, class... ArrayTypes>
 auto createHalo( const Pattern& pattern, const int width,
                  const ArrayTypes&... arrays )
 {
     using memory_space = typename ArrayPackMemorySpace<ArrayTypes...>::type;
-    return std::make_shared<Halo<memory_space>>( pattern, width, arrays... );
+    return std::make_shared<Halo<memory_space, CommSpaceType>>( pattern, width, arrays... );
 }
+
+} // end namespace Grid
+} // end namespace Cabana
 
 //---------------------------------------------------------------------------//
 
-// Forward declaration of the primary grid Halo template.
-template <class MemorySpace, class CommSpaceType = CommSpace::Mpi>
-class Halo;
 
-} // namespace Grid
-} // namespace Cabana
-
-// Include communication backends from what is enabled in CMake.
-#ifdef Cabana_ENABLE_MPI
-#include <impl/Cabana_Grid_Halo_Mpi.hpp>
-#endif // Enable MPI
 
 #endif // end CABANA_GRID_HALOBASE_HPP
