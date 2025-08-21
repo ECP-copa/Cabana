@@ -302,8 +302,8 @@ struct is_halo_impl : public std::false_type
 {
 };
 
-template <typename MemorySpace, typename BuildType>
-struct is_halo_impl<Halo<MemorySpace, BuildType>> : public std::true_type
+template <typename MemorySpace, typename BuildType, typename CommSpaceType>
+struct is_halo_impl<Halo<MemorySpace, BuildType, CommSpaceType>> : public std::true_type
 {
 };
 //! \endcond
