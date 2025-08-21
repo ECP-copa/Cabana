@@ -17,7 +17,7 @@
 #define CABANA_DISTRIBUTOR_HPP
 
 #include <Cabana_AoSoA.hpp>
-#include <Cabana_CommunicationPlan.hpp>
+#include <Cabana_CommunicationPlanBase.hpp>
 #include <Cabana_Slice.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -58,8 +58,8 @@ namespace Cabana
   user must allocate their own destination data structure.
 
 */
-template <class MemorySpace>
-class Distributor : public CommunicationPlan<MemorySpace>
+template <class MemorySpace, class CommSpace = CommSpace::Mpi>
+class Distributor : public CommunicationPlan<MemorySpace, CommSpace>
 {
   public:
     /*!
@@ -99,9 +99,9 @@ class Distributor : public CommunicationPlan<MemorySpace>
     template <class ViewType>
     Distributor( MPI_Comm comm, const ViewType& element_export_ranks,
                  const std::vector<int>& neighbor_ranks )
-        : CommunicationPlan<MemorySpace>( comm )
+        : CommunicationPlan<MemorySpace, CommSpace>( comm )
     {
-        auto neighbor_ids = this->createWithTopology(
+        auto neighbor_ids = this->createFromTopology(
             Export(), element_export_ranks, neighbor_ranks );
         this->createExportSteering( neighbor_ids, element_export_ranks );
     }
@@ -135,10 +135,10 @@ class Distributor : public CommunicationPlan<MemorySpace>
     */
     template <class ViewType>
     Distributor( MPI_Comm comm, const ViewType& element_export_ranks )
-        : CommunicationPlan<MemorySpace>( comm )
+        : CommunicationPlan<MemorySpace, CommSpace>( comm )
     {
         auto neighbor_ids =
-            this->createWithoutTopology( Export(), element_export_ranks );
+            this->createFromNoTopology( Export(), element_export_ranks );
         this->createExportSteering( neighbor_ids, element_export_ranks );
     }
 };
@@ -163,6 +163,19 @@ struct is_distributor
 {
 };
 
+} // end namespace Cabana
+
+// Include communication backends from what is enabled in CMake.
+#ifdef Cabana_ENABLE_MPI
+#include <impl/Cabana_Migrate_Mpi.hpp>
+
+#ifdef Cabana_ENABLE_MPIADVANCE
+#include <impl/Cabana_Migrate_MpiAdvance.hpp>
+#endif // MPIADVANCE
+#endif // Enable MPI
+
+namespace Cabana
+{
 //---------------------------------------------------------------------------//
 namespace Impl
 {
@@ -333,26 +346,26 @@ void distributeData(
   same size as the number of imports given by the distributor on this
   rank. Call totalNumImport() on the distributor to get this size value.
 */
-template <class ExecutionSpace, class Distributor_t, class AoSoA_t>
-void migrate( ExecutionSpace exec_space, const Distributor_t& distributor,
-              const AoSoA_t& src, AoSoA_t& dst,
-              typename std::enable_if<( is_distributor<Distributor_t>::value &&
-                                        is_aosoa<AoSoA_t>::value ),
-                                      int>::type* = 0 )
+void migrate(
+    ExecutionSpace exec_space,
+    const Distributor<MemorySpace, CommSpace>& distributor, const AoSoA_t& src,
+    AoSoA_t& dst,
+    typename std::enable_if<
+        ( is_distributor<Distributor<MemorySpace, CommSpace>>::value &&
+          is_aosoa<AoSoA_t>::value ),
+        int>::type* = 0 )
 {
     // Check that src and dst are the right size.
     if ( src.size() != distributor.exportSize() )
-        throw std::runtime_error( "Cabana::migrate: Source is "
-                                  "the wrong size for migration! (Label: " +
-                                  src.label() + ")" );
+        throw std::runtime_error( "Cabana::migrate (Distributor): Source is "
+                                  "the wrong size for migration!" );
     if ( dst.size() != distributor.totalNumImport() )
-        throw std::runtime_error( "Cabana::migrate: Destination "
-                                  "is the wrong size for migration! (Label: " +
-                                  dst.label() + ")" );
+        throw std::runtime_error( "Cabana::migrate (Distributor): Destination "
+                                  "is the wrong size for migration!" );
 
     // Move the data.
-    Impl::distributeData( exec_space, distributor, src, dst );
-}
+    Impl::migrateData( CommSpace(), exec_space, distributor, src, dst );
+
 
 /*!
   \brief Synchronously migrate data between two different decompositions using
@@ -430,7 +443,7 @@ void migrate( ExecutionSpace exec_space, const Distributor_t& distributor,
         aosoa.resize( distributor.totalNumImport() );
 
     // Move the data.
-    Impl::distributeData( exec_space, distributor, aosoa, aosoa );
+    Impl::migrateData( CommSpace(), exec_space, distributor, aosoa, aosoa );
 
     // If the destination decomposition is smaller than the source
     // decomposition resize after we have moved the data.
@@ -672,14 +685,24 @@ void migrate( ExecutionSpace, const Distributor_t& distributor,
   same size as the number of imports given by the distributor on this
   rank. Call totalNumImport() on the distributor to get this size value.
 */
-template <class Distributor_t, class Slice_t>
-void migrate( const Distributor_t& distributor, const Slice_t& src,
-              Slice_t& dst,
-              typename std::enable_if<( is_distributor<Distributor_t>::value &&
-                                        is_slice<Slice_t>::value ),
-                                      int>::type* = 0 )
+template <class MemorySpace, class CommSpace, class Slice_t>
+void migrate(
+    const Distributor<MemorySpace, CommSpace>& distributor, const Slice_t& src,
+    Slice_t& dst,
+    typename std::enable_if<
+        ( is_distributor<Distributor<MemorySpace, CommSpace>>::value &&
+          is_slice<Slice_t>::value ),
+        int>::type* = 0 )
 {
-    migrate( typename Distributor_t::execution_space{}, distributor, src, dst );
+    if ( src.size() != distributor.exportSize() )
+        throw std::runtime_error(
+            "Cabana::Migrate::migrate: Source slice is the "
+            "wrong size for migration!" );
+
+    Impl::migrateSlice(
+        CommSpace(),
+        typename Distributor<MemorySpace, CommSpace>::execution_space{},
+        distributor, src, dst );
 }
 
 //---------------------------------------------------------------------------//

@@ -756,41 +756,54 @@ void test9( const bool use_topology )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( Distributor, Test1 ) { test1( true ); }
+template <typename TEST_COMMSPACE>
+class DistributorTypedTest : public ::testing::Test
+{
+  public:
+    using CommSpaceType = TEST_COMMSPACE;
+};
 
-TEST( Distributor, Test2 ) { test2( true ); }
+using CommSpaceTypes = ::testing::Types<Cabana::CommSpace::Mpi
+// When added, place additional CommSpace types here to test
+                                        >;
 
-TEST( Distributor, Test3 ) { test3( true ); }
+TYPED_TEST_SUITE( DistributorTypedTest, CommSpaceTypes );
 
-TEST( Distributor, Test4 ) { test4( true ); }
+TYPED_TEST( DistributorTypedTest, Test1 ) { test1<TypeParam>( true ); }
 
-TEST( Distributor, Test5 ) { test5( true ); }
+TYPED_TEST( DistributorTypedTest, Test2 ) { test2<TypeParam>( true ); }
 
-TEST( Distributor, Test6 ) { test6( true ); }
+TYPED_TEST( DistributorTypedTest, Test3 ) { test3<TypeParam>( true ); }
 
-TEST( Distributor, Test7 ) { test7( true ); }
+TYPED_TEST( DistributorTypedTest, Test4 ) { test4<TypeParam>( true ); }
 
-TEST( Distributor, Test8 ) { test8( true ); }
+TYPED_TEST( DistributorTypedTest, Test5 ) { test5<TypeParam>( true ); }
 
-TEST( Distributor, Test9 ) { test9( true ); }
+TYPED_TEST( DistributorTypedTest, Test6 ) { test6<TypeParam>( true ); }
 
-TEST( Distributor, Test1NoTopo ) { test1( false ); }
+TYPED_TEST( DistributorTypedTest, Test7 ) { test7<TypeParam>( true ); }
 
-TEST( Distributor, Test2NoTopo ) { test2( false ); }
+TYPED_TEST( DistributorTypedTest, Test8 ) { test8<TypeParam>( true ); }
 
-TEST( Distributor, Test3NoTopo ) { test3( false ); }
+TYPED_TEST( DistributorTypedTest, Test9 ) { test9<TypeParam>( true ); }
 
-TEST( Distributor, Test4NoTopo ) { test4( false ); }
+TYPED_TEST( DistributorTypedTest, Test1NoTopo ) { test1<TypeParam>( false ); }
 
-TEST( Distributor, Test5NoTopo ) { test5( false ); }
+TYPED_TEST( DistributorTypedTest, Test2NoTopo ) { test2<TypeParam>( false ); }
 
-TEST( Distributor, Test6NoTopo ) { test6( false ); }
+TYPED_TEST( DistributorTypedTest, Test3NoTopo ) { test3<TypeParam>( false ); }
 
-TEST( Distributor, Test7NoTopo ) { test7( false ); }
+TYPED_TEST( DistributorTypedTest, Test4NoTopo ) { test4<TypeParam>( false ); }
 
-TEST( Distributor, Test8NoTopo ) { test8( false ); }
+TYPED_TEST( DistributorTypedTest, Test5NoTopo ) { test5<TypeParam>( false ); }
 
-TEST( Distributor, Test9NoTopo ) { test9( false ); }
+TYPED_TEST( DistributorTypedTest, Test6NoTopo ) { test6<TypeParam>( false ); }
+
+TYPED_TEST( DistributorTypedTest, Test7NoTopo ) { test7<TypeParam>( false ); }
+
+TYPED_TEST( DistributorTypedTest, Test8NoTopo ) { test8<TypeParam>( false ); }
+
+TYPED_TEST( DistributorTypedTest, Test9NoTopo ) { test9<TypeParam>( false ); }
 
 //---------------------------------------------------------------------------//
 
