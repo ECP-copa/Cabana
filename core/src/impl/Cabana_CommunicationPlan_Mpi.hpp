@@ -155,8 +155,9 @@ class CommunicationPlan<MemorySpace, CommSpace::Mpi>
             if ( my_rank != this->_neighbors[n] )
             {
                 requests.push_back( MPI_Request() );
-                MPI_Irecv( &this->_num_import[n], 1, MPI_UNSIGNED_LONG, this->_neighbors[n],
-                           mpi_tag, this->comm(), &( requests.back() ) );
+                MPI_Irecv( &this->_num_import[n], 1, MPI_UNSIGNED_LONG,
+                           this->_neighbors[n], mpi_tag, this->comm(),
+                           &( requests.back() ) );
             }
             else
                 this->_num_import[n] = this->_num_export[n];
@@ -164,8 +165,8 @@ class CommunicationPlan<MemorySpace, CommSpace::Mpi>
         // Send the number of exports to each of our neighbors.
         for ( int n = 0; n < num_n; ++n )
             if ( my_rank != this->_neighbors[n] )
-                MPI_Send( &this->_num_export[n], 1, MPI_UNSIGNED_LONG, this->_neighbors[n],
-                          mpi_tag, this->comm() );
+                MPI_Send( &this->_num_export[n], 1, MPI_UNSIGNED_LONG,
+                          this->_neighbors[n], mpi_tag, this->comm() );
 
         // Wait on receives.
         std::vector<MPI_Status> status( requests.size() );
@@ -177,10 +178,12 @@ class CommunicationPlan<MemorySpace, CommSpace::Mpi>
                 "Failed MPI Communication" );
 
         // Get the total number of imports/exports.
-        this->_total_num_export = std::accumulate(
-            this->_num_export.begin(), this->_num_export.end(), std::size_t{ 0u } );
-        this->_total_num_import = std::accumulate(
-            this->_num_import.begin(), this->_num_import.end(), std::size_t{ 0u } );
+        this->_total_num_export =
+            std::accumulate( this->_num_export.begin(), this->_num_export.end(),
+                             std::size_t{ 0u } );
+        this->_total_num_import =
+            std::accumulate( this->_num_import.begin(), this->_num_import.end(),
+                             std::size_t{ 0u } );
 
         // No barrier is needed because all ranks know who they are receiving
         // and sending to.
@@ -333,7 +336,8 @@ class CommunicationPlan<MemorySpace, CommSpace::Mpi>
         int num_import_rank = -1;
         std::vector<int> recv_counts( comm_size, 1 );
         MPI_Reduce_scatter( neighbor_counts_host.data(), &num_import_rank,
-                            recv_counts.data(), MPI_INT, MPI_SUM, this->comm() );
+                            recv_counts.data(), MPI_INT, MPI_SUM,
+                            this->comm() );
         if ( self_send )
             --num_import_rank;
 
@@ -348,8 +352,8 @@ class CommunicationPlan<MemorySpace, CommSpace::Mpi>
         // Do blocking sends. Dont do any self sends.
         int self_offset = ( self_send ) ? 1 : 0;
         for ( int n = self_offset; n < num_export_rank; ++n )
-            MPI_Send( &this->_num_export[n], 1, MPI_UNSIGNED_LONG, this->_neighbors[n],
-                      mpi_tag, this->comm() );
+            MPI_Send( &this->_num_export[n], 1, MPI_UNSIGNED_LONG,
+                      this->_neighbors[n], mpi_tag, this->comm() );
 
         // Wait on non-blocking receives.
         std::vector<MPI_Status> status( requests.size() );
@@ -374,8 +378,8 @@ class CommunicationPlan<MemorySpace, CommSpace::Mpi>
 
             // See if the neighbor we received stuff from was someone we also
             // sent stuff to.
-            auto found_neighbor =
-                std::find( this->_neighbors.begin(), this->_neighbors.end(), source );
+            auto found_neighbor = std::find( this->_neighbors.begin(),
+                                             this->_neighbors.end(), source );
 
             // If this is a new neighbor (i.e. someone we didn't send anything
             // to) record this.
@@ -391,7 +395,8 @@ class CommunicationPlan<MemorySpace, CommSpace::Mpi>
             // import entry for that neighbor.
             else
             {
-                auto n = std::distance( this->_neighbors.begin(), found_neighbor );
+                auto n =
+                    std::distance( this->_neighbors.begin(), found_neighbor );
                 this->_num_import[n] = import_sizes[i];
             }
         }
@@ -539,8 +544,9 @@ class CommunicationPlan<MemorySpace, CommSpace::Mpi>
             if ( my_rank != this->_neighbors[n] )
             {
                 requests.push_back( MPI_Request() );
-                MPI_Irecv( &this->_num_export[n], 1, MPI_UNSIGNED_LONG, this->_neighbors[n],
-                           mpi_tag, this->comm(), &( requests.back() ) );
+                MPI_Irecv( &this->_num_export[n], 1, MPI_UNSIGNED_LONG,
+                           this->_neighbors[n], mpi_tag, this->comm(),
+                           &( requests.back() ) );
             }
             else // Self import
             {
@@ -552,8 +558,9 @@ class CommunicationPlan<MemorySpace, CommSpace::Mpi>
             if ( my_rank != this->_neighbors[n] )
             {
                 requests.push_back( MPI_Request() );
-                MPI_Isend( &this->_num_import[n], 1, MPI_UNSIGNED_LONG, this->_neighbors[n],
-                           mpi_tag, this->comm(), &( requests.back() ) );
+                MPI_Isend( &this->_num_import[n], 1, MPI_UNSIGNED_LONG,
+                           this->_neighbors[n], mpi_tag, this->comm(),
+                           &( requests.back() ) );
             }
 
         // Wait on messages.
@@ -564,18 +571,19 @@ class CommunicationPlan<MemorySpace, CommSpace::Mpi>
             throw std::logic_error( "Failed MPI Communication" );
 
         // Get the total number of imports/exports.
-        this->_total_num_export =
-            std::accumulate( this->_num_export.begin(), this->_num_export.end(), 0 );
-        this->_total_num_import =
-            std::accumulate( this->_num_import.begin(), this->_num_import.end(), 0 );
+        this->_total_num_export = std::accumulate( this->_num_export.begin(),
+                                                   this->_num_export.end(), 0 );
+        this->_total_num_import = std::accumulate( this->_num_import.begin(),
+                                                   this->_num_import.end(), 0 );
         this->_num_export_element = this->_total_num_export;
 
         // Post receives to get the indices other processes are requesting
         // i.e. our export indices
-        Kokkos::View<int*, memory_space> export_indices( "export_indices",
-                                                         this->_total_num_export );
+        Kokkos::View<int*, memory_space> export_indices(
+            "export_indices", this->_total_num_export );
         std::size_t idx = 0;
-        int num_messages = this->_total_num_export + element_import_ranks.extent( 0 );
+        int num_messages =
+            this->_total_num_export + element_import_ranks.extent( 0 );
         std::vector<MPI_Request> mpi_requests( num_messages );
         std::vector<MPI_Status> mpi_statuses( num_messages );
 
@@ -833,8 +841,9 @@ class CommunicationPlan<MemorySpace, CommSpace::Mpi>
             {
                 // See if the neighbor we are exporting to is someone we are
                 // also importing from
-                auto found_neighbor = std::find( this->_neighbors.begin(),
-                                                 this->_neighbors.end(), export_to );
+                auto found_neighbor =
+                    std::find( this->_neighbors.begin(), this->_neighbors.end(),
+                               export_to );
 
                 // If this is a new neighbor (i.e. someone we are not importing
                 // from) record this.
@@ -850,8 +859,8 @@ class CommunicationPlan<MemorySpace, CommSpace::Mpi>
                 // the export entry for that neighbor.
                 else
                 {
-                    auto n =
-                        std::distance( this->_neighbors.begin(), found_neighbor );
+                    auto n = std::distance( this->_neighbors.begin(),
+                                            found_neighbor );
                     this->_num_export[n] = send_counts( r );
                 }
             }
@@ -882,12 +891,13 @@ class CommunicationPlan<MemorySpace, CommSpace::Mpi>
 
         // Post receives to get the indices other processes are requesting
         // i.e. our export indices
-        Kokkos::View<int*, memory_space> export_indices( "export_indices",
-                                                         this->_total_num_export );
+        Kokkos::View<int*, memory_space> export_indices(
+            "export_indices", this->_total_num_export );
         std::size_t idx = 0;
         mpi_requests.clear();
         mpi_statuses.clear();
-        int num_messages = this->_total_num_export + element_import_ranks.extent( 0 );
+        int num_messages =
+            this->_total_num_export + element_import_ranks.extent( 0 );
         mpi_requests.resize( num_messages );
         mpi_statuses.resize( num_messages );
 

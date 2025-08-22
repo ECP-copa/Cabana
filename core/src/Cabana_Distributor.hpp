@@ -199,8 +199,8 @@ template <class ExecutionSpace, class MemorySpace, class CommSpaceType,
           class AoSoA_t>
 void migrate(
     ExecutionSpace exec_space,
-    const Distributor<MemorySpace, CommSpaceType>& distributor, const AoSoA_t& src,
-    AoSoA_t& dst,
+    const Distributor<MemorySpace, CommSpaceType>& distributor,
+    const AoSoA_t& src, AoSoA_t& dst,
     typename std::enable_if<
         ( is_distributor<Distributor<MemorySpace, CommSpaceType>>::value &&
           is_aosoa<AoSoA_t>::value ),
@@ -350,8 +350,8 @@ void migrate( const Distributor_t& distributor, AoSoA_t& aosoa,
 */
 template <class MemorySpace, class CommSpaceType, class Slice_t>
 void migrate(
-    const Distributor<MemorySpace, CommSpaceType>& distributor, const Slice_t& src,
-    Slice_t& dst,
+    const Distributor<MemorySpace, CommSpaceType>& distributor,
+    const Slice_t& src, Slice_t& dst,
     typename std::enable_if<
         ( is_distributor<Distributor<MemorySpace, CommSpaceType>>::value &&
           is_slice<Slice_t>::value ),

@@ -856,8 +856,8 @@ class CommunicationDataBase
       buffers to avoid frequent resizing.
     */
     CommunicationDataBase( const CommPlanType& comm_plan,
-                       const particle_data_type& particles,
-                       const double overallocation = 1.0 )
+                           const particle_data_type& particles,
+                           const double overallocation = 1.0 )
         : _comm_plan( comm_plan )
         , _comm_data( CommDataType( particles ) )
         , _overallocation( overallocation )
