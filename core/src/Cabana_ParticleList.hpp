@@ -188,12 +188,21 @@ class ParticleList
     using aosoa_type = Cabana::AoSoA<member_types, memory_space, VectorLength>;
     //! Particle tuple type.
     using tuple_type = typename aosoa_type::tuple_type;
+
     /*!
-      \brief Single field slice type.
+      \brief Single field slice type (by index).
       \tparam M AoSoA field index.
     */
     template <std::size_t M>
     using slice_type = typename aosoa_type::template member_slice_type<M>;
+
+    /*!
+         \brief Single field slice type (by tag name).
+         \tparam FieldTag Field tag.
+    */
+    template <typename FieldTag>
+    using field_type = slice_type<TypeIndexer<FieldTag, FieldTags...>::index>;
+
     //! Single particle type.
     using particle_type = Particle<FieldTags...>;
     //! Single SoA type.
