@@ -32,7 +32,6 @@
 #include <type_traits>
 #include <vector>
 
-
 namespace Cabana
 {
 namespace Grid
@@ -45,8 +44,7 @@ namespace Grid
 */
 
 template <class MemorySpace>
-class Halo<MemorySpace, CommSpace::Mpi>
-    : public HaloBase<MemorySpace>
+class Halo<MemorySpace, CommSpace::Mpi> : public HaloBase<MemorySpace>
 {
   public:
     using typename HaloBase<MemorySpace>::memory_space;
@@ -102,7 +100,8 @@ class Halo<MemorySpace, CommSpace::Mpi>
             {
                 MPI_Irecv( this->_ghosted_buffers[n].data(),
                            this->_ghosted_buffers[n].size(), MPI_BYTE,
-                           this->_neighbor_ranks[n], mpi_tag + this->_receive_tags[n], comm,
+                           this->_neighbor_ranks[n],
+                           mpi_tag + this->_receive_tags[n], comm,
                            &requests[n] );
             }
         }
@@ -114,12 +113,13 @@ class Halo<MemorySpace, CommSpace::Mpi>
             if ( 0 < this->_owned_buffers[n].size() )
             {
                 // Pack the send buffer.
-                this->packBuffer( exec_space, this->_owned_buffers[n], this->_owned_steering[n],
-                            arrays.view()... );
+                this->packBuffer( exec_space, this->_owned_buffers[n],
+                                  this->_owned_steering[n], arrays.view()... );
 
                 // Post a send.
-                MPI_Isend( this->_owned_buffers[n].data(), this->_owned_buffers[n].size(),
-                           MPI_BYTE, this->_neighbor_ranks[n],
+                MPI_Isend( this->_owned_buffers[n].data(),
+                           this->_owned_buffers[n].size(), MPI_BYTE,
+                           this->_neighbor_ranks[n],
                            mpi_tag + this->_send_tags[n], comm,
                            &requests[num_n + n] );
             }
@@ -144,9 +144,9 @@ class Halo<MemorySpace, CommSpace::Mpi>
             else
             {
                 this->unpackBuffer( ScatterReduce::Replace(), exec_space,
-                              this->_ghosted_buffers[unpack_index],
-                              this->_ghosted_steering[unpack_index],
-                              arrays.view()... );
+                                    this->_ghosted_buffers[unpack_index],
+                                    this->_ghosted_steering[unpack_index],
+                                    arrays.view()... );
             }
         }
 
@@ -188,9 +188,11 @@ class Halo<MemorySpace, CommSpace::Mpi>
             // Only process this neighbor if there is work to do.
             if ( 0 < this->_owned_buffers[n].size() )
             {
-                MPI_Irecv( this->_owned_buffers[n].data(), this->_owned_buffers[n].size(),
-                           MPI_BYTE, this->_neighbor_ranks[n],
-                           mpi_tag + this->_receive_tags[n], comm, &requests[n] );
+                MPI_Irecv( this->_owned_buffers[n].data(),
+                           this->_owned_buffers[n].size(), MPI_BYTE,
+                           this->_neighbor_ranks[n],
+                           mpi_tag + this->_receive_tags[n], comm,
+                           &requests[n] );
             }
         }
 
@@ -202,12 +204,14 @@ class Halo<MemorySpace, CommSpace::Mpi>
             {
                 // Pack the send buffer.
                 this->packBuffer( exec_space, this->_ghosted_buffers[n],
-                            this->_ghosted_steering[n], arrays.view()... );
+                                  this->_ghosted_steering[n],
+                                  arrays.view()... );
 
                 // Post a send.
                 MPI_Isend( this->_ghosted_buffers[n].data(),
                            this->_ghosted_buffers[n].size(), MPI_BYTE,
-                           this->_neighbor_ranks[n], mpi_tag + this->_send_tags[n], comm,
+                           this->_neighbor_ranks[n],
+                           mpi_tag + this->_send_tags[n], comm,
                            &requests[num_n + n] );
             }
         }
@@ -230,16 +234,15 @@ class Halo<MemorySpace, CommSpace::Mpi>
             // Otherwise unpack the next buffer and apply the reduce operation.
             else
             {
-                this->unpackBuffer( reduce_op, exec_space,
-                              this->_owned_buffers[unpack_index],
-                              this->_owned_steering[unpack_index], arrays.view()... );
+                this->unpackBuffer(
+                    reduce_op, exec_space, this->_owned_buffers[unpack_index],
+                    this->_owned_steering[unpack_index], arrays.view()... );
             }
 
             // Wait on send requests.
             MPI_Waitall( num_n, requests.data() + num_n, MPI_STATUSES_IGNORE );
         }
     }
-
 };
 
 } // end namespace Grid
