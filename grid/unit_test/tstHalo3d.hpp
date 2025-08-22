@@ -175,6 +175,7 @@ void checkScatter( const std::array<bool, 3>& is_dim_periodic,
 }
 
 //---------------------------------------------------------------------------//
+template <class TEST_COMMSPACE>
 void gatherScatterTest( const ManualBlockPartitioner<3>& partitioner,
                         const std::array<bool, 3>& is_dim_periodic )
 {
@@ -210,7 +211,8 @@ void gatherScatterTest( const ManualBlockPartitioner<3>& partitioner,
         ArrayOp::assign( *array, 1.0, Own() );
 
         // Create a halo.
-        auto halo = createHalo( NodeHaloPattern<3>(), halo_width, *array );
+        auto halo = createHalo<TEST_COMMSPACE>( NodeHaloPattern<3>(),
+                                                halo_width, *array );
 
         // Gather into the ghosts.
         halo->gather( TEST_EXECSPACE(), *array );
@@ -296,10 +298,10 @@ void gatherScatterTest( const ManualBlockPartitioner<3>& partitioner,
         ArrayOp::assign( *edge_k_array, 1.0, Own() );
 
         // Create a multihalo.
-        auto halo = createHalo( NodeHaloPattern<3>(), halo_width, *cell_array,
-                                *node_array, *face_i_array, *face_j_array,
-                                *face_k_array, *edge_i_array, *edge_j_array,
-                                *edge_k_array );
+        auto halo = createHalo<TEST_COMMSPACE>(
+            NodeHaloPattern<3>(), halo_width, *cell_array, *node_array,
+            *face_i_array, *face_j_array, *face_k_array, *edge_i_array,
+            *edge_j_array, *edge_k_array );
 
         // Gather into the ghosts.
         halo->gather( TEST_EXECSPACE(), *cell_array, *node_array, *face_i_array,
@@ -376,7 +378,7 @@ struct TestHaloReduce<ScatterReduce::Replace>
     }
 };
 
-template <class ReduceFunc>
+template <class TEST_COMMSPACE, class ReduceFunc>
 void scatterReduceTest( const ReduceFunc& reduce )
 {
     // Create the global grid.
@@ -418,7 +420,7 @@ void scatterReduceTest( const ReduceFunc& reduce )
     pattern.setNeighbors( neighbors );
 
     // Create a halo.
-    auto halo = createHalo( pattern, array_halo_width, *array );
+    auto halo = createHalo<TEST_COMMSPACE>( pattern, array_halo_width, *array );
 
     // Scatter.
     halo->scatter( TEST_EXECSPACE(), reduce, *array );
@@ -449,8 +451,25 @@ void scatterReduceTest( const ReduceFunc& reduce )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( Halo, NonPeriodic3d )
+template <typename TEST_COMMSPACE>
+class Halo3dTypedTest : public ::testing::Test
 {
+  public:
+    using CommSpaceType = TEST_COMMSPACE;
+};
+
+using CommSpaceTypes =
+    ::testing::Types<CommSpace::Mpi
+                     // Add additional CommSpace types to test when implemented
+                     >;
+
+TYPED_TEST_SUITE( Halo3dTypedTest, CommSpaceTypes );
+
+TYPED_TEST( Halo3dTypedTest, NonPeriodic3d )
+{
+    // Extract communication backend type
+    using commspace_type = TypeParam;
+
     // Let MPI compute the partitioning for this test.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
@@ -461,7 +480,7 @@ TEST( Halo, NonPeriodic3d )
     // Boundaries are not periodic.
     std::array<bool, 3> is_dim_periodic = { false, false, false };
 
-    gatherScatterTest( partitioner, is_dim_periodic );
+    gatherScatterTest<commspace_type>( partitioner, is_dim_periodic );
 
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
@@ -469,25 +488,28 @@ TEST( Halo, NonPeriodic3d )
     {
         std::swap( ranks_per_dim[0], ranks_per_dim[1] );
         partitioner = ManualBlockPartitioner<3>( ranks_per_dim );
-        gatherScatterTest( partitioner, is_dim_periodic );
+        gatherScatterTest<commspace_type>( partitioner, is_dim_periodic );
     }
     if ( ranks_per_dim[0] != ranks_per_dim[2] )
     {
         std::swap( ranks_per_dim[0], ranks_per_dim[2] );
         partitioner = ManualBlockPartitioner<3>( ranks_per_dim );
-        gatherScatterTest( partitioner, is_dim_periodic );
+        gatherScatterTest<commspace_type>( partitioner, is_dim_periodic );
     }
     if ( ranks_per_dim[1] != ranks_per_dim[2] )
     {
         std::swap( ranks_per_dim[1], ranks_per_dim[2] );
         partitioner = ManualBlockPartitioner<3>( ranks_per_dim );
-        gatherScatterTest( partitioner, is_dim_periodic );
+        gatherScatterTest<commspace_type>( partitioner, is_dim_periodic );
     }
 }
 
 //---------------------------------------------------------------------------//
-TEST( Halo, Periodic3d )
+TYPED_TEST( Halo3dTypedTest, Periodic3d )
 {
+    // Extract communication backend type
+    using commspace_type = TypeParam;
+
     // Let MPI compute the partitioning for this test.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
@@ -498,7 +520,7 @@ TEST( Halo, Periodic3d )
     // Every boundary is periodic
     std::array<bool, 3> is_dim_periodic = { true, true, true };
 
-    gatherScatterTest( partitioner, is_dim_periodic );
+    gatherScatterTest<commspace_type>( partitioner, is_dim_periodic );
 
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
@@ -506,32 +528,47 @@ TEST( Halo, Periodic3d )
     {
         std::swap( ranks_per_dim[0], ranks_per_dim[1] );
         partitioner = ManualBlockPartitioner<3>( ranks_per_dim );
-        gatherScatterTest( partitioner, is_dim_periodic );
+        gatherScatterTest<commspace_type>( partitioner, is_dim_periodic );
     }
     if ( ranks_per_dim[0] != ranks_per_dim[2] )
     {
         std::swap( ranks_per_dim[0], ranks_per_dim[2] );
         partitioner = ManualBlockPartitioner<3>( ranks_per_dim );
-        gatherScatterTest( partitioner, is_dim_periodic );
+        gatherScatterTest<commspace_type>( partitioner, is_dim_periodic );
     }
     if ( ranks_per_dim[1] != ranks_per_dim[2] )
     {
         std::swap( ranks_per_dim[1], ranks_per_dim[2] );
         partitioner = ManualBlockPartitioner<3>( ranks_per_dim );
-        gatherScatterTest( partitioner, is_dim_periodic );
+        gatherScatterTest<commspace_type>( partitioner, is_dim_periodic );
     }
 }
 
 //---------------------------------------------------------------------------//
-TEST( Halo, ScatterReduceMax3d ) { scatterReduceTest( ScatterReduce::Max() ); }
-
-//---------------------------------------------------------------------------//
-TEST( Halo, ScatterReduceMin3d ) { scatterReduceTest( ScatterReduce::Min() ); }
-
-//---------------------------------------------------------------------------//
-TEST( Halo, ScatterReduceReplace3d )
+TYPED_TEST( Halo3dTypedTest, ScatterReduceMax3d )
 {
-    scatterReduceTest( ScatterReduce::Replace() );
+    // Extract communication backend type
+    using commspace_type = TypeParam;
+
+    scatterReduceTest<commspace_type>( ScatterReduce::Max() );
+}
+
+//---------------------------------------------------------------------------//
+TYPED_TEST( Halo3dTypedTest, ScatterReduceMin3d )
+{
+    // Extract communication backend type
+    using commspace_type = TypeParam;
+
+    scatterReduceTest<commspace_type>( ScatterReduce::Min() );
+}
+
+//---------------------------------------------------------------------------//
+TYPED_TEST( Halo3dTypedTest, ScatterReduceReplace3d )
+{
+    // Extract communication backend type
+    using commspace_type = TypeParam;
+
+    scatterReduceTest<commspace_type>( ScatterReduce::Replace() );
 }
 
 //---------------------------------------------------------------------------//

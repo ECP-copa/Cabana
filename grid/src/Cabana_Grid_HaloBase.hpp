@@ -227,7 +227,8 @@ class HaloBase
       provided in the same order
     */
     template <class Pattern, class... ArrayTypes>
-    HaloBase( const Pattern& pattern, const int width, const ArrayTypes&... arrays )
+    HaloBase( const Pattern& pattern, const int width,
+              const ArrayTypes&... arrays )
     {
         // Spatial dimension.
         const std::size_t num_space_dim = Pattern::num_space_dim;
@@ -805,19 +806,19 @@ namespace Grid
   \param arrays The arrays over which to build the halo.
   \return Shared pointer to a Halo.
 */
-template <class Pattern, class CommSpaceType = CommSpace::Mpi, class... ArrayTypes>
+template <class CommSpaceType = CommSpace::Mpi, class Pattern,
+          class... ArrayTypes>
 auto createHalo( const Pattern& pattern, const int width,
                  const ArrayTypes&... arrays )
 {
     using memory_space = typename ArrayPackMemorySpace<ArrayTypes...>::type;
-    return std::make_shared<Halo<memory_space, CommSpaceType>>( pattern, width, arrays... );
+    return std::make_shared<Halo<memory_space, CommSpaceType>>( pattern, width,
+                                                                arrays... );
 }
 
 } // end namespace Grid
 } // end namespace Cabana
 
 //---------------------------------------------------------------------------//
-
-
 
 #endif // end CABANA_GRID_HALOBASE_HPP
