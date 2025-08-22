@@ -55,7 +55,7 @@ class CommSpaceTester
     createFromExports( const ViewType& element_export_ranks )
     {
         return this->createWithoutTopology( Cabana::Export(),
-                                           element_export_ranks );
+                                            element_export_ranks );
     }
 
     template <class ViewType>
@@ -997,9 +997,10 @@ class CommunicationPlanTypedTest : public ::testing::Test
     using CommSpaceType = TEST_COMMSPACE;
 };
 
-using CommSpaceTypes = ::testing::Types<Cabana::CommSpace::Mpi
-// Add additional CommSpace types to test when implemented
-                                        >;
+using CommSpaceTypes =
+    ::testing::Types<Cabana::CommSpace::Mpi
+                     // Add additional CommSpace types to test when implemented
+                     >;
 
 TYPED_TEST_SUITE( CommunicationPlanTypedTest, CommSpaceTypes );
 
