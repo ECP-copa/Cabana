@@ -35,6 +35,13 @@ set(HEADERS_PUBLIC
   Cabana_Version.hpp
   )
 
+set(HEADERS_IMPL
+  impl/Cabana_CartesianGrid.hpp
+  impl/Cabana_Index.hpp
+  impl/Cabana_PerformanceTraits.hpp
+  impl/Cabana_TypeTraits.hpp
+  )
+
 if(Cabana_ENABLE_ARBORX)
   list(APPEND HEADERS_PUBLIC
     Cabana_Experimental_NeighborList.hpp
@@ -61,13 +68,6 @@ endif()
 if(Cabana_ENABLE_HDF5)
   list(APPEND HEADERS_PUBLIC Cabana_HDF5ParticleOutput.hpp)
 endif()
-
-set(HEADERS_IMPL
-  impl/Cabana_CartesianGrid.hpp
-  impl/Cabana_Index.hpp
-  impl/Cabana_PerformanceTraits.hpp
-  impl/Cabana_TypeTraits.hpp
-  )
 
 add_library(Core INTERFACE)
 add_library(Cabana::Core ALIAS Core)
