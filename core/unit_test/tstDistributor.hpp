@@ -799,12 +799,10 @@ class DistributorTypedTest : public ::testing::Test
     using CommSpaceType = TEST_COMMSPACE;
 };
 
-using CommSpaceTypes = ::testing::Types<Cabana::CommSpace::Mpi
-#ifdef Cabana_ENABLE_MPIADVANCE
-                                        ,
-                                        Cabana::CommSpace::MpiAdvance
-#endif
-                                        >;
+using CommSpaceTypes =
+    ::testing::Types<CommSpace::Mpi
+                     // Add additional CommSpace types to test when implemented
+                     >;
 
 TYPED_TEST_SUITE( DistributorTypedTest, CommSpaceTypes );
 
