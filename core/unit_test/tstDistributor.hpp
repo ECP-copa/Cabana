@@ -800,11 +800,11 @@ class DistributorTypedTest : public ::testing::Test
 };
 
 using CommSpaceTypes =
-    ::testing::Types<CommSpace::Mpi
+    ::testing::Types<Cabana::CommSpace::Mpi
                      // Add additional CommSpace types to test when implemented
                      >;
 
-TYPED_TEST_SUITE( DistributorTypedTest, CommSpaceTypes );
+TYPED_TEST_SUITE( DistributorTypedTest, CommSpaceTypes, );
 
 TYPED_TEST( DistributorTypedTest, Test1 ) { test1<TypeParam>( true ); }
 
