@@ -393,7 +393,10 @@ using CommSpaceTypes =
                      // Add additional CommSpace types to test when implemented
                      >;
 
-TYPED_TEST_SUITE( Halo2dTypedTest, CommSpaceTypes );
+
+// Need a trailing comma
+// to avoid an error when compiling with clang++
+TYPED_TEST_SUITE( Halo2dTypedTest, CommSpaceTypes, );
 
 TYPED_TEST( Halo2dTypedTest, NonPeriodic2d )
 {

@@ -462,8 +462,10 @@ using CommSpaceTypes =
     ::testing::Types<CommSpace::Mpi
                      // Add additional CommSpace types to test when implemented
                      >;
-
-TYPED_TEST_SUITE( Halo3dTypedTest, CommSpaceTypes );
+                     
+// Need a trailing comma
+// to avoid an error when compiling with clang++
+TYPED_TEST_SUITE( Halo3dTypedTest, CommSpaceTypes, );
 
 TYPED_TEST( Halo3dTypedTest, NonPeriodic3d )
 {
