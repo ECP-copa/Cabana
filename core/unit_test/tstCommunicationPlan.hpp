@@ -1002,7 +1002,9 @@ using CommSpaceTypes =
                      // Add additional CommSpace types to test when implemented
                      >;
 
-TYPED_TEST_SUITE( CommunicationPlanTypedTest, CommSpaceTypes );
+// Need a trailing comma
+// to avoid an error when compiling with clang++
+TYPED_TEST_SUITE( CommunicationPlanTypedTest, CommSpaceTypes, );
 
 // Export tests
 TYPED_TEST( CommunicationPlanTypedTest, Test1 ) { test1<TypeParam>( true ); }
