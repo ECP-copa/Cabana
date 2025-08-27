@@ -39,10 +39,9 @@ namespace Grid
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Communication plan class. Uses vanilla MPI as the communication
+  \brief Grid Halo class. Variant that uses vanilla MPI as the communication
   backend.
 */
-
 template <class MemorySpace>
 class Halo<MemorySpace, CommSpace::Mpi> : public HaloBase<MemorySpace>
 {
@@ -51,9 +50,12 @@ class Halo<MemorySpace, CommSpace::Mpi> : public HaloBase<MemorySpace>
 
     /*!
       \brief Constructor.
-
-      \param comm The MPI communicator over which the CommunicationPlan is
-      defined.
+      \tparam The arrays types to construct the halo for.
+      \param pattern The halo pattern to use for halo communication.
+      \param width Halo cell width. Must be less than or equal to the halo
+      width of the block.
+      \param arrays The arrays to build the halo for. These arrays must be
+      provided in the same order
     */
     template <class Pattern, class... ArrayTypes>
     Halo( const Pattern& pattern, const int width, const ArrayTypes&... arrays )

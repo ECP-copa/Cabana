@@ -996,6 +996,9 @@ class CommunicationPlan<MemorySpace, CommSpace::Mpi>
     }
 };
 
+/*!
+  \brief Store AoSoA send/receive buffers. Mpi variant.
+*/
 template <class CommPlanType, class CommDataType>
 class CommunicationData<CommPlanType, CommDataType, CommSpace::Mpi>
     : public CommunicationDataBase<CommPlanType, CommDataType>

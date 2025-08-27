@@ -699,13 +699,23 @@ class CommunicationPlanBase
     //! \endcond
 
   protected:
+    //! Shared pointer to Mpi communicator
     std::shared_ptr<MPI_Comm> _comm_ptr;
+    //! List of Mpi neighbors
     std::vector<int> _neighbors;
+    //! Number of elements exported
     std::size_t _total_num_export;
+    //! Number of elements imported
     std::size_t _total_num_import;
+    //! Number of elements exported to each neighbor
     std::vector<std::size_t> _num_export;
+    //! Number of elements imported from each neighbor
     std::vector<std::size_t> _num_import;
+    //! Number of elements exported. May be different from _total_num_export
+    //! if some of the export ranks used in the construction are -1 and
+    //! therefore will not particpate in an export operation.
     std::size_t _num_export_element;
+    //! Export steering vector
     Kokkos::View<std::size_t*, memory_space> _export_steering;
 };
 

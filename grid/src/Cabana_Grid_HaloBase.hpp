@@ -748,25 +748,25 @@ class HaloBase
     }
 
   protected:
-    // The ranks we will send/receive from.
+    //! The ranks we will send/receive from.
     std::vector<int> _neighbor_ranks;
 
-    // The tag we use for sending to each neighbor.
+    //! The tag we use for sending to each neighbor.
     std::vector<int> _send_tags;
 
-    // The tag we use for receiving from each neighbor.
+    //! The tag we use for receiving from each neighbor.
     std::vector<int> _receive_tags;
 
-    // For each neighbor, send/receive buffers for data we own.
+    //! For each neighbor, send/receive buffers for data we own.
     std::vector<Kokkos::View<char*, memory_space>> _owned_buffers;
 
-    // For each neighbor, send/receive buffers for data we ghost.
+    //! For each neighbor, send/receive buffers for data we ghost.
     std::vector<Kokkos::View<char*, memory_space>> _ghosted_buffers;
 
-    // For each neighbor, steering vector for the owned buffer.
+    //! For each neighbor, steering vector for the owned buffer.
     std::vector<Kokkos::View<int**, memory_space>> _owned_steering;
 
-    // For each neighbor, steering vector for the ghosted buffer.
+    //! For each neighbor, steering vector for the ghosted buffer.
     std::vector<Kokkos::View<int**, memory_space>> _ghosted_steering;
 };
 

@@ -396,16 +396,18 @@ class Gather<HaloType, AoSoAType,
     auto totalReceive() { return _halo.totalNumImport(); }
 
     /*!
-    \brief Perform the gather operation.
+      \brief Perform the gather operation.
     */
     void apply() override { applyImpl( execution_space{}, commspace_type{} ); }
 
-    template <class ExecutionSpace, class CommSpaceTypeType>
-    std::enable_if_t<std::is_same<CommSpaceTypeType, CommSpace::Mpi>::value,
-                     void>
-        applyImpl( ExecutionSpace, CommSpaceTypeType );
+    /*!
+      \brief Vanilla Mpi implementation of the gather operation.
+    */
+    template <class ExecutionSpace, class CommSpaceType>
+    std::enable_if_t<std::is_same<CommSpaceType, CommSpace::Mpi>::value, void>
+        applyImpl( ExecutionSpace, CommSpaceType );
 
-    // Future: Add applyImpl that is enabled for other CommSpaceTypeType types.
+    // Future: Add applyImpl that is enabled for other CommSpaceType types.
 
     /*!
       \brief Reserve new buffers as needed and update the halo and AoSoA data.
@@ -509,16 +511,18 @@ class Gather<HaloType, SliceType,
     auto totalReceive() { return _halo.totalNumImport(); }
 
     /*!
-    \brief Perform the gather operation.
+      \brief Perform the gather operation.
     */
     void apply() override { applyImpl( execution_space{}, commspace_type{} ); }
 
-    template <class ExecutionSpace, class CommSpaceTypeType>
-    std::enable_if_t<std::is_same<CommSpaceTypeType, CommSpace::Mpi>::value,
-                     void>
-        applyImpl( ExecutionSpace, CommSpaceTypeType );
+    /*!
+      \brief Vanilla Mpi implementation of the gather operation.
+    */
+    template <class ExecutionSpace, class CommSpaceType>
+    std::enable_if_t<std::is_same<CommSpaceType, CommSpace::Mpi>::value, void>
+        applyImpl( ExecutionSpace, CommSpaceType );
 
-    // Future: Add applyImpl that is enabled for other CommSpaceTypeType types.
+    // Future: Add applyImpl that is enabled for other CommSpaceType types.
 
     /*!
       \brief Reserve new buffers as needed and update the halo and slice data.
@@ -676,12 +680,14 @@ class Scatter
     */
     void apply() override { applyImpl( execution_space{}, commspace_type{} ); }
 
-    template <class ExecutionSpace, class CommSpaceTypeType>
-    std::enable_if_t<std::is_same<CommSpaceTypeType, CommSpace::Mpi>::value,
-                     void>
-        applyImpl( ExecutionSpace, CommSpaceTypeType );
+    /*!
+      \brief Vanilla Mpi implementation of the scatter operation.
+    */
+    template <class ExecutionSpace, class CommSpaceType>
+    std::enable_if_t<std::is_same<CommSpaceType, CommSpace::Mpi>::value, void>
+        applyImpl( ExecutionSpace, CommSpaceType );
 
-    // Future: Add applyImpl that is enabled for other CommSpaceTypeType types.
+    // Future: Add applyImpl that is enabled for other CommSpaceType types.
 
     /*!
       \brief Reserve new buffers as needed and update the halo and slice data.
