@@ -60,6 +60,7 @@ template <class MemorySpace, class BuildType = Export,
 class Halo : public CommunicationPlan<MemorySpace, CommSpaceType>
 {
   public:
+    //! Communication space type.
     using commspace_type = CommSpaceType;
 
     /*!
