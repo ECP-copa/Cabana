@@ -208,11 +208,13 @@ void migrate(
 {
     // Check that src and dst are the right size.
     if ( src.size() != distributor.exportSize() )
-        throw std::runtime_error( "Cabana::migrate (Distributor): Source is "
-                                  "the wrong size for migration!" );
+        throw std::runtime_error( "Cabana::migrate: Source is "
+                                  "the wrong size for migration! (Label: " +
+                                  src.label() + ")" );
     if ( dst.size() != distributor.totalNumImport() )
-        throw std::runtime_error( "Cabana::migrate (Distributor): Destination "
-                                  "is the wrong size for migration!" );
+        throw std::runtime_error( "Cabana::migrate: Destination "
+                                  "is the wrong size for migration! (Label: " +
+                                  dst.label() + ")" );
 
     // Move the data.
     Impl::migrateData( CommSpaceType(), exec_space, distributor, src, dst );
@@ -278,7 +280,10 @@ void migrate(
 {
     // Check that the AoSoA is the right size.
     if ( aosoa.size() != distributor.exportSize() )
-        throw std::runtime_error( "AoSoA is the wrong size for migration!" );
+        throw std::runtime_error(
+            "Cabana::migrate (in-place): "
+            "AoSoA is the wrong size for migration! (Label: " +
+            aosoa.label() + ")" );
 
     // Determine if the source of destination decomposition has more data on
     // this rank.
@@ -357,10 +362,15 @@ void migrate(
           is_slice<Slice_t>::value ),
         int>::type* = 0 )
 {
+    // Check that src and dst are the right size.
     if ( src.size() != distributor.exportSize() )
-        throw std::runtime_error(
-            "Cabana::Migrate::migrate: Source slice is the "
-            "wrong size for migration!" );
+        throw std::runtime_error( "Cabana::migrate: Source Slice is the wrong "
+                                  "size for migration! (Label: " +
+                                  src.label() + ")" );
+    if ( dst.size() != distributor.totalNumImport() )
+        throw std::runtime_error( "Cabana::migrate: Destination Slice is the "
+                                  "wrong size for migration! (Label: " +
+                                  dst.label() + ")" );
 
     Impl::migrateSlice(
         CommSpaceType(),

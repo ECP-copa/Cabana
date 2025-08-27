@@ -205,16 +205,6 @@ void migrateSlice(
                               is_slice<Slice_t>::value ),
                             int>::type* = 0 )
 {
-    // Check that src and dst are the right size.
-    if ( src.size() != distributor.exportSize() )
-        throw std::runtime_error( "Cabana::migrate: Source Slice is the wrong "
-                                  "size for migration! (Label: " +
-                                  src.label() + ")" );
-    if ( dst.size() != distributor.totalNumImport() )
-        throw std::runtime_error( "Cabana::migrate: Destination Slice is the "
-                                  "wrong size for migration! (Label: " +
-                                  dst.label() + ")" );
-
     // Get the number of components in the slices.
     size_t num_comp = 1;
     for ( size_t d = 2; d < src.viewRank(); ++d )
