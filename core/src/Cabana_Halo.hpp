@@ -168,44 +168,44 @@ class Halo : public CommunicationPlan<MemorySpace, CommSpaceType>
     }
 
     /*!
-     \brief Neighbor and import rank constructor. Use this when you don't know
-     who you will sending to - only who you are receiving from, but you already
-     know which ranks neighbor each other (i.e. every rank already knows who
-     they will be exporting to and receiving from) as it will be more
-     efficient. In this case you already know the topology of the
-     point-to-point communication but not how much data to send and receive
-     from the neighbors.
+      \brief Neighbor and import rank constructor. Use this when you don't know
+      who you will sending to - only who you are receiving from, but you already
+      know which ranks neighbor each other (i.e. every rank already knows who
+      they will be exporting to and receiving from) as it will be more
+      efficient. In this case you already know the topology of the
+      point-to-point communication but not how much data to send and receive
+      from the neighbors.
 
-     \tparam IdViewType The container type for the export element ids. This
-     container type can be either a Kokkos View or a Cabana Slice.
+      \tparam IdViewType The container type for the export element ids. This
+      container type can be either a Kokkos View or a Cabana Slice.
 
-     \tparam RankViewType The container type for the export element
-     ranks. This container type can be either a Kokkos View or a Cabana
-     Slice.
+      \tparam RankViewType The container type for the export element
+      ranks. This container type can be either a Kokkos View or a Cabana
+      Slice.
 
-     \tparam BuildType must be Cabana::Import
+      \tparam BuildType must be Cabana::Import
 
-     \param comm The MPI communicator over which the halo is defined.
+      \param comm The MPI communicator over which the halo is defined.
 
-     \param num_local The number of locally-owned elements on this rank.
+      \param num_local The number of locally-owned elements on this rank.
 
-     \param element_ids The local ids of the elements that will be
-     imported from other ranks to be used as ghosts. Element ids may be
-     repeated in this list if they are sent to multiple destinations. Must be
-     the same length as element_ranks. The input is expected to be a
-     Kokkos view or Cabana slice in the same memory space as the
-     communication plan.
+      \param element_ids The local ids of the elements that will be
+      imported from other ranks to be used as ghosts. Element ids may be
+      repeated in this list if they are sent to multiple destinations. Must be
+      the same length as element_ranks. The input is expected to be a
+      Kokkos view or Cabana slice in the same memory space as the
+      communication plan.
 
-     \param element_ranks The ranks from which we will import each element
-     in element_ids. In this case each rank must be one of the
-     neighbor ranks. Must be the same length as element_ids. A rank is
-     allowed to send to itself. The input is expected to be a Kokkos view or
-     Cabana slice in the same memory space as the communication plan.
+      \param element_ranks The ranks from which we will import each element
+      in element_ids. In this case each rank must be one of the
+      neighbor ranks. Must be the same length as element_ids. A rank is
+      allowed to send to itself. The input is expected to be a Kokkos view or
+      Cabana slice in the same memory space as the communication plan.
 
-     \param neighbor_ranks List of ranks this rank will send to and receive
-     from. This list can include the calling rank. This is effectively a
-     description of the topology of the point-to-point communication
-     plan. The elements in this list must be unique.
+      \param neighbor_ranks List of ranks this rank will send to and receive
+      from. This list can include the calling rank. This is effectively a
+      description of the topology of the point-to-point communication
+      plan. The elements in this list must be unique.
    */
     template <class IdViewType, class RankViewType, typename T = BuildType,
               std::enable_if_t<std::is_same<T, Import>::value, int> = 0>
@@ -227,36 +227,36 @@ class Halo : public CommunicationPlan<MemorySpace, CommSpaceType>
     }
 
     /*!
-  \brief Import rank constructor. Use this when you don't know which ranks
-  neighbor each other. (i.e. every rank does not already know who they will
-  be exporting to and receiving from)
+      \brief Import rank constructor. Use this when you don't know which ranks
+      neighbor each other. (i.e. every rank does not already know who they will
+      be exporting to and receiving from)
 
-  \tparam IdViewType The container type for the export element ids. This
-  container type can be either a Kokkos View or a Cabana Slice.
+      \tparam IdViewType The container type for the export element ids. This
+      container type can be either a Kokkos View or a Cabana Slice.
 
-  \tparam RankViewType The container type for the export element
-  ranks. This container type can be either a Kokkos View or a Cabana
-  Slice.
+      \tparam RankViewType The container type for the export element
+      ranks. This container type can be either a Kokkos View or a Cabana
+      Slice.
 
-  \tparam BuildType must be Cabana::Import
+      \tparam BuildType must be Cabana::Import
 
-  \param comm The MPI communicator over which the halo is defined.
+      \param comm The MPI communicator over which the halo is defined.
 
-  \param num_local The number of locally-owned elements on this rank.
+      \param num_local The number of locally-owned elements on this rank.
 
-  \param element_ids The local ids of the elements that will be
-  imported from other ranks to be used as ghosts. Element ids may be
-  repeated in this list if they are sent to multiple destinations. Must be
-  the same length as element_ranks. The input is expected to be a
-  Kokkos view or Cabana slice in the same memory space as the
-  communication plan.
+      \param element_ids The local ids of the elements that will be
+      imported from other ranks to be used as ghosts. Element ids may be
+      repeated in this list if they are sent to multiple destinations. Must be
+      the same length as element_ranks. The input is expected to be a
+      Kokkos view or Cabana slice in the same memory space as the
+      communication plan.
 
-  \param element_ranks The ranks from which we will import each element
-  in element_ids. In this case each rank must be one of the
-  neighbor ranks. Must be the same length as element_ids. A rank is
-  allowed to send to itself. The input is expected to be a Kokkos view or
-  Cabana slice in the same memory space as the communication plan.
-*/
+      \param element_ranks The ranks from which we will import each element
+      in element_ids. In this case each rank must be one of the
+      neighbor ranks. Must be the same length as element_ids. A rank is
+      allowed to send to itself. The input is expected to be a Kokkos view or
+      Cabana slice in the same memory space as the communication plan.
+    */
     template <class IdViewType, class RankViewType, typename T = BuildType,
               std::enable_if_t<std::is_same<T, Import>::value, int> = 0>
     Halo( MPI_Comm comm, const std::size_t num_local,
