@@ -41,7 +41,7 @@ namespace Cabana
 */
 
 template <class MemorySpace>
-class CommunicationPlan<MemorySpace, CommSpace::Mpi>
+class CommunicationPlan<MemorySpace, Mpi>
     : public CommunicationPlanBase<MemorySpace>
 {
   public:
@@ -1000,7 +1000,7 @@ class CommunicationPlan<MemorySpace, CommSpace::Mpi>
   \brief Store AoSoA send/receive buffers. Mpi variant.
 */
 template <class CommPlanType, class CommDataType>
-class CommunicationData<CommPlanType, CommDataType, CommSpace::Mpi>
+class CommunicationData<CommPlanType, CommDataType, Mpi>
     : public CommunicationDataBase<CommPlanType, CommDataType>
 {
   protected:

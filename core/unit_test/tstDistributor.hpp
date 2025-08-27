@@ -800,7 +800,7 @@ class DistributorTypedTest : public ::testing::Test
 };
 
 using CommSpaceTypes =
-    ::testing::Types<Cabana::CommSpace::Mpi
+    ::testing::Types<Cabana::Mpi
                      // Add additional CommSpace types to test when implemented
                      >;
 

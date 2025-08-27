@@ -715,8 +715,8 @@ void testHaloBuffers( TestTag tag, CommType comm_space, BuildType build_type,
 //---------------------------------------------------------------------------//
 // Define the type list
 using HaloTestTypes =
-    ::testing::Types<std::tuple<Cabana::CommSpace::Mpi, Cabana::Export>,
-                     std::tuple<Cabana::CommSpace::Mpi, Cabana::Import>
+    ::testing::Types<std::tuple<Cabana::Mpi, Cabana::Export>,
+                     std::tuple<Cabana::Mpi, Cabana::Import>
                      // Add additional CommSpace types to test when implemented
                      >;
 

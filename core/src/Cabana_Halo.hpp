@@ -56,7 +56,7 @@ namespace Cabana
   of the forward communication plan (the gather).
 */
 template <class MemorySpace, class BuildType = Export,
-          class CommSpaceType = CommSpace::Mpi>
+          class CommSpaceType = Mpi>
 class Halo : public CommunicationPlan<MemorySpace, CommSpaceType>
 {
   public:
@@ -404,7 +404,7 @@ class Gather<HaloType, AoSoAType,
       \brief Vanilla Mpi implementation of the gather operation.
     */
     template <class ExecutionSpace, class CommSpaceType>
-    std::enable_if_t<std::is_same<CommSpaceType, CommSpace::Mpi>::value, void>
+    std::enable_if_t<std::is_same<CommSpaceType, Mpi>::value, void>
         applyImpl( ExecutionSpace, CommSpaceType );
 
     // Future: Add applyImpl that is enabled for other CommSpaceType types.
@@ -519,7 +519,7 @@ class Gather<HaloType, SliceType,
       \brief Vanilla Mpi implementation of the gather operation.
     */
     template <class ExecutionSpace, class CommSpaceType>
-    std::enable_if_t<std::is_same<CommSpaceType, CommSpace::Mpi>::value, void>
+    std::enable_if_t<std::is_same<CommSpaceType, Mpi>::value, void>
         applyImpl( ExecutionSpace, CommSpaceType );
 
     // Future: Add applyImpl that is enabled for other CommSpaceType types.
@@ -684,7 +684,7 @@ class Scatter
       \brief Vanilla Mpi implementation of the scatter operation.
     */
     template <class ExecutionSpace, class CommSpaceType>
-    std::enable_if_t<std::is_same<CommSpaceType, CommSpace::Mpi>::value, void>
+    std::enable_if_t<std::is_same<CommSpaceType, Mpi>::value, void>
         applyImpl( ExecutionSpace, CommSpaceType );
 
     // Future: Add applyImpl that is enabled for other CommSpaceType types.

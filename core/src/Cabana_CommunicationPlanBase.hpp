@@ -32,8 +32,6 @@
 
 namespace Cabana
 {
-namespace CommSpace
-{
 //---------------------------------------------------------------------------//
 // Communication plan types.
 //---------------------------------------------------------------------------//
@@ -43,7 +41,6 @@ namespace CommSpace
 struct Mpi
 {
 };
-} // end namespace CommSpace
 
 //---------------------------------------------------------------------------//
 // Communication driver construction type tags.
@@ -986,12 +983,12 @@ class CommunicationDataBase
 };
 
 // Forward declaration of the primary CommunicationPlan template.
-template <class MemorySpace, class CommSpaceType = CommSpace::Mpi>
+template <class MemorySpace, class CommSpaceType = Mpi>
 class CommunicationPlan;
 
 // Forward declaration of the primary CommunicationData template.
 template <class CommPlanType, class CommDataType,
-          class CommSpaceType = CommSpace::Mpi>
+          class CommSpaceType = Mpi>
 class CommunicationData;
 
 } // namespace Cabana
