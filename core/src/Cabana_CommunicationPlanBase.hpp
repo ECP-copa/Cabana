@@ -987,8 +987,7 @@ template <class MemorySpace, class CommSpaceType = Mpi>
 class CommunicationPlan;
 
 // Forward declaration of the primary CommunicationData template.
-template <class CommPlanType, class CommDataType,
-          class CommSpaceType = Mpi>
+template <class CommPlanType, class CommDataType, class CommSpaceType = Mpi>
 class CommunicationData;
 
 } // namespace Cabana

@@ -39,8 +39,8 @@ namespace Impl
 // the forward communication plan.
 template <class ExecutionSpace, class Distributor_t, class AoSoA_t>
 void migrateData(
-    Mpi, ExecutionSpace, const Distributor_t& distributor,
-    const AoSoA_t& src, AoSoA_t& dst,
+    Mpi, ExecutionSpace, const Distributor_t& distributor, const AoSoA_t& src,
+    AoSoA_t& dst,
     typename std::enable_if<( ( is_distributor<Distributor_t>::value ) &&
                               is_aosoa<AoSoA_t>::value ),
                             int>::type* = 0 )
@@ -199,8 +199,8 @@ void migrateData(
 */
 template <class ExecutionSpace, class Distributor_t, class Slice_t>
 void migrateSlice(
-    Mpi, ExecutionSpace, const Distributor_t& distributor,
-    const Slice_t& src, Slice_t& dst,
+    Mpi, ExecutionSpace, const Distributor_t& distributor, const Slice_t& src,
+    Slice_t& dst,
     typename std::enable_if<( ( is_distributor<Distributor_t>::value ) &&
                               is_slice<Slice_t>::value ),
                             int>::type* = 0 )
