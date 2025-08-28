@@ -28,11 +28,11 @@ namespace Test
 {
 
 //---------------------------------------------------------------------------//
-template <class TEST_COMMSPACE>
+template <class TestCommSpace>
 void test1( const bool use_topology )
 {
     // Make a Distributor.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>
+    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>
         distributor;
 
     // Get my rank.
@@ -47,13 +47,13 @@ void test1( const bool use_topology )
 
     // Create the plan.
     if ( use_topology )
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks, neighbor_ranks );
     else
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>( MPI_COMM_WORLD,
-                                                                 export_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks );
 
     // Make some data to migrate.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
@@ -101,11 +101,11 @@ void test1( const bool use_topology )
 }
 
 //---------------------------------------------------------------------------//
-template <class TEST_COMMSPACE>
+template <class TestCommSpace>
 void test2( const bool use_topology )
 {
     // Make a Distributor.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>
+    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>
         distributor;
 
     // Get my rank.
@@ -125,13 +125,13 @@ void test2( const bool use_topology )
 
     // Create the plan
     if ( use_topology )
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks, neighbor_ranks );
     else
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>( MPI_COMM_WORLD,
-                                                                 export_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks );
 
     // Make some data to migrate.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
@@ -178,11 +178,11 @@ void test2( const bool use_topology )
 }
 
 //---------------------------------------------------------------------------//
-template <class TEST_COMMSPACE>
+template <class TestCommSpace>
 void test3( const bool use_topology )
 {
     // Make a Distributor.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>
+    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>
         distributor;
 
     // Get my rank.
@@ -204,13 +204,13 @@ void test3( const bool use_topology )
 
     // Create the plan with both export ranks and the topology.
     if ( use_topology )
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks, neighbor_ranks );
     else
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>( MPI_COMM_WORLD,
-                                                                 export_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks );
 
     // Make some data to migrate.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
@@ -274,11 +274,11 @@ void test3( const bool use_topology )
 }
 
 //---------------------------------------------------------------------------//
-template <class TEST_COMMSPACE>
+template <class TestCommSpace>
 void test4( const bool use_topology )
 {
     // Make a Distributor.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>
+    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>
         distributor;
 
     // Get my rank.
@@ -305,13 +305,13 @@ void test4( const bool use_topology )
 
     // Create the plan
     if ( use_topology )
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks, neighbor_ranks );
     else
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>( MPI_COMM_WORLD,
-                                                                 export_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks );
 
     // Make some data to migrate.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
@@ -382,11 +382,11 @@ void test4( const bool use_topology )
 }
 
 //---------------------------------------------------------------------------//
-template <class TEST_COMMSPACE>
+template <class TestCommSpace>
 void test5( const bool use_topology )
 {
     // Make a Distributor.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>
+    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>
         distributor;
 
     // Get my rank.
@@ -414,13 +414,13 @@ void test5( const bool use_topology )
 
     // Create the plan
     if ( use_topology )
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks, neighbor_ranks );
     else
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>( MPI_COMM_WORLD,
-                                                                 export_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks );
 
     // Make some data to migrate.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
@@ -480,11 +480,11 @@ void test5( const bool use_topology )
 }
 
 //---------------------------------------------------------------------------//
-template <class TEST_COMMSPACE>
+template <class TestCommSpace>
 void test6( const bool use_topology )
 {
     // Make a Distributor.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>
+    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>
         distributor;
 
     // Get my rank.
@@ -512,13 +512,13 @@ void test6( const bool use_topology )
 
     // Create the plan.
     if ( use_topology )
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks, neighbor_ranks );
     else
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>( MPI_COMM_WORLD,
-                                                                 export_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks );
 
     // Make some data to migrate.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
@@ -567,11 +567,11 @@ void test6( const bool use_topology )
 }
 
 //---------------------------------------------------------------------------//
-template <class TEST_COMMSPACE>
+template <class TestCommSpace>
 void test7( const bool use_topology )
 {
     // Make a Distributor.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>
+    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>
         distributor;
 
     // Get my rank.
@@ -602,13 +602,13 @@ void test7( const bool use_topology )
 
     // Create the plan.
     if ( use_topology )
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks, neighbor_ranks );
     else
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>( MPI_COMM_WORLD,
-                                                                 export_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks );
 
     // Make some data to migrate.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
@@ -645,11 +645,11 @@ void test7( const bool use_topology )
 }
 
 //---------------------------------------------------------------------------//
-template <class TEST_COMMSPACE>
+template <class TestCommSpace>
 void test8( const bool use_topology )
 {
     // Make a Distributor.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>
+    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>
         distributor;
 
     // Get my rank.
@@ -685,13 +685,13 @@ void test8( const bool use_topology )
 
     // Create the plan.
     if ( use_topology )
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks, neighbor_ranks );
     else
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>( MPI_COMM_WORLD,
-                                                                 export_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks );
 
     // Make some data to migrate.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
@@ -733,11 +733,11 @@ void test8( const bool use_topology )
 }
 
 //---------------------------------------------------------------------------//
-template <class TEST_COMMSPACE>
+template <class TestCommSpace>
 void test9( const bool use_topology )
 {
     // Make a Distributor.
-    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>
+    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>
         distributor;
 
     // Edge case where all particles will be removed - nothing is kept, sent, or
@@ -754,15 +754,15 @@ void test9( const bool use_topology )
     if ( use_topology )
     {
         std::vector<int> neighbor_ranks;
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>(
-            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks, neighbor_ranks );
     }
     else
     {
-        distributor = std::make_shared<
-            Cabana::Distributor<TEST_MEMSPACE, TEST_COMMSPACE>>( MPI_COMM_WORLD,
-                                                                 export_ranks );
+        distributor =
+            std::make_shared<Cabana::Distributor<TEST_MEMSPACE, TestCommSpace>>(
+                MPI_COMM_WORLD, export_ranks );
     }
 
     // Make empty data to migrate.
@@ -792,11 +792,11 @@ void test9( const bool use_topology )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-template <typename TEST_COMMSPACE>
+template <typename TestCommSpace>
 class DistributorTypedTest : public ::testing::Test
 {
   public:
-    using CommSpaceType = TEST_COMMSPACE;
+    using CommSpaceType = TestCommSpace;
 };
 
 using CommSpaceTypes =

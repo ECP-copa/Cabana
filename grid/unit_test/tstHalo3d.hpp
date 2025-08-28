@@ -175,7 +175,7 @@ void checkScatter( const std::array<bool, 3>& is_dim_periodic,
 }
 
 //---------------------------------------------------------------------------//
-template <class TEST_COMMSPACE>
+template <class TestCommSpace>
 void gatherScatterTest( const ManualBlockPartitioner<3>& partitioner,
                         const std::array<bool, 3>& is_dim_periodic )
 {
@@ -211,8 +211,8 @@ void gatherScatterTest( const ManualBlockPartitioner<3>& partitioner,
         ArrayOp::assign( *array, 1.0, Own() );
 
         // Create a halo.
-        auto halo = createHalo<TEST_COMMSPACE>( NodeHaloPattern<3>(),
-                                                halo_width, *array );
+        auto halo = createHalo<TestCommSpace>( NodeHaloPattern<3>(), halo_width,
+                                               *array );
 
         // Gather into the ghosts.
         halo->gather( TEST_EXECSPACE(), *array );
@@ -298,7 +298,7 @@ void gatherScatterTest( const ManualBlockPartitioner<3>& partitioner,
         ArrayOp::assign( *edge_k_array, 1.0, Own() );
 
         // Create a multihalo.
-        auto halo = createHalo<TEST_COMMSPACE>(
+        auto halo = createHalo<TestCommSpace>(
             NodeHaloPattern<3>(), halo_width, *cell_array, *node_array,
             *face_i_array, *face_j_array, *face_k_array, *edge_i_array,
             *edge_j_array, *edge_k_array );
@@ -378,7 +378,7 @@ struct TestHaloReduce<ScatterReduce::Replace>
     }
 };
 
-template <class TEST_COMMSPACE, class ReduceFunc>
+template <class TestCommSpace, class ReduceFunc>
 void scatterReduceTest( const ReduceFunc& reduce )
 {
     // Create the global grid.
@@ -420,7 +420,7 @@ void scatterReduceTest( const ReduceFunc& reduce )
     pattern.setNeighbors( neighbors );
 
     // Create a halo.
-    auto halo = createHalo<TEST_COMMSPACE>( pattern, array_halo_width, *array );
+    auto halo = createHalo<TestCommSpace>( pattern, array_halo_width, *array );
 
     // Scatter.
     halo->scatter( TEST_EXECSPACE(), reduce, *array );
@@ -451,11 +451,11 @@ void scatterReduceTest( const ReduceFunc& reduce )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-template <typename TEST_COMMSPACE>
+template <typename TestCommSpace>
 class Halo3dTypedTest : public ::testing::Test
 {
   public:
-    using CommSpaceType = TEST_COMMSPACE;
+    using CommSpaceType = TestCommSpace;
 };
 
 using CommSpaceTypes =
