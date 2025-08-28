@@ -62,6 +62,9 @@ template <class MemorySpace, class CommSpaceType = Mpi>
 class Distributor : public CommunicationPlan<MemorySpace, CommSpaceType>
 {
   public:
+    //! Communication space
+    using commspace_type = CommSpaceType;
+
     /*!
       \brief Topology and export rank constructor. Use this when you already
       know which ranks neighbor each other (i.e. every rank already knows who
@@ -195,16 +198,12 @@ namespace Cabana
   same size as the number of imports given by the distributor on this
   rank. Call totalNumImport() on the distributor to get this size value.
 */
-template <class ExecutionSpace, class MemorySpace, class CommSpaceType,
-          class AoSoA_t>
-void migrate(
-    ExecutionSpace exec_space,
-    const Distributor<MemorySpace, CommSpaceType>& distributor,
-    const AoSoA_t& src, AoSoA_t& dst,
-    typename std::enable_if<
-        ( is_distributor<Distributor<MemorySpace, CommSpaceType>>::value &&
-          is_aosoa<AoSoA_t>::value ),
-        int>::type* = 0 )
+template <class ExecutionSpace, class Distributor_t, class AoSoA_t>
+void migrate( ExecutionSpace exec_space, const Distributor_t& distributor,
+              const AoSoA_t& src, AoSoA_t& dst,
+              typename std::enable_if<( is_distributor<Distributor_t>::value &&
+                                        is_aosoa<AoSoA_t>::value ),
+                                      int>::type* = 0 )
 {
     // Check that src and dst are the right size.
     if ( src.size() != distributor.exportSize() )
@@ -217,7 +216,8 @@ void migrate(
                                   dst.label() + ")" );
 
     // Move the data.
-    Impl::migrateData( CommSpaceType(), exec_space, distributor, src, dst );
+    Impl::migrateData( typename Distributor_t::commspace_type(), exec_space,
+                       distributor, src, dst );
 }
 
 /*!
@@ -271,12 +271,12 @@ void migrate( const Distributor_t& distributor, const AoSoA_t& src,
   function, consider reserving enough memory in the data structure so
   reallocating is not necessary.
 */
-template <class ExecutionSpace, class MemorySpace, class CommSpaceType,
-          class AoSoA_t>
-void migrate(
-    ExecutionSpace exec_space,
-    const Distributor<MemorySpace, CommSpaceType>& distributor, AoSoA_t& aosoa,
-    typename std::enable_if<( is_aosoa<AoSoA_t>::value ), int>::type* = 0 )
+template <class ExecutionSpace, class Distributor_t, class AoSoA_t>
+void migrate( ExecutionSpace exec_space, const Distributor_t& distributor,
+              AoSoA_t& aosoa,
+              typename std::enable_if<( is_distributor<Distributor_t>::value &&
+                                        is_aosoa<AoSoA_t>::value ),
+                                      int>::type* = 0 )
 {
     // Check that the AoSoA is the right size.
     if ( aosoa.size() != distributor.exportSize() )
@@ -296,7 +296,8 @@ void migrate(
         aosoa.resize( distributor.totalNumImport() );
 
     // Move the data.
-    Impl::migrateData( CommSpaceType(), exec_space, distributor, aosoa, aosoa );
+    Impl::migrateData( typename Distributor_t::commspace_type(), exec_space,
+                       distributor, aosoa, aosoa );
 
     // If the destination decomposition is smaller than the source
     // decomposition resize after we have moved the data.
@@ -353,14 +354,12 @@ void migrate( const Distributor_t& distributor, AoSoA_t& aosoa,
   same size as the number of imports given by the distributor on this
   rank. Call totalNumImport() on the distributor to get this size value.
 */
-template <class MemorySpace, class CommSpaceType, class Slice_t>
-void migrate(
-    const Distributor<MemorySpace, CommSpaceType>& distributor,
-    const Slice_t& src, Slice_t& dst,
-    typename std::enable_if<
-        ( is_distributor<Distributor<MemorySpace, CommSpaceType>>::value &&
-          is_slice<Slice_t>::value ),
-        int>::type* = 0 )
+template <class Distributor_t, class Slice_t>
+void migrate( const Distributor_t& distributor, const Slice_t& src,
+              Slice_t& dst,
+              typename std::enable_if<( is_distributor<Distributor_t>::value &&
+                                        is_slice<Slice_t>::value ),
+                                      int>::type* = 0 )
 {
     // Check that src and dst are the right size.
     if ( src.size() != distributor.exportSize() )
@@ -372,10 +371,9 @@ void migrate(
                                   "wrong size for migration! (Label: " +
                                   dst.label() + ")" );
 
-    Impl::migrateSlice(
-        CommSpaceType(),
-        typename Distributor<MemorySpace, CommSpaceType>::execution_space{},
-        distributor, src, dst );
+    Impl::migrateSlice( typename Distributor_t::commspace_type(),
+                        typename Distributor_t::execution_space{}, distributor,
+                        src, dst );
 }
 
 //---------------------------------------------------------------------------//
