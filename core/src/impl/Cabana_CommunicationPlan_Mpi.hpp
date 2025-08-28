@@ -1019,9 +1019,6 @@ class CommunicationData<CommPlanType, CommDataType, Mpi>
               comm_plan, particles, overallocation )
     {
     }
-
-  public:
-    // Future development: Place MPI-specific functions and variables here.
 };
 
 } // end namespace Cabana
