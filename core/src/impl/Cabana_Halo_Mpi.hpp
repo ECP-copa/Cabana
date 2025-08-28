@@ -32,7 +32,9 @@ namespace Cabana
 {
 
 /*!
-    \brief Perform the gather operation.
+    \brief Perform the gather operation, AoSoA version
+    \class Cabana::Gather
+    \memberof Cabana::Gather
 */
 template <class HaloType, class AoSoAType>
 template <class ExecutionSpace, class CommSpaceType>
@@ -121,7 +123,9 @@ Gather<HaloType, AoSoAType,
 }
 
 /*!
-    \brief Perform the gather operation.
+    \brief Perform the gather operation, Slice version
+    \class Cabana::Gather
+    \memberof Cabana::Gather
 */
 template <class HaloType, class SliceType>
 template <class ExecutionSpace, class CommSpaceType>
@@ -232,6 +236,11 @@ Gather<HaloType, SliceType,
  * SCATTER *
  **********/
 
+/*!
+    \brief Perform the scatter operation, Slice version
+    \class Cabana::Scatter
+    \memberof Cabana::Scatter
+*/
 template <class HaloType, class SliceType>
 template <class ExecutionSpace, class CommSpaceType>
 std::enable_if_t<std::is_same<CommSpaceType, Mpi>::value, void>
