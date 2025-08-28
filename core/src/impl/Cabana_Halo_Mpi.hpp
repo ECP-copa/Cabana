@@ -16,6 +16,8 @@
 #ifndef CABANA_HALO_MPI_HPP
 #define CABANA_HALO_MPI_HPP
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_CommunicationPlanBase.hpp>
 #include <Cabana_Slice.hpp>
@@ -349,5 +351,7 @@ Scatter<HaloType, SliceType>::applyImpl( ExecutionSpace, CommSpaceType )
 }
 
 } // end namespace Cabana
+
+#endif // end DOXYGEN_SHOULD_SKIP_THIS
 
 #endif // end CABANA_HALO_MPI_HPP
