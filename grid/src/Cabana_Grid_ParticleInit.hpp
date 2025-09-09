@@ -87,8 +87,7 @@ int createParticles(
     auto owned_cells = local_grid.indexSpace( Own(), Cell(), Local() );
 
     // Create a random number generator.
-    const auto local_seed =
-        global_grid.blockId() + ( seed % ( global_grid.blockId() + 1 ) );
+    const auto local_seed = seed + global_grid.blockId();
     using rnd_type = Kokkos::Random_XorShift64_Pool<ExecutionSpace>;
     // FIXME: remove when 4.7 required
 #if ( KOKKOS_VERSION < 40700 )
@@ -249,8 +248,7 @@ void createParticles(
     auto owned_cells = local_grid.indexSpace( Own(), Cell(), Local() );
 
     // Create a random number generator.
-    const auto local_seed =
-        global_grid.blockId() + ( seed % ( global_grid.blockId() + 1 ) );
+    const auto local_seed = seed + global_grid.blockId();
     using rnd_type = Kokkos::Random_XorShift64_Pool<ExecutionSpace>;
     // FIXME: remove when 4.7 required
 #if ( KOKKOS_VERSION < 40700 )
