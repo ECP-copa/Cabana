@@ -83,8 +83,14 @@ void performanceTest( std::ostream& stream,
         uint64_t seed = global_grid->blockId() +
                         ( 19383747 % ( global_grid->blockId() + 1 ) );
         using rnd_type = Kokkos::Random_XorShift64_Pool<memory_space>;
+        // FIXME: remove when 4.7 required
+#if ( KOKKOS_VERSION < 40700 )
         rnd_type pool;
         pool.init( seed, ghosted_space.size() );
+#else
+        rnd_type pool( seed, ghosted_space.size() );
+#endif
+
         Kokkos::parallel_for(
             "random_complex_grid",
             createExecutionPolicy( owned_space, exec_space() ),
