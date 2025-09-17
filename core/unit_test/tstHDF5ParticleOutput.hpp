@@ -31,15 +31,15 @@
 
 #include <mpi.h>
 
-#include <memory>
-
 namespace Test
 {
 
 template <class SliceType1, class SliceType2>
 void checkScalar( SliceType1 write, SliceType2 read )
 {
-    for ( std::size_t p = 0; p < write.size(); ++p )
+    EXPECT_EQ( write.size(), read.size() );
+
+    for ( std::size_t p = 0; p < write.size() && p < read.size(); ++p )
     {
         EXPECT_EQ( write( p ), read( p ) );
     }
@@ -48,12 +48,16 @@ void checkScalar( SliceType1 write, SliceType2 read )
 template <class SliceType1, class SliceType2>
 void checkVector( SliceType1 write, SliceType2 read )
 {
-    for ( std::size_t p = 0; p < write.size(); ++p )
+    EXPECT_EQ( write.size(), read.size() );
+    EXPECT_EQ( write.extent( 2 ), read.extent( 2 ) );
+
+    for ( std::size_t p = 0; p < write.size() && p < read.size(); ++p )
     {
         // TODO: update when testing for Views.
-        for ( std::size_t d = 0; d < write.extent( 2 ); ++d )
+        for ( std::size_t d = 0; d < write.extent( 2 ) && d < read.extent( 2 );
+              ++d )
         {
-            EXPECT_DOUBLE_EQ( write( p, d ), read( p, d ) );
+            EXPECT_EQ( write( p, d ), read( p, d ) );
         }
     }
 }
@@ -61,14 +65,22 @@ void checkVector( SliceType1 write, SliceType2 read )
 template <class SliceType1, class SliceType2>
 void checkMatrix( SliceType1 write, SliceType2 read )
 {
-    for ( std::size_t p = 0; p < write.size(); ++p )
+    EXPECT_EQ( write.size(), read.size() );
+    EXPECT_EQ( write.extent( 2 ), read.extent( 2 ) );
+    EXPECT_EQ( write.extent( 3 ), read.extent( 3 ) );
+
+    for ( std::size_t p = 0; p < write.size() && p < read.size(); ++p )
     {
         // TODO: update when testing for Views.
-        for ( std::size_t d1 = 0; d1 < write.extent( 2 ); ++d1 )
-            for ( std::size_t d2 = 0; d2 < write.extent( 3 ); ++d2 )
+        for ( std::size_t d1 = 0;
+              d1 < write.extent( 2 ) && d1 < read.extent( 2 ); ++d1 )
+        {
+            for ( std::size_t d2 = 0;
+                  d2 < write.extent( 3 ) && d2 < read.extent( 3 ); ++d2 )
             {
-                EXPECT_FLOAT_EQ( write( p, d1, d2 ), read( p, d1, d2 ) );
+                EXPECT_EQ( write( p, d1, d2 ), read( p, d1, d2 ) );
             }
+        }
     }
 }
 //---------------------------------------------------------------------------//
@@ -137,28 +149,28 @@ void writeReadTest( const Kokkos::Array<double, Dim> low_corner,
         h5_config, "particles", MPI_COMM_WORLD, step, coords.size(),
         coords.label(), time_read, coords_read );
     checkVector( coords_mirror, coords_read );
-    EXPECT_DOUBLE_EQ( time, time_read );
+    EXPECT_EQ( time, time_read );
 
     Cabana::Experimental::HDF5ParticleOutput::readTimeStep(
         h5_config, "particles", MPI_COMM_WORLD, step, coords.size(),
         ids.label(), time_read, ids_read );
     checkScalar( ids_mirror, ids_read );
-    EXPECT_DOUBLE_EQ( time, time_read );
+    EXPECT_EQ( time, time_read );
 
     Cabana::Experimental::HDF5ParticleOutput::readTimeStep(
         h5_config, "particles", MPI_COMM_WORLD, step, coords.size(),
         vec.label(), time_read, vec_read );
     checkVector( vec_mirror, vec_read );
-    EXPECT_DOUBLE_EQ( time, time_read );
+    EXPECT_EQ( time, time_read );
 
     Cabana::Experimental::HDF5ParticleOutput::readTimeStep(
         h5_config, "particles", MPI_COMM_WORLD, step, coords.size(),
         matrix.label(), time_read, matrix_read );
     checkMatrix( matrix_mirror, matrix_read );
-    EXPECT_DOUBLE_EQ( time, time_read );
+    EXPECT_EQ( time, time_read );
 
     // Move the particles and write again.
-    double time_step_size = 0.32;
+    const double time_step_size = 0.32;
     time += time_step_size;
     ++step;
     for ( std::size_t p = 0; p < num_particle; ++p )
@@ -174,7 +186,7 @@ void writeReadTest( const Kokkos::Array<double, Dim> low_corner,
         h5_config, "particles-update", MPI_COMM_WORLD, step, coords_read.size(),
         coords.label(), time_read, coords_read );
     checkVector( coords_mirror, coords_read );
-    EXPECT_DOUBLE_EQ( time, time_read );
+    EXPECT_EQ( time, time_read );
 
     // Now check writing only positions.
     Cabana::Experimental::HDF5ParticleOutput::writeTimeStep(
@@ -186,7 +198,7 @@ void writeReadTest( const Kokkos::Array<double, Dim> low_corner,
         h5_config, "positions_only", MPI_COMM_WORLD, step, coords_read.size(),
         coords.label(), time_read, coords_read );
     checkVector( coords_mirror, coords_read );
-    EXPECT_DOUBLE_EQ( time, time_read );
+    EXPECT_EQ( time, time_read );
 }
 
 //---------------------------------------------------------------------------//
