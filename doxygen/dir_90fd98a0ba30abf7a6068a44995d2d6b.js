@@ -25,7 +25,7 @@ var dir_90fd98a0ba30abf7a6068a44995d2d6b =
     [ "Cabana_Sort.hpp", "Cabana__Sort_8hpp.html", "Cabana__Sort_8hpp" ],
     [ "Cabana_Tuple.hpp", "Cabana__Tuple_8hpp.html", "Cabana__Tuple_8hpp" ],
     [ "Cabana_Types.hpp", "Cabana__Types_8hpp.html", "Cabana__Types_8hpp" ],
-    [ "Cabana_Utils.hpp", "Cabana__Utils_8hpp.html", null ],
+    [ "Cabana_Utils.hpp", "Cabana__Utils_8hpp.html", "Cabana__Utils_8hpp" ],
     [ "Cabana_VerletList.hpp", "Cabana__VerletList_8hpp.html", "Cabana__VerletList_8hpp" ],
     [ "Cabana_Version.hpp", "Cabana__Version_8hpp.html", "Cabana__Version_8hpp" ]
 ];

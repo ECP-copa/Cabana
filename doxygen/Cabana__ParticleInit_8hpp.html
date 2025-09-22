@@ -116,6 +116,7 @@ $(function(){initNavTree('Cabana__ParticleInit_8hpp.html',''); initResizable(tru
 <code>#include &lt;Kokkos_Random.hpp&gt;</code><br />
 <code>#include &lt;<a class="el" href="Cabana__ParticleList_8hpp_source.html">Cabana_ParticleList.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="Cabana__Slice_8hpp_source.html">Cabana_Slice.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="Cabana__Utils_8hpp_source.html">Cabana_Utils.hpp</a>&gt;</code><br />
 <code>#include &lt;random&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -123,87 +124,91 @@ Include dependency graph for Cabana_ParticleInit.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="Cabana__ParticleInit_8hpp__incl.png" border="0" usemap="#acore_2src_2Cabana__ParticleInit_8hpp" alt=""/></div>
 <map name="acore_2src_2Cabana__ParticleInit_8hpp" id="acore_2src_2Cabana__ParticleInit_8hpp">
-<area shape="rect" title="Particle creation utilities." alt="" coords="823,5,996,54"/>
-<area shape="rect" title=" " alt="" coords="226,490,355,520"/>
-<area shape="poly" title=" " alt="" coords="823,34,702,39,550,50,383,71,300,86,218,105,180,112,143,115,75,121,47,129,26,141,13,162,8,193,8,351,13,383,28,410,50,432,78,451,110,466,144,478,212,493,211,498,143,483,108,471,75,456,46,436,23,413,8,385,3,351,3,193,8,160,23,137,45,124,74,116,142,110,179,106,217,99,298,81,383,65,550,44,702,33,823,29"/>
-<area shape="rect" title=" " alt="" coords="229,102,379,132"/>
-<area shape="poly" title=" " alt="" coords="823,45,398,105,394,105,394,100,397,99,822,40"/>
-<area shape="rect" href="Cabana__ParticleList_8hpp.html" title="Application&#45;level particle storage and single particle access." alt="" coords="1114,102,1281,132"/>
-<area shape="poly" title=" " alt="" coords="991,52,1136,95,1134,100,989,57"/>
-<area shape="rect" title=" " alt="" coords="1072,490,1158,520"/>
-<area shape="poly" title=" " alt="" coords="996,36,1208,57,1461,91,1578,113,1674,137,1740,163,1759,177,1765,193,1765,351,1763,372,1757,388,1748,402,1735,412,1703,428,1665,445,1624,459,1569,470,1433,488,1290,499,1174,505,1173,499,1290,493,1432,482,1568,465,1622,453,1663,440,1701,424,1732,408,1744,398,1753,386,1758,371,1760,351,1760,194,1754,181,1737,167,1673,142,1577,118,1460,97,1207,63,996,41"/>
-<area shape="rect" href="Cabana__Slice_8hpp.html" title="Slice a single particle property from an AoSoA." alt="" coords="542,257,669,287"/>
-<area shape="poly" title=" " alt="" coords="881,57,637,250,633,245,878,52"/>
-<area shape="rect" title=" " alt="" coords="1800,102,1869,132"/>
-<area shape="poly" title=" " alt="" coords="996,31,1145,37,1341,49,1561,69,1782,99,1786,100,1785,105,1781,105,1560,75,1341,54,1145,42,996,36"/>
-<area shape="rect" href="Cabana__AoSoA_8hpp.html" title="Array&#45;of&#45;Struct&#45;of&#45;Arrays particle data structure." alt="" coords="736,180,877,209"/>
-<area shape="poly" title=" " alt="" coords="1124,135,893,179,892,174,1123,130"/>
-<area shape="rect" href="Cabana__MemberTypes_8hpp.html" title="AoSoA tuple member types." alt="" coords="1434,413,1624,442"/>
-<area shape="poly" title=" " alt="" coords="1248,130,1302,148,1365,175,1430,211,1488,255,1519,291,1535,334,1536,350,1535,365,1534,397,1528,397,1529,364,1531,350,1529,336,1514,293,1485,259,1427,215,1363,180,1300,153,1247,135"/>
-<area shape="poly" title=" " alt="" coords="1272,130,1342,149,1414,177,1522,231,1572,260,1616,291,1649,325,1659,343,1666,362,1668,382,1664,402,1654,423,1638,444,1614,457,1570,468,1442,485,1296,497,1174,504,1173,499,1296,491,1442,480,1569,462,1612,452,1634,440,1649,420,1659,400,1662,381,1661,363,1655,345,1644,328,1613,295,1570,264,1519,235,1412,182,1341,154,1271,135"/>
-<area shape="rect" title=" " alt="" coords="43,335,101,365"/>
-<area shape="poly" title=" " alt="" coords="1113,122,885,128,741,137,590,149,442,167,308,190,196,221,152,239,118,259,104,272,94,288,81,321,76,319,89,285,100,269,114,255,150,234,194,216,307,185,442,161,589,144,740,131,884,123,1113,116"/>
-<area shape="rect" href="Cabana__SoA_8hpp.html" title="Struct&#45;of&#45;Arrays for building AoSoA." alt="" coords="1222,335,1346,365"/>
-<area shape="poly" title=" " alt="" coords="1214,130,1232,152,1249,178,1263,215,1274,253,1284,319,1279,320,1268,255,1258,217,1244,181,1228,155,1210,134"/>
-<area shape="rect" href="Cabana__Tuple_8hpp.html" title="Tuple of single particle information to build AoSoA." alt="" coords="1309,257,1443,287"/>
-<area shape="poly" title=" " alt="" coords="1223,130,1257,151,1292,178,1328,211,1357,244,1353,247,1324,215,1289,182,1254,156,1220,134"/>
-<area shape="rect" href="Cabana__Fields_8hpp.html" title="Particle field types and common field examples." alt="" coords="1000,180,1136,209"/>
-<area shape="poly" title=" " alt="" coords="1174,135,1106,174,1104,169,1172,130"/>
-<area shape="rect" title=" " alt="" coords="1160,180,1234,209"/>
-<area shape="poly" title=" " alt="" coords="1200,132,1200,164,1195,164,1195,132"/>
-<area shape="poly" title=" " alt="" coords="736,201,595,207,430,219,286,236,237,247,211,259,193,281,181,302,175,323,173,344,183,390,206,441,223,463,246,480,243,484,220,467,202,444,178,392,168,345,170,322,176,300,189,278,208,255,235,242,285,231,430,213,595,202,736,195"/>
-<area shape="poly" title=" " alt="" coords="878,199,1224,229,1383,244,1456,255,1486,286,1507,324,1521,363,1528,397,1523,398,1515,364,1502,326,1482,289,1453,260,1383,250,1224,234,877,204"/>
-<area shape="rect" title=" " alt="" coords="1499,490,1560,520"/>
-<area shape="poly" title=" " alt="" coords="878,199,1235,227,1404,243,1487,255,1550,281,1596,310,1615,329,1632,352,1660,412,1664,428,1660,444,1643,464,1621,479,1575,497,1573,493,1619,474,1639,460,1655,441,1659,428,1655,414,1627,354,1611,333,1593,315,1548,286,1486,260,1403,249,1235,233,878,204"/>
-<area shape="poly" title=" " alt="" coords="823,208,1092,477,1088,481,819,212"/>
-<area shape="poly" title=" " alt="" coords="770,212,658,254,656,249,768,207"/>
-<area shape="rect" href="Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="538,335,675,365"/>
-<area shape="poly" title=" " alt="" coords="790,212,639,327,635,323,787,208"/>
-<area shape="rect" href="Cabana__Utils_8hpp.html" title="Cabana utilities." alt="" coords="775,335,902,365"/>
-<area shape="poly" title=" " alt="" coords="812,209,835,319,830,320,807,210"/>
-<area shape="rect" href="Cabana__Index_8hpp.html" title="AoSoA indexing." alt="" coords="298,335,464,365"/>
-<area shape="poly" title=" " alt="" coords="736,208,637,227,583,241,530,260,418,329,415,324,528,255,581,236,636,222,735,202"/>
-<area shape="poly" title=" " alt="" coords="736,203,409,226,251,242,195,251,162,260,141,273,122,289,92,324,88,320,118,285,138,268,160,255,194,246,250,237,408,220,735,197"/>
-<area shape="poly" title=" " alt="" coords="878,199,999,218,1068,233,1134,255,1200,288,1255,323,1252,328,1198,292,1132,260,1066,239,998,223,877,204"/>
-<area shape="poly" title=" " alt="" coords="878,203,1294,257,1293,263,877,208"/>
-<area shape="rect" href="Cabana__PerformanceTraits_8hpp.html" title="Default settings for execution spaces." alt="" coords="221,257,467,287"/>
-<area shape="poly" title=" " alt="" coords="736,210,446,257,446,252,735,205"/>
-<area shape="rect" title=" " alt="" coords="744,257,803,287"/>
-<area shape="poly" title=" " alt="" coords="803,211,788,244,783,242,798,209"/>
-<area shape="poly" title=" " alt="" coords="1532,443,1532,475,1527,475,1527,443"/>
-<area shape="poly" title=" " alt="" coords="1452,446,1173,496,1172,491,1451,440"/>
-<area shape="poly" title=" " alt="" coords="542,284,387,308,322,323,300,330,289,337,279,352,273,369,269,406,274,443,283,475,277,476,269,444,264,406,268,368,274,350,285,333,297,325,320,317,386,303,541,279"/>
-<area shape="poly" title=" " alt="" coords="670,280,785,301,915,332,994,360,1054,387,1113,413,1191,440,1271,460,1351,475,1484,496,1483,501,1351,481,1270,465,1190,445,1111,418,1051,391,992,365,914,338,784,306,669,286"/>
-<area shape="poly" title=" " alt="" coords="631,285,661,306,689,333,705,364,711,391,719,417,726,429,739,440,762,453,796,464,881,481,974,492,1056,498,1056,504,974,497,880,486,794,469,760,458,736,445,722,432,714,419,706,393,700,366,685,337,657,310,628,290"/>
-<area shape="poly" title=" " alt="" coords="608,288,609,319,603,319,603,288"/>
-<area shape="poly" title=" " alt="" coords="650,285,781,327,780,332,648,290"/>
-<area shape="poly" title=" " alt="" coords="564,290,438,332,437,327,562,285"/>
-<area shape="rect" href="Cabana__TypeTraits_8hpp_source.html" title=" " alt="" coords="328,413,522,442"/>
-<area shape="poly" title=" " alt="" coords="589,289,528,337,453,404,449,400,525,333,585,285"/>
-<area shape="poly" title=" " alt="" coords="541,285,117,345,116,340,541,280"/>
-<area shape="poly" title=" " alt="" coords="602,367,576,406,558,427,536,445,496,466,454,481,371,500,370,494,452,476,494,461,533,440,554,423,572,402,597,364"/>
-<area shape="poly" title=" " alt="" coords="617,363,648,403,670,423,695,440,723,451,763,461,860,478,1056,497,1056,503,860,483,761,466,722,456,692,445,667,428,644,406,613,367"/>
-<area shape="poly" title=" " alt="" coords="865,363,1077,480,1075,485,863,368"/>
-<area shape="rect" title=" " alt="" coords="750,413,925,442"/>
-<area shape="poly" title=" " alt="" coords="841,365,841,397,835,397,836,365"/>
-<area shape="poly" title=" " alt="" coords="363,367,340,388,318,414,305,445,297,476,292,475,300,443,314,411,336,384,360,363"/>
-<area shape="poly" title=" " alt="" coords="416,363,520,401,650,440,762,462,874,478,1056,497,1056,502,873,484,761,467,649,445,518,406,414,368"/>
-<area shape="poly" title=" " alt="" coords="392,364,412,398,407,401,387,367"/>
-<area shape="poly" title=" " alt="" coords="401,445,331,485,328,480,399,441"/>
-<area shape="poly" title=" " alt="" coords="523,437,1056,495,1056,500,523,442"/>
-<area shape="poly" title=" " alt="" coords="1254,368,1157,407,1096,428,1033,445,942,462,848,476,664,495,499,504,371,507,371,501,498,499,664,490,848,471,941,457,1031,440,1094,423,1155,402,1252,363"/>
-<area shape="poly" title=" " alt="" coords="1331,363,1470,405,1468,410,1329,368"/>
-<area shape="poly" title=" " alt="" coords="1306,363,1424,440,1492,480,1489,485,1421,445,1303,367"/>
-<area shape="poly" title=" " alt="" coords="1289,365,1288,403,1283,425,1273,444,1252,464,1227,479,1174,498,1172,493,1225,475,1249,460,1269,441,1278,423,1283,402,1283,365"/>
-<area shape="rect" title=" " alt="" coords="1203,413,1258,442"/>
-<area shape="poly" title=" " alt="" coords="1276,367,1252,401,1247,398,1272,364"/>
-<area shape="poly" title=" " alt="" coords="1338,290,1210,337,1075,394,999,425,938,445,782,474,625,493,483,502,371,506,371,501,483,497,625,487,781,469,937,440,997,420,1073,389,1208,333,1336,285"/>
-<area shape="poly" title=" " alt="" coords="1392,286,1506,399,1503,403,1388,289"/>
-<area shape="poly" title=" " alt="" coords="1440,285,1491,302,1547,328,1598,364,1620,386,1638,411,1643,424,1642,437,1628,459,1603,477,1575,491,1573,486,1601,472,1624,455,1637,435,1638,425,1634,414,1616,389,1594,368,1544,332,1489,307,1438,290"/>
-<area shape="poly" title=" " alt="" coords="1378,287,1374,324,1361,366,1336,411,1298,444,1268,462,1236,476,1174,495,1173,490,1234,471,1265,457,1294,440,1332,407,1356,364,1368,323,1373,287"/>
-<area shape="poly" title=" " alt="" coords="1360,290,1315,327,1311,323,1357,286"/>
-<area shape="poly" title=" " alt="" coords="288,290,252,308,236,321,224,336,211,364,207,387,212,412,224,441,238,462,256,479,252,483,233,465,219,444,207,414,202,388,205,362,219,334,232,317,249,304,286,285"/>
-<area shape="poly" title=" " alt="" coords="394,285,544,328,542,333,393,290"/>
+<area shape="rect" title="Particle creation utilities." alt="" coords="1246,5,1418,54"/>
+<area shape="rect" title=" " alt="" coords="499,490,627,520"/>
+<area shape="poly" title=" " alt="" coords="1246,35,928,45,725,56,516,71,322,92,160,119,97,135,49,153,20,173,12,183,10,193,10,351,10,402,17,421,34,440,66,459,113,473,170,484,234,492,367,501,483,502,483,508,367,506,233,498,169,490,112,479,64,464,31,444,13,424,5,403,4,351,4,193,7,181,16,169,47,148,95,130,159,113,321,86,516,65,724,50,928,40,1246,30"/>
+<area shape="rect" title=" " alt="" coords="1796,102,1946,132"/>
+<area shape="poly" title=" " alt="" coords="1419,42,1781,99,1780,104,1418,47"/>
+<area shape="rect" href="Cabana__ParticleList_8hpp.html" title="Application&#45;level particle storage and single particle access." alt="" coords="1249,102,1416,132"/>
+<area shape="poly" title=" " alt="" coords="1335,55,1335,86,1330,86,1330,55"/>
+<area shape="rect" title=" " alt="" coords="1068,490,1154,520"/>
+<area shape="poly" title=" " alt="" coords="1419,43,1525,66,1636,99,1685,119,1725,141,1752,165,1759,179,1762,193,1762,351,1761,403,1753,424,1735,445,1704,458,1649,469,1491,486,1314,498,1170,504,1170,499,1314,492,1490,481,1648,463,1702,452,1732,440,1749,421,1756,402,1756,351,1756,193,1754,181,1747,169,1722,145,1683,124,1635,104,1524,71,1418,48"/>
+<area shape="rect" href="Cabana__Slice_8hpp.html" title="Slice a single particle property from an AoSoA." alt="" coords="813,257,940,287"/>
+<area shape="poly" title=" " alt="" coords="1247,47,1173,65,1090,92,1006,131,966,154,930,182,905,212,888,244,884,242,901,209,926,178,963,150,1003,126,1088,87,1171,60,1245,42"/>
+<area shape="rect" href="Cabana__Utils_8hpp.html" title="Cabana utilities." alt="" coords="189,335,316,365"/>
+<area shape="poly" title=" " alt="" coords="1246,52,999,105,889,122,791,129,621,131,543,139,464,159,424,176,383,197,339,225,294,259,282,272,272,288,260,321,255,319,268,286,278,269,291,255,336,221,380,193,422,171,463,154,542,134,621,126,791,124,888,117,998,99,1245,47"/>
+<area shape="rect" title=" " alt="" coords="1970,102,2039,132"/>
+<area shape="poly" title=" " alt="" coords="1419,34,1657,55,1804,74,1955,99,1954,104,1804,79,1657,60,1419,39"/>
+<area shape="rect" href="Cabana__AoSoA_8hpp.html" title="Array&#45;of&#45;Struct&#45;of&#45;Arrays particle data structure." alt="" coords="940,180,1082,209"/>
+<area shape="poly" title=" " alt="" coords="1272,135,1086,178,1085,173,1271,130"/>
+<area shape="rect" href="Cabana__MemberTypes_8hpp.html" title="AoSoA tuple member types." alt="" coords="1532,413,1722,442"/>
+<area shape="poly" title=" " alt="" coords="1398,130,1450,148,1499,178,1539,213,1564,247,1584,285,1605,334,1617,366,1625,396,1619,398,1612,367,1601,336,1579,287,1560,250,1535,217,1496,182,1447,153,1396,135"/>
+<area shape="poly" title=" " alt="" coords="1268,135,1225,153,1206,166,1189,181,1174,203,1167,222,1164,271,1164,351,1161,386,1152,421,1128,478,1123,476,1147,419,1156,385,1159,351,1159,271,1161,221,1169,200,1185,178,1203,162,1223,148,1266,130"/>
+<area shape="rect" title=" " alt="" coords="392,335,449,365"/>
+<area shape="poly" title=" " alt="" coords="1248,123,1056,132,939,141,817,154,700,172,594,195,507,224,473,241,447,259,437,272,430,288,423,320,418,319,425,286,432,269,444,255,471,236,505,219,592,190,699,167,816,149,938,136,1056,127,1248,117"/>
+<area shape="rect" href="Cabana__SoA_8hpp.html" title="Struct&#45;of&#45;Arrays for building AoSoA." alt="" coords="1351,335,1476,365"/>
+<area shape="poly" title=" " alt="" coords="1390,130,1431,149,1452,162,1469,178,1490,204,1503,230,1505,257,1495,288,1478,311,1458,328,1454,324,1475,307,1490,286,1499,256,1497,231,1485,207,1465,181,1448,166,1429,153,1387,135"/>
+<area shape="rect" href="Cabana__Tuple_8hpp.html" title="Tuple of single particle information to build AoSoA." alt="" coords="1346,257,1481,287"/>
+<area shape="poly" title=" " alt="" coords="1384,130,1419,149,1435,162,1448,178,1453,195,1452,213,1437,246,1432,244,1447,212,1448,196,1443,181,1431,166,1416,153,1381,135"/>
+<area shape="rect" href="Cabana__Fields_8hpp.html" title="Particle field types and common field examples." alt="" coords="1199,180,1335,209"/>
+<area shape="poly" title=" " alt="" coords="1322,134,1291,169,1287,166,1318,131"/>
+<area shape="rect" title=" " alt="" coords="1359,180,1433,209"/>
+<area shape="poly" title=" " alt="" coords="1346,131,1377,166,1373,169,1342,134"/>
+<area shape="poly" title=" " alt="" coords="940,200,819,204,675,214,540,232,486,245,447,260,413,280,387,304,380,317,376,331,377,346,383,363,409,402,444,435,481,461,517,481,514,486,479,466,440,439,405,406,378,366,371,347,370,330,375,315,383,300,410,276,444,255,485,239,539,227,674,209,819,199,940,194"/>
+<area shape="poly" title=" " alt="" coords="1082,199,1321,224,1432,239,1493,255,1535,286,1569,324,1597,363,1616,397,1611,400,1592,366,1565,327,1531,290,1491,260,1431,245,1321,229,1082,205"/>
+<area shape="rect" title=" " alt="" coords="1597,490,1657,520"/>
+<area shape="poly" title=" " alt="" coords="1082,199,1321,221,1443,237,1530,255,1578,270,1615,284,1649,303,1690,333,1723,357,1751,382,1761,395,1766,410,1765,426,1757,444,1740,464,1719,479,1673,497,1671,493,1716,474,1737,460,1753,441,1760,425,1761,411,1756,398,1748,386,1720,362,1687,337,1646,308,1613,289,1577,275,1529,260,1442,242,1320,227,1082,204"/>
+<area shape="poly" title=" " alt="" coords="1039,208,1065,228,1088,256,1101,284,1110,314,1119,375,1120,431,1117,475,1112,475,1115,431,1114,375,1104,315,1096,286,1083,259,1062,232,1035,212"/>
+<area shape="poly" title=" " alt="" coords="987,212,916,252,914,247,984,208"/>
+<area shape="rect" href="Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="536,335,672,365"/>
+<area shape="poly" title=" " alt="" coords="949,213,877,232,801,260,776,274,751,289,656,331,654,326,748,285,773,269,799,255,875,227,947,207"/>
+<area shape="poly" title=" " alt="" coords="940,199,796,201,620,210,453,228,386,242,336,260,316,272,298,289,271,323,266,320,295,285,313,268,334,255,384,237,452,223,620,205,796,196,940,193"/>
+<area shape="rect" href="Cabana__Index_8hpp.html" title="AoSoA indexing." alt="" coords="857,335,1023,365"/>
+<area shape="poly" title=" " alt="" coords="1007,211,956,322,951,320,1002,209"/>
+<area shape="poly" title=" " alt="" coords="940,199,825,204,691,213,567,231,517,244,482,260,466,272,453,288,433,322,429,319,448,285,462,269,479,255,516,239,566,226,691,208,825,198,940,194"/>
+<area shape="poly" title=" " alt="" coords="1049,207,1364,327,1362,332,1047,212"/>
+<area shape="poly" title=" " alt="" coords="1083,206,1332,253,1331,258,1082,212"/>
+<area shape="rect" href="Cabana__PerformanceTraits_8hpp.html" title="Default settings for execution spaces." alt="" coords="492,257,738,287"/>
+<area shape="poly" title=" " alt="" coords="940,212,705,257,704,251,939,207"/>
+<area shape="rect" title=" " alt="" coords="1015,257,1074,287"/>
+<area shape="poly" title=" " alt="" coords="1020,209,1034,242,1030,244,1015,211"/>
+<area shape="poly" title=" " alt="" coords="1630,443,1630,475,1624,475,1624,443"/>
+<area shape="poly" title=" " alt="" coords="1532,445,1170,498,1169,493,1531,440"/>
+<area shape="poly" title=" " alt="" coords="851,290,762,341,708,376,655,415,618,448,587,481,583,477,614,444,652,411,705,372,759,337,848,285"/>
+<area shape="poly" title=" " alt="" coords="920,285,1390,440,1583,491,1581,496,1389,445,918,290"/>
+<area shape="poly" title=" " alt="" coords="941,284,991,302,1015,316,1037,333,1055,358,1073,396,1104,475,1099,477,1068,398,1050,361,1033,337,1012,320,989,307,940,289"/>
+<area shape="poly" title=" " alt="" coords="826,290,670,333,669,328,824,285"/>
+<area shape="poly" title=" " alt="" coords="813,284,332,342,331,336,812,279"/>
+<area shape="poly" title=" " alt="" coords="890,286,921,321,917,325,886,289"/>
+<area shape="rect" href="Cabana__TypeTraits_8hpp_source.html" title=" " alt="" coords="727,413,921,442"/>
+<area shape="poly" title=" " alt="" coords="871,288,848,336,832,398,827,397,843,334,866,286"/>
+<area shape="poly" title=" " alt="" coords="813,287,465,344,464,339,812,281"/>
+<area shape="poly" title=" " alt="" coords="596,366,583,388,572,413,566,445,565,475,559,475,561,444,567,412,578,385,592,364"/>
+<area shape="poly" title=" " alt="" coords="619,363,659,403,686,423,716,440,759,457,804,470,896,489,982,498,1052,502,1052,507,981,504,895,494,803,476,757,462,714,445,683,428,656,407,615,367"/>
+<area shape="poly" title=" " alt="" coords="268,363,311,401,368,440,426,465,484,484,483,489,424,470,366,445,308,405,265,367"/>
+<area shape="poly" title=" " alt="" coords="309,363,468,400,663,440,878,473,1053,495,1052,500,877,478,663,445,467,405,308,368"/>
+<area shape="rect" title=" " alt="" coords="122,413,297,442"/>
+<area shape="poly" title=" " alt="" coords="247,367,228,400,223,397,242,364"/>
+<area shape="rect" title=" " alt="" coords="44,413,98,442"/>
+<area shape="poly" title=" " alt="" coords="219,368,113,412,111,407,217,363"/>
+<area shape="poly" title=" " alt="" coords="870,368,795,387,716,415,651,449,596,484,593,479,648,444,714,410,793,382,869,363"/>
+<area shape="poly" title=" " alt="" coords="958,363,1043,440,1085,478,1082,482,1040,444,954,367"/>
+<area shape="poly" title=" " alt="" coords="920,368,860,406,857,402,917,363"/>
+<area shape="poly" title=" " alt="" coords="776,446,627,488,625,483,774,440"/>
+<area shape="poly" title=" " alt="" coords="879,440,1053,486,1052,491,878,446"/>
+<area shape="poly" title=" " alt="" coords="1352,368,1184,405,978,445,798,474,643,496,642,491,797,469,977,440,1183,399,1351,363"/>
+<area shape="poly" title=" " alt="" coords="1455,363,1574,405,1572,410,1453,368"/>
+<area shape="poly" title=" " alt="" coords="1430,363,1470,399,1522,440,1588,480,1585,485,1519,445,1467,403,1426,367"/>
+<area shape="poly" title=" " alt="" coords="1398,367,1348,405,1283,445,1226,470,1170,490,1168,485,1224,465,1280,440,1345,400,1395,363"/>
+<area shape="rect" title=" " alt="" coords="1402,413,1457,442"/>
+<area shape="poly" title=" " alt="" coords="1419,365,1426,397,1421,398,1414,366"/>
+<area shape="poly" title=" " alt="" coords="1351,290,1180,338,1078,373,979,415,957,430,935,445,859,469,782,486,708,497,643,503,643,498,707,492,781,481,858,464,933,440,954,426,976,410,1076,368,1178,332,1350,285"/>
+<area shape="poly" title=" " alt="" coords="1435,285,1597,401,1594,406,1432,290"/>
+<area shape="poly" title=" " alt="" coords="1482,279,1546,293,1616,317,1651,335,1683,356,1712,381,1736,411,1741,424,1741,437,1727,458,1701,476,1672,490,1670,486,1699,472,1723,455,1736,435,1736,425,1731,414,1708,385,1680,360,1648,339,1614,322,1544,298,1481,284"/>
+<area shape="poly" title=" " alt="" coords="1397,290,1143,483,1140,479,1394,285"/>
+<area shape="poly" title=" " alt="" coords="1416,288,1416,319,1411,319,1411,288"/>
+<area shape="poly" title=" " alt="" coords="581,290,550,309,537,322,527,336,520,354,517,372,521,410,533,445,548,476,543,478,528,447,516,411,512,372,515,352,522,334,533,318,547,305,578,285"/>
+<area shape="poly" title=" " alt="" coords="616,288,611,320,606,319,610,287"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -240,35 +245,46 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:afd47c2b676d6596f92183e6c07dcfbc8" id="r_afd47c2b676d6596f92183e6c07dcfbc8"><td class="memTemplParams" colspan="2"><a id="afd47c2b676d6596f92183e6c07dcfbc8" name="afd47c2b676d6596f92183e6c07dcfbc8"></a>
-template&lt;class ArrayType&gt; </td></tr>
-<tr class="memitem:afd47c2b676d6596f92183e6c07dcfbc8"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Cabana::Impl::copyArray</b> (ArrayType corner)</td></tr>
-<tr class="memdesc:afd47c2b676d6596f92183e6c07dcfbc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy array (std, c-array) into Kokkos::Array for potential device use. <br /></td></tr>
-<tr class="separator:afd47c2b676d6596f92183e6c07dcfbc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a9c418e8de2a8cc415fca572a44f4ae" id="r_a6a9c418e8de2a8cc415fca572a44f4ae"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class InitFunctor, class ParticleListType, class ArrayType&gt; </td></tr>
-<tr class="memitem:a6a9c418e8de2a8cc415fca572a44f4ae"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a6a9c418e8de2a8cc415fca572a44f4ae">Cabana::createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a>, ExecutionSpace exec_space, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, const std::size_t num_particles, const ArrayType box_min, const ArrayType box_max, const std::size_t previous_num_particles=0, const bool shrink_to_fit=true, const uint64_t seed=342343901, typename std::enable_if&lt; <a class="el" href="structCabana_1_1is__particle__list.html">is_particle_list</a>&lt; ParticleListType &gt;::value, int &gt;::type *=0)</td></tr>
-<tr class="memdesc:a6a9c418e8de2a8cc415fca572a44f4ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles given an initialization functor.  <br /></td></tr>
-<tr class="separator:a6a9c418e8de2a8cc415fca572a44f4ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24ec5c5bb6dac97cbc833cfafb4dd037" id="r_a24ec5c5bb6dac97cbc833cfafb4dd037"><td class="memTemplParams" colspan="2">template&lt;class InitFunctor, class ParticleListType, class ArrayType&gt; </td></tr>
-<tr class="memitem:a24ec5c5bb6dac97cbc833cfafb4dd037"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a24ec5c5bb6dac97cbc833cfafb4dd037">Cabana::createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, const std::size_t num_particles, const ArrayType box_min, const ArrayType box_max, const std::size_t previous_num_particles=0, const bool shrink_to_fit=true, const uint64_t seed=342343901)</td></tr>
-<tr class="memdesc:a24ec5c5bb6dac97cbc833cfafb4dd037"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles given an initialization functor.  <br /></td></tr>
-<tr class="separator:a24ec5c5bb6dac97cbc833cfafb4dd037"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5974645edaa6d0ab40737c15b26026d" id="r_ae5974645edaa6d0ab40737c15b26026d"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class PositionType, class ArrayType&gt; </td></tr>
-<tr class="memitem:ae5974645edaa6d0ab40737c15b26026d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ae5974645edaa6d0ab40737c15b26026d">Cabana::createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a>, ExecutionSpace exec_space, PositionType &amp;positions, const std::size_t num_particles, const ArrayType box_min, const ArrayType box_max, const std::size_t previous_num_particles=0, const uint64_t seed=342343901, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:ae5974645edaa6d0ab40737c15b26026d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles.  <br /></td></tr>
-<tr class="separator:ae5974645edaa6d0ab40737c15b26026d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af769ed0be27ed435e3c26b52711b8826" id="r_af769ed0be27ed435e3c26b52711b8826"><td class="memTemplParams" colspan="2">template&lt;class PositionType, class ArrayType&gt; </td></tr>
-<tr class="memitem:af769ed0be27ed435e3c26b52711b8826"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#af769ed0be27ed435e3c26b52711b8826">Cabana::createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, PositionType &amp;positions, const std::size_t num_particles, const ArrayType box_min, const ArrayType box_max, const std::size_t previous_num_particles=0, const uint64_t seed=342343901, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:af769ed0be27ed435e3c26b52711b8826"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles.  <br /></td></tr>
-<tr class="separator:af769ed0be27ed435e3c26b52711b8826"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0c4bf4f3365c05b7e56452d0dd7b0ff" id="r_ac0c4bf4f3365c05b7e56452d0dd7b0ff"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class InitFunctor, class ParticleListType, class PositionTag, class ArrayType&gt; </td></tr>
-<tr class="memitem:ac0c4bf4f3365c05b7e56452d0dd7b0ff"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ac0c4bf4f3365c05b7e56452d0dd7b0ff">Cabana::createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, ExecutionSpace exec_space, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, PositionTag position_tag, const std::size_t num_particles, const double min_dist, const ArrayType box_min, const ArrayType box_max, const std::size_t previous_num_particles=0, const bool shrink_to_fit=true, const uint64_t seed=342343901, typename std::enable_if&lt; <a class="el" href="structCabana_1_1is__particle__list.html">is_particle_list</a>&lt; ParticleListType &gt;::value, int &gt;::type *=0)</td></tr>
-<tr class="memdesc:ac0c4bf4f3365c05b7e56452d0dd7b0ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles with minimum separation.  <br /></td></tr>
-<tr class="separator:ac0c4bf4f3365c05b7e56452d0dd7b0ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a370d939addeb7bb7dc2600f6d793f053" id="r_a370d939addeb7bb7dc2600f6d793f053"><td class="memTemplParams" colspan="2">template&lt;class InitFunctor, class ParticleListType, class PositionTag, class ArrayType&gt; </td></tr>
-<tr class="memitem:a370d939addeb7bb7dc2600f6d793f053"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a370d939addeb7bb7dc2600f6d793f053">Cabana::createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, PositionTag position_tag, const std::size_t num_particles, const double min_dist, const ArrayType box_min, const ArrayType box_max, const std::size_t previous_num_particles=0, const bool shrink_to_fit=true, const uint64_t seed=342343901)</td></tr>
-<tr class="memdesc:a370d939addeb7bb7dc2600f6d793f053"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles with minimum separation.  <br /></td></tr>
-<tr class="separator:a370d939addeb7bb7dc2600f6d793f053"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b2671b1bc9dec4a8b1359bedde822d6" id="r_a9b2671b1bc9dec4a8b1359bedde822d6"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class InitFunctor, class ParticleListType, template&lt; class, std::size_t, class... &gt; class ArrayType, class Scalar, std::size_t NumSpaceDim, class... Args&gt; </td></tr>
+<tr class="memitem:a9b2671b1bc9dec4a8b1359bedde822d6"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a9b2671b1bc9dec4a8b1359bedde822d6">Cabana::createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a>, ExecutionSpace exec_space, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, const std::size_t num_particles, const ArrayType&lt; Scalar, NumSpaceDim &gt; box_min, const ArrayType&lt; Scalar, NumSpaceDim &gt; box_max, const std::size_t previous_num_particles=0, const bool shrink_to_fit=true, const uint64_t seed=342343901, typename std::enable_if&lt; <a class="el" href="structCabana_1_1is__particle__list.html">is_particle_list</a>&lt; ParticleListType &gt;::value, int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a9b2671b1bc9dec4a8b1359bedde822d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles given an initialization functor.  <br /></td></tr>
+<tr class="separator:a9b2671b1bc9dec4a8b1359bedde822d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a583b9b91774baa84b4cf9c7329f5e060" id="r_a583b9b91774baa84b4cf9c7329f5e060"><td class="memTemplParams" colspan="2">template&lt;class InitFunctor, class ParticleListType, template&lt; class, std::size_t, class... &gt; class ArrayType, class Scalar, std::size_t NumSpaceDim, class... Args&gt; </td></tr>
+<tr class="memitem:a583b9b91774baa84b4cf9c7329f5e060"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a583b9b91774baa84b4cf9c7329f5e060">Cabana::createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, const std::size_t num_particles, const ArrayType&lt; Scalar, NumSpaceDim &gt; box_min, const ArrayType&lt; Scalar, NumSpaceDim &gt; box_max, const std::size_t previous_num_particles=0, const bool shrink_to_fit=true, const uint64_t seed=342343901)</td></tr>
+<tr class="memdesc:a583b9b91774baa84b4cf9c7329f5e060"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles given an initialization functor.  <br /></td></tr>
+<tr class="separator:a583b9b91774baa84b4cf9c7329f5e060"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae30d1ef7fbc683accab91198f9f4fc9b" id="r_ae30d1ef7fbc683accab91198f9f4fc9b"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class PositionType, template&lt; class, std::size_t, class... &gt; class ArrayType, class Scalar, std::size_t NumSpaceDim, class... Args&gt; </td></tr>
+<tr class="memitem:ae30d1ef7fbc683accab91198f9f4fc9b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ae30d1ef7fbc683accab91198f9f4fc9b">Cabana::createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a>, ExecutionSpace exec_space, PositionType &amp;positions, const std::size_t num_particles, const ArrayType&lt; Scalar, NumSpaceDim &gt; box_min, const ArrayType&lt; Scalar, NumSpaceDim &gt; box_max, const std::size_t previous_num_particles=0, const uint64_t seed=342343901, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:ae30d1ef7fbc683accab91198f9f4fc9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles.  <br /></td></tr>
+<tr class="separator:ae30d1ef7fbc683accab91198f9f4fc9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf29cebb06e9ef6549b88f8cd5203c8b" id="r_abf29cebb06e9ef6549b88f8cd5203c8b"><td class="memTemplParams" colspan="2">template&lt;class PositionType, template&lt; class, std::size_t, class... &gt; class ArrayType, class Scalar, std::size_t NumSpaceDim, class... Args&gt; </td></tr>
+<tr class="memitem:abf29cebb06e9ef6549b88f8cd5203c8b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#abf29cebb06e9ef6549b88f8cd5203c8b">Cabana::createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, PositionType &amp;positions, const std::size_t num_particles, const ArrayType&lt; Scalar, NumSpaceDim &gt; box_min, const ArrayType&lt; Scalar, NumSpaceDim &gt; box_max, const std::size_t previous_num_particles=0, const uint64_t seed=342343901, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:abf29cebb06e9ef6549b88f8cd5203c8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles.  <br /></td></tr>
+<tr class="separator:abf29cebb06e9ef6549b88f8cd5203c8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd5f1181821db2d1c60f2f781421e243" id="r_acd5f1181821db2d1c60f2f781421e243"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class PositionType, class Scalar&gt; </td></tr>
+<tr class="memitem:acd5f1181821db2d1c60f2f781421e243"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#acd5f1181821db2d1c60f2f781421e243">Cabana::createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, ExecutionSpace exec_space, PositionType &amp;positions, const std::size_t num_particles, const Scalar box_min[3], const Scalar box_max[3], const std::size_t previous_num_particles=0, const uint64_t seed=342343901)</td></tr>
+<tr class="memdesc:acd5f1181821db2d1c60f2f781421e243"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles.  <br /></td></tr>
+<tr class="separator:acd5f1181821db2d1c60f2f781421e243"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78d34d4150b74a2f908736ef2556d77d" id="r_a78d34d4150b74a2f908736ef2556d77d"><td class="memTemplParams" colspan="2">template&lt;class PositionType, class Scalar&gt; </td></tr>
+<tr class="memitem:a78d34d4150b74a2f908736ef2556d77d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a78d34d4150b74a2f908736ef2556d77d">Cabana::createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, PositionType &amp;positions, const std::size_t num_particles, const Scalar box_min[3], const Scalar box_max[3], const std::size_t previous_num_particles=0, const uint64_t seed=342343901)</td></tr>
+<tr class="memdesc:a78d34d4150b74a2f908736ef2556d77d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles.  <br /></td></tr>
+<tr class="separator:a78d34d4150b74a2f908736ef2556d77d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1a2dac93a3ad6a0f7b4c18505034a4e" id="r_ac1a2dac93a3ad6a0f7b4c18505034a4e"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class InitFunctor, class ParticleListType, class PositionTag, template&lt; class, std::size_t, class... &gt; class ArrayType, class Scalar, std::size_t NumSpaceDim, class... Args&gt; </td></tr>
+<tr class="memitem:ac1a2dac93a3ad6a0f7b4c18505034a4e"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ac1a2dac93a3ad6a0f7b4c18505034a4e">Cabana::createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, ExecutionSpace exec_space, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, PositionTag position_tag, const std::size_t num_particles, const double min_dist, const ArrayType&lt; Scalar, NumSpaceDim &gt; box_min, const ArrayType&lt; Scalar, NumSpaceDim &gt; box_max, const std::size_t previous_num_particles=0, const bool shrink_to_fit=true, const uint64_t seed=342343901, typename std::enable_if&lt; <a class="el" href="structCabana_1_1is__particle__list.html">is_particle_list</a>&lt; ParticleListType &gt;::value, int &gt;::type *=0)</td></tr>
+<tr class="memdesc:ac1a2dac93a3ad6a0f7b4c18505034a4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles with minimum separation.  <br /></td></tr>
+<tr class="separator:ac1a2dac93a3ad6a0f7b4c18505034a4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e0f00a2e33a94fb0968b984f8ad98f4" id="r_a2e0f00a2e33a94fb0968b984f8ad98f4"><td class="memTemplParams" colspan="2">template&lt;class InitFunctor, class ParticleListType, class PositionTag, template&lt; class, std::size_t, class... &gt; class ArrayType, class Scalar, std::size_t NumSpaceDim, class... Args&gt; </td></tr>
+<tr class="memitem:a2e0f00a2e33a94fb0968b984f8ad98f4"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a2e0f00a2e33a94fb0968b984f8ad98f4">Cabana::createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, const InitFunctor &amp;create_functor, ParticleListType &amp;particle_list, PositionTag position_tag, const std::size_t num_particles, const double min_dist, const ArrayType&lt; Scalar, NumSpaceDim &gt; box_min, const ArrayType&lt; Scalar, NumSpaceDim &gt; box_max, const std::size_t previous_num_particles=0, const bool shrink_to_fit=true, const uint64_t seed=342343901)</td></tr>
+<tr class="memdesc:a2e0f00a2e33a94fb0968b984f8ad98f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles with minimum separation.  <br /></td></tr>
+<tr class="separator:a2e0f00a2e33a94fb0968b984f8ad98f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e671252eada8128208cd1d430462bcc" id="r_a5e671252eada8128208cd1d430462bcc"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class PositionType, class Scalar&gt; </td></tr>
+<tr class="memitem:a5e671252eada8128208cd1d430462bcc"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a5e671252eada8128208cd1d430462bcc">Cabana::createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, ExecutionSpace exec_space, PositionType &amp;positions, const std::size_t num_particles, const double min_dist, const Scalar box_min[3], const Scalar box_max[3], const std::size_t previous_num_particles=0, const uint64_t seed=342343901)</td></tr>
+<tr class="memdesc:a5e671252eada8128208cd1d430462bcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles.  <br /></td></tr>
+<tr class="separator:a5e671252eada8128208cd1d430462bcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae63c282b6c8bb6ed977e9a627fe2ee35" id="r_ae63c282b6c8bb6ed977e9a627fe2ee35"><td class="memTemplParams" colspan="2">template&lt;class PositionType, class Scalar&gt; </td></tr>
+<tr class="memitem:ae63c282b6c8bb6ed977e9a627fe2ee35"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ae63c282b6c8bb6ed977e9a627fe2ee35">Cabana::createParticles</a> (<a class="el" href="structCabana_1_1InitRandom.html">InitRandom</a> tag, PositionType &amp;positions, const std::size_t num_particles, const double min_dist, const Scalar box_min[3], const Scalar box_max[3], const std::size_t previous_num_particles=0, const uint64_t seed=342343901)</td></tr>
+<tr class="memdesc:ae63c282b6c8bb6ed977e9a627fe2ee35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize random particles.  <br /></td></tr>
+<tr class="separator:ae63c282b6c8bb6ed977e9a627fe2ee35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Particle creation utilities. </p>

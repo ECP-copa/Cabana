@@ -1,5 +1,12 @@
 var NAVTREEINDEX7 =
 {
+"namespaceCabana.html#aefdf5eabe42ed35aa32b9d5b5bdf87f4":[0,0,0,170],
+"namespaceCabana.html#af41e2cfc71aa5fa140bc2332eb8a3a3e":[0,0,0,89],
+"namespaceCabana.html#af4a8672095ebecba36332e0b0ea60f94":[0,0,0,186],
+"namespaceCabana.html#af4ef15a052c4647babb9bb12229b9804":[0,0,0,173],
+"namespaceCabana.html#af5ab274abf8942a7404be03338b0cf68":[0,0,0,102],
+"namespaceCabana.html#afad181bcaca8bec0b53a05927aff3120":[0,0,0,158],
+"namespaceGrid.html":[0,0,1],
 "namespacemembers.html":[0,1,0],
 "namespacemembers_func.html":[0,1,1],
 "namespaces.html":[0,0],
@@ -242,12 +249,5 @@ var NAVTREEINDEX7 =
 "structCabana_1_1Grid_1_1ScalarValueP2G.html#a1d0552f7489c470a536e0e016cc4004f":[1,0,1,2,112,4],
 "structCabana_1_1Grid_1_1ScalarValueP2G.html#ac41244646350191f7d2b26df9dc22c7e":[1,0,1,2,112,1],
 "structCabana_1_1Grid_1_1ScalarValueP2G.html#acc3af119f158e0728d5386fef8b0715f":[1,0,1,2,112,2],
-"structCabana_1_1Grid_1_1ScalarValueP2G.html#adc096171848ec8364e6c5c2c5269e178":[1,0,1,2,112,3],
-"structCabana_1_1Grid_1_1ScalarValueP2G.html#ae4a865bd1d0440b0542993ad4ff06932":[1,0,1,2,112,0],
-"structCabana_1_1Grid_1_1ScatterReduce_1_1Max.html":[1,0,1,2,4,0],
-"structCabana_1_1Grid_1_1ScatterReduce_1_1Min.html":[1,0,1,2,4,1],
-"structCabana_1_1Grid_1_1ScatterReduce_1_1Replace.html":[1,0,1,2,4,2],
-"structCabana_1_1Grid_1_1ScatterReduce_1_1Sum.html":[1,0,1,2,4,3],
-"structCabana_1_1Grid_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html":[1,0,1,2,113,0],
-"structCabana_1_1Grid_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html#a1129dff14d7f371a7ff8037c7f4690fd":[1,0,1,2,113,0,2]
+"structCabana_1_1Grid_1_1ScalarValueP2G.html#adc096171848ec8364e6c5c2c5269e178":[1,0,1,2,112,3]
 };

@@ -1,5 +1,12 @@
 var NAVTREEINDEX8 =
 {
+"structCabana_1_1Grid_1_1ScalarValueP2G.html#ae4a865bd1d0440b0542993ad4ff06932":[1,0,1,2,112,0],
+"structCabana_1_1Grid_1_1ScatterReduce_1_1Max.html":[1,0,1,2,4,0],
+"structCabana_1_1Grid_1_1ScatterReduce_1_1Min.html":[1,0,1,2,4,1],
+"structCabana_1_1Grid_1_1ScatterReduce_1_1Replace.html":[1,0,1,2,4,2],
+"structCabana_1_1Grid_1_1ScatterReduce_1_1Sum.html":[1,0,1,2,4,3],
+"structCabana_1_1Grid_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html":[1,0,1,2,113,0],
+"structCabana_1_1Grid_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html#a1129dff14d7f371a7ff8037c7f4690fd":[1,0,1,2,113,0,2],
 "structCabana_1_1Grid_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html#a25b57ba3bf8f2de6d3ce3a41a7173899":[1,0,1,2,113,0,1],
 "structCabana_1_1Grid_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html#aa202308a6b90bb51df495d89a68ce721":[1,0,1,2,113,0,0],
 "structCabana_1_1Grid_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html#add0dcdf76ddedbb1b9c22216e160526b":[1,0,1,2,113,0,3],
@@ -242,12 +249,5 @@ var NAVTREEINDEX8 =
 "structCabana_1_1Tuple_3_01MemberTypes_3_01Types_8_8_8_01_4_01_4.html":[1,0,1,77],
 "structCabana_1_1Tuple_3_01MemberTypes_3_01Types_8_8_8_01_4_01_4.html#a46904525e75270bf9480f9bfa8d3d6a8":[0,0,0,73,2],
 "structCabana_1_1Tuple_3_01MemberTypes_3_01Types_8_8_8_01_4_01_4.html#a46904525e75270bf9480f9bfa8d3d6a8":[1,0,1,77,2],
-"structCabana_1_1Tuple_3_01MemberTypes_3_01Types_8_8_8_01_4_01_4.html#a5a917c6c0d7d6b3cbadcec203bfc030e":[0,0,0,73,0],
-"structCabana_1_1Tuple_3_01MemberTypes_3_01Types_8_8_8_01_4_01_4.html#a5a917c6c0d7d6b3cbadcec203bfc030e":[1,0,1,77,0],
-"structCabana_1_1Tuple_3_01MemberTypes_3_01Types_8_8_8_01_4_01_4.html#aec3666ca56ea0137f76c05a690844e75":[0,0,0,73,4],
-"structCabana_1_1Tuple_3_01MemberTypes_3_01Types_8_8_8_01_4_01_4.html#aec3666ca56ea0137f76c05a690844e75":[1,0,1,77,4],
-"structCabana_1_1Tuple_3_01MemberTypes_3_01Types_8_8_8_01_4_01_4.html#aeefb2b58077287a88e84cfbb130dbc6d":[0,0,0,73,1],
-"structCabana_1_1Tuple_3_01MemberTypes_3_01Types_8_8_8_01_4_01_4.html#aeefb2b58077287a88e84cfbb130dbc6d":[1,0,1,77,1],
-"structCabana_1_1Tuple_3_01MemberTypes_3_01Types_8_8_8_01_4_01_4.html#af43294cf7f6075161789dbb77f3678cc":[0,0,0,73,3],
-"structCabana_1_1Tuple_3_01MemberTypes_3_01Types_8_8_8_01_4_01_4.html#af43294cf7f6075161789dbb77f3678cc":[1,0,1,77,3]
+"structCabana_1_1Tuple_3_01MemberTypes_3_01Types_8_8_8_01_4_01_4.html#a5a917c6c0d7d6b3cbadcec203bfc030e":[0,0,0,73,0]
 };
