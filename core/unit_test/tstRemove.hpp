@@ -20,9 +20,8 @@
 namespace Test
 {
 
-void testRemoveSlice()
+void testRemoveSlice( const int num_particle, const int max_remove )
 {
-    int num_particle = 200;
     Cabana::AoSoA<Cabana::MemberTypes<int>, TEST_MEMSPACE> aosoa(
         "remove", num_particle );
     auto keep_slice = Cabana::slice<0>( aosoa, "slice" );
@@ -41,7 +40,7 @@ void testRemoveSlice()
     Kokkos::parallel_for(
         "init", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, num_particle ),
         KOKKOS_LAMBDA( const int p ) {
-            if ( p % 2 )
+            if ( p % 2 || p >= max_remove )
             {
                 keep_slice( p ) = 1;
             }
@@ -51,7 +50,7 @@ void testRemoveSlice()
             }
         } );
 
-    int new_num_particle = num_particle / 2;
+    int new_num_particle = num_particle - max_remove / 2;
     Cabana::remove( TEST_EXECSPACE{}, new_num_particle, keep_slice, aosoa );
     EXPECT_EQ( aosoa.size(), new_num_particle );
 
@@ -72,9 +71,8 @@ void testRemoveSlice()
     EXPECT_EQ( aosoa.size(), 0 );
 }
 
-void testRemoveView()
+void testRemoveView( const int num_particle, const int max_remove )
 {
-    int num_particle = 200;
     Cabana::AoSoA<Cabana::MemberTypes<int>, TEST_MEMSPACE> aosoa(
         "remove", num_particle );
     auto keep_slice = Cabana::slice<0>( aosoa, "slice" );
@@ -89,7 +87,7 @@ void testRemoveView()
     Kokkos::parallel_for(
         "init", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, num_particle ),
         KOKKOS_LAMBDA( const int p ) {
-            if ( p % 2 )
+            if ( p % 2 || p >= max_remove )
             {
                 keep_slice( p ) = 1;
                 keep_view( p ) = 1;
@@ -101,7 +99,7 @@ void testRemoveView()
             }
         } );
 
-    int new_num_particle = num_particle / 2;
+    int new_num_particle = num_particle - max_remove / 2;
     Cabana::remove( TEST_EXECSPACE{}, new_num_particle, keep_view, aosoa );
     EXPECT_EQ( aosoa.size(), new_num_particle );
 
@@ -123,8 +121,20 @@ void testRemoveView()
     EXPECT_EQ( aosoa.size(), 0 );
 }
 
-TEST( TEST_CATEGORY, remove_slice_test ) { testRemoveSlice(); }
+TEST( TEST_CATEGORY, remove_slice_test )
+{
+    testRemoveSlice( 200, 200 );
+    testRemoveSlice( 200, 100 );
+    testRemoveSlice( 300, 26 );
+    testRemoveSlice( 300, 270 );
+}
 
-TEST( TEST_CATEGORY, remove_view_test ) { testRemoveView(); }
+TEST( TEST_CATEGORY, remove_view_test )
+{
+    testRemoveView( 200, 200 );
+    testRemoveView( 200, 100 );
+    testRemoveView( 300, 26 );
+    testRemoveView( 300, 270 );
+}
 
 } // namespace Test
