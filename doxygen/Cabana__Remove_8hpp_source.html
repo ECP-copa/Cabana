@@ -138,59 +138,64 @@ $(function(){initNavTree('Cabana__Remove_8hpp_source.html',''); initResizable(tr
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="comment">// Determine the empty particle positions in the compaction zone.</span></div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keywordtype">int</span> num_particles = particles.size();</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="comment">// This View is either empty indices to be filled or the created particle</span></div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="comment">// indices, depending on the ratio of allocated space to the number</span></div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="comment">// created.</span></div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    Kokkos::View&lt;int*, memory_space&gt; indices(</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        Kokkos::ViewAllocateWithoutInitializing( <span class="stringliteral">&quot;empty_or_filled&quot;</span> ),</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        std::min( num_particles - num_particles_ignore - num_keep, num_keep ) );</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keywordtype">int</span> new_num_particles = num_particles_ignore + num_keep;</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="comment">// parallel_scan will break if not keeping any particles.</span></div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keywordflow">if</span> ( num_keep &gt; 0 )</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    {</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        Kokkos::parallel_scan(</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>            <span class="stringliteral">&quot;Cabana::remove::FindEmpty&quot;</span>,</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>            Kokkos::RangePolicy&lt;ExecutionSpace&gt;( exec_space, 0, num_keep ),</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>            KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keywordtype">int</span>&amp; count, <span class="keyword">const</span> <span class="keywordtype">bool</span> final_pass ) {</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>                <span class="keywordflow">if</span> ( !keep_particle( i ) )</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>                {</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>                    <span class="keywordflow">if</span> ( final_pass )</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>                    {</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>                        indices( count ) = i + num_particles_ignore;</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>                    }</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>                    ++count;</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>                }</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>            } );</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        Kokkos::fence();</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <span class="comment">// Compact the list so the it only has real particles.</span></div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        Kokkos::parallel_scan(</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>            <span class="stringliteral">&quot;Cabana::remove::RemoveEmpty&quot;</span>,</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>            Kokkos::RangePolicy&lt;ExecutionSpace&gt;( exec_space, new_num_particles,</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>                                                 num_particles ),</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>            KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keywordtype">int</span>&amp; count, <span class="keyword">const</span> <span class="keywordtype">bool</span> final_pass ) {</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>                <span class="keywordflow">if</span> ( keep_particle( i - num_particles_ignore ) )</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>                {</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>                    <span class="keywordflow">if</span> ( final_pass )</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>                    {</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>                        particles.setTuple( indices( count ),</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>                                            particles.getTuple( i ) );</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>                    }</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>                    ++count;</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>                }</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>            } );</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    }</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    particles.resize( new_num_particles );</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    <span class="keywordflow">if</span> ( shrink_to_fit )</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        particles.shrinkToFit();</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>}</div>
-</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="comment">// Nothing to remove.</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="keywordflow">if</span> ( num_particles == num_particles_ignore + num_keep )</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="comment">// This View is either empty indices to be filled or the created particle</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="comment">// indices, depending on the ratio of allocated space to the number</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="comment">// created.</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    Kokkos::View&lt;int*, memory_space&gt; indices(</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        Kokkos::ViewAllocateWithoutInitializing( <span class="stringliteral">&quot;empty_or_filled&quot;</span> ),</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        std::min( num_particles - num_particles_ignore - num_keep, num_keep ) );</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keywordtype">int</span> new_num_particles = num_particles_ignore + num_keep;</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="comment">// parallel_scan will break if not keeping any particles.</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <span class="keywordflow">if</span> ( num_keep &gt; 0 )</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    {</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        Kokkos::parallel_scan(</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>            <span class="stringliteral">&quot;Cabana::remove::FindEmpty&quot;</span>,</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>            Kokkos::RangePolicy&lt;ExecutionSpace&gt;( exec_space, 0, num_keep ),</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>            KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keywordtype">int</span>&amp; count, <span class="keyword">const</span> <span class="keywordtype">bool</span> final_pass ) {</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>                <span class="keywordflow">if</span> ( !keep_particle( i ) )</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>                {</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>                    <span class="keywordflow">if</span> ( final_pass )</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>                    {</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>                        indices( count ) = i + num_particles_ignore;</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>                    }</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>                    ++count;</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>                }</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>            } );</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        Kokkos::fence();</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>        <span class="comment">// Compact the list so the it only has real particles.</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        Kokkos::parallel_scan(</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>            <span class="stringliteral">&quot;Cabana::remove::RemoveEmpty&quot;</span>,</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>            Kokkos::RangePolicy&lt;ExecutionSpace&gt;( exec_space, new_num_particles,</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>                                                 num_particles ),</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>            KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keywordtype">int</span>&amp; count, <span class="keyword">const</span> <span class="keywordtype">bool</span> final_pass ) {</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>                <span class="keywordflow">if</span> ( keep_particle( i - num_particles_ignore ) )</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>                {</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>                    <span class="keywordflow">if</span> ( final_pass )</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>                    {</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>                        particles.setTuple( indices( count ),</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>                                            particles.getTuple( i ) );</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>                    }</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>                    ++count;</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>                }</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>            } );</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    }</div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>} <span class="comment">// end namespace Cabana</span></div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span><span class="preprocessor">#endif </span><span class="comment">// end CABANA_REMOVE_HPP</span></div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    particles.resize( new_num_particles );</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keywordflow">if</span> ( shrink_to_fit )</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>        particles.shrinkToFit();</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>}</div>
+</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>} <span class="comment">// end namespace Cabana</span></div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span> </div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span><span class="preprocessor">#endif </span><span class="comment">// end CABANA_REMOVE_HPP</span></div>
 <div class="ttc" id="aCabana__AoSoA_8hpp_html"><div class="ttname"><a href="Cabana__AoSoA_8hpp.html">Cabana_AoSoA.hpp</a></div><div class="ttdoc">Array-of-Struct-of-Arrays particle data structure.</div></div>
 <div class="ttc" id="aCabana__DeepCopy_8hpp_html"><div class="ttname"><a href="Cabana__DeepCopy_8hpp.html">Cabana_DeepCopy.hpp</a></div><div class="ttdoc">AoSoA and slice extensions for Kokkos deep copy and mirrors.</div></div>
 <div class="ttc" id="aCabana__Slice_8hpp_html"><div class="ttname"><a href="Cabana__Slice_8hpp.html">Cabana_Slice.hpp</a></div><div class="ttdoc">Slice a single particle property from an AoSoA.</div></div>
