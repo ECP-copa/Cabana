@@ -77,7 +77,7 @@ struct CountSendsAndCreateSteeringAlgorithm<Kokkos::Cuda>
 #endif // end KOKKOS_ENABLE_CUDA
 #ifdef KOKKOS_ENABLE_HIP
 template <>
-struct CountSendsAndCreateSteeringAlgorithm<Kokkos::Experimental::HIP>
+struct CountSendsAndCreateSteeringAlgorithm<Kokkos::HIP>
 {
     using type = CountSendsAndCreateSteeringAtomic;
 };
