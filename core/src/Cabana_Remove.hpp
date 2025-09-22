@@ -46,6 +46,11 @@ void remove( const ExecutionSpace& exec_space, const int num_keep,
 
     // Determine the empty particle positions in the compaction zone.
     int num_particles = particles.size();
+
+    // Nothing to remove.
+    if ( num_particles == num_particles_ignore + num_keep )
+        return;
+
     // This View is either empty indices to be filled or the created particle
     // indices, depending on the ratio of allocated space to the number
     // created.
