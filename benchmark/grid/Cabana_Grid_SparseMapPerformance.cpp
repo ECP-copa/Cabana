@@ -53,9 +53,12 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
         positions[p] = position_type(
             Kokkos::ViewAllocateWithoutInitializing( "positions" ),
             problem_sizes[p] );
+        // FIXME: remove when createParticles variadic template is removed.
+        auto kokkos_low_corner = Cabana::copyArray( global_low_corner );
+        auto kokkos_high_corner = Cabana::copyArray( global_high_corner );
         Cabana::createParticles( Cabana::InitRandom(), positions[p],
-                                 problem_sizes[p], global_low_corner,
-                                 global_high_corner );
+                                 problem_sizes[p], kokkos_low_corner,
+                                 kokkos_high_corner );
     }
     // Number of runs in the test loops.
     int num_run = 10;

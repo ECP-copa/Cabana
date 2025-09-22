@@ -70,7 +70,8 @@ inline void writeXdmfHeader( const char* xml_file_name, hsize_t dims0,
     xdmf_file << "      <Topology TopologyType=\"Polyvertex\"";
     xdmf_file << " Dimensions=\"" << dims0 << "\"";
     xdmf_file << " NodesPerElement=\"1\"> </Topology>\n";
-    xdmf_file << "      <Geometry Type=\"XYZ\">\n";
+    xdmf_file << "      <Geometry Type=\"" << ( dims1 == 3 ? "XYZ" : "XY" )
+              << "\">\n";
     xdmf_file << "         <DataItem Dimensions=\"" << dims0 << " " << dims1;
     xdmf_file << "\" NumberType=\"" << dtype;
     xdmf_file << "\" Precision=\"" << precision;
@@ -703,12 +704,12 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
     std::vector<int>().swap( all_offsets );
 
     dimsf[0] = n_global;
-    dimsf[1] = 3;
+    dimsf[1] = coords_slice.extent( 2 );
 
     filespace_id = H5Screate_simple( 2, dimsf, nullptr );
 
     count[0] = n_local;
-    count[1] = 3;
+    count[1] = coords_slice.extent( 2 );
 
     memspace_id = H5Screate_simple( 2, count, nullptr );
 
