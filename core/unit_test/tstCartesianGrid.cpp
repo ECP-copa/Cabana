@@ -19,7 +19,7 @@
 namespace Test
 {
 
-TEST( CartesianGrid, Test )
+TEST( CartesianGrid, 3d )
 {
     double min[3] = { -1.0, -0.5, -0.6 };
     double max[3] = { 2.5, 1.5, 1.9 };
@@ -56,6 +56,37 @@ TEST( CartesianGrid, Test )
     EXPECT_EQ( ic, 6 );
     EXPECT_EQ( jc, 15 );
     EXPECT_EQ( kc, 9 );
+}
+
+TEST( CartesianGrid, 2d )
+{
+    double min[2] = { -1.0, -0.5 };
+    double max[2] = { 2.5, 1.5 };
+    double delta[2] = { 0.5, 0.125 };
+
+    Cabana::Impl::CartesianGrid<double, 2> grid( min, max, delta );
+
+    int nx, ny;
+    grid.numCells( nx, ny );
+    EXPECT_EQ( nx, 7 );
+    EXPECT_EQ( ny, 16 );
+    auto total = grid.totalNumCells();
+    EXPECT_EQ( total, nx * ny );
+
+    Kokkos::Array<double, 2> xp = { -0.9, 1.4 };
+    Kokkos::Array<int, 2> ic;
+    grid.locatePoint( xp, ic );
+    EXPECT_EQ( ic[0], 0 );
+    EXPECT_EQ( ic[1], 15 );
+
+    double min_dist = grid.minDistanceToPoint( xp, ic );
+    EXPECT_DOUBLE_EQ( min_dist, 0.0 );
+
+    xp[0] = 2.5;
+    xp[1] = 1.5;
+    grid.locatePoint( xp, ic );
+    EXPECT_EQ( ic[0], 6 );
+    EXPECT_EQ( ic[1], 15 );
 }
 
 } // end namespace Test
