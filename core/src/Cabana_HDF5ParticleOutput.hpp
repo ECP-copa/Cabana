@@ -41,6 +41,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <string>
 #include <type_traits>
@@ -57,16 +58,20 @@ namespace Impl
 {
 // XDMF file creation routines
 //! \cond Impl
-inline void writeXdmfHeader( const char* xml_file_name, hsize_t dims0,
-                             hsize_t dims1, const char* dtype, uint precision,
-                             const char* h5_file_name, const char* coords_name )
+inline void writeXdmfHeader( const char* xml_file_name, const double time,
+                             hsize_t dims0, hsize_t dims1, const char* dtype,
+                             uint precision, const char* h5_file_name,
+                             const char* coords_name )
 {
     std::ofstream xdmf_file( xml_file_name, std::ios::trunc );
+    // Set precision to guarantee that conversion to text and back is exact.
+    xdmf_file.precision( std::numeric_limits<double>::max_digits10 );
     xdmf_file << "<?xml version=\"1.0\" ?>\n";
     xdmf_file << "<!DOCTYPE Xdmf SYSTEM \"Xdmf.dtd\" []>\n";
     xdmf_file << "<Xdmf Version=\"2.0\">\n";
     xdmf_file << "  <Domain>\n";
     xdmf_file << "    <Grid Name=\"points\" GridType=\"Uniform\">\n";
+    xdmf_file << "      <Time Value=\"" << time << "\"/>\n";
     xdmf_file << "      <Topology TopologyType=\"Polyvertex\"";
     xdmf_file << " Dimensions=\"" << dims0 << "\"";
     xdmf_file << " NodesPerElement=\"1\"> </Topology>\n";
@@ -744,8 +749,8 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
 
     if ( 0 == comm_rank )
     {
-        Impl::writeXdmfHeader( filename_xdmf.str().c_str(), dimsf[0], dimsf[1],
-                               dtype.c_str(), precision,
+        Impl::writeXdmfHeader( filename_xdmf.str().c_str(), time, dimsf[0],
+                               dimsf[1], dtype.c_str(), precision,
                                filename_hdf5.str().c_str(),
                                coords_slice.label().c_str() );
     }
