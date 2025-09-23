@@ -236,7 +236,8 @@ int migrateCount( const LocalGridType& local_grid,
 
   \return Distributor for later migration.
 */
-template <class LocalGridType, class PositionSliceType>
+template <class CommSpaceType = Mpi, class LocalGridType,
+          class PositionSliceType>
 Cabana::Distributor<typename PositionSliceType::memory_space>
 createParticleDistributor( const LocalGridType& local_grid,
                            PositionSliceType& positions )
@@ -260,7 +261,7 @@ createParticleDistributor( const LocalGridType& local_grid,
                                   positions );
 
     // Create the Cabana distributor.
-    Cabana::Distributor<memory_space> distributor(
+    Cabana::Distributor<memory_space, CommSpaceType> distributor(
         local_grid.globalGrid().comm(), destinations, topology );
     return distributor;
 }
@@ -284,7 +285,8 @@ createParticleDistributor( const LocalGridType& local_grid,
   ghosted halo.
   \return Whether any particle migration occurred.
 */
-template <class LocalGridType, class ParticlePositions, class ParticleContainer>
+template <class CommSpaceType = Mpi, class LocalGridType,
+          class ParticlePositions, class ParticleContainer>
 bool particleMigrate( const LocalGridType& local_grid,
                       const ParticlePositions& positions,
                       ParticleContainer& particles, const int min_halo_width,
@@ -304,7 +306,8 @@ bool particleMigrate( const LocalGridType& local_grid,
             return false;
     }
 
-    auto distributor = createParticleDistributor( local_grid, positions );
+    auto distributor =
+        createParticleDistributor<CommSpaceType>( local_grid, positions );
 
     // Redistribute the particles.
     migrate( distributor, particles );
@@ -332,7 +335,8 @@ bool particleMigrate( const LocalGridType& local_grid,
   ghosted halo.
   \return Whether any particle migration occurred.
 */
-template <class LocalGridType, class ParticlePositions, class ParticleContainer>
+template <class CommSpaceType = Mpi, class LocalGridType,
+          class ParticlePositions, class ParticleContainer>
 bool particleMigrate( const LocalGridType& local_grid,
                       const ParticlePositions& positions,
                       const ParticleContainer& src_particles,
@@ -357,7 +361,8 @@ bool particleMigrate( const LocalGridType& local_grid,
         }
     }
 
-    auto distributor = createParticleDistributor( local_grid, positions );
+    auto distributor =
+        createParticleDistributor<CommSpaceType>( local_grid, positions );
 
     // Resize as needed.
     dst_particles.resize( distributor.totalNumImport() );
