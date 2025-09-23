@@ -43,7 +43,7 @@ namespace Grid
   backend.
 */
 template <class MemorySpace>
-class Halo<MemorySpace, CommSpace::Mpi> : public HaloBase<MemorySpace>
+class Halo<MemorySpace, Mpi> : public HaloBase<MemorySpace>
 {
   public:
     using typename HaloBase<MemorySpace>::memory_space;

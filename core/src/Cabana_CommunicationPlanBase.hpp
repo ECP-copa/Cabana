@@ -16,6 +16,7 @@
 #ifndef CABANA_COMMUNICATIONPLANBASE_HPP
 #define CABANA_COMMUNICATIONPLANBASE_HPP
 
+#include <Cabana_Tags.hpp>
 #include <Cabana_Utils.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -32,32 +33,6 @@
 
 namespace Cabana
 {
-//---------------------------------------------------------------------------//
-// Communication plan types.
-//---------------------------------------------------------------------------//
-/*!
-    \brief MPI comm tag - default.
-*/
-struct Mpi
-{
-};
-
-//---------------------------------------------------------------------------//
-// Communication driver construction type tags.
-//---------------------------------------------------------------------------//
-/*!
-    \brief Export-based tag - default.
-*/
-struct Export
-{
-};
-
-/*!
-    \brief Import-based tag.
-*/
-struct Import
-{
-};
 //---------------------------------------------------------------------------//
 
 namespace Impl

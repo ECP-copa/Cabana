@@ -459,7 +459,7 @@ class Halo3dTypedTest : public ::testing::Test
 };
 
 using CommSpaceTypes =
-    ::testing::Types<CommSpace::Mpi
+    ::testing::Types<Cabana::Mpi
                      // Add additional CommSpace types to test when implemented
                      >;
 

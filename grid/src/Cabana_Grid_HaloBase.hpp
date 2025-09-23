@@ -16,6 +16,7 @@
 #ifndef CABANA_GRID_HALO_HPP
 #define CABANA_GRID_HALO_HPP
 
+#include <Cabana_Tags.hpp>
 #include <Cabana_Grid_Array.hpp>
 #include <Cabana_Grid_IndexSpace.hpp>
 
@@ -36,18 +37,6 @@ namespace Cabana
 {
 namespace Grid
 {
-namespace CommSpace
-{
-//---------------------------------------------------------------------------//
-// Communication backend types.
-//---------------------------------------------------------------------------//
-/*!
-    \brief MPI comm tag - default.
-*/
-struct Mpi
-{
-};
-} // end namespace CommSpace
 
 //---------------------------------------------------------------------------//
 // Halo exchange patterns.
@@ -782,7 +771,7 @@ struct ArrayPackMemorySpace
 };
 
 // Forward declaration of the primary grid Halo template.
-template <class MemorySpace, class CommSpaceType = CommSpace::Mpi>
+template <class MemorySpace, class CommSpaceType = Mpi>
 class Halo;
 
 } // end namespace Grid
@@ -806,7 +795,7 @@ namespace Grid
   \param arrays The arrays over which to build the halo.
   \return Shared pointer to a Halo.
 */
-template <class CommSpaceType = CommSpace::Mpi, class Pattern,
+template <class CommSpaceType = Mpi, class Pattern,
           class... ArrayTypes>
 auto createHalo( const Pattern& pattern, const int width,
                  const ArrayTypes&... arrays )
