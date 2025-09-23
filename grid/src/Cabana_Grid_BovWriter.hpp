@@ -17,7 +17,7 @@
 #define CABANA_GRID_BOVWRITER_HPP
 
 #include <Cabana_Grid_Array.hpp>
-#include <Cabana_Grid_Halo.hpp>
+#include <Cabana_Grid_HaloBase.hpp>
 #include <Cabana_Grid_IndexSpace.hpp>
 #include <Cabana_Grid_MpiTraits.hpp>
 #include <Cabana_Grid_Types.hpp>

@@ -16,7 +16,7 @@
 #include <Cabana_SoA.hpp>
 #include <Cabana_Tuple.hpp>
 
-#include <Cabana_Grid_Halo.hpp> // to get the pattern and tags defined here
+#include <Cabana_Grid_HaloBase.hpp> // to get the pattern and tags defined here
 #include <Cabana_Grid_SparseArray.hpp>
 #include <Cabana_Grid_SparseIndexSpace.hpp>
 #include <Cabana_Grid_Types.hpp>

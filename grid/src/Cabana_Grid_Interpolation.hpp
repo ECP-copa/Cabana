@@ -17,7 +17,7 @@
 #define CABANA_GRID_INTERPOLATION_HPP
 
 #include <Cabana_Grid_Array.hpp>
-#include <Cabana_Grid_Halo.hpp>
+#include <Cabana_Grid_HaloBase.hpp>
 #include <Cabana_Grid_LocalMesh.hpp>
 #include <Cabana_Grid_Splines.hpp>
 #include <Cabana_Grid_Types.hpp>

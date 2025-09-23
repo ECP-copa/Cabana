@@ -12,7 +12,7 @@
 #include <Cabana_Grid_Array.hpp>
 #include <Cabana_Grid_GlobalGrid.hpp>
 #include <Cabana_Grid_GlobalMesh.hpp>
-#include <Cabana_Grid_Halo.hpp>
+#include <Cabana_Grid_HaloBase.hpp>
 #include <Cabana_Grid_IndexConversion.hpp>
 #include <Cabana_Grid_IndexSpace.hpp>
 #include <Cabana_Grid_LocalGrid.hpp>

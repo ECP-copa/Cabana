@@ -18,6 +18,7 @@
 
 #include <Cabana_Grid_LocalMesh.hpp>
 #include <Cabana_Grid_Types.hpp>
+#include <Cabana_Tags.hpp>
 
 #include <Cabana_Distributor.hpp>
 #include <Cabana_Slice.hpp>
@@ -34,7 +35,7 @@ namespace Grid
 /*!
   \brief Global particle communication based on the background grid.
 */
-template <class MemorySpace, class LocalGridType>
+template <class MemorySpace, class LocalGridType, class CommSpaceType = Mpi>
 class GlobalParticleComm
 {
   public:
@@ -46,6 +47,8 @@ class GlobalParticleComm
     using global_grid_type = Cabana::Grid::GlobalGrid<mesh_type>;
     //! Kokkos memory space.
     using memory_space = MemorySpace;
+    //! Communication backend
+    using commspace_type = CommSpaceType;
 
     //! Local boundary View type.
     using corner_view_type =
@@ -282,7 +285,8 @@ class GlobalParticleComm
     template <class AoSoAType>
     void migrate( MPI_Comm comm, AoSoAType& aosoa )
     {
-        Cabana::Distributor<memory_space> distributor( comm, _destinations );
+        Cabana::Distributor<memory_space, commspace_type> distributor(
+            comm, _destinations );
         Cabana::migrate( distributor, aosoa );
     }
 
@@ -305,10 +309,11 @@ class GlobalParticleComm
   \brief Create global linked cell binning.
   \return Shared pointer to a GlobalParticleComm.
 */
-template <class MemorySpace, class LocalGridType>
+template <class MemorySpace, class LocalGridType, class CommSpaceType = Mpi>
 auto createGlobalParticleComm( const LocalGridType& local_grid )
 {
-    return std::make_shared<GlobalParticleComm<MemorySpace, LocalGridType>>(
+    return std::make_shared<
+        GlobalParticleComm<MemorySpace, LocalGridType, CommSpaceType>>(
         local_grid );
 }
 
