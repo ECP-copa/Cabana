@@ -28,6 +28,7 @@ set(HEADERS_PUBLIC
   Cabana_Slice.hpp
   Cabana_SoA.hpp
   Cabana_Sort.hpp
+  Cabana_Tags.hpp
   Cabana_Tuple.hpp
   Cabana_Types.hpp
   Cabana_Utils.hpp
