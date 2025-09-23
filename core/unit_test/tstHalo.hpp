@@ -713,23 +713,17 @@ void testHaloBuffers( TestTag tag, CommType comm_space, BuildType build_type,
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-// Define the type list
-using HaloTestTypes =
-    ::testing::Types<std::tuple<Cabana::Mpi, Cabana::Export>,
-                     std::tuple<Cabana::Mpi, Cabana::Import>
-                     // Add additional CommSpace types to test when implemented
-                     >;
+using HaloTestTypes = ::testing::Types<std::tuple<Cabana::Mpi, Cabana::Export>,
+                                       std::tuple<Cabana::Mpi, Cabana::Import>>;
 
-// Test fixture template
 template <typename T>
 class HaloTypedTest : public ::testing::Test
 {
-  public:
-    using CommSpace = typename std::tuple_element<0, T>::type;
+  protected:
+    using CommType = typename std::tuple_element<0, T>::type;
     using BuildType = typename std::tuple_element<1, T>::type;
 };
 
-// Declare the parameterized typed test suite
 TYPED_TEST_SUITE_P( HaloTypedTest );
 
 // 'Unique' tests:
@@ -738,18 +732,18 @@ TYPED_TEST_SUITE_P( HaloTypedTest );
 // Behavior, and consequently tests, differ between export/import build type
 TYPED_TEST_P( HaloTypedTest, Unique )
 {
-    using CommType = typename std::tuple_element<0, TypeParam>::type;
-    using BuildType = typename std::tuple_element<1, TypeParam>::type;
-    testHalo( UniqueTestTag{}, CommType(), BuildType(), true );
-    testHaloBuffers( UniqueTestTag{}, CommType(), BuildType(), true );
+    testHalo( UniqueTestTag{}, typename TestFixture::CommType{},
+              typename TestFixture::BuildType{}, true );
+    testHaloBuffers( UniqueTestTag{}, typename TestFixture::CommType{},
+                     typename TestFixture::BuildType{}, true );
 }
 
 TYPED_TEST_P( HaloTypedTest, UniqueNoTopo )
 {
-    using CommType = typename std::tuple_element<0, TypeParam>::type;
-    using BuildType = typename std::tuple_element<1, TypeParam>::type;
-    testHalo( UniqueTestTag{}, CommType(), BuildType(), false );
-    testHaloBuffers( UniqueTestTag{}, CommType(), BuildType(), false );
+    testHalo( UniqueTestTag{}, typename TestFixture::CommType{},
+              typename TestFixture::BuildType{}, false );
+    testHaloBuffers( UniqueTestTag{}, typename TestFixture::CommType{},
+                     typename TestFixture::BuildType{}, false );
 }
 
 // 'All' tests:
@@ -760,28 +754,26 @@ TYPED_TEST_P( HaloTypedTest, UniqueNoTopo )
 // types.
 TYPED_TEST_P( HaloTypedTest, All )
 {
-    using CommType = typename std::tuple_element<0, TypeParam>::type;
-    using BuildType = typename std::tuple_element<1, TypeParam>::type;
-    testHalo( AllTestTag{}, CommType(), BuildType(), true );
-    testHaloBuffers( AllTestTag{}, CommType(), BuildType(), false );
+    testHalo( AllTestTag{}, typename TestFixture::CommType{},
+              typename TestFixture::BuildType{}, true );
+    testHaloBuffers( AllTestTag{}, typename TestFixture::CommType{},
+                     typename TestFixture::BuildType{}, false );
 }
 
 TYPED_TEST_P( HaloTypedTest, AllNoTopo )
 {
-    using CommType = typename std::tuple_element<0, TypeParam>::type;
-    using BuildType = typename std::tuple_element<1, TypeParam>::type;
-    testHalo( AllTestTag{}, CommType(), BuildType(), false );
-    testHaloBuffers( AllTestTag{}, CommType(), BuildType(), false );
+    testHalo( AllTestTag{}, typename TestFixture::CommType{},
+              typename TestFixture::BuildType{}, false );
+    testHaloBuffers( AllTestTag{}, typename TestFixture::CommType{},
+                     typename TestFixture::BuildType{}, false );
 }
 
-// Register tests
 REGISTER_TYPED_TEST_SUITE_P( HaloTypedTest, Unique, UniqueNoTopo, All,
                              AllNoTopo );
 
 // Instantiate the test suite with the type list. Need a trailing comma
 // to avoid an error when compiling with clang++
 INSTANTIATE_TYPED_TEST_SUITE_P( HaloTests, HaloTypedTest, HaloTestTypes, );
-
 //---------------------------------------------------------------------------//
 
 } // end namespace Test

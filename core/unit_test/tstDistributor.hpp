@@ -795,14 +795,10 @@ void test9( const bool use_topology )
 template <typename TestCommSpace>
 class DistributorTypedTest : public ::testing::Test
 {
-  public:
-    using CommSpaceType = TestCommSpace;
 };
 
-using CommSpaceTypes =
-    ::testing::Types<Cabana::Mpi
-                     // Add additional CommSpace types to test when implemented
-                     >;
+// Add additional backends to test when implemented.
+using CommSpaceTypes = ::testing::Types<Cabana::Mpi>;
 
 // Need a trailing comma
 // to avoid an error when compiling with clang++

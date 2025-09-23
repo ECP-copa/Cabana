@@ -454,14 +454,10 @@ void scatterReduceTest( const ReduceFunc& reduce )
 template <typename TestCommSpace>
 class Halo3dTypedTest : public ::testing::Test
 {
-  public:
-    using CommSpaceType = TestCommSpace;
 };
 
-using CommSpaceTypes =
-    ::testing::Types<Cabana::Mpi
-                     // Add additional CommSpace types to test when implemented
-                     >;
+// Add additional backends to test when implemented.
+using CommSpaceTypes = ::testing::Types<Cabana::Mpi>;
 
 // Need a trailing comma
 // to avoid an error when compiling with clang++
