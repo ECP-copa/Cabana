@@ -16,7 +16,6 @@
 #ifndef CABANA_TAGS_HPP
 #define CABANA_TAGS_HPP
 
-
 namespace Cabana
 {
 //---------------------------------------------------------------------------//

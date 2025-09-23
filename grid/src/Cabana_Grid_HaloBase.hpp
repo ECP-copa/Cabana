@@ -16,9 +16,9 @@
 #ifndef CABANA_GRID_HALO_HPP
 #define CABANA_GRID_HALO_HPP
 
-#include <Cabana_Tags.hpp>
 #include <Cabana_Grid_Array.hpp>
 #include <Cabana_Grid_IndexSpace.hpp>
+#include <Cabana_Tags.hpp>
 
 #include <Cabana_ParameterPack.hpp>
 
@@ -795,8 +795,7 @@ namespace Grid
   \param arrays The arrays over which to build the halo.
   \return Shared pointer to a Halo.
 */
-template <class CommSpaceType = Mpi, class Pattern,
-          class... ArrayTypes>
+template <class CommSpaceType = Mpi, class Pattern, class... ArrayTypes>
 auto createHalo( const Pattern& pattern, const int width,
                  const ArrayTypes&... arrays )
 {
