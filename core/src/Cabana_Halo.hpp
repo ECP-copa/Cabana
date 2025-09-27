@@ -107,13 +107,7 @@ class Halo : public CommunicationPlan<MemorySpace>
         : CommunicationPlan<MemorySpace>( comm )
         , _num_local( num_local )
     {
-        if ( element_ids.size() != element_ranks.size() )
-            throw std::runtime_error( "Cabana::Halo (export): ids and ranks "
-                                      "views are different sizes!" );
-
-        auto neighbor_ids = this->createWithTopology(
-            BuildType(), element_ranks, neighbor_ranks );
-        this->createExportSteering( neighbor_ids, element_ranks, element_ids );
+        build( num_local, element_ids, element_ranks, neighbor_ranks );
     }
 
     /*!
@@ -155,13 +149,7 @@ class Halo : public CommunicationPlan<MemorySpace>
         : CommunicationPlan<MemorySpace>( comm )
         , _num_local( num_local )
     {
-        if ( element_ids.size() != element_ranks.size() )
-            throw std::runtime_error( "Cabana::Halo (export): ids and ranks "
-                                      "views are different sizes!" );
-
-        auto neighbor_ids =
-            this->createWithoutTopology( BuildType(), element_ranks );
-        this->createExportSteering( neighbor_ids, element_ranks, element_ids );
+        build( num_local, element_ids, element_ranks );
     }
 
     /*!
@@ -210,17 +198,8 @@ class Halo : public CommunicationPlan<MemorySpace>
           const IdViewType& element_ids, const RankViewType& element_ranks,
           const std::vector<int>& neighbor_ranks )
         : CommunicationPlan<MemorySpace>( comm )
-        , _num_local( num_local )
     {
-        if ( element_ids.size() != element_ranks.size() )
-            throw std::runtime_error( "Cabana::Halo (import): ids and ranks "
-                                      "views are different sizes!" );
-
-        auto neighbor_ids_ranks_indices = this->createWithTopology(
-            BuildType(), element_ranks, element_ids, neighbor_ranks );
-        this->createExportSteering( std::get<0>( neighbor_ids_ranks_indices ),
-                                    std::get<1>( neighbor_ids_ranks_indices ),
-                                    std::get<2>( neighbor_ids_ranks_indices ) );
+        build( num_local, element_ids, element_ranks, neighbor_ranks );
     }
 
     /*!
@@ -259,8 +238,85 @@ class Halo : public CommunicationPlan<MemorySpace>
     Halo( MPI_Comm comm, const std::size_t num_local,
           const IdViewType& element_ids, const RankViewType& element_ranks )
         : CommunicationPlan<MemorySpace>( comm )
-        , _num_local( num_local )
     {
+        build( num_local, element_ids, element_ranks );
+    }
+
+    /*!
+      \brief Neighbor and export rank (re)build interface.
+
+      See corresponding Halo constructor for detail.
+    */
+    template <class IdViewType, class RankViewType, typename T = BuildType,
+              std::enable_if_t<std::is_same<T, Export>::value, int> = 0>
+    void build( const std::size_t num_local, const IdViewType& element_ids,
+                const RankViewType& element_ranks,
+                const std::vector<int>& neighbor_ranks )
+    {
+        _num_local = num_local;
+        if ( element_ids.size() != element_ranks.size() )
+            throw std::runtime_error( "Cabana::Halo (export): ids and ranks "
+                                      "views are different sizes!" );
+
+        auto neighbor_ids = this->createWithTopology(
+            BuildType(), element_ranks, neighbor_ranks );
+        this->createExportSteering( neighbor_ids, element_ranks, element_ids );
+    }
+
+    /*!
+      \brief Export rank (re)build interface.
+
+      See corresponding Halo constructor for detail.
+    */
+    template <class IdViewType, class RankViewType, typename T = BuildType,
+              std::enable_if_t<std::is_same<T, Export>::value, int> = 0>
+    void build( const std::size_t num_local, const IdViewType& element_ids,
+                const RankViewType& element_ranks )
+    {
+        _num_local = num_local;
+        if ( element_ids.size() != element_ranks.size() )
+            throw std::runtime_error( "Cabana::Halo (export): ids and ranks "
+                                      "views are different sizes!" );
+
+        auto neighbor_ids =
+            this->createWithoutTopology( BuildType(), element_ranks );
+        this->createExportSteering( neighbor_ids, element_ranks, element_ids );
+    }
+
+    /*!
+      \brief Neighbor and import rank (re)build interface.
+
+      See corresponding Halo constructor for detail.
+    */
+    template <class IdViewType, class RankViewType, typename T = BuildType,
+              std::enable_if_t<std::is_same<T, Import>::value, int> = 0>
+    void build( const std::size_t num_local, const IdViewType& element_ids,
+                const RankViewType& element_ranks,
+                const std::vector<int>& neighbor_ranks )
+    {
+        _num_local = num_local;
+        if ( element_ids.size() != element_ranks.size() )
+            throw std::runtime_error( "Cabana::Halo (import): ids and ranks "
+                                      "views are different sizes!" );
+
+        auto neighbor_ids_ranks_indices = this->createWithTopology(
+            BuildType(), element_ranks, element_ids, neighbor_ranks );
+        this->createExportSteering( std::get<0>( neighbor_ids_ranks_indices ),
+                                    std::get<1>( neighbor_ids_ranks_indices ),
+                                    std::get<2>( neighbor_ids_ranks_indices ) );
+    }
+
+    /*!
+      \brief Import rank (re)build interface.
+
+      See corresponding Halo constructor for detail.
+    */
+    template <class IdViewType, class RankViewType, typename T = BuildType,
+              std::enable_if_t<std::is_same<T, Import>::value, int> = 0>
+    void build( const std::size_t num_local, const IdViewType& element_ids,
+                const RankViewType& element_ranks )
+    {
+        _num_local = num_local;
         if ( element_ids.size() != element_ranks.size() )
             throw std::runtime_error( "Cabana::Halo (import): ids and ranks "
                                       "views are different sizes!" );
