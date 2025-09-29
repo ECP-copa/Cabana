@@ -2,6 +2,8 @@ var Cabana__NeighborList_8hpp =
 [
     [ "Cabana::FullNeighborTag", "classCabana_1_1FullNeighborTag.html", null ],
     [ "Cabana::HalfNeighborTag", "classCabana_1_1HalfNeighborTag.html", null ],
+    [ "Cabana::SelfNeighborTag", "classCabana_1_1SelfNeighborTag.html", null ],
+    [ "Cabana::NeighborDiscriminator< SelfNeighborTag >", "classCabana_1_1NeighborDiscriminator_3_01SelfNeighborTag_01_4.html", null ],
     [ "Cabana::NeighborDiscriminator< FullNeighborTag >", "classCabana_1_1NeighborDiscriminator_3_01FullNeighborTag_01_4.html", null ],
     [ "Cabana::NeighborDiscriminator< HalfNeighborTag >", "classCabana_1_1NeighborDiscriminator_3_01HalfNeighborTag_01_4.html", null ],
     [ "Cabana::NeighborList< NeighborListType >", "classCabana_1_1NeighborList.html", "classCabana_1_1NeighborList" ],

@@ -116,6 +116,10 @@ $(function(){initNavTree('classCabana_1_1NeighborDiscriminator_3_01FullNeighborT
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
+<tr class="memitem:ab4f0613098c51c1951a81ad7f73de35f" id="r_ab4f0613098c51c1951a81ad7f73de35f"><td class="memTemplParams" colspan="2">template&lt;std::size_t NumSpaceDim&gt; </td></tr>
+<tr class="memitem:ab4f0613098c51c1951a81ad7f73de35f"><td class="memTemplItemLeft" align="right" valign="top">static KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab4f0613098c51c1951a81ad7f73de35f">isValid</a> (const std::size_t p, const Kokkos::Array&lt; double, NumSpaceDim &gt;, const std::size_t n, const Kokkos::Array&lt; double, NumSpaceDim &gt;)</td></tr>
+<tr class="memdesc:ab4f0613098c51c1951a81ad7f73de35f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether neighbor pair is valid.  <br /></td></tr>
+<tr class="separator:ab4f0613098c51c1951a81ad7f73de35f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c1abfa3dd7e4ade467aca5b361acbf8" id="r_a6c1abfa3dd7e4ade467aca5b361acbf8"><td class="memItemLeft" align="right" valign="top">static KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c1abfa3dd7e4ade467aca5b361acbf8">isValid</a> (const std::size_t p, const double, const double, const double, const std::size_t n, const double, const double, const double)</td></tr>
 <tr class="memdesc:a6c1abfa3dd7e4ade467aca5b361acbf8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether neighbor pair is valid.  <br /></td></tr>
 <tr class="separator:a6c1abfa3dd7e4ade467aca5b361acbf8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -124,7 +128,7 @@ Static Public Member Functions</h2></td></tr>
 <div class="textblock"><p>Full list discriminator specialization. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a6c1abfa3dd7e4ade467aca5b361acbf8" name="a6c1abfa3dd7e4ade467aca5b361acbf8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c1abfa3dd7e4ade467aca5b361acbf8">&#9670;&#160;</a></span>isValid()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c1abfa3dd7e4ade467aca5b361acbf8">&#9670;&#160;</a></span>isValid() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -171,6 +175,50 @@ Static Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check whether neighbor pair is valid. </p>
+<p>Full neighbor lists count and store the neighbors of all particles. The only criteria for a potentially valid neighbor is that the particle does not neighbor itself (i.e. the particle index "p" is not the same as the neighbor index "n"). </p>
+
+</div>
+</div>
+<a id="ab4f0613098c51c1951a81ad7f73de35f" name="ab4f0613098c51c1951a81ad7f73de35f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4f0613098c51c1951a81ad7f73de35f">&#9670;&#160;</a></span>isValid() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t NumSpaceDim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static KOKKOS_INLINE_FUNCTION bool <a class="el" href="classCabana_1_1NeighborDiscriminator.html">Cabana::NeighborDiscriminator</a>&lt; <a class="el" href="classCabana_1_1FullNeighborTag.html">FullNeighborTag</a> &gt;::isValid </td>
+          <td>(</td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>p</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Kokkos::Array&lt; double, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Kokkos::Array&lt; double, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
         </tr>
       </table>
   </td>

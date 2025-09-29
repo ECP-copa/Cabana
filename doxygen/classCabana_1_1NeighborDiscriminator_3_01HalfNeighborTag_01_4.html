@@ -116,6 +116,16 @@ $(function(){initNavTree('classCabana_1_1NeighborDiscriminator_3_01HalfNeighborT
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a00e76af62418c2d57755ddba23315040" id="r_a00e76af62418c2d57755ddba23315040"><td class="memTemplParams" colspan="2">template&lt;std::size_t NumSpaceDim&gt; </td></tr>
+<tr class="memitem:a00e76af62418c2d57755ddba23315040"><td class="memTemplItemLeft" align="right" valign="top">static KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a00e76af62418c2d57755ddba23315040">isValid</a> (const std::size_t p, const Kokkos::Array&lt; double, NumSpaceDim &gt; xp, const std::size_t n, const Kokkos::Array&lt; double, NumSpaceDim &gt; xn)</td></tr>
+<tr class="memdesc:a00e76af62418c2d57755ddba23315040"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether neighbor pair is valid.  <br /></td></tr>
+<tr class="separator:a00e76af62418c2d57755ddba23315040"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a266ce62af8defdff89cfc10c5e05accc" id="r_a266ce62af8defdff89cfc10c5e05accc"><td class="memItemLeft" align="right" valign="top">static KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a266ce62af8defdff89cfc10c5e05accc">isValid</a> (const std::size_t p, const Kokkos::Array&lt; double, 3 &gt; xp, const std::size_t n, const Kokkos::Array&lt; double, 3 &gt; xn)</td></tr>
+<tr class="memdesc:a266ce62af8defdff89cfc10c5e05accc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether neighbor pair is valid.  <br /></td></tr>
+<tr class="separator:a266ce62af8defdff89cfc10c5e05accc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a693cb8ba03ec0377765786b386621480" id="r_a693cb8ba03ec0377765786b386621480"><td class="memItemLeft" align="right" valign="top">static KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a693cb8ba03ec0377765786b386621480">isValid</a> (const std::size_t p, const Kokkos::Array&lt; double, 2 &gt; xp, const std::size_t n, const Kokkos::Array&lt; double, 2 &gt; xn)</td></tr>
+<tr class="memdesc:a693cb8ba03ec0377765786b386621480"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether neighbor pair is valid.  <br /></td></tr>
+<tr class="separator:a693cb8ba03ec0377765786b386621480"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd0c3093be36740a2f19754d9662cedd" id="r_abd0c3093be36740a2f19754d9662cedd"><td class="memItemLeft" align="right" valign="top">static KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abd0c3093be36740a2f19754d9662cedd">isValid</a> (const std::size_t p, const double xp, const double yp, const double zp, const std::size_t n, const double xn, const double yn, const double zn)</td></tr>
 <tr class="memdesc:abd0c3093be36740a2f19754d9662cedd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether neighbor pair is valid.  <br /></td></tr>
 <tr class="separator:abd0c3093be36740a2f19754d9662cedd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -124,7 +134,7 @@ Static Public Member Functions</h2></td></tr>
 <div class="textblock"><p>Half list discriminator specialization. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="abd0c3093be36740a2f19754d9662cedd" name="abd0c3093be36740a2f19754d9662cedd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abd0c3093be36740a2f19754d9662cedd">&#9670;&#160;</a></span>isValid()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#abd0c3093be36740a2f19754d9662cedd">&#9670;&#160;</a></span>isValid() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -171,6 +181,134 @@ Static Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double</td>          <td class="paramname"><span class="paramname"><em>zn</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check whether neighbor pair is valid. </p>
+<p>Half neighbor lists only store half of the neighbors be eliminating duplicate pairs such that the fact that particle "p" neighbors particle "n" is stored in the list but "n" neighboring "p" is not stored but rather implied. We discriminate by only storing neighbors whose coordinates are greater in the x direction. If they are the same then the y direction is checked next and finally the z direction if the y coordinates are the same. </p>
+
+</div>
+</div>
+<a id="a693cb8ba03ec0377765786b386621480" name="a693cb8ba03ec0377765786b386621480"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a693cb8ba03ec0377765786b386621480">&#9670;&#160;</a></span>isValid() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static KOKKOS_INLINE_FUNCTION bool <a class="el" href="classCabana_1_1NeighborDiscriminator.html">Cabana::NeighborDiscriminator</a>&lt; <a class="el" href="classCabana_1_1HalfNeighborTag.html">HalfNeighborTag</a> &gt;::isValid </td>
+          <td>(</td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>p</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Kokkos::Array&lt; double, 2 &gt;</td>          <td class="paramname"><span class="paramname"><em>xp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Kokkos::Array&lt; double, 2 &gt;</td>          <td class="paramname"><span class="paramname"><em>xn</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check whether neighbor pair is valid. </p>
+<p>Half neighbor lists only store half of the neighbors be eliminating duplicate pairs such that the fact that particle "p" neighbors particle "n" is stored in the list but "n" neighboring "p" is not stored but rather implied. We discriminate by only storing neighbors whose coordinates are greater in the x direction. If they are the same then the y direction is checked next and finally the z direction if the y coordinates are the same. </p>
+
+</div>
+</div>
+<a id="a266ce62af8defdff89cfc10c5e05accc" name="a266ce62af8defdff89cfc10c5e05accc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a266ce62af8defdff89cfc10c5e05accc">&#9670;&#160;</a></span>isValid() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static KOKKOS_INLINE_FUNCTION bool <a class="el" href="classCabana_1_1NeighborDiscriminator.html">Cabana::NeighborDiscriminator</a>&lt; <a class="el" href="classCabana_1_1HalfNeighborTag.html">HalfNeighborTag</a> &gt;::isValid </td>
+          <td>(</td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>p</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Kokkos::Array&lt; double, 3 &gt;</td>          <td class="paramname"><span class="paramname"><em>xp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Kokkos::Array&lt; double, 3 &gt;</td>          <td class="paramname"><span class="paramname"><em>xn</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check whether neighbor pair is valid. </p>
+<p>Half neighbor lists only store half of the neighbors be eliminating duplicate pairs such that the fact that particle "p" neighbors particle "n" is stored in the list but "n" neighboring "p" is not stored but rather implied. We discriminate by only storing neighbors whose coordinates are greater in the x direction. If they are the same then the y direction is checked next and finally the z direction if the y coordinates are the same. </p>
+
+</div>
+</div>
+<a id="a00e76af62418c2d57755ddba23315040" name="a00e76af62418c2d57755ddba23315040"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00e76af62418c2d57755ddba23315040">&#9670;&#160;</a></span>isValid() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t NumSpaceDim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static KOKKOS_INLINE_FUNCTION bool <a class="el" href="classCabana_1_1NeighborDiscriminator.html">Cabana::NeighborDiscriminator</a>&lt; <a class="el" href="classCabana_1_1HalfNeighborTag.html">HalfNeighborTag</a> &gt;::isValid </td>
+          <td>(</td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>p</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Kokkos::Array&lt; double, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>xp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Kokkos::Array&lt; double, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>xn</em></span>&#160;)</td>
         </tr>
       </table>
   </td>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.13.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Cabana: Cabana::LinkedCellStencil&lt; Scalar &gt; Struct Template Reference</title>
+<title>Cabana: Cabana::LinkedCellStencil&lt; Scalar, NumSpaceDim &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -105,8 +105,9 @@ $(function(){initNavTree('structCabana_1_1LinkedCellStencil.html',''); initResiz
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="structCabana_1_1LinkedCellStencil-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">Cabana::LinkedCellStencil&lt; Scalar &gt; Struct Template Reference</div></div>
+  <div class="headertitle"><div class="title">Cabana::LinkedCellStencil&lt; Scalar, NumSpaceDim &gt; Struct Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -117,41 +118,58 @@ $(function(){initNavTree('structCabana_1_1LinkedCellStencil.html',''); initResiz
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5d96d1a9142868d333a22fe2d1729638" id="r_a5d96d1a9142868d333a22fe2d1729638"><td class="memItemLeft" align="right" valign="top"><a id="a5d96d1a9142868d333a22fe2d1729638" name="a5d96d1a9142868d333a22fe2d1729638"></a>
+<tr class="memitem:ac40aa64ec0815693a61e521791d437d4" id="r_ac40aa64ec0815693a61e521791d437d4"><td class="memItemLeft" align="right" valign="top"><a id="ac40aa64ec0815693a61e521791d437d4" name="ac40aa64ec0815693a61e521791d437d4"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>LinkedCellStencil</b> ()=default</td></tr>
-<tr class="memdesc:a5d96d1a9142868d333a22fe2d1729638"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor. <br /></td></tr>
-<tr class="separator:a5d96d1a9142868d333a22fe2d1729638"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38f51fd32351a3914a22b0448acdda74" id="r_a38f51fd32351a3914a22b0448acdda74"><td class="memItemLeft" align="right" valign="top"><a id="a38f51fd32351a3914a22b0448acdda74" name="a38f51fd32351a3914a22b0448acdda74"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>LinkedCellStencil</b> (const Scalar neighborhood_radius, const Scalar cell_size_ratio, const Scalar grid_min[3], const Scalar grid_max[3])</td></tr>
-<tr class="memdesc:a38f51fd32351a3914a22b0448acdda74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
-<tr class="separator:a38f51fd32351a3914a22b0448acdda74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3bd05d86c6bb73fa6669e17925f3907" id="r_af3bd05d86c6bb73fa6669e17925f3907"><td class="memItemLeft" align="right" valign="top"><a id="af3bd05d86c6bb73fa6669e17925f3907" name="af3bd05d86c6bb73fa6669e17925f3907"></a>
-KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><b>getCells</b> (const int cell, int &amp;imin, int &amp;imax, int &amp;jmin, int &amp;jmax, int &amp;kmin, int &amp;kmax) const</td></tr>
-<tr class="memdesc:af3bd05d86c6bb73fa6669e17925f3907"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a cell, get the index bounds of the cell stencil. <br /></td></tr>
-<tr class="separator:af3bd05d86c6bb73fa6669e17925f3907"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:ac40aa64ec0815693a61e521791d437d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor. <br /></td></tr>
+<tr class="separator:ac40aa64ec0815693a61e521791d437d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d7d470410f94c89bd977e188b746911" id="r_a1d7d470410f94c89bd977e188b746911"><td class="memTemplParams" colspan="2"><a id="a1d7d470410f94c89bd977e188b746911" name="a1d7d470410f94c89bd977e188b746911"></a>
+template&lt;class ArrayType&gt; </td></tr>
+<tr class="memitem:a1d7d470410f94c89bd977e188b746911"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>LinkedCellStencil</b> (const Scalar neighborhood_radius, const Scalar cell_size_ratio, const ArrayType &amp;grid_min, const ArrayType &amp;grid_max)</td></tr>
+<tr class="memdesc:a1d7d470410f94c89bd977e188b746911"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array Constructor. <br /></td></tr>
+<tr class="separator:a1d7d470410f94c89bd977e188b746911"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30e20e0a8e328c7bfb879ed4ec687317" id="r_a30e20e0a8e328c7bfb879ed4ec687317"><td class="memItemLeft" align="right" valign="top"><a id="a30e20e0a8e328c7bfb879ed4ec687317" name="a30e20e0a8e328c7bfb879ed4ec687317"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>LinkedCellStencil</b> (const Scalar neighborhood_radius, const Scalar cell_size_ratio, const Scalar grid_min[<a class="el" href="#a59eb953bbb95471770fabd27547ad465">num_space_dim</a>], const Scalar grid_max[<a class="el" href="#a59eb953bbb95471770fabd27547ad465">num_space_dim</a>])</td></tr>
+<tr class="memdesc:a30e20e0a8e328c7bfb879ed4ec687317"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
+<tr class="separator:a30e20e0a8e328c7bfb879ed4ec687317"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c2173707be588f3dcab6eb4f57e8b89" id="r_a7c2173707be588f3dcab6eb4f57e8b89"><td class="memTemplParams" colspan="2"><a id="a7c2173707be588f3dcab6eb4f57e8b89" name="a7c2173707be588f3dcab6eb4f57e8b89"></a>
+template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
+<tr class="memitem:a7c2173707be588f3dcab6eb4f57e8b89"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getCells</b> (const int cell, int &amp;imin, int &amp;imax, int &amp;jmin, int &amp;jmax, int &amp;kmin, int &amp;kmax) const</td></tr>
+<tr class="memdesc:a7c2173707be588f3dcab6eb4f57e8b89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a cell, get the index bounds of the cell stencil. <br /></td></tr>
+<tr class="separator:a7c2173707be588f3dcab6eb4f57e8b89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd81cce66d2713290c322dd29ba514a2" id="r_abd81cce66d2713290c322dd29ba514a2"><td class="memItemLeft" align="right" valign="top"><a id="abd81cce66d2713290c322dd29ba514a2" name="abd81cce66d2713290c322dd29ba514a2"></a>
+KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><b>getCells</b> (const int cell, Kokkos::Array&lt; int, <a class="el" href="#a59eb953bbb95471770fabd27547ad465">num_space_dim</a> &gt; &amp;min, Kokkos::Array&lt; int, <a class="el" href="#a59eb953bbb95471770fabd27547ad465">num_space_dim</a> &gt; &amp;max) const</td></tr>
+<tr class="memdesc:abd81cce66d2713290c322dd29ba514a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a cell, get the index bounds of the cell stencil. <br /></td></tr>
+<tr class="separator:abd81cce66d2713290c322dd29ba514a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a9393a8f9ef3d93aaad02017d70f83889" id="r_a9393a8f9ef3d93aaad02017d70f83889"><td class="memItemLeft" align="right" valign="top"><a id="a9393a8f9ef3d93aaad02017d70f83889" name="a9393a8f9ef3d93aaad02017d70f83889"></a>
-Impl::CartesianGrid&lt; Scalar &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>grid</b></td></tr>
-<tr class="memdesc:a9393a8f9ef3d93aaad02017d70f83889"><td class="mdescLeft">&#160;</td><td class="mdescRight">Background grid. <br /></td></tr>
-<tr class="separator:a9393a8f9ef3d93aaad02017d70f83889"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e91fa6f653c525c84d124765fbc5f7c" id="r_a4e91fa6f653c525c84d124765fbc5f7c"><td class="memItemLeft" align="right" valign="top"><a id="a4e91fa6f653c525c84d124765fbc5f7c" name="a4e91fa6f653c525c84d124765fbc5f7c"></a>
+<tr class="memitem:ad3ff3c8ab194ea58c31158488a590999" id="r_ad3ff3c8ab194ea58c31158488a590999"><td class="memItemLeft" align="right" valign="top"><a id="ad3ff3c8ab194ea58c31158488a590999" name="ad3ff3c8ab194ea58c31158488a590999"></a>
+Impl::CartesianGrid&lt; Scalar, <a class="el" href="#a59eb953bbb95471770fabd27547ad465">num_space_dim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>grid</b></td></tr>
+<tr class="memdesc:ad3ff3c8ab194ea58c31158488a590999"><td class="mdescLeft">&#160;</td><td class="mdescRight">Background grid. <br /></td></tr>
+<tr class="separator:ad3ff3c8ab194ea58c31158488a590999"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58a04853e89e7b4d0c522f99e417fc65" id="r_a58a04853e89e7b4d0c522f99e417fc65"><td class="memItemLeft" align="right" valign="top"><a id="a58a04853e89e7b4d0c522f99e417fc65" name="a58a04853e89e7b4d0c522f99e417fc65"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>max_cells_dir</b></td></tr>
-<tr class="memdesc:a4e91fa6f653c525c84d124765fbc5f7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum cells per dimension. <br /></td></tr>
-<tr class="separator:a4e91fa6f653c525c84d124765fbc5f7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d38f13b8d20c9b353120e3825e6fc28" id="r_a3d38f13b8d20c9b353120e3825e6fc28"><td class="memItemLeft" align="right" valign="top"><a id="a3d38f13b8d20c9b353120e3825e6fc28" name="a3d38f13b8d20c9b353120e3825e6fc28"></a>
+<tr class="memdesc:a58a04853e89e7b4d0c522f99e417fc65"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum cells per dimension. <br /></td></tr>
+<tr class="separator:a58a04853e89e7b4d0c522f99e417fc65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1846b88523c9ce36ac5db796c221d17b" id="r_a1846b88523c9ce36ac5db796c221d17b"><td class="memItemLeft" align="right" valign="top"><a id="a1846b88523c9ce36ac5db796c221d17b" name="a1846b88523c9ce36ac5db796c221d17b"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>max_cells</b></td></tr>
-<tr class="memdesc:a3d38f13b8d20c9b353120e3825e6fc28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum total cells. <br /></td></tr>
-<tr class="separator:a3d38f13b8d20c9b353120e3825e6fc28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a32c2506c4eaaf6f074c612baf1d22155" id="r_a32c2506c4eaaf6f074c612baf1d22155"><td class="memItemLeft" align="right" valign="top"><a id="a32c2506c4eaaf6f074c612baf1d22155" name="a32c2506c4eaaf6f074c612baf1d22155"></a>
+<tr class="memdesc:a1846b88523c9ce36ac5db796c221d17b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum total cells. <br /></td></tr>
+<tr class="separator:a1846b88523c9ce36ac5db796c221d17b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae510025bb7193319d841f43193971ec5" id="r_ae510025bb7193319d841f43193971ec5"><td class="memItemLeft" align="right" valign="top"><a id="ae510025bb7193319d841f43193971ec5" name="ae510025bb7193319d841f43193971ec5"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>cell_range</b></td></tr>
-<tr class="memdesc:a32c2506c4eaaf6f074c612baf1d22155"><td class="mdescLeft">&#160;</td><td class="mdescRight">Range of cells to search based on cutoff. <br /></td></tr>
-<tr class="separator:a32c2506c4eaaf6f074c612baf1d22155"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:ae510025bb7193319d841f43193971ec5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Range of cells to search based on cutoff. <br /></td></tr>
+<tr class="separator:ae510025bb7193319d841f43193971ec5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a59eb953bbb95471770fabd27547ad465" id="r_a59eb953bbb95471770fabd27547ad465"><td class="memItemLeft" align="right" valign="top"><a id="a59eb953bbb95471770fabd27547ad465" name="a59eb953bbb95471770fabd27547ad465"></a>
+static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_space_dim</b> = NumSpaceDim</td></tr>
+<tr class="memdesc:a59eb953bbb95471770fabd27547ad465"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
+<tr class="separator:a59eb953bbb95471770fabd27547ad465"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;class Scalar&gt;<br />
-struct Cabana::LinkedCellStencil&lt; Scalar &gt;</div><p>Stencil of cells surrounding each cell. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;class Scalar, std::size_t NumSpaceDim = 3&gt;<br />
+struct Cabana::LinkedCellStencil&lt; Scalar, NumSpaceDim &gt;</div><p>Stencil of cells surrounding each cell. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>core/src/<a class="el" href="Cabana__LinkedCellList_8hpp_source.html">Cabana_LinkedCellList.hpp</a></li>
 </ul>

@@ -1,10 +1,12 @@
 var structCabana_1_1LinkedCellStencil =
 [
-    [ "LinkedCellStencil", "structCabana_1_1LinkedCellStencil.html#a5d96d1a9142868d333a22fe2d1729638", null ],
-    [ "LinkedCellStencil", "structCabana_1_1LinkedCellStencil.html#a38f51fd32351a3914a22b0448acdda74", null ],
-    [ "getCells", "structCabana_1_1LinkedCellStencil.html#af3bd05d86c6bb73fa6669e17925f3907", null ],
-    [ "cell_range", "structCabana_1_1LinkedCellStencil.html#a32c2506c4eaaf6f074c612baf1d22155", null ],
-    [ "grid", "structCabana_1_1LinkedCellStencil.html#a9393a8f9ef3d93aaad02017d70f83889", null ],
-    [ "max_cells", "structCabana_1_1LinkedCellStencil.html#a3d38f13b8d20c9b353120e3825e6fc28", null ],
-    [ "max_cells_dir", "structCabana_1_1LinkedCellStencil.html#a4e91fa6f653c525c84d124765fbc5f7c", null ]
+    [ "LinkedCellStencil", "structCabana_1_1LinkedCellStencil.html#ac40aa64ec0815693a61e521791d437d4", null ],
+    [ "LinkedCellStencil", "structCabana_1_1LinkedCellStencil.html#a1d7d470410f94c89bd977e188b746911", null ],
+    [ "LinkedCellStencil", "structCabana_1_1LinkedCellStencil.html#a30e20e0a8e328c7bfb879ed4ec687317", null ],
+    [ "getCells", "structCabana_1_1LinkedCellStencil.html#a7c2173707be588f3dcab6eb4f57e8b89", null ],
+    [ "getCells", "structCabana_1_1LinkedCellStencil.html#abd81cce66d2713290c322dd29ba514a2", null ],
+    [ "cell_range", "structCabana_1_1LinkedCellStencil.html#ae510025bb7193319d841f43193971ec5", null ],
+    [ "grid", "structCabana_1_1LinkedCellStencil.html#ad3ff3c8ab194ea58c31158488a590999", null ],
+    [ "max_cells", "structCabana_1_1LinkedCellStencil.html#a1846b88523c9ce36ac5db796c221d17b", null ],
+    [ "max_cells_dir", "structCabana_1_1LinkedCellStencil.html#a58a04853e89e7b4d0c522f99e417fc65", null ]
 ];

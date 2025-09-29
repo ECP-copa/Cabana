@@ -153,7 +153,7 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loop over particle neighbors.  <a href="classCabana_1_1FirstNeighborsTag.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1FullNeighborTag.html">FullNeighborTag</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tag for full neighbor lists.  <a href="classCabana_1_1FullNeighborTag.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tag for building full neighbor lists.  <a href="classCabana_1_1FullNeighborTag.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Gather.html">Gather</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -164,7 +164,7 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously gather data from the local decomposition to the ghosts using the halo forward communication plan. <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> version. This is a uniquely-owned to multiply-owned communication.  <a href="classCabana_1_1Gather_3_01HaloType_00_01SliceType_00_01typename_01std_1_1enable__if_3_01is__slica420051aad1e71fccbd290130c9a8cef.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1HalfNeighborTag.html">HalfNeighborTag</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tag for half neighbor lists.  <a href="classCabana_1_1HalfNeighborTag.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tag for building half neighbor lists.  <a href="classCabana_1_1HalfNeighborTag.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Halo.html">Halo</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A communication plan for scattering and gathering of ghosted data.  <a href="classCabana_1_1Halo.html#details">More...</a><br /></td></tr>
@@ -253,6 +253,8 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1NeighborDiscriminator_3_01HalfNeighborTag_01_4.html">NeighborDiscriminator&lt; HalfNeighborTag &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Half list discriminator specialization.  <a href="classCabana_1_1NeighborDiscriminator_3_01HalfNeighborTag_01_4.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1NeighborDiscriminator_3_01SelfNeighborTag_01_4.html">NeighborDiscriminator&lt; SelfNeighborTag &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1NeighborList.html">NeighborList</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor list interface. Provides an interface callable at the functor level that gives access to neighbor data for particles.  <a href="classCabana_1_1NeighborList.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -262,14 +264,14 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1NeighborList_3_01Experimental_1_1Dense_3_01MemorySpace_00_01Tag_01_4_01_4.html">NeighborList&lt; Experimental::Dense&lt; MemorySpace, Tag &gt; &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">2d ArborX <a class="el" href="classCabana_1_1NeighborList.html" title="Neighbor list interface. Provides an interface callable at the functor level that gives access to nei...">NeighborList</a> interface.  <a href="classCabana_1_1NeighborList_3_01Experimental_1_1Dense_3_01MemorySpace_00_01Tag_01_4_01_4.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1NeighborList_3_01LinkedCellList_3_01MemorySpace_00_01Scalar_01_4_01_4.html">NeighborList&lt; LinkedCellList&lt; MemorySpace, Scalar &gt; &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1LinkedCellList.html" title="Data describing the bin sizes and offsets resulting from a binning operation on a 3d regular Cartesia...">LinkedCellList</a> <a class="el" href="classCabana_1_1NeighborList.html" title="Neighbor list interface. Provides an interface callable at the functor level that gives access to nei...">NeighborList</a> interface.  <a href="classCabana_1_1NeighborList_3_01LinkedCellList_3_01MemorySpace_00_01Scalar_01_4_01_4.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1NeighborList_3_01LinkedCellList_3_01MemorySpace_00_01Scalar_00_01NumSpaceDim_01_4_01_4.html">NeighborList&lt; LinkedCellList&lt; MemorySpace, Scalar, NumSpaceDim &gt; &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1LinkedCellList.html" title="Data describing the bin sizes and offsets resulting from a binning operation on a 3d regular Cartesia...">LinkedCellList</a> <a class="el" href="classCabana_1_1NeighborList.html" title="Neighbor list interface. Provides an interface callable at the functor level that gives access to nei...">NeighborList</a> interface.  <a href="classCabana_1_1NeighborList_3_01LinkedCellList_3_01MemorySpace_00_01Scalar_00_01NumSpaceDim_01_4_01_4.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayout2D_00_01BuildTag_01_4_01_4.html">NeighborList&lt; VerletList&lt; MemorySpace, AlgorithmTag, VerletLayout2D, BuildTag &gt; &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">2D <a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same...">VerletList</a> <a class="el" href="classCabana_1_1NeighborList.html" title="Neighbor list interface. Provides an interface callable at the functor level that gives access to nei...">NeighborList</a> interface.  <a href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayout2D_00_01BuildTag_01_4_01_4.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayout2Dbbb69c9e30f1a93dc490c315328b7260.html">NeighborList&lt; VerletList&lt; MemorySpace, AlgorithmTag, VerletLayout2D, BuildTag, Dim &gt; &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">2D <a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a Cartesian grid with cells of the same si...">VerletList</a> <a class="el" href="classCabana_1_1NeighborList.html" title="Neighbor list interface. Provides an interface callable at the functor level that gives access to nei...">NeighborList</a> interface.  <a href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayout2Dbbb69c9e30f1a93dc490c315328b7260.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_00_01BuildTag_01_4_01_4.html">NeighborList&lt; VerletList&lt; MemorySpace, AlgorithmTag, VerletLayoutCSR, BuildTag &gt; &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">CSR <a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same...">VerletList</a> <a class="el" href="classCabana_1_1NeighborList.html" title="Neighbor list interface. Provides an interface callable at the functor level that gives access to nei...">NeighborList</a> interface.  <a href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_00_01BuildTag_01_4_01_4.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCS91df0b0ab9bd7f25043cfd9b1f7607ee.html">NeighborList&lt; VerletList&lt; MemorySpace, AlgorithmTag, VerletLayoutCSR, BuildTag, Dim &gt; &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">CSR <a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a Cartesian grid with cells of the same si...">VerletList</a> <a class="el" href="classCabana_1_1NeighborList.html" title="Neighbor list interface. Provides an interface callable at the functor level that gives access to nei...">NeighborList</a> interface.  <a href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCS91df0b0ab9bd7f25043cfd9b1f7607ee.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1PackTypeAtIndex.html">PackTypeAtIndex</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the type at the given index of a parameter pack.  <a href="structCabana_1_1PackTypeAtIndex.html#details">More...</a><br /></td></tr>
@@ -299,6 +301,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1SecondNeighborsTag.html">SecondNeighborsTag</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loop over particle neighbors (first) and neighbor's neighbors (second)  <a href="classCabana_1_1SecondNeighborsTag.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1SelfNeighborTag.html">SelfNeighborTag</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tag for neighbor list iteration, ignoring only self neighbors.  <a href="classCabana_1_1SelfNeighborTag.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1SerialOpTag.html">SerialOpTag</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor operations are executed in serial on each particle thread.  <a href="classCabana_1_1SerialOpTag.html#details">More...</a><br /></td></tr>
@@ -335,15 +340,15 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">CSR (compressed sparse row) neighbor list layout.  <a href="structCabana_1_1VerletLayoutCSR.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html">VerletList</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same size as the interaction distance.  <a href="classCabana_1_1VerletList.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor list implementation based on binning particles on a Cartesian grid with cells of the same size as the interaction distance.  <a href="classCabana_1_1VerletList.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1VerletListData.html">VerletListData</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html">VerletListData&lt; MemorySpace, VerletLayout2D &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store the <a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same...">VerletList</a> 2D neighbor data.  <a href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store the <a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a Cartesian grid with cells of the same si...">VerletList</a> 2D neighbor data.  <a href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4.html">VerletListData&lt; MemorySpace, VerletLayoutCSR &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store the <a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same...">VerletList</a> compressed sparse row (CSR) neighbor data.  <a href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store the <a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a Cartesian grid with cells of the same si...">VerletList</a> compressed sparse row (CSR) neighbor data.  <a href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -447,22 +452,38 @@ Functions</h2></td></tr>
 <tr class="memitem:aa8eb6aa8da865a5ff9c1a86f1ba0a281"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aa8eb6aa8da865a5ff9c1a86f1ba0a281">scatter</a> (const HaloType &amp;halo, SliceType &amp;<a class="el" href="#aa14f30ab334c57448b204fc9b304289a">slice</a>, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__halo.html">is_halo</a>&lt; HaloType &gt;::value &amp;&amp;<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
 <tr class="memdesc:aa8eb6aa8da865a5ff9c1a86f1ba0a281"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously scatter data from the ghosts to the local decomposition of a slice using the halo reverse communication plan. This is a multiply-owned to uniquely owned communication.  <br /></td></tr>
 <tr class="separator:aa8eb6aa8da865a5ff9c1a86f1ba0a281"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9f8296e63d71349605eefe595566cb0" id="r_aa9f8296e63d71349605eefe595566cb0"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace, class PositionType, class Scalar&gt; </td></tr>
-<tr class="memitem:aa9f8296e63d71349605eefe595566cb0"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aa9f8296e63d71349605eefe595566cb0">createLinkedCellList</a> (PositionType positions, const Scalar grid_delta[3], const Scalar grid_min[3], const Scalar grid_max[3])</td></tr>
-<tr class="memdesc:aa9f8296e63d71349605eefe595566cb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list.  <br /></td></tr>
-<tr class="separator:aa9f8296e63d71349605eefe595566cb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a9d685569944ce88df681e248f8a1f1" id="r_a4a9d685569944ce88df681e248f8a1f1"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace, class PositionType, class Scalar&gt; </td></tr>
-<tr class="memitem:a4a9d685569944ce88df681e248f8a1f1"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4a9d685569944ce88df681e248f8a1f1">createLinkedCellList</a> (PositionType positions, const std::size_t begin, const std::size_t end, const Scalar grid_delta[3], const Scalar grid_min[3], const Scalar grid_max[3])</td></tr>
-<tr class="memdesc:a4a9d685569944ce88df681e248f8a1f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list with partial range.  <br /></td></tr>
-<tr class="separator:a4a9d685569944ce88df681e248f8a1f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d37f04afefe54d1c1dcaa484997528a" id="r_a7d37f04afefe54d1c1dcaa484997528a"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace, class PositionType, class Scalar&gt; </td></tr>
-<tr class="memitem:a7d37f04afefe54d1c1dcaa484997528a"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a7d37f04afefe54d1c1dcaa484997528a">createLinkedCellList</a> (PositionType positions, const Scalar grid_delta[3], const Scalar grid_min[3], const Scalar grid_max[3], const Scalar neighborhood_radius, const Scalar cell_size_ratio=1.0)</td></tr>
-<tr class="memdesc:a7d37f04afefe54d1c1dcaa484997528a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list with custom cutoff radius and cell ratio.  <br /></td></tr>
-<tr class="separator:a7d37f04afefe54d1c1dcaa484997528a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0815e834d6b2f97b2df628996a53490f" id="r_a0815e834d6b2f97b2df628996a53490f"><td class="memTemplParams" colspan="2">template&lt;class MemorySpace, class PositionType, class Scalar&gt; </td></tr>
-<tr class="memitem:a0815e834d6b2f97b2df628996a53490f"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a0815e834d6b2f97b2df628996a53490f">createLinkedCellList</a> (PositionType positions, const std::size_t begin, const std::size_t end, const Scalar grid_delta[3], const Scalar grid_min[3], const Scalar grid_max[3], const Scalar neighborhood_radius, const Scalar cell_size_ratio=1.0)</td></tr>
-<tr class="memdesc:a0815e834d6b2f97b2df628996a53490f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list with partial range and custom cutoff radius and/or cell ratio.  <br /></td></tr>
-<tr class="separator:a0815e834d6b2f97b2df628996a53490f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e383a5f93e7ff1d54b1071c9e18feb4" id="r_a9e383a5f93e7ff1d54b1071c9e18feb4"><td class="memTemplParams" colspan="2">template&lt;class PositionType, template&lt; class, std::size_t, class... &gt; class ArrayType, class... Args, class Scalar, std::size_t NumSpaceDim&gt; </td></tr>
+<tr class="memitem:a9e383a5f93e7ff1d54b1071c9e18feb4"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9e383a5f93e7ff1d54b1071c9e18feb4">createLinkedCellList</a> (PositionType positions, const ArrayType&lt; Scalar, NumSpaceDim &gt; grid_delta, const ArrayType&lt; Scalar, NumSpaceDim &gt; grid_min, const ArrayType&lt; Scalar, NumSpaceDim &gt; grid_max)</td></tr>
+<tr class="memdesc:a9e383a5f93e7ff1d54b1071c9e18feb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list.  <br /></td></tr>
+<tr class="separator:a9e383a5f93e7ff1d54b1071c9e18feb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40cb83164537db1ef13f82b3402134bb" id="r_a40cb83164537db1ef13f82b3402134bb"><td class="memTemplParams" colspan="2">template&lt;class PositionType, template&lt; class, std::size_t, class... &gt; class ArrayType, class... Args, class Scalar, std::size_t NumSpaceDim&gt; </td></tr>
+<tr class="memitem:a40cb83164537db1ef13f82b3402134bb"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a40cb83164537db1ef13f82b3402134bb">createLinkedCellList</a> (PositionType positions, const std::size_t begin, const std::size_t end, const ArrayType&lt; Scalar, NumSpaceDim &gt; grid_delta, const ArrayType&lt; Scalar, NumSpaceDim &gt; grid_min, const ArrayType&lt; Scalar, NumSpaceDim &gt; grid_max)</td></tr>
+<tr class="memdesc:a40cb83164537db1ef13f82b3402134bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list with partial range.  <br /></td></tr>
+<tr class="separator:a40cb83164537db1ef13f82b3402134bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38a362466441bacacbf3d43ff5af57d4" id="r_a38a362466441bacacbf3d43ff5af57d4"><td class="memTemplParams" colspan="2">template&lt;class PositionType, template&lt; class, std::size_t, class... &gt; class ArrayType, class... Args, class Scalar, std::size_t NumSpaceDim&gt; </td></tr>
+<tr class="memitem:a38a362466441bacacbf3d43ff5af57d4"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a38a362466441bacacbf3d43ff5af57d4">createLinkedCellList</a> (PositionType positions, const ArrayType&lt; Scalar, NumSpaceDim &gt; grid_delta, const ArrayType&lt; Scalar, NumSpaceDim &gt; grid_min, const ArrayType&lt; Scalar, NumSpaceDim &gt; grid_max, const typename PositionType::value_type neighborhood_radius, const typename PositionType::value_type cell_size_ratio=1.0)</td></tr>
+<tr class="memdesc:a38a362466441bacacbf3d43ff5af57d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list with custom cutoff radius and cell ratio.  <br /></td></tr>
+<tr class="separator:a38a362466441bacacbf3d43ff5af57d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c63d0a9605d8034581758d74902a9d6" id="r_a8c63d0a9605d8034581758d74902a9d6"><td class="memTemplParams" colspan="2">template&lt;class PositionType, template&lt; class, std::size_t, class... &gt; class ArrayType, class... Args, class Scalar, std::size_t NumSpaceDim&gt; </td></tr>
+<tr class="memitem:a8c63d0a9605d8034581758d74902a9d6"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a8c63d0a9605d8034581758d74902a9d6">createLinkedCellList</a> (PositionType positions, const std::size_t begin, const std::size_t end, const ArrayType&lt; Scalar, NumSpaceDim &gt; grid_delta, const ArrayType&lt; Scalar, NumSpaceDim &gt; grid_min, const ArrayType&lt; Scalar, NumSpaceDim &gt; grid_max, const typename PositionType::value_type neighborhood_radius, const typename PositionType::value_type cell_size_ratio=1.0)</td></tr>
+<tr class="memdesc:a8c63d0a9605d8034581758d74902a9d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list with partial range and custom cutoff radius and/or cell ratio.  <br /></td></tr>
+<tr class="separator:a8c63d0a9605d8034581758d74902a9d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afcbab298f727489057132f718552892c" id="r_afcbab298f727489057132f718552892c"><td class="memTemplParams" colspan="2">template&lt;class PositionType&gt; </td></tr>
+<tr class="memitem:afcbab298f727489057132f718552892c"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#afcbab298f727489057132f718552892c">createLinkedCellList</a> (PositionType positions, const typename PositionType::value_type grid_delta[3], const typename PositionType::value_type grid_min[3], const typename PositionType::value_type grid_max[3])</td></tr>
+<tr class="memdesc:afcbab298f727489057132f718552892c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list.  <br /></td></tr>
+<tr class="separator:afcbab298f727489057132f718552892c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ea42084be73f3ef96b5003ead86775c" id="r_a0ea42084be73f3ef96b5003ead86775c"><td class="memTemplParams" colspan="2">template&lt;class PositionType&gt; </td></tr>
+<tr class="memitem:a0ea42084be73f3ef96b5003ead86775c"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a0ea42084be73f3ef96b5003ead86775c">createLinkedCellList</a> (PositionType positions, const std::size_t begin, const std::size_t end, const typename PositionType::value_type grid_delta[3], const typename PositionType::value_type grid_min[3], const typename PositionType::value_type grid_max[3])</td></tr>
+<tr class="memdesc:a0ea42084be73f3ef96b5003ead86775c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list with partial range.  <br /></td></tr>
+<tr class="separator:a0ea42084be73f3ef96b5003ead86775c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fa9b63a296c89bc6ba8fa2fa8f39883" id="r_a4fa9b63a296c89bc6ba8fa2fa8f39883"><td class="memTemplParams" colspan="2">template&lt;class PositionType&gt; </td></tr>
+<tr class="memitem:a4fa9b63a296c89bc6ba8fa2fa8f39883"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4fa9b63a296c89bc6ba8fa2fa8f39883">createLinkedCellList</a> (PositionType positions, const typename PositionType::value_type grid_delta[3], const typename PositionType::value_type grid_min[3], const typename PositionType::value_type grid_max[3], const typename PositionType::value_type neighborhood_radius, const typename PositionType::value_type cell_size_ratio=1.0)</td></tr>
+<tr class="memdesc:a4fa9b63a296c89bc6ba8fa2fa8f39883"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list with custom cutoff radius and cell ratio.  <br /></td></tr>
+<tr class="separator:a4fa9b63a296c89bc6ba8fa2fa8f39883"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9803c3cb15899b5e673d57c166b50329" id="r_a9803c3cb15899b5e673d57c166b50329"><td class="memTemplParams" colspan="2">template&lt;class PositionType&gt; </td></tr>
+<tr class="memitem:a9803c3cb15899b5e673d57c166b50329"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9803c3cb15899b5e673d57c166b50329">createLinkedCellList</a> (PositionType positions, const std::size_t begin, const std::size_t end, const typename PositionType::value_type grid_delta[3], const typename PositionType::value_type grid_min[3], const typename PositionType::value_type grid_max[3], const typename PositionType::value_type neighborhood_radius, const typename PositionType::value_type cell_size_ratio=1.0)</td></tr>
+<tr class="memdesc:a9803c3cb15899b5e673d57c166b50329"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation function for linked cell list with partial range and custom cutoff radius and/or cell ratio.  <br /></td></tr>
+<tr class="separator:a9803c3cb15899b5e673d57c166b50329"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a718a56e3bd90ee4e6b80095fd15a9db7" id="r_a718a56e3bd90ee4e6b80095fd15a9db7"><td class="memTemplParams" colspan="2">template&lt;class LinkedCellListType, class PositionType&gt; </td></tr>
 <tr class="memitem:a718a56e3bd90ee4e6b80095fd15a9db7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a718a56e3bd90ee4e6b80095fd15a9db7">permute</a> (LinkedCellListType &amp;linked_cell_list, PositionType &amp;positions, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__linked__cell__list.html">is_linked_cell_list</a>&lt; LinkedCellListType &gt;::value &amp;&amp;(<a class="el" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt; PositionType &gt;::value||<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionType &gt;::value||Kokkos::is_view&lt; PositionType &gt;::value)), int &gt;::type *=0)</td></tr>
 <tr class="memdesc:a718a56e3bd90ee4e6b80095fd15a9db7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a linked cell list permute positions.  <br /></td></tr>
@@ -849,6 +870,14 @@ template&lt;class Scalar, std::size_t Dim&gt; </td></tr>
 <tr class="memitem:a62bd5a37b87ce24337e38aa05b1282ee"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>copyArray</b> (const Scalar input[Dim])</td></tr>
 <tr class="memdesc:a62bd5a37b87ce24337e38aa05b1282ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy c-array into Kokkos::Array for potential device use. <br /></td></tr>
 <tr class="separator:a62bd5a37b87ce24337e38aa05b1282ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6cbe49a5251c106c2997074fc038a52" id="r_ae6cbe49a5251c106c2997074fc038a52"><td class="memTemplParams" colspan="2">template&lt;class AlgorithmTag, class LayoutTag, class BuildTag, class PositionType, template&lt; class, std::size_t, class... &gt; class ArrayType, std::size_t NumSpaceDim, class... Args&gt; </td></tr>
+<tr class="memitem:ae6cbe49a5251c106c2997074fc038a52"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae6cbe49a5251c106c2997074fc038a52">createVerletList</a> (PositionType positions, const std::size_t begin, const std::size_t end, const typename PositionType::value_type radius, const typename PositionType::value_type cell_size_ratio, const ArrayType&lt; typename PositionType::value_type, NumSpaceDim &gt; grid_min, const ArrayType&lt; typename PositionType::value_type, NumSpaceDim &gt; grid_max, const std::size_t max_neigh=0)</td></tr>
+<tr class="memdesc:ae6cbe49a5251c106c2997074fc038a52"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a Cartesian grid with cells of the same si...">VerletList</a> constructor. Given a list of particle positions and a neighborhood radius calculate the neighbor list.  <br /></td></tr>
+<tr class="separator:ae6cbe49a5251c106c2997074fc038a52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad841c0a4b3133a6487cfbf38fcb957a7" id="r_ad841c0a4b3133a6487cfbf38fcb957a7"><td class="memTemplParams" colspan="2">template&lt;class AlgorithmTag, class LayoutTag, class BuildTag, class PositionType, template&lt; class, std::size_t, class... &gt; class ArrayType, std::size_t NumSpaceDim, class... Args&gt; </td></tr>
+<tr class="memitem:ad841c0a4b3133a6487cfbf38fcb957a7"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ad841c0a4b3133a6487cfbf38fcb957a7">createVerletList</a> (const PositionType &amp;positions, const typename PositionType::value_type radius, const typename PositionType::value_type cell_size_ratio, const ArrayType&lt; typename PositionType::value_type, NumSpaceDim &gt; grid_min, const ArrayType&lt; typename PositionType::value_type, NumSpaceDim &gt; grid_max, const std::size_t max_neigh=0)</td></tr>
+<tr class="memdesc:ad841c0a4b3133a6487cfbf38fcb957a7"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a Cartesian grid with cells of the same si...">VerletList</a> constructor. Given a list of particle positions and a neighborhood radius calculate the neighbor list.  <br /></td></tr>
+<tr class="separator:ad841c0a4b3133a6487cfbf38fcb957a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94f45805f16a42f9f6f048d2e88cd940" id="r_a94f45805f16a42f9f6f048d2e88cd940"><td class="memItemLeft" align="right" valign="top"><a id="a94f45805f16a42f9f6f048d2e88cd940" name="a94f45805f16a42f9f6f048d2e88cd940"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>version</b> ()</td></tr>
 <tr class="memdesc:a94f45805f16a42f9f6f048d2e88cd940"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceCabana.html" title="Core: particle data structures and algorithms.">Cabana</a> version. <br /></td></tr>
@@ -1463,13 +1492,13 @@ template&lt;class HaloType, class ParticleDataType&gt; </div>
 
 </div>
 </div>
-<a id="aa9f8296e63d71349605eefe595566cb0" name="aa9f8296e63d71349605eefe595566cb0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa9f8296e63d71349605eefe595566cb0">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[1/4]</span></h2>
+<a id="a9e383a5f93e7ff1d54b1071c9e18feb4" name="a9e383a5f93e7ff1d54b1071c9e18feb4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e383a5f93e7ff1d54b1071c9e18feb4">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[1/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class PositionType, class Scalar&gt; </div>
+template&lt;class PositionType, template&lt; class, std::size_t, class... &gt; class ArrayType, class... Args, class Scalar, std::size_t NumSpaceDim&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">auto Cabana::createLinkedCellList </td>
@@ -1479,17 +1508,17 @@ template&lt;class MemorySpace, class PositionType, class Scalar&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Scalar</td>          <td class="paramname"><span class="paramname"><em>grid_delta</em></span>[3], </td>
+          <td class="paramtype">const ArrayType&lt; Scalar, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>grid_delta</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Scalar</td>          <td class="paramname"><span class="paramname"><em>grid_min</em></span>[3], </td>
+          <td class="paramtype">const ArrayType&lt; Scalar, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>grid_min</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Scalar</td>          <td class="paramname"><span class="paramname"><em>grid_max</em></span>[3]&#160;)</td>
+          <td class="paramtype">const ArrayType&lt; Scalar, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>grid_max</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1499,13 +1528,13 @@ template&lt;class MemorySpace, class PositionType, class Scalar&gt; </div>
 
 </div>
 </div>
-<a id="a7d37f04afefe54d1c1dcaa484997528a" name="a7d37f04afefe54d1c1dcaa484997528a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7d37f04afefe54d1c1dcaa484997528a">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[2/4]</span></h2>
+<a id="a38a362466441bacacbf3d43ff5af57d4" name="a38a362466441bacacbf3d43ff5af57d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38a362466441bacacbf3d43ff5af57d4">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[2/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class PositionType, class Scalar&gt; </div>
+template&lt;class PositionType, template&lt; class, std::size_t, class... &gt; class ArrayType, class... Args, class Scalar, std::size_t NumSpaceDim&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">auto Cabana::createLinkedCellList </td>
@@ -1515,27 +1544,27 @@ template&lt;class MemorySpace, class PositionType, class Scalar&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Scalar</td>          <td class="paramname"><span class="paramname"><em>grid_delta</em></span>[3], </td>
+          <td class="paramtype">const ArrayType&lt; Scalar, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>grid_delta</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Scalar</td>          <td class="paramname"><span class="paramname"><em>grid_min</em></span>[3], </td>
+          <td class="paramtype">const ArrayType&lt; Scalar, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>grid_min</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Scalar</td>          <td class="paramname"><span class="paramname"><em>grid_max</em></span>[3], </td>
+          <td class="paramtype">const ArrayType&lt; Scalar, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>grid_max</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Scalar</td>          <td class="paramname"><span class="paramname"><em>neighborhood_radius</em></span>, </td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>neighborhood_radius</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Scalar</td>          <td class="paramname"><span class="paramname"><em>cell_size_ratio</em></span><span class="paramdefsep"> = </span><span class="paramdefval">1.0</span>&#160;)</td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>cell_size_ratio</em></span><span class="paramdefsep"> = </span><span class="paramdefval">1.0</span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1545,13 +1574,13 @@ template&lt;class MemorySpace, class PositionType, class Scalar&gt; </div>
 
 </div>
 </div>
-<a id="a4a9d685569944ce88df681e248f8a1f1" name="a4a9d685569944ce88df681e248f8a1f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4a9d685569944ce88df681e248f8a1f1">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[3/4]</span></h2>
+<a id="a40cb83164537db1ef13f82b3402134bb" name="a40cb83164537db1ef13f82b3402134bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a40cb83164537db1ef13f82b3402134bb">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[3/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class PositionType, class Scalar&gt; </div>
+template&lt;class PositionType, template&lt; class, std::size_t, class... &gt; class ArrayType, class... Args, class Scalar, std::size_t NumSpaceDim&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">auto Cabana::createLinkedCellList </td>
@@ -1571,17 +1600,17 @@ template&lt;class MemorySpace, class PositionType, class Scalar&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Scalar</td>          <td class="paramname"><span class="paramname"><em>grid_delta</em></span>[3], </td>
+          <td class="paramtype">const ArrayType&lt; Scalar, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>grid_delta</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Scalar</td>          <td class="paramname"><span class="paramname"><em>grid_min</em></span>[3], </td>
+          <td class="paramtype">const ArrayType&lt; Scalar, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>grid_min</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Scalar</td>          <td class="paramname"><span class="paramname"><em>grid_max</em></span>[3]&#160;)</td>
+          <td class="paramtype">const ArrayType&lt; Scalar, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>grid_max</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1591,13 +1620,13 @@ template&lt;class MemorySpace, class PositionType, class Scalar&gt; </div>
 
 </div>
 </div>
-<a id="a0815e834d6b2f97b2df628996a53490f" name="a0815e834d6b2f97b2df628996a53490f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0815e834d6b2f97b2df628996a53490f">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[4/4]</span></h2>
+<a id="a8c63d0a9605d8034581758d74902a9d6" name="a8c63d0a9605d8034581758d74902a9d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c63d0a9605d8034581758d74902a9d6">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[4/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class PositionType, class Scalar&gt; </div>
+template&lt;class PositionType, template&lt; class, std::size_t, class... &gt; class ArrayType, class... Args, class Scalar, std::size_t NumSpaceDim&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">auto Cabana::createLinkedCellList </td>
@@ -1617,32 +1646,216 @@ template&lt;class MemorySpace, class PositionType, class Scalar&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Scalar</td>          <td class="paramname"><span class="paramname"><em>grid_delta</em></span>[3], </td>
+          <td class="paramtype">const ArrayType&lt; Scalar, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>grid_delta</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Scalar</td>          <td class="paramname"><span class="paramname"><em>grid_min</em></span>[3], </td>
+          <td class="paramtype">const ArrayType&lt; Scalar, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>grid_min</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Scalar</td>          <td class="paramname"><span class="paramname"><em>grid_max</em></span>[3], </td>
+          <td class="paramtype">const ArrayType&lt; Scalar, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>grid_max</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Scalar</td>          <td class="paramname"><span class="paramname"><em>neighborhood_radius</em></span>, </td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>neighborhood_radius</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Scalar</td>          <td class="paramname"><span class="paramname"><em>cell_size_ratio</em></span><span class="paramdefsep"> = </span><span class="paramdefval">1.0</span>&#160;)</td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>cell_size_ratio</em></span><span class="paramdefsep"> = </span><span class="paramdefval">1.0</span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Creation function for linked cell list with partial range and custom cutoff radius and/or cell ratio. </p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classCabana_1_1LinkedCellList.html" title="Data describing the bin sizes and offsets resulting from a binning operation on a 3d regular Cartesia...">LinkedCellList</a>. </dd></dl>
+
+</div>
+</div>
+<a id="a0ea42084be73f3ef96b5003ead86775c" name="a0ea42084be73f3ef96b5003ead86775c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ea42084be73f3ef96b5003ead86775c">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[5/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class PositionType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto Cabana::createLinkedCellList </td>
+          <td>(</td>
+          <td class="paramtype">PositionType</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>begin</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>end</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>grid_delta</em></span>[3], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>grid_min</em></span>[3], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>grid_max</em></span>[3]&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creation function for linked cell list with partial range. </p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classCabana_1_1LinkedCellList.html" title="Data describing the bin sizes and offsets resulting from a binning operation on a 3d regular Cartesia...">LinkedCellList</a>. </dd></dl>
+
+</div>
+</div>
+<a id="a9803c3cb15899b5e673d57c166b50329" name="a9803c3cb15899b5e673d57c166b50329"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9803c3cb15899b5e673d57c166b50329">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[6/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class PositionType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto Cabana::createLinkedCellList </td>
+          <td>(</td>
+          <td class="paramtype">PositionType</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>begin</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>end</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>grid_delta</em></span>[3], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>grid_min</em></span>[3], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>grid_max</em></span>[3], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>neighborhood_radius</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>cell_size_ratio</em></span><span class="paramdefsep"> = </span><span class="paramdefval">1.0</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creation function for linked cell list with partial range and custom cutoff radius and/or cell ratio. </p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classCabana_1_1LinkedCellList.html" title="Data describing the bin sizes and offsets resulting from a binning operation on a 3d regular Cartesia...">LinkedCellList</a>. </dd></dl>
+
+</div>
+</div>
+<a id="afcbab298f727489057132f718552892c" name="afcbab298f727489057132f718552892c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afcbab298f727489057132f718552892c">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[7/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class PositionType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto Cabana::createLinkedCellList </td>
+          <td>(</td>
+          <td class="paramtype">PositionType</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>grid_delta</em></span>[3], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>grid_min</em></span>[3], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>grid_max</em></span>[3]&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creation function for linked cell list. </p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classCabana_1_1LinkedCellList.html" title="Data describing the bin sizes and offsets resulting from a binning operation on a 3d regular Cartesia...">LinkedCellList</a>. </dd></dl>
+
+</div>
+</div>
+<a id="a4fa9b63a296c89bc6ba8fa2fa8f39883" name="a4fa9b63a296c89bc6ba8fa2fa8f39883"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4fa9b63a296c89bc6ba8fa2fa8f39883">&#9670;&#160;</a></span>createLinkedCellList() <span class="overload">[8/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class PositionType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto Cabana::createLinkedCellList </td>
+          <td>(</td>
+          <td class="paramtype">PositionType</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>grid_delta</em></span>[3], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>grid_min</em></span>[3], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>grid_max</em></span>[3], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>neighborhood_radius</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>cell_size_ratio</em></span><span class="paramdefsep"> = </span><span class="paramdefval">1.0</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creation function for linked cell list with custom cutoff radius and cell ratio. </p>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="classCabana_1_1LinkedCellList.html" title="Data describing the bin sizes and offsets resulting from a binning operation on a 3d regular Cartesia...">LinkedCellList</a>. </dd></dl>
 
 </div>
@@ -2506,6 +2719,131 @@ template&lt;class HaloType, class SliceType&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="classCabana_1_1Scatter.html" title="Synchronously scatter data from the ghosts to the local decomposition of a slice using the halo rever...">Scatter</a> </dd></dl>
+
+</div>
+</div>
+<a id="ad841c0a4b3133a6487cfbf38fcb957a7" name="ad841c0a4b3133a6487cfbf38fcb957a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad841c0a4b3133a6487cfbf38fcb957a7">&#9670;&#160;</a></span>createVerletList() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class AlgorithmTag, class LayoutTag, class BuildTag, class PositionType, template&lt; class, std::size_t, class... &gt; class ArrayType, std::size_t NumSpaceDim, class... Args&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto Cabana::createVerletList </td>
+          <td>(</td>
+          <td class="paramtype">const PositionType &amp;</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>radius</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>cell_size_ratio</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ArrayType&lt; typename PositionType::value_type, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>grid_min</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ArrayType&lt; typename PositionType::value_type, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>grid_max</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>max_neigh</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a Cartesian grid with cells of the same si...">VerletList</a> constructor. Given a list of particle positions and a neighborhood radius calculate the neighbor list. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">positions</td><td>The particle positions </td></tr>
+    <tr><td class="paramname">radius</td><td>The radius of the neighborhood. Particles within this radius are considered neighbors. This is effectively the grid cell size in each dimension. </td></tr>
+    <tr><td class="paramname">cell_size_ratio</td><td>The ratio of the cell size in the Cartesian grid to the neighborhood radius. For example, if the cell size ratio is 0.5 then the cells will be half the size of the neighborhood radius in each dimension. </td></tr>
+    <tr><td class="paramname">grid_min</td><td>The minimum value of the grid containing the particles in each dimension. </td></tr>
+    <tr><td class="paramname">grid_max</td><td>The maximum value of the grid containing the particles in each dimension. </td></tr>
+    <tr><td class="paramname">max_neigh</td><td>Optional maximum number of neighbors per particle to pre-allocate the neighbor list. Potentially avoids recounting with 2D layout only. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae6cbe49a5251c106c2997074fc038a52" name="ae6cbe49a5251c106c2997074fc038a52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6cbe49a5251c106c2997074fc038a52">&#9670;&#160;</a></span>createVerletList() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class AlgorithmTag, class LayoutTag, class BuildTag, class PositionType, template&lt; class, std::size_t, class... &gt; class ArrayType, std::size_t NumSpaceDim, class... Args&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto Cabana::createVerletList </td>
+          <td>(</td>
+          <td class="paramtype">PositionType</td>          <td class="paramname"><span class="paramname"><em>positions</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>begin</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>end</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>radius</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename PositionType::value_type</td>          <td class="paramname"><span class="paramname"><em>cell_size_ratio</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ArrayType&lt; typename PositionType::value_type, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>grid_min</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ArrayType&lt; typename PositionType::value_type, NumSpaceDim &gt;</td>          <td class="paramname"><span class="paramname"><em>grid_max</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>max_neigh</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a Cartesian grid with cells of the same si...">VerletList</a> constructor. Given a list of particle positions and a neighborhood radius calculate the neighbor list. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">positions</td><td>The particle positions </td></tr>
+    <tr><td class="paramname">begin</td><td>The beginning particle index to compute neighbors for. </td></tr>
+    <tr><td class="paramname">end</td><td>The end particle index to compute neighbors for. </td></tr>
+    <tr><td class="paramname">radius</td><td>The radius of the neighborhood. Particles within this radius are considered neighbors. This is effectively the grid cell size in each dimension. </td></tr>
+    <tr><td class="paramname">cell_size_ratio</td><td>The ratio of the cell size in the Cartesian grid to the neighborhood radius. For example, if the cell size ratio is 0.5 then the cells will be half the size of the neighborhood radius in each dimension. </td></tr>
+    <tr><td class="paramname">grid_min</td><td>The minimum value of the grid containing the particles in each dimension. </td></tr>
+    <tr><td class="paramname">grid_max</td><td>The maximum value of the grid containing the particles in each dimension. </td></tr>
+    <tr><td class="paramname">max_neigh</td><td>Optional maximum number of neighbors per particle to pre-allocate the neighbor list. Potentially avoids recounting with 2D layout only.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Particles outside of the neighborhood radius will not be considered neighbors. Only compute the neighbors of those that are within the given range. All particles are candidates for being a neighbor, regardless of whether or not they are in the range. </p>
 
 </div>
 </div>
