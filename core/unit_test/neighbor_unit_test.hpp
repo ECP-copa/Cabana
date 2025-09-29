@@ -83,7 +83,7 @@ copyListToHost( const ListType& list, const std::size_t num_particle,
 }
 
 //---------------------------------------------------------------------------//
-template <class PositionSlice>
+template <std::size_t Dim, class PositionSlice>
 TestNeighborList<TEST_MEMSPACE>
 computeFullNeighborList( const PositionSlice& position,
                          const double neighborhood_radius )
@@ -103,7 +103,7 @@ computeFullNeighborList( const PositionSlice& position,
             if ( i != j )
             {
                 double dsqr = 0.0;
-                for ( std::size_t d = 0; d < 3; ++d )
+                for ( std::size_t d = 0; d < Dim; ++d )
                     dsqr += ( position( i, d ) - position( j, d ) ) *
                             ( position( i, d ) - position( j, d ) );
                 if ( dsqr <= rsqr )
@@ -140,7 +140,7 @@ computeFullNeighborList( const PositionSlice& position,
             if ( i != j )
             {
                 double dsqr = 0.0;
-                for ( int d = 0; d < 3; ++d )
+                for ( std::size_t d = 0; d < Dim; ++d )
                     dsqr += ( position( i, d ) - position( j, d ) ) *
                             ( position( i, d ) - position( j, d ) );
                 if ( dsqr <= rsqr )
@@ -988,7 +988,12 @@ void checkSecondNeighborParallelReduceFunctor( const ListType& nlist,
 
 //---------------------------------------------------------------------------//
 // Default test settings.
-struct NeighborListTestData
+
+template <std::size_t Dim>
+struct NeighborListTestData;
+
+template <>
+struct NeighborListTestData<3>
 {
     std::size_t num_particle = 300;
     std::size_t begin = 75;
@@ -998,8 +1003,13 @@ struct NeighborListTestData
     double box_max = 4.7 * test_radius;
 
     double cell_size_ratio = 0.5;
-    double grid_min[3] = { box_min, box_min, box_min };
-    double grid_max[3] = { box_max, box_max, box_max };
+    double delta = cell_size_ratio * test_radius;
+    double c_grid_min[3] = { box_min, box_min, box_min };
+    double c_grid_max[3] = { box_max, box_max, box_max };
+    double c_grid_delta[3] = { delta, delta, delta };
+    Kokkos::Array<double, 3> grid_min = { box_min, box_min, box_min };
+    Kokkos::Array<double, 3> grid_max = { box_max, box_max, box_max };
+    Kokkos::Array<double, 3> grid_delta = { delta, delta, delta };
 
     using DataTypes = Cabana::MemberTypes<double[3]>;
     using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
@@ -1029,7 +1039,59 @@ struct NeighborListTestData
 #endif
 
         // Create a full N^2 neighbor list to check against.
-        auto N2_list = computeFullNeighborList( positions, test_radius );
+        auto N2_list = computeFullNeighborList<3>( positions, test_radius );
+        N2_list_copy = createTestListHostCopy( N2_list );
+    }
+};
+
+template <>
+struct NeighborListTestData<2>
+{
+    std::size_t num_particle = 300;
+    std::size_t begin = 75;
+    std::size_t end = 225;
+    double test_radius = 2.32;
+    double box_min = -5.3 * test_radius;
+    double box_max = 4.7 * test_radius;
+
+    double cell_size_ratio = 0.5;
+    double delta = cell_size_ratio * test_radius;
+    double c_grid_min[2] = { box_min, box_min };
+    double c_grid_max[2] = { box_max, box_max };
+    double c_grid_delta[2] = { delta, delta };
+    Kokkos::Array<double, 2> grid_min = { box_min, box_min };
+    Kokkos::Array<double, 2> grid_max = { box_max, box_max };
+    Kokkos::Array<double, 2> grid_delta = { delta, delta };
+
+    using DataTypes = Cabana::MemberTypes<double[2]>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
+    AoSoA_t aosoa;
+
+    TestNeighborList<typename TEST_EXECSPACE::array_layout, Kokkos::HostSpace>
+        N2_list_copy;
+
+    NeighborListTestData()
+    {
+        // Create the AoSoA and fill with random particle positions.
+        aosoa = AoSoA_t( "random", num_particle );
+
+#ifdef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
+        using AoSoA_copy = Cabana::AoSoA<DataTypes, Kokkos::HostSpace>;
+        AoSoA_copy aosoa_copy( "aosoa", num_particle );
+        auto positions = Cabana::slice<0>( aosoa_copy );
+#else
+        auto positions = Cabana::slice<0>( aosoa );
+#endif
+
+        Cabana::createParticles( Cabana::InitRandom(), positions,
+                                 positions.size(), grid_min, grid_max );
+
+#ifdef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
+        Cabana::deep_copy( aosoa, aosoa_copy );
+#endif
+
+        // Create a full N^2 neighbor list to check against.
+        auto N2_list = computeFullNeighborList<2>( positions, test_radius );
         N2_list_copy = createTestListHostCopy( N2_list );
     }
 };
@@ -1045,8 +1107,8 @@ struct NeighborListTestDataOrdered
     double box_max = 5.0;
 
     double cell_size_ratio = 0.5;
-    double grid_min[3] = { box_min, box_min, box_min };
-    double grid_max[3] = { box_max, box_max, box_max };
+    Kokkos::Array<double, 3> grid_min = { box_min, box_min, box_min };
+    Kokkos::Array<double, 3> grid_max = { box_max, box_max, box_max };
 
     using DataTypes = Cabana::MemberTypes<double[3], double>;
     using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
@@ -1072,7 +1134,7 @@ struct NeighborListTestDataOrdered
 
         // Create a full N^2 neighbor list to check against.
         auto positions = Cabana::slice<0>( aosoa );
-        auto N2_list = computeFullNeighborList( positions, test_radius );
+        auto N2_list = computeFullNeighborList<3>( positions, test_radius );
         N2_list_copy = createTestListHostCopy( N2_list );
     }
 

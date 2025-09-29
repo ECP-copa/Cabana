@@ -23,10 +23,11 @@
 namespace Test
 {
 //---------------------------------------------------------------------------//
+template <std::size_t Dim>
 void testArborXListFull()
 {
     // Create the AoSoA and fill with random particle positions.
-    NeighborListTestData test_data;
+    NeighborListTestData<Dim> test_data;
     auto position = Cabana::slice<0>( test_data.aosoa );
 
     // Check CSR neighbor lists.
@@ -84,10 +85,11 @@ void testArborXListFull()
 }
 
 //---------------------------------------------------------------------------//
+template <std::size_t Dim>
 void testArborXListHalf()
 {
     // Create the AoSoA and fill with random particle positions.
-    NeighborListTestData test_data;
+    NeighborListTestData<Dim> test_data;
     auto position = Cabana::slice<0>( test_data.aosoa );
 
     // Check CSR neighbor lists.
@@ -145,10 +147,11 @@ void testArborXListHalf()
 }
 
 //---------------------------------------------------------------------------//
+template <std::size_t Dim>
 void testArborXListFullPartialRange()
 {
     // Create the AoSoA and fill with random particle positions.
-    NeighborListTestData test_data;
+    NeighborListTestData<Dim> test_data;
     auto position = Cabana::slice<0>( test_data.aosoa );
 
     {
@@ -176,10 +179,11 @@ void testArborXListFullPartialRange()
 }
 
 //---------------------------------------------------------------------------//
+template <std::size_t Dim>
 void testNeighborArborXParallelFor()
 {
     // Create the AoSoA and fill with random particle positions.
-    NeighborListTestData test_data;
+    NeighborListTestData<Dim> test_data;
     auto position = Cabana::slice<0>( test_data.aosoa );
 
     {
@@ -235,10 +239,11 @@ void testNeighborArborXParallelFor()
 }
 
 //---------------------------------------------------------------------------//
+template <std::size_t Dim>
 void testNeighborArborXParallelReduce()
 {
     // Create the AoSoA and fill with random particle positions.
-    NeighborListTestData test_data;
+    NeighborListTestData<Dim> test_data;
     auto position = Cabana::slice<0>( test_data.aosoa );
 
     {
@@ -290,19 +295,19 @@ void testNeighborArborXParallelReduce()
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-TEST( ArborXList, Full ) { testArborXListFull(); }
+TEST( ArborXList, Full3d ) { testArborXListFull<3>(); }
 
 //---------------------------------------------------------------------------//
-TEST( ArborXList, Half ) { testArborXListHalf(); }
+TEST( ArborXList, Half3d ) { testArborXListHalf<3>(); }
 
 //---------------------------------------------------------------------------//
-TEST( ArborXList, FullRange ) { testArborXListFullPartialRange(); }
+TEST( ArborXList, FullRange3d ) { testArborXListFullPartialRange<3>(); }
 
 //---------------------------------------------------------------------------//
-TEST( ArborXList, ParallelFor ) { testNeighborArborXParallelFor(); }
+TEST( ArborXList, ParallelFor3d ) { testNeighborArborXParallelFor<3>(); }
 
 //---------------------------------------------------------------------------//
-TEST( ArborXList, ParallelReduce ) { testNeighborArborXParallelReduce(); }
+TEST( ArborXList, ParallelReduce3d ) { testNeighborArborXParallelReduce<3>(); }
 //---------------------------------------------------------------------------//
 
 } // end namespace Test

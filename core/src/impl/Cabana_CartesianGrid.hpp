@@ -23,131 +23,256 @@ namespace Impl
 {
 //! \cond Impl
 
-template <class Real, typename std::enable_if<
-                          std::is_floating_point<Real>::value, int>::type = 0>
+template <class Real, std::size_t NumSpaceDim = 3>
 class CartesianGrid
 {
+    static_assert( std::is_floating_point<Real>::value,
+                   "Scalar type must be floating point type." );
+
   public:
     using real_type = Real;
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
 
-    Real _min_x;
-    Real _min_y;
-    Real _min_z;
-    Real _max_x;
-    Real _max_y;
-    Real _max_z;
-    Real _dx;
-    Real _dy;
-    Real _dz;
-    Real _rdx;
-    Real _rdy;
-    Real _rdz;
-    int _nx;
-    int _ny;
-    int _nz;
+    Kokkos::Array<real_type, num_space_dim> _min;
+    Kokkos::Array<real_type, num_space_dim> _max;
+    Kokkos::Array<real_type, num_space_dim> _dx;
+    Kokkos::Array<real_type, num_space_dim> _rdx;
+    Kokkos::Array<int, num_space_dim> _nx;
 
     CartesianGrid() = default;
 
+    template <class ArrayType>
+    CartesianGrid( const ArrayType min, const ArrayType max,
+                   const real_type delta_x )
+    {
+        Kokkos::Array<real_type, num_space_dim> delta;
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+            delta[d] = delta_x;
+        init( min, max, delta );
+    }
+
+    template <class ArrayType>
+    CartesianGrid( const ArrayType min, const ArrayType max,
+                   const ArrayType delta )
+    {
+        init( min, max, delta );
+    }
+
+    template <class ArrayType, class DeltaArrayType>
+    void init( const ArrayType min, const ArrayType max,
+               const DeltaArrayType delta )
+    {
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+        {
+            _min[d] = min[d];
+            _max[d] = max[d];
+            _nx[d] = cellsBetween( max[d], min[d], 1.0 / delta[d] );
+            _dx[d] = ( max[d] - min[d] ) / _nx[d];
+            _rdx[d] = 1.0 / _dx[d];
+        }
+    }
+
+    template <std::size_t NSD = num_space_dim>
     CartesianGrid( const Real min_x, const Real min_y, const Real min_z,
                    const Real max_x, const Real max_y, const Real max_z,
-                   const Real delta_x, const Real delta_y, const Real delta_z )
-        : _min_x( min_x )
-        , _min_y( min_y )
-        , _min_z( min_z )
-        , _max_x( max_x )
-        , _max_y( max_y )
-        , _max_z( max_z )
+                   const Real delta_x, const Real delta_y, const Real delta_z,
+                   typename std::enable_if<NSD == 3, int>::type* = 0 )
+        : _min( { min_x, min_y, min_z } )
+        , _max( { max_x, max_y, max_z } )
     {
-        _nx = cellsBetween( max_x, min_x, 1.0 / delta_x );
-        _ny = cellsBetween( max_y, min_y, 1.0 / delta_y );
-        _nz = cellsBetween( max_z, min_z, 1.0 / delta_z );
+        _nx[0] = cellsBetween( max_x, min_x, 1.0 / delta_x );
+        _nx[1] = cellsBetween( max_y, min_y, 1.0 / delta_y );
+        _nx[2] = cellsBetween( max_z, min_z, 1.0 / delta_z );
 
-        _dx = ( max_x - min_x ) / _nx;
-        _dy = ( max_y - min_y ) / _ny;
-        _dz = ( max_z - min_z ) / _nz;
+        _dx[0] = ( max_x - min_x ) / _nx[0];
+        _dx[1] = ( max_y - min_y ) / _nx[1];
+        _dx[2] = ( max_z - min_z ) / _nx[2];
 
-        _rdx = 1.0 / _dx;
-        _rdy = 1.0 / _dy;
-        _rdz = 1.0 / _dz;
+        _rdx[0] = 1.0 / _dx[0];
+        _rdx[1] = 1.0 / _dx[1];
+        _rdx[2] = 1.0 / _dx[2];
     }
 
     // Get the total number of cells.
     KOKKOS_INLINE_FUNCTION
-    std::size_t totalNumCells() const { return _nx * _ny * _nz; }
+    std::size_t totalNumCells() const
+    {
+        std::size_t total = 1;
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+            total *= _nx[d];
+        return total;
+    }
 
     // Get the number of cells in each direction.
-    KOKKOS_INLINE_FUNCTION
-    void numCells( int& num_x, int& num_y, int& num_z )
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    numCells( int& num_x, int& num_y, int& num_z )
     {
-        num_x = _nx;
-        num_y = _ny;
-        num_z = _nz;
+        num_x = _nx[0];
+        num_y = _nx[1];
+        num_z = _nx[2];
+    }
+
+    // Get the number of cells in each direction.
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
+    numCells( int& num_x, int& num_y )
+    {
+        num_x = _nx[0];
+        num_y = _nx[1];
     }
 
     // Get the number of cells in a given direction.
     KOKKOS_INLINE_FUNCTION
     int numBin( const int dim ) const
     {
+        assert( static_cast<std::size_t>( dim ) < num_space_dim );
+
         if ( 0 == dim )
-            return _nx;
+            return _nx[0];
         else if ( 1 == dim )
-            return _ny;
+            return _nx[1];
         else if ( 2 == dim )
-            return _nz;
+            return _nx[2];
         else
             return -1;
     }
 
     // Given a position get the ijk indices of the cell in which
-    KOKKOS_INLINE_FUNCTION
-    void locatePoint( const Real xp, const Real yp, const Real zp, int& ic,
-                      int& jc, int& kc ) const
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    locatePoint( const Real xp, const Real yp, const Real zp, int& ic, int& jc,
+                 int& kc ) const
     {
         // Since we use a floor function a point on the outer boundary
         // will be found in the next cell, causing an out of bounds error
-        ic = cellsBetween( xp, _min_x, _rdx );
-        ic = ( ic == _nx ) ? ic - 1 : ic;
-        jc = cellsBetween( yp, _min_y, _rdy );
-        jc = ( jc == _ny ) ? jc - 1 : jc;
-        kc = cellsBetween( zp, _min_z, _rdz );
-        kc = ( kc == _nz ) ? kc - 1 : kc;
+        ic = cellsBetween( xp, _min[0], _rdx[0] );
+        ic = ( ic == _nx[0] ) ? ic - 1 : ic;
+        jc = cellsBetween( yp, _min[1], _rdx[1] );
+        jc = ( jc == _nx[1] ) ? jc - 1 : jc;
+        kc = cellsBetween( zp, _min[2], _rdx[2] );
+        kc = ( kc == _nx[2] ) ? kc - 1 : kc;
+    }
+
+    // Given a position get the ijk indices of the cell in which
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
+    locatePoint( const Real xp, const Real yp, int& ic, int& jc ) const
+    {
+        // Since we use a floor function a point on the outer boundary
+        // will be found in the next cell, causing an out of bounds error
+        ic = cellsBetween( xp, _min[0], _rdx[0] );
+        ic = ( ic == _nx[0] ) ? ic - 1 : ic;
+        jc = cellsBetween( yp, _min[1], _rdx[1] );
+        jc = ( jc == _nx[1] ) ? jc - 1 : jc;
+    }
+
+    // Given a position get the ijk indices of the cell in which
+    KOKKOS_INLINE_FUNCTION void
+    locatePoint( const Kokkos::Array<Real, num_space_dim> p,
+                 Kokkos::Array<int, num_space_dim>& c ) const
+    {
+        // Since we use a floor function a point on the outer boundary
+        // will be found in the next cell, causing an out of bounds error
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+        {
+            c[d] = cellsBetween( p[d], _min[d], _rdx[d] );
+            c[d] = ( c[d] == _nx[d] ) ? c[d] - 1 : c[d];
+        }
     }
 
     // Given a position and a cell index get square of the minimum distance to
     // that point to any point in the cell. If the point is in the cell the
     // returned distance is zero.
-    KOKKOS_INLINE_FUNCTION
-    Real minDistanceToPoint( const Real xp, const Real yp, const Real zp,
-                             const int ic, const int jc, const int kc ) const
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, Real>
+    minDistanceToPoint( const Real xp, const Real yp, const Real zp,
+                        const int ic, const int jc, const int kc ) const
     {
-        Real xc = _min_x + ( ic + 0.5 ) * _dx;
-        Real yc = _min_y + ( jc + 0.5 ) * _dy;
-        Real zc = _min_z + ( kc + 0.5 ) * _dz;
+        Kokkos::Array<Real, num_space_dim> x;
+        x[0] = xp;
+        x[1] = yp;
+        x[2] = zp;
+        Kokkos::Array<int, num_space_dim> c;
+        c[0] = ic;
+        c[1] = jc;
+        c[2] = kc;
 
-        Real rx = fabs( xp - xc ) - 0.5 * _dx;
-        Real ry = fabs( yp - yc ) - 0.5 * _dy;
-        Real rz = fabs( zp - zc ) - 0.5 * _dz;
+        return minDistanceToPoint( x, c );
+    }
 
-        rx = ( rx > 0.0 ) ? rx : 0.0;
-        ry = ( ry > 0.0 ) ? ry : 0.0;
-        rz = ( rz > 0.0 ) ? rz : 0.0;
+    // Given a position and a cell index get square of the minimum distance to
+    // that point to any point in the cell. If the point is in the cell the
+    // returned distance is zero.
+    KOKKOS_INLINE_FUNCTION Real
+    minDistanceToPoint( const Kokkos::Array<Real, num_space_dim> x,
+                        const Kokkos::Array<int, num_space_dim> c ) const
+    {
+        Real rsqr = 0.0;
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+        {
+            Real xc = _min[d] + ( c[d] + 0.5 ) * _dx[d];
+            Real rx = fabs( x[d] - xc ) - 0.5 * _dx[d];
 
-        return rx * rx + ry * ry + rz * rz;
+            rx = ( rx > 0.0 ) ? rx : 0.0;
+
+            rsqr += rx * rx;
+        }
+
+        return rsqr;
     }
 
     // Given the ijk index of a cell get its cardinal index.
-    KOKKOS_INLINE_FUNCTION
-    int cardinalCellIndex( const int i, const int j, const int k ) const
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, int>
+    cardinalCellIndex( const int i, const int j, const int k ) const
     {
-        return ( i * _ny + j ) * _nz + k;
+        return ( i * _nx[1] + j ) * _nx[2] + k;
     }
 
-    KOKKOS_INLINE_FUNCTION
-    void ijkBinIndex( const int cardinal, int& i, int& j, int& k ) const
+    // Given the ij index of a cell get its cardinal index.
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, int>
+    cardinalCellIndex( const int i, const int j ) const
     {
-        i = cardinal / ( _ny * _nz );
-        j = ( cardinal / _nz ) % _ny;
-        k = cardinal % _nz;
+        return i * _nx[1] + j;
+    }
+
+    // Given the ij index of a cell get its cardinal index.
+    KOKKOS_INLINE_FUNCTION int
+    cardinalCellIndex( const Kokkos::Array<int, num_space_dim> ijk ) const
+    {
+        if constexpr ( num_space_dim == 3 )
+            return cardinalCellIndex( ijk[0], ijk[1], ijk[2] );
+        else
+            return cardinalCellIndex( ijk[0], ijk[1] );
+    }
+
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    ijkBinIndex( const int cardinal, int& i, int& j, int& k ) const
+    {
+        i = cardinal / ( _nx[1] * _nx[2] );
+        j = ( cardinal / _nx[2] ) % _nx[1];
+        k = cardinal % _nx[2];
+    }
+
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
+    ijkBinIndex( const int cardinal, int& i, int& j ) const
+    {
+        i = cardinal / ( _nx[1] );
+        j = cardinal % _nx[1];
+    }
+
+    KOKKOS_INLINE_FUNCTION void
+    ijkBinIndex( const int cardinal,
+                 Kokkos::Array<int, num_space_dim>& ijk ) const
+    {
+        if constexpr ( num_space_dim == 3 )
+            return ijkBinIndex( cardinal, ijk[0], ijk[1], ijk[2] );
+        else
+            return ijkBinIndex( cardinal, ijk[0], ijk[1] );
     }
 
     // Calculate the number of full cells between 2 points.
