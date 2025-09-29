@@ -78,7 +78,7 @@ class PerformanceTraits<Kokkos::Cuda>
 //---------------------------------------------------------------------------//
 #if defined( KOKKOS_ENABLE_HIP )
 template <>
-class PerformanceTraits<Kokkos::Experimental::HIP>
+class PerformanceTraits<Kokkos::HIP>
 {
   public:
     static constexpr int vector_length = 64; // wavefront size
