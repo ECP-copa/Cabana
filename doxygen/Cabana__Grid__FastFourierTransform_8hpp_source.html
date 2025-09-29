@@ -473,7 +473,7 @@ $(function(){initNavTree('Cabana__Grid__FastFourierTransform_8hpp_source.html','
 <div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span><span class="preprocessor">#ifdef Heffte_ENABLE_ROCM</span></div>
 <div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span><span class="preprocessor">#ifdef KOKKOS_ENABLE_HIP</span></div>
 <div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span><span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span><span class="keyword">struct </span>HeffteBackendTraits&lt;Kokkos::Experimental::HIP, Impl::FFTBackendDefault&gt;</div>
+<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span><span class="keyword">struct </span>HeffteBackendTraits&lt;Kokkos::HIP, Impl::FFTBackendDefault&gt;</div>
 <div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>{</div>
 <div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>    <span class="keyword">using </span>backend_type = heffte::backend::rocfft;</div>
 <div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>};</div>
