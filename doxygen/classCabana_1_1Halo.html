@@ -152,6 +152,22 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6c39f13fe61bcfbd22e183785c4c83b6"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a6c39f13fe61bcfbd22e183785c4c83b6">Halo</a> (MPI_Comm <a class="el" href="classCabana_1_1CommunicationPlan.html#a614a7eb904961fd1c301accd4f8b9848">comm</a>, const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks)</td></tr>
 <tr class="memdesc:a6c39f13fe61bcfbd22e183785c4c83b6"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Import.html" title="Import-based tag.">Import</a> rank constructor. Use this when you don't know which ranks neighbor each other. (i.e. every rank does not already know who they will be exporting to and receiving from)  <br /></td></tr>
 <tr class="separator:a6c39f13fe61bcfbd22e183785c4c83b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3c1740f2bc358a3d097938f41e530e1" id="r_ad3c1740f2bc358a3d097938f41e530e1"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Export.html">Export</a> &gt;::value, int &gt; = 0&gt; </td></tr>
+<tr class="memitem:ad3c1740f2bc358a3d097938f41e530e1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ad3c1740f2bc358a3d097938f41e530e1">build</a> (const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</td></tr>
+<tr class="memdesc:ad3c1740f2bc358a3d097938f41e530e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and export rank (re)build interface.  <br /></td></tr>
+<tr class="separator:ad3c1740f2bc358a3d097938f41e530e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add7ab9463f1f7061a98d4adf182acc9d" id="r_add7ab9463f1f7061a98d4adf182acc9d"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Export.html">Export</a> &gt;::value, int &gt; = 0&gt; </td></tr>
+<tr class="memitem:add7ab9463f1f7061a98d4adf182acc9d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#add7ab9463f1f7061a98d4adf182acc9d">build</a> (const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks)</td></tr>
+<tr class="memdesc:add7ab9463f1f7061a98d4adf182acc9d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Export.html" title="Export-based tag - default.">Export</a> rank (re)build interface.  <br /></td></tr>
+<tr class="separator:add7ab9463f1f7061a98d4adf182acc9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3c1740f2bc358a3d097938f41e530e1" id="r_ad3c1740f2bc358a3d097938f41e530e1"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Import.html">Import</a> &gt;::value, int &gt; = 0&gt; </td></tr>
+<tr class="memitem:ad3c1740f2bc358a3d097938f41e530e1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ad3c1740f2bc358a3d097938f41e530e1">build</a> (const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</td></tr>
+<tr class="memdesc:ad3c1740f2bc358a3d097938f41e530e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and import rank (re)build interface.  <br /></td></tr>
+<tr class="separator:ad3c1740f2bc358a3d097938f41e530e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add7ab9463f1f7061a98d4adf182acc9d" id="r_add7ab9463f1f7061a98d4adf182acc9d"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Import.html">Import</a> &gt;::value, int &gt; = 0&gt; </td></tr>
+<tr class="memitem:add7ab9463f1f7061a98d4adf182acc9d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#add7ab9463f1f7061a98d4adf182acc9d">build</a> (const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks)</td></tr>
+<tr class="memdesc:add7ab9463f1f7061a98d4adf182acc9d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Import.html" title="Import-based tag.">Import</a> rank (re)build interface.  <br /></td></tr>
+<tr class="separator:add7ab9463f1f7061a98d4adf182acc9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a7fa1e057f65089995a01895283f4b2" id="r_a6a7fa1e057f65089995a01895283f4b2"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a7fa1e057f65089995a01895283f4b2">numLocal</a> () const</td></tr>
 <tr class="memdesc:a6a7fa1e057f65089995a01895283f4b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of elements locally owned by this rank.  <br /></td></tr>
 <tr class="separator:a6a7fa1e057f65089995a01895283f4b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -521,6 +537,180 @@ template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::e
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="add7ab9463f1f7061a98d4adf182acc9d" name="add7ab9463f1f7061a98d4adf182acc9d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add7ab9463f1f7061a98d4adf182acc9d">&#9670;&#160;</a></span>build() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MemorySpace, class BuildType = Export&gt; </div>
+<div class="memtemplate">
+template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Export.html">Export</a> &gt;::value, int &gt; = 0&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType &gt;::build </td>
+          <td>(</td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>num_local</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const IdViewType &amp;</td>          <td class="paramname"><span class="paramname"><em>element_ids</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const RankViewType &amp;</td>          <td class="paramname"><span class="paramname"><em>element_ranks</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="structCabana_1_1Export.html" title="Export-based tag - default.">Export</a> rank (re)build interface. </p>
+<p>See corresponding <a class="el" href="classCabana_1_1Halo.html" title="A communication plan for scattering and gathering of ghosted data.">Halo</a> constructor for detail. </p>
+
+</div>
+</div>
+<a id="add7ab9463f1f7061a98d4adf182acc9d" name="add7ab9463f1f7061a98d4adf182acc9d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add7ab9463f1f7061a98d4adf182acc9d">&#9670;&#160;</a></span>build() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MemorySpace, class BuildType = Export&gt; </div>
+<div class="memtemplate">
+template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Import.html">Import</a> &gt;::value, int &gt; = 0&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType &gt;::build </td>
+          <td>(</td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>num_local</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const IdViewType &amp;</td>          <td class="paramname"><span class="paramname"><em>element_ids</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const RankViewType &amp;</td>          <td class="paramname"><span class="paramname"><em>element_ranks</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="structCabana_1_1Import.html" title="Import-based tag.">Import</a> rank (re)build interface. </p>
+<p>See corresponding <a class="el" href="classCabana_1_1Halo.html" title="A communication plan for scattering and gathering of ghosted data.">Halo</a> constructor for detail. </p>
+
+</div>
+</div>
+<a id="ad3c1740f2bc358a3d097938f41e530e1" name="ad3c1740f2bc358a3d097938f41e530e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad3c1740f2bc358a3d097938f41e530e1">&#9670;&#160;</a></span>build() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MemorySpace, class BuildType = Export&gt; </div>
+<div class="memtemplate">
+template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Export.html">Export</a> &gt;::value, int &gt; = 0&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType &gt;::build </td>
+          <td>(</td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>num_local</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const IdViewType &amp;</td>          <td class="paramname"><span class="paramname"><em>element_ids</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const RankViewType &amp;</td>          <td class="paramname"><span class="paramname"><em>element_ranks</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; int &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>neighbor_ranks</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Neighbor and export rank (re)build interface. </p>
+<p>See corresponding <a class="el" href="classCabana_1_1Halo.html" title="A communication plan for scattering and gathering of ghosted data.">Halo</a> constructor for detail. </p>
+
+</div>
+</div>
+<a id="ad3c1740f2bc358a3d097938f41e530e1" name="ad3c1740f2bc358a3d097938f41e530e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad3c1740f2bc358a3d097938f41e530e1">&#9670;&#160;</a></span>build() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MemorySpace, class BuildType = Export&gt; </div>
+<div class="memtemplate">
+template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Import.html">Import</a> &gt;::value, int &gt; = 0&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType &gt;::build </td>
+          <td>(</td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>num_local</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const IdViewType &amp;</td>          <td class="paramname"><span class="paramname"><em>element_ids</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const RankViewType &amp;</td>          <td class="paramname"><span class="paramname"><em>element_ranks</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; int &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>neighbor_ranks</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Neighbor and import rank (re)build interface. </p>
+<p>See corresponding <a class="el" href="classCabana_1_1Halo.html" title="A communication plan for scattering and gathering of ghosted data.">Halo</a> constructor for detail. </p>
+
+</div>
+</div>
 <a id="a20a2f092117288f3aff7d93b016dd6e7" name="a20a2f092117288f3aff7d93b016dd6e7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a20a2f092117288f3aff7d93b016dd6e7">&#9670;&#160;</a></span>numGhost()</h2>
 

@@ -12,5 +12,7 @@ var classCabana_1_1Scatter =
     [ "reserve", "classCabana_1_1Scatter.html#a1e7ffb8551089c18fd4257d8bdbc9ac2", null ],
     [ "reserve", "classCabana_1_1Scatter.html#a69e083e0c36735e0f3f6cdc792573776", null ],
     [ "totalReceive", "classCabana_1_1Scatter.html#abe8c24cd4cdfbb6ddad24e1aa2ca29f7", null ],
-    [ "totalSend", "classCabana_1_1Scatter.html#ae47766c1e1abb22654c8e7cbb6c5f670", null ]
+    [ "totalReceive", "classCabana_1_1Scatter.html#acbba183f164ca62b248aa714af0d7e07", null ],
+    [ "totalSend", "classCabana_1_1Scatter.html#ae47766c1e1abb22654c8e7cbb6c5f670", null ],
+    [ "totalSend", "classCabana_1_1Scatter.html#a4f6c3611bb1ecbbd385c474492294f28", null ]
 ];

@@ -12,5 +12,7 @@ var classCabana_1_1Gather_3_01HaloType_00_01AoSoAType_00_01typename_01std_1_1ena
     [ "reserve", "classCabana_1_1Gather_3_01HaloType_00_01AoSoAType_00_01typename_01std_1_1enable__if_3_01is__aoso666e08a1494152c80218c785a19e78d3.html#ae36b42b7246bcf4439b760199ffbd784", null ],
     [ "reserve", "classCabana_1_1Gather_3_01HaloType_00_01AoSoAType_00_01typename_01std_1_1enable__if_3_01is__aoso666e08a1494152c80218c785a19e78d3.html#a8930f328b5b3ff485c6b55b6afdaf4ff", null ],
     [ "totalReceive", "classCabana_1_1Gather_3_01HaloType_00_01AoSoAType_00_01typename_01std_1_1enable__if_3_01is__aoso666e08a1494152c80218c785a19e78d3.html#ab316c912a6a047f9dc351f9e00bbd993", null ],
-    [ "totalSend", "classCabana_1_1Gather_3_01HaloType_00_01AoSoAType_00_01typename_01std_1_1enable__if_3_01is__aoso666e08a1494152c80218c785a19e78d3.html#a923ec2b0e1fda9f4e55a460492859037", null ]
+    [ "totalReceive", "classCabana_1_1Gather_3_01HaloType_00_01AoSoAType_00_01typename_01std_1_1enable__if_3_01is__aoso666e08a1494152c80218c785a19e78d3.html#a50923c342bfdd377ad33703f89ec5695", null ],
+    [ "totalSend", "classCabana_1_1Gather_3_01HaloType_00_01AoSoAType_00_01typename_01std_1_1enable__if_3_01is__aoso666e08a1494152c80218c785a19e78d3.html#a923ec2b0e1fda9f4e55a460492859037", null ],
+    [ "totalSend", "classCabana_1_1Gather_3_01HaloType_00_01AoSoAType_00_01typename_01std_1_1enable__if_3_01is__aoso666e08a1494152c80218c785a19e78d3.html#a0f3762ba79e3079d5019a7de7d3b60ac", null ]
 ];
