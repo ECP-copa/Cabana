@@ -107,13 +107,7 @@ class Halo : public CommunicationPlan<MemorySpace>
         : CommunicationPlan<MemorySpace>( comm )
         , _num_local( num_local )
     {
-        if ( element_ids.size() != element_ranks.size() )
-            throw std::runtime_error( "Cabana::Halo (export): ids and ranks "
-                                      "views are different sizes!" );
-
-        auto neighbor_ids = this->createWithTopology(
-            BuildType(), element_ranks, neighbor_ranks );
-        this->createExportSteering( neighbor_ids, element_ranks, element_ids );
+        build( num_local, element_ids, element_ranks, neighbor_ranks );
     }
 
     /*!
@@ -155,13 +149,7 @@ class Halo : public CommunicationPlan<MemorySpace>
         : CommunicationPlan<MemorySpace>( comm )
         , _num_local( num_local )
     {
-        if ( element_ids.size() != element_ranks.size() )
-            throw std::runtime_error( "Cabana::Halo (export): ids and ranks "
-                                      "views are different sizes!" );
-
-        auto neighbor_ids =
-            this->createWithoutTopology( BuildType(), element_ranks );
-        this->createExportSteering( neighbor_ids, element_ranks, element_ids );
+        build( num_local, element_ids, element_ranks );
     }
 
     /*!
@@ -210,17 +198,8 @@ class Halo : public CommunicationPlan<MemorySpace>
           const IdViewType& element_ids, const RankViewType& element_ranks,
           const std::vector<int>& neighbor_ranks )
         : CommunicationPlan<MemorySpace>( comm )
-        , _num_local( num_local )
     {
-        if ( element_ids.size() != element_ranks.size() )
-            throw std::runtime_error( "Cabana::Halo (import): ids and ranks "
-                                      "views are different sizes!" );
-
-        auto neighbor_ids_ranks_indices = this->createWithTopology(
-            BuildType(), element_ranks, element_ids, neighbor_ranks );
-        this->createExportSteering( std::get<0>( neighbor_ids_ranks_indices ),
-                                    std::get<1>( neighbor_ids_ranks_indices ),
-                                    std::get<2>( neighbor_ids_ranks_indices ) );
+        build( num_local, element_ids, element_ranks, neighbor_ranks );
     }
 
     /*!
@@ -259,8 +238,85 @@ class Halo : public CommunicationPlan<MemorySpace>
     Halo( MPI_Comm comm, const std::size_t num_local,
           const IdViewType& element_ids, const RankViewType& element_ranks )
         : CommunicationPlan<MemorySpace>( comm )
-        , _num_local( num_local )
     {
+        build( num_local, element_ids, element_ranks );
+    }
+
+    /*!
+      \brief Neighbor and export rank (re)build interface.
+
+      See corresponding Halo constructor for detail.
+    */
+    template <class IdViewType, class RankViewType, typename T = BuildType,
+              std::enable_if_t<std::is_same<T, Export>::value, int> = 0>
+    void build( const std::size_t num_local, const IdViewType& element_ids,
+                const RankViewType& element_ranks,
+                const std::vector<int>& neighbor_ranks )
+    {
+        _num_local = num_local;
+        if ( element_ids.size() != element_ranks.size() )
+            throw std::runtime_error( "Cabana::Halo (export): ids and ranks "
+                                      "views are different sizes!" );
+
+        auto neighbor_ids = this->createWithTopology(
+            BuildType(), element_ranks, neighbor_ranks );
+        this->createExportSteering( neighbor_ids, element_ranks, element_ids );
+    }
+
+    /*!
+      \brief Export rank (re)build interface.
+
+      See corresponding Halo constructor for detail.
+    */
+    template <class IdViewType, class RankViewType, typename T = BuildType,
+              std::enable_if_t<std::is_same<T, Export>::value, int> = 0>
+    void build( const std::size_t num_local, const IdViewType& element_ids,
+                const RankViewType& element_ranks )
+    {
+        _num_local = num_local;
+        if ( element_ids.size() != element_ranks.size() )
+            throw std::runtime_error( "Cabana::Halo (export): ids and ranks "
+                                      "views are different sizes!" );
+
+        auto neighbor_ids =
+            this->createWithoutTopology( BuildType(), element_ranks );
+        this->createExportSteering( neighbor_ids, element_ranks, element_ids );
+    }
+
+    /*!
+      \brief Neighbor and import rank (re)build interface.
+
+      See corresponding Halo constructor for detail.
+    */
+    template <class IdViewType, class RankViewType, typename T = BuildType,
+              std::enable_if_t<std::is_same<T, Import>::value, int> = 0>
+    void build( const std::size_t num_local, const IdViewType& element_ids,
+                const RankViewType& element_ranks,
+                const std::vector<int>& neighbor_ranks )
+    {
+        _num_local = num_local;
+        if ( element_ids.size() != element_ranks.size() )
+            throw std::runtime_error( "Cabana::Halo (import): ids and ranks "
+                                      "views are different sizes!" );
+
+        auto neighbor_ids_ranks_indices = this->createWithTopology(
+            BuildType(), element_ranks, element_ids, neighbor_ranks );
+        this->createExportSteering( std::get<0>( neighbor_ids_ranks_indices ),
+                                    std::get<1>( neighbor_ids_ranks_indices ),
+                                    std::get<2>( neighbor_ids_ranks_indices ) );
+    }
+
+    /*!
+      \brief Import rank (re)build interface.
+
+      See corresponding Halo constructor for detail.
+    */
+    template <class IdViewType, class RankViewType, typename T = BuildType,
+              std::enable_if_t<std::is_same<T, Import>::value, int> = 0>
+    void build( const std::size_t num_local, const IdViewType& element_ids,
+                const RankViewType& element_ranks )
+    {
+        _num_local = num_local;
         if ( element_ids.size() != element_ranks.size() )
             throw std::runtime_error( "Cabana::Halo (import): ids and ranks "
                                       "views are different sizes!" );
@@ -381,13 +437,17 @@ class Gather<HaloType, AoSoAType,
     Gather( HaloType halo, AoSoAType aosoa, const double overallocation = 1.0 )
         : base_type( halo, aosoa, overallocation )
     {
-        reserve( _halo, aosoa );
+        reserve( _comm_plan, aosoa );
     }
 
     //! Total gather send size for this rank.
-    auto totalSend() { return _halo.totalNumExport(); }
+    auto totalSend() { return _comm_plan.totalNumExport(); }
     //! Total gather receive size for this rank.
-    auto totalReceive() { return _halo.totalNumImport(); }
+    auto totalReceive() { return _comm_plan.totalNumImport(); }
+    //! Total gather send size for this rank.
+    auto totalSend( const HaloType& halo ) { return halo.totalNumExport(); }
+    //! Total gather receive size for this rank.
+    auto totalReceive( const HaloType& halo ) { return halo.totalNumImport(); }
 
     /*!
       \brief Perform the gather operation.
@@ -403,7 +463,7 @@ class Gather<HaloType, AoSoAType,
         auto aosoa = this->getData();
 
         // Get the steering vector for the sends.
-        auto steering = _halo.getExportSteering();
+        auto steering = _comm_plan.getExportSteering();
         // Gather from the local data into a tuple-contiguous send buffer.
         auto gather_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
         {
@@ -418,18 +478,18 @@ class Gather<HaloType, AoSoAType,
         const int mpi_tag = 2345;
 
         // Post non-blocking receives.
-        int num_n = _halo.numNeighbor();
+        int num_n = _comm_plan.numNeighbor();
         std::vector<MPI_Request> requests( num_n );
         std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
         for ( int n = 0; n < num_n; ++n )
         {
-            recv_range.second = recv_range.first + _halo.numImport( n );
+            recv_range.second = recv_range.first + _comm_plan.numImport( n );
 
             auto recv_subview = Kokkos::subview( recv_buffer, recv_range );
 
             MPI_Irecv( recv_subview.data(),
                        recv_subview.size() * sizeof( data_type ), MPI_BYTE,
-                       _halo.neighborRank( n ), mpi_tag, _halo.comm(),
+                       _comm_plan.neighborRank( n ), mpi_tag, _comm_plan.comm(),
                        &( requests[n] ) );
 
             recv_range.first = recv_range.second;
@@ -439,13 +499,14 @@ class Gather<HaloType, AoSoAType,
         std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
         for ( int n = 0; n < num_n; ++n )
         {
-            send_range.second = send_range.first + _halo.numExport( n );
+            send_range.second = send_range.first + _comm_plan.numExport( n );
 
             auto send_subview = Kokkos::subview( send_buffer, send_range );
 
             MPI_Send( send_subview.data(),
                       send_subview.size() * sizeof( data_type ), MPI_BYTE,
-                      _halo.neighborRank( n ), mpi_tag, _halo.comm() );
+                      _comm_plan.neighborRank( n ), mpi_tag,
+                      _comm_plan.comm() );
 
             send_range.first = send_range.second;
         }
@@ -459,7 +520,7 @@ class Gather<HaloType, AoSoAType,
                 "Cabana::Gather::apply (AoSoA): Failed MPI Communication" );
 
         // Extract the receive buffer into the ghosted elements.
-        std::size_t num_local = _halo.numLocal();
+        std::size_t num_local = _comm_plan.numLocal();
         auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
         {
             std::size_t ghost_idx = i + num_local;
@@ -471,7 +532,7 @@ class Gather<HaloType, AoSoAType,
         Kokkos::fence();
 
         // Barrier before completing to ensure synchronization.
-        MPI_Barrier( _halo.comm() );
+        MPI_Barrier( _comm_plan.comm() );
     }
 
     void apply() override { apply( execution_space{} ); }
@@ -490,7 +551,8 @@ class Gather<HaloType, AoSoAType,
                 "AoSoA is the wrong size for gather! (Label: " +
                 aosoa.label() + ")" );
 
-        this->reserveImpl( halo, aosoa, totalSend(), totalReceive() );
+        this->reserveImpl( halo, aosoa, totalSend( halo ),
+                           totalReceive( halo ) );
     }
     /*!
       \brief Reserve new buffers as needed and update the halo and AoSoA data.
@@ -509,12 +571,12 @@ class Gather<HaloType, AoSoAType,
                 "AoSoA is the wrong size for gather! (Label: " +
                 aosoa.label() + ")" );
 
-        this->reserveImpl( halo, aosoa, totalSend(), totalReceive(),
+        this->reserveImpl( halo, aosoa, totalSend( halo ), totalReceive( halo ),
                            overallocation );
     }
 
   private:
-    plan_type _halo = base_type::_comm_plan;
+    using base_type::_comm_plan;
     using base_type::_recv_size;
     using base_type::_send_size;
 };
@@ -567,13 +629,17 @@ class Gather<HaloType, SliceType,
     Gather( HaloType halo, SliceType slice, const double overallocation = 1.0 )
         : base_type( halo, slice, overallocation )
     {
-        reserve( _halo, slice );
+        reserve( _comm_plan, slice );
     }
 
     //! Total gather send size for this rank.
-    auto totalSend() { return _halo.totalNumExport(); }
+    auto totalSend() { return _comm_plan.totalNumExport(); }
     //! Total gather receive size for this rank.
-    auto totalReceive() { return _halo.totalNumImport(); }
+    auto totalReceive() { return _comm_plan.totalNumImport(); }
+    //! Total gather send size for this rank.
+    auto totalSend( const HaloType& halo ) { return halo.totalNumExport(); }
+    //! Total gather receive size for this rank.
+    auto totalReceive( const HaloType& halo ) { return halo.totalNumImport(); }
 
     /*!
       \brief Perform the gather operation.
@@ -595,7 +661,7 @@ class Gather<HaloType, SliceType,
         auto slice_data = slice.data();
 
         // Get the steering vector for the sends.
-        auto steering = _halo.getExportSteering();
+        auto steering = _comm_plan.getExportSteering();
 
         // Gather from the local data into a tuple-contiguous send buffer.
         auto gather_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
@@ -616,19 +682,19 @@ class Gather<HaloType, SliceType,
         const int mpi_tag = 2345;
 
         // Post non-blocking receives.
-        int num_n = _halo.numNeighbor();
+        int num_n = _comm_plan.numNeighbor();
         std::vector<MPI_Request> requests( num_n );
         std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
         for ( int n = 0; n < num_n; ++n )
         {
-            recv_range.second = recv_range.first + _halo.numImport( n );
+            recv_range.second = recv_range.first + _comm_plan.numImport( n );
 
             auto recv_subview =
                 Kokkos::subview( recv_buffer, recv_range, Kokkos::ALL );
 
             MPI_Irecv( recv_subview.data(),
                        recv_subview.size() * sizeof( data_type ), MPI_BYTE,
-                       _halo.neighborRank( n ), mpi_tag, _halo.comm(),
+                       _comm_plan.neighborRank( n ), mpi_tag, _comm_plan.comm(),
                        &( requests[n] ) );
 
             recv_range.first = recv_range.second;
@@ -638,14 +704,15 @@ class Gather<HaloType, SliceType,
         std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
         for ( int n = 0; n < num_n; ++n )
         {
-            send_range.second = send_range.first + _halo.numExport( n );
+            send_range.second = send_range.first + _comm_plan.numExport( n );
 
             auto send_subview =
                 Kokkos::subview( send_buffer, send_range, Kokkos::ALL );
 
             MPI_Send( send_subview.data(),
                       send_subview.size() * sizeof( data_type ), MPI_BYTE,
-                      _halo.neighborRank( n ), mpi_tag, _halo.comm() );
+                      _comm_plan.neighborRank( n ), mpi_tag,
+                      _comm_plan.comm() );
 
             send_range.first = send_range.second;
         }
@@ -659,7 +726,7 @@ class Gather<HaloType, SliceType,
                 "Cabana::Gather::apply (Slice): Failed MPI Communication" );
 
         // Extract the receive buffer into the ghosted elements.
-        std::size_t num_local = _halo.numLocal();
+        std::size_t num_local = _comm_plan.numLocal();
         auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
         {
             std::size_t ghost_idx = i + num_local;
@@ -676,7 +743,7 @@ class Gather<HaloType, SliceType,
         Kokkos::fence();
 
         // Barrier before completing to ensure synchronization.
-        MPI_Barrier( _halo.comm() );
+        MPI_Barrier( _comm_plan.comm() );
     }
 
     void apply() override { apply( execution_space{} ); }
@@ -698,7 +765,9 @@ class Gather<HaloType, SliceType,
                 "Slice is the wrong size for gather! (Label: " +
                 slice.label() + ")" );
 
-        this->reserveImpl( halo, slice, totalSend(), totalReceive(),
+        // Cannot use totalSend(), totalReceive() because it may be inconsistent
+        // with the new plan.
+        this->reserveImpl( halo, slice, totalSend( halo ), totalReceive( halo ),
                            overallocation );
     }
     /*!
@@ -715,11 +784,12 @@ class Gather<HaloType, SliceType,
                 "Slice is the wrong size for gather! (Label: " +
                 slice.label() + ")" );
 
-        this->reserveImpl( halo, slice, totalSend(), totalReceive() );
+        this->reserveImpl( halo, slice, totalSend( halo ),
+                           totalReceive( halo ) );
     }
 
   private:
-    plan_type _halo = base_type::_comm_plan;
+    using base_type::_comm_plan;
     using base_type::_recv_size;
     using base_type::_send_size;
 };
@@ -822,13 +892,17 @@ class Scatter
     Scatter( HaloType halo, SliceType slice, const double overallocation = 1.0 )
         : base_type( halo, slice, overallocation )
     {
-        reserve( _halo, slice );
+        reserve( _comm_plan, slice );
     }
 
     //! Total scatter send size for this rank.
-    auto totalSend() { return _halo.totalNumImport(); }
+    auto totalSend() { return _comm_plan.totalNumImport(); }
     //! Total scatter receive size for this rank.
-    auto totalReceive() { return _halo.totalNumExport(); }
+    auto totalReceive() { return _comm_plan.totalNumExport(); }
+    //! Total gather send size for this rank.
+    auto totalSend( const HaloType& halo ) { return halo.totalNumImport(); }
+    //! Total gather receive size for this rank.
+    auto totalReceive( const HaloType& halo ) { return halo.totalNumExport(); }
 
     /*!
       \brief Perform the scatter operation.
@@ -853,7 +927,7 @@ class Scatter
             slice_data( slice.data(), slice.numSoA() * slice.stride( 0 ) );
 
         // Extract the send buffer from the ghosted elements.
-        std::size_t num_local = _halo.numLocal();
+        std::size_t num_local = _comm_plan.numLocal();
         auto extract_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
         {
             std::size_t ghost_idx = i + num_local;
@@ -873,19 +947,19 @@ class Scatter
         const int mpi_tag = 2345;
 
         // Post non-blocking receives.
-        int num_n = _halo.numNeighbor();
+        int num_n = _comm_plan.numNeighbor();
         std::vector<MPI_Request> requests( num_n );
         std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
         for ( int n = 0; n < num_n; ++n )
         {
-            recv_range.second = recv_range.first + _halo.numExport( n );
+            recv_range.second = recv_range.first + _comm_plan.numExport( n );
 
             auto recv_subview =
                 Kokkos::subview( recv_buffer, recv_range, Kokkos::ALL );
 
             MPI_Irecv( recv_subview.data(),
                        recv_subview.size() * sizeof( data_type ), MPI_BYTE,
-                       _halo.neighborRank( n ), mpi_tag, _halo.comm(),
+                       _comm_plan.neighborRank( n ), mpi_tag, _comm_plan.comm(),
                        &( requests[n] ) );
 
             recv_range.first = recv_range.second;
@@ -895,14 +969,15 @@ class Scatter
         std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
         for ( int n = 0; n < num_n; ++n )
         {
-            send_range.second = send_range.first + _halo.numImport( n );
+            send_range.second = send_range.first + _comm_plan.numImport( n );
 
             auto send_subview =
                 Kokkos::subview( send_buffer, send_range, Kokkos::ALL );
 
             MPI_Send( send_subview.data(),
                       send_subview.size() * sizeof( data_type ), MPI_BYTE,
-                      _halo.neighborRank( n ), mpi_tag, _halo.comm() );
+                      _comm_plan.neighborRank( n ), mpi_tag,
+                      _comm_plan.comm() );
 
             send_range.first = send_range.second;
         }
@@ -916,7 +991,7 @@ class Scatter
                                     "Failed MPI Communication" );
 
         // Get the steering vector for the sends.
-        auto steering = _halo.getExportSteering();
+        auto steering = _comm_plan.getExportSteering();
 
         // Scatter the ghosts in the receive buffer into the local values.
         auto scatter_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
@@ -935,7 +1010,7 @@ class Scatter
         Kokkos::fence();
 
         // Barrier before completing to ensure synchronization.
-        MPI_Barrier( _halo.comm() );
+        MPI_Barrier( _comm_plan.comm() );
     }
 
     void apply() override { apply( execution_space{} ); }
@@ -958,7 +1033,7 @@ class Scatter
                 "Slice is the wrong size for scatter! (Label: " +
                 slice.label() + ")" );
 
-        this->reserveImpl( halo, slice, totalSend(), totalReceive(),
+        this->reserveImpl( halo, slice, totalSend( halo ), totalReceive( halo ),
                            overallocation );
     }
     /*!
@@ -975,11 +1050,12 @@ class Scatter
                 "Slice is the wrong size for scatter! (Label: " +
                 slice.label() + ")" );
 
-        this->reserveImpl( halo, slice, totalSend(), totalReceive() );
+        this->reserveImpl( halo, slice, totalSend( halo ),
+                           totalReceive( halo ) );
     }
 
   private:
-    plan_type _halo = base_type::_comm_plan;
+    using base_type::_comm_plan;
     using base_type::_recv_size;
     using base_type::_send_size;
 };
