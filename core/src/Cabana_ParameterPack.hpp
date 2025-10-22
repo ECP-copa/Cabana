@@ -201,8 +201,7 @@ void fillParameterPack( ParameterPack_t& )
 template <typename... Types>
 ParameterPack<Types...> makeParameterPack( const Types&... ts )
 {
-    ParameterPack<Types...> pp;
-    fillParameterPack( pp, ts... );
+    ParameterPack pp( ts... );
     return pp;
 }
 
