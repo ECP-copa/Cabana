@@ -62,6 +62,10 @@ struct PackTypeAtIndex
 template <std::size_t N, typename T>
 struct ParameterPackElement
 {
+    explicit ParameterPackElement( T value )
+        : _m( value )
+    {
+    }
     //! Packed element.
     T _m;
 };
@@ -75,6 +79,10 @@ template <std::size_t... Indices, typename... Types>
 struct ParameterPackImpl<std::index_sequence<Indices...>, Types...>
     : ParameterPackElement<Indices, Types>...
 {
+    explicit ParameterPackImpl( Types... t )
+        : ParameterPackElement<Indices, Types>( t )...
+    {
+    }
 };
 //! \endcond
 
@@ -84,6 +92,11 @@ template <typename... Types>
 struct ParameterPack
     : ParameterPackImpl<std::make_index_sequence<sizeof...( Types )>, Types...>
 {
+    explicit ParameterPack( Types... args )
+        : ParameterPackImpl<std::make_index_sequence<sizeof...( Types )>,
+                            Types...>( args... )
+    {
+    }
     //! Packed type.
     template <std::size_t N>
     using value_type = typename PackTypeAtIndex<N, Types...>::type;
