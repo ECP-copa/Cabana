@@ -47,10 +47,47 @@ void captureTest()
 
     EXPECT_DOUBLE_EQ( dbl_host( 0 ), 3.14 );
     EXPECT_EQ( int_host( 0, 0 ), 12 );
+
+    struct NonDefaultConstructableType
+    {
+        explicit NonDefaultConstructableType( int i )
+            : value( i )
+        {
+        }
+        int value;
+    };
+    // Make a parameter pack via the ctor so we can capture them as a group.
+    auto packViaCtor = Cabana::ParameterPack(
+        dbl_view, int_view, NonDefaultConstructableType{ 3 } );
+
+    // Update the pack in a kernel
+    Kokkos::parallel_for(
+        "fill_pack", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, 1 ),
+        KOKKOS_LAMBDA( const int ) {
+            auto dv = Cabana::get<0>( packViaCtor );
+            auto iv = Cabana::get<1>( packViaCtor );
+            auto ndc = Cabana::get<2>( packViaCtor );
+
+            dv( 0 ) = 2. * ndc.value;
+            iv( 0, 0 ) = 2 * ndc.value;
+        } );
+
+    // Check the capture.
+    dbl_host =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), dbl_view );
+    int_host =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), int_view );
+
+    EXPECT_DOUBLE_EQ( dbl_host( 0 ), 2. * 3 );
+    EXPECT_EQ( int_host( 0, 0 ), 2 * 3 );
 }
 
 //---------------------------------------------------------------------------//
-void emptyTest() { std::ignore = Cabana::makeParameterPack(); }
+void emptyTest()
+{
+    std::ignore = Cabana::ParameterPack();
+    std::ignore = Cabana::makeParameterPack();
+}
 
 //---------------------------------------------------------------------------//
 // RUN TESTS
