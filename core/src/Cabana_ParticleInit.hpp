@@ -21,28 +21,13 @@
 
 #include <Cabana_ParticleList.hpp>
 #include <Cabana_Slice.hpp>
+#include <Cabana_Utils.hpp>
 
 #include <random>
 #include <type_traits>
 
 namespace Cabana
 {
-
-namespace Impl
-{
-//! Copy array (std, c-array) into Kokkos::Array for potential device use.
-template <class ArrayType>
-auto copyArray( ArrayType corner )
-{
-    using value_type = std::remove_reference_t<decltype( corner[0] )>;
-    Kokkos::Array<value_type, 3> kokkos_corner;
-    for ( std::size_t d = 0; d < 3; ++d )
-        kokkos_corner[d] = corner[d];
-
-    return kokkos_corner;
-}
-
-} // namespace Impl
 
 //---------------------------------------------------------------------------//
 // Initialization type tags.
@@ -69,7 +54,7 @@ struct InitRandom
   position of a particle. This functor returns true if a particle was created
   and false if it was not giving the signature:
 
-      bool createFunctor( const double pid, const double px[3], const double pv,
+      bool createFunctor( const double pid, const double px[d], const double pv,
                           typename ParticleAoSoA::tuple_type& particle );
   \param particle_list The ParticleList to populate. This will be filled with
   particles and resized to a size equal to the number of particles created.
@@ -84,11 +69,18 @@ struct InitRandom
   \return Number of particles created.
 */
 template <class ExecutionSpace, class InitFunctor, class ParticleListType,
-          class ArrayType>
+          template <class, std::size_t, class...> class ArrayType, class Scalar,
+          std::size_t NumSpaceDim, class... Args>
 int createParticles(
     InitRandom, ExecutionSpace exec_space, const InitFunctor& create_functor,
     ParticleListType& particle_list, const std::size_t num_particles,
-    const ArrayType box_min, const ArrayType box_max,
+#ifdef KOKKOS_ENABLE_DEPRECATED_CODE_4
+    const ArrayType<Scalar, NumSpaceDim, Args...> box_min,
+    const ArrayType<Scalar, NumSpaceDim, Args...> box_max,
+#else
+    const ArrayType<Scalar, NumSpaceDim> box_min,
+    const ArrayType<Scalar, NumSpaceDim> box_max,
+#endif
     const std::size_t previous_num_particles = 0,
     const bool shrink_to_fit = true, const uint64_t seed = 342343901,
     typename std::enable_if<is_particle_list<ParticleListType>::value,
@@ -110,17 +102,17 @@ int createParticles(
     Kokkos::deep_copy( count, previous_num_particles );
 
     // Copy corners to device accessible arrays.
-    auto kokkos_min = Impl::copyArray( box_min );
-    auto kokkos_max = Impl::copyArray( box_max );
+    auto kokkos_min = copyArray( box_min );
+    auto kokkos_max = copyArray( box_max );
 
     auto random_coord_op = KOKKOS_LAMBDA( const int p )
     {
         // Particle coordinate.
-        double px[3];
+        double px[NumSpaceDim];
 
         auto gen = pool.get_state();
         auto particle = particle_list.getParticle( p );
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < NumSpaceDim; ++d )
             px[d] = Kokkos::rand<RandomType, double>::draw( gen, kokkos_min[d],
                                                             kokkos_max[d] );
         pool.free_state( gen );
@@ -160,7 +152,7 @@ int createParticles(
   position of a particle. This functor returns true if a particle was created
   and false if it was not giving the signature:
 
-      bool createFunctor( const double pid, const double px[3], const double pv,
+      bool createFunctor( const double pid, const double px[d], const double pv,
                           typename ParticleAoSoA::tuple_type& particle );
   \param particle_list The ParticleList to populate. This will be filled with
   particles and resized to a size equal to the number of particles created.
@@ -174,11 +166,19 @@ int createParticles(
 
   \return Number of particles created.
 */
-template <class InitFunctor, class ParticleListType, class ArrayType>
+template <class InitFunctor, class ParticleListType,
+          template <class, std::size_t, class...> class ArrayType, class Scalar,
+          std::size_t NumSpaceDim, class... Args>
 int createParticles( InitRandom tag, const InitFunctor& create_functor,
                      ParticleListType& particle_list,
-                     const std::size_t num_particles, const ArrayType box_min,
-                     const ArrayType box_max,
+                     const std::size_t num_particles,
+#ifdef KOKKOS_ENABLE_DEPRECATED_CODE_4
+                     const ArrayType<Scalar, NumSpaceDim, Args...> box_min,
+                     const ArrayType<Scalar, NumSpaceDim, Args...> box_max,
+#else
+                     const ArrayType<Scalar, NumSpaceDim> box_min,
+                     const ArrayType<Scalar, NumSpaceDim> box_max,
+#endif
                      const std::size_t previous_num_particles = 0,
                      const bool shrink_to_fit = true,
                      const uint64_t seed = 342343901 )
@@ -201,11 +201,20 @@ int createParticles( InitRandom tag, const InitFunctor& create_functor,
   already in the container (and should be unchanged).
   \param seed Optional random seed for generating particles.
 */
-template <class ExecutionSpace, class PositionType, class ArrayType>
+template <class ExecutionSpace, class PositionType,
+          template <class, std::size_t, class...> class ArrayType, class Scalar,
+          std::size_t NumSpaceDim, class... Args>
 void createParticles(
     InitRandom, ExecutionSpace exec_space, PositionType& positions,
-    const std::size_t num_particles, const ArrayType box_min,
-    const ArrayType box_max, const std::size_t previous_num_particles = 0,
+    const std::size_t num_particles,
+#ifdef KOKKOS_ENABLE_DEPRECATED_CODE_4
+    const ArrayType<Scalar, NumSpaceDim, Args...> box_min,
+    const ArrayType<Scalar, NumSpaceDim, Args...> box_max,
+#else
+    const ArrayType<Scalar, NumSpaceDim> box_min,
+    const ArrayType<Scalar, NumSpaceDim> box_max,
+#endif
+    const std::size_t previous_num_particles = 0,
     const uint64_t seed = 342343901,
     typename std::enable_if<( is_slice<PositionType>::value ||
                               Kokkos::is_view<PositionType>::value ),
@@ -215,8 +224,8 @@ void createParticles(
     checkSize( positions, num_particles + previous_num_particles );
 
     // Copy corners to device accessible arrays.
-    auto kokkos_min = Impl::copyArray( box_min );
-    auto kokkos_max = Impl::copyArray( box_max );
+    auto kokkos_min = copyArray( box_min );
+    auto kokkos_max = copyArray( box_max );
 
     using PoolType = Kokkos::Random_XorShift64_Pool<ExecutionSpace>;
     using RandomType = Kokkos::Random_XorShift64<ExecutionSpace>;
@@ -224,7 +233,7 @@ void createParticles(
     auto random_coord_op = KOKKOS_LAMBDA( const int p )
     {
         auto gen = pool.get_state();
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < NumSpaceDim; ++d )
             positions( p, d ) = Kokkos::rand<RandomType, double>::draw(
                 gen, kokkos_min[d], kokkos_max[d] );
         pool.free_state( gen );
@@ -250,10 +259,18 @@ void createParticles(
   already in the container (and should be unchanged).
   \param seed Optional random seed for generating particles.
 */
-template <class PositionType, class ArrayType>
+template <class PositionType,
+          template <class, std::size_t, class...> class ArrayType, class Scalar,
+          std::size_t NumSpaceDim, class... Args>
 void createParticles(
     InitRandom tag, PositionType& positions, const std::size_t num_particles,
-    const ArrayType box_min, const ArrayType box_max,
+#ifdef KOKKOS_ENABLE_DEPRECATED_CODE_4
+    const ArrayType<Scalar, NumSpaceDim, Args...> box_min,
+    const ArrayType<Scalar, NumSpaceDim, Args...> box_max,
+#else
+    const ArrayType<Scalar, NumSpaceDim> box_min,
+    const ArrayType<Scalar, NumSpaceDim> box_max,
+#endif
     const std::size_t previous_num_particles = 0,
     const uint64_t seed = 342343901,
     typename std::enable_if<( is_slice<PositionType>::value ||
@@ -261,6 +278,56 @@ void createParticles(
                             int>::type* = 0 )
 {
     using exec_space = typename PositionType::execution_space;
+    createParticles( tag, exec_space{}, positions, num_particles, box_min,
+                     box_max, previous_num_particles, seed );
+}
+
+/*!
+  \brief Initialize random particles.
+
+  \param tag Initialization type tag.
+  \param exec_space Kokkos execution space.
+  \param positions Particle positions slice.
+  \param num_particles The number of particles to create.
+  \param box_min Array specifying lower corner to create particles within.
+  \param box_max Array specifying upper corner to create particles within.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
+  \param seed Optional random seed for generating particles.
+*/
+template <class ExecutionSpace, class PositionType, class Scalar>
+void createParticles( InitRandom tag, ExecutionSpace exec_space,
+                      PositionType& positions, const std::size_t num_particles,
+                      const Scalar box_min[3], const Scalar box_max[3],
+                      const std::size_t previous_num_particles = 0,
+                      const uint64_t seed = 342343901 )
+{
+    auto kokkos_min = copyArray<Scalar, 3>( box_min );
+    auto kokkos_max = copyArray<Scalar, 3>( box_max );
+    createParticles( tag, exec_space, positions, num_particles, kokkos_min,
+                     kokkos_max, previous_num_particles, seed );
+}
+
+/*!
+  \brief Initialize random particles.
+
+  \param tag Initialization type tag.
+  \param positions Particle positions slice.
+  \param num_particles The number of particles to create.
+  \param box_min C-array specifying lower corner to create particles within.
+  \param box_max C-array specifying upper corner to create particles within.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
+  \param seed Optional random seed for generating particles.
+*/
+template <class PositionType, class Scalar>
+void createParticles( InitRandom tag, PositionType& positions,
+                      const std::size_t num_particles, const Scalar box_min[3],
+                      const Scalar box_max[3],
+                      const std::size_t previous_num_particles = 0,
+                      const uint64_t seed = 342343901 )
+{
+    using exec_space = typename PositionType::memory_space::execution_space;
     createParticles( tag, exec_space{}, positions, num_particles, box_min,
                      box_max, previous_num_particles, seed );
 }
@@ -278,7 +345,7 @@ void createParticles(
   position of a particle. This functor returns true if a particle was created
   and false if it was not giving the signature:
 
-      bool createFunctor( const double pid, const double px[3], const double pv,
+      bool createFunctor( const double pid, const double px[d], const double pv,
                           typename ParticleAoSoA::tuple_type& particle );
   \param particle_list The ParticleList to populate. This will be filled with
   particles and resized to a size equal to the number of particles created.
@@ -298,12 +365,21 @@ void createParticles(
   \note This approximates many physical scenarios, e.g. atomic simulations.
 */
 template <class ExecutionSpace, class InitFunctor, class ParticleListType,
-          class PositionTag, class ArrayType>
+          class PositionTag,
+          template <class, std::size_t, class...> class ArrayType, class Scalar,
+          std::size_t NumSpaceDim, class... Args>
 int createParticles(
     InitRandom tag, ExecutionSpace exec_space,
     const InitFunctor& create_functor, ParticleListType& particle_list,
     PositionTag position_tag, const std::size_t num_particles,
-    const double min_dist, const ArrayType box_min, const ArrayType box_max,
+    const double min_dist,
+#ifdef KOKKOS_ENABLE_DEPRECATED_CODE_4
+    const ArrayType<Scalar, NumSpaceDim, Args...> box_min,
+    const ArrayType<Scalar, NumSpaceDim, Args...> box_max,
+#else
+    const ArrayType<Scalar, NumSpaceDim> box_min,
+    const ArrayType<Scalar, NumSpaceDim> box_max,
+#endif
     const std::size_t previous_num_particles = 0,
     const bool shrink_to_fit = true, const uint64_t seed = 342343901,
     typename std::enable_if<is_particle_list<ParticleListType>::value,
@@ -319,17 +395,19 @@ int createParticles(
 
     // Create the functor which ignores particles within the radius of another.
     auto min_distance_op =
-        KOKKOS_LAMBDA( const int id, const double px[3], const double,
+        KOKKOS_LAMBDA( const int id, const double px[NumSpaceDim], const double,
                        typename ParticleListType::particle_type& particle )
     {
         // Ensure this particle is not within the minimum distance of any other
         // existing particle.
         for ( int n = 0; n < id; n++ )
         {
-            double dx = positions( n, 0 ) - px[0];
-            double dy = positions( n, 1 ) - px[1];
-            double dz = positions( n, 2 ) - px[2];
-            double dist = dx * dx + dy * dy + dz * dz;
+            double dist = 0.0;
+            for ( std::size_t d = 0; d < NumSpaceDim; ++d )
+            {
+                double dx = positions( n, d ) - px[d];
+                dist += dx * dx;
+            }
             if ( dist < min_dist_sqr )
                 return false;
         }
@@ -352,7 +430,7 @@ int createParticles(
   position of a particle. This functor returns true if a particle was created
   and false if it was not giving the signature:
 
-      bool createFunctor( const double pid, const double px[3], const double pv,
+      bool createFunctor( const double pid, const double px[d], const double pv,
                           typename ParticleAoSoA::tuple_type& particle );
   \param particle_list The ParticleList to populate. This will be filled with
   particles and resized to a size equal to the number of particles created.
@@ -372,11 +450,18 @@ int createParticles(
   \note This approximates many physical scenarios, e.g. atomic simulations.
 */
 template <class InitFunctor, class ParticleListType, class PositionTag,
-          class ArrayType>
+          template <class, std::size_t, class...> class ArrayType, class Scalar,
+          std::size_t NumSpaceDim, class... Args>
 int createParticles( InitRandom tag, const InitFunctor& create_functor,
                      ParticleListType& particle_list, PositionTag position_tag,
                      const std::size_t num_particles, const double min_dist,
-                     const ArrayType box_min, const ArrayType box_max,
+#ifdef KOKKOS_ENABLE_DEPRECATED_CODE_4
+                     const ArrayType<Scalar, NumSpaceDim, Args...> box_min,
+                     const ArrayType<Scalar, NumSpaceDim, Args...> box_max,
+#else
+                     const ArrayType<Scalar, NumSpaceDim> box_min,
+                     const ArrayType<Scalar, NumSpaceDim> box_max,
+#endif
                      const std::size_t previous_num_particles = 0,
                      const bool shrink_to_fit = true,
                      const uint64_t seed = 342343901 )
@@ -386,6 +471,61 @@ int createParticles( InitRandom tag, const InitFunctor& create_functor,
                             position_tag, num_particles, min_dist, box_min,
                             box_max, previous_num_particles, shrink_to_fit,
                             seed );
+}
+
+/*!
+  \brief Initialize random particles.
+
+  \param tag Initialization type tag.
+  \param exec_space Kokkos execution space.
+  \param positions Particle positions slice.
+  \param num_particles The number of particles to create.
+  \param min_dist Minimum separation distance between particles. Potential
+  particles created within this distance of an existing particle are rejected.
+  \param box_min C-array specifying lower corner to create particles within.
+  \param box_max C-array specifying upper corner to create particles within.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
+  \param seed Optional random seed for generating particles.
+*/
+template <class ExecutionSpace, class PositionType, class Scalar>
+void createParticles( InitRandom tag, ExecutionSpace exec_space,
+                      PositionType& positions, const std::size_t num_particles,
+                      const double min_dist, const Scalar box_min[3],
+                      const Scalar box_max[3],
+                      const std::size_t previous_num_particles = 0,
+                      const uint64_t seed = 342343901 )
+{
+    auto kokkos_min = copyArray<Scalar, 3>( box_min );
+    auto kokkos_max = copyArray<Scalar, 3>( box_max );
+    createParticles( tag, exec_space, positions, num_particles, min_dist,
+                     kokkos_min, kokkos_max, previous_num_particles, seed );
+}
+
+/*!
+  \brief Initialize random particles.
+
+  \param tag Initialization type tag.
+  \param positions Particle positions slice.
+  \param num_particles The number of particles to create.
+  \param min_dist Minimum separation distance between particles. Potential
+  particles created within this distance of an existing particle are rejected.
+  \param box_min C-array specifying lower corner to create particles within.
+  \param box_max C-array specifying upper corner to create particles within.
+  \param previous_num_particles Optionally specify how many particles are
+  already in the container (and should be unchanged).
+  \param seed Optional random seed for generating particles.
+*/
+template <class PositionType, class Scalar>
+void createParticles( InitRandom tag, PositionType& positions,
+                      const std::size_t num_particles, const double min_dist,
+                      const Scalar box_min[3], const Scalar box_max[3],
+                      const std::size_t previous_num_particles = 0,
+                      const uint64_t seed = 342343901 )
+{
+    using exec_space = typename PositionType::memory_space::execution_space;
+    createParticles( tag, exec_space{}, positions, num_particles, min_dist,
+                     box_min, box_max, previous_num_particles, seed );
 }
 
 } // namespace Cabana

@@ -1132,12 +1132,14 @@ struct LinkedCellParallelFor
     Functor _functor;
     //! Linked cell list
     LinkedCellType _list;
+    //! Spatial dimension
+    static constexpr std::size_t num_space_dim = LinkedCellType::num_space_dim;
 
     //! beginning index of the loop
     index_type _begin;
 
     //! discriminator for whether a particle is a neighbor or not
-    NeighborDiscriminator<FullNeighborTag> _discriminator;
+    NeighborDiscriminator<SelfNeighborTag> _discriminator;
 
     //! Constructor
     LinkedCellParallelFor( std::string label, Policy exec_policy,
@@ -1159,31 +1161,63 @@ struct LinkedCellParallelFor
     //! Performs a loop over the particles in neighboring bins in Serial
     KOKKOS_FUNCTION void operator()( SerialOpTag, const index_type i ) const
     {
-        int imin, imax, jmin, jmax, kmin, kmax;
-        _list.getStencilCells( _list.getParticleBin( i ), imin, imax, jmin,
-                               jmax, kmin, kmax );
+        Kokkos::Array<int, num_space_dim> min;
+        Kokkos::Array<int, num_space_dim> max;
+        _list.getStencilCells( _list.getParticleBin( i ), min, max );
 
-        // Loop over the cell stencil.
-        for ( int gi = imin; gi < imax; ++gi )
-            for ( int gj = jmin; gj < jmax; ++gj )
-                for ( int gk = kmin; gk < kmax; ++gk )
+        iterate_serial_bins( min, max, i );
+    }
+
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    iterate_serial_bins( const Kokkos::Array<int, 3> min,
+                         const Kokkos::Array<int, 3> max,
+                         const std::size_t i ) const
+    {
+        Kokkos::Array<int, 3> ijk;
+        for ( int gi = min[0]; gi < max[0]; ++gi )
+            for ( int gj = min[1]; gj < max[1]; ++gj )
+                for ( int gk = min[2]; gk < max[2]; ++gk )
                 {
-                    // Check the particles in this bin to see if they are
-                    // neighbors.
-                    auto offset = _list.binOffset( gi, gj, gk );
-                    auto size = _list.binSize( gi, gj, gk );
-                    for ( std::size_t n = offset; n < offset + size; ++n )
-                    {
-                        // Get the true id of the candidate neighbor.
-                        auto j = _list.getParticle( n );
-
-                        // Avoid self interactions (dummy position args).
-                        if ( _discriminator.isValid( i, 0, 0, 0, j, 0, 0, 0 ) )
-                        {
-                            Impl::functorTagDispatch<WorkTag>( _functor, i, j );
-                        }
-                    }
+                    ijk = { gi, gj, gk };
+                    iterate_serial_particles( ijk, i );
                 }
+    }
+
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
+    iterate_serial_bins( const Kokkos::Array<int, 2> min,
+                         const Kokkos::Array<int, 2> max,
+                         const std::size_t i ) const
+    {
+        Kokkos::Array<int, 2> ij;
+        for ( int gi = min[0]; gi < max[0]; ++gi )
+            for ( int gj = min[1]; gj < max[1]; ++gj )
+            {
+                ij = { gi, gj };
+                iterate_serial_particles( ij, i );
+            }
+    }
+
+    KOKKOS_INLINE_FUNCTION void
+    iterate_serial_particles( const Kokkos::Array<int, num_space_dim> ijk,
+                              const std::size_t i ) const
+    {
+        // Check the particles in this bin to see if they are
+        // neighbors.
+        auto offset = _list.binOffset( ijk );
+        auto size = _list.binSize( ijk );
+        for ( std::size_t n = offset; n < offset + size; ++n )
+        {
+            // Get the true id of the candidate neighbor.
+            auto j = _list.getParticle( n );
+
+            // Avoid self interactions.
+            if ( _discriminator.isValid( i, j ) )
+            {
+                Impl::functorTagDispatch<WorkTag>( _functor, i, j );
+            }
+        }
     }
 
     //! Performs a loop over the particles in neighboring bins in TeamOp
@@ -1191,36 +1225,68 @@ struct LinkedCellParallelFor
     operator()( TeamOpTag, const typename Policy::member_type& team ) const
     {
         index_type i = team.league_rank() + _begin;
-        int imin, imax, jmin, jmax, kmin, kmax;
-        _list.getStencilCells( _list.getParticleBin( i ), imin, imax, jmin,
-                               jmax, kmin, kmax );
+        Kokkos::Array<int, num_space_dim> min;
+        Kokkos::Array<int, num_space_dim> max;
+        _list.getStencilCells( _list.getParticleBin( i ), min, max );
 
-        // Loop over the cell stencil.
-        for ( int gi = imin; gi < imax; ++gi )
-            for ( int gj = jmin; gj < jmax; ++gj )
-                for ( int gk = kmin; gk < kmax; ++gk )
+        iterate_team_bins( team, min, max, i );
+    }
+
+    template <class TeamType, std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    iterate_team_bins( TeamType team, const Kokkos::Array<int, 3> min,
+                       const Kokkos::Array<int, 3> max,
+                       const std::size_t i ) const
+    {
+        Kokkos::Array<int, 3> ijk;
+        for ( int gi = min[0]; gi < max[0]; ++gi )
+            for ( int gj = min[1]; gj < max[1]; ++gj )
+                for ( int gk = min[2]; gk < max[2]; ++gk )
                 {
-                    // Check the particles in this bin to see if they
-                    // are neighbors.
-                    auto offset = _list.binOffset( gi, gj, gk );
-                    auto size = _list.binSize( gi, gj, gk );
-                    Kokkos::parallel_for(
-                        Kokkos::TeamThreadRange( team, offset, offset + size ),
-                        [&]( const index_type n )
-                        {
-                            // Get the true id of the candidate neighbor.
-                            auto j = _list.getParticle( n );
-
-                            // Avoid self interactions (dummy position args).
-                            if ( _discriminator.isValid( i, 0, 0, 0, j, 0, 0,
-                                                         0 ) )
-                            {
-                                Impl::functorTagDispatch<WorkTag>( _functor, i,
-                                                                   j );
-                            }
-                        } );
+                    ijk = { gi, gj, gk };
+                    iterate_team_particles( team, ijk, i );
                 }
-    };
+    }
+
+    template <class TeamType, std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
+    iterate_team_bins( TeamType team, const Kokkos::Array<int, 2> min,
+                       const Kokkos::Array<int, 2> max,
+                       const std::size_t i ) const
+    {
+        Kokkos::Array<int, 2> ij;
+        for ( int gi = min[0]; gi < max[0]; ++gi )
+            for ( int gj = min[1]; gj < max[1]; ++gj )
+            {
+                ij = { gi, gj };
+                iterate_team_particles( team, ij, i );
+            }
+    }
+
+    template <class TeamType>
+    KOKKOS_INLINE_FUNCTION void
+    iterate_team_particles( TeamType team,
+                            const Kokkos::Array<int, num_space_dim> ijk,
+                            const std::size_t i ) const
+    {
+        // Check the particles in this bin to see if they
+        // are neighbors.
+        auto offset = _list.binOffset( ijk );
+        auto size = _list.binSize( ijk );
+        Kokkos::parallel_for(
+            Kokkos::TeamThreadRange( team, offset, offset + size ),
+            [&]( const index_type n )
+            {
+                // Get the true id of the candidate neighbor.
+                auto j = _list.getParticle( n );
+
+                // Avoid self interactions.
+                if ( _discriminator.isValid( i, j ) )
+                {
+                    Impl::functorTagDispatch<WorkTag>( _functor, i, j );
+                }
+            } );
+    }
 };
 
 /*!
@@ -1240,12 +1306,14 @@ struct LinkedCellParallelReduce
     Functor _functor;
     //! Linked cell list
     LinkedCellType _list;
+    //! Spatial dimension
+    static constexpr std::size_t num_space_dim = LinkedCellType::num_space_dim;
 
     //! beginning index of the loop
     index_type _begin;
 
     //! discriminator for whether a particle is a neighbor or not
-    NeighborDiscriminator<FullNeighborTag> _discriminator;
+    NeighborDiscriminator<SelfNeighborTag> _discriminator;
 
     //! Constructor
     LinkedCellParallelReduce( std::string label, Policy exec_policy,
@@ -1270,32 +1338,63 @@ struct LinkedCellParallelReduce
     KOKKOS_FUNCTION void operator()( SerialOpTag, const index_type i,
                                      ReduceType& ival ) const
     {
-        int imin, imax, jmin, jmax, kmin, kmax;
-        _list.getStencilCells( _list.getParticleBin( i ), imin, imax, jmin,
-                               jmax, kmin, kmax );
+        Kokkos::Array<int, num_space_dim> min;
+        Kokkos::Array<int, num_space_dim> max;
+        _list.getStencilCells( _list.getParticleBin( i ), min, max );
 
-        // Loop over the cell stencil.
-        for ( int gi = imin; gi < imax; ++gi )
-            for ( int gj = jmin; gj < jmax; ++gj )
-                for ( int gk = kmin; gk < kmax; ++gk )
+        iterate_serial_bins( min, max, i, ival );
+    }
+
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    iterate_serial_bins( const Kokkos::Array<int, 3> min,
+                         const Kokkos::Array<int, 3> max, const std::size_t i,
+                         ReduceType& ival ) const
+    {
+        Kokkos::Array<int, 3> ijk;
+        for ( int gi = min[0]; gi < max[0]; ++gi )
+            for ( int gj = min[1]; gj < max[1]; ++gj )
+                for ( int gk = min[2]; gk < max[2]; ++gk )
                 {
-                    // Check the particles in this bin to see if they are
-                    // neighbors.
-                    auto offset = _list.binOffset( gi, gj, gk );
-                    auto size = _list.binSize( gi, gj, gk );
-                    for ( std::size_t n = offset; n < offset + size; ++n )
-                    {
-                        // Get the true id of the candidate neighbor.
-                        auto j = _list.getParticle( n );
-
-                        // Avoid self interactions (dummy position args).
-                        if ( _discriminator.isValid( i, 0, 0, 0, j, 0, 0, 0 ) )
-                        {
-                            Impl::functorTagDispatch<WorkTag>( _functor, i, j,
-                                                               ival );
-                        }
-                    }
+                    ijk = { gi, gj, gk };
+                    iterate_serial_particles( ijk, i, ival );
                 }
+    }
+
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
+    iterate_serial_bins( const Kokkos::Array<int, 2> min,
+                         const Kokkos::Array<int, 2> max, const std::size_t i,
+                         ReduceType& ival ) const
+    {
+        Kokkos::Array<int, 2> ij;
+        for ( int gi = min[0]; gi < max[0]; ++gi )
+            for ( int gj = min[1]; gj < max[1]; ++gj )
+            {
+                ij = { gi, gj };
+                iterate_serial_particles( ij, i, ival );
+            }
+    }
+
+    KOKKOS_INLINE_FUNCTION void
+    iterate_serial_particles( const Kokkos::Array<int, num_space_dim> ijk,
+                              const std::size_t i, ReduceType& ival ) const
+    {
+        // Check the particles in this bin to see if they are
+        // neighbors.
+        auto offset = _list.binOffset( ijk );
+        auto size = _list.binSize( ijk );
+        for ( std::size_t n = offset; n < offset + size; ++n )
+        {
+            // Get the true id of the candidate neighbor.
+            auto j = _list.getParticle( n );
+
+            // Avoid self interactions.
+            if ( _discriminator.isValid( i, j ) )
+            {
+                Impl::functorTagDispatch<WorkTag>( _functor, i, j, ival );
+            }
+        }
     }
 
     //! Performs a loop over the particles in neighboring bins in TeamOp
@@ -1304,36 +1403,68 @@ struct LinkedCellParallelReduce
                                      ReduceType& ival ) const
     {
         index_type i = team.league_rank() + _begin;
-        int imin, imax, jmin, jmax, kmin, kmax;
-        _list.getStencilCells( _list.getParticleBin( i ), imin, imax, jmin,
-                               jmax, kmin, kmax );
+        Kokkos::Array<int, num_space_dim> min;
+        Kokkos::Array<int, num_space_dim> max;
+        _list.getStencilCells( _list.getParticleBin( i ), min, max );
 
-        // Loop over the cell stencil.
-        for ( int gi = imin; gi < imax; ++gi )
-            for ( int gj = jmin; gj < jmax; ++gj )
-                for ( int gk = kmin; gk < kmax; ++gk )
+        iterate_team_bins( team, min, max, i, ival );
+    }
+
+    template <class TeamType, std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    iterate_team_bins( TeamType team, const Kokkos::Array<int, 3> min,
+                       const Kokkos::Array<int, 3> max, const std::size_t i,
+                       ReduceType& ival ) const
+    {
+        Kokkos::Array<int, 3> ijk;
+        for ( int gi = min[0]; gi < max[0]; ++gi )
+            for ( int gj = min[1]; gj < max[1]; ++gj )
+                for ( int gk = min[2]; gk < max[2]; ++gk )
                 {
-                    // Check the particles in this bin to see if they
-                    // are neighbors.
-                    auto offset = _list.binOffset( gi, gj, gk );
-                    auto size = _list.binSize( gi, gj, gk );
-                    Kokkos::parallel_for(
-                        Kokkos::TeamThreadRange( team, offset, offset + size ),
-                        [&]( const index_type n )
-                        {
-                            // Get the true id of the candidate neighbor.
-                            auto j = _list.getParticle( n );
-
-                            // Avoid self interactions (dummy position args).
-                            if ( _discriminator.isValid( i, 0, 0, 0, j, 0, 0,
-                                                         0 ) )
-                            {
-                                Impl::functorTagDispatch<WorkTag>( _functor, i,
-                                                                   j, ival );
-                            }
-                        } );
+                    ijk = { gi, gj, gk };
+                    iterate_team_particles( team, ijk, i, ival );
                 }
-    };
+    }
+
+    template <class TeamType, std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
+    iterate_team_bins( TeamType team, const Kokkos::Array<int, 2> min,
+                       const Kokkos::Array<int, 2> max, const std::size_t i,
+                       ReduceType& ival ) const
+    {
+        Kokkos::Array<int, 2> ij;
+        for ( int gi = min[0]; gi < max[0]; ++gi )
+            for ( int gj = min[1]; gj < max[1]; ++gj )
+            {
+                ij = { gi, gj };
+                iterate_team_particles( team, ij, i, ival );
+            }
+    }
+
+    template <class TeamType>
+    KOKKOS_INLINE_FUNCTION void
+    iterate_team_particles( TeamType team,
+                            const Kokkos::Array<int, num_space_dim> ijk,
+                            const std::size_t i, ReduceType& ival ) const
+    {
+        // Check the particles in this bin to see if they
+        // are neighbors.
+        auto offset = _list.binOffset( ijk );
+        auto size = _list.binSize( ijk );
+        Kokkos::parallel_for(
+            Kokkos::TeamThreadRange( team, offset, offset + size ),
+            [&]( const index_type n )
+            {
+                // Get the true id of the candidate neighbor.
+                auto j = _list.getParticle( n );
+
+                // Avoid self interactions.
+                if ( _discriminator.isValid( i, j ) )
+                {
+                    Impl::functorTagDispatch<WorkTag>( _functor, i, j, ival );
+                }
+            } );
+    }
 };
 //! \endcond
 } // namespace Impl

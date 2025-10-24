@@ -31,15 +31,15 @@
 
 #include <mpi.h>
 
-#include <memory>
-
 namespace Test
 {
 
 template <class SliceType1, class SliceType2>
 void checkScalar( SliceType1 write, SliceType2 read )
 {
-    for ( std::size_t p = 0; p < write.size(); ++p )
+    EXPECT_EQ( write.size(), read.size() );
+
+    for ( std::size_t p = 0; p < write.size() && p < read.size(); ++p )
     {
         EXPECT_EQ( write( p ), read( p ) );
     }
@@ -48,11 +48,16 @@ void checkScalar( SliceType1 write, SliceType2 read )
 template <class SliceType1, class SliceType2>
 void checkVector( SliceType1 write, SliceType2 read )
 {
-    for ( std::size_t p = 0; p < write.size(); ++p )
+    EXPECT_EQ( write.size(), read.size() );
+    EXPECT_EQ( write.extent( 2 ), read.extent( 2 ) );
+
+    for ( std::size_t p = 0; p < write.size() && p < read.size(); ++p )
     {
-        for ( int d = 0; d < 3; ++d )
+        // TODO: update when testing for Views.
+        for ( std::size_t d = 0; d < write.extent( 2 ) && d < read.extent( 2 );
+              ++d )
         {
-            EXPECT_DOUBLE_EQ( write( p, d ), read( p, d ) );
+            EXPECT_EQ( write( p, d ), read( p, d ) );
         }
     }
 }
@@ -60,27 +65,35 @@ void checkVector( SliceType1 write, SliceType2 read )
 template <class SliceType1, class SliceType2>
 void checkMatrix( SliceType1 write, SliceType2 read )
 {
-    for ( std::size_t p = 0; p < write.size(); ++p )
+    EXPECT_EQ( write.size(), read.size() );
+    EXPECT_EQ( write.extent( 2 ), read.extent( 2 ) );
+    EXPECT_EQ( write.extent( 3 ), read.extent( 3 ) );
+
+    for ( std::size_t p = 0; p < write.size() && p < read.size(); ++p )
     {
-        for ( int d1 = 0; d1 < 3; ++d1 )
-            for ( int d2 = 0; d2 < 3; ++d2 )
+        // TODO: update when testing for Views.
+        for ( std::size_t d1 = 0;
+              d1 < write.extent( 2 ) && d1 < read.extent( 2 ); ++d1 )
+        {
+            for ( std::size_t d2 = 0;
+                  d2 < write.extent( 3 ) && d2 < read.extent( 3 ); ++d2 )
             {
-                EXPECT_FLOAT_EQ( write( p, d1, d2 ), read( p, d1, d2 ) );
+                EXPECT_EQ( write( p, d1, d2 ), read( p, d1, d2 ) );
             }
+        }
     }
 }
 //---------------------------------------------------------------------------//
-void writeReadTest()
+template <std::size_t Dim>
+void writeReadTest( const Kokkos::Array<double, Dim> low_corner,
+                    const Kokkos::Array<double, Dim> high_corner )
 {
-    std::array<double, 3> low_corner = { -2.8, 1.4, -10.4 };
-    std::array<double, 3> high_corner = { 1.2, 7.5, -7.9 };
-
     // Allocate particle properties.
-    int num_particle = 100;
-    using DataTypes = Cabana::MemberTypes<double[3],   // coords
-                                          double[3],   // vec
-                                          float[3][3], // matrix
-                                          int>;        // id.
+    const std::size_t num_particle = 100;
+    using DataTypes = Cabana::MemberTypes<double[Dim],     // coords
+                                          double[Dim],     // vec
+                                          float[Dim][Dim], // matrix
+                                          int>;            // id
     Cabana::AoSoA<DataTypes, TEST_MEMSPACE> aosoa( "particles", num_particle );
     auto coords = Cabana::slice<0>( aosoa, "coords" );
     auto vec = Cabana::slice<1>( aosoa, "vec" );
@@ -98,15 +111,15 @@ void writeReadTest()
     auto vec_mirror = Cabana::slice<1>( aosoa_mirror, "vec" );
     auto matrix_mirror = Cabana::slice<2>( aosoa_mirror, "matrix" );
     auto ids_mirror = Cabana::slice<3>( aosoa_mirror, "ids" );
-    for ( int p = 0; p < num_particle; ++p )
+    for ( std::size_t p = 0; p < num_particle; ++p )
     {
         ids_mirror( p ) = p;
 
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < Dim; ++d )
             vec_mirror( p, d ) = p * coords_mirror( p, d );
 
-        for ( int d1 = 0; d1 < 3; ++d1 )
-            for ( int d2 = 0; d2 < 3; ++d2 )
+        for ( std::size_t d1 = 0; d1 < Dim; ++d1 )
+            for ( std::size_t d2 = 0; d2 < Dim; ++d2 )
                 matrix_mirror( p, d1, d2 ) = d1 * d2 / coords_mirror( p, d2 );
     }
     Cabana::deep_copy( aosoa, aosoa_mirror );
@@ -125,7 +138,7 @@ void writeReadTest()
 
     // Make an empty copy to read into.
     Cabana::AoSoA<DataTypes, Kokkos::HostSpace> aosoa_read( "read",
-                                                            aosoa.size() );
+                                                            num_particle );
     auto coords_read = Cabana::slice<0>( aosoa_read, "coords" );
     auto vec_read = Cabana::slice<1>( aosoa_read, "vec" );
     auto matrix_read = Cabana::slice<2>( aosoa_read, "matrix" );
@@ -136,32 +149,32 @@ void writeReadTest()
         h5_config, "particles", MPI_COMM_WORLD, step, coords.size(),
         coords.label(), time_read, coords_read );
     checkVector( coords_mirror, coords_read );
-    EXPECT_DOUBLE_EQ( time, time_read );
+    EXPECT_EQ( time, time_read );
 
     Cabana::Experimental::HDF5ParticleOutput::readTimeStep(
         h5_config, "particles", MPI_COMM_WORLD, step, coords.size(),
         ids.label(), time_read, ids_read );
     checkScalar( ids_mirror, ids_read );
-    EXPECT_DOUBLE_EQ( time, time_read );
+    EXPECT_EQ( time, time_read );
 
     Cabana::Experimental::HDF5ParticleOutput::readTimeStep(
         h5_config, "particles", MPI_COMM_WORLD, step, coords.size(),
         vec.label(), time_read, vec_read );
     checkVector( vec_mirror, vec_read );
-    EXPECT_DOUBLE_EQ( time, time_read );
+    EXPECT_EQ( time, time_read );
 
     Cabana::Experimental::HDF5ParticleOutput::readTimeStep(
         h5_config, "particles", MPI_COMM_WORLD, step, coords.size(),
         matrix.label(), time_read, matrix_read );
     checkMatrix( matrix_mirror, matrix_read );
-    EXPECT_DOUBLE_EQ( time, time_read );
+    EXPECT_EQ( time, time_read );
 
     // Move the particles and write again.
-    double time_step_size = 0.32;
+    const double time_step_size = 0.32;
     time += time_step_size;
     ++step;
-    for ( int p = 0; p < num_particle; ++p )
-        for ( int d = 0; d < 3; ++d )
+    for ( std::size_t p = 0; p < num_particle; ++p )
+        for ( std::size_t d = 0; d < Dim; ++d )
             coords_mirror( p, d ) += 1.32;
     Cabana::deep_copy( coords, coords_mirror );
     Cabana::Experimental::HDF5ParticleOutput::writeTimeStep(
@@ -173,7 +186,7 @@ void writeReadTest()
         h5_config, "particles-update", MPI_COMM_WORLD, step, coords_read.size(),
         coords.label(), time_read, coords_read );
     checkVector( coords_mirror, coords_read );
-    EXPECT_DOUBLE_EQ( time, time_read );
+    EXPECT_EQ( time, time_read );
 
     // Now check writing only positions.
     Cabana::Experimental::HDF5ParticleOutput::writeTimeStep(
@@ -185,13 +198,27 @@ void writeReadTest()
         h5_config, "positions_only", MPI_COMM_WORLD, step, coords_read.size(),
         coords.label(), time_read, coords_read );
     checkVector( coords_mirror, coords_read );
-    EXPECT_DOUBLE_EQ( time, time_read );
+    EXPECT_EQ( time, time_read );
 }
 
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( HDF5, WriteRead ) { writeReadTest(); }
+TEST( HDF5, WriteRead3d )
+{
+    const Kokkos::Array<double, 3> low_corner = { -2.8, 1.4, -10.4 };
+    const Kokkos::Array<double, 3> high_corner = { 1.2, 7.5, -7.9 };
+
+    writeReadTest( low_corner, high_corner );
+}
+
+TEST( HDF5, WriteRead2d )
+{
+    const Kokkos::Array<double, 2> low_corner = { -2.8, 1.4 };
+    const Kokkos::Array<double, 2> high_corner = { 1.2, 7.5 };
+
+    writeReadTest( low_corner, high_corner );
+}
 
 //---------------------------------------------------------------------------//
 

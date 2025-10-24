@@ -415,7 +415,7 @@ struct HeffteBackendTraits<Kokkos::Cuda, Impl::FFTBackendDefault>
 #ifdef Heffte_ENABLE_ROCM
 #ifdef KOKKOS_ENABLE_HIP
 template <>
-struct HeffteBackendTraits<Kokkos::Experimental::HIP, Impl::FFTBackendDefault>
+struct HeffteBackendTraits<Kokkos::HIP, Impl::FFTBackendDefault>
 {
     using backend_type = heffte::backend::rocfft;
 };

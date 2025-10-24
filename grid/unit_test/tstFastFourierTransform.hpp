@@ -116,8 +116,13 @@ void forwardReverseTest3d( bool use_default, bool use_params )
     uint64_t seed =
         global_grid->blockId() + ( 19383747 % ( global_grid->blockId() + 1 ) );
     using rnd_type = Kokkos::Random_XorShift64_Pool<Kokkos::HostSpace>;
+    // FIXME: remove when 4.7 required
+#if ( KOKKOS_VERSION < 40700 )
     rnd_type pool;
     pool.init( seed, ghosted_space.size() );
+#else
+    rnd_type pool( seed, ghosted_space.size() );
+#endif
     for ( int i = owned_space.min( Dim::I ); i < owned_space.max( Dim::I );
           ++i )
         for ( int j = owned_space.min( Dim::J ); j < owned_space.max( Dim::J );
@@ -191,8 +196,13 @@ void forwardReverseTest2d( bool use_default, bool use_params )
     uint64_t seed =
         global_grid->blockId() + ( 19383747 % ( global_grid->blockId() + 1 ) );
     using rnd_type = Kokkos::Random_XorShift64_Pool<Kokkos::HostSpace>;
+    // FIXME: remove when 4.7 required
+#if ( KOKKOS_VERSION < 40700 )
     rnd_type pool;
     pool.init( seed, ghosted_space.size() );
+#else
+    rnd_type pool( seed, ghosted_space.size() );
+#endif
     for ( int i = owned_space.min( Dim::I ); i < owned_space.max( Dim::I );
           ++i )
         for ( int j = owned_space.min( Dim::J ); j < owned_space.max( Dim::J );

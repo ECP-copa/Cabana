@@ -109,15 +109,8 @@ class Halo : public CommunicationPlan<MemorySpace, CommSpaceType>
           const IdViewType& element_ids, const RankViewType& element_ranks,
           const std::vector<int>& neighbor_ranks )
         : CommunicationPlan<MemorySpace, CommSpaceType>( comm )
-        , _num_local( num_local )
     {
-        if ( element_ids.size() != element_ranks.size() )
-            throw std::runtime_error( "Cabana::Halo (export): ids and ranks "
-                                      "views are different sizes!" );
-
-        auto neighbor_ids = this->createWithTopology(
-            BuildType(), element_ranks, neighbor_ranks );
-        this->createExportSteering( neighbor_ids, element_ranks, element_ids );
+        build( num_local, element_ids, element_ranks, neighbor_ranks );
     }
 
     /*!
@@ -157,15 +150,8 @@ class Halo : public CommunicationPlan<MemorySpace, CommSpaceType>
     Halo( MPI_Comm comm, const std::size_t num_local,
           const IdViewType& element_ids, const RankViewType& element_ranks )
         : CommunicationPlan<MemorySpace, CommSpaceType>( comm )
-        , _num_local( num_local )
     {
-        if ( element_ids.size() != element_ranks.size() )
-            throw std::runtime_error( "Cabana::Halo (import): ids and ranks "
-                                      "views are different sizes!" );
-
-        auto neighbor_ids =
-            this->createWithoutTopology( BuildType(), element_ranks );
-        this->createExportSteering( neighbor_ids, element_ranks, element_ids );
+        build( num_local, element_ids, element_ranks );
     }
 
     /*!
@@ -214,17 +200,8 @@ class Halo : public CommunicationPlan<MemorySpace, CommSpaceType>
           const IdViewType& element_ids, const RankViewType& element_ranks,
           const std::vector<int>& neighbor_ranks )
         : CommunicationPlan<MemorySpace, CommSpaceType>( comm )
-        , _num_local( num_local )
     {
-        if ( element_ids.size() != element_ranks.size() )
-            throw std::runtime_error( "Cabana::Halo (import): ids and ranks "
-                                      "views are different sizes!" );
-
-        auto neighbor_ids_ranks_indices = this->createWithTopology(
-            BuildType(), element_ranks, element_ids, neighbor_ranks );
-        this->createExportSteering( std::get<0>( neighbor_ids_ranks_indices ),
-                                    std::get<1>( neighbor_ids_ranks_indices ),
-                                    std::get<2>( neighbor_ids_ranks_indices ) );
+        build( num_local, element_ids, element_ranks, neighbor_ranks );
     }
 
     /*!
@@ -263,8 +240,85 @@ class Halo : public CommunicationPlan<MemorySpace, CommSpaceType>
     Halo( MPI_Comm comm, const std::size_t num_local,
           const IdViewType& element_ids, const RankViewType& element_ranks )
         : CommunicationPlan<MemorySpace, CommSpaceType>( comm )
-        , _num_local( num_local )
     {
+        build( num_local, element_ids, element_ranks );
+    }
+
+    /*!
+      \brief Neighbor and export rank (re)build interface.
+
+      See corresponding Halo constructor for detail.
+    */
+    template <class IdViewType, class RankViewType, typename T = BuildType,
+              std::enable_if_t<std::is_same<T, Export>::value, int> = 0>
+    void build( const std::size_t num_local, const IdViewType& element_ids,
+                const RankViewType& element_ranks,
+                const std::vector<int>& neighbor_ranks )
+    {
+        _num_local = num_local;
+        if ( element_ids.size() != element_ranks.size() )
+            throw std::runtime_error( "Cabana::Halo (export): ids and ranks "
+                                      "views are different sizes!" );
+
+        auto neighbor_ids = this->createWithTopology(
+            BuildType(), element_ranks, neighbor_ranks );
+        this->createExportSteering( neighbor_ids, element_ranks, element_ids );
+    }
+
+    /*!
+      \brief Export rank (re)build interface.
+
+      See corresponding Halo constructor for detail.
+    */
+    template <class IdViewType, class RankViewType, typename T = BuildType,
+              std::enable_if_t<std::is_same<T, Export>::value, int> = 0>
+    void build( const std::size_t num_local, const IdViewType& element_ids,
+                const RankViewType& element_ranks )
+    {
+        _num_local = num_local;
+        if ( element_ids.size() != element_ranks.size() )
+            throw std::runtime_error( "Cabana::Halo (export): ids and ranks "
+                                      "views are different sizes!" );
+
+        auto neighbor_ids =
+            this->createWithoutTopology( BuildType(), element_ranks );
+        this->createExportSteering( neighbor_ids, element_ranks, element_ids );
+    }
+
+    /*!
+      \brief Neighbor and import rank (re)build interface.
+
+      See corresponding Halo constructor for detail.
+    */
+    template <class IdViewType, class RankViewType, typename T = BuildType,
+              std::enable_if_t<std::is_same<T, Import>::value, int> = 0>
+    void build( const std::size_t num_local, const IdViewType& element_ids,
+                const RankViewType& element_ranks,
+                const std::vector<int>& neighbor_ranks )
+    {
+        _num_local = num_local;
+        if ( element_ids.size() != element_ranks.size() )
+            throw std::runtime_error( "Cabana::Halo (import): ids and ranks "
+                                      "views are different sizes!" );
+
+        auto neighbor_ids_ranks_indices = this->createWithTopology(
+            BuildType(), element_ranks, element_ids, neighbor_ranks );
+        this->createExportSteering( std::get<0>( neighbor_ids_ranks_indices ),
+                                    std::get<1>( neighbor_ids_ranks_indices ),
+                                    std::get<2>( neighbor_ids_ranks_indices ) );
+    }
+
+    /*!
+      \brief Import rank (re)build interface.
+
+      See corresponding Halo constructor for detail.
+    */
+    template <class IdViewType, class RankViewType, typename T = BuildType,
+              std::enable_if_t<std::is_same<T, Import>::value, int> = 0>
+    void build( const std::size_t num_local, const IdViewType& element_ids,
+                const RankViewType& element_ranks )
+    {
+        _num_local = num_local;
         if ( element_ids.size() != element_ranks.size() )
             throw std::runtime_error( "Cabana::Halo (import): ids and ranks "
                                       "views are different sizes!" );
@@ -388,13 +442,17 @@ class Gather<HaloType, AoSoAType,
     Gather( HaloType halo, AoSoAType aosoa, const double overallocation = 1.0 )
         : base_type( halo, aosoa, overallocation )
     {
-        reserve( _halo, aosoa );
+        reserve( _comm_plan, aosoa );
     }
 
     //! Total gather send size for this rank.
-    auto totalSend() { return _halo.totalNumExport(); }
+    auto totalSend() { return _comm_plan.totalNumExport(); }
     //! Total gather receive size for this rank.
-    auto totalReceive() { return _halo.totalNumImport(); }
+    auto totalReceive() { return _comm_plan.totalNumImport(); }
+    //! Total gather send size for this rank.
+    auto totalSend( const HaloType& halo ) { return halo.totalNumExport(); }
+    //! Total gather receive size for this rank.
+    auto totalReceive( const HaloType& halo ) { return halo.totalNumImport(); }
 
     /*!
       \brief Perform the gather operation.
@@ -424,7 +482,8 @@ class Gather<HaloType, AoSoAType,
                 "AoSoA is the wrong size for gather! (Label: " +
                 aosoa.label() + ")" );
 
-        this->reserveImpl( halo, aosoa, totalSend(), totalReceive() );
+        this->reserveImpl( halo, aosoa, totalSend( halo ),
+                           totalReceive( halo ) );
     }
     /*!
       \brief Reserve new buffers as needed and update the halo and AoSoA data.
@@ -443,12 +502,12 @@ class Gather<HaloType, AoSoAType,
                 "AoSoA is the wrong size for gather! (Label: " +
                 aosoa.label() + ")" );
 
-        this->reserveImpl( halo, aosoa, totalSend(), totalReceive(),
+        this->reserveImpl( halo, aosoa, totalSend( halo ), totalReceive( halo ),
                            overallocation );
     }
 
   private:
-    plan_type _halo = base_type::_comm_plan;
+    using base_type::_comm_plan;
     using base_type::_recv_size;
     using base_type::_send_size;
 };
@@ -503,13 +562,17 @@ class Gather<HaloType, SliceType,
     Gather( HaloType halo, SliceType slice, const double overallocation = 1.0 )
         : base_type( halo, slice, overallocation )
     {
-        reserve( _halo, slice );
+        reserve( _comm_plan, slice );
     }
 
     //! Total gather send size for this rank.
-    auto totalSend() { return _halo.totalNumExport(); }
+    auto totalSend() { return _comm_plan.totalNumExport(); }
     //! Total gather receive size for this rank.
-    auto totalReceive() { return _halo.totalNumImport(); }
+    auto totalReceive() { return _comm_plan.totalNumImport(); }
+    //! Total gather send size for this rank.
+    auto totalSend( const HaloType& halo ) { return halo.totalNumExport(); }
+    //! Total gather receive size for this rank.
+    auto totalReceive( const HaloType& halo ) { return halo.totalNumImport(); }
 
     /*!
       \brief Perform the gather operation.
@@ -542,7 +605,9 @@ class Gather<HaloType, SliceType,
                 "Slice is the wrong size for gather! (Label: " +
                 slice.label() + ")" );
 
-        this->reserveImpl( halo, slice, totalSend(), totalReceive(),
+        // Cannot use totalSend(), totalReceive() because it may be inconsistent
+        // with the new plan.
+        this->reserveImpl( halo, slice, totalSend( halo ), totalReceive( halo ),
                            overallocation );
     }
     /*!
@@ -559,11 +624,12 @@ class Gather<HaloType, SliceType,
                 "Slice is the wrong size for gather! (Label: " +
                 slice.label() + ")" );
 
-        this->reserveImpl( halo, slice, totalSend(), totalReceive() );
+        this->reserveImpl( halo, slice, totalSend( halo ),
+                           totalReceive( halo ) );
     }
 
   private:
-    plan_type _halo = base_type::_comm_plan;
+    using base_type::_comm_plan;
     using base_type::_recv_size;
     using base_type::_send_size;
 };
@@ -668,13 +734,17 @@ class Scatter
     Scatter( HaloType halo, SliceType slice, const double overallocation = 1.0 )
         : base_type( halo, slice, overallocation )
     {
-        reserve( _halo, slice );
+        reserve( _comm_plan, slice );
     }
 
     //! Total scatter send size for this rank.
-    auto totalSend() { return _halo.totalNumImport(); }
+    auto totalSend() { return _comm_plan.totalNumImport(); }
     //! Total scatter receive size for this rank.
-    auto totalReceive() { return _halo.totalNumExport(); }
+    auto totalReceive() { return _comm_plan.totalNumExport(); }
+    //! Total gather send size for this rank.
+    auto totalSend( const HaloType& halo ) { return halo.totalNumImport(); }
+    //! Total gather receive size for this rank.
+    auto totalReceive( const HaloType& halo ) { return halo.totalNumExport(); }
 
     /*!
       \brief Perform the scatter operation.
@@ -708,7 +778,7 @@ class Scatter
                 "Slice is the wrong size for scatter! (Label: " +
                 slice.label() + ")" );
 
-        this->reserveImpl( halo, slice, totalSend(), totalReceive(),
+        this->reserveImpl( halo, slice, totalSend( halo ), totalReceive( halo ),
                            overallocation );
     }
     /*!
@@ -725,11 +795,12 @@ class Scatter
                 "Slice is the wrong size for scatter! (Label: " +
                 slice.label() + ")" );
 
-        this->reserveImpl( halo, slice, totalSend(), totalReceive() );
+        this->reserveImpl( halo, slice, totalSend( halo ),
+                           totalReceive( halo ) );
     }
 
   private:
-    plan_type _halo = base_type::_comm_plan;
+    using base_type::_comm_plan;
     using base_type::_recv_size;
     using base_type::_send_size;
 };

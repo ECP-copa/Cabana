@@ -317,8 +317,14 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
             int num_cells = owned_cells.size();
 
             // Create a random number generator.
-            Kokkos::Random_XorShift64_Pool<exec_space> pool;
+            using random_type = Kokkos::Random_XorShift64_Pool<exec_space>;
+            // FIXME: remove when 4.7 required
+#if ( KOKKOS_VERSION < 40700 )
+            random_type pool;
             pool.init( seed, num_cells );
+#else
+            random_type pool( seed, num_cells );
+#endif
 
             // Create the particles.
             int num_ppc = particles_per_cell[ppc];

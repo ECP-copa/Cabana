@@ -41,6 +41,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <string>
 #include <type_traits>
@@ -57,20 +58,25 @@ namespace Impl
 {
 // XDMF file creation routines
 //! \cond Impl
-inline void writeXdmfHeader( const char* xml_file_name, hsize_t dims0,
-                             hsize_t dims1, const char* dtype, uint precision,
-                             const char* h5_file_name, const char* coords_name )
+inline void writeXdmfHeader( const char* xml_file_name, const double time,
+                             hsize_t dims0, hsize_t dims1, const char* dtype,
+                             uint precision, const char* h5_file_name,
+                             const char* coords_name )
 {
     std::ofstream xdmf_file( xml_file_name, std::ios::trunc );
+    // Set precision to guarantee that conversion to text and back is exact.
+    xdmf_file.precision( std::numeric_limits<double>::max_digits10 );
     xdmf_file << "<?xml version=\"1.0\" ?>\n";
     xdmf_file << "<!DOCTYPE Xdmf SYSTEM \"Xdmf.dtd\" []>\n";
     xdmf_file << "<Xdmf Version=\"2.0\">\n";
     xdmf_file << "  <Domain>\n";
     xdmf_file << "    <Grid Name=\"points\" GridType=\"Uniform\">\n";
+    xdmf_file << "      <Time Value=\"" << time << "\"/>\n";
     xdmf_file << "      <Topology TopologyType=\"Polyvertex\"";
     xdmf_file << " Dimensions=\"" << dims0 << "\"";
     xdmf_file << " NodesPerElement=\"1\"> </Topology>\n";
-    xdmf_file << "      <Geometry Type=\"XYZ\">\n";
+    xdmf_file << "      <Geometry Type=\"" << ( dims1 == 3 ? "XYZ" : "XY" )
+              << "\">\n";
     xdmf_file << "         <DataItem Dimensions=\"" << dims0 << " " << dims1;
     xdmf_file << "\" NumberType=\"" << dtype;
     xdmf_file << "\" Precision=\"" << precision;
@@ -703,12 +709,12 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
     std::vector<int>().swap( all_offsets );
 
     dimsf[0] = n_global;
-    dimsf[1] = 3;
+    dimsf[1] = coords_slice.extent( 2 );
 
     filespace_id = H5Screate_simple( 2, dimsf, nullptr );
 
     count[0] = n_local;
-    count[1] = 3;
+    count[1] = coords_slice.extent( 2 );
 
     memspace_id = H5Screate_simple( 2, count, nullptr );
 
@@ -743,8 +749,8 @@ void writeTimeStep( HDF5Config h5_config, const std::string& prefix,
 
     if ( 0 == comm_rank )
     {
-        Impl::writeXdmfHeader( filename_xdmf.str().c_str(), dimsf[0], dimsf[1],
-                               dtype.c_str(), precision,
+        Impl::writeXdmfHeader( filename_xdmf.str().c_str(), time, dimsf[0],
+                               dimsf[1], dtype.c_str(), precision,
                                filename_hdf5.str().c_str(),
                                coords_slice.label().c_str() );
     }
