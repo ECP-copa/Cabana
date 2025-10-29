@@ -16,6 +16,11 @@ set(NOBACKEND_TESTS
   Index
   CartesianGrid
   SoA
+  Erfinv
+  Hammersley
+  Matrix1
+  Matrix2
+  Matrix3
   )
 
 set(SERIAL_TESTS

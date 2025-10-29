@@ -33,6 +33,7 @@ set(HEADERS_PUBLIC
   Cabana_Utils.hpp
   Cabana_VerletList.hpp
   Cabana_Version.hpp
+  Cabana_GaussianMixtureModel.hpp
   )
 
 if(Cabana_ENABLE_ARBORX)
@@ -59,7 +60,11 @@ endif()
 
 set(HEADERS_IMPL
   impl/Cabana_CartesianGrid.hpp
+  impl/Cabana_Erfinv.hpp
   impl/Cabana_Index.hpp
+  impl/Cabana_GaussianWeight.hpp
+  impl/Cabana_Hammersley.hpp
+  impl/Cabana_Matrix2d.hpp
   impl/Cabana_PerformanceTraits.hpp
   impl/Cabana_TypeTraits.hpp
   )
