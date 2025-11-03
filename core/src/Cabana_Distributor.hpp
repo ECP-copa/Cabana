@@ -266,7 +266,7 @@ void migrate( const Distributor_t& distributor, const AoSoA_t& src,
   \param distributor The distributor to use for the migration.
   \param aosoa The AoSoA containing the data to be migrated. Upon input, must
   have the same number of elements as the inputs used to construct the
-  distributor. At output, it will be the same size as th enumber of import
+  distributor. At output, it will be the same size as the number of import
   elements on this rank provided by the distributor. Before using this
   function, consider reserving enough memory in the data structure so
   reallocating is not necessary.
@@ -321,7 +321,7 @@ void migrate( ExecutionSpace exec_space, const Distributor_t& distributor,
   \param distributor The distributor to use for the migration.
   \param aosoa The AoSoA containing the data to be migrated. Upon input, must
   have the same number of elements as the inputs used to construct the
-  distributor. At output, it will be the same size as th enumber of import
+  distributor. At output, it will be the same size as the number of import
   elements on this rank provided by the distributor. Before using this
   function, consider reserving enough memory in the data structure so
   reallocating is not necessary.
@@ -337,7 +337,49 @@ void migrate( const Distributor_t& distributor, AoSoA_t& aosoa,
 
 /*!
   \brief Synchronously migrate data between two different decompositions using
-  the Distributor forward communication plan. Slice version. The user can do
+  the distributor forward communication plan. Slice version. The user can do
+  this in-place with the same slice but they will need to manage the resizing
+  themselves as we can't resize slices.
+
+  Migrate moves all data to a new distribution that is uniquely owned - each
+  element will only have a single destination rank.
+
+  \tparam ExecutionSpace Kokkos execution space.
+  \tparam Distributor_t distributor type - must be a distributor.
+  \tparam Slice_t Slice type - must be an Slice.
+
+  \param distributor The distributor to use for the migration.
+  \param src The slice containing the data to be migrated. Must have the same
+  number of elements as the inputs used to construct the distributor.
+  \param dst The slice to which the migrated data will be written. Must be the
+  same size as the number of imports given by the distributor on this
+  rank. Call totalNumImport() on the distributor to get this size value.
+*/
+template <class ExecutionSpace, class Distributor_t, class Slice_t>
+void migrate( ExecutionSpace exec_space, const Distributor_t& distributor,
+              const Slice_t& src, Slice_t& dst,
+              typename std::enable_if<( is_distributor<Distributor_t>::value &&
+                                        is_slice<Slice_t>::value ),
+                                      int>::type* = 0 )
+{
+    // Check that src and dst are the right size.
+    if ( src.size() != distributor.exportSize() )
+        throw std::runtime_error( "Cabana::migrate: Source Slice is the wrong "
+                                  "size for migration! (Label: " +
+                                  src.label() + ")" );
+    if ( dst.size() != distributor.totalNumImport() )
+        throw std::runtime_error( "Cabana::migrate: Destination Slice is the "
+                                  "wrong size for migration! (Label: " +
+                                  dst.label() + ")" );
+
+    // Move the data.
+    Impl::migrateSlice( typename Distributor_t::commspace_type(), exec_space,
+                        distributor, src, dst );
+}
+
+/*!
+  \brief Synchronously migrate data between two different decompositions using
+  the distributor forward communication plan. Slice version. The user can do
   this in-place with the same slice but they will need to manage the resizing
   themselves as we can't resize slices.
 
@@ -361,21 +403,8 @@ void migrate( const Distributor_t& distributor, const Slice_t& src,
                                         is_slice<Slice_t>::value ),
                                       int>::type* = 0 )
 {
-    // Check that src and dst are the right size.
-    if ( src.size() != distributor.exportSize() )
-        throw std::runtime_error( "Cabana::migrate: Source Slice is the wrong "
-                                  "size for migration! (Label: " +
-                                  src.label() + ")" );
-    if ( dst.size() != distributor.totalNumImport() )
-        throw std::runtime_error( "Cabana::migrate: Destination Slice is the "
-                                  "wrong size for migration! (Label: " +
-                                  dst.label() + ")" );
-
-    Impl::migrateSlice( typename Distributor_t::commspace_type(),
-                        typename Distributor_t::execution_space{}, distributor,
-                        src, dst );
+    migrate( typename Distributor_t::execution_space{}, distributor, src, dst );
 }
-
 //---------------------------------------------------------------------------//
 
 } // end namespace Cabana
