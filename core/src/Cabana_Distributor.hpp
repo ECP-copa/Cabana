@@ -348,6 +348,7 @@ void migrate( const Distributor_t& distributor, AoSoA_t& aosoa,
   \tparam Distributor_t distributor type - must be a distributor.
   \tparam Slice_t Slice type - must be an Slice.
 
+  \param exec_space Kokkos execution space.
   \param distributor The distributor to use for the migration.
   \param src The slice containing the data to be migrated. Must have the same
   number of elements as the inputs used to construct the distributor.
