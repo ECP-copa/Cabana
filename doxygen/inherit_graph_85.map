@@ -1,7 +1,11 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classCabana_1_1Grid_1_1IndexSpace.html" title="Structured index space." alt="" coords="5,66,218,95"/>
-<area shape="rect" id="Node000001" href="$classCabana_1_1Grid_1_1TileIndexSpace.html" title=" " alt="" coords="266,5,467,73"/>
-<area shape="poly" id="edge26_Node000000_Node000001" title=" " alt="" coords="222,60,265,53,266,58,222,65"/>
-<area shape="rect" id="Node000002" href="$classCabana_1_1Grid_1_1TileIndexSpace.html" title="Index space with tile as unit; _min and _max forms the tile range. Note this is for sparse grid only,..." alt="" coords="266,98,467,146"/>
-<area shape="poly" id="edge27_Node000000_Node000002" title=" " alt="" coords="222,96,266,103,265,108,222,101"/>
+<area shape="rect" id="Node000000" href="$classCabana_1_1Grid_1_1HypreSemiStructuredSolver.html" title="Hypre semi&#45;structured solver interface for scalar fields." alt="" coords="5,144,249,212"/>
+<area shape="rect" id="Node000001" href="$classCabana_1_1Grid_1_1HypreSemiStructBiCGSTAB.html" title="BiCGSTAB solver." alt="" coords="297,5,511,73"/>
+<area shape="poly" id="edge18_Node000000_Node000001" title=" " alt="" coords="200,134,295,83,321,71,324,76,298,88,203,138"/>
+<area shape="rect" id="Node000002" href="$classCabana_1_1Grid_1_1HypreSemiStructDiagonal.html" title="Diagonal preconditioner." alt="" coords="297,97,511,165"/>
+<area shape="poly" id="edge19_Node000000_Node000002" title=" " alt="" coords="264,152,296,147,296,152,265,157"/>
+<area shape="rect" id="Node000003" href="$classCabana_1_1Grid_1_1HypreSemiStructGMRES.html" title="GMRES solver." alt="" coords="297,189,511,257"/>
+<area shape="poly" id="edge20_Node000000_Node000003" title=" " alt="" coords="265,198,296,203,296,208,264,203"/>
+<area shape="rect" id="Node000004" href="$classCabana_1_1Grid_1_1HypreSemiStructPCG.html" title="PCG solver." alt="" coords="297,281,511,349"/>
+<area shape="poly" id="edge21_Node000000_Node000004" title=" " alt="" coords="204,217,298,266,324,278,321,283,295,271,201,222"/>
 </map>

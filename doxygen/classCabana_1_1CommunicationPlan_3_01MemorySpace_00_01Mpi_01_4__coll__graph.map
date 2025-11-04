@@ -1,0 +1,5 @@
+<map id="Cabana::CommunicationPlan&lt; MemorySpace, Mpi &gt;" name="Cabana::CommunicationPlan&lt; MemorySpace, Mpi &gt;">
+<area shape="rect" id="Node000001" title="Communication plan class. Uses vanilla MPI as the communication backend." alt="" coords="5,102,202,151"/>
+<area shape="rect" id="Node000002" href="$classCabana_1_1CommunicationPlanBase.html" title="Communication plan base class." alt="" coords="5,5,202,54"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="106,69,106,101,101,101,101,69"/>
+</map>

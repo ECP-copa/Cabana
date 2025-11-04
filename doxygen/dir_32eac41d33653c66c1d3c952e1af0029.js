@@ -1,5 +1,6 @@
 var dir_32eac41d33653c66c1d3c952e1af0029 =
 [
+    [ "impl", "dir_41fdcd265688a99169b0a883bdc98abe.html", "dir_41fdcd265688a99169b0a883bdc98abe" ],
     [ "Cabana_Grid.hpp", "Cabana__Grid_8hpp_source.html", null ],
     [ "Cabana_Grid_Array.hpp", "Cabana__Grid__Array_8hpp.html", "Cabana__Grid__Array_8hpp" ],
     [ "Cabana_Grid_BovWriter.hpp", "Cabana__Grid__BovWriter_8hpp.html", "Cabana__Grid__BovWriter_8hpp" ],
@@ -8,7 +9,7 @@ var dir_32eac41d33653c66c1d3c952e1af0029 =
     [ "Cabana_Grid_GlobalGrid_impl.hpp", "Cabana__Grid__GlobalGrid__impl_8hpp_source.html", null ],
     [ "Cabana_Grid_GlobalMesh.hpp", "Cabana__Grid__GlobalMesh_8hpp.html", "Cabana__Grid__GlobalMesh_8hpp" ],
     [ "Cabana_Grid_GlobalParticleComm.hpp", "Cabana__Grid__GlobalParticleComm_8hpp.html", "Cabana__Grid__GlobalParticleComm_8hpp" ],
-    [ "Cabana_Grid_Halo.hpp", "Cabana__Grid__Halo_8hpp.html", "Cabana__Grid__Halo_8hpp" ],
+    [ "Cabana_Grid_HaloBase.hpp", "Cabana__Grid__HaloBase_8hpp.html", "Cabana__Grid__HaloBase_8hpp" ],
     [ "Cabana_Grid_Hypre.hpp", "Cabana__Grid__Hypre_8hpp.html", "Cabana__Grid__Hypre_8hpp" ],
     [ "Cabana_Grid_HypreSemiStructuredSolver.hpp", "Cabana__Grid__HypreSemiStructuredSolver_8hpp.html", "Cabana__Grid__HypreSemiStructuredSolver_8hpp" ],
     [ "Cabana_Grid_HypreStructuredSolver.hpp", "Cabana__Grid__HypreStructuredSolver_8hpp.html", "Cabana__Grid__HypreStructuredSolver_8hpp" ],

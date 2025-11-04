@@ -1,0 +1,5 @@
+<map id="Cabana::CommunicationDataBase&lt; CommPlanType, CommDataType &gt;" name="Cabana::CommunicationDataBase&lt; CommPlanType, CommDataType &gt;">
+<area shape="rect" id="Node000001" title="Store communication plan and communication buffers." alt="" coords="5,5,281,54"/>
+<area shape="rect" id="Node000002" href="$classCabana_1_1CommunicationData_3_01CommPlanType_00_01CommDataType_00_01Mpi_01_4.html" title="Store AoSoA send/receive buffers. Mpi variant." alt="" coords="5,102,281,151"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="146,69,146,101,140,101,140,69"/>
+</map>

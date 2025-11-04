@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.13.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Cabana: Cabana::Grid::GlobalParticleComm&lt; MemorySpace, LocalGridType &gt; Class Template Reference</title>
+<title>Cabana: Cabana::Grid::GlobalParticleComm&lt; MemorySpace, LocalGridType, CommSpaceType &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -108,7 +108,7 @@ $(function(){initNavTree('classCabana_1_1Grid_1_1GlobalParticleComm.html',''); i
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classCabana_1_1Grid_1_1GlobalParticleComm-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">Cabana::Grid::GlobalParticleComm&lt; MemorySpace, LocalGridType &gt; Class Template Reference</div></div>
+  <div class="headertitle"><div class="title">Cabana::Grid::GlobalParticleComm&lt; MemorySpace, LocalGridType, CommSpaceType &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -119,135 +119,139 @@ $(function(){initNavTree('classCabana_1_1Grid_1_1GlobalParticleComm.html',''); i
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a5eaca8c4fe0915dc436c782906d0da7f" id="r_a5eaca8c4fe0915dc436c782906d0da7f"><td class="memItemLeft" align="right" valign="top"><a id="a5eaca8c4fe0915dc436c782906d0da7f" name="a5eaca8c4fe0915dc436c782906d0da7f"></a>
+<tr class="memitem:adb2b42cf5dbdfe4361fd90c243e6d833" id="r_adb2b42cf5dbdfe4361fd90c243e6d833"><td class="memItemLeft" align="right" valign="top"><a id="adb2b42cf5dbdfe4361fd90c243e6d833" name="adb2b42cf5dbdfe4361fd90c243e6d833"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>mesh_type</b> = typename LocalGridType::mesh_type</td></tr>
-<tr class="memdesc:a5eaca8c4fe0915dc436c782906d0da7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mesh type. <br /></td></tr>
-<tr class="separator:a5eaca8c4fe0915dc436c782906d0da7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a7330509b497bd96efec289643bd42c" id="r_a1a7330509b497bd96efec289643bd42c"><td class="memItemLeft" align="right" valign="top"><a id="a1a7330509b497bd96efec289643bd42c" name="a1a7330509b497bd96efec289643bd42c"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>global_grid_type</b> = <a class="el" href="classCabana_1_1Grid_1_1GlobalGrid.html">Cabana::Grid::GlobalGrid</a>&lt;<a class="el" href="#a5eaca8c4fe0915dc436c782906d0da7f">mesh_type</a>&gt;</td></tr>
-<tr class="memdesc:a1a7330509b497bd96efec289643bd42c"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Grid_1_1Global.html" title="Global index tag.">Global</a> grid. <br /></td></tr>
-<tr class="separator:a1a7330509b497bd96efec289643bd42c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6919432e3f75b69cc3937266be945a54" id="r_a6919432e3f75b69cc3937266be945a54"><td class="memItemLeft" align="right" valign="top"><a id="a6919432e3f75b69cc3937266be945a54" name="a6919432e3f75b69cc3937266be945a54"></a>
+<tr class="memdesc:adb2b42cf5dbdfe4361fd90c243e6d833"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mesh type. <br /></td></tr>
+<tr class="separator:adb2b42cf5dbdfe4361fd90c243e6d833"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a242c9153412bc924751e2af9d009494f" id="r_a242c9153412bc924751e2af9d009494f"><td class="memItemLeft" align="right" valign="top"><a id="a242c9153412bc924751e2af9d009494f" name="a242c9153412bc924751e2af9d009494f"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>global_grid_type</b> = <a class="el" href="classCabana_1_1Grid_1_1GlobalGrid.html">Cabana::Grid::GlobalGrid</a>&lt;<a class="el" href="#adb2b42cf5dbdfe4361fd90c243e6d833">mesh_type</a>&gt;</td></tr>
+<tr class="memdesc:a242c9153412bc924751e2af9d009494f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Grid_1_1Global.html" title="Global index tag.">Global</a> grid. <br /></td></tr>
+<tr class="separator:a242c9153412bc924751e2af9d009494f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2ae504454f5317a34a9fcbe11f2c1de" id="r_ae2ae504454f5317a34a9fcbe11f2c1de"><td class="memItemLeft" align="right" valign="top"><a id="ae2ae504454f5317a34a9fcbe11f2c1de" name="ae2ae504454f5317a34a9fcbe11f2c1de"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
-<tr class="memdesc:a6919432e3f75b69cc3937266be945a54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
-<tr class="separator:a6919432e3f75b69cc3937266be945a54"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a21efa1a9b9592461b412d11a7458a5" id="r_a9a21efa1a9b9592461b412d11a7458a5"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9a21efa1a9b9592461b412d11a7458a5">corner_view_type</a></td></tr>
-<tr class="memdesc:a9a21efa1a9b9592461b412d11a7458a5"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Grid_1_1Local.html" title="Local index tag.">Local</a> boundary View type.  <br /></td></tr>
-<tr class="separator:a9a21efa1a9b9592461b412d11a7458a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6394da898cf09d3484e9d4cac1f1d83" id="r_ad6394da898cf09d3484e9d4cac1f1d83"><td class="memItemLeft" align="right" valign="top"><a id="ad6394da898cf09d3484e9d4cac1f1d83" name="ad6394da898cf09d3484e9d4cac1f1d83"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>destination_view_type</b> = Kokkos::View&lt;int*, <a class="el" href="#a6919432e3f75b69cc3937266be945a54">memory_space</a>&gt;</td></tr>
-<tr class="memdesc:ad6394da898cf09d3484e9d4cac1f1d83"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Particle.html" title="Single particle copy. Wraps a tuple copy of a particle.">Particle</a> destination ranks View type. <br /></td></tr>
-<tr class="separator:ad6394da898cf09d3484e9d4cac1f1d83"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ca06c2a2987f743261a6a8ed670d66a" id="r_a1ca06c2a2987f743261a6a8ed670d66a"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1ca06c2a2987f743261a6a8ed670d66a">rank_view_type</a></td></tr>
-<tr class="memdesc:a1ca06c2a2987f743261a6a8ed670d66a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cartesian rank View type.  <br /></td></tr>
-<tr class="separator:a1ca06c2a2987f743261a6a8ed670d66a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2531c5ab3b204aa6bd4d049d2141724f" id="r_a2531c5ab3b204aa6bd4d049d2141724f"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2531c5ab3b204aa6bd4d049d2141724f">host_rank_view_type</a></td></tr>
-<tr class="memdesc:a2531c5ab3b204aa6bd4d049d2141724f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cartesian rank View type (host).  <br /></td></tr>
-<tr class="separator:a2531c5ab3b204aa6bd4d049d2141724f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:ae2ae504454f5317a34a9fcbe11f2c1de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
+<tr class="separator:ae2ae504454f5317a34a9fcbe11f2c1de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74034e41b46048d537b260cf458ceb68" id="r_a74034e41b46048d537b260cf458ceb68"><td class="memItemLeft" align="right" valign="top"><a id="a74034e41b46048d537b260cf458ceb68" name="a74034e41b46048d537b260cf458ceb68"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>commspace_type</b> = CommSpaceType</td></tr>
+<tr class="memdesc:a74034e41b46048d537b260cf458ceb68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Communication backend. <br /></td></tr>
+<tr class="separator:a74034e41b46048d537b260cf458ceb68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fa414d7e55f9854ef54a185113494be" id="r_a0fa414d7e55f9854ef54a185113494be"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0fa414d7e55f9854ef54a185113494be">corner_view_type</a></td></tr>
+<tr class="memdesc:a0fa414d7e55f9854ef54a185113494be"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Grid_1_1Local.html" title="Local index tag.">Local</a> boundary View type.  <br /></td></tr>
+<tr class="separator:a0fa414d7e55f9854ef54a185113494be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4864ae35d61753a32feb1af387f18cc" id="r_ab4864ae35d61753a32feb1af387f18cc"><td class="memItemLeft" align="right" valign="top"><a id="ab4864ae35d61753a32feb1af387f18cc" name="ab4864ae35d61753a32feb1af387f18cc"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>destination_view_type</b> = Kokkos::View&lt;int*, <a class="el" href="#ae2ae504454f5317a34a9fcbe11f2c1de">memory_space</a>&gt;</td></tr>
+<tr class="memdesc:ab4864ae35d61753a32feb1af387f18cc"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Particle.html" title="Single particle copy. Wraps a tuple copy of a particle.">Particle</a> destination ranks View type. <br /></td></tr>
+<tr class="separator:ab4864ae35d61753a32feb1af387f18cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab68d6960c256c1e1a10e54389910c0e4" id="r_ab68d6960c256c1e1a10e54389910c0e4"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab68d6960c256c1e1a10e54389910c0e4">rank_view_type</a></td></tr>
+<tr class="memdesc:ab68d6960c256c1e1a10e54389910c0e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cartesian rank View type.  <br /></td></tr>
+<tr class="separator:ab68d6960c256c1e1a10e54389910c0e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9044b12f35579ed72b8776878c965094" id="r_a9044b12f35579ed72b8776878c965094"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9044b12f35579ed72b8776878c965094">host_rank_view_type</a></td></tr>
+<tr class="memdesc:a9044b12f35579ed72b8776878c965094"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cartesian rank View type (host).  <br /></td></tr>
+<tr class="separator:a9044b12f35579ed72b8776878c965094"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa9e371878ca53b46bfd4bd3299d1ecd6" id="r_aa9e371878ca53b46bfd4bd3299d1ecd6"><td class="memItemLeft" align="right" valign="top"><a id="aa9e371878ca53b46bfd4bd3299d1ecd6" name="aa9e371878ca53b46bfd4bd3299d1ecd6"></a>
+<tr class="memitem:af0a2302e43663cbe0090d01c4d38c863" id="r_af0a2302e43663cbe0090d01c4d38c863"><td class="memItemLeft" align="right" valign="top"><a id="af0a2302e43663cbe0090d01c4d38c863" name="af0a2302e43663cbe0090d01c4d38c863"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>GlobalParticleComm</b> (const LocalGridType local_grid)</td></tr>
-<tr class="memdesc:aa9e371878ca53b46bfd4bd3299d1ecd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
-<tr class="separator:aa9e371878ca53b46bfd4bd3299d1ecd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b3b74ab7134e2269186a4e480f03161" id="r_a4b3b74ab7134e2269186a4e480f03161"><td class="memTemplParams" colspan="2"><a id="a4b3b74ab7134e2269186a4e480f03161" name="a4b3b74ab7134e2269186a4e480f03161"></a>
+<tr class="memdesc:af0a2302e43663cbe0090d01c4d38c863"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
+<tr class="separator:af0a2302e43663cbe0090d01c4d38c863"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a636301f52d68f4b430b4324289464381" id="r_a636301f52d68f4b430b4324289464381"><td class="memTemplParams" colspan="2"><a id="a636301f52d68f4b430b4324289464381" name="a636301f52d68f4b430b4324289464381"></a>
 template&lt;class LocalMeshType&gt; </td></tr>
-<tr class="memitem:a4b3b74ab7134e2269186a4e480f03161"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>storeRanks</b> (LocalMeshType local_mesh)</td></tr>
-<tr class="memdesc:a4b3b74ab7134e2269186a4e480f03161"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store local rank boundaries from the local mesh. <br /></td></tr>
-<tr class="separator:a4b3b74ab7134e2269186a4e480f03161"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb77d4f73fcae3e5895f62366242c296" id="r_adb77d4f73fcae3e5895f62366242c296"><td class="memItemLeft" align="right" valign="top"><a id="adb77d4f73fcae3e5895f62366242c296" name="adb77d4f73fcae3e5895f62366242c296"></a>
+<tr class="memitem:a636301f52d68f4b430b4324289464381"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>storeRanks</b> (LocalMeshType local_mesh)</td></tr>
+<tr class="memdesc:a636301f52d68f4b430b4324289464381"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store local rank boundaries from the local mesh. <br /></td></tr>
+<tr class="separator:a636301f52d68f4b430b4324289464381"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d3538d2ee63801e13ea3f2d17ac8d5e" id="r_a7d3538d2ee63801e13ea3f2d17ac8d5e"><td class="memItemLeft" align="right" valign="top"><a id="a7d3538d2ee63801e13ea3f2d17ac8d5e" name="a7d3538d2ee63801e13ea3f2d17ac8d5e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>scaleRanks</b> ()</td></tr>
-<tr class="memdesc:adb77d4f73fcae3e5895f62366242c296"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scale local rank boundaries based on double counting from MPI reduction. <br /></td></tr>
-<tr class="separator:adb77d4f73fcae3e5895f62366242c296"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4b32ae5ba3910e3da178ea9120dae84" id="r_af4b32ae5ba3910e3da178ea9120dae84"><td class="memTemplParams" colspan="2"><a id="af4b32ae5ba3910e3da178ea9120dae84" name="af4b32ae5ba3910e3da178ea9120dae84"></a>
+<tr class="memdesc:a7d3538d2ee63801e13ea3f2d17ac8d5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scale local rank boundaries based on double counting from MPI reduction. <br /></td></tr>
+<tr class="separator:a7d3538d2ee63801e13ea3f2d17ac8d5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35863483e8d8824802a57043b048bafc" id="r_a35863483e8d8824802a57043b048bafc"><td class="memTemplParams" colspan="2"><a id="a35863483e8d8824802a57043b048bafc" name="a35863483e8d8824802a57043b048bafc"></a>
 template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:af4b32ae5ba3910e3da178ea9120dae84"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 3==NSD, Kokkos::Array&lt; int, <a class="el" href="#a4a85c3d4c47b2c0da9bffe0545d3cb06">num_space_dim</a> &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getScaling</b> ()</td></tr>
-<tr class="memdesc:af4b32ae5ba3910e3da178ea9120dae84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scaling factors due to double counting from MPI reduction. <br /></td></tr>
-<tr class="separator:af4b32ae5ba3910e3da178ea9120dae84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6dbc2d29998251662ab9d1778625e3b9" id="r_a6dbc2d29998251662ab9d1778625e3b9"><td class="memTemplParams" colspan="2"><a id="a6dbc2d29998251662ab9d1778625e3b9" name="a6dbc2d29998251662ab9d1778625e3b9"></a>
+<tr class="memitem:a35863483e8d8824802a57043b048bafc"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 3==NSD, Kokkos::Array&lt; int, <a class="el" href="#a67766d79bb9eded862ffcd941f18c4b7">num_space_dim</a> &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getScaling</b> ()</td></tr>
+<tr class="memdesc:a35863483e8d8824802a57043b048bafc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scaling factors due to double counting from MPI reduction. <br /></td></tr>
+<tr class="separator:a35863483e8d8824802a57043b048bafc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14505fd4afa50e2decc72d4292b9f531" id="r_a14505fd4afa50e2decc72d4292b9f531"><td class="memTemplParams" colspan="2"><a id="a14505fd4afa50e2decc72d4292b9f531" name="a14505fd4afa50e2decc72d4292b9f531"></a>
 template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:a6dbc2d29998251662ab9d1778625e3b9"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 2==NSD, Kokkos::Array&lt; int, <a class="el" href="#a4a85c3d4c47b2c0da9bffe0545d3cb06">num_space_dim</a> &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getScaling</b> ()</td></tr>
-<tr class="memdesc:a6dbc2d29998251662ab9d1778625e3b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scaling factors due to double counting from MPI reduction. <br /></td></tr>
-<tr class="separator:a6dbc2d29998251662ab9d1778625e3b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adeb24574021cb6f4c821f14fa7635c35" id="r_adeb24574021cb6f4c821f14fa7635c35"><td class="memTemplParams" colspan="2"><a id="adeb24574021cb6f4c821f14fa7635c35" name="adeb24574021cb6f4c821f14fa7635c35"></a>
+<tr class="memitem:a14505fd4afa50e2decc72d4292b9f531"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 2==NSD, Kokkos::Array&lt; int, <a class="el" href="#a67766d79bb9eded862ffcd941f18c4b7">num_space_dim</a> &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getScaling</b> ()</td></tr>
+<tr class="memdesc:a14505fd4afa50e2decc72d4292b9f531"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scaling factors due to double counting from MPI reduction. <br /></td></tr>
+<tr class="separator:a14505fd4afa50e2decc72d4292b9f531"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ecfdc0daa84e431dd001eb66369b42e" id="r_a4ecfdc0daa84e431dd001eb66369b42e"><td class="memTemplParams" colspan="2"><a id="a4ecfdc0daa84e431dd001eb66369b42e" name="a4ecfdc0daa84e431dd001eb66369b42e"></a>
 template&lt;class GlobalGridType, std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:adeb24574021cb6f4c821f14fa7635c35"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>copyRanks</b> (GlobalGridType global_grid)</td></tr>
-<tr class="memdesc:adeb24574021cb6f4c821f14fa7635c35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store all cartesian MPI ranks. <br /></td></tr>
-<tr class="separator:adeb24574021cb6f4c821f14fa7635c35"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56699689a23a42675689faef34ca88cf" id="r_a56699689a23a42675689faef34ca88cf"><td class="memTemplParams" colspan="2"><a id="a56699689a23a42675689faef34ca88cf" name="a56699689a23a42675689faef34ca88cf"></a>
+<tr class="memitem:a4ecfdc0daa84e431dd001eb66369b42e"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>copyRanks</b> (GlobalGridType global_grid)</td></tr>
+<tr class="memdesc:a4ecfdc0daa84e431dd001eb66369b42e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store all cartesian MPI ranks. <br /></td></tr>
+<tr class="separator:a4ecfdc0daa84e431dd001eb66369b42e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3fb416668d0346a4d142759cbc5588c2" id="r_a3fb416668d0346a4d142759cbc5588c2"><td class="memTemplParams" colspan="2"><a id="a3fb416668d0346a4d142759cbc5588c2" name="a3fb416668d0346a4d142759cbc5588c2"></a>
 template&lt;class GlobalGridType, std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:a56699689a23a42675689faef34ca88cf"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 2==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>copyRanks</b> (GlobalGridType global_grid)</td></tr>
-<tr class="memdesc:a56699689a23a42675689faef34ca88cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store all cartesian MPI ranks. <br /></td></tr>
-<tr class="separator:a56699689a23a42675689faef34ca88cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56259d45f02cbe5f670602d75efc03ae" id="r_a56259d45f02cbe5f670602d75efc03ae"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class PositionType&gt; </td></tr>
-<tr class="memitem:a56259d45f02cbe5f670602d75efc03ae"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a56259d45f02cbe5f670602d75efc03ae">build</a> (ExecutionSpace exec_space, PositionType positions, const std::size_t begin, const std::size_t end)</td></tr>
-<tr class="memdesc:a56259d45f02cbe5f670602d75efc03ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin particles across the global grid.  <br /></td></tr>
-<tr class="separator:a56259d45f02cbe5f670602d75efc03ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1244f03cb253a4af4cc441215bf50f01" id="r_a1244f03cb253a4af4cc441215bf50f01"><td class="memTemplParams" colspan="2"><a id="a1244f03cb253a4af4cc441215bf50f01" name="a1244f03cb253a4af4cc441215bf50f01"></a>
+<tr class="memitem:a3fb416668d0346a4d142759cbc5588c2"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 2==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>copyRanks</b> (GlobalGridType global_grid)</td></tr>
+<tr class="memdesc:a3fb416668d0346a4d142759cbc5588c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store all cartesian MPI ranks. <br /></td></tr>
+<tr class="separator:a3fb416668d0346a4d142759cbc5588c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a148937ffc0e3b4f14d3029eb1aca83a5" id="r_a148937ffc0e3b4f14d3029eb1aca83a5"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class PositionType&gt; </td></tr>
+<tr class="memitem:a148937ffc0e3b4f14d3029eb1aca83a5"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a148937ffc0e3b4f14d3029eb1aca83a5">build</a> (ExecutionSpace exec_space, PositionType positions, const std::size_t begin, const std::size_t end)</td></tr>
+<tr class="memdesc:a148937ffc0e3b4f14d3029eb1aca83a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin particles across the global grid.  <br /></td></tr>
+<tr class="separator:a148937ffc0e3b4f14d3029eb1aca83a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad0774e9ff7efd17b32f1b153b680039" id="r_aad0774e9ff7efd17b32f1b153b680039"><td class="memTemplParams" colspan="2"><a id="aad0774e9ff7efd17b32f1b153b680039" name="aad0774e9ff7efd17b32f1b153b680039"></a>
 template&lt;class ExecutionSpace, class PositionType&gt; </td></tr>
-<tr class="memitem:a1244f03cb253a4af4cc441215bf50f01"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>build</b> (ExecutionSpace exec_space, PositionType positions)</td></tr>
-<tr class="memdesc:a1244f03cb253a4af4cc441215bf50f01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin particles across the global grid. <br /></td></tr>
-<tr class="separator:a1244f03cb253a4af4cc441215bf50f01"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace21606184c4b4df594df81aef87a062" id="r_ace21606184c4b4df594df81aef87a062"><td class="memTemplParams" colspan="2"><a id="ace21606184c4b4df594df81aef87a062" name="ace21606184c4b4df594df81aef87a062"></a>
+<tr class="memitem:aad0774e9ff7efd17b32f1b153b680039"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>build</b> (ExecutionSpace exec_space, PositionType positions)</td></tr>
+<tr class="memdesc:aad0774e9ff7efd17b32f1b153b680039"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin particles across the global grid. <br /></td></tr>
+<tr class="separator:aad0774e9ff7efd17b32f1b153b680039"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0b1651b85b93cbebb5210f7315730bf" id="r_ad0b1651b85b93cbebb5210f7315730bf"><td class="memTemplParams" colspan="2"><a id="ad0b1651b85b93cbebb5210f7315730bf" name="ad0b1651b85b93cbebb5210f7315730bf"></a>
 template&lt;class PositionType&gt; </td></tr>
-<tr class="memitem:ace21606184c4b4df594df81aef87a062"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>build</b> (PositionType positions)</td></tr>
-<tr class="memdesc:ace21606184c4b4df594df81aef87a062"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin particles across the global grid. <br /></td></tr>
-<tr class="separator:ace21606184c4b4df594df81aef87a062"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acbfedbe2efbd9b4c1fd7384f499fc551" id="r_acbfedbe2efbd9b4c1fd7384f499fc551"><td class="memTemplParams" colspan="2"><a id="acbfedbe2efbd9b4c1fd7384f499fc551" name="acbfedbe2efbd9b4c1fd7384f499fc551"></a>
+<tr class="memitem:ad0b1651b85b93cbebb5210f7315730bf"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>build</b> (PositionType positions)</td></tr>
+<tr class="memdesc:ad0b1651b85b93cbebb5210f7315730bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bin particles across the global grid. <br /></td></tr>
+<tr class="separator:ad0b1651b85b93cbebb5210f7315730bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24ca00119deee3201c13e1644d741035" id="r_a24ca00119deee3201c13e1644d741035"><td class="memTemplParams" colspan="2"><a id="a24ca00119deee3201c13e1644d741035" name="a24ca00119deee3201c13e1644d741035"></a>
 template&lt;class AoSoAType&gt; </td></tr>
-<tr class="memitem:acbfedbe2efbd9b4c1fd7384f499fc551"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>migrate</b> (MPI_Comm comm, AoSoAType &amp;aosoa)</td></tr>
-<tr class="memdesc:acbfedbe2efbd9b4c1fd7384f499fc551"><td class="mdescLeft">&#160;</td><td class="mdescRight">Migrate particles to the correct rank. <br /></td></tr>
-<tr class="separator:acbfedbe2efbd9b4c1fd7384f499fc551"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24ca00119deee3201c13e1644d741035"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>migrate</b> (MPI_Comm comm, AoSoAType &amp;aosoa)</td></tr>
+<tr class="memdesc:a24ca00119deee3201c13e1644d741035"><td class="mdescLeft">&#160;</td><td class="mdescRight">Migrate particles to the correct rank. <br /></td></tr>
+<tr class="separator:a24ca00119deee3201c13e1644d741035"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a4a85c3d4c47b2c0da9bffe0545d3cb06" id="r_a4a85c3d4c47b2c0da9bffe0545d3cb06"><td class="memItemLeft" align="right" valign="top"><a id="a4a85c3d4c47b2c0da9bffe0545d3cb06" name="a4a85c3d4c47b2c0da9bffe0545d3cb06"></a>
+<tr class="memitem:a67766d79bb9eded862ffcd941f18c4b7" id="r_a67766d79bb9eded862ffcd941f18c4b7"><td class="memItemLeft" align="right" valign="top"><a id="a67766d79bb9eded862ffcd941f18c4b7" name="a67766d79bb9eded862ffcd941f18c4b7"></a>
 static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_space_dim</b> = LocalGridType::num_space_dim</td></tr>
-<tr class="memdesc:a4a85c3d4c47b2c0da9bffe0545d3cb06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
-<tr class="separator:a4a85c3d4c47b2c0da9bffe0545d3cb06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:a67766d79bb9eded862ffcd941f18c4b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
+<tr class="separator:a67766d79bb9eded862ffcd941f18c4b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a9fd032e1b0e76e19a2328b5100423c84" id="r_a9fd032e1b0e76e19a2328b5100423c84"><td class="memItemLeft" align="right" valign="top"><a id="a9fd032e1b0e76e19a2328b5100423c84" name="a9fd032e1b0e76e19a2328b5100423c84"></a>
+<tr class="memitem:a17d24557516e66ca907a0f7f2a1e90b2" id="r_a17d24557516e66ca907a0f7f2a1e90b2"><td class="memItemLeft" align="right" valign="top"><a id="a17d24557516e66ca907a0f7f2a1e90b2" name="a17d24557516e66ca907a0f7f2a1e90b2"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>_rank_1d</b></td></tr>
-<tr class="memdesc:a9fd032e1b0e76e19a2328b5100423c84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current rank. <br /></td></tr>
-<tr class="separator:a9fd032e1b0e76e19a2328b5100423c84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4336cf596f8f3b42b72658d29b3b886c" id="r_a4336cf596f8f3b42b72658d29b3b886c"><td class="memItemLeft" align="right" valign="top"><a id="a4336cf596f8f3b42b72658d29b3b886c" name="a4336cf596f8f3b42b72658d29b3b886c"></a>
-Kokkos::Array&lt; int, <a class="el" href="#a4a85c3d4c47b2c0da9bffe0545d3cb06">num_space_dim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_rank</b></td></tr>
-<tr class="memdesc:a4336cf596f8f3b42b72658d29b3b886c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current cartesian rank. <br /></td></tr>
-<tr class="separator:a4336cf596f8f3b42b72658d29b3b886c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8e57df3ffb25aa91659293409f8ad62" id="r_ab8e57df3ffb25aa91659293409f8ad62"><td class="memItemLeft" align="right" valign="top"><a id="ab8e57df3ffb25aa91659293409f8ad62" name="ab8e57df3ffb25aa91659293409f8ad62"></a>
-Kokkos::Array&lt; int, <a class="el" href="#a4a85c3d4c47b2c0da9bffe0545d3cb06">num_space_dim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_ranks_per_dim</b></td></tr>
-<tr class="memdesc:ab8e57df3ffb25aa91659293409f8ad62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total ranks per dimension. <br /></td></tr>
-<tr class="separator:ab8e57df3ffb25aa91659293409f8ad62"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa24ff054c9c76f814d3b0e23a8103ea6" id="r_aa24ff054c9c76f814d3b0e23a8103ea6"><td class="memItemLeft" align="right" valign="top"><a id="aa24ff054c9c76f814d3b0e23a8103ea6" name="aa24ff054c9c76f814d3b0e23a8103ea6"></a>
-<a class="el" href="#a9a21efa1a9b9592461b412d11a7458a5">corner_view_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_local_corners</b></td></tr>
-<tr class="memdesc:aa24ff054c9c76f814d3b0e23a8103ea6"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Grid_1_1Local.html" title="Local index tag.">Local</a> boundaries. <br /></td></tr>
-<tr class="separator:aa24ff054c9c76f814d3b0e23a8103ea6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1d3ae1dbe21d6e73acdbdceac0a719f" id="r_ac1d3ae1dbe21d6e73acdbdceac0a719f"><td class="memItemLeft" align="right" valign="top"><a id="ac1d3ae1dbe21d6e73acdbdceac0a719f" name="ac1d3ae1dbe21d6e73acdbdceac0a719f"></a>
-<a class="el" href="#a1ca06c2a2987f743261a6a8ed670d66a">rank_view_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_global_ranks</b></td></tr>
-<tr class="memdesc:ac1d3ae1dbe21d6e73acdbdceac0a719f"><td class="mdescLeft">&#160;</td><td class="mdescRight">All cartesian ranks. <br /></td></tr>
-<tr class="separator:ac1d3ae1dbe21d6e73acdbdceac0a719f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e38c602f367e01afd9aef091c91e3f5" id="r_a5e38c602f367e01afd9aef091c91e3f5"><td class="memItemLeft" align="right" valign="top"><a id="a5e38c602f367e01afd9aef091c91e3f5" name="a5e38c602f367e01afd9aef091c91e3f5"></a>
-<a class="el" href="#ad6394da898cf09d3484e9d4cac1f1d83">destination_view_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_destinations</b></td></tr>
-<tr class="memdesc:a5e38c602f367e01afd9aef091c91e3f5"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Particle.html" title="Single particle copy. Wraps a tuple copy of a particle.">Particle</a> destination ranks. <br /></td></tr>
-<tr class="separator:a5e38c602f367e01afd9aef091c91e3f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:a17d24557516e66ca907a0f7f2a1e90b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current rank. <br /></td></tr>
+<tr class="separator:a17d24557516e66ca907a0f7f2a1e90b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a805ed05026288d78acc0767908283aed" id="r_a805ed05026288d78acc0767908283aed"><td class="memItemLeft" align="right" valign="top"><a id="a805ed05026288d78acc0767908283aed" name="a805ed05026288d78acc0767908283aed"></a>
+Kokkos::Array&lt; int, <a class="el" href="#a67766d79bb9eded862ffcd941f18c4b7">num_space_dim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_rank</b></td></tr>
+<tr class="memdesc:a805ed05026288d78acc0767908283aed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current cartesian rank. <br /></td></tr>
+<tr class="separator:a805ed05026288d78acc0767908283aed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a699f378311ed6349bee78de9d17abc6b" id="r_a699f378311ed6349bee78de9d17abc6b"><td class="memItemLeft" align="right" valign="top"><a id="a699f378311ed6349bee78de9d17abc6b" name="a699f378311ed6349bee78de9d17abc6b"></a>
+Kokkos::Array&lt; int, <a class="el" href="#a67766d79bb9eded862ffcd941f18c4b7">num_space_dim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_ranks_per_dim</b></td></tr>
+<tr class="memdesc:a699f378311ed6349bee78de9d17abc6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total ranks per dimension. <br /></td></tr>
+<tr class="separator:a699f378311ed6349bee78de9d17abc6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f65a9c871cfe231633aef037d2cc17a" id="r_a1f65a9c871cfe231633aef037d2cc17a"><td class="memItemLeft" align="right" valign="top"><a id="a1f65a9c871cfe231633aef037d2cc17a" name="a1f65a9c871cfe231633aef037d2cc17a"></a>
+<a class="el" href="#a0fa414d7e55f9854ef54a185113494be">corner_view_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_local_corners</b></td></tr>
+<tr class="memdesc:a1f65a9c871cfe231633aef037d2cc17a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Grid_1_1Local.html" title="Local index tag.">Local</a> boundaries. <br /></td></tr>
+<tr class="separator:a1f65a9c871cfe231633aef037d2cc17a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad096469f0d54193b5f20eb7ff670e5d9" id="r_ad096469f0d54193b5f20eb7ff670e5d9"><td class="memItemLeft" align="right" valign="top"><a id="ad096469f0d54193b5f20eb7ff670e5d9" name="ad096469f0d54193b5f20eb7ff670e5d9"></a>
+<a class="el" href="#ab68d6960c256c1e1a10e54389910c0e4">rank_view_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_global_ranks</b></td></tr>
+<tr class="memdesc:ad096469f0d54193b5f20eb7ff670e5d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">All cartesian ranks. <br /></td></tr>
+<tr class="separator:ad096469f0d54193b5f20eb7ff670e5d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5fdb1aa8ac2378e8da0ee7362a5c4e90" id="r_a5fdb1aa8ac2378e8da0ee7362a5c4e90"><td class="memItemLeft" align="right" valign="top"><a id="a5fdb1aa8ac2378e8da0ee7362a5c4e90" name="a5fdb1aa8ac2378e8da0ee7362a5c4e90"></a>
+<a class="el" href="#ab4864ae35d61753a32feb1af387f18cc">destination_view_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_destinations</b></td></tr>
+<tr class="memdesc:a5fdb1aa8ac2378e8da0ee7362a5c4e90"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Particle.html" title="Single particle copy. Wraps a tuple copy of a particle.">Particle</a> destination ranks. <br /></td></tr>
+<tr class="separator:a5fdb1aa8ac2378e8da0ee7362a5c4e90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;class MemorySpace, class LocalGridType&gt;<br />
-class Cabana::Grid::GlobalParticleComm&lt; MemorySpace, LocalGridType &gt;</div><p><a class="el" href="structCabana_1_1Grid_1_1Global.html" title="Global index tag.">Global</a> particle communication based on the background grid. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;class MemorySpace, class LocalGridType, class CommSpaceType = Mpi&gt;<br />
+class Cabana::Grid::GlobalParticleComm&lt; MemorySpace, LocalGridType, CommSpaceType &gt;</div><p><a class="el" href="structCabana_1_1Grid_1_1Global.html" title="Global index tag.">Global</a> particle communication based on the background grid. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a9a21efa1a9b9592461b412d11a7458a5" name="a9a21efa1a9b9592461b412d11a7458a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9a21efa1a9b9592461b412d11a7458a5">&#9670;&#160;</a></span>corner_view_type</h2>
+<a id="a0fa414d7e55f9854ef54a185113494be" name="a0fa414d7e55f9854ef54a185113494be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fa414d7e55f9854ef54a185113494be">&#9670;&#160;</a></span>corner_view_type</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class LocalGridType&gt; </div>
+template&lt;class MemorySpace, class LocalGridType, class CommSpaceType = Mpi&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classCabana_1_1Grid_1_1GlobalParticleComm.html">Cabana::Grid::GlobalParticleComm</a>&lt; MemorySpace, LocalGridType &gt;::corner_view_type</td>
+          <td class="memname">using <a class="el" href="classCabana_1_1Grid_1_1GlobalParticleComm.html">Cabana::Grid::GlobalParticleComm</a>&lt; MemorySpace, LocalGridType, CommSpaceType &gt;::corner_view_type</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -258,16 +262,16 @@ template&lt;class MemorySpace, class LocalGridType&gt; </div>
 
 </div>
 </div>
-<a id="a2531c5ab3b204aa6bd4d049d2141724f" name="a2531c5ab3b204aa6bd4d049d2141724f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2531c5ab3b204aa6bd4d049d2141724f">&#9670;&#160;</a></span>host_rank_view_type</h2>
+<a id="a9044b12f35579ed72b8776878c965094" name="a9044b12f35579ed72b8776878c965094"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9044b12f35579ed72b8776878c965094">&#9670;&#160;</a></span>host_rank_view_type</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class LocalGridType&gt; </div>
+template&lt;class MemorySpace, class LocalGridType, class CommSpaceType = Mpi&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classCabana_1_1Grid_1_1GlobalParticleComm.html">Cabana::Grid::GlobalParticleComm</a>&lt; MemorySpace, LocalGridType &gt;::host_rank_view_type</td>
+          <td class="memname">using <a class="el" href="classCabana_1_1Grid_1_1GlobalParticleComm.html">Cabana::Grid::GlobalParticleComm</a>&lt; MemorySpace, LocalGridType, CommSpaceType &gt;::host_rank_view_type</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -278,16 +282,16 @@ template&lt;class MemorySpace, class LocalGridType&gt; </div>
 
 </div>
 </div>
-<a id="a1ca06c2a2987f743261a6a8ed670d66a" name="a1ca06c2a2987f743261a6a8ed670d66a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ca06c2a2987f743261a6a8ed670d66a">&#9670;&#160;</a></span>rank_view_type</h2>
+<a id="ab68d6960c256c1e1a10e54389910c0e4" name="ab68d6960c256c1e1a10e54389910c0e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab68d6960c256c1e1a10e54389910c0e4">&#9670;&#160;</a></span>rank_view_type</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class LocalGridType&gt; </div>
+template&lt;class MemorySpace, class LocalGridType, class CommSpaceType = Mpi&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classCabana_1_1Grid_1_1GlobalParticleComm.html">Cabana::Grid::GlobalParticleComm</a>&lt; MemorySpace, LocalGridType &gt;::rank_view_type</td>
+          <td class="memname">using <a class="el" href="classCabana_1_1Grid_1_1GlobalParticleComm.html">Cabana::Grid::GlobalParticleComm</a>&lt; MemorySpace, LocalGridType, CommSpaceType &gt;::rank_view_type</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -299,13 +303,13 @@ template&lt;class MemorySpace, class LocalGridType&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a56259d45f02cbe5f670602d75efc03ae" name="a56259d45f02cbe5f670602d75efc03ae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56259d45f02cbe5f670602d75efc03ae">&#9670;&#160;</a></span>build()</h2>
+<a id="a148937ffc0e3b4f14d3029eb1aca83a5" name="a148937ffc0e3b4f14d3029eb1aca83a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a148937ffc0e3b4f14d3029eb1aca83a5">&#9670;&#160;</a></span>build()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class LocalGridType&gt; </div>
+template&lt;class MemorySpace, class LocalGridType, class CommSpaceType = Mpi&gt; </div>
 <div class="memtemplate">
 template&lt;class ExecutionSpace, class PositionType&gt; </div>
 <table class="mlabels">
@@ -313,7 +317,7 @@ template&lt;class ExecutionSpace, class PositionType&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCabana_1_1Grid_1_1GlobalParticleComm.html">Cabana::Grid::GlobalParticleComm</a>&lt; MemorySpace, LocalGridType &gt;::build </td>
+          <td class="memname">void <a class="el" href="classCabana_1_1Grid_1_1GlobalParticleComm.html">Cabana::Grid::GlobalParticleComm</a>&lt; MemorySpace, LocalGridType, CommSpaceType &gt;::build </td>
           <td>(</td>
           <td class="paramtype">ExecutionSpace</td>          <td class="paramname"><span class="paramname"><em>exec_space</em></span>, </td>
         </tr>

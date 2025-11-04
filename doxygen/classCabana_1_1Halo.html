@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.13.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Cabana: Cabana::Halo&lt; MemorySpace, BuildType &gt; Class Template Reference</title>
+<title>Cabana: Cabana::Halo&lt; MemorySpace, BuildType, CommSpaceType &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -103,9 +103,10 @@ $(function(){initNavTree('classCabana_1_1Halo.html',''); initResizable(true); })
 
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classCabana_1_1Halo-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">Cabana::Halo&lt; MemorySpace, BuildType &gt; Class Template Reference</div></div>
+  <div class="headertitle"><div class="title">Cabana::Halo&lt; MemorySpace, BuildType, CommSpaceType &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -114,158 +115,206 @@ $(function(){initNavTree('classCabana_1_1Halo.html',''); initResizable(true); })
 
 <p><code>#include &lt;<a class="el" href="Cabana__Halo_8hpp_source.html">Cabana_Halo.hpp</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for Cabana::Halo&lt; MemorySpace, BuildType &gt;:</div>
+Inheritance diagram for Cabana::Halo&lt; MemorySpace, BuildType, CommSpaceType &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classCabana_1_1Halo__inherit__graph.png" border="0" usemap="#aCabana_1_1Halo_3_01MemorySpace_00_01BuildType_01_4_inherit__map" alt="Inheritance graph"/></div>
-<map name="aCabana_1_1Halo_3_01MemorySpace_00_01BuildType_01_4_inherit__map" id="aCabana_1_1Halo_3_01MemorySpace_00_01BuildType_01_4_inherit__map">
-<area shape="rect" title="A communication plan for scattering and gathering of ghosted data." alt="" coords="5,102,212,151"/>
-<area shape="rect" href="classCabana_1_1CommunicationPlan.html" title="Communication plan base class." alt="" coords="10,5,207,54"/>
-<area shape="poly" title=" " alt="" coords="111,69,111,101,106,101,106,69"/>
+<div class="center"><img src="classCabana_1_1Halo__inherit__graph.png" border="0" usemap="#aCabana_1_1Halo_3_01MemorySpace_00_01BuildType_00_01CommSpaceType_01_4_inherit__map" alt="Inheritance graph"/></div>
+<map name="aCabana_1_1Halo_3_01MemorySpace_00_01BuildType_00_01CommSpaceType_01_4_inherit__map" id="aCabana_1_1Halo_3_01MemorySpace_00_01BuildType_00_01CommSpaceType_01_4_inherit__map">
+<area shape="rect" title="A communication plan for scattering and gathering of ghosted data." alt="" coords="5,199,215,247"/>
+<area shape="rect" href="classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4.html" title="Communication plan class. Uses vanilla MPI as the communication backend." alt="" coords="12,102,208,151"/>
+<area shape="poly" title=" " alt="" coords="113,166,113,198,107,198,107,166"/>
+<area shape="rect" href="classCabana_1_1CommunicationPlanBase.html" title="Communication plan base class." alt="" coords="12,5,208,54"/>
+<area shape="poly" title=" " alt="" coords="113,69,113,101,107,101,107,69"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
-Collaboration diagram for Cabana::Halo&lt; MemorySpace, BuildType &gt;:</div>
+Collaboration diagram for Cabana::Halo&lt; MemorySpace, BuildType, CommSpaceType &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classCabana_1_1Halo__coll__graph.png" border="0" usemap="#aCabana_1_1Halo_3_01MemorySpace_00_01BuildType_01_4_coll__map" alt="Collaboration graph"/></div>
-<map name="aCabana_1_1Halo_3_01MemorySpace_00_01BuildType_01_4_coll__map" id="aCabana_1_1Halo_3_01MemorySpace_00_01BuildType_01_4_coll__map">
-<area shape="rect" title="A communication plan for scattering and gathering of ghosted data." alt="" coords="5,102,212,151"/>
-<area shape="rect" href="classCabana_1_1CommunicationPlan.html" title="Communication plan base class." alt="" coords="10,5,207,54"/>
-<area shape="poly" title=" " alt="" coords="111,69,111,101,106,101,106,69"/>
+<div class="center"><img src="classCabana_1_1Halo__coll__graph.png" border="0" usemap="#aCabana_1_1Halo_3_01MemorySpace_00_01BuildType_00_01CommSpaceType_01_4_coll__map" alt="Collaboration graph"/></div>
+<map name="aCabana_1_1Halo_3_01MemorySpace_00_01BuildType_00_01CommSpaceType_01_4_coll__map" id="aCabana_1_1Halo_3_01MemorySpace_00_01BuildType_00_01CommSpaceType_01_4_coll__map">
+<area shape="rect" title="A communication plan for scattering and gathering of ghosted data." alt="" coords="5,199,215,247"/>
+<area shape="rect" href="classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4.html" title="Communication plan class. Uses vanilla MPI as the communication backend." alt="" coords="12,102,208,151"/>
+<area shape="poly" title=" " alt="" coords="113,166,113,198,107,198,107,166"/>
+<area shape="rect" href="classCabana_1_1CommunicationPlanBase.html" title="Communication plan base class." alt="" coords="12,5,208,54"/>
+<area shape="poly" title=" " alt="" coords="113,69,113,101,107,101,107,69"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a10196c50bb94c79227739a72ef057d69" id="r_a10196c50bb94c79227739a72ef057d69"><td class="memItemLeft" align="right" valign="top"><a id="a10196c50bb94c79227739a72ef057d69" name="a10196c50bb94c79227739a72ef057d69"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>commspace_type</b> = CommSpaceType</td></tr>
+<tr class="memdesc:a10196c50bb94c79227739a72ef057d69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Communication space type. <br /></td></tr>
+<tr class="separator:a10196c50bb94c79227739a72ef057d69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_types_classCabana_1_1CommunicationPlanBase"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_types_classCabana_1_1CommunicationPlanBase')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classCabana_1_1CommunicationPlanBase.html">Cabana::CommunicationPlanBase&lt; MemorySpace &gt;</a></td></tr>
+<tr class="memitem:ade52a84c762977169dd1867f4c617348 inherit pub_types_classCabana_1_1CommunicationPlanBase" id="r_ade52a84c762977169dd1867f4c617348"><td class="memItemLeft" align="right" valign="top">
+using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
+<tr class="memdesc:ade52a84c762977169dd1867f4c617348 inherit pub_types_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
+<tr class="separator:ade52a84c762977169dd1867f4c617348 inherit pub_types_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add94f41de27ee9adae8f5c42c6ca8a68 inherit pub_types_classCabana_1_1CommunicationPlanBase" id="r_add94f41de27ee9adae8f5c42c6ca8a68"><td class="memItemLeft" align="right" valign="top">
+using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename memory_space::execution_space</td></tr>
+<tr class="memdesc:add94f41de27ee9adae8f5c42c6ca8a68 inherit pub_types_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default execution space. <br /></td></tr>
+<tr class="separator:add94f41de27ee9adae8f5c42c6ca8a68 inherit pub_types_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c22c59cd9089040be500e6f62b3d09a inherit pub_types_classCabana_1_1CommunicationPlanBase" id="r_a9c22c59cd9089040be500e6f62b3d09a"><td class="memItemLeft" align="right" valign="top">
+using&#160;</td><td class="memItemRight" valign="bottom"><b>size_type</b> = typename memory_space::memory_space::size_type</td></tr>
+<tr class="memdesc:a9c22c59cd9089040be500e6f62b3d09a inherit pub_types_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size type. <br /></td></tr>
+<tr class="separator:a9c22c59cd9089040be500e6f62b3d09a inherit pub_types_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5f69fd5594bc26e9b672000fff26be75" id="r_a5f69fd5594bc26e9b672000fff26be75"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Export.html">Export</a> &gt;::value, int &gt; = 0&gt; </td></tr>
-<tr class="memitem:a5f69fd5594bc26e9b672000fff26be75"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a5f69fd5594bc26e9b672000fff26be75">Halo</a> (MPI_Comm <a class="el" href="classCabana_1_1CommunicationPlan.html#a614a7eb904961fd1c301accd4f8b9848">comm</a>, const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</td></tr>
-<tr class="memdesc:a5f69fd5594bc26e9b672000fff26be75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and export rank constructor. Use this when you don't know who you will receiving from - only who you are sending to, but you already know which ranks neighbor each other (i.e. every rank already knows who they will be exporting to and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send and receive from the neighbors.  <br /></td></tr>
-<tr class="separator:a5f69fd5594bc26e9b672000fff26be75"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c39f13fe61bcfbd22e183785c4c83b6" id="r_a6c39f13fe61bcfbd22e183785c4c83b6"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Export.html">Export</a> &gt;::value, int &gt; = 0&gt; </td></tr>
-<tr class="memitem:a6c39f13fe61bcfbd22e183785c4c83b6"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a6c39f13fe61bcfbd22e183785c4c83b6">Halo</a> (MPI_Comm <a class="el" href="classCabana_1_1CommunicationPlan.html#a614a7eb904961fd1c301accd4f8b9848">comm</a>, const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks)</td></tr>
-<tr class="memdesc:a6c39f13fe61bcfbd22e183785c4c83b6"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Export.html" title="Export-based tag - default.">Export</a> rank constructor. Use this when you don't know who you will receiving from - only who you are sending to. This is less efficient than if we already knew who our neighbors were because we have to determine the topology of the point-to-point communication first.  <br /></td></tr>
-<tr class="separator:a6c39f13fe61bcfbd22e183785c4c83b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f69fd5594bc26e9b672000fff26be75" id="r_a5f69fd5594bc26e9b672000fff26be75"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Import.html">Import</a> &gt;::value, int &gt; = 0&gt; </td></tr>
-<tr class="memitem:a5f69fd5594bc26e9b672000fff26be75"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a5f69fd5594bc26e9b672000fff26be75">Halo</a> (MPI_Comm <a class="el" href="classCabana_1_1CommunicationPlan.html#a614a7eb904961fd1c301accd4f8b9848">comm</a>, const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</td></tr>
-<tr class="memdesc:a5f69fd5594bc26e9b672000fff26be75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and import rank constructor. Use this when you don't know who you will sending to - only who you are receiving from, but you already know which ranks neighbor each other (i.e. every rank already knows who they will be exporting to and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send and receive from the neighbors.  <br /></td></tr>
-<tr class="separator:a5f69fd5594bc26e9b672000fff26be75"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c39f13fe61bcfbd22e183785c4c83b6" id="r_a6c39f13fe61bcfbd22e183785c4c83b6"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Import.html">Import</a> &gt;::value, int &gt; = 0&gt; </td></tr>
-<tr class="memitem:a6c39f13fe61bcfbd22e183785c4c83b6"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a6c39f13fe61bcfbd22e183785c4c83b6">Halo</a> (MPI_Comm <a class="el" href="classCabana_1_1CommunicationPlan.html#a614a7eb904961fd1c301accd4f8b9848">comm</a>, const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks)</td></tr>
-<tr class="memdesc:a6c39f13fe61bcfbd22e183785c4c83b6"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Import.html" title="Import-based tag.">Import</a> rank constructor. Use this when you don't know which ranks neighbor each other. (i.e. every rank does not already know who they will be exporting to and receiving from)  <br /></td></tr>
-<tr class="separator:a6c39f13fe61bcfbd22e183785c4c83b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3c1740f2bc358a3d097938f41e530e1" id="r_ad3c1740f2bc358a3d097938f41e530e1"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Export.html">Export</a> &gt;::value, int &gt; = 0&gt; </td></tr>
-<tr class="memitem:ad3c1740f2bc358a3d097938f41e530e1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ad3c1740f2bc358a3d097938f41e530e1">build</a> (const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</td></tr>
-<tr class="memdesc:ad3c1740f2bc358a3d097938f41e530e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and export rank (re)build interface.  <br /></td></tr>
-<tr class="separator:ad3c1740f2bc358a3d097938f41e530e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add7ab9463f1f7061a98d4adf182acc9d" id="r_add7ab9463f1f7061a98d4adf182acc9d"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Export.html">Export</a> &gt;::value, int &gt; = 0&gt; </td></tr>
-<tr class="memitem:add7ab9463f1f7061a98d4adf182acc9d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#add7ab9463f1f7061a98d4adf182acc9d">build</a> (const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks)</td></tr>
-<tr class="memdesc:add7ab9463f1f7061a98d4adf182acc9d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Export.html" title="Export-based tag - default.">Export</a> rank (re)build interface.  <br /></td></tr>
-<tr class="separator:add7ab9463f1f7061a98d4adf182acc9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3c1740f2bc358a3d097938f41e530e1" id="r_ad3c1740f2bc358a3d097938f41e530e1"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Import.html">Import</a> &gt;::value, int &gt; = 0&gt; </td></tr>
-<tr class="memitem:ad3c1740f2bc358a3d097938f41e530e1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ad3c1740f2bc358a3d097938f41e530e1">build</a> (const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</td></tr>
-<tr class="memdesc:ad3c1740f2bc358a3d097938f41e530e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and import rank (re)build interface.  <br /></td></tr>
-<tr class="separator:ad3c1740f2bc358a3d097938f41e530e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add7ab9463f1f7061a98d4adf182acc9d" id="r_add7ab9463f1f7061a98d4adf182acc9d"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Import.html">Import</a> &gt;::value, int &gt; = 0&gt; </td></tr>
-<tr class="memitem:add7ab9463f1f7061a98d4adf182acc9d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#add7ab9463f1f7061a98d4adf182acc9d">build</a> (const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks)</td></tr>
-<tr class="memdesc:add7ab9463f1f7061a98d4adf182acc9d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Import.html" title="Import-based tag.">Import</a> rank (re)build interface.  <br /></td></tr>
-<tr class="separator:add7ab9463f1f7061a98d4adf182acc9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a7fa1e057f65089995a01895283f4b2" id="r_a6a7fa1e057f65089995a01895283f4b2"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a7fa1e057f65089995a01895283f4b2">numLocal</a> () const</td></tr>
-<tr class="memdesc:a6a7fa1e057f65089995a01895283f4b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of elements locally owned by this rank.  <br /></td></tr>
-<tr class="separator:a6a7fa1e057f65089995a01895283f4b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a20a2f092117288f3aff7d93b016dd6e7" id="r_a20a2f092117288f3aff7d93b016dd6e7"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a20a2f092117288f3aff7d93b016dd6e7">numGhost</a> () const</td></tr>
-<tr class="memdesc:a20a2f092117288f3aff7d93b016dd6e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of ghost elements this rank. Use this to resize a data structure for scatter/gather operations. For use with scatter gather, a data structure should be of size <a class="el" href="#a6a7fa1e057f65089995a01895283f4b2" title="Get the number of elements locally owned by this rank.">numLocal()</a> + <a class="el" href="#a20a2f092117288f3aff7d93b016dd6e7" title="Get the number of ghost elements this rank. Use this to resize a data structure for scatter/gather op...">numGhost()</a>.  <br /></td></tr>
-<tr class="separator:a20a2f092117288f3aff7d93b016dd6e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classCabana_1_1CommunicationPlan"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classCabana_1_1CommunicationPlan')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan&lt; MemorySpace &gt;</a></td></tr>
-<tr class="memitem:ad37cb95149bc904f4da45e193dc59cd3 inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_ad37cb95149bc904f4da45e193dc59cd3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#ad37cb95149bc904f4da45e193dc59cd3">CommunicationPlan</a> (MPI_Comm <a class="el" href="classCabana_1_1CommunicationPlan.html#a614a7eb904961fd1c301accd4f8b9848">comm</a>)</td></tr>
-<tr class="memdesc:ad37cb95149bc904f4da45e193dc59cd3 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
-<tr class="separator:ad37cb95149bc904f4da45e193dc59cd3 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a614a7eb904961fd1c301accd4f8b9848 inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_a614a7eb904961fd1c301accd4f8b9848"><td class="memItemLeft" align="right" valign="top">
+<tr class="memitem:afbe667510735a06d4c35787cd75ac863" id="r_afbe667510735a06d4c35787cd75ac863"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Export.html">Export</a> &gt;::value, int &gt; = 0&gt; </td></tr>
+<tr class="memitem:afbe667510735a06d4c35787cd75ac863"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#afbe667510735a06d4c35787cd75ac863">Halo</a> (MPI_Comm <a class="el" href="classCabana_1_1CommunicationPlanBase.html#aea909e312c4cf4da52ac21a0dab15228">comm</a>, const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</td></tr>
+<tr class="memdesc:afbe667510735a06d4c35787cd75ac863"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and export rank constructor. Use this when you don't know who you will receiving from - only who you are sending to, but you already know which ranks neighbor each other (i.e. every rank already knows who they will be exporting to and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send and receive from the neighbors.  <br /></td></tr>
+<tr class="separator:afbe667510735a06d4c35787cd75ac863"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af95ba926327ed520e396d76a1503e75b" id="r_af95ba926327ed520e396d76a1503e75b"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Export.html">Export</a> &gt;::value, int &gt; = 0&gt; </td></tr>
+<tr class="memitem:af95ba926327ed520e396d76a1503e75b"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#af95ba926327ed520e396d76a1503e75b">Halo</a> (MPI_Comm <a class="el" href="classCabana_1_1CommunicationPlanBase.html#aea909e312c4cf4da52ac21a0dab15228">comm</a>, const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks)</td></tr>
+<tr class="memdesc:af95ba926327ed520e396d76a1503e75b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Export.html" title="Export-based tag - default.">Export</a> rank constructor. Use this when you don't know who you will receiving from - only who you are sending to. This is less efficient than if we already knew who our neighbors were because we have to determine the topology of the point-to-point communication first.  <br /></td></tr>
+<tr class="separator:af95ba926327ed520e396d76a1503e75b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afbe667510735a06d4c35787cd75ac863" id="r_afbe667510735a06d4c35787cd75ac863"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Import.html">Import</a> &gt;::value, int &gt; = 0&gt; </td></tr>
+<tr class="memitem:afbe667510735a06d4c35787cd75ac863"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#afbe667510735a06d4c35787cd75ac863">Halo</a> (MPI_Comm <a class="el" href="classCabana_1_1CommunicationPlanBase.html#aea909e312c4cf4da52ac21a0dab15228">comm</a>, const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</td></tr>
+<tr class="memdesc:afbe667510735a06d4c35787cd75ac863"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and import rank constructor. Use this when you don't know who you will sending to - only who you are receiving from, but you already know which ranks neighbor each other (i.e. every rank already knows who they will be exporting to and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send and receive from the neighbors.  <br /></td></tr>
+<tr class="separator:afbe667510735a06d4c35787cd75ac863"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af95ba926327ed520e396d76a1503e75b" id="r_af95ba926327ed520e396d76a1503e75b"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Import.html">Import</a> &gt;::value, int &gt; = 0&gt; </td></tr>
+<tr class="memitem:af95ba926327ed520e396d76a1503e75b"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#af95ba926327ed520e396d76a1503e75b">Halo</a> (MPI_Comm <a class="el" href="classCabana_1_1CommunicationPlanBase.html#aea909e312c4cf4da52ac21a0dab15228">comm</a>, const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks)</td></tr>
+<tr class="memdesc:af95ba926327ed520e396d76a1503e75b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Import.html" title="Import-based tag.">Import</a> rank constructor. Use this when you don't know which ranks neighbor each other. (i.e. every rank does not already know who they will be exporting to and receiving from)  <br /></td></tr>
+<tr class="separator:af95ba926327ed520e396d76a1503e75b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a669a90a28aded34588b6e189a790649a" id="r_a669a90a28aded34588b6e189a790649a"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Export.html">Export</a> &gt;::value, int &gt; = 0&gt; </td></tr>
+<tr class="memitem:a669a90a28aded34588b6e189a790649a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a669a90a28aded34588b6e189a790649a">build</a> (const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</td></tr>
+<tr class="memdesc:a669a90a28aded34588b6e189a790649a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and export rank (re)build interface.  <br /></td></tr>
+<tr class="separator:a669a90a28aded34588b6e189a790649a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a240409534fe75787483557d87f88be5c" id="r_a240409534fe75787483557d87f88be5c"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Export.html">Export</a> &gt;::value, int &gt; = 0&gt; </td></tr>
+<tr class="memitem:a240409534fe75787483557d87f88be5c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a240409534fe75787483557d87f88be5c">build</a> (const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks)</td></tr>
+<tr class="memdesc:a240409534fe75787483557d87f88be5c"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Export.html" title="Export-based tag - default.">Export</a> rank (re)build interface.  <br /></td></tr>
+<tr class="separator:a240409534fe75787483557d87f88be5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a669a90a28aded34588b6e189a790649a" id="r_a669a90a28aded34588b6e189a790649a"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Import.html">Import</a> &gt;::value, int &gt; = 0&gt; </td></tr>
+<tr class="memitem:a669a90a28aded34588b6e189a790649a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a669a90a28aded34588b6e189a790649a">build</a> (const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</td></tr>
+<tr class="memdesc:a669a90a28aded34588b6e189a790649a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and import rank (re)build interface.  <br /></td></tr>
+<tr class="separator:a669a90a28aded34588b6e189a790649a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a240409534fe75787483557d87f88be5c" id="r_a240409534fe75787483557d87f88be5c"><td class="memTemplParams" colspan="2">template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Import.html">Import</a> &gt;::value, int &gt; = 0&gt; </td></tr>
+<tr class="memitem:a240409534fe75787483557d87f88be5c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a240409534fe75787483557d87f88be5c">build</a> (const std::size_t num_local, const IdViewType &amp;element_ids, const RankViewType &amp;element_ranks)</td></tr>
+<tr class="memdesc:a240409534fe75787483557d87f88be5c"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Import.html" title="Import-based tag.">Import</a> rank (re)build interface.  <br /></td></tr>
+<tr class="separator:a240409534fe75787483557d87f88be5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec8cd7168f8b0c4e023bfa217f904cb5" id="r_aec8cd7168f8b0c4e023bfa217f904cb5"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aec8cd7168f8b0c4e023bfa217f904cb5">numLocal</a> () const</td></tr>
+<tr class="memdesc:aec8cd7168f8b0c4e023bfa217f904cb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of elements locally owned by this rank.  <br /></td></tr>
+<tr class="separator:aec8cd7168f8b0c4e023bfa217f904cb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f711bb86962dec289eadf40e2a136b5" id="r_a2f711bb86962dec289eadf40e2a136b5"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f711bb86962dec289eadf40e2a136b5">numGhost</a> () const</td></tr>
+<tr class="memdesc:a2f711bb86962dec289eadf40e2a136b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of ghost elements this rank. Use this to resize a data structure for scatter/gather operations. For use with scatter gather, a data structure should be of size <a class="el" href="#aec8cd7168f8b0c4e023bfa217f904cb5" title="Get the number of elements locally owned by this rank.">numLocal()</a> + <a class="el" href="#a2f711bb86962dec289eadf40e2a136b5" title="Get the number of ghost elements this rank. Use this to resize a data structure for scatter/gather op...">numGhost()</a>.  <br /></td></tr>
+<tr class="separator:a2f711bb86962dec289eadf40e2a136b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4.html">Cabana::CommunicationPlan&lt; MemorySpace, Mpi &gt;</a></td></tr>
+<tr class="memitem:a12c9a18433ab41af808ba793d285c46a inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4" id="r_a12c9a18433ab41af808ba793d285c46a"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class RankViewType&gt; </td></tr>
+<tr class="memitem:a12c9a18433ab41af808ba793d285c46a inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::View&lt; <a class="el" href="classCabana_1_1CommunicationPlanBase.html#a9c22c59cd9089040be500e6f62b3d09a">size_type</a> *, <a class="el" href="classCabana_1_1CommunicationPlanBase.html#ade52a84c762977169dd1867f4c617348">memory_space</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4.html#a12c9a18433ab41af808ba793d285c46a">createWithTopology</a> (ExecutionSpace exec_space, <a class="el" href="structCabana_1_1Export.html">Export</a>, const RankViewType &amp;element_export_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</td></tr>
+<tr class="memdesc:a12c9a18433ab41af808ba793d285c46a inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and export rank creator. Use this when you already know which ranks neighbor each other (i.e. every rank already knows who they will be sending and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send to and receive from the neighbors.  <br /></td></tr>
+<tr class="separator:a12c9a18433ab41af808ba793d285c46a inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4d0b4d20d8ae73ea350961f61b46c34 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4" id="r_aa4d0b4d20d8ae73ea350961f61b46c34"><td class="memTemplParams" colspan="2">template&lt;class RankViewType&gt; </td></tr>
+<tr class="memitem:aa4d0b4d20d8ae73ea350961f61b46c34 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::View&lt; <a class="el" href="classCabana_1_1CommunicationPlanBase.html#a9c22c59cd9089040be500e6f62b3d09a">size_type</a> *, <a class="el" href="classCabana_1_1CommunicationPlanBase.html#ade52a84c762977169dd1867f4c617348">memory_space</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4.html#aa4d0b4d20d8ae73ea350961f61b46c34">createWithTopology</a> (<a class="el" href="structCabana_1_1Export.html">Export</a>, const RankViewType &amp;element_export_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</td></tr>
+<tr class="memdesc:aa4d0b4d20d8ae73ea350961f61b46c34 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and export rank creator. Use this when you already know which ranks neighbor each other (i.e. every rank already knows who they will be sending and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send to and receive from the neighbors.  <br /></td></tr>
+<tr class="separator:aa4d0b4d20d8ae73ea350961f61b46c34 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a1ce92effd4a8ec401ae188276998e0 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4" id="r_a3a1ce92effd4a8ec401ae188276998e0"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class RankViewType&gt; </td></tr>
+<tr class="memitem:a3a1ce92effd4a8ec401ae188276998e0 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::View&lt; <a class="el" href="classCabana_1_1CommunicationPlanBase.html#a9c22c59cd9089040be500e6f62b3d09a">size_type</a> *, <a class="el" href="classCabana_1_1CommunicationPlanBase.html#ade52a84c762977169dd1867f4c617348">memory_space</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4.html#a3a1ce92effd4a8ec401ae188276998e0">createWithoutTopology</a> (ExecutionSpace exec_space, <a class="el" href="structCabana_1_1Export.html">Export</a>, const RankViewType &amp;element_export_ranks)</td></tr>
+<tr class="memdesc:a3a1ce92effd4a8ec401ae188276998e0 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Export.html" title="Export-based tag - default.">Export</a> rank creator. Use this when you don't know who you will receiving from - only who you are sending to. This is less efficient than if we already knew who our neighbors were because we have to determine the topology of the point-to-point communication first.  <br /></td></tr>
+<tr class="separator:a3a1ce92effd4a8ec401ae188276998e0 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96a08be158caa7d1c3e041edf3b54172 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4" id="r_a96a08be158caa7d1c3e041edf3b54172"><td class="memTemplParams" colspan="2">template&lt;class RankViewType&gt; </td></tr>
+<tr class="memitem:a96a08be158caa7d1c3e041edf3b54172 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::View&lt; <a class="el" href="classCabana_1_1CommunicationPlanBase.html#a9c22c59cd9089040be500e6f62b3d09a">size_type</a> *, <a class="el" href="classCabana_1_1CommunicationPlanBase.html#ade52a84c762977169dd1867f4c617348">memory_space</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4.html#a96a08be158caa7d1c3e041edf3b54172">createWithoutTopology</a> (<a class="el" href="structCabana_1_1Export.html">Export</a>, const RankViewType &amp;element_export_ranks)</td></tr>
+<tr class="memdesc:a96a08be158caa7d1c3e041edf3b54172 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Export.html" title="Export-based tag - default.">Export</a> rank creator. Use this when you don't know who you will receiving from - only who you are sending to. This is less efficient than if we already knew who our neighbors were because we have to determine the topology of the point-to-point communication first.  <br /></td></tr>
+<tr class="separator:a96a08be158caa7d1c3e041edf3b54172 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d95e3d877c213dbe0967c2cdcf5c8d6 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4" id="r_a3d95e3d877c213dbe0967c2cdcf5c8d6"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class RankViewType, class IdViewType&gt; </td></tr>
+<tr class="memitem:a3d95e3d877c213dbe0967c2cdcf5c8d6 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4.html#a3d95e3d877c213dbe0967c2cdcf5c8d6">createWithTopology</a> (ExecutionSpace exec_space, <a class="el" href="structCabana_1_1Import.html">Import</a>, const RankViewType &amp;element_import_ranks, const IdViewType &amp;element_import_ids, const std::vector&lt; int &gt; &amp;neighbor_ranks) -&gt; std::tuple&lt; Kokkos::View&lt; typename RankViewType::size_type *, typename RankViewType::memory_space &gt;, Kokkos::View&lt; int *, typename RankViewType::memory_space &gt;, Kokkos::View&lt; int *, typename IdViewType::memory_space &gt; &gt;</td></tr>
+<tr class="memdesc:a3d95e3d877c213dbe0967c2cdcf5c8d6 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and import rank creator. Use this when you already know which ranks neighbor each other (i.e. every rank already knows who they will be sending and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send to and receive from the neighbors.  <br /></td></tr>
+<tr class="separator:a3d95e3d877c213dbe0967c2cdcf5c8d6 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a138ff6e81ddfdd98c0c7e20e3536c65b inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4" id="r_a138ff6e81ddfdd98c0c7e20e3536c65b"><td class="memTemplParams" colspan="2">template&lt;class RankViewType, class IdViewType&gt; </td></tr>
+<tr class="memitem:a138ff6e81ddfdd98c0c7e20e3536c65b inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4.html#a138ff6e81ddfdd98c0c7e20e3536c65b">createWithTopology</a> (<a class="el" href="structCabana_1_1Import.html">Import</a>, const RankViewType &amp;element_import_ranks, const IdViewType &amp;element_import_ids, const std::vector&lt; int &gt; &amp;neighbor_ranks)</td></tr>
+<tr class="memdesc:a138ff6e81ddfdd98c0c7e20e3536c65b inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and import rank creator. Use this when you already know which ranks neighbor each other (i.e. every rank already knows who they will be sending and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send to and receive from the neighbors.  <br /></td></tr>
+<tr class="separator:a138ff6e81ddfdd98c0c7e20e3536c65b inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1ced9199a784d28235f9798e5e05d74 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4" id="r_ae1ced9199a784d28235f9798e5e05d74"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class RankViewType, class IdViewType&gt; </td></tr>
+<tr class="memitem:ae1ced9199a784d28235f9798e5e05d74 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4.html#ae1ced9199a784d28235f9798e5e05d74">createWithoutTopology</a> (ExecutionSpace exec_space, <a class="el" href="structCabana_1_1Import.html">Import</a>, const RankViewType &amp;element_import_ranks, const IdViewType &amp;element_import_ids) -&gt; std::tuple&lt; Kokkos::View&lt; typename RankViewType::size_type *, typename RankViewType::memory_space &gt;, Kokkos::View&lt; int *, typename RankViewType::memory_space &gt;, Kokkos::View&lt; int *, typename IdViewType::memory_space &gt; &gt;</td></tr>
+<tr class="memdesc:ae1ced9199a784d28235f9798e5e05d74 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Import.html" title="Import-based tag.">Import</a> rank creator. Use this when you don't know who you will be receiving from - only who you are importing from. This is less efficient than if we already knew who our neighbors were because we have to determine the topology of the point-to-point communication first.  <br /></td></tr>
+<tr class="separator:ae1ced9199a784d28235f9798e5e05d74 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee7818bd4ef0f33b9f0542dcd6cb1545 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4" id="r_aee7818bd4ef0f33b9f0542dcd6cb1545"><td class="memTemplParams" colspan="2">template&lt;class RankViewType, class IdViewType&gt; </td></tr>
+<tr class="memitem:aee7818bd4ef0f33b9f0542dcd6cb1545 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4.html#aee7818bd4ef0f33b9f0542dcd6cb1545">createWithoutTopology</a> (<a class="el" href="structCabana_1_1Import.html">Import</a>, const RankViewType &amp;element_import_ranks, const IdViewType &amp;element_import_ids)</td></tr>
+<tr class="memdesc:aee7818bd4ef0f33b9f0542dcd6cb1545 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Import.html" title="Import-based tag.">Import</a> rank creator. Use this when you don't know who you will be receiving from - only who you are importing from. This is less efficient than if we already knew who our neighbors were because we have to determine the topology of the point-to-point communication first.  <br /></td></tr>
+<tr class="separator:aee7818bd4ef0f33b9f0542dcd6cb1545 inherit pub_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classCabana_1_1CommunicationPlanBase"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classCabana_1_1CommunicationPlanBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classCabana_1_1CommunicationPlanBase.html">Cabana::CommunicationPlanBase&lt; MemorySpace &gt;</a></td></tr>
+<tr class="memitem:aea909e312c4cf4da52ac21a0dab15228 inherit pub_methods_classCabana_1_1CommunicationPlanBase" id="r_aea909e312c4cf4da52ac21a0dab15228"><td class="memItemLeft" align="right" valign="top">
 MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><b>comm</b> () const</td></tr>
-<tr class="memdesc:a614a7eb904961fd1c301accd4f8b9848 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the MPI communicator. <br /></td></tr>
-<tr class="separator:a614a7eb904961fd1c301accd4f8b9848 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45792fbc446d3289cb3028a730bcd959 inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_a45792fbc446d3289cb3028a730bcd959"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a45792fbc446d3289cb3028a730bcd959">numNeighbor</a> () const</td></tr>
-<tr class="memdesc:a45792fbc446d3289cb3028a730bcd959 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of neighbor ranks that this rank will communicate with.  <br /></td></tr>
-<tr class="separator:a45792fbc446d3289cb3028a730bcd959 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97d67b24c7e983fc6adafd04f5887dfb inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_a97d67b24c7e983fc6adafd04f5887dfb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a97d67b24c7e983fc6adafd04f5887dfb">neighborRank</a> (const int neighbor) const</td></tr>
-<tr class="memdesc:a97d67b24c7e983fc6adafd04f5887dfb inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a local neighbor id get its rank in the MPI communicator.  <br /></td></tr>
-<tr class="separator:a97d67b24c7e983fc6adafd04f5887dfb inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e22d0dd1f9fd7ac52de395f2a74d9bd inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_a8e22d0dd1f9fd7ac52de395f2a74d9bd"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a8e22d0dd1f9fd7ac52de395f2a74d9bd">numExport</a> (const int neighbor) const</td></tr>
-<tr class="memdesc:a8e22d0dd1f9fd7ac52de395f2a74d9bd inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of elements this rank will export to a given neighbor.  <br /></td></tr>
-<tr class="separator:a8e22d0dd1f9fd7ac52de395f2a74d9bd inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a57c004e3614b1d62fd95f55bdcf3ce5d inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_a57c004e3614b1d62fd95f55bdcf3ce5d"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a57c004e3614b1d62fd95f55bdcf3ce5d">totalNumExport</a> () const</td></tr>
-<tr class="memdesc:a57c004e3614b1d62fd95f55bdcf3ce5d inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the total number of exports this rank will do.  <br /></td></tr>
-<tr class="separator:a57c004e3614b1d62fd95f55bdcf3ce5d inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a905dbd5d80fc34f0299ecf24e30274c5 inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_a905dbd5d80fc34f0299ecf24e30274c5"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a905dbd5d80fc34f0299ecf24e30274c5">numImport</a> (const int neighbor) const</td></tr>
-<tr class="memdesc:a905dbd5d80fc34f0299ecf24e30274c5 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of elements this rank will import from a given neighbor.  <br /></td></tr>
-<tr class="separator:a905dbd5d80fc34f0299ecf24e30274c5 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93b8a67e50990c64f8e8923982d7f306 inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_a93b8a67e50990c64f8e8923982d7f306"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a93b8a67e50990c64f8e8923982d7f306">totalNumImport</a> () const</td></tr>
-<tr class="memdesc:a93b8a67e50990c64f8e8923982d7f306 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the total number of imports this rank will do.  <br /></td></tr>
-<tr class="separator:a93b8a67e50990c64f8e8923982d7f306 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1fe2c790ef56d1d027ae6d29b63b1198 inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_a1fe2c790ef56d1d027ae6d29b63b1198"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a1fe2c790ef56d1d027ae6d29b63b1198">exportSize</a> () const</td></tr>
-<tr class="memdesc:a1fe2c790ef56d1d027ae6d29b63b1198 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of export elements.  <br /></td></tr>
-<tr class="separator:a1fe2c790ef56d1d027ae6d29b63b1198 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0864132bc0c1a26c7fb33d8e9ed059c0 inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_a0864132bc0c1a26c7fb33d8e9ed059c0"><td class="memItemLeft" align="right" valign="top">Kokkos::View&lt; std::size_t *, <a class="el" href="classCabana_1_1CommunicationPlan.html#a4b57656297b6e95ac7dce53d6967f1df">memory_space</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a0864132bc0c1a26c7fb33d8e9ed059c0">getExportSteering</a> () const</td></tr>
-<tr class="memdesc:a0864132bc0c1a26c7fb33d8e9ed059c0 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the steering vector for the exports.  <br /></td></tr>
-<tr class="separator:a0864132bc0c1a26c7fb33d8e9ed059c0 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4845343a014ce1e73ad07ce56a7abacb inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_a4845343a014ce1e73ad07ce56a7abacb"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class RankViewType&gt; </td></tr>
-<tr class="memitem:a4845343a014ce1e73ad07ce56a7abacb inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::View&lt; <a class="el" href="classCabana_1_1CommunicationPlan.html#a2888c5686762460a20d0cc78aea4e9d4">size_type</a> *, <a class="el" href="classCabana_1_1CommunicationPlan.html#a4b57656297b6e95ac7dce53d6967f1df">memory_space</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a4845343a014ce1e73ad07ce56a7abacb">createWithTopology</a> (ExecutionSpace exec_space, <a class="el" href="structCabana_1_1Export.html">Export</a>, const RankViewType &amp;element_export_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</td></tr>
-<tr class="memdesc:a4845343a014ce1e73ad07ce56a7abacb inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and export rank creator. Use this when you already know which ranks neighbor each other (i.e. every rank already knows who they will be sending and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send to and receive from the neighbors.  <br /></td></tr>
-<tr class="separator:a4845343a014ce1e73ad07ce56a7abacb inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0730029e5db0fec6e7ac9599749f9093 inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_a0730029e5db0fec6e7ac9599749f9093"><td class="memTemplParams" colspan="2">template&lt;class RankViewType&gt; </td></tr>
-<tr class="memitem:a0730029e5db0fec6e7ac9599749f9093 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::View&lt; <a class="el" href="classCabana_1_1CommunicationPlan.html#a2888c5686762460a20d0cc78aea4e9d4">size_type</a> *, <a class="el" href="classCabana_1_1CommunicationPlan.html#a4b57656297b6e95ac7dce53d6967f1df">memory_space</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a0730029e5db0fec6e7ac9599749f9093">createWithTopology</a> (<a class="el" href="structCabana_1_1Export.html">Export</a>, const RankViewType &amp;element_export_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</td></tr>
-<tr class="memdesc:a0730029e5db0fec6e7ac9599749f9093 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and export rank creator. Use this when you already know which ranks neighbor each other (i.e. every rank already knows who they will be sending and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send to and receive from the neighbors.  <br /></td></tr>
-<tr class="separator:a0730029e5db0fec6e7ac9599749f9093 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a453a8e993c45cf0eb89ae6b67ebbf5af inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_a453a8e993c45cf0eb89ae6b67ebbf5af"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class RankViewType&gt; </td></tr>
-<tr class="memitem:a453a8e993c45cf0eb89ae6b67ebbf5af inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::View&lt; <a class="el" href="classCabana_1_1CommunicationPlan.html#a2888c5686762460a20d0cc78aea4e9d4">size_type</a> *, <a class="el" href="classCabana_1_1CommunicationPlan.html#a4b57656297b6e95ac7dce53d6967f1df">memory_space</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a453a8e993c45cf0eb89ae6b67ebbf5af">createWithoutTopology</a> (ExecutionSpace exec_space, <a class="el" href="structCabana_1_1Export.html">Export</a>, const RankViewType &amp;element_export_ranks)</td></tr>
-<tr class="memdesc:a453a8e993c45cf0eb89ae6b67ebbf5af inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Export.html" title="Export-based tag - default.">Export</a> rank creator. Use this when you don't know who you will receiving from - only who you are sending to. This is less efficient than if we already knew who our neighbors were because we have to determine the topology of the point-to-point communication first.  <br /></td></tr>
-<tr class="separator:a453a8e993c45cf0eb89ae6b67ebbf5af inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad266968f06c80cbe77db80e863a81d34 inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_ad266968f06c80cbe77db80e863a81d34"><td class="memTemplParams" colspan="2">template&lt;class RankViewType&gt; </td></tr>
-<tr class="memitem:ad266968f06c80cbe77db80e863a81d34 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::View&lt; <a class="el" href="classCabana_1_1CommunicationPlan.html#a2888c5686762460a20d0cc78aea4e9d4">size_type</a> *, <a class="el" href="classCabana_1_1CommunicationPlan.html#a4b57656297b6e95ac7dce53d6967f1df">memory_space</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#ad266968f06c80cbe77db80e863a81d34">createWithoutTopology</a> (<a class="el" href="structCabana_1_1Export.html">Export</a>, const RankViewType &amp;element_export_ranks)</td></tr>
-<tr class="memdesc:ad266968f06c80cbe77db80e863a81d34 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Export.html" title="Export-based tag - default.">Export</a> rank creator. Use this when you don't know who you will receiving from - only who you are sending to. This is less efficient than if we already knew who our neighbors were because we have to determine the topology of the point-to-point communication first.  <br /></td></tr>
-<tr class="separator:ad266968f06c80cbe77db80e863a81d34 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6431801fb098675e1723225dac4f30ca inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_a6431801fb098675e1723225dac4f30ca"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class RankViewType, class IdViewType&gt; </td></tr>
-<tr class="memitem:a6431801fb098675e1723225dac4f30ca inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a6431801fb098675e1723225dac4f30ca">createWithTopology</a> (ExecutionSpace exec_space, <a class="el" href="structCabana_1_1Import.html">Import</a>, const RankViewType &amp;element_import_ranks, const IdViewType &amp;element_import_ids, const std::vector&lt; int &gt; &amp;neighbor_ranks) -&gt; std::tuple&lt; Kokkos::View&lt; typename RankViewType::size_type *, typename RankViewType::memory_space &gt;, Kokkos::View&lt; int *, typename RankViewType::memory_space &gt;, Kokkos::View&lt; int *, typename IdViewType::memory_space &gt; &gt;</td></tr>
-<tr class="memdesc:a6431801fb098675e1723225dac4f30ca inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and import rank creator. Use this when you already know which ranks neighbor each other (i.e. every rank already knows who they will be sending and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send to and receive from the neighbors.  <br /></td></tr>
-<tr class="separator:a6431801fb098675e1723225dac4f30ca inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ed6e777d594c30686fe354c20beea5f inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_a3ed6e777d594c30686fe354c20beea5f"><td class="memTemplParams" colspan="2">template&lt;class RankViewType, class IdViewType&gt; </td></tr>
-<tr class="memitem:a3ed6e777d594c30686fe354c20beea5f inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a3ed6e777d594c30686fe354c20beea5f">createWithTopology</a> (<a class="el" href="structCabana_1_1Import.html">Import</a>, const RankViewType &amp;element_import_ranks, const IdViewType &amp;element_import_ids, const std::vector&lt; int &gt; &amp;neighbor_ranks)</td></tr>
-<tr class="memdesc:a3ed6e777d594c30686fe354c20beea5f inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and import rank creator. Use this when you already know which ranks neighbor each other (i.e. every rank already knows who they will be sending and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send to and receive from the neighbors.  <br /></td></tr>
-<tr class="separator:a3ed6e777d594c30686fe354c20beea5f inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab068ab8ffe3c1d3ba2fec974ac1a9ff5 inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_ab068ab8ffe3c1d3ba2fec974ac1a9ff5"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace, class RankViewType, class IdViewType&gt; </td></tr>
-<tr class="memitem:ab068ab8ffe3c1d3ba2fec974ac1a9ff5 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#ab068ab8ffe3c1d3ba2fec974ac1a9ff5">createWithoutTopology</a> (ExecutionSpace exec_space, <a class="el" href="structCabana_1_1Import.html">Import</a>, const RankViewType &amp;element_import_ranks, const IdViewType &amp;element_import_ids) -&gt; std::tuple&lt; Kokkos::View&lt; typename RankViewType::size_type *, typename RankViewType::memory_space &gt;, Kokkos::View&lt; int *, typename RankViewType::memory_space &gt;, Kokkos::View&lt; int *, typename IdViewType::memory_space &gt; &gt;</td></tr>
-<tr class="memdesc:ab068ab8ffe3c1d3ba2fec974ac1a9ff5 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Import.html" title="Import-based tag.">Import</a> rank creator. Use this when you don't know who you will be receiving from - only who you are importing from. This is less efficient than if we already knew who our neighbors were because we have to determine the topology of the point-to-point communication first.  <br /></td></tr>
-<tr class="separator:ab068ab8ffe3c1d3ba2fec974ac1a9ff5 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a563ba842b419411df93d2750cc83aed8 inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_a563ba842b419411df93d2750cc83aed8"><td class="memTemplParams" colspan="2">template&lt;class RankViewType, class IdViewType&gt; </td></tr>
-<tr class="memitem:a563ba842b419411df93d2750cc83aed8 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a563ba842b419411df93d2750cc83aed8">createWithoutTopology</a> (<a class="el" href="structCabana_1_1Import.html">Import</a>, const RankViewType &amp;element_import_ranks, const IdViewType &amp;element_import_ids)</td></tr>
-<tr class="memdesc:a563ba842b419411df93d2750cc83aed8 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Import.html" title="Import-based tag.">Import</a> rank creator. Use this when you don't know who you will be receiving from - only who you are importing from. This is less efficient than if we already knew who our neighbors were because we have to determine the topology of the point-to-point communication first.  <br /></td></tr>
-<tr class="separator:a563ba842b419411df93d2750cc83aed8 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d09203fe92d9a63f2852bdfd317c72a inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_a4d09203fe92d9a63f2852bdfd317c72a"><td class="memTemplParams" colspan="2">template&lt;class PackViewType, class RankViewType&gt; </td></tr>
-<tr class="memitem:a4d09203fe92d9a63f2852bdfd317c72a inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a4d09203fe92d9a63f2852bdfd317c72a">createExportSteering</a> (const PackViewType &amp;neighbor_ids, const RankViewType &amp;element_export_ranks)</td></tr>
-<tr class="memdesc:a4d09203fe92d9a63f2852bdfd317c72a inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the export steering vector.  <br /></td></tr>
-<tr class="separator:a4d09203fe92d9a63f2852bdfd317c72a inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e9b8b82a49acbca33d63164320d44f5 inherit pub_methods_classCabana_1_1CommunicationPlan" id="r_a9e9b8b82a49acbca33d63164320d44f5"><td class="memTemplParams" colspan="2">template&lt;class PackViewType, class RankViewType, class IdViewType&gt; </td></tr>
-<tr class="memitem:a9e9b8b82a49acbca33d63164320d44f5 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a9e9b8b82a49acbca33d63164320d44f5">createExportSteering</a> (const PackViewType &amp;neighbor_ids, const RankViewType &amp;element_export_ranks, const IdViewType &amp;element_export_ids)</td></tr>
-<tr class="memdesc:a9e9b8b82a49acbca33d63164320d44f5 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the export steering vector.  <br /></td></tr>
-<tr class="separator:a9e9b8b82a49acbca33d63164320d44f5 inherit pub_methods_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:aea909e312c4cf4da52ac21a0dab15228 inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the MPI communicator. <br /></td></tr>
+<tr class="separator:aea909e312c4cf4da52ac21a0dab15228 inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e35361587f6f78fe7066030c76824c4 inherit pub_methods_classCabana_1_1CommunicationPlanBase" id="r_a9e35361587f6f78fe7066030c76824c4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlanBase.html#a9e35361587f6f78fe7066030c76824c4">numNeighbor</a> () const</td></tr>
+<tr class="memdesc:a9e35361587f6f78fe7066030c76824c4 inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of neighbor ranks that this rank will communicate with.  <br /></td></tr>
+<tr class="separator:a9e35361587f6f78fe7066030c76824c4 inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f9317f80a6b3afc7ba4f1757fdf20cb inherit pub_methods_classCabana_1_1CommunicationPlanBase" id="r_a4f9317f80a6b3afc7ba4f1757fdf20cb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlanBase.html#a4f9317f80a6b3afc7ba4f1757fdf20cb">neighborRank</a> (const int neighbor) const</td></tr>
+<tr class="memdesc:a4f9317f80a6b3afc7ba4f1757fdf20cb inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a local neighbor id get its rank in the MPI communicator.  <br /></td></tr>
+<tr class="separator:a4f9317f80a6b3afc7ba4f1757fdf20cb inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0f742a9c68e3673625da6f8966fd38f inherit pub_methods_classCabana_1_1CommunicationPlanBase" id="r_ad0f742a9c68e3673625da6f8966fd38f"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlanBase.html#ad0f742a9c68e3673625da6f8966fd38f">numExport</a> (const int neighbor) const</td></tr>
+<tr class="memdesc:ad0f742a9c68e3673625da6f8966fd38f inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of elements this rank will export to a given neighbor.  <br /></td></tr>
+<tr class="separator:ad0f742a9c68e3673625da6f8966fd38f inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5485461fcead85a2c89c0698129bde32 inherit pub_methods_classCabana_1_1CommunicationPlanBase" id="r_a5485461fcead85a2c89c0698129bde32"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlanBase.html#a5485461fcead85a2c89c0698129bde32">totalNumExport</a> () const</td></tr>
+<tr class="memdesc:a5485461fcead85a2c89c0698129bde32 inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the total number of exports this rank will do.  <br /></td></tr>
+<tr class="separator:a5485461fcead85a2c89c0698129bde32 inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a521cce72bacd30bf13dddbac2fa307e0 inherit pub_methods_classCabana_1_1CommunicationPlanBase" id="r_a521cce72bacd30bf13dddbac2fa307e0"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlanBase.html#a521cce72bacd30bf13dddbac2fa307e0">numImport</a> (const int neighbor) const</td></tr>
+<tr class="memdesc:a521cce72bacd30bf13dddbac2fa307e0 inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of elements this rank will import from a given neighbor.  <br /></td></tr>
+<tr class="separator:a521cce72bacd30bf13dddbac2fa307e0 inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6624ba829579fb308f37854956050182 inherit pub_methods_classCabana_1_1CommunicationPlanBase" id="r_a6624ba829579fb308f37854956050182"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlanBase.html#a6624ba829579fb308f37854956050182">totalNumImport</a> () const</td></tr>
+<tr class="memdesc:a6624ba829579fb308f37854956050182 inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the total number of imports this rank will do.  <br /></td></tr>
+<tr class="separator:a6624ba829579fb308f37854956050182 inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0948a98484500e0b72f1e304579fbd37 inherit pub_methods_classCabana_1_1CommunicationPlanBase" id="r_a0948a98484500e0b72f1e304579fbd37"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlanBase.html#a0948a98484500e0b72f1e304579fbd37">exportSize</a> () const</td></tr>
+<tr class="memdesc:a0948a98484500e0b72f1e304579fbd37 inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of export elements.  <br /></td></tr>
+<tr class="separator:a0948a98484500e0b72f1e304579fbd37 inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9963bdfea2f1cf34018b60defe01f4a inherit pub_methods_classCabana_1_1CommunicationPlanBase" id="r_ad9963bdfea2f1cf34018b60defe01f4a"><td class="memItemLeft" align="right" valign="top">Kokkos::View&lt; std::size_t *, <a class="el" href="classCabana_1_1CommunicationPlanBase.html#ade52a84c762977169dd1867f4c617348">memory_space</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlanBase.html#ad9963bdfea2f1cf34018b60defe01f4a">getExportSteering</a> () const</td></tr>
+<tr class="memdesc:ad9963bdfea2f1cf34018b60defe01f4a inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the steering vector for the exports.  <br /></td></tr>
+<tr class="separator:ad9963bdfea2f1cf34018b60defe01f4a inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89654426c8566c2fc830c25fbf28fa59 inherit pub_methods_classCabana_1_1CommunicationPlanBase" id="r_a89654426c8566c2fc830c25fbf28fa59"><td class="memTemplParams" colspan="2">template&lt;class PackViewType, class RankViewType&gt; </td></tr>
+<tr class="memitem:a89654426c8566c2fc830c25fbf28fa59 inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlanBase.html#a89654426c8566c2fc830c25fbf28fa59">createExportSteering</a> (const PackViewType &amp;neighbor_ids, const RankViewType &amp;element_export_ranks)</td></tr>
+<tr class="memdesc:a89654426c8566c2fc830c25fbf28fa59 inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the export steering vector.  <br /></td></tr>
+<tr class="separator:a89654426c8566c2fc830c25fbf28fa59 inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c00e198f37e2af1b4c8df5c0bd3138f inherit pub_methods_classCabana_1_1CommunicationPlanBase" id="r_a7c00e198f37e2af1b4c8df5c0bd3138f"><td class="memTemplParams" colspan="2">template&lt;class PackViewType, class RankViewType, class IdViewType&gt; </td></tr>
+<tr class="memitem:a7c00e198f37e2af1b4c8df5c0bd3138f inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlanBase.html#a7c00e198f37e2af1b4c8df5c0bd3138f">createExportSteering</a> (const PackViewType &amp;neighbor_ids, const RankViewType &amp;element_export_ranks, const IdViewType &amp;element_export_ids)</td></tr>
+<tr class="memdesc:a7c00e198f37e2af1b4c8df5c0bd3138f inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the export steering vector.  <br /></td></tr>
+<tr class="separator:a7c00e198f37e2af1b4c8df5c0bd3138f inherit pub_methods_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pub_types_classCabana_1_1CommunicationPlan"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_types_classCabana_1_1CommunicationPlan')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan&lt; MemorySpace &gt;</a></td></tr>
-<tr class="memitem:a4b57656297b6e95ac7dce53d6967f1df inherit pub_types_classCabana_1_1CommunicationPlan" id="r_a4b57656297b6e95ac7dce53d6967f1df"><td class="memItemLeft" align="right" valign="top">
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
-<tr class="memdesc:a4b57656297b6e95ac7dce53d6967f1df inherit pub_types_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
-<tr class="separator:a4b57656297b6e95ac7dce53d6967f1df inherit pub_types_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae846372aa7018c5da4d017502a0803e2 inherit pub_types_classCabana_1_1CommunicationPlan" id="r_ae846372aa7018c5da4d017502a0803e2"><td class="memItemLeft" align="right" valign="top">
-using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename memory_space::execution_space</td></tr>
-<tr class="memdesc:ae846372aa7018c5da4d017502a0803e2 inherit pub_types_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default execution space. <br /></td></tr>
-<tr class="separator:ae846372aa7018c5da4d017502a0803e2 inherit pub_types_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2888c5686762460a20d0cc78aea4e9d4 inherit pub_types_classCabana_1_1CommunicationPlan" id="r_a2888c5686762460a20d0cc78aea4e9d4"><td class="memItemLeft" align="right" valign="top">
-using&#160;</td><td class="memItemRight" valign="bottom"><b>size_type</b> = typename memory_space::memory_space::size_type</td></tr>
-<tr class="memdesc:a2888c5686762460a20d0cc78aea4e9d4 inherit pub_types_classCabana_1_1CommunicationPlan"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size type. <br /></td></tr>
-<tr class="separator:a2888c5686762460a20d0cc78aea4e9d4 inherit pub_types_classCabana_1_1CommunicationPlan"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4.html">Cabana::CommunicationPlan&lt; MemorySpace, Mpi &gt;</a></td></tr>
+<tr class="memitem:a8d7ea5e3b1d98fcf01bb44e9ab9a552e inherit pro_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4" id="r_a8d7ea5e3b1d98fcf01bb44e9ab9a552e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4.html#a8d7ea5e3b1d98fcf01bb44e9ab9a552e">CommunicationPlan</a> (MPI_Comm <a class="el" href="classCabana_1_1CommunicationPlanBase.html#aea909e312c4cf4da52ac21a0dab15228">comm</a>)</td></tr>
+<tr class="memdesc:a8d7ea5e3b1d98fcf01bb44e9ab9a552e inherit pro_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
+<tr class="separator:a8d7ea5e3b1d98fcf01bb44e9ab9a552e inherit pro_methods_classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_classCabana_1_1CommunicationPlanBase"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_methods_classCabana_1_1CommunicationPlanBase')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classCabana_1_1CommunicationPlanBase.html">Cabana::CommunicationPlanBase&lt; MemorySpace &gt;</a></td></tr>
+<tr class="memitem:a41e15e96daa97a90915c8f29145ca0c4 inherit pro_methods_classCabana_1_1CommunicationPlanBase" id="r_a41e15e96daa97a90915c8f29145ca0c4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlanBase.html#a41e15e96daa97a90915c8f29145ca0c4">CommunicationPlanBase</a> (MPI_Comm <a class="el" href="classCabana_1_1CommunicationPlanBase.html#aea909e312c4cf4da52ac21a0dab15228">comm</a>)</td></tr>
+<tr class="memdesc:a41e15e96daa97a90915c8f29145ca0c4 inherit pro_methods_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
+<tr class="separator:a41e15e96daa97a90915c8f29145ca0c4 inherit pro_methods_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_classCabana_1_1CommunicationPlanBase"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_attribs_classCabana_1_1CommunicationPlanBase')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classCabana_1_1CommunicationPlanBase.html">Cabana::CommunicationPlanBase&lt; MemorySpace &gt;</a></td></tr>
+<tr class="memitem:a72708578bc4d29acd5a8a8f359f4b9ce inherit pro_attribs_classCabana_1_1CommunicationPlanBase" id="r_a72708578bc4d29acd5a8a8f359f4b9ce"><td class="memItemLeft" align="right" valign="top">
+std::shared_ptr&lt; MPI_Comm &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_comm_ptr</b></td></tr>
+<tr class="memdesc:a72708578bc4d29acd5a8a8f359f4b9ce inherit pro_attribs_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shared pointer to <a class="el" href="structCabana_1_1Mpi.html" title="Vanilla MPI backend tag - default.">Mpi</a> communicator. <br /></td></tr>
+<tr class="separator:a72708578bc4d29acd5a8a8f359f4b9ce inherit pro_attribs_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca342fad7a374c5d066743fce037c6f1 inherit pro_attribs_classCabana_1_1CommunicationPlanBase" id="r_aca342fad7a374c5d066743fce037c6f1"><td class="memItemLeft" align="right" valign="top">
+std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_neighbors</b></td></tr>
+<tr class="memdesc:aca342fad7a374c5d066743fce037c6f1 inherit pro_attribs_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of <a class="el" href="structCabana_1_1Mpi.html" title="Vanilla MPI backend tag - default.">Mpi</a> neighbors. <br /></td></tr>
+<tr class="separator:aca342fad7a374c5d066743fce037c6f1 inherit pro_attribs_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15c740213abcd9b401c7dfa0111460f1 inherit pro_attribs_classCabana_1_1CommunicationPlanBase" id="r_a15c740213abcd9b401c7dfa0111460f1"><td class="memItemLeft" align="right" valign="top">
+std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>_total_num_export</b></td></tr>
+<tr class="memdesc:a15c740213abcd9b401c7dfa0111460f1 inherit pro_attribs_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of elements exported. <br /></td></tr>
+<tr class="separator:a15c740213abcd9b401c7dfa0111460f1 inherit pro_attribs_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88e4ed8138ecfcd2be327365bf7999c7 inherit pro_attribs_classCabana_1_1CommunicationPlanBase" id="r_a88e4ed8138ecfcd2be327365bf7999c7"><td class="memItemLeft" align="right" valign="top">
+std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>_total_num_import</b></td></tr>
+<tr class="memdesc:a88e4ed8138ecfcd2be327365bf7999c7 inherit pro_attribs_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of elements imported. <br /></td></tr>
+<tr class="separator:a88e4ed8138ecfcd2be327365bf7999c7 inherit pro_attribs_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1fc2607e2e32a9d3f7290b8e1b112add inherit pro_attribs_classCabana_1_1CommunicationPlanBase" id="r_a1fc2607e2e32a9d3f7290b8e1b112add"><td class="memItemLeft" align="right" valign="top">
+std::vector&lt; std::size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_num_export</b></td></tr>
+<tr class="memdesc:a1fc2607e2e32a9d3f7290b8e1b112add inherit pro_attribs_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of elements exported to each neighbor. <br /></td></tr>
+<tr class="separator:a1fc2607e2e32a9d3f7290b8e1b112add inherit pro_attribs_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad93a68db08d10e0872f51698e33f9d6 inherit pro_attribs_classCabana_1_1CommunicationPlanBase" id="r_aad93a68db08d10e0872f51698e33f9d6"><td class="memItemLeft" align="right" valign="top">
+std::vector&lt; std::size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_num_import</b></td></tr>
+<tr class="memdesc:aad93a68db08d10e0872f51698e33f9d6 inherit pro_attribs_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of elements imported from each neighbor. <br /></td></tr>
+<tr class="separator:aad93a68db08d10e0872f51698e33f9d6 inherit pro_attribs_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac6c10f8ccfc103eb69e6b7d2b0e3192 inherit pro_attribs_classCabana_1_1CommunicationPlanBase" id="r_aac6c10f8ccfc103eb69e6b7d2b0e3192"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlanBase.html#aac6c10f8ccfc103eb69e6b7d2b0e3192">_num_export_element</a></td></tr>
+<tr class="separator:aac6c10f8ccfc103eb69e6b7d2b0e3192 inherit pro_attribs_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ebf3556128399fc94f87444a38a4930 inherit pro_attribs_classCabana_1_1CommunicationPlanBase" id="r_a3ebf3556128399fc94f87444a38a4930"><td class="memItemLeft" align="right" valign="top">
+Kokkos::View&lt; std::size_t *, <a class="el" href="classCabana_1_1CommunicationPlanBase.html#ade52a84c762977169dd1867f4c617348">memory_space</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_export_steering</b></td></tr>
+<tr class="memdesc:a3ebf3556128399fc94f87444a38a4930 inherit pro_attribs_classCabana_1_1CommunicationPlanBase"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCabana_1_1Export.html" title="Export-based tag - default.">Export</a> steering vector. <br /></td></tr>
+<tr class="separator:a3ebf3556128399fc94f87444a38a4930 inherit pro_attribs_classCabana_1_1CommunicationPlanBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;class MemorySpace, class BuildType = Export&gt;<br />
-class Cabana::Halo&lt; MemorySpace, BuildType &gt;</div><p>A communication plan for scattering and gathering of ghosted data. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;class MemorySpace, class BuildType = Export, class CommSpaceType = Mpi&gt;<br />
+class Cabana::Halo&lt; MemorySpace, BuildType, CommSpaceType &gt;</div><p>A communication plan for scattering and gathering of ghosted data. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">MemorySpace</td><td>Kokkos memory space in which data for this class will be allocated.</td></tr>
@@ -276,13 +325,13 @@ class Cabana::Halo&lt; MemorySpace, BuildType &gt;</div><p>A communication plan 
 <p><a class="el" href="structCabana_1_1Export.html" title="Export-based tag - default.">Export</a> - the local data we uniquely own that we will send to other ranks for those ranks to be used as ghosts. <a class="el" href="structCabana_1_1Export.html" title="Export-based tag - default.">Export</a> is used in the context of the forward communication plan (the gather).</p>
 <p><a class="el" href="structCabana_1_1Import.html" title="Import-based tag.">Import</a> - the ghost data that we get from other ranks. The rank we get a ghost from is the unique owner of that data. <a class="el" href="structCabana_1_1Import.html" title="Import-based tag.">Import</a> is used in the context of the forward communication plan (the gather). </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a5f69fd5594bc26e9b672000fff26be75" name="a5f69fd5594bc26e9b672000fff26be75"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5f69fd5594bc26e9b672000fff26be75">&#9670;&#160;</a></span>Halo() <span class="overload">[1/4]</span></h2>
+<a id="afbe667510735a06d4c35787cd75ac863" name="afbe667510735a06d4c35787cd75ac863"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afbe667510735a06d4c35787cd75ac863">&#9670;&#160;</a></span>Halo() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class BuildType = Export&gt; </div>
+template&lt;class MemorySpace, class BuildType = Export, class CommSpaceType = Mpi&gt; </div>
 <div class="memtemplate">
 template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Export.html">Export</a> &gt;::value, int &gt; = 0&gt; </div>
 <table class="mlabels">
@@ -290,7 +339,7 @@ template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::e
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType &gt;::Halo </td>
+          <td class="memname"><a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType, CommSpaceType &gt;::Halo </td>
           <td>(</td>
           <td class="paramtype">MPI_Comm</td>          <td class="paramname"><span class="paramname"><em>comm</em></span>, </td>
         </tr>
@@ -344,13 +393,13 @@ template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::e
 
 </div>
 </div>
-<a id="a6c39f13fe61bcfbd22e183785c4c83b6" name="a6c39f13fe61bcfbd22e183785c4c83b6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c39f13fe61bcfbd22e183785c4c83b6">&#9670;&#160;</a></span>Halo() <span class="overload">[2/4]</span></h2>
+<a id="af95ba926327ed520e396d76a1503e75b" name="af95ba926327ed520e396d76a1503e75b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af95ba926327ed520e396d76a1503e75b">&#9670;&#160;</a></span>Halo() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class BuildType = Export&gt; </div>
+template&lt;class MemorySpace, class BuildType = Export, class CommSpaceType = Mpi&gt; </div>
 <div class="memtemplate">
 template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Export.html">Export</a> &gt;::value, int &gt; = 0&gt; </div>
 <table class="mlabels">
@@ -358,7 +407,7 @@ template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::e
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType &gt;::Halo </td>
+          <td class="memname"><a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType, CommSpaceType &gt;::Halo </td>
           <td>(</td>
           <td class="paramtype">MPI_Comm</td>          <td class="paramname"><span class="paramname"><em>comm</em></span>, </td>
         </tr>
@@ -406,13 +455,13 @@ template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::e
 
 </div>
 </div>
-<a id="a5f69fd5594bc26e9b672000fff26be75" name="a5f69fd5594bc26e9b672000fff26be75"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5f69fd5594bc26e9b672000fff26be75">&#9670;&#160;</a></span>Halo() <span class="overload">[3/4]</span></h2>
+<a id="afbe667510735a06d4c35787cd75ac863" name="afbe667510735a06d4c35787cd75ac863"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afbe667510735a06d4c35787cd75ac863">&#9670;&#160;</a></span>Halo() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class BuildType = Export&gt; </div>
+template&lt;class MemorySpace, class BuildType = Export, class CommSpaceType = Mpi&gt; </div>
 <div class="memtemplate">
 template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Import.html">Import</a> &gt;::value, int &gt; = 0&gt; </div>
 <table class="mlabels">
@@ -420,7 +469,7 @@ template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::e
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType &gt;::Halo </td>
+          <td class="memname"><a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType, CommSpaceType &gt;::Halo </td>
           <td>(</td>
           <td class="paramtype">MPI_Comm</td>          <td class="paramname"><span class="paramname"><em>comm</em></span>, </td>
         </tr>
@@ -474,13 +523,13 @@ template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::e
 
 </div>
 </div>
-<a id="a6c39f13fe61bcfbd22e183785c4c83b6" name="a6c39f13fe61bcfbd22e183785c4c83b6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c39f13fe61bcfbd22e183785c4c83b6">&#9670;&#160;</a></span>Halo() <span class="overload">[4/4]</span></h2>
+<a id="af95ba926327ed520e396d76a1503e75b" name="af95ba926327ed520e396d76a1503e75b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af95ba926327ed520e396d76a1503e75b">&#9670;&#160;</a></span>Halo() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class BuildType = Export&gt; </div>
+template&lt;class MemorySpace, class BuildType = Export, class CommSpaceType = Mpi&gt; </div>
 <div class="memtemplate">
 template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Import.html">Import</a> &gt;::value, int &gt; = 0&gt; </div>
 <table class="mlabels">
@@ -488,7 +537,7 @@ template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::e
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType &gt;::Halo </td>
+          <td class="memname"><a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType, CommSpaceType &gt;::Halo </td>
           <td>(</td>
           <td class="paramtype">MPI_Comm</td>          <td class="paramname"><span class="paramname"><em>comm</em></span>, </td>
         </tr>
@@ -537,13 +586,13 @@ template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::e
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="add7ab9463f1f7061a98d4adf182acc9d" name="add7ab9463f1f7061a98d4adf182acc9d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#add7ab9463f1f7061a98d4adf182acc9d">&#9670;&#160;</a></span>build() <span class="overload">[1/4]</span></h2>
+<a id="a240409534fe75787483557d87f88be5c" name="a240409534fe75787483557d87f88be5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a240409534fe75787483557d87f88be5c">&#9670;&#160;</a></span>build() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class BuildType = Export&gt; </div>
+template&lt;class MemorySpace, class BuildType = Export, class CommSpaceType = Mpi&gt; </div>
 <div class="memtemplate">
 template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Export.html">Export</a> &gt;::value, int &gt; = 0&gt; </div>
 <table class="mlabels">
@@ -551,7 +600,7 @@ template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::e
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType &gt;::build </td>
+          <td class="memname">void <a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType, CommSpaceType &gt;::build </td>
           <td>(</td>
           <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>num_local</em></span>, </td>
         </tr>
@@ -578,13 +627,13 @@ template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::e
 
 </div>
 </div>
-<a id="add7ab9463f1f7061a98d4adf182acc9d" name="add7ab9463f1f7061a98d4adf182acc9d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#add7ab9463f1f7061a98d4adf182acc9d">&#9670;&#160;</a></span>build() <span class="overload">[2/4]</span></h2>
+<a id="a240409534fe75787483557d87f88be5c" name="a240409534fe75787483557d87f88be5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a240409534fe75787483557d87f88be5c">&#9670;&#160;</a></span>build() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class BuildType = Export&gt; </div>
+template&lt;class MemorySpace, class BuildType = Export, class CommSpaceType = Mpi&gt; </div>
 <div class="memtemplate">
 template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Import.html">Import</a> &gt;::value, int &gt; = 0&gt; </div>
 <table class="mlabels">
@@ -592,7 +641,7 @@ template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::e
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType &gt;::build </td>
+          <td class="memname">void <a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType, CommSpaceType &gt;::build </td>
           <td>(</td>
           <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>num_local</em></span>, </td>
         </tr>
@@ -619,13 +668,13 @@ template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::e
 
 </div>
 </div>
-<a id="ad3c1740f2bc358a3d097938f41e530e1" name="ad3c1740f2bc358a3d097938f41e530e1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad3c1740f2bc358a3d097938f41e530e1">&#9670;&#160;</a></span>build() <span class="overload">[3/4]</span></h2>
+<a id="a669a90a28aded34588b6e189a790649a" name="a669a90a28aded34588b6e189a790649a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a669a90a28aded34588b6e189a790649a">&#9670;&#160;</a></span>build() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class BuildType = Export&gt; </div>
+template&lt;class MemorySpace, class BuildType = Export, class CommSpaceType = Mpi&gt; </div>
 <div class="memtemplate">
 template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Export.html">Export</a> &gt;::value, int &gt; = 0&gt; </div>
 <table class="mlabels">
@@ -633,7 +682,7 @@ template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::e
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType &gt;::build </td>
+          <td class="memname">void <a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType, CommSpaceType &gt;::build </td>
           <td>(</td>
           <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>num_local</em></span>, </td>
         </tr>
@@ -665,13 +714,13 @@ template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::e
 
 </div>
 </div>
-<a id="ad3c1740f2bc358a3d097938f41e530e1" name="ad3c1740f2bc358a3d097938f41e530e1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad3c1740f2bc358a3d097938f41e530e1">&#9670;&#160;</a></span>build() <span class="overload">[4/4]</span></h2>
+<a id="a669a90a28aded34588b6e189a790649a" name="a669a90a28aded34588b6e189a790649a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a669a90a28aded34588b6e189a790649a">&#9670;&#160;</a></span>build() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class BuildType = Export&gt; </div>
+template&lt;class MemorySpace, class BuildType = Export, class CommSpaceType = Mpi&gt; </div>
 <div class="memtemplate">
 template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::enable_if_t&lt; std::is_same&lt; T, <a class="el" href="structCabana_1_1Import.html">Import</a> &gt;::value, int &gt; = 0&gt; </div>
 <table class="mlabels">
@@ -679,7 +728,7 @@ template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::e
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType &gt;::build </td>
+          <td class="memname">void <a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType, CommSpaceType &gt;::build </td>
           <td>(</td>
           <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>num_local</em></span>, </td>
         </tr>
@@ -711,19 +760,19 @@ template&lt;class IdViewType, class RankViewType, typename T = BuildType, std::e
 
 </div>
 </div>
-<a id="a20a2f092117288f3aff7d93b016dd6e7" name="a20a2f092117288f3aff7d93b016dd6e7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a20a2f092117288f3aff7d93b016dd6e7">&#9670;&#160;</a></span>numGhost()</h2>
+<a id="a2f711bb86962dec289eadf40e2a136b5" name="a2f711bb86962dec289eadf40e2a136b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f711bb86962dec289eadf40e2a136b5">&#9670;&#160;</a></span>numGhost()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class BuildType = Export&gt; </div>
+template&lt;class MemorySpace, class BuildType = Export, class CommSpaceType = Mpi&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::size_t <a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType &gt;::numGhost </td>
+          <td class="memname">std::size_t <a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType, CommSpaceType &gt;::numGhost </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -736,24 +785,24 @@ template&lt;class MemorySpace, class BuildType = Export&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Get the number of ghost elements this rank. Use this to resize a data structure for scatter/gather operations. For use with scatter gather, a data structure should be of size <a class="el" href="#a6a7fa1e057f65089995a01895283f4b2" title="Get the number of elements locally owned by this rank.">numLocal()</a> + <a class="el" href="#a20a2f092117288f3aff7d93b016dd6e7" title="Get the number of ghost elements this rank. Use this to resize a data structure for scatter/gather op...">numGhost()</a>. </p>
+<p>Get the number of ghost elements this rank. Use this to resize a data structure for scatter/gather operations. For use with scatter gather, a data structure should be of size <a class="el" href="#aec8cd7168f8b0c4e023bfa217f904cb5" title="Get the number of elements locally owned by this rank.">numLocal()</a> + <a class="el" href="#a2f711bb86962dec289eadf40e2a136b5" title="Get the number of ghost elements this rank. Use this to resize a data structure for scatter/gather op...">numGhost()</a>. </p>
 <dl class="section return"><dt>Returns</dt><dd>The number of ghosted elements on this rank. </dd></dl>
 
 </div>
 </div>
-<a id="a6a7fa1e057f65089995a01895283f4b2" name="a6a7fa1e057f65089995a01895283f4b2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6a7fa1e057f65089995a01895283f4b2">&#9670;&#160;</a></span>numLocal()</h2>
+<a id="aec8cd7168f8b0c4e023bfa217f904cb5" name="aec8cd7168f8b0c4e023bfa217f904cb5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec8cd7168f8b0c4e023bfa217f904cb5">&#9670;&#160;</a></span>numLocal()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class BuildType = Export&gt; </div>
+template&lt;class MemorySpace, class BuildType = Export, class CommSpaceType = Mpi&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::size_t <a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType &gt;::numLocal </td>
+          <td class="memname">std::size_t <a class="el" href="classCabana_1_1Halo.html">Cabana::Halo</a>&lt; MemorySpace, BuildType, CommSpaceType &gt;::numLocal </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -767,7 +816,7 @@ template&lt;class MemorySpace, class BuildType = Export&gt; </div>
 </div><div class="memdoc">
 
 <p>Get the number of elements locally owned by this rank. </p>
-<dl class="section return"><dt>Returns</dt><dd>The number of elements locally owned by this rank. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>THe number of elements locally owned by this rank. </dd></dl>
 
 </div>
 </div>

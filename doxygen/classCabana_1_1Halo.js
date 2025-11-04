@@ -1,13 +1,14 @@
 var classCabana_1_1Halo =
 [
-    [ "Halo", "classCabana_1_1Halo.html#a5f69fd5594bc26e9b672000fff26be75", null ],
-    [ "Halo", "classCabana_1_1Halo.html#a6c39f13fe61bcfbd22e183785c4c83b6", null ],
-    [ "Halo", "classCabana_1_1Halo.html#a5f69fd5594bc26e9b672000fff26be75", null ],
-    [ "Halo", "classCabana_1_1Halo.html#a6c39f13fe61bcfbd22e183785c4c83b6", null ],
-    [ "build", "classCabana_1_1Halo.html#add7ab9463f1f7061a98d4adf182acc9d", null ],
-    [ "build", "classCabana_1_1Halo.html#add7ab9463f1f7061a98d4adf182acc9d", null ],
-    [ "build", "classCabana_1_1Halo.html#ad3c1740f2bc358a3d097938f41e530e1", null ],
-    [ "build", "classCabana_1_1Halo.html#ad3c1740f2bc358a3d097938f41e530e1", null ],
-    [ "numGhost", "classCabana_1_1Halo.html#a20a2f092117288f3aff7d93b016dd6e7", null ],
-    [ "numLocal", "classCabana_1_1Halo.html#a6a7fa1e057f65089995a01895283f4b2", null ]
+    [ "commspace_type", "classCabana_1_1Halo.html#a10196c50bb94c79227739a72ef057d69", null ],
+    [ "Halo", "classCabana_1_1Halo.html#afbe667510735a06d4c35787cd75ac863", null ],
+    [ "Halo", "classCabana_1_1Halo.html#af95ba926327ed520e396d76a1503e75b", null ],
+    [ "Halo", "classCabana_1_1Halo.html#afbe667510735a06d4c35787cd75ac863", null ],
+    [ "Halo", "classCabana_1_1Halo.html#af95ba926327ed520e396d76a1503e75b", null ],
+    [ "build", "classCabana_1_1Halo.html#a240409534fe75787483557d87f88be5c", null ],
+    [ "build", "classCabana_1_1Halo.html#a240409534fe75787483557d87f88be5c", null ],
+    [ "build", "classCabana_1_1Halo.html#a669a90a28aded34588b6e189a790649a", null ],
+    [ "build", "classCabana_1_1Halo.html#a669a90a28aded34588b6e189a790649a", null ],
+    [ "numGhost", "classCabana_1_1Halo.html#a2f711bb86962dec289eadf40e2a136b5", null ],
+    [ "numLocal", "classCabana_1_1Halo.html#aec8cd7168f8b0c4e023bfa217f904cb5", null ]
 ];

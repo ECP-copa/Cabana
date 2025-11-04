@@ -27,7 +27,7 @@ var hierarchy =
     [ "Cabana::Grid::Cell", "structCabana_1_1Grid_1_1Cell.html", null ],
     [ "Cabana::CheckMemberTypes< Types >", "structCabana_1_1CheckMemberTypes.html", null ],
     [ "Cabana::CheckMemberTypes< MemberTypes< Types... > >", "structCabana_1_1CheckMemberTypes_3_01MemberTypes_3_01Types_8_8_8_01_4_01_4.html", null ],
-    [ "Cabana::CommunicationData< CommPlanType, CommDataType >", "classCabana_1_1CommunicationData.html", null ],
+    [ "Cabana::CommunicationData< CommPlanType, CommDataType, CommSpaceType >", "classCabana_1_1CommunicationData.html", null ],
     [ "Cabana::CommunicationData< HaloType, CommunicationDataAoSoA< AoSoAType > >", "classCabana_1_1CommunicationData.html", [
       [ "Cabana::Gather< HaloType, AoSoAType, typename std::enable_if< is_aosoa< AoSoAType >::value >::type >", "classCabana_1_1Gather_3_01HaloType_00_01AoSoAType_00_01typename_01std_1_1enable__if_3_01is__aoso666e08a1494152c80218c785a19e78d3.html", null ]
     ] ],
@@ -36,10 +36,16 @@ var hierarchy =
       [ "Cabana::Scatter< HaloType, SliceType >", "classCabana_1_1Scatter.html", null ]
     ] ],
     [ "Cabana::CommunicationDataAoSoA< AoSoAType >", "structCabana_1_1CommunicationDataAoSoA.html", null ],
+    [ "Cabana::CommunicationDataBase< CommPlanType, CommDataType >", "classCabana_1_1CommunicationDataBase.html", [
+      [ "Cabana::CommunicationData< CommPlanType, CommDataType, Mpi >", "classCabana_1_1CommunicationData_3_01CommPlanType_00_01CommDataType_00_01Mpi_01_4.html", null ]
+    ] ],
     [ "Cabana::CommunicationDataSlice< SliceType >", "structCabana_1_1CommunicationDataSlice.html", null ],
-    [ "Cabana::CommunicationPlan< MemorySpace >", "classCabana_1_1CommunicationPlan.html", [
-      [ "Cabana::Distributor< MemorySpace >", "classCabana_1_1Distributor.html", null ],
-      [ "Cabana::Halo< MemorySpace, BuildType >", "classCabana_1_1Halo.html", null ]
+    [ "Cabana::CommunicationPlan< MemorySpace, CommSpaceType >", "classCabana_1_1CommunicationPlan.html", null ],
+    [ "Cabana::CommunicationPlanBase< MemorySpace >", "classCabana_1_1CommunicationPlanBase.html", [
+      [ "Cabana::CommunicationPlan< MemorySpace, Mpi >", "classCabana_1_1CommunicationPlan_3_01MemorySpace_00_01Mpi_01_4.html", [
+        [ "Cabana::Distributor< MemorySpace, CommSpaceType >", "classCabana_1_1Distributor.html", null ],
+        [ "Cabana::Halo< MemorySpace, BuildType, CommSpaceType >", "classCabana_1_1Halo.html", null ]
+      ] ]
     ] ],
     [ "Cabana::Experimental::CrsGraph< MemorySpace, Tag >", "structCabana_1_1Experimental_1_1CrsGraph.html", null ],
     [ "Cabana::DefaultAccessMemory", "structCabana_1_1DefaultAccessMemory.html", null ],
@@ -131,9 +137,12 @@ var hierarchy =
     [ "Cabana::Grid::GlobalMesh< MeshType >", "classCabana_1_1Grid_1_1GlobalMesh.html", null ],
     [ "Cabana::Grid::GlobalMesh< NonUniformMesh< Scalar, 2 > >", "classCabana_1_1Grid_1_1GlobalMesh_3_01NonUniformMesh_3_01Scalar_00_012_01_4_01_4.html", null ],
     [ "Cabana::Grid::GlobalMesh< NonUniformMesh< Scalar, 3 > >", "classCabana_1_1Grid_1_1GlobalMesh_3_01NonUniformMesh_3_01Scalar_00_013_01_4_01_4.html", null ],
-    [ "Cabana::Grid::GlobalParticleComm< MemorySpace, LocalGridType >", "classCabana_1_1Grid_1_1GlobalParticleComm.html", null ],
+    [ "Cabana::Grid::GlobalParticleComm< MemorySpace, LocalGridType, CommSpaceType >", "classCabana_1_1Grid_1_1GlobalParticleComm.html", null ],
     [ "Cabana::HalfNeighborTag", "classCabana_1_1HalfNeighborTag.html", null ],
-    [ "Cabana::Grid::Halo< MemorySpace >", "classCabana_1_1Grid_1_1Halo.html", null ],
+    [ "Cabana::Grid::Halo< MemorySpace, CommSpaceType >", "classCabana_1_1Grid_1_1Halo.html", null ],
+    [ "Cabana::Grid::HaloBase< MemorySpace >", "classCabana_1_1Grid_1_1HaloBase.html", [
+      [ "Cabana::Grid::Halo< MemorySpace, Mpi >", "classCabana_1_1Grid_1_1Halo_3_01MemorySpace_00_01Mpi_01_4.html", null ]
+    ] ],
     [ "Cabana::Grid::HaloPattern< NumSpaceDim >", "classCabana_1_1Grid_1_1HaloPattern.html", null ],
     [ "Cabana::Grid::HaloPattern< 2 >", "classCabana_1_1Grid_1_1HaloPattern.html", [
       [ "Cabana::Grid::FaceHaloPattern< 2 >", "classCabana_1_1Grid_1_1FaceHaloPattern_3_012_01_4.html", null ],
@@ -189,6 +198,7 @@ var hierarchy =
     [ "Cabana::MemberTypeAtIndex< M, MemberTypes< Types... > >", "structCabana_1_1MemberTypeAtIndex_3_01M_00_01MemberTypes_3_01Types_8_8_8_01_4_01_4.html", null ],
     [ "Cabana::MemberTypes< Types >", "structCabana_1_1MemberTypes.html", null ],
     [ "Cabana::Grid::ScatterReduce::Min", "structCabana_1_1Grid_1_1ScatterReduce_1_1Min.html", null ],
+    [ "Cabana::Mpi", "structCabana_1_1Mpi.html", null ],
     [ "Cabana::Grid::MpiTraits< T >", "structCabana_1_1Grid_1_1MpiTraits.html", null ],
     [ "Cabana::Grid::MpiTraits< char >", "structCabana_1_1Grid_1_1MpiTraits_3_01char_01_4.html", null ],
     [ "Cabana::Grid::MpiTraits< double >", "structCabana_1_1Grid_1_1MpiTraits_3_01double_01_4.html", null ],

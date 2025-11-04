@@ -1,0 +1,26 @@
+var classCabana_1_1CommunicationPlanBase =
+[
+    [ "execution_space", "classCabana_1_1CommunicationPlanBase.html#add94f41de27ee9adae8f5c42c6ca8a68", null ],
+    [ "memory_space", "classCabana_1_1CommunicationPlanBase.html#ade52a84c762977169dd1867f4c617348", null ],
+    [ "size_type", "classCabana_1_1CommunicationPlanBase.html#a9c22c59cd9089040be500e6f62b3d09a", null ],
+    [ "CommunicationPlanBase", "classCabana_1_1CommunicationPlanBase.html#a41e15e96daa97a90915c8f29145ca0c4", null ],
+    [ "comm", "classCabana_1_1CommunicationPlanBase.html#aea909e312c4cf4da52ac21a0dab15228", null ],
+    [ "createExportSteering", "classCabana_1_1CommunicationPlanBase.html#a89654426c8566c2fc830c25fbf28fa59", null ],
+    [ "createExportSteering", "classCabana_1_1CommunicationPlanBase.html#a7c00e198f37e2af1b4c8df5c0bd3138f", null ],
+    [ "exportSize", "classCabana_1_1CommunicationPlanBase.html#a0948a98484500e0b72f1e304579fbd37", null ],
+    [ "getExportSteering", "classCabana_1_1CommunicationPlanBase.html#ad9963bdfea2f1cf34018b60defe01f4a", null ],
+    [ "neighborRank", "classCabana_1_1CommunicationPlanBase.html#a4f9317f80a6b3afc7ba4f1757fdf20cb", null ],
+    [ "numExport", "classCabana_1_1CommunicationPlanBase.html#ad0f742a9c68e3673625da6f8966fd38f", null ],
+    [ "numImport", "classCabana_1_1CommunicationPlanBase.html#a521cce72bacd30bf13dddbac2fa307e0", null ],
+    [ "numNeighbor", "classCabana_1_1CommunicationPlanBase.html#a9e35361587f6f78fe7066030c76824c4", null ],
+    [ "totalNumExport", "classCabana_1_1CommunicationPlanBase.html#a5485461fcead85a2c89c0698129bde32", null ],
+    [ "totalNumImport", "classCabana_1_1CommunicationPlanBase.html#a6624ba829579fb308f37854956050182", null ],
+    [ "_comm_ptr", "classCabana_1_1CommunicationPlanBase.html#a72708578bc4d29acd5a8a8f359f4b9ce", null ],
+    [ "_export_steering", "classCabana_1_1CommunicationPlanBase.html#a3ebf3556128399fc94f87444a38a4930", null ],
+    [ "_neighbors", "classCabana_1_1CommunicationPlanBase.html#aca342fad7a374c5d066743fce037c6f1", null ],
+    [ "_num_export", "classCabana_1_1CommunicationPlanBase.html#a1fc2607e2e32a9d3f7290b8e1b112add", null ],
+    [ "_num_export_element", "classCabana_1_1CommunicationPlanBase.html#aac6c10f8ccfc103eb69e6b7d2b0e3192", null ],
+    [ "_num_import", "classCabana_1_1CommunicationPlanBase.html#aad93a68db08d10e0872f51698e33f9d6", null ],
+    [ "_total_num_export", "classCabana_1_1CommunicationPlanBase.html#a15c740213abcd9b401c7dfa0111460f1", null ],
+    [ "_total_num_import", "classCabana_1_1CommunicationPlanBase.html#a88e4ed8138ecfcd2be327365bf7999c7", null ]
+];

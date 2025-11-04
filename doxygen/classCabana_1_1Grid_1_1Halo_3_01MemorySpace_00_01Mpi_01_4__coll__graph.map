@@ -1,0 +1,5 @@
+<map id="Cabana::Grid::Halo&lt; MemorySpace, Mpi &gt;" name="Cabana::Grid::Halo&lt; MemorySpace, Mpi &gt;">
+<area shape="rect" id="Node000001" title="Grid Halo class. Variant that uses vanilla MPI as the communication backend." alt="" coords="8,102,170,151"/>
+<area shape="rect" id="Node000002" href="$classCabana_1_1Grid_1_1HaloBase.html" title=" " alt="" coords="5,5,173,54"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="92,69,92,101,86,101,86,69"/>
+</map>

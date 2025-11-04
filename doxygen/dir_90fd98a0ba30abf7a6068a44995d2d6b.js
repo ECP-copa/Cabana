@@ -2,7 +2,7 @@ var dir_90fd98a0ba30abf7a6068a44995d2d6b =
 [
     [ "impl", "dir_b19ac8d57de3663da67bd771cc3deea6.html", "dir_b19ac8d57de3663da67bd771cc3deea6" ],
     [ "Cabana_AoSoA.hpp", "Cabana__AoSoA_8hpp.html", "Cabana__AoSoA_8hpp" ],
-    [ "Cabana_CommunicationPlan.hpp", "Cabana__CommunicationPlan_8hpp.html", "Cabana__CommunicationPlan_8hpp" ],
+    [ "Cabana_CommunicationPlanBase.hpp", "Cabana__CommunicationPlanBase_8hpp.html", "Cabana__CommunicationPlanBase_8hpp" ],
     [ "Cabana_Core.hpp", "Cabana__Core_8hpp_source.html", null ],
     [ "Cabana_DeepCopy.hpp", "Cabana__DeepCopy_8hpp.html", "Cabana__DeepCopy_8hpp" ],
     [ "Cabana_Distributor.hpp", "Cabana__Distributor_8hpp.html", "Cabana__Distributor_8hpp" ],
@@ -23,6 +23,7 @@ var dir_90fd98a0ba30abf7a6068a44995d2d6b =
     [ "Cabana_Slice.hpp", "Cabana__Slice_8hpp.html", "Cabana__Slice_8hpp" ],
     [ "Cabana_SoA.hpp", "Cabana__SoA_8hpp.html", "Cabana__SoA_8hpp" ],
     [ "Cabana_Sort.hpp", "Cabana__Sort_8hpp.html", "Cabana__Sort_8hpp" ],
+    [ "Cabana_Tags.hpp", "Cabana__Tags_8hpp.html", "Cabana__Tags_8hpp" ],
     [ "Cabana_Tuple.hpp", "Cabana__Tuple_8hpp.html", "Cabana__Tuple_8hpp" ],
     [ "Cabana_Types.hpp", "Cabana__Types_8hpp.html", "Cabana__Types_8hpp" ],
     [ "Cabana_Utils.hpp", "Cabana__Utils_8hpp.html", "Cabana__Utils_8hpp" ],

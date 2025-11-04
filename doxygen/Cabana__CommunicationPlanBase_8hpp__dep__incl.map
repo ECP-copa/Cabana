@@ -1,0 +1,22 @@
+<map id="core/src/Cabana_CommunicationPlanBase.hpp" name="core/src/Cabana_CommunicationPlanBase.hpp">
+<area shape="rect" id="Node000001" title="Multi&#45;node communication patterns. Base class." alt="" coords="274,5,496,54"/>
+<area shape="rect" id="Node000002" href="$Cabana__Distributor_8hpp.html" title="Multi&#45;node particle redistribution." alt="" coords="50,112,269,141"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="316,63,194,113,192,108,314,58"/>
+<area shape="rect" id="Node000008" href="$Cabana__Halo_8hpp.html" title="Multi&#45;node particle scatter/gather." alt="" coords="294,112,476,141"/>
+<area shape="poly" id="edge10_Node000001_Node000008" title=" " alt="" coords="388,69,388,111,382,111,382,69"/>
+<area shape="rect" id="Node000009" href="$Cabana__Halo__Mpi_8hpp.html" title="Multi&#45;node particle scatter/gather, Mpi implementations." alt="" coords="500,102,651,151"/>
+<area shape="poly" id="edge11_Node000001_Node000009" title=" " alt="" coords="447,59,529,99,527,104,445,63"/>
+<area shape="rect" id="Node000003" href="$Cabana__Grid__GlobalParticleComm_8hpp.html" title="Global particle communication." alt="" coords="5,295,186,344"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="149,156,131,200,104,296,98,294,126,198,144,154"/>
+<area shape="rect" id="Node000005" href="$Cabana__Grid__ParticleDistributor_8hpp.html" title="Multi&#45;node particle redistribution using the grid halo." alt="" coords="140,199,307,247"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="180,153,210,197,205,200,175,156"/>
+<area shape="rect" id="Node000004" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="159,489,338,518"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="127,354,239,487,235,490,123,358"/>
+<area shape="poly" id="edge5_Node000005_Node000004" title=" " alt="" coords="230,262,250,488,245,489,224,263"/>
+<area shape="rect" id="Node000006" href="$Cabana__Grid__ParticleList_8hpp.html" title="Application&#45;level particle/mesh storage and single particle access." alt="" coords="261,295,412,344"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="265,255,310,293,307,297,261,259"/>
+<area shape="poly" id="edge7_Node000006_Node000004" title=" " alt="" coords="319,359,302,393,257,489,253,487,297,391,315,357"/>
+<area shape="rect" id="Node000007" href="$Cabana__Grid__ParticleInit_8hpp.html" title="Particle creation utilities based on uniform grids." alt="" coords="312,392,463,441"/>
+<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="359,356,377,390,372,393,354,359"/>
+<area shape="poly" id="edge9_Node000007_Node000004" title=" " alt="" coords="338,451,273,490,271,486,335,447"/>
+</map>

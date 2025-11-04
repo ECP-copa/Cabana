@@ -1,34 +1,36 @@
 <map id="grid/src/Cabana_Grid_MpiTraits.hpp" name="grid/src/Cabana_Grid_MpiTraits.hpp">
-<area shape="rect" id="Node000001" title="MPI traits." alt="" coords="204,5,355,54"/>
-<area shape="rect" id="Node000002" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="366,392,545,422"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="190,46,122,67,89,83,60,104,30,136,13,167,8,203,14,247,27,301,38,322,59,342,81,354,112,364,191,381,281,392,366,399,366,404,281,397,190,386,110,370,79,359,56,346,33,325,22,303,9,248,3,203,8,166,25,133,57,100,87,79,120,62,188,40"/>
-<area shape="rect" id="Node000003" href="$Cabana__Grid__Array_8hpp.html" title="Grid field arrays." alt="" coords="521,102,673,151"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="371,55,522,100,520,105,369,60"/>
-<area shape="rect" id="Node000004" href="$Cabana__Grid__BovWriter_8hpp.html" title="Brick of values (BOV) grid output." alt="" coords="69,295,221,344"/>
-<area shape="poly" id="edge20_Node000001_Node000004" title=" " alt="" coords="199,63,152,86,104,116,61,154,27,200,20,223,27,246,50,273,81,293,78,297,47,277,23,249,15,223,23,197,57,151,101,112,149,81,196,58"/>
-<area shape="rect" id="Node000008" href="$Cabana__Grid__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="732,295,953,344"/>
-<area shape="poly" id="edge21_Node000001_Node000008" title=" " alt="" coords="371,35,533,53,724,84,815,105,896,131,960,161,984,178,1002,197,1009,210,1012,223,1002,249,975,277,941,297,938,293,972,273,998,246,1006,222,1004,212,998,200,981,182,957,166,894,136,814,110,723,89,533,58,370,41"/>
-<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="689,128,777,134,870,147,951,167,981,180,1002,197,1009,210,1009,222,1002,248,995,303,987,325,967,346,935,363,892,377,780,396,657,405,546,408,546,403,656,400,780,390,890,372,933,359,963,342,982,322,990,301,997,247,1004,221,1004,211,998,200,978,185,949,172,869,152,776,140,688,133"/>
-<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="506,135,374,145,228,159,105,178,63,189,42,201,35,211,33,222,42,246,63,273,91,293,88,297,60,276,37,249,28,222,30,210,38,197,61,184,104,173,228,154,374,140,506,130"/>
-<area shape="rect" id="Node000005" href="$Cabana__Grid__FastFourierTransform_8hpp.html" title="Fast Fourier transforms." alt="" coords="798,199,988,247"/>
-<area shape="poly" id="edge6_Node000003_Node000005" title=" " alt="" coords="687,153,820,196,818,201,685,158"/>
-<area shape="rect" id="Node000006" href="$Cabana__Grid__Halo_8hpp.html" title="Multi&#45;node grid scatter/gather." alt="" coords="521,199,673,247"/>
-<area shape="poly" id="edge7_Node000003_Node000006" title=" " alt="" coords="600,166,600,198,594,198,594,166"/>
-<area shape="rect" id="Node000007" href="$Cabana__Grid__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="556,295,707,344"/>
-<area shape="poly" id="edge18_Node000003_Node000007" title=" " alt="" coords="655,158,673,176,688,198,694,223,688,248,675,274,658,297,653,293,670,272,683,246,689,223,683,200,669,179,651,162"/>
-<area shape="poly" id="edge19_Node000003_Node000008" title=" " alt="" coords="651,157,708,197,769,247,820,293,816,297,766,251,705,201,648,162"/>
-<area shape="rect" id="Node000010" href="$Cabana__Grid__HypreSemiStructuredSolver_8hpp.html" title="HYPRE semi&#45;structured solver interface." alt="" coords="52,199,278,247"/>
-<area shape="poly" id="edge16_Node000003_Node000010" title=" " alt="" coords="507,150,274,201,273,195,505,145"/>
-<area shape="rect" id="Node000011" href="$Cabana__Grid__HypreStructuredSolver_8hpp.html" title="HYPRE structured solver interface." alt="" coords="302,199,497,247"/>
-<area shape="poly" id="edge17_Node000003_Node000011" title=" " alt="" coords="535,160,450,201,448,196,533,155"/>
-<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="236,343,405,389,403,394,235,348"/>
-<area shape="poly" id="edge8_Node000006_Node000002" title=" " alt="" coords="507,252,416,279,370,297,363,308,362,319,370,343,380,357,393,370,423,389,420,394,390,374,376,361,365,345,357,319,358,307,366,293,415,274,506,247"/>
-<area shape="poly" id="edge9_Node000006_Node000004" title=" " alt="" coords="506,251,222,308,221,302,505,245"/>
-<area shape="poly" id="edge10_Node000006_Node000007" title=" " alt="" coords="613,261,626,294,621,296,608,263"/>
-<area shape="poly" id="edge12_Node000006_Node000008" title=" " alt="" coords="673,251,782,292,780,297,671,256"/>
-<area shape="rect" id="Node000009" href="$Cabana__Grid__SparseHalo_8hpp_source.html" title=" " alt="" coords="380,295,531,344"/>
-<area shape="poly" id="edge14_Node000006_Node000009" title=" " alt="" coords="551,258,493,297,490,293,548,254"/>
-<area shape="poly" id="edge11_Node000007_Node000002" title=" " alt="" coords="570,353,486,394,484,389,568,349"/>
-<area shape="poly" id="edge13_Node000008_Node000002" title=" " alt="" coords="720,350,521,394,520,389,719,345"/>
-<area shape="poly" id="edge15_Node000009_Node000002" title=" " alt="" coords="458,360,458,391,453,391,453,360"/>
+<area shape="rect" id="Node000001" title="MPI traits." alt="" coords="302,5,454,54"/>
+<area shape="rect" id="Node000002" href="$Cabana__Grid_8hpp_source.html" title=" " alt="" coords="387,392,566,422"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="300,62,189,113,131,145,79,180,38,219,23,239,13,259,9,279,10,300,17,321,32,342,55,359,89,373,133,384,182,392,288,401,387,404,387,409,288,406,181,397,131,389,88,378,52,364,28,346,13,323,4,301,3,279,8,257,19,236,34,215,76,176,128,140,186,108,298,58"/>
+<area shape="rect" id="Node000003" href="$Cabana__Grid__Array_8hpp.html" title="Grid field arrays." alt="" coords="553,102,704,151"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="456,57,567,99,565,104,454,62"/>
+<area shape="rect" id="Node000004" href="$Cabana__Grid__BovWriter_8hpp.html" title="Brick of values (BOV) grid output." alt="" coords="690,295,842,344"/>
+<area shape="poly" id="edge21_Node000001_Node000004" title=" " alt="" coords="470,29,697,36,837,46,982,60,1122,81,1247,110,1301,128,1348,148,1386,171,1415,197,1423,210,1426,223,1423,236,1414,249,1385,265,1331,277,1175,297,995,311,842,318,842,313,995,305,1174,292,1330,272,1383,260,1411,245,1418,234,1421,223,1418,212,1411,200,1383,176,1346,153,1299,133,1246,116,1121,87,982,65,837,51,697,41,469,34"/>
+<area shape="rect" id="Node000008" href="$Cabana__Grid__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="42,295,263,344"/>
+<area shape="poly" id="edge22_Node000001_Node000008" title=" " alt="" coords="325,64,288,90,249,121,211,158,180,200,169,224,162,249,156,295,150,295,157,248,164,222,176,197,207,155,245,117,285,85,322,60"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="659,161,732,245,749,255,765,260,798,263,828,270,843,279,856,294,864,307,866,320,864,333,856,346,837,361,809,373,735,391,649,401,567,406,567,401,649,396,734,386,807,368,834,356,852,342,859,331,861,320,859,309,852,297,839,283,826,275,797,269,764,265,747,260,728,249,655,164"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="645,164,663,205,688,246,711,271,736,293,732,297,707,275,684,249,658,208,640,167"/>
+<area shape="rect" id="Node000005" href="$Cabana__Grid__FastFourierTransform_8hpp.html" title="Fast Fourier transforms." alt="" coords="741,199,932,247"/>
+<area shape="poly" id="edge6_Node000003_Node000005" title=" " alt="" coords="696,155,786,196,784,201,693,160"/>
+<area shape="rect" id="Node000006" href="$Cabana__Grid__HaloBase_8hpp.html" title="Multi&#45;node grid scatter/gather." alt="" coords="414,199,566,247"/>
+<area shape="poly" id="edge7_Node000003_Node000006" title=" " alt="" coords="583,162,526,200,523,196,580,157"/>
+<area shape="rect" id="Node000007" href="$Cabana__Grid__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="514,295,666,344"/>
+<area shape="poly" id="edge18_Node000003_Node000007" title=" " alt="" coords="624,166,597,295,592,294,618,165"/>
+<area shape="poly" id="edge19_Node000003_Node000008" title=" " alt="" coords="538,148,470,170,403,201,388,213,379,224,369,237,353,250,299,277,244,297,242,292,297,272,350,245,365,233,374,221,385,209,401,196,468,165,537,143"/>
+<area shape="rect" id="Node000010" href="$Cabana__Grid__HypreSemiStructuredSolver_8hpp.html" title="HYPRE semi&#45;structured solver interface." alt="" coords="956,199,1181,247"/>
+<area shape="poly" id="edge16_Node000003_Node000010" title=" " alt="" coords="720,144,959,195,957,201,719,150"/>
+<area shape="rect" id="Node000011" href="$Cabana__Grid__HypreStructuredSolver_8hpp.html" title="HYPRE structured solver interface." alt="" coords="1206,199,1401,247"/>
+<area shape="poly" id="edge17_Node000003_Node000011" title=" " alt="" coords="720,134,937,159,1194,196,1205,198,1205,203,1194,201,936,164,720,139"/>
+<area shape="rect" id="Node000012" href="$Cabana__Grid__Halo__Mpi_8hpp.html" title="Multi&#45;node grid scatter/gather implemented with vanilla MPI." alt="" coords="190,199,339,247"/>
+<area shape="poly" id="edge20_Node000003_Node000012" title=" " alt="" coords="538,154,340,205,339,200,537,149"/>
+<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="676,350,526,394,524,389,675,345"/>
+<area shape="poly" id="edge8_Node000006_Node000002" title=" " alt="" coords="490,263,480,392,475,391,485,262"/>
+<area shape="poly" id="edge9_Node000006_Node000004" title=" " alt="" coords="574,250,698,292,696,297,573,255"/>
+<area shape="poly" id="edge10_Node000006_Node000007" title=" " alt="" coords="527,256,567,293,563,297,524,260"/>
+<area shape="poly" id="edge12_Node000006_Node000008" title=" " alt="" coords="400,252,238,297,237,292,399,247"/>
+<area shape="rect" id="Node000009" href="$Cabana__Grid__SparseHalo_8hpp_source.html" title=" " alt="" coords="288,295,439,344"/>
+<area shape="poly" id="edge14_Node000006_Node000009" title=" " alt="" coords="448,259,397,297,394,293,445,254"/>
+<area shape="poly" id="edge11_Node000007_Node000002" title=" " alt="" coords="548,355,497,393,494,389,545,351"/>
+<area shape="poly" id="edge13_Node000008_Node000002" title=" " alt="" coords="259,346,423,389,422,394,257,351"/>
+<area shape="poly" id="edge15_Node000009_Node000002" title=" " alt="" coords="408,351,459,389,456,393,405,355"/>
 </map>
