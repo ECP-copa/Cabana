@@ -12,7 +12,7 @@
 #include <Cabana_Grid_Array.hpp>
 #include <Cabana_Grid_GlobalGrid.hpp>
 #include <Cabana_Grid_GlobalMesh.hpp>
-#include <Cabana_Grid_Halo.hpp>
+#include <Cabana_Grid_HaloBase.hpp>
 #include <Cabana_Grid_Partitioner.hpp>
 #include <Cabana_Grid_Types.hpp>
 
@@ -153,6 +153,7 @@ void checkScatter( const std::array<bool, 2>& is_dim_periodic,
 }
 
 //---------------------------------------------------------------------------//
+template <class TestCommSpace>
 void gatherScatterTest( const ManualBlockPartitioner<2>& partitioner,
                         const std::array<bool, 2>& is_dim_periodic )
 {
@@ -187,7 +188,8 @@ void gatherScatterTest( const ManualBlockPartitioner<2>& partitioner,
         ArrayOp::assign( *array, 1.0, Own() );
 
         // Create a halo.
-        auto halo = createHalo( NodeHaloPattern<2>(), halo_width, *array );
+        auto halo = createHalo<TestCommSpace>( NodeHaloPattern<2>(), halo_width,
+                                               *array );
 
         // Gather into the ghosts.
         halo->gather( TEST_EXECSPACE(), *array );
@@ -241,8 +243,9 @@ void gatherScatterTest( const ManualBlockPartitioner<2>& partitioner,
         ArrayOp::assign( *face_j_array, 1.0, Own() );
 
         // Create a multihalo.
-        auto halo = createHalo( NodeHaloPattern<2>(), halo_width, *cell_array,
-                                *node_array, *face_i_array, *face_j_array );
+        auto halo = createHalo<TestCommSpace>( NodeHaloPattern<2>(), halo_width,
+                                               *cell_array, *node_array,
+                                               *face_i_array, *face_j_array );
 
         // Gather into the ghosts.
         halo->gather( TEST_EXECSPACE(), *cell_array, *node_array, *face_i_array,
@@ -309,7 +312,7 @@ struct TestHaloReduce<ScatterReduce::Replace>
     }
 };
 
-template <class ReduceFunc>
+template <class TestCommSpace, class ReduceFunc>
 void scatterReduceTest( const ReduceFunc& reduce )
 {
     // Create the global grid.
@@ -349,7 +352,7 @@ void scatterReduceTest( const ReduceFunc& reduce )
     pattern.setNeighbors( neighbors );
 
     // Create a halo.
-    auto halo = createHalo( pattern, array_halo_width, *array );
+    auto halo = createHalo<TestCommSpace>( pattern, array_halo_width, *array );
 
     // Scatter.
     halo->scatter( TEST_EXECSPACE(), reduce, *array );
@@ -378,8 +381,23 @@ void scatterReduceTest( const ReduceFunc& reduce )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( Halo, NonPeriodic2d )
+template <typename TestCommSpace>
+class Halo2dTypedTest : public ::testing::Test
 {
+};
+
+// Add additional backends to test when implemented.
+using CommSpaceTypes = ::testing::Types<Cabana::Mpi>;
+
+// Need a trailing comma
+// to avoid an error when compiling with clang++
+TYPED_TEST_SUITE( Halo2dTypedTest, CommSpaceTypes, );
+
+TYPED_TEST( Halo2dTypedTest, NonPeriodic2d )
+{
+    // Extract communication backend type
+    using commspace_type = TypeParam;
+
     // Let MPI compute the partitioning for this test.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
@@ -390,7 +408,7 @@ TEST( Halo, NonPeriodic2d )
     // Boundaries are not periodic.
     std::array<bool, 2> is_dim_periodic = { false, false };
 
-    gatherScatterTest( partitioner, is_dim_periodic );
+    gatherScatterTest<commspace_type>( partitioner, is_dim_periodic );
 
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
@@ -398,13 +416,16 @@ TEST( Halo, NonPeriodic2d )
     {
         std::swap( ranks_per_dim[0], ranks_per_dim[1] );
         partitioner = ManualBlockPartitioner<2>( ranks_per_dim );
-        gatherScatterTest( partitioner, is_dim_periodic );
+        gatherScatterTest<commspace_type>( partitioner, is_dim_periodic );
     }
 }
 
 //---------------------------------------------------------------------------//
-TEST( Halo, Periodic2d )
+TYPED_TEST( Halo2dTypedTest, Periodic2d )
 {
+    // Extract communication backend type
+    using commspace_type = TypeParam;
+
     // Let MPI compute the partitioning for this test.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
@@ -415,7 +436,7 @@ TEST( Halo, Periodic2d )
     // Every boundary is periodic
     std::array<bool, 2> is_dim_periodic = { true, true };
 
-    gatherScatterTest( partitioner, is_dim_periodic );
+    gatherScatterTest<commspace_type>( partitioner, is_dim_periodic );
 
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
@@ -424,20 +445,35 @@ TEST( Halo, Periodic2d )
     {
         std::swap( ranks_per_dim[0], ranks_per_dim[1] );
         partitioner = ManualBlockPartitioner<2>( ranks_per_dim );
-        gatherScatterTest( partitioner, is_dim_periodic );
+        gatherScatterTest<commspace_type>( partitioner, is_dim_periodic );
     }
 }
 
 //---------------------------------------------------------------------------//
-TEST( Halo, ScatterReduceMax2d ) { scatterReduceTest( ScatterReduce::Max() ); }
-
-//---------------------------------------------------------------------------//
-TEST( Halo, ScatterReduceMin2d ) { scatterReduceTest( ScatterReduce::Min() ); }
-
-//---------------------------------------------------------------------------//
-TEST( Halo, ScatterReduceReplace2d )
+TYPED_TEST( Halo2dTypedTest, ScatterReduceMax2d )
 {
-    scatterReduceTest( ScatterReduce::Replace() );
+    // Extract communication backend type
+    using commspace_type = TypeParam;
+
+    scatterReduceTest<commspace_type>( ScatterReduce::Max() );
+}
+
+//---------------------------------------------------------------------------//
+TYPED_TEST( Halo2dTypedTest, ScatterReduceMin2d )
+{
+    // Extract communication backend type
+    using commspace_type = TypeParam;
+
+    scatterReduceTest<commspace_type>( ScatterReduce::Min() );
+}
+
+//---------------------------------------------------------------------------//
+TYPED_TEST( Halo2dTypedTest, ScatterReduceReplace2d )
+{
+    // Extract communication backend type
+    using commspace_type = TypeParam;
+
+    scatterReduceTest<commspace_type>( ScatterReduce::Replace() );
 }
 
 //---------------------------------------------------------------------------//

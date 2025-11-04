@@ -12,7 +12,6 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_DeepCopy.hpp>
 #include <Cabana_Halo.hpp>
-#include <Cabana_Parallel.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -54,7 +53,7 @@ struct AllTestTag
     }
 };
 
-template <class BuildType, class CommType>
+template <class BuildType>
 struct HaloData
 {
     // Create an AoSoA of local data with space allocated for local data.
@@ -63,7 +62,7 @@ struct HaloData
     using AoSoA_Host_t = Cabana::AoSoA<DataTypes, Kokkos::HostSpace>;
     AoSoA_t aosoa;
 
-    HaloData( Cabana::Halo<TEST_MEMSPACE, BuildType, CommType> halo )
+    HaloData( Cabana::Halo<TEST_MEMSPACE, BuildType> halo )
     {
         aosoa = AoSoA_t( "data", halo.numLocal() + halo.numGhost() );
     }
@@ -95,8 +94,8 @@ struct HaloData
     }
 };
 
-template <class CommType, class BuildType>
-auto createHalo( UniqueTestTag, CommType, BuildType, const int use_topology,
+template <class BuildType>
+auto createHalo( UniqueTestTag, BuildType, const int use_topology,
                  const int my_size, const int num_local )
 {
     // Export version:
@@ -108,7 +107,7 @@ auto createHalo( UniqueTestTag, CommType, BuildType, const int use_topology,
     // Every rank will import ghosts from all other ranks. Import one element
     // from each rank including yourself. Interleave the imports. The resulting
     // communication plan has ghosts that have one unique destination.
-    std::shared_ptr<Cabana::Halo<TEST_MEMSPACE, BuildType, CommType>> halo;
+    std::shared_ptr<Cabana::Halo<TEST_MEMSPACE, BuildType>> halo;
 
     Kokkos::View<int*, Kokkos::HostSpace> ranks_host( "ranks", my_size );
     Kokkos::View<std::size_t*, Kokkos::HostSpace> ids_host( "ids", my_size );
@@ -129,20 +128,17 @@ auto createHalo( UniqueTestTag, CommType, BuildType, const int use_topology,
 
     // Create the plan.
     if ( use_topology )
-        halo =
-            std::make_shared<Cabana::Halo<TEST_MEMSPACE, BuildType, CommType>>(
-                MPI_COMM_WORLD, num_local, export_ids, export_ranks,
-                neighbors );
+        halo = std::make_shared<Cabana::Halo<TEST_MEMSPACE, BuildType>>(
+            MPI_COMM_WORLD, num_local, export_ids, export_ranks, neighbors );
     else
-        halo =
-            std::make_shared<Cabana::Halo<TEST_MEMSPACE, BuildType, CommType>>(
-                MPI_COMM_WORLD, num_local, export_ids, export_ranks );
+        halo = std::make_shared<Cabana::Halo<TEST_MEMSPACE, BuildType>>(
+            MPI_COMM_WORLD, num_local, export_ids, export_ranks );
 
     return halo;
 }
 
-template <class CommType, class BuildType>
-auto createHalo( AllTestTag, CommType, BuildType, const int use_topology,
+template <class BuildType>
+auto createHalo( AllTestTag, BuildType, const int use_topology,
                  const int my_size, const int num_local )
 {
     // Export version:
@@ -154,7 +150,7 @@ auto createHalo( AllTestTag, CommType, BuildType, const int use_topology,
     // Every rank will import a single data point as a ghost from all other
     // ranks. This will create collisions in the scatter as every rank will
     // have data for this rank in the summation.
-    std::shared_ptr<Cabana::Halo<TEST_MEMSPACE, BuildType, CommType>> halo;
+    std::shared_ptr<Cabana::Halo<TEST_MEMSPACE, BuildType>> halo;
 
     Kokkos::View<int*, Kokkos::HostSpace> ranks_host( "ranks", my_size );
     Kokkos::View<std::size_t*, TEST_MEMSPACE> ids( "ids", my_size );
@@ -170,13 +166,11 @@ auto createHalo( AllTestTag, CommType, BuildType, const int use_topology,
 
     // Create the plan.
     if ( use_topology )
-        halo =
-            std::make_shared<Cabana::Halo<TEST_MEMSPACE, BuildType, CommType>>(
-                MPI_COMM_WORLD, num_local, ids, export_ranks, neighbors );
+        halo = std::make_shared<Cabana::Halo<TEST_MEMSPACE, BuildType>>(
+            MPI_COMM_WORLD, num_local, ids, export_ranks, neighbors );
     else
-        halo =
-            std::make_shared<Cabana::Halo<TEST_MEMSPACE, BuildType, CommType>>(
-                MPI_COMM_WORLD, num_local, ids, export_ranks );
+        halo = std::make_shared<Cabana::Halo<TEST_MEMSPACE, BuildType>>(
+            MPI_COMM_WORLD, num_local, ids, export_ranks );
 
     return halo;
 }
@@ -565,9 +559,8 @@ void checkSizeAndCapacity( CommData comm_data, const int num_send,
 
 //---------------------------------------------------------------------------//
 // Gather/scatter test.
-template <class TestTag, class CommType, class BuildType>
-void testHalo( TestTag tag, CommType comm_space, BuildType build_type,
-               const bool use_topology )
+template <class TestTag, class BuildType>
+void testHalo( TestTag tag, BuildType build_type, const bool use_topology )
 {
     // Get my rank.
     int my_rank = -1;
@@ -579,15 +572,14 @@ void testHalo( TestTag tag, CommType comm_space, BuildType build_type,
 
     // Make a communication plan.
     int num_local = tag.num_local;
-    auto halo = createHalo( tag, comm_space, build_type, use_topology, my_size,
-                            num_local );
+    auto halo = createHalo( tag, build_type, use_topology, my_size, num_local );
 
     // Check the plan.
     EXPECT_EQ( halo->numLocal(), num_local );
     EXPECT_EQ( halo->numGhost(), my_size );
 
     // Create particle data.
-    HaloData<BuildType, CommType> halo_data( *halo );
+    HaloData<BuildType> halo_data( *halo );
     auto data = halo_data.createData( my_rank, num_local );
 
     // Gather by AoSoA.
@@ -614,8 +606,8 @@ void testHalo( TestTag tag, CommType comm_space, BuildType build_type,
 
 //---------------------------------------------------------------------------//
 // Gather/scatter test with persistent buffers.
-template <class CommType, class BuildType, class TestTag>
-void testHaloBuffers( TestTag tag, CommType comm_space, BuildType build_type,
+template <class BuildType, class TestTag>
+void testHaloBuffers( TestTag tag, BuildType build_type,
                       const bool use_topology )
 {
     // Get my rank.
@@ -628,15 +620,14 @@ void testHaloBuffers( TestTag tag, CommType comm_space, BuildType build_type,
 
     // Make a communication plan.
     int num_local = tag.num_local;
-    auto halo = createHalo( tag, comm_space, build_type, use_topology, my_size,
-                            num_local );
+    auto halo = createHalo( tag, build_type, use_topology, my_size, num_local );
 
     // Check the plan.
     EXPECT_EQ( halo->numLocal(), num_local );
     EXPECT_EQ( halo->numGhost(), my_size );
 
     // Create particle data.
-    HaloData<BuildType, CommType> halo_data( *halo );
+    HaloData<BuildType> halo_data( *halo );
     auto data = halo_data.createData( my_rank, num_local );
 
     // Create send and receive buffers with an overallocation.
@@ -713,17 +704,24 @@ void testHaloBuffers( TestTag tag, CommType comm_space, BuildType build_type,
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-using HaloTestTypes = ::testing::Types<std::tuple<Cabana::Mpi, Cabana::Export>,
-                                       std::tuple<Cabana::Mpi, Cabana::Import>>;
+// Define the type list
+using HaloTestTypes =
+    ::testing::Types<std::tuple<Cabana::Export, Cabana::Export>,
+                     std::tuple<Cabana::Import, Cabana::Import>
+                     // Future: Set first tuple element to communication space
+                     // used.
+                     >;
 
+// Test fixture template
 template <typename T>
 class HaloTypedTest : public ::testing::Test
 {
-  protected:
-    using CommType = typename std::tuple_element<0, T>::type;
+  public:
+    // using CommSpace = typename std::tuple_element<0, T>::type;
     using BuildType = typename std::tuple_element<1, T>::type;
 };
 
+// Declare the parameterized typed test suite
 TYPED_TEST_SUITE_P( HaloTypedTest );
 
 // 'Unique' tests:
@@ -732,18 +730,16 @@ TYPED_TEST_SUITE_P( HaloTypedTest );
 // Behavior, and consequently tests, differ between export/import build type
 TYPED_TEST_P( HaloTypedTest, Unique )
 {
-    testHalo( UniqueTestTag{}, typename TestFixture::CommType{},
-              typename TestFixture::BuildType{}, true );
-    testHaloBuffers( UniqueTestTag{}, typename TestFixture::CommType{},
-                     typename TestFixture::BuildType{}, true );
+    using BuildType = typename std::tuple_element<1, TypeParam>::type;
+    testHalo( UniqueTestTag{}, BuildType(), true );
+    testHaloBuffers( UniqueTestTag{}, BuildType(), true );
 }
 
 TYPED_TEST_P( HaloTypedTest, UniqueNoTopo )
 {
-    testHalo( UniqueTestTag{}, typename TestFixture::CommType{},
-              typename TestFixture::BuildType{}, false );
-    testHaloBuffers( UniqueTestTag{}, typename TestFixture::CommType{},
-                     typename TestFixture::BuildType{}, false );
+    using BuildType = typename std::tuple_element<1, TypeParam>::type;
+    testHalo( UniqueTestTag{}, BuildType(), false );
+    testHaloBuffers( UniqueTestTag{}, BuildType(), false );
 }
 
 // 'All' tests:
@@ -754,26 +750,26 @@ TYPED_TEST_P( HaloTypedTest, UniqueNoTopo )
 // types.
 TYPED_TEST_P( HaloTypedTest, All )
 {
-    testHalo( AllTestTag{}, typename TestFixture::CommType{},
-              typename TestFixture::BuildType{}, true );
-    testHaloBuffers( AllTestTag{}, typename TestFixture::CommType{},
-                     typename TestFixture::BuildType{}, false );
+    using BuildType = typename std::tuple_element<1, TypeParam>::type;
+    testHalo( AllTestTag{}, BuildType(), true );
+    testHaloBuffers( AllTestTag{}, BuildType(), false );
 }
 
 TYPED_TEST_P( HaloTypedTest, AllNoTopo )
 {
-    testHalo( AllTestTag{}, typename TestFixture::CommType{},
-              typename TestFixture::BuildType{}, false );
-    testHaloBuffers( AllTestTag{}, typename TestFixture::CommType{},
-                     typename TestFixture::BuildType{}, false );
+    using BuildType = typename std::tuple_element<1, TypeParam>::type;
+    testHalo( AllTestTag{}, BuildType(), false );
+    testHaloBuffers( AllTestTag{}, BuildType(), false );
 }
 
+// Register tests
 REGISTER_TYPED_TEST_SUITE_P( HaloTypedTest, Unique, UniqueNoTopo, All,
                              AllNoTopo );
 
 // Instantiate the test suite with the type list. Need a trailing comma
 // to avoid an error when compiling with clang++
 INSTANTIATE_TYPED_TEST_SUITE_P( HaloTests, HaloTypedTest, HaloTestTypes, );
+
 //---------------------------------------------------------------------------//
 
 } // end namespace Test

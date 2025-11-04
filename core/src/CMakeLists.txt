@@ -28,11 +28,19 @@ set(HEADERS_PUBLIC
   Cabana_Slice.hpp
   Cabana_SoA.hpp
   Cabana_Sort.hpp
+  Cabana_Tags.hpp
   Cabana_Tuple.hpp
   Cabana_Types.hpp
   Cabana_Utils.hpp
   Cabana_VerletList.hpp
   Cabana_Version.hpp
+  )
+
+set(HEADERS_IMPL
+  impl/Cabana_CartesianGrid.hpp
+  impl/Cabana_Index.hpp
+  impl/Cabana_PerformanceTraits.hpp
+  impl/Cabana_TypeTraits.hpp
   )
 
 if(Cabana_ENABLE_ARBORX)
@@ -43,9 +51,14 @@ endif()
 
 if(Cabana_ENABLE_MPI)
   list(APPEND HEADERS_PUBLIC
-    Cabana_CommunicationPlan.hpp
+    Cabana_CommunicationPlanBase.hpp
     Cabana_Distributor.hpp
     Cabana_Halo.hpp
+    )
+  list(APPEND HEADERS_IMPL
+    impl/Cabana_CommunicationPlan_Mpi.hpp
+    impl/Cabana_Halo_Mpi.hpp
+    impl/Cabana_Migrate_Mpi.hpp
     )
 endif()
 
@@ -56,13 +69,6 @@ endif()
 if(Cabana_ENABLE_HDF5)
   list(APPEND HEADERS_PUBLIC Cabana_HDF5ParticleOutput.hpp)
 endif()
-
-set(HEADERS_IMPL
-  impl/Cabana_CartesianGrid.hpp
-  impl/Cabana_Index.hpp
-  impl/Cabana_PerformanceTraits.hpp
-  impl/Cabana_TypeTraits.hpp
-  )
 
 add_library(Core INTERFACE)
 add_library(Cabana::Core ALIAS Core)

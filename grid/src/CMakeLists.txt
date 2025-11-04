@@ -19,7 +19,7 @@ set(HEADERS_PUBLIC
   Cabana_Grid_GlobalGrid_impl.hpp
   Cabana_Grid_GlobalMesh.hpp
   Cabana_Grid_GlobalParticleComm.hpp
-  Cabana_Grid_Halo.hpp
+  Cabana_Grid_HaloBase.hpp
   Cabana_Grid_IndexConversion.hpp
   Cabana_Grid_IndexSpace.hpp
   Cabana_Grid_Interpolation.hpp
@@ -41,6 +41,10 @@ set(HEADERS_PUBLIC
   Cabana_Grid_SparseLocalGrid_impl.hpp
   Cabana_Grid_Splines.hpp
   Cabana_Grid_Types.hpp
+  )
+
+set(HEADERS_IMPL
+  impl/Cabana_Grid_Halo_Mpi.hpp
   )
 
 if(Cabana_ENABLE_HYPRE)
@@ -103,5 +107,7 @@ install(TARGETS Grid
 
 install(FILES ${HEADERS_PUBLIC}
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+install(FILES ${HEADERS_IMPL} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/impl/)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Cabana_Grid_Config.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
