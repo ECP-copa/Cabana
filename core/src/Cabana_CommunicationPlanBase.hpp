@@ -430,9 +430,6 @@ class CommunicationPlanBase
     //! Default execution space.
     using execution_space = typename memory_space::execution_space;
 
-    // FIXME: extracting the self type for backwards compatibility with previous
-    // template on DeviceType. Should simply be memory_space::size_type after
-    // next release.
     //! Size type.
     using size_type = typename memory_space::memory_space::size_type;
 
