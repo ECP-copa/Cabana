@@ -20,6 +20,7 @@
 #include <Cabana_Grid_IndexSpace.hpp>
 #include <Cabana_Tags.hpp>
 
+#include <Cabana_Core_Config.hpp>
 #include <Cabana_ParameterPack.hpp>
 
 #include <Kokkos_Core.hpp>

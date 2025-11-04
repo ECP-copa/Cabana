@@ -16,6 +16,7 @@
 #ifndef CABANA_COMMUNICATIONPLANBASE_HPP
 #define CABANA_COMMUNICATIONPLANBASE_HPP
 
+#include <Cabana_Core_Config.hpp>
 #include <Cabana_Tags.hpp>
 #include <Cabana_Utils.hpp>
 

@@ -18,6 +18,7 @@
 
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_CommunicationPlanBase.hpp>
+#include <Cabana_Core_Config.hpp>
 #include <Cabana_Slice.hpp>
 
 #include <Kokkos_Core.hpp>
