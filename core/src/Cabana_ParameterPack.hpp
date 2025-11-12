@@ -62,6 +62,7 @@ struct PackTypeAtIndex
 template <std::size_t N, typename T>
 struct ParameterPackElement
 {
+    //! Ctor from variadic template args
     explicit ParameterPackElement( T value )
         : _m( value )
     {
@@ -79,6 +80,7 @@ template <std::size_t... Indices, typename... Types>
 struct ParameterPackImpl<std::index_sequence<Indices...>, Types...>
     : ParameterPackElement<Indices, Types>...
 {
+    //! Ctor from variadic template args
     explicit ParameterPackImpl( Types... t )
         : ParameterPackElement<Indices, Types>( t )...
     {
@@ -92,6 +94,7 @@ template <typename... Types>
 struct ParameterPack
     : ParameterPackImpl<std::make_index_sequence<sizeof...( Types )>, Types...>
 {
+    //! Ctor from variadic template args
     explicit ParameterPack( Types... args )
         : ParameterPackImpl<std::make_index_sequence<sizeof...( Types )>,
                             Types...>( args... )
