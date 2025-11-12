@@ -236,7 +236,18 @@ add_feature_info(Tests Cabana_ENABLE_TESTING "Build unit tests (requires GTest)"
 option(Cabana_INSTALL_TEST_EXECUTABLES "Install Cabana test executables" OFF)
 
 if(Cabana_ENABLE_TESTING)
-  find_package(GTest 1.10 REQUIRED)
+  find_package(GTest 1.10 CONFIG)
+  if(Gtest_FOUND)
+    message(STATUS "Gtest found")
+  else()
+    message(STATUS "Gtest not found: fetching")
+    include(FetchContent)
+    FetchContent_Declare(
+        GTest
+        URL https://github.com/google/googletest/releases/download/v1.17.0/googletest-1.17.0.tar.gz
+    )
+    FetchContent_MakeAvailable(Gtest)
+  endif()
   # Workaround for FindGTest module in CMake older than 3.20
   if(TARGET GTest::gtest)
     set(gtest_target GTest::gtest)
