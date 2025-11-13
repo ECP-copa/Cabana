@@ -17,6 +17,17 @@
 
 namespace Test
 {
+namespace
+{
+struct NonDefaultConstructableType
+{
+    explicit NonDefaultConstructableType( int i )
+        : value( i )
+    {
+    }
+    int value;
+};
+} // namespace
 
 //---------------------------------------------------------------------------//
 void captureTest()
@@ -25,8 +36,9 @@ void captureTest()
     Kokkos::View<double[1], TEST_MEMSPACE> dbl_view( "dbl_view" );
     Kokkos::View<int[1][1], TEST_MEMSPACE> int_view( "int_view" );
 
-    // Make a parameter pack so we can capture them as a group.
-    auto pack = Cabana::makeParameterPack( dbl_view, int_view );
+    // Make a parameter pack via the ctor so we can capture them as a group.
+    auto pack = Cabana::makeParameterPack( dbl_view, int_view,
+                                           NonDefaultConstructableType{ 1 } );
 
     // Update the pack in a kernel
     Kokkos::parallel_for(
@@ -34,9 +46,10 @@ void captureTest()
         KOKKOS_LAMBDA( const int ) {
             auto dv = Cabana::get<0>( pack );
             auto iv = Cabana::get<1>( pack );
+            auto ndc = Cabana::get<2>( pack );
 
-            dv( 0 ) = 3.14;
-            iv( 0, 0 ) = 12;
+            dv( 0 ) = 2. * ndc.value;
+            iv( 0, 0 ) = 2 * ndc.value;
         } );
 
     // Check the capture.
@@ -45,8 +58,31 @@ void captureTest()
     auto int_host =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), int_view );
 
-    EXPECT_DOUBLE_EQ( dbl_host( 0 ), 3.14 );
-    EXPECT_EQ( int_host( 0, 0 ), 12 );
+    EXPECT_DOUBLE_EQ( dbl_host( 0 ), 2. * 1 );
+    EXPECT_EQ( int_host( 0, 0 ), 2 * 1 );
+
+    Cabana::fillParameterPack( pack, dbl_view, int_view,
+                               NonDefaultConstructableType{ 3 } );
+    // Update the pack in a kernel
+    Kokkos::parallel_for(
+        "fill_pack", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, 1 ),
+        KOKKOS_LAMBDA( const int ) {
+            auto dv = Cabana::get<0>( pack );
+            auto iv = Cabana::get<1>( pack );
+            auto ndc = Cabana::get<2>( pack );
+
+            dv( 0 ) = 2. * ndc.value;
+            iv( 0, 0 ) = 2 * ndc.value;
+        } );
+
+    // Check the capture.
+    dbl_host =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), dbl_view );
+    int_host =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), int_view );
+
+    EXPECT_DOUBLE_EQ( dbl_host( 0 ), 2. * 3 );
+    EXPECT_EQ( int_host( 0, 0 ), 2 * 3 );
 }
 
 //---------------------------------------------------------------------------//
