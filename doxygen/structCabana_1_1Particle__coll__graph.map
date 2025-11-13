@@ -1,5 +1,5 @@
 <map id="Cabana::Particle&lt; FieldTags &gt;" name="Cabana::Particle&lt; FieldTags &gt;">
-<area shape="rect" id="Node000001" title="Single particle copy. Wraps a tuple copy of a particle." alt="" coords="5,121,204,151"/>
+<area shape="rect" id="Node000001" title="Single particle copy. Wraps a tuple copy of a particle." alt="" coords="5,129,204,159"/>
 <area shape="rect" id="Node000002" href="$structCabana_1_1Tuple.html" title=" " alt="" coords="13,5,196,54"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="107,69,107,120,102,120,102,69"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="107,69,107,129,102,129,102,69"/>
 </map>
