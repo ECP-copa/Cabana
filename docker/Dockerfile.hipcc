@@ -1,5 +1,5 @@
 # Use -complete to get both rocm and rocfft
-ARG BASE=rocm/dev-ubuntu-20.04:5.2-complete
+ARG BASE=rocm/dev-ubuntu-20.04:5.6-complete
 FROM $BASE
 
 ARG NPROCS=4
@@ -21,6 +21,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
         python-dev \
         autotools-dev \
         libgtest-dev \
+        libopenmpi-dev \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -37,7 +38,7 @@ RUN KEYDUMP_URL=https://cloud.cees.ornl.gov/download && \
 
 # Install CMake
 ENV CMAKE_DIR=/opt/cmake
-RUN CMAKE_VERSION=3.16.9 && \
+RUN CMAKE_VERSION=3.22.4 && \
     CMAKE_KEY=2D2CEF1034921684 && \
     CMAKE_URL=https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION} && \
     CMAKE_SCRIPT=cmake-${CMAKE_VERSION}-Linux-x86_64.sh && \
@@ -46,33 +47,15 @@ RUN CMAKE_VERSION=3.16.9 && \
     wget --quiet ${CMAKE_URL}/${CMAKE_SHA256}.asc && \
     wget --quiet ${CMAKE_URL}/${CMAKE_SCRIPT} && \
     gpg --verify ${CMAKE_SHA256}.asc ${CMAKE_SHA256} && \
-    grep ${CMAKE_SCRIPT} ${CMAKE_SHA256} | sha256sum --check && \
+    grep -i ${CMAKE_SCRIPT} ${CMAKE_SHA256} | sed -e s/linux/Linux/ | sha256sum --check && \
     mkdir -p ${CMAKE_DIR} && \
     sh ${CMAKE_SCRIPT} --skip-license --prefix=${CMAKE_DIR} && \
-    rm ${CMAKE_SCRIPT}
+    rm cmake*
 ENV PATH=${CMAKE_DIR}/bin:$PATH
-
-# Install Open MPI
-ENV OPENMPI_DIR=/opt/openmpi
-RUN OPENMPI_VERSION=4.0.4 && \
-    OPENMPI_VERSION_SHORT=4.0 && \
-    OPENMPI_SHA1=50861c22a4b92ca2e069cd49d756dd96c659bfa8 && \
-    OPENMPI_URL=https://download.open-mpi.org/release/open-mpi/v${OPENMPI_VERSION_SHORT}/openmpi-${OPENMPI_VERSION}.tar.bz2 && \
-    OPENMPI_ARCHIVE=openmpi-${OPENMPI_VERSION}.tar.bz2 && \
-    SCRATCH_DIR=/scratch && mkdir -p ${SCRATCH_DIR} && cd ${SCRATCH_DIR} && \
-    wget --quiet ${OPENMPI_URL} --output-document=${OPENMPI_ARCHIVE} && \
-    echo "${OPENMPI_SHA1} ${OPENMPI_ARCHIVE}" | sha1sum -c && \
-    mkdir -p openmpi && \
-    tar -xf ${OPENMPI_ARCHIVE} -C openmpi --strip-components=1 && \
-    mkdir -p build && cd build && \
-    ../openmpi/configure --prefix=${OPENMPI_DIR} CFLAGS=-w && \
-    make -j${NPROCS} install && \
-    rm -rf ${SCRATCH_DIR}
-ENV PATH=${OPENMPI_DIR}/bin:$PATH
 
 # Install Kokkos
 ARG KOKKOS_VERSION=4.1.00
-ARG KOKKOS_OPTIONS="-DKokkos_ENABLE_HIP=ON -DKokkos_ENABLE_LIBDL=OFF -DKokkos_ARCH_VEGA906=ON"
+ARG KOKKOS_OPTIONS="-DKokkos_ENABLE_HIP=ON -DKokkos_ENABLE_LIBDL=OFF -DKokkos_ARCH_VEGA908=ON"
 ENV KOKKOS_DIR=/opt/kokkos
 RUN KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz && \
     KOKKOS_ARCHIVE=kokkos-${KOKKOS_HASH}.tar.gz && \
@@ -82,7 +65,7 @@ RUN KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz
     tar -xf ${KOKKOS_ARCHIVE} -C kokkos --strip-components=1 && \
     cd kokkos && \
     mkdir -p build && cd build && \
-    cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=${KOKKOS_DIR} -D CMAKE_CXX_STANDARD=14 -D CMAKE_CXX_COMPILER=hipcc ${KOKKOS_OPTIONS} .. && \
+    cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=${KOKKOS_DIR} -D CMAKE_CXX_STANDARD=17 -D CMAKE_CXX_COMPILER=hipcc ${KOKKOS_OPTIONS} .. && \
     make -j${NPROCS} install && \
     rm -rf ${SCRATCH_DIR}
 
@@ -100,6 +83,7 @@ RUN ARBORX_VERSION=v1.4 && \
       -D CMAKE_INSTALL_PREFIX=${ARBORX_DIR} \
       -D CMAKE_BUILD_TYPE=Debug \
       -D CMAKE_CXX_COMPILER=hipcc \
+      -D GPU_TARGETS=gfx908 \
       -D CMAKE_CXX_EXTENSIONS=OFF \
       -D CMAKE_PREFIX_PATH=${KOKKOS_DIR} \
     .. && \
@@ -132,7 +116,7 @@ RUN FFTW_URL=http://www.fftw.org/fftw-${FFTW_VERSION}.tar.gz && \
     rm -rf ${SCRATCH_DIR}
 
 # Install heffte
-ARG HEFFTE_VERSION=2.3.0
+ARG HEFFTE_VERSION=2.4.0
 ENV HEFFTE_DIR=/opt/heffte
 RUN HEFFTE_URL=https://github.com/icl-utk-edu/heffte/archive/v${HEFFTE_VERSION}.tar.gz && \
     HEFFTE_ARCHIVE=heffte.tar.gz && \
@@ -148,7 +132,8 @@ RUN HEFFTE_URL=https://github.com/icl-utk-edu/heffte/archive/v${HEFFTE_VERSION}.
       -D CMAKE_BUILD_TYPE=Debug \
       -D CMAKE_CXX_COMPILER=hipcc \
       -D CMAKE_CXX_STANDARD=14 \
-      -D CMAKE_CXX_FLAGS="--amdgpu-target=gfx906" \
+      -D CMAKE_CXX_FLAGS="--amdgpu-target=gfx908" \
+      -D Heffte_ENABLE_TESTING=OFF \
       -D Heffte_ENABLE_ROCM=ON \
       -D Heffte_ENABLE_FFTW=ON \
     .. && \
