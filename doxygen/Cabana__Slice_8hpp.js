@@ -13,6 +13,6 @@ var Cabana__Slice_8hpp =
     [ "Cabana::copyViewToSlice", "namespaceCabana.html#aae0938a572be03d7c205d58f9e81caf3", null ],
     [ "Cabana::copyViewToSlice", "namespaceCabana.html#aea3f27002f8056b1d72b94aa2301ba5e", null ],
     [ "Cabana::copyViewToSlice", "namespaceCabana.html#a9bcaaa26544a4e172541847a82995876", null ],
-    [ "Cabana::size", "namespaceCabana.html#a38373e37aa5b7d04357323bcb20b249c", null ],
-    [ "Cabana::size", "namespaceCabana.html#a84d5740a31ba48910d2a247684ab669a", null ]
+    [ "Cabana::size", "namespaceCabana.html#ac830039c05cbfa5d12a344c38ea3c854", null ],
+    [ "Cabana::size", "namespaceCabana.html#addb0fd64e9a2407b214b07c09a59842e", null ]
 ];
