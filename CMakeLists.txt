@@ -99,7 +99,7 @@ set_package_properties(ALL PROPERTIES TYPE OPTIONAL PURPOSE "Used for load balan
 find_package( CLANG_FORMAT 14 )
 
 # find hypre
-Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.1 )
+Cabana_add_dependency( PACKAGE HYPRE VERSION 3.0.0 )
 set_package_properties(HYPRE PROPERTIES TYPE OPTIONAL PURPOSE "Used for structured solves")
 
 # find heffte
