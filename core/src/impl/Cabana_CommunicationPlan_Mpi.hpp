@@ -35,8 +35,8 @@ namespace Cabana
 {
 
 /*!
-    \brief Helper to post non-blocking receive(s) for a single neighbor, handling
-    messages larger than INT_MAX when MPI version is less than 4 and
+    \brief Helper to post non-blocking receive(s) for a single neighbor,
+   handling messages larger than INT_MAX when MPI version is less than 4 and
     large-count messages are unavailable.
 
     \param subview The receive buffer.
@@ -51,12 +51,11 @@ namespace Cabana
 */
 template <class ViewType>
 inline void cabanaIrecv( const ViewType& subview, int source, int tag,
-                    MPI_Comm comm,
-                    std::vector<MPI_Request>& requests )
+                         MPI_Comm comm, std::vector<MPI_Request>& requests )
 {
     using value_type = typename ViewType::value_type;
     std::size_t total_bytes = subview.size() * sizeof( value_type );
- 
+
 #if MPI_VERSION >= 4
     // MPI 4.0 supports large counts natively via MPI_Irecv_c.
     requests.push_back( MPI_Request() );
@@ -67,14 +66,13 @@ inline void cabanaIrecv( const ViewType& subview, int source, int tag,
     std::size_t offset = 0;
     while ( offset < total_bytes )
     {
-        int chunk = static_cast<int>(
-            std::min( static_cast<std::size_t>( INT_MAX ),
-                      total_bytes - offset ) );
- 
+        int chunk = static_cast<int>( std::min(
+            static_cast<std::size_t>( INT_MAX ), total_bytes - offset ) );
+
         requests.push_back( MPI_Request() );
         MPI_Irecv( reinterpret_cast<char*>( subview.data() ) + offset, chunk,
                    MPI_BYTE, source, tag, comm, &( requests.back() ) );
- 
+
         offset += static_cast<std::size_t>( chunk );
     }
 #endif
@@ -97,12 +95,11 @@ inline void cabanaIrecv( const ViewType& subview, int source, int tag,
 */
 template <class ViewType>
 inline void cabanaIsend( const ViewType& subview, int dest, int tag,
-                    MPI_Comm comm,
-                    std::vector<MPI_Request>& requests )
+                         MPI_Comm comm, std::vector<MPI_Request>& requests )
 {
     using value_type = typename ViewType::value_type;
     std::size_t total_bytes = subview.size() * sizeof( value_type );
- 
+
 #if MPI_VERSION >= 4
     // MPI 4.0 supports large counts natively via MPI_Isend_c.
     requests.push_back( MPI_Request() );
@@ -113,15 +110,13 @@ inline void cabanaIsend( const ViewType& subview, int dest, int tag,
     std::size_t offset = 0;
     while ( offset < total_bytes )
     {
-        int chunk = static_cast<int>(
-            std::min( static_cast<std::size_t>( INT_MAX ),
-                      total_bytes - offset ) );
- 
+        int chunk = static_cast<int>( std::min(
+            static_cast<std::size_t>( INT_MAX ), total_bytes - offset ) );
+
         requests.push_back( MPI_Request() );
-        MPI_Isend(
-            reinterpret_cast<const char*>( subview.data() ) + offset, chunk,
-            MPI_BYTE, dest, tag, comm, &( requests.back() ) );
- 
+        MPI_Isend( reinterpret_cast<const char*>( subview.data() ) + offset,
+                   chunk, MPI_BYTE, dest, tag, comm, &( requests.back() ) );
+
         offset += static_cast<std::size_t>( chunk );
     }
 #endif

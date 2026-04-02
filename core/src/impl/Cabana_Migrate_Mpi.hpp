@@ -113,19 +113,19 @@ void migrateData(
     for ( int n = 0; n < num_n; ++n )
     {
         recv_range.second = recv_range.first + distributor.numImport( n );
- 
+
         if ( ( distributor.numImport( n ) > 0 ) &&
              ( distributor.neighborRank( n ) != my_rank ) )
         {
             auto recv_subview = Kokkos::subview( recv_buffer, recv_range );
- 
-            cabanaIrecv( recv_subview, distributor.neighborRank( n ),
-                               mpi_tag, distributor.comm(), requests );
+
+            cabanaIrecv( recv_subview, distributor.neighborRank( n ), mpi_tag,
+                         distributor.comm(), requests );
         }
- 
+
         recv_range.first = recv_range.second;
     }
- 
+
     // Post non-blocking sends.
     std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
@@ -134,12 +134,12 @@ void migrateData(
              ( distributor.neighborRank( n ) != my_rank ) )
         {
             send_range.second = send_range.first + distributor.numExport( n );
- 
+
             auto send_subview = Kokkos::subview( send_buffer, send_range );
- 
-            cabanaIsend( send_subview, distributor.neighborRank( n ),
-                               mpi_tag, distributor.comm(), requests );
- 
+
+            cabanaIsend( send_subview, distributor.neighborRank( n ), mpi_tag,
+                         distributor.comm(), requests );
+
             send_range.first = send_range.second;
         }
     }
@@ -275,19 +275,20 @@ void migrateSlice(
     for ( int n = 0; n < num_n; ++n )
     {
         recv_range.second = recv_range.first + distributor.numImport( n );
- 
+
         if ( ( distributor.numImport( n ) > 0 ) &&
              ( distributor.neighborRank( n ) != my_rank ) )
         {
-            auto recv_subview = Kokkos::subview( recv_buffer, recv_range );
- 
-            cabanaIrecv( recv_subview, distributor.neighborRank( n ),
-                               mpi_tag, distributor.comm(), requests );
+            auto recv_subview =
+                Kokkos::subview( recv_buffer, recv_range, Kokkos::ALL );
+
+            cabanaIrecv( recv_subview, distributor.neighborRank( n ), mpi_tag,
+                         distributor.comm(), requests );
         }
- 
+
         recv_range.first = recv_range.second;
     }
- 
+
     // Post non-blocking sends.
     std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
@@ -296,12 +297,13 @@ void migrateSlice(
              ( distributor.neighborRank( n ) != my_rank ) )
         {
             send_range.second = send_range.first + distributor.numExport( n );
- 
-            auto send_subview = Kokkos::subview( send_buffer, send_range );
- 
-            cabanaIsend( send_subview, distributor.neighborRank( n ),
-                               mpi_tag, distributor.comm(), requests );
- 
+
+            auto send_subview =
+                Kokkos::subview( send_buffer, send_range, Kokkos::ALL );
+
+            cabanaIsend( send_subview, distributor.neighborRank( n ), mpi_tag,
+                         distributor.comm(), requests );
+
             send_range.first = send_range.second;
         }
     }
