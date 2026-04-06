@@ -69,7 +69,8 @@ Gather<HaloType, AoSoAType,
 
     // Post non-blocking receives.
     int num_n = _comm_plan.numNeighbor();
-    std::vector<MPI_Request> requests( num_n );
+    std::vector<MPI_Request> requests;
+    requests.reserve( num_n * 2 );
     std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
@@ -77,15 +78,13 @@ Gather<HaloType, AoSoAType,
 
         auto recv_subview = Kokkos::subview( recv_buffer, recv_range );
 
-        MPI_Irecv( recv_subview.data(),
-                   recv_subview.size() * sizeof( data_type ), MPI_BYTE,
-                   _comm_plan.neighborRank( n ), mpi_tag, _comm_plan.comm(),
-                   &( requests[n] ) );
+        cabanaIrecv( recv_subview, _comm_plan.neighborRank( n ), mpi_tag,
+                     _comm_plan.comm(), requests );
 
         recv_range.first = recv_range.second;
     }
 
-    // Do blocking sends.
+    // Post non-blocking sends.
     std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
@@ -93,15 +92,14 @@ Gather<HaloType, AoSoAType,
 
         auto send_subview = Kokkos::subview( send_buffer, send_range );
 
-        MPI_Send( send_subview.data(),
-                  send_subview.size() * sizeof( data_type ), MPI_BYTE,
-                  _comm_plan.neighborRank( n ), mpi_tag, _comm_plan.comm() );
+        cabanaIsend( send_subview, _comm_plan.neighborRank( n ), mpi_tag,
+                     _comm_plan.comm(), requests );
 
         send_range.first = send_range.second;
     }
 
-    // Wait on non-blocking receives.
-    std::vector<MPI_Status> status( num_n );
+    // Wait on all non-blocking communication.
+    std::vector<MPI_Status> status( requests.size() );
     const int ec =
         MPI_Waitall( requests.size(), requests.data(), status.data() );
     if ( MPI_SUCCESS != ec )
@@ -172,7 +170,8 @@ Gather<HaloType, SliceType,
 
     // Post non-blocking receives.
     int num_n = _comm_plan.numNeighbor();
-    std::vector<MPI_Request> requests( num_n );
+    std::vector<MPI_Request> requests;
+    requests.reserve( num_n * 2 );
     std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
@@ -181,15 +180,13 @@ Gather<HaloType, SliceType,
         auto recv_subview =
             Kokkos::subview( recv_buffer, recv_range, Kokkos::ALL );
 
-        MPI_Irecv( recv_subview.data(),
-                   recv_subview.size() * sizeof( data_type ), MPI_BYTE,
-                   _comm_plan.neighborRank( n ), mpi_tag, _comm_plan.comm(),
-                   &( requests[n] ) );
+        cabanaIrecv( recv_subview, _comm_plan.neighborRank( n ), mpi_tag,
+                     _comm_plan.comm(), requests );
 
         recv_range.first = recv_range.second;
     }
 
-    // Do blocking sends.
+    // Post non-blocking sends.
     std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
@@ -198,15 +195,14 @@ Gather<HaloType, SliceType,
         auto send_subview =
             Kokkos::subview( send_buffer, send_range, Kokkos::ALL );
 
-        MPI_Send( send_subview.data(),
-                  send_subview.size() * sizeof( data_type ), MPI_BYTE,
-                  _comm_plan.neighborRank( n ), mpi_tag, _comm_plan.comm() );
+        cabanaIsend( send_subview, _comm_plan.neighborRank( n ), mpi_tag,
+                     _comm_plan.comm(), requests );
 
         send_range.first = send_range.second;
     }
 
-    // Wait on non-blocking receives.
-    std::vector<MPI_Status> status( num_n );
+    // Wait on all non-blocking communication.
+    std::vector<MPI_Status> status( requests.size() );
     const int ec =
         MPI_Waitall( requests.size(), requests.data(), status.data() );
     if ( MPI_SUCCESS != ec )
@@ -286,7 +282,8 @@ Scatter<HaloType, SliceType>::applyImpl( ExecutionSpace, CommSpaceType )
 
     // Post non-blocking receives.
     int num_n = _comm_plan.numNeighbor();
-    std::vector<MPI_Request> requests( num_n );
+    std::vector<MPI_Request> requests;
+    requests.reserve( num_n * 2 );
     std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
@@ -295,15 +292,13 @@ Scatter<HaloType, SliceType>::applyImpl( ExecutionSpace, CommSpaceType )
         auto recv_subview =
             Kokkos::subview( recv_buffer, recv_range, Kokkos::ALL );
 
-        MPI_Irecv( recv_subview.data(),
-                   recv_subview.size() * sizeof( data_type ), MPI_BYTE,
-                   _comm_plan.neighborRank( n ), mpi_tag, _comm_plan.comm(),
-                   &( requests[n] ) );
+        cabanaIrecv( recv_subview, _comm_plan.neighborRank( n ), mpi_tag,
+                     _comm_plan.comm(), requests );
 
         recv_range.first = recv_range.second;
     }
 
-    // Do blocking sends.
+    // Post non-blocking sends.
     std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
@@ -312,15 +307,14 @@ Scatter<HaloType, SliceType>::applyImpl( ExecutionSpace, CommSpaceType )
         auto send_subview =
             Kokkos::subview( send_buffer, send_range, Kokkos::ALL );
 
-        MPI_Send( send_subview.data(),
-                  send_subview.size() * sizeof( data_type ), MPI_BYTE,
-                  _comm_plan.neighborRank( n ), mpi_tag, _comm_plan.comm() );
+        cabanaIsend( send_subview, _comm_plan.neighborRank( n ), mpi_tag,
+                     _comm_plan.comm(), requests );
 
         send_range.first = send_range.second;
     }
 
-    // Wait on non-blocking receives.
-    std::vector<MPI_Status> status( num_n );
+    // Wait on all non-blocking communication.
+    std::vector<MPI_Status> status( requests.size() );
     const int ec =
         MPI_Waitall( requests.size(), requests.data(), status.data() );
     if ( MPI_SUCCESS != ec )
