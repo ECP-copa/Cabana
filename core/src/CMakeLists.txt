@@ -34,6 +34,7 @@ set(HEADERS_PUBLIC
   Cabana_Utils.hpp
   Cabana_VerletList.hpp
   Cabana_Version.hpp
+  Cabana_BatchedLinearAlgebra.hpp
   )
 
 set(HEADERS_IMPL
