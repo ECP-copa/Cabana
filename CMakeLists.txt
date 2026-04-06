@@ -58,11 +58,6 @@ foreach(_device ${CABANA_SUPPORTED_DEVICES})
   endif()
 endforeach()
 
-# ensure that we can use lambdas
-if(Kokkos_ENABLE_CUDA)
-  kokkos_check(OPTIONS CUDA_LAMBDA)
-endif()
-
 # standard dependency macro
 macro(Cabana_add_dependency)
   cmake_parse_arguments(CABANA_DEPENDENCY "" "PACKAGE;VERSION" "COMPONENTS" ${ARGN})
