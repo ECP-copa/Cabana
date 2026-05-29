@@ -251,8 +251,82 @@ class LocalGrid
     boundaryIndexSpace( DecompositionTag t1, EntityType t2, const int off_i,
                         const int off_j, const int halo_width = -1 ) const;
 
+    /*!
+      \brief Given the relative offsets of a periodic boundary relative to this
+      local grid's indices get the set of local entity indices associated with
+      that boundary in the given decomposition.
+
+      \param t1 Decomposition type: Own or Ghost
+      \param t2 Entity: Cell, Node, Edge, or Face
+      \param off_ijk %Array of neighbor offset indices.
+      \param halo_width Optional depth of shared indices within the halo. Must
+      be less than or equal to the halo width of the local grid. Default is to
+      use the halo width of the local grid.
+
+      For example, if the Own decomposition is used, the interior entities that
+      would be affected by a periodic boundary operation are provided whereas if
+      the Ghost decomposition is used the halo entities of that periodic
+      neighbor are provided.
+    */
+    template <class DecompositionTag, class EntityType>
+    IndexSpace<num_space_dim>
+    periodicIndexSpace( DecompositionTag t1, EntityType t2,
+                        const std::array<int, num_space_dim>& off_ijk,
+                        const int halo_width = -1 ) const;
+
+    /*!
+      \brief Given the relative offsets of a periodic boundary relative to this
+      local grid's indices get the set of local entity indices associated with
+      that boundary in the given decomposition.
+
+      \param t1 Decomposition type: Own or Ghost
+      \param t2 Entity: Cell, Node, Edge, or Face
+      \param off_i, off_j, off_k Neighbor offset index in a given dimension.
+      \param halo_width Optional depth of shared indices within the halo. Must
+      be less than or equal to the halo width of the local grid. Default is to
+      use the halo width of the local grid.
+
+      For example, if the Own decomposition is used, the interior entities that
+      would be affected by a boundary operation are provided whereas if the
+      Ghost decomposition is used the halo entities of that periodic neighbor
+      are provided.
+    */
+    template <class DecompositionTag, class EntityType,
+              std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    periodicIndexSpace( DecompositionTag t1, EntityType t2, const int off_i,
+                        const int off_j, const int off_k,
+                        const int halo_width = -1 ) const;
+
+    /*!
+      \brief Given the relative offsets of a periodic boundary relative to this
+      local grid's indices get the set of local entity indices associated with
+      that boundary in the given decomposition.
+
+      \param t1 Decomposition type: Own or Ghost
+      \param t2 Entity: Cell, Node, Edge, or Face
+      \param off_i, off_j Neighbor offset index in a given dimension.
+      \param halo_width Optional depth of shared indices within the halo. Must
+      be less than or equal to the halo width of the local grid. Default is to
+      use the halo width of the local grid.
+
+      For example, if the Own decomposition is used, the interior entities that
+      would be affected by a boundary operation are provided whereas if the
+      Ghost decomposition is used the halo entities of that periodic neighbor
+      are provided.
+    */
+    template <class DecompositionTag, class EntityType,
+              std::size_t NSD = num_space_dim>
+    std::enable_if_t<2 == NSD, IndexSpace<2>>
+    periodicIndexSpace( DecompositionTag t1, EntityType t2, const int off_i,
+                        const int off_j, const int halo_width = -1 ) const;
+
   private:
     // Helper functions
+    auto zeroIndexSpace() const;
+    auto setupHaloWidth( const int halo_width ) const;
+    void checkOffsets( const std::array<int, num_space_dim>& off_ijk ) const;
+
     template <class OwnedIndexSpace>
     auto getBound( OwnedIndexSpace owned_space, const int upper_lower,
                    const std::array<int, num_space_dim>& off_ijk,
