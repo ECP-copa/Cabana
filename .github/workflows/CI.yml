@@ -631,3 +631,64 @@ jobs:
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
           cmake --build build --parallel 2 --verbose
           cmake --install build
+
+  OpenMPTarget:
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        cxx: ['clang++']
+        cmake_build_type: ['Release']
+        kokkos_ver: ['4.2.00']
+    runs-on: ubuntu-latest
+    container: ghcr.io/ecp-copa/ci-containers/ubuntu:latest
+    steps:
+      - name: Checkout kokkos
+        uses: actions/checkout@v3
+        with:
+          repository: kokkos/kokkos
+          ref: ${{ matrix.kokkos_ver }}
+          path: kokkos
+      - name: Build kokkos
+        working-directory: kokkos
+        run: |
+          cmake -B build \
+            -DCMAKE_INSTALL_PREFIX=$HOME/kokkos \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DKokkos_ENABLE_OPENMPTARGET=ON \
+            -DKokkos_ARCH_VOLTA70=ON
+          cmake --build build --parallel 2
+          cmake --install build
+      - name: Checkout arborx
+        uses: actions/checkout@v3
+        with:
+          repository: arborx/ArborX
+          ref: v1.7
+          path: arborx
+      - name: Build arborx
+        working-directory: arborx
+        run: |
+          cmake -B build \
+            -DKokkos_ROOT=${HOME}/kokkos \
+            -DCMAKE_INSTALL_PREFIX=$HOME/arborx \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
+          cmake --build build --parallel 2
+          cmake --install build
+      - name: Checkout Cabana
+        uses: actions/checkout@v3
+      - name: Build Cabana
+        run: |
+          cmake -B build \
+            -DCMAKE_INSTALL_PREFIX=$HOME/Cabana \
+            -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe" \
+            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/ALL" \
+            -DCMAKE_CXX_FLAGS="-Wall -Wextra -pedantic -Werror" \
+            -DCabana_ENABLE_TESTING=ON \
+            -DCabana_ENABLE_EXAMPLES=ON \
+            -DCabana_ENABLE_PERFORMANCE_TESTING=ON \
+            -DCabana_PERFORMANCE_EXPECTED_FLOPS=0 \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
+          cmake --build build --parallel 2 --verbose
+          cmake --install build
