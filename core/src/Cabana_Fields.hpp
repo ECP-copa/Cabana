@@ -16,6 +16,8 @@
 #ifndef CABANA_FIELDS_HPP
 #define CABANA_FIELDS_HPP
 
+#include <Cabana_BatchedLinearAlgebra.hpp>
+
 namespace Cabana
 {
 namespace Field
@@ -47,6 +49,8 @@ struct Scalar
     static constexpr int size = 1;
     //! Scalar type.
     using data_type = value_type;
+    //! Linear algebra type.
+    using linear_algebra_type = value_type;
 };
 
 //! Vector (1D) particle field type.
@@ -63,6 +67,8 @@ struct Vector
     static constexpr int dim0 = D;
     //! Scalar type.
     using data_type = value_type[D];
+    //! Linear algebra type.
+    using linear_algebra_type = Cabana::LinearAlgebra::VectorView<T, D>;
 };
 
 //! Matrix (2D) particle field type.
@@ -81,6 +87,8 @@ struct Matrix
     static constexpr int dim1 = D1;
     //! Scalar type.
     using data_type = value_type[D0][D1];
+    //! Linear algebra type.
+    using linear_algebra_type = LinearAlgebra::MatrixView<T, D0, D1>;
 };
 
 //---------------------------------------------------------------------------//
