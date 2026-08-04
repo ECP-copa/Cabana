@@ -300,20 +300,6 @@ deep_copy( DstSlice& dst, const SrcSlice& src,
                    "Cabana::deep_copy: Attempted to deep copy Slice objects of "
                    "different value types" );
 
-    // Check that the element dimensions are the same.
-    static_assert( SrcSlice::view_layout::D0 == SrcSlice::view_layout::D0,
-                   "Cabana::deep_copy: Slice dimension 0 is different" );
-    static_assert( SrcSlice::view_layout::D1 == SrcSlice::view_layout::D1,
-                   "Cabana::deep_copy: Slice dimension 1 is different" );
-    static_assert( SrcSlice::view_layout::D2 == SrcSlice::view_layout::D2,
-                   "Cabana::deep_copy: Slice dimension 2 is different" );
-    static_assert( SrcSlice::view_layout::D3 == SrcSlice::view_layout::D3,
-                   "Cabana::deep_copy: Slice dimension 3 is different" );
-    static_assert( SrcSlice::view_layout::D4 == SrcSlice::view_layout::D4,
-                   "Cabana::deep_copy: Slice dimension 4 is different" );
-    static_assert( SrcSlice::view_layout::D5 == SrcSlice::view_layout::D5,
-                   "Cabana::deep_copy: Slice dimension 5 is different" );
-
     // Check for the same number of elements.
     if ( dst.size() != src.size() )
     {

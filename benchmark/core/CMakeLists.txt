@@ -9,6 +9,9 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
+add_executable(AoSoAPerformance Cabana_AoSoAPerformance.cpp)
+target_link_libraries(AoSoAPerformance Cabana::Core)
+
 add_executable(BinSortPerformance Cabana_BinSortPerformance.cpp)
 target_link_libraries(BinSortPerformance Cabana::Core)
 
@@ -29,6 +32,8 @@ target_link_libraries(CommPerformance Cabana::Core)
 endif()
 
 if(Cabana_ENABLE_TESTING)
+  add_test(NAME Cabana_Core_Performance_AoSoA COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:AoSoAPerformance> aosoa_output.txt)
+
   add_test(NAME Cabana_Core_Performance_BinSort COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:BinSortPerformance> sort_output.txt)
 
   add_test(NAME Cabana_Core_Performance_NeighborVerlet COMMAND ${NONMPI_PRECOMMAND} $<TARGET_FILE:NeighborVerletPerformance> verlet_output.txt)
