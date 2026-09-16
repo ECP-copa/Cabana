@@ -772,7 +772,8 @@ class LocalMesh<MemorySpace, NonUniformMesh<Scalar, NumSpaceDim>>
 //---------------------------------------------------------------------------//
 /*!
   \brief Creation function for local mesh.
-  \return Shared pointer to a LocalMesh.
+  \param local_grid LocalGrid
+  \return A LocalMesh instance.
 */
 template <class MemorySpace, class MeshType>
 LocalMesh<MemorySpace, MeshType>
