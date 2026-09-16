@@ -56,14 +56,14 @@ pipeline {
                         }
                     }
                 }
-                stage('ROCM-5.2-HIPCC-DEBUG') {
+                stage('ROCM-5.6-HIPCC-DEBUG') {
                     agent {
                         dockerfile {
                             filename 'Dockerfile.hipcc'
                             dir 'docker'
-                            additionalBuildArgs '--build-arg BASE=rocm/dev-ubuntu-20.04:5.2-complete'
+                            additionalBuildArgs '--build-arg BASE=rocm/dev-ubuntu-20.04:5.6-complete'
                             args '-v /tmp/ccache.kokkos:/tmp/ccache --device=/dev/kfd --device=/dev/dri --security-opt seccomp=unconfined --group-add video --env HIP_VISIBLE_DEVICES=$HIP_VISIBLE_DEVICES'
-                            label 'rocm-docker && vega && AMD_Radeon_Instinct_MI60'
+                            label 'rocm-docker && AMD_Radeon_Instinct_MI100'
                         }
                     }
                     steps {
@@ -85,6 +85,8 @@ pipeline {
                               -D Cabana_ENABLE_TESTING=ON \
                               -D Cabana_ENABLE_PERFORMANCE_TESTING=ON \
                               -D Cabana_ENABLE_EXAMPLES=ON \
+                              -D VALGRIND_EXECUTABLE=False \
+                              -D GPU_TARGETS=gfx908 \
                             .. && \
                             make -j8 && \
                             ctest --output-on-failure
