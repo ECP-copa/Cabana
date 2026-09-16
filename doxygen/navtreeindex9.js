@@ -190,13 +190,5 @@ var NAVTREEINDEX9 =
 "structCabana_1_1is__soa.html":[0,0,0,43],
 "structCabana_1_1is__soa.html":[1,0,1,47],
 "structCabana_1_1is__tuple.html":[0,0,0,44],
-"structCabana_1_1is__tuple.html":[1,0,1,48],
-"structKokkos_1_1LayoutCabanaSlice.html":[1,0,2,0],
-"structKokkos_1_1LayoutCabanaSlice.html#a191996e9315be13165dc80c39b1eab81":[1,0,2,0,5],
-"structKokkos_1_1LayoutCabanaSlice.html#a4a8e59e8839a30f456c3606d7244a7cc":[1,0,2,0,0],
-"structKokkos_1_1LayoutCabanaSlice.html#a53dc5465c4fd54fdc8182a221cba7b17":[1,0,2,0,2],
-"structKokkos_1_1LayoutCabanaSlice.html#aa5a667b93e547f75262b4102e9701e17":[1,0,2,0,6],
-"structKokkos_1_1LayoutCabanaSlice.html#aadfb9de405102f0e3ed7908d78aa503a":[1,0,2,0,1],
-"structKokkos_1_1LayoutCabanaSlice.html#ab4f81902493f8b933284458d7abadd64":[1,0,2,0,4],
-"structKokkos_1_1LayoutCabanaSlice.html#ada2d7365f8fd915b91f48877659cea07":[1,0,2,0,3]
+"structCabana_1_1is__tuple.html":[1,0,1,48]
 };

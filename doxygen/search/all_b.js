@@ -6,7 +6,7 @@ var searchData=
   ['keyminmax_3',['keyMinMax',['../Cabana__Sort_8hpp.html#aef9be11013c4188e68ddc69505bc793c',1,'Cabana::Impl']]],
   ['keyvalue_4',['KeyValue',['../classCabana_1_1Grid_1_1Experimental_1_1SparseHalo.html#a7899e2f7b731ecef19cfeb9db6ba14d4',1,'Cabana::Grid::Experimental::SparseHalo']]],
   ['kokkos_5fmemory_5ftraits_5',['kokkos_memory_traits',['../structCabana_1_1DefaultAccessMemory.html#acfb14068ddce93f5592d426162991236',1,'Cabana::DefaultAccessMemory::kokkos_memory_traits'],['../structCabana_1_1RandomAccessMemory.html#a120531cf33c4fe669f0f99913ffe4fbf',1,'Cabana::RandomAccessMemory::kokkos_memory_traits'],['../structCabana_1_1AtomicAccessMemory.html#a86bc75de64b739857b087ab7fd0750ef',1,'Cabana::AtomicAccessMemory::kokkos_memory_traits']]],
-  ['kokkos_5fview_6',['kokkos_view',['../classCabana_1_1Slice.html#af85e42ed78f4f0b854b3fa3330c9c254',1,'Cabana::Slice']]],
+  ['kokkos_5fview_6',['kokkos_view',['../classCabana_1_1Slice.html#a50205ed5e4a1926cd9d9a96f9ce4899c',1,'Cabana::Slice']]],
   ['kokkosbinsort_7',['kokkosBinSort',['../Cabana__Sort_8hpp.html#a87314a9f2f994ce75fafb81395312528',1,'Cabana::Impl']]],
   ['kokkosbinsort1d_8',['kokkosBinSort1d',['../Cabana__Sort_8hpp.html#abc306dfbc0234a62bb4b0f7a3764fab8',1,'Cabana::Impl']]]
 ];

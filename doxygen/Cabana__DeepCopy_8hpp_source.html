@@ -337,154 +337,140 @@ $(function(){initNavTree('Cabana__DeepCopy_8hpp_source.html','',''); });
 <div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>                   <span class="stringliteral">&quot;Cabana::deep_copy: Attempted to deep copy Slice objects of &quot;</span></div>
 <div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>                   <span class="stringliteral">&quot;different value types&quot;</span> );</div>
 <div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span> </div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>    <span class="comment">// Check that the element dimensions are the same.</span></div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>    <span class="keyword">static_assert</span>( SrcSlice::view_layout::D0 == SrcSlice::view_layout::D0,</div>
-<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>                   <span class="stringliteral">&quot;Cabana::deep_copy: Slice dimension 0 is different&quot;</span> );</div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>    <span class="keyword">static_assert</span>( SrcSlice::view_layout::D1 == SrcSlice::view_layout::D1,</div>
-<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>                   <span class="stringliteral">&quot;Cabana::deep_copy: Slice dimension 1 is different&quot;</span> );</div>
-<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>    <span class="keyword">static_assert</span>( SrcSlice::view_layout::D2 == SrcSlice::view_layout::D2,</div>
-<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>                   <span class="stringliteral">&quot;Cabana::deep_copy: Slice dimension 2 is different&quot;</span> );</div>
-<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>    <span class="keyword">static_assert</span>( SrcSlice::view_layout::D3 == SrcSlice::view_layout::D3,</div>
-<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>                   <span class="stringliteral">&quot;Cabana::deep_copy: Slice dimension 3 is different&quot;</span> );</div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>    <span class="keyword">static_assert</span>( SrcSlice::view_layout::D4 == SrcSlice::view_layout::D4,</div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>                   <span class="stringliteral">&quot;Cabana::deep_copy: Slice dimension 4 is different&quot;</span> );</div>
-<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>    <span class="keyword">static_assert</span>( SrcSlice::view_layout::D5 == SrcSlice::view_layout::D5,</div>
-<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>                   <span class="stringliteral">&quot;Cabana::deep_copy: Slice dimension 5 is different&quot;</span> );</div>
-<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span> </div>
-<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>    <span class="comment">// Check for the same number of elements.</span></div>
-<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>    <span class="keywordflow">if</span> ( dst.size() != src.size() )</div>
-<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>    {</div>
-<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>        <span class="keywordflow">throw</span> std::runtime_error(</div>
-<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>            <span class="stringliteral">&quot;Cabana::deep_copy: Attempted to deep copy Slice objects of &quot;</span></div>
-<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>            <span class="stringliteral">&quot;different sizes. (Labels: &quot;</span> +</div>
-<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>            src.label() + <span class="stringliteral">&quot;, &quot;</span> + dst.label() + <span class="stringliteral">&quot;)&quot;</span> );</div>
-<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>    }</div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>    <span class="comment">// Check for the same number of elements.</span></div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>    <span class="keywordflow">if</span> ( dst.size() != src.size() )</div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>    {</div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>        <span class="keywordflow">throw</span> std::runtime_error(</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>            <span class="stringliteral">&quot;Cabana::deep_copy: Attempted to deep copy Slice objects of &quot;</span></div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>            <span class="stringliteral">&quot;different sizes. (Labels: &quot;</span> +</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>            src.label() + <span class="stringliteral">&quot;, &quot;</span> + dst.label() + <span class="stringliteral">&quot;)&quot;</span> );</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>    }</div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span> </div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>    <span class="comment">// Get the pointers to the beginning of the data blocks.</span></div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>    <span class="keyword">auto</span> dst_data = dst.data();</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>    <span class="keyword">const</span> <span class="keyword">auto</span> src_data = src.data();</div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span> </div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>    <span class="comment">// Return if both pointers are null.</span></div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>    <span class="keywordflow">if</span> ( dst_data == <span class="keyword">nullptr</span> &amp;&amp; src_data == <span class="keyword">nullptr</span> )</div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>    {</div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>    }</div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span> </div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>    <span class="comment">// Get the number of SoA&#39;s in each object.</span></div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>    <span class="keyword">auto</span> dst_num_soa = dst.numSoA();</div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>    <span class="keyword">auto</span> src_num_soa = src.numSoA();</div>
 <div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span> </div>
-<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>    <span class="comment">// Get the pointers to the beginning of the data blocks.</span></div>
-<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>    <span class="keyword">auto</span> dst_data = dst.data();</div>
-<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>    <span class="keyword">const</span> <span class="keyword">auto</span> src_data = src.data();</div>
-<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span> </div>
-<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>    <span class="comment">// Return if both pointers are null.</span></div>
-<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>    <span class="keywordflow">if</span> ( dst_data == <span class="keyword">nullptr</span> &amp;&amp; src_data == <span class="keyword">nullptr</span> )</div>
-<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>    {</div>
-<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>        <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>    }</div>
-<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span> </div>
-<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>    <span class="comment">// Get the number of SoA&#39;s in each object.</span></div>
-<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>    <span class="keyword">auto</span> dst_num_soa = dst.numSoA();</div>
-<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>    <span class="keyword">auto</span> src_num_soa = src.numSoA();</div>
-<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span> </div>
-<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>    <span class="comment">// Return if the slice memory occupies the same space.</span></div>
-<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>    <span class="keywordflow">if</span> ( ( dst_data == src_data ) &amp;&amp;</div>
-<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>         ( dst_num_soa * dst.stride( 0 ) == src_num_soa * src.stride( 0 ) ) )</div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>    <span class="comment">// Return if the slice memory occupies the same space.</span></div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>    <span class="keywordflow">if</span> ( ( dst_data == src_data ) &amp;&amp;</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>         ( dst_num_soa * dst.stride( 0 ) == src_num_soa * src.stride( 0 ) ) )</div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>    {</div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>    }</div>
+<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span> </div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>    <span class="comment">// Get the number of components in each slice element.</span></div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>    std::size_t num_comp = 1;</div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>    <span class="keywordflow">for</span> ( std::size_t d = 2; d &lt; dst.viewRank(); ++d )</div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>        num_comp *= dst.extent( d );</div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span> </div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>    <span class="comment">// Gather the slice data in a flat view in the source space and copy it to</span></div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>    <span class="comment">// the destination space.</span></div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>    Kokkos::View&lt;<span class="keyword">typename</span> dst_type::value_type*,</div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>                 <span class="keyword">typename</span> dst_type::memory_space&gt;</div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>        gather_dst( <span class="stringliteral">&quot;gather_dst&quot;</span>, num_comp * dst.size() );</div>
 <div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>    {</div>
-<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>        <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>    }</div>
-<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span> </div>
-<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>    <span class="comment">// Get the number of components in each slice element.</span></div>
-<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>    std::size_t num_comp = 1;</div>
-<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>    <span class="keywordflow">for</span> ( std::size_t d = 2; d &lt; dst.viewRank(); ++d )</div>
-<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>        num_comp *= dst.extent( d );</div>
-<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span> </div>
-<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>    <span class="comment">// Gather the slice data in a flat view in the source space and copy it to</span></div>
-<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>    <span class="comment">// the destination space.</span></div>
-<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>    Kokkos::View&lt;<span class="keyword">typename</span> dst_type::value_type*,</div>
-<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>                 <span class="keyword">typename</span> dst_type::memory_space&gt;</div>
-<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>        gather_dst( <span class="stringliteral">&quot;gather_dst&quot;</span>, num_comp * dst.size() );</div>
-<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>    {</div>
-<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>        Kokkos::View&lt;<span class="keyword">typename</span> src_type::value_type*,</div>
-<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>                     <span class="keyword">typename</span> src_type::memory_space&gt;</div>
-<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>            gather_src( <span class="stringliteral">&quot;gather_src&quot;</span>, num_comp * src.size() );</div>
-<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>        <span class="keyword">auto</span> gather_func = KOKKOS_LAMBDA( <span class="keyword">const</span> std::size_t i )</div>
-<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>        {</div>
-<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>            <span class="keyword">auto</span> src_offset = SrcSlice::index_type::s( i ) * src.stride( 0 ) +</div>
-<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>                              SrcSlice::index_type::a( i );</div>
-<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>            <span class="keywordflow">for</span> ( std::size_t n = 0; n &lt; num_comp; ++n )</div>
-<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>                gather_src( i * num_comp + n ) =</div>
-<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>                    src_data[src_offset + SrcSlice::vector_length * n];</div>
-<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>        };</div>
-<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>        Kokkos::RangePolicy&lt;typename src_type::execution_space&gt; gather_policy(</div>
-<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>            0, src.size() );</div>
-<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>        Kokkos::parallel_for( <span class="stringliteral">&quot;Cabana::deep_copy::gather&quot;</span>, gather_policy,</div>
-<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>                              gather_func );</div>
-<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>        Kokkos::fence();</div>
-<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>        Kokkos::deep_copy( gather_dst, gather_src );</div>
-<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>    }</div>
-<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span> </div>
-<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>    <span class="comment">// Scatter back into the destination slice from the gathered slice.</span></div>
-<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>    <span class="keyword">auto</span> scatter_func = KOKKOS_LAMBDA( <span class="keyword">const</span> std::size_t i )</div>
-<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>    {</div>
-<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>        <span class="keyword">auto</span> dst_offset = DstSlice::index_type::s( i ) * dst.stride( 0 ) +</div>
-<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>                          DstSlice::index_type::a( i );</div>
-<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>        <span class="keywordflow">for</span> ( std::size_t n = 0; n &lt; num_comp; ++n )</div>
-<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>            dst_data[dst_offset + DstSlice::vector_length * n] =</div>
-<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>                gather_dst( i * num_comp + n );</div>
-<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>    };</div>
-<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>    Kokkos::RangePolicy&lt;typename dst_type::execution_space&gt; scatter_policy(</div>
-<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>        0, dst.size() );</div>
-<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>    Kokkos::parallel_for( <span class="stringliteral">&quot;Cabana::deep_copy::scatter&quot;</span>, scatter_policy,</div>
-<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>                          scatter_func );</div>
-<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>    Kokkos::fence();</div>
-<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>}</div>
+<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>        Kokkos::View&lt;<span class="keyword">typename</span> src_type::value_type*,</div>
+<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>                     <span class="keyword">typename</span> src_type::memory_space&gt;</div>
+<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>            gather_src( <span class="stringliteral">&quot;gather_src&quot;</span>, num_comp * src.size() );</div>
+<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>        <span class="keyword">auto</span> gather_func = KOKKOS_LAMBDA( <span class="keyword">const</span> std::size_t i )</div>
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>        {</div>
+<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>            <span class="keyword">auto</span> src_offset = SrcSlice::index_type::s( i ) * src.stride( 0 ) +</div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>                              SrcSlice::index_type::a( i );</div>
+<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>            <span class="keywordflow">for</span> ( std::size_t n = 0; n &lt; num_comp; ++n )</div>
+<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>                gather_src( i * num_comp + n ) =</div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>                    src_data[src_offset + SrcSlice::vector_length * n];</div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>        };</div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>        Kokkos::RangePolicy&lt;typename src_type::execution_space&gt; gather_policy(</div>
+<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>            0, src.size() );</div>
+<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>        Kokkos::parallel_for( <span class="stringliteral">&quot;Cabana::deep_copy::gather&quot;</span>, gather_policy,</div>
+<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>                              gather_func );</div>
+<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>        Kokkos::fence();</div>
+<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>        Kokkos::deep_copy( gather_dst, gather_src );</div>
+<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>    }</div>
+<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span> </div>
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>    <span class="comment">// Scatter back into the destination slice from the gathered slice.</span></div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>    <span class="keyword">auto</span> scatter_func = KOKKOS_LAMBDA( <span class="keyword">const</span> std::size_t i )</div>
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>    {</div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>        <span class="keyword">auto</span> dst_offset = DstSlice::index_type::s( i ) * dst.stride( 0 ) +</div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>                          DstSlice::index_type::a( i );</div>
+<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>        <span class="keywordflow">for</span> ( std::size_t n = 0; n &lt; num_comp; ++n )</div>
+<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>            dst_data[dst_offset + DstSlice::vector_length * n] =</div>
+<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>                gather_dst( i * num_comp + n );</div>
+<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>    };</div>
+<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>    Kokkos::RangePolicy&lt;typename dst_type::execution_space&gt; scatter_policy(</div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>        0, dst.size() );</div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>    Kokkos::parallel_for( <span class="stringliteral">&quot;Cabana::deep_copy::scatter&quot;</span>, scatter_policy,</div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>                          scatter_func );</div>
+<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>    Kokkos::fence();</div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>}</div>
 </div>
-<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span> </div>
-<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Slice_t&gt;</div>
-<div class="foldopen" id="foldopen00401" data-start="{" data-end="}">
-<div class="line"><a id="l00401" name="l00401"></a><span class="lineno"><a class="line" href="namespaceCabana.html#ae209c92053381625d4d040bb1f74682b">  401</a></span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespaceCabana.html#ad4814c237861e275fbcb767ad6c420cb">deep_copy</a>( Slice_t&amp; <a class="code hl_function" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>,</div>
-<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>                       <span class="keyword">const</span> <span class="keyword">typename</span> Slice_t::value_type scalar )</div>
-<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>{</div>
-<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>    <span class="keyword">static_assert</span>( <a class="code hl_struct" href="structCabana_1_1is__slice.html">is_slice&lt;Slice_t&gt;::value</a>,</div>
-<div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>                   <span class="stringliteral">&quot;Cabana::deep_copy: Only slices can be assigned scalars&quot;</span> );</div>
-<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>    Kokkos::deep_copy( <a class="code hl_function" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>.view(), scalar );</div>
-<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>}</div>
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span> </div>
+<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Slice_t&gt;</div>
+<div class="foldopen" id="foldopen00387" data-start="{" data-end="}">
+<div class="line"><a id="l00387" name="l00387"></a><span class="lineno"><a class="line" href="namespaceCabana.html#ae209c92053381625d4d040bb1f74682b">  387</a></span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespaceCabana.html#ad4814c237861e275fbcb767ad6c420cb">deep_copy</a>( Slice_t&amp; <a class="code hl_function" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>,</div>
+<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>                       <span class="keyword">const</span> <span class="keyword">typename</span> Slice_t::value_type scalar )</div>
+<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>{</div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>    <span class="keyword">static_assert</span>( <a class="code hl_struct" href="structCabana_1_1is__slice.html">is_slice&lt;Slice_t&gt;::value</a>,</div>
+<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>                   <span class="stringliteral">&quot;Cabana::deep_copy: Only slices can be assigned scalars&quot;</span> );</div>
+<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>    Kokkos::deep_copy( <a class="code hl_function" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>.view(), scalar );</div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>}</div>
 </div>
-<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span> </div>
-<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>DstMemorySpace, <span class="keyword">class </span>SrcMemorySpace, <span class="keywordtype">int</span> VectorLength,</div>
-<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>          <span class="keyword">class</span>... FieldTags&gt;</div>
-<div class="foldopen" id="foldopen00419" data-start="{" data-end="}">
-<div class="line"><a id="l00419" name="l00419"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a79ce54b97e3aa320e6108b0e978e1df0">  419</a></span><span class="keyword">auto</span> <a class="code hl_function" href="namespaceCabana.html#a892811b71917ebd71b3608ef3978b76d">create_mirror_view_and_copy</a>(</div>
-<div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>    DstMemorySpace,</div>
-<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>    <a class="code hl_class" href="classCabana_1_1ParticleList.html">ParticleList&lt;SrcMemorySpace, VectorLength, FieldTags...&gt;</a> plist_src,</div>
-<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>    std::enable_if_t&lt;std::is_same_v&lt;SrcMemorySpace, DstMemorySpace&gt;&gt;* =</div>
-<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>        <span class="keyword">nullptr</span> )</div>
-<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>{</div>
-<div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span>    <span class="keywordflow">return</span> plist_src;</div>
-<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>}</div>
+<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span> </div>
+<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span><span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>DstMemorySpace, <span class="keyword">class </span>SrcMemorySpace, <span class="keywordtype">int</span> VectorLength,</div>
+<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>          <span class="keyword">class</span>... FieldTags&gt;</div>
+<div class="foldopen" id="foldopen00405" data-start="{" data-end="}">
+<div class="line"><a id="l00405" name="l00405"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a79ce54b97e3aa320e6108b0e978e1df0">  405</a></span><span class="keyword">auto</span> <a class="code hl_function" href="namespaceCabana.html#a892811b71917ebd71b3608ef3978b76d">create_mirror_view_and_copy</a>(</div>
+<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>    DstMemorySpace,</div>
+<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>    <a class="code hl_class" href="classCabana_1_1ParticleList.html">ParticleList&lt;SrcMemorySpace, VectorLength, FieldTags...&gt;</a> plist_src,</div>
+<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>    std::enable_if_t&lt;std::is_same_v&lt;SrcMemorySpace, DstMemorySpace&gt;&gt;* =</div>
+<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>        <span class="keyword">nullptr</span> )</div>
+<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>{</div>
+<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>    <span class="keywordflow">return</span> plist_src;</div>
+<div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span>}</div>
 </div>
-<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span></div>
-<div class="line"><a id="l00435" name="l00435"></a><span class="lineno">  435</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>DstMemorySpace, <span class="keyword">class </span>SrcMemorySpace, <span class="keywordtype">int</span> VectorLength,</div>
-<div class="line"><a id="l00436" name="l00436"></a><span class="lineno">  436</span>          <span class="keyword">class</span>... FieldTags&gt;</div>
-<div class="foldopen" id="foldopen00437" data-start="{" data-end="}">
-<div class="line"><a id="l00437" name="l00437"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a139eac1fa0c2578743ed90b3bee42bd0">  437</a></span><span class="keyword">auto</span> <a class="code hl_function" href="namespaceCabana.html#a892811b71917ebd71b3608ef3978b76d">create_mirror_view_and_copy</a>(</div>
-<div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span>    DstMemorySpace,</div>
-<div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>    <a class="code hl_class" href="classCabana_1_1ParticleList.html">ParticleList&lt;SrcMemorySpace, VectorLength, FieldTags...&gt;</a> plist_src,</div>
-<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>    std::enable_if_t&lt;!std::is_same_v&lt;SrcMemorySpace, DstMemorySpace&gt;&gt;* =</div>
-<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>        <span class="keyword">nullptr</span> )</div>
-<div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span>{</div>
-<div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span>    <span class="comment">// Extract the original AoSoA.</span></div>
-<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>    <span class="keyword">auto</span> aosoa_src = plist_src.<a class="code hl_function" href="classCabana_1_1ParticleList.html#a763a62e6b0a4d5b6b7202b255a7e4d37">aosoa</a>();</div>
-<div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span> </div>
-<div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>    <span class="comment">// Create an AoSoA in the new memory space.</span></div>
-<div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>    <span class="keyword">using </span>src_plist_type =</div>
-<div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span>        <a class="code hl_class" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt;SrcMemorySpace, VectorLength, FieldTags...&gt;;</div>
-<div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span>    <span class="keyword">using </span>member_types = <span class="keyword">typename</span> src_plist_type::member_types;</div>
-<div class="line"><a id="l00450" name="l00450"></a><span class="lineno">  450</span>    <a class="code hl_class" href="classCabana_1_1AoSoA.html">AoSoA&lt;member_types, DstMemorySpace, VectorLength&gt;</a> aosoa_dst(</div>
-<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span>        aosoa_src.label(), aosoa_src.size() );</div>
-<div class="line"><a id="l00452" name="l00452"></a><span class="lineno">  452</span> </div>
-<div class="line"><a id="l00453" name="l00453"></a><span class="lineno">  453</span>    <span class="comment">// Copy data to new AoAoA.</span></div>
-<div class="line"><a id="l00454" name="l00454"></a><span class="lineno">  454</span>    <a class="code hl_function" href="namespaceCabana.html#ad4814c237861e275fbcb767ad6c420cb">deep_copy</a>( aosoa_dst, aosoa_src );</div>
-<div class="line"><a id="l00455" name="l00455"></a><span class="lineno">  455</span> </div>
-<div class="line"><a id="l00456" name="l00456"></a><span class="lineno">  456</span>    <span class="comment">// Create new list with the copied data.</span></div>
-<div class="line"><a id="l00457" name="l00457"></a><span class="lineno">  457</span>    <span class="keywordflow">return</span> <a class="code hl_class" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt;DstMemorySpace, VectorLength, FieldTags...&gt;(</div>
-<div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span>        aosoa_dst );</div>
-<div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>}</div>
+<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span></div>
+<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>DstMemorySpace, <span class="keyword">class </span>SrcMemorySpace, <span class="keywordtype">int</span> VectorLength,</div>
+<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>          <span class="keyword">class</span>... FieldTags&gt;</div>
+<div class="foldopen" id="foldopen00423" data-start="{" data-end="}">
+<div class="line"><a id="l00423" name="l00423"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a139eac1fa0c2578743ed90b3bee42bd0">  423</a></span><span class="keyword">auto</span> <a class="code hl_function" href="namespaceCabana.html#a892811b71917ebd71b3608ef3978b76d">create_mirror_view_and_copy</a>(</div>
+<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>    DstMemorySpace,</div>
+<div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span>    <a class="code hl_class" href="classCabana_1_1ParticleList.html">ParticleList&lt;SrcMemorySpace, VectorLength, FieldTags...&gt;</a> plist_src,</div>
+<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>    std::enable_if_t&lt;!std::is_same_v&lt;SrcMemorySpace, DstMemorySpace&gt;&gt;* =</div>
+<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>        <span class="keyword">nullptr</span> )</div>
+<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>{</div>
+<div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span>    <span class="comment">// Extract the original AoSoA.</span></div>
+<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>    <span class="keyword">auto</span> aosoa_src = plist_src.<a class="code hl_function" href="classCabana_1_1ParticleList.html#a763a62e6b0a4d5b6b7202b255a7e4d37">aosoa</a>();</div>
+<div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span> </div>
+<div class="line"><a id="l00432" name="l00432"></a><span class="lineno">  432</span>    <span class="comment">// Create an AoSoA in the new memory space.</span></div>
+<div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span>    <span class="keyword">using </span>src_plist_type =</div>
+<div class="line"><a id="l00434" name="l00434"></a><span class="lineno">  434</span>        <a class="code hl_class" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt;SrcMemorySpace, VectorLength, FieldTags...&gt;;</div>
+<div class="line"><a id="l00435" name="l00435"></a><span class="lineno">  435</span>    <span class="keyword">using </span>member_types = <span class="keyword">typename</span> src_plist_type::member_types;</div>
+<div class="line"><a id="l00436" name="l00436"></a><span class="lineno">  436</span>    <a class="code hl_class" href="classCabana_1_1AoSoA.html">AoSoA&lt;member_types, DstMemorySpace, VectorLength&gt;</a> aosoa_dst(</div>
+<div class="line"><a id="l00437" name="l00437"></a><span class="lineno">  437</span>        aosoa_src.label(), aosoa_src.size() );</div>
+<div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span> </div>
+<div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>    <span class="comment">// Copy data to new AoAoA.</span></div>
+<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>    <a class="code hl_function" href="namespaceCabana.html#ad4814c237861e275fbcb767ad6c420cb">deep_copy</a>( aosoa_dst, aosoa_src );</div>
+<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span> </div>
+<div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span>    <span class="comment">// Create new list with the copied data.</span></div>
+<div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span>    <span class="keywordflow">return</span> <a class="code hl_class" href="classCabana_1_1ParticleList.html">ParticleList</a>&lt;DstMemorySpace, VectorLength, FieldTags...&gt;(</div>
+<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>        aosoa_dst );</div>
+<div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>}</div>
 </div>
-<div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span> </div>
-<div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>} <span class="comment">// end namespace Cabana</span></div>
-<div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span> </div>
-<div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span><span class="preprocessor">#endif </span><span class="comment">// end CABANA_DEEPCOPY_HPP</span></div>
+<div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span> </div>
+<div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>} <span class="comment">// end namespace Cabana</span></div>
+<div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span> </div>
+<div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span><span class="preprocessor">#endif </span><span class="comment">// end CABANA_DEEPCOPY_HPP</span></div>
 <div class="ttc" id="aCabana__AoSoA_8hpp_html"><div class="ttname"><a href="Cabana__AoSoA_8hpp.html">Cabana_AoSoA.hpp</a></div><div class="ttdoc">Array-of-Struct-of-Arrays particle data structure.</div></div>
 <div class="ttc" id="aCabana__ParticleList_8hpp_html"><div class="ttname"><a href="Cabana__ParticleList_8hpp.html">Cabana_ParticleList.hpp</a></div><div class="ttdoc">Application-level particle storage and single particle access.</div></div>
 <div class="ttc" id="aCabana__Slice_8hpp_html"><div class="ttname"><a href="Cabana__Slice_8hpp.html">Cabana_Slice.hpp</a></div><div class="ttdoc">Slice a single particle property from an AoSoA.</div></div>
@@ -498,7 +484,7 @@ $(function(){initNavTree('Cabana__DeepCopy_8hpp_source.html','',''); });
 <div class="ttc" id="anamespaceCabana_html_aa14f30ab334c57448b204fc9b304289a"><div class="ttname"><a href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">Cabana::slice</a></div><div class="ttdeci">AoSoA_t::template member_slice_type&lt; M &gt; slice(const AoSoA_t &amp;aosoa, const std::string &amp;slice_label=&quot;&quot;)</div><div class="ttdoc">Create a slice from an AoSoA.</div><div class="ttdef"><b>Definition</b> Cabana_AoSoA.hpp:77</div></div>
 <div class="ttc" id="anamespaceCabana_html_ad4814c237861e275fbcb767ad6c420cb"><div class="ttname"><a href="namespaceCabana.html#ad4814c237861e275fbcb767ad6c420cb">Cabana::deep_copy</a></div><div class="ttdeci">void deep_copy(DstAoSoA &amp;dst, const SrcAoSoA &amp;src, std::enable_if_t&lt;(is_aosoa&lt; DstAoSoA &gt;::value &amp;&amp;is_aosoa&lt; SrcAoSoA &gt;::value)&gt; *=nullptr)</div><div class="ttdoc">Deep copy data between compatible AoSoA objects.</div><div class="ttdef"><b>Definition</b> Cabana_DeepCopy.hpp:156</div></div>
 <div class="ttc" id="astructCabana_1_1is__aosoa_html"><div class="ttname"><a href="structCabana_1_1is__aosoa.html">Cabana::is_aosoa</a></div><div class="ttdoc">AoSoA static type checker.</div><div class="ttdef"><b>Definition</b> Cabana_AoSoA.hpp:61</div></div>
-<div class="ttc" id="astructCabana_1_1is__slice_html"><div class="ttname"><a href="structCabana_1_1is__slice.html">Cabana::is_slice</a></div><div class="ttdoc">Slice static type checker.</div><div class="ttdef"><b>Definition</b> Cabana_Slice.hpp:868</div></div>
+<div class="ttc" id="astructCabana_1_1is__slice_html"><div class="ttname"><a href="structCabana_1_1is__slice.html">Cabana::is_slice</a></div><div class="ttdoc">Slice static type checker.</div><div class="ttdef"><b>Definition</b> Cabana_Slice.hpp:532</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->

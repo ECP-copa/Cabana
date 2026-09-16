@@ -59,7 +59,7 @@ var NAVTREEINDEX =
 "classCabana_1_1Grid_1_1HypreStructuredSolver.html#a285c7645aaddc6723999f1fad902dd69",
 "classCabana_1_1Halo.html#a240409534fe75787483557d87f88be5c",
 "classCabana_1_1SimdPolicy.html#a436d08f61136ca3d83b76e712058da39",
-"namespaceCabana.html#a2e0f00a2e33a94fb0968b984f8ad98f4",
+"namespaceCabana.html#a2e09860dc2f238e0201b091d563d4e1c",
 "structCabana_1_1Grid_1_1ArrayOp_1_1NormInfFunctor.html#aa56e501bfb069ce17cdcd5fd55d90e90",
 "structCabana_1_1LinkedCellStencil.html#ac40aa64ec0815693a61e521791d437d4"
 ];

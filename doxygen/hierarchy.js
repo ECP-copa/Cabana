@@ -179,7 +179,6 @@ var hierarchy =
     [ "Cabana::InitRandom", "structCabana_1_1InitRandom.html", null ],
     [ "Cabana::InitUniform", "structCabana_1_1InitUniform.html", null ],
     [ "Cabana::Grid::IndexConversion::L2G< MeshType, EntityType >", "structCabana_1_1Grid_1_1IndexConversion_1_1L2G.html", null ],
-    [ "Kokkos::LayoutCabanaSlice< SOASTRIDE, VLEN, DIM0, DIM1, DIM2, DIM3, DIM4, DIM5 >", "structKokkos_1_1LayoutCabanaSlice.html", null ],
     [ "Cabana::Grid::ReferenceConjugateGradient< Scalar, EntityType, MeshType, MemorySpace >::LayoutContainer< ScalarT, MemorySpaceT, ArrayLayoutT >", "structCabana_1_1Grid_1_1ReferenceConjugateGradient_1_1LayoutContainer.html", null ],
     [ "Cabana::LinkedCellList< MemorySpace, Scalar, NumSpaceDim >", "classCabana_1_1LinkedCellList.html", null ],
     [ "Cabana::LinkedCellStencil< Scalar, NumSpaceDim >", "structCabana_1_1LinkedCellStencil.html", null ],

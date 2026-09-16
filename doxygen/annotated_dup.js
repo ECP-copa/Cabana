@@ -311,8 +311,5 @@ var annotated_dup =
       [ "VerletListData", "structCabana_1_1VerletListData.html", null ],
       [ "VerletListData< MemorySpace, VerletLayout2D >", "structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html", "structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4" ],
       [ "VerletListData< MemorySpace, VerletLayoutCSR >", "structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4.html", "structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4" ]
-    ] ],
-    [ "Kokkos", null, [
-      [ "LayoutCabanaSlice", "structKokkos_1_1LayoutCabanaSlice.html", "structKokkos_1_1LayoutCabanaSlice" ]
     ] ]
 ];

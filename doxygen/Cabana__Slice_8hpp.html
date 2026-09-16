@@ -99,7 +99,9 @@ $(function(){initNavTree('Cabana__Slice_8hpp.html','',''); });
 <code>#include &lt;<a class="el" href="Cabana__Index_8hpp_source.html">impl/Cabana_Index.hpp</a>&gt;</code><br />
 <code>#include &lt;impl/Cabana_TypeTraits.hpp&gt;</code><br />
 <code>#include &lt;Kokkos_Core.hpp&gt;</code><br />
+<code>#include &lt;cassert&gt;</code><br />
 <code>#include &lt;cstdlib&gt;</code><br />
+<code>#include &lt;cstring&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -107,23 +109,27 @@ Include dependency graph for Cabana_Slice.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="Cabana__Slice_8hpp__incl.png" border="0" usemap="#acore_2src_2Cabana__Slice_8hpp" loading="lazy" alt=""/></div>
 <map name="acore_2src_2Cabana__Slice_8hpp" id="acore_2src_2Cabana__Slice_8hpp">
-<area shape="rect" title="Slice a single particle property from an AoSoA." alt="" coords="363,5,544,35"/>
+<area shape="rect" title="Slice a single particle property from an AoSoA." alt="" coords="415,5,596,35"/>
 <area shape="rect" href="Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="307,161,443,190"/>
-<area shape="poly" title=" " alt="" coords="449,37,392,148,387,146,444,34"/>
+<area shape="poly" title=" " alt="" coords="496,37,399,150,395,147,492,34"/>
 <area shape="rect" title=" " alt="" coords="71,238,199,268"/>
-<area shape="poly" title=" " alt="" coords="363,31,199,50,124,66,72,85,41,107,18,132,11,145,8,158,10,173,17,189,39,213,68,230,65,234,36,217,13,192,5,174,3,158,6,143,13,128,37,103,70,81,122,61,198,45,362,25"/>
+<area shape="poly" title=" " alt="" coords="415,29,323,36,223,47,134,63,98,74,72,85,41,107,17,131,11,144,8,158,10,173,17,189,39,213,68,230,65,234,36,217,13,192,5,174,3,158,6,143,13,128,37,103,70,81,97,69,132,58,222,42,322,30,414,23"/>
 <area shape="rect" title=" " alt="" coords="332,238,418,268"/>
-<area shape="poly" title=" " alt="" coords="460,35,467,65,472,105,470,149,457,192,441,214,419,232,416,228,437,211,453,189,465,148,466,105,462,66,455,36"/>
+<area shape="poly" title=" " alt="" coords="507,36,494,106,479,150,457,192,438,214,415,232,412,228,434,210,453,189,474,148,489,105,502,35"/>
 <area shape="rect" href="Cabana__Utils_8hpp.html" title="Cabana utilities." alt="" coords="518,161,645,190"/>
-<area shape="poly" title=" " alt="" coords="468,34,562,147,558,150,463,37"/>
+<area shape="poly" title=" " alt="" coords="515,34,570,146,566,148,510,37"/>
 <area shape="rect" href="Cabana__Index_8hpp.html" title="AoSoA indexing." alt="" coords="83,83,249,113"/>
-<area shape="poly" title=" " alt="" coords="400,38,235,81,233,76,399,33"/>
+<area shape="poly" title=" " alt="" coords="442,38,245,82,244,77,441,33"/>
 <area shape="rect" href="Cabana__TypeTraits_8hpp_source.html" title=" " alt="" coords="38,161,232,190"/>
-<area shape="poly" title=" " alt="" coords="425,38,179,156,177,151,423,33"/>
-<area shape="rect" title=" " alt="" coords="569,83,629,113"/>
-<area shape="poly" title=" " alt="" coords="482,33,560,73,557,78,480,38"/>
-<area shape="rect" title=" " alt="" coords="653,83,710,113"/>
-<area shape="poly" title=" " alt="" coords="498,33,639,79,637,84,496,38"/>
+<area shape="poly" title=" " alt="" coords="473,38,184,157,182,152,471,33"/>
+<area shape="rect" title=" " alt="" coords="569,83,634,113"/>
+<area shape="poly" title=" " alt="" coords="525,34,574,71,570,75,522,38"/>
+<area shape="rect" title=" " alt="" coords="658,83,719,113"/>
+<area shape="poly" title=" " alt="" coords="541,33,645,76,643,81,539,38"/>
+<area shape="rect" title=" " alt="" coords="742,83,805,113"/>
+<area shape="poly" title=" " alt="" coords="560,33,728,79,726,84,559,38"/>
+<area shape="rect" title=" " alt="" coords="829,83,886,113"/>
+<area shape="poly" title=" " alt="" coords="594,33,696,52,815,80,813,85,695,58,593,38"/>
 <area shape="poly" title=" " alt="" coords="331,193,195,236,193,231,329,188"/>
 <area shape="poly" title=" " alt="" coords="378,191,378,223,372,223,372,191"/>
 <area shape="poly" title=" " alt="" coords="518,190,215,241,214,236,517,185"/>
@@ -241,8 +247,6 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:Kokkos_3A_3ALayoutCabanaSlice_3C_20SOASTRIDE_2C_20VLEN_2C_20DIM0_2C_20DIM1_2C_20DIM2_2C_20DIM3_2C_20DIM4_2C_20DIM5_20_3E" id="r_Kokkos_3A_3ALayoutCabanaSlice_3C_20SOASTRIDE_2C_20VLEN_2C_20DIM0_2C_20DIM1_2C_20DIM2_2C_20DIM3_2C_20DIM4_2C_20DIM5_20_3E"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKokkos_1_1LayoutCabanaSlice.html">Kokkos::LayoutCabanaSlice&lt; SOASTRIDE, VLEN, DIM0, DIM1, DIM2, DIM3, DIM4, DIM5 &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceCabana.html" title="Core: particle data structures and algorithms.">Cabana</a> Slice layout.  <a href="structKokkos_1_1LayoutCabanaSlice.html#details">More...</a><br /></td></tr>
 <tr class="memitem:Cabana_3A_3ASlice_3C_20DataType_2C_20MemorySpace_2C_20MemoryAccessType_2C_20VectorLength_2C_20Stride_20_3E" id="r_Cabana_3A_3ASlice_3C_20DataType_2C_20MemorySpace_2C_20MemoryAccessType_2C_20VectorLength_2C_20Stride_20_3E"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html">Cabana::Slice&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.  <a href="classCabana_1_1Slice.html#details">More...</a><br /></td></tr>
 <tr class="memitem:Cabana_3A_3Ais_5Fslice_3C_20T_20_3E" id="r_Cabana_3A_3Ais_5Fslice_3C_20T_20_3E"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1is__slice.html">Cabana::is_slice&lt; T &gt;</a></td></tr>
@@ -255,34 +259,34 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a55f062f7dc8d19daf0c5b3830c04c51e" id="r_a55f062f7dc8d19daf0c5b3830c04c51e"><td class="memTemplParams" colspan="2"><a id="a55f062f7dc8d19daf0c5b3830c04c51e" name="a55f062f7dc8d19daf0c5b3830c04c51e"></a>
+<tr class="memitem:a7cbbae531c1089dc87e26c37a3d8f1c7" id="r_a7cbbae531c1089dc87e26c37a3d8f1c7"><td class="memTemplParams" colspan="2"><a id="a7cbbae531c1089dc87e26c37a3d8f1c7" name="a7cbbae531c1089dc87e26c37a3d8f1c7"></a>
 template&lt;class ExecutionSpace, class ViewType, class SliceType&gt; </td></tr>
-<tr class="memitem:a55f062f7dc8d19daf0c5b3830c04c51e template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><b>Cabana::copySliceToView</b> (ExecutionSpace exec_space, ViewType &amp;view, const SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const std::size_t begin, const std::size_t end, typename std::enable_if&lt; 2==SliceType::kokkos_view::traits::dimension::rank, int * &gt;::type=0)</td></tr>
-<tr class="memdesc:a55f062f7dc8d19daf0c5b3830c04c51e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from slice to View. Rank-0. <br /></td></tr>
-<tr class="memitem:ac39be444dae0eb366bd8f1482ce3a554" id="r_ac39be444dae0eb366bd8f1482ce3a554"><td class="memTemplParams" colspan="2"><a id="ac39be444dae0eb366bd8f1482ce3a554" name="ac39be444dae0eb366bd8f1482ce3a554"></a>
+<tr class="memitem:a7cbbae531c1089dc87e26c37a3d8f1c7 template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><b>Cabana::copySliceToView</b> (ExecutionSpace exec_space, ViewType &amp;view, const SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(SliceType::view_rank==2), int * &gt;::type=0)</td></tr>
+<tr class="memdesc:a7cbbae531c1089dc87e26c37a3d8f1c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from slice to View. Rank-0. <br /></td></tr>
+<tr class="memitem:a4f36e831b9c9b34a098564e2bfc7e493" id="r_a4f36e831b9c9b34a098564e2bfc7e493"><td class="memTemplParams" colspan="2"><a id="a4f36e831b9c9b34a098564e2bfc7e493" name="a4f36e831b9c9b34a098564e2bfc7e493"></a>
 template&lt;class ExecutionSpace, class ViewType, class SliceType&gt; </td></tr>
-<tr class="memitem:ac39be444dae0eb366bd8f1482ce3a554 template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><b>Cabana::copySliceToView</b> (ExecutionSpace exec_space, ViewType &amp;view, const SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const std::size_t begin, const std::size_t end, typename std::enable_if&lt; 3==SliceType::kokkos_view::traits::dimension::rank, int * &gt;::type=0)</td></tr>
-<tr class="memdesc:ac39be444dae0eb366bd8f1482ce3a554"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from slice to View. Rank-1. <br /></td></tr>
-<tr class="memitem:ac22dd879aa043dc81e11e15189e407bb" id="r_ac22dd879aa043dc81e11e15189e407bb"><td class="memTemplParams" colspan="2"><a id="ac22dd879aa043dc81e11e15189e407bb" name="ac22dd879aa043dc81e11e15189e407bb"></a>
+<tr class="memitem:a4f36e831b9c9b34a098564e2bfc7e493 template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><b>Cabana::copySliceToView</b> (ExecutionSpace exec_space, ViewType &amp;view, const SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(SliceType::view_rank==3), int * &gt;::type=0)</td></tr>
+<tr class="memdesc:a4f36e831b9c9b34a098564e2bfc7e493"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from slice to View. Rank-1. <br /></td></tr>
+<tr class="memitem:a0d43ef3557566dd84498fcadc2045899" id="r_a0d43ef3557566dd84498fcadc2045899"><td class="memTemplParams" colspan="2"><a id="a0d43ef3557566dd84498fcadc2045899" name="a0d43ef3557566dd84498fcadc2045899"></a>
 template&lt;class ExecutionSpace, class ViewType, class SliceType&gt; </td></tr>
-<tr class="memitem:ac22dd879aa043dc81e11e15189e407bb template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><b>Cabana::copySliceToView</b> (ExecutionSpace exec_space, ViewType &amp;view, const SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const std::size_t begin, const std::size_t end, typename std::enable_if&lt; 4==SliceType::kokkos_view::traits::dimension::rank, int * &gt;::type=0)</td></tr>
-<tr class="memdesc:ac22dd879aa043dc81e11e15189e407bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from slice to View. Rank-2. <br /></td></tr>
+<tr class="memitem:a0d43ef3557566dd84498fcadc2045899 template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><b>Cabana::copySliceToView</b> (ExecutionSpace exec_space, ViewType &amp;view, const SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(SliceType::view_rank==4), int * &gt;::type=0)</td></tr>
+<tr class="memdesc:a0d43ef3557566dd84498fcadc2045899"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from slice to View. Rank-2. <br /></td></tr>
 <tr class="memitem:a4351abc308d1deabc7450a5f37d2cad9" id="r_a4351abc308d1deabc7450a5f37d2cad9"><td class="memTemplParams" colspan="2"><a id="a4351abc308d1deabc7450a5f37d2cad9" name="a4351abc308d1deabc7450a5f37d2cad9"></a>
 template&lt;class ViewType, class SliceType&gt; </td></tr>
 <tr class="memitem:a4351abc308d1deabc7450a5f37d2cad9 template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><b>Cabana::copySliceToView</b> (ViewType &amp;view, const SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const std::size_t begin, const std::size_t end)</td></tr>
 <tr class="memdesc:a4351abc308d1deabc7450a5f37d2cad9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from slice to View with default execution space. <br /></td></tr>
-<tr class="memitem:a44bc1515cae7d5da7248006fdf113849" id="r_a44bc1515cae7d5da7248006fdf113849"><td class="memTemplParams" colspan="2"><a id="a44bc1515cae7d5da7248006fdf113849" name="a44bc1515cae7d5da7248006fdf113849"></a>
+<tr class="memitem:aaf125f4a5f503f199977fed9be187303" id="r_aaf125f4a5f503f199977fed9be187303"><td class="memTemplParams" colspan="2"><a id="aaf125f4a5f503f199977fed9be187303" name="aaf125f4a5f503f199977fed9be187303"></a>
 template&lt;class ExecutionSpace, class SliceType, class ViewType&gt; </td></tr>
-<tr class="memitem:a44bc1515cae7d5da7248006fdf113849 template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><b>Cabana::copyViewToSlice</b> (ExecutionSpace exec_space, SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const ViewType &amp;view, const std::size_t begin, const std::size_t end, typename std::enable_if&lt; 2==SliceType::kokkos_view::traits::dimension::rank, int * &gt;::type=0)</td></tr>
-<tr class="memdesc:a44bc1515cae7d5da7248006fdf113849"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from View to slice. Rank-0. <br /></td></tr>
-<tr class="memitem:aae0938a572be03d7c205d58f9e81caf3" id="r_aae0938a572be03d7c205d58f9e81caf3"><td class="memTemplParams" colspan="2"><a id="aae0938a572be03d7c205d58f9e81caf3" name="aae0938a572be03d7c205d58f9e81caf3"></a>
+<tr class="memitem:aaf125f4a5f503f199977fed9be187303 template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><b>Cabana::copyViewToSlice</b> (ExecutionSpace exec_space, SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const ViewType &amp;view, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(SliceType::view_rank==2), int * &gt;::type=0)</td></tr>
+<tr class="memdesc:aaf125f4a5f503f199977fed9be187303"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from View to slice. Rank-0. <br /></td></tr>
+<tr class="memitem:aff8f741d01769a0627d9e70c2732b211" id="r_aff8f741d01769a0627d9e70c2732b211"><td class="memTemplParams" colspan="2"><a id="aff8f741d01769a0627d9e70c2732b211" name="aff8f741d01769a0627d9e70c2732b211"></a>
 template&lt;class ExecutionSpace, class SliceType, class ViewType&gt; </td></tr>
-<tr class="memitem:aae0938a572be03d7c205d58f9e81caf3 template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><b>Cabana::copyViewToSlice</b> (ExecutionSpace exec_space, SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const ViewType &amp;view, const std::size_t begin, const std::size_t end, typename std::enable_if&lt; 3==SliceType::kokkos_view::traits::dimension::rank, int * &gt;::type=0)</td></tr>
-<tr class="memdesc:aae0938a572be03d7c205d58f9e81caf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from View to slice. Rank-1. <br /></td></tr>
-<tr class="memitem:aea3f27002f8056b1d72b94aa2301ba5e" id="r_aea3f27002f8056b1d72b94aa2301ba5e"><td class="memTemplParams" colspan="2"><a id="aea3f27002f8056b1d72b94aa2301ba5e" name="aea3f27002f8056b1d72b94aa2301ba5e"></a>
+<tr class="memitem:aff8f741d01769a0627d9e70c2732b211 template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><b>Cabana::copyViewToSlice</b> (ExecutionSpace exec_space, SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const ViewType &amp;view, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(SliceType::view_rank==3), int * &gt;::type=0)</td></tr>
+<tr class="memdesc:aff8f741d01769a0627d9e70c2732b211"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from View to slice. Rank-1. <br /></td></tr>
+<tr class="memitem:a766cc6e9c6bf7f7aa31fd1cc96ccc6fb" id="r_a766cc6e9c6bf7f7aa31fd1cc96ccc6fb"><td class="memTemplParams" colspan="2"><a id="a766cc6e9c6bf7f7aa31fd1cc96ccc6fb" name="a766cc6e9c6bf7f7aa31fd1cc96ccc6fb"></a>
 template&lt;class ExecutionSpace, class SliceType, class ViewType&gt; </td></tr>
-<tr class="memitem:aea3f27002f8056b1d72b94aa2301ba5e template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><b>Cabana::copyViewToSlice</b> (ExecutionSpace exec_space, SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const ViewType &amp;view, const std::size_t begin, const std::size_t end, typename std::enable_if&lt; 4==SliceType::kokkos_view::traits::dimension::rank, int * &gt;::type=0)</td></tr>
-<tr class="memdesc:aea3f27002f8056b1d72b94aa2301ba5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from View to slice. Rank-2. <br /></td></tr>
+<tr class="memitem:a766cc6e9c6bf7f7aa31fd1cc96ccc6fb template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><b>Cabana::copyViewToSlice</b> (ExecutionSpace exec_space, SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const ViewType &amp;view, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(SliceType::view_rank==4), int * &gt;::type=0)</td></tr>
+<tr class="memdesc:a766cc6e9c6bf7f7aa31fd1cc96ccc6fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy from View to slice. Rank-2. <br /></td></tr>
 <tr class="memitem:a9bcaaa26544a4e172541847a82995876" id="r_a9bcaaa26544a4e172541847a82995876"><td class="memTemplParams" colspan="2"><a id="a9bcaaa26544a4e172541847a82995876" name="a9bcaaa26544a4e172541847a82995876"></a>
 template&lt;class ViewType, class SliceType&gt; </td></tr>
 <tr class="memitem:a9bcaaa26544a4e172541847a82995876 template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><b>Cabana::copyViewToSlice</b> (SliceType &amp;<a class="el" href="namespaceCabana.html#aa14f30ab334c57448b204fc9b304289a">slice</a>, const ViewType &amp;view, const std::size_t begin, const std::size_t end)</td></tr>
