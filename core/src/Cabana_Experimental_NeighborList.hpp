@@ -107,7 +107,7 @@ namespace ArborX
 //! Neighbor access trait for Cabana slice and/or Kokkos View.
 template <typename Positions>
 struct AccessTraits<Positions,
-#if ARBORX_VERSION < 10799
+#if ARBORX_VERSION < 20000
                     PrimitivesTag,
 #endif
                     std::enable_if_t<Cabana::is_slice<Positions>{} ||
@@ -120,7 +120,7 @@ struct AccessTraits<Positions,
     //! Get number of particles.
     static KOKKOS_FUNCTION size_type size( Positions const& x )
     {
-        return Cabana::size( x );
+        return x.size();
     }
     //! Get the particle at the index.
     static KOKKOS_FUNCTION auto get( Positions const& x, size_type i )
@@ -133,7 +133,7 @@ struct AccessTraits<Positions,
 //! Neighbor access trait.
 template <typename Positions>
 struct AccessTraits<Cabana::Experimental::Impl::SubPositionsAndRadius<Positions>
-#if ARBORX_VERSION < 10799
+#if ARBORX_VERSION < 20000
                     ,
                     PredicatesTag
 #endif
@@ -156,7 +156,7 @@ struct AccessTraits<Cabana::Experimental::Impl::SubPositionsAndRadius<Positions>
     {
         assert( i < size( x ) );
         auto const point = AccessTraits<typename PositionLike::positions_type
-#if ARBORX_VERSION < 10799
+#if ARBORX_VERSION < 20000
                                         ,
                                         PrimitivesTag
 #endif
@@ -198,7 +198,7 @@ struct CollisionFilter<HalfNeighborTag>
 template <typename Tag>
 struct NeighborDiscriminatorCallback
 {
-#if ARBORX_VERSION >= 10799
+#if ARBORX_VERSION >= 20000
     template <typename Predicate, typename Geometry, typename OutputFunctor>
     KOKKOS_FUNCTION void
     operator()( Predicate const& predicate,
@@ -232,7 +232,7 @@ template <typename Counts, typename Tag>
 struct NeighborDiscriminatorCallback2D_FirstPass
 {
     Counts counts;
-#if ARBORX_VERSION >= 10799
+#if ARBORX_VERSION >= 20000
     template <typename Predicate, typename Geometry>
     KOKKOS_FUNCTION void
     operator()( Predicate const& predicate,
@@ -265,7 +265,7 @@ struct NeighborDiscriminatorCallback2D_FirstPass_BufferOptimization
 {
     Counts counts;
     Neighbors neighbors;
-#if ARBORX_VERSION >= 10799
+#if ARBORX_VERSION >= 20000
     template <typename Predicate, typename Geometry>
     KOKKOS_FUNCTION void
     operator()( Predicate const& predicate,
@@ -316,7 +316,7 @@ struct NeighborDiscriminatorCallback2D_SecondPass
 {
     Counts counts;
     Neighbors neighbors;
-#if ARBORX_VERSION >= 10799
+#if ARBORX_VERSION >= 20000
     template <typename Predicate, typename Geometry>
     KOKKOS_FUNCTION void
     operator()( Predicate const& predicate,
@@ -404,7 +404,7 @@ auto makeNeighborList( ExecutionSpace space, Tag, Positions const& positions,
 
     using memory_space = typename Positions::memory_space;
 
-#if ARBORX_VERSION >= 10799
+#if ARBORX_VERSION >= 20000
     ArborX::BoundingVolumeHierarchy bvh(
         space, ArborX::Experimental::attach_indices<int>( positions ) );
 #else
@@ -503,7 +503,7 @@ auto make2DNeighborList( ExecutionSpace space, Tag, Positions const& positions,
 
     using memory_space = typename Positions::memory_space;
 
-#if ARBORX_VERSION >= 10799
+#if ARBORX_VERSION >= 20000
     ArborX::BoundingVolumeHierarchy bvh(
         space, ArborX::Experimental::attach_indices<int>( positions ) );
 #else
@@ -515,7 +515,7 @@ auto make2DNeighborList( ExecutionSpace space, Tag, Positions const& positions,
 
     auto const n_queries =
         ArborX::AccessTraits<std::remove_const_t<decltype( predicates )>
-#if ARBORX_VERSION < 10799
+#if ARBORX_VERSION < 20000
                              ,
                              ArborX::PredicatesTag
 #endif
