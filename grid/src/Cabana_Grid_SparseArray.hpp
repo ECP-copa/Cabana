@@ -163,11 +163,11 @@ class SparseArrayLayout
                                        positions( pid, 1 ) - low_corner[1],
                                        positions( pid, 2 ) - low_corner[2] };
                 int grid_base[3] = {
-                    static_cast<int>( std::lround( pos[0] * dx_inv[0] ) -
+                    static_cast<int>( std::floor( pos[0] * dx_inv[0] ) -
                                       p2g_radius ),
-                    static_cast<int>( std::lround( pos[1] * dx_inv[1] ) -
+                    static_cast<int>( std::floor( pos[1] * dx_inv[1] ) -
                                       p2g_radius ),
-                    static_cast<int>( std::lround( pos[2] * dx_inv[2] ) -
+                    static_cast<int>( std::floor( pos[2] * dx_inv[2] ) -
                                       p2g_radius ) };
                 // register grids that will have data transfer with the particle
                 const int p2g_size = p2g_radius * 2;
