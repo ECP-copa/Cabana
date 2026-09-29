@@ -138,8 +138,8 @@ void generate_random_particles( const int particle_number,
         for ( int d = 0; d < 3; ++d )
         {
             grid_base[d] =
-                int( std::lround( ( new_pos[d] - global_low_corner[d] ) /
-                                  cell_size ) ) -
+                int( std::floor( ( new_pos[d] - global_low_corner[d] ) /
+                                 cell_size ) ) -
                 1;
         }
 
@@ -246,6 +246,16 @@ void sparse_array_test( int par_num, EntityType entity )
     auto test_array = createSparseArray<TEST_MEMSPACE>(
         std::string( "test_sparse_grid" ), *test_layout );
 
+    // A particle in cell 2 must not round into cell 3 (and the next tile).
+    std::set<std::array<T, 3>> boundary_particle = {
+        { global_low_corner[0] + 2.75f * cell_size,
+          global_low_corner[1] + 2.75f * cell_size,
+          global_low_corner[2] + 2.75f * cell_size } };
+    auto boundary_view = set2view( boundary_particle );
+    test_array->registerSparseGrid( boundary_view, 1 );
+    EXPECT_EQ( test_layout->sparseMap().sizeTile(), 1 );
+    test_array->clear();
+
     // insert particles
     test_array->registerSparseGrid( par_view, par_num );
     test_array->reserveFromMap( 1.2 );
@@ -275,9 +285,9 @@ void sparse_array_test( int par_num, EntityType entity )
                          par_view( id, 1 ) - low_corner[1],
                          par_view( id, 2 ) - low_corner[2] };
             int grid_base[3] = {
-                static_cast<int>( std::lround( pos[0] * dx_inv ) - 1 ),
-                static_cast<int>( std::lround( pos[1] * dx_inv ) - 1 ),
-                static_cast<int>( std::lround( pos[2] * dx_inv ) - 1 ) };
+                static_cast<int>( std::floor( pos[0] * dx_inv ) - 1 ),
+                static_cast<int>( std::floor( pos[1] * dx_inv ) - 1 ),
+                static_cast<int>( std::floor( pos[2] * dx_inv ) - 1 ) };
             int offset = 0;
             for ( int i = 0; i <= 2; ++i )
                 for ( int j = 0; j <= 2; ++j )
